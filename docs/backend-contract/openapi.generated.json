@@ -681,6 +681,11 @@
             "title": "Attachments",
             "type": "array"
           },
+          "client_context": {
+            "additionalProperties": true,
+            "title": "Client Context",
+            "type": "object"
+          },
           "graph_version": {
             "anyOf": [
               {
@@ -1033,6 +1038,18 @@
             ],
             "title": "Infant Id"
           },
+          "plan_task_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Task Id"
+          },
           "title": {
             "anyOf": [
               {
@@ -1128,6 +1145,18 @@
             "format": "uuid",
             "title": "Owner User Id",
             "type": "string"
+          },
+          "plan_task_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Task Id"
           },
           "status": {
             "title": "Status",
@@ -1607,16 +1636,36 @@
       },
       "InviteCodeListResponse": {
         "properties": {
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/InviteCodeRead"
             },
             "title": "Items",
             "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
           }
         },
         "required": [
-          "items"
+          "items",
+          "total",
+          "limit",
+          "offset",
+          "has_more"
         ],
         "title": "InviteCodeListResponse",
         "type": "object"
@@ -1685,6 +1734,16 @@
             "title": "Id",
             "type": "string"
           },
+          "is_available": {
+            "readOnly": true,
+            "title": "Is Available",
+            "type": "boolean"
+          },
+          "is_bound": {
+            "readOnly": true,
+            "title": "Is Bound",
+            "type": "boolean"
+          },
           "label": {
             "title": "Label",
             "type": "string"
@@ -1716,7 +1775,9 @@
           "expires_at",
           "disabled_at",
           "created_at",
-          "updated_at"
+          "updated_at",
+          "is_bound",
+          "is_available"
         ],
         "title": "InviteCodeRead",
         "type": "object"
@@ -2128,6 +2189,10 @@
           "title": {
             "title": "Title",
             "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
           }
         },
         "required": [
@@ -2138,7 +2203,8 @@
           "summary",
           "status",
           "source",
-          "payload"
+          "payload",
+          "version"
         ],
         "title": "PlanRead",
         "type": "object"
@@ -2307,6 +2373,24 @@
         "title": "PlanTaskRead",
         "type": "object"
       },
+      "PlanTaskStateUpdate": {
+        "properties": {
+          "state": {
+            "enum": [
+              "pending",
+              "completed",
+              "skipped"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "title": "PlanTaskStateUpdate",
+        "type": "object"
+      },
       "PlanTaskUpdate": {
         "properties": {
           "description": {
@@ -2385,6 +2469,154 @@
         "title": "PlanTaskUpdate",
         "type": "object"
       },
+      "PlanTodoCompletionUpdate": {
+        "properties": {
+          "completed": {
+            "title": "Completed",
+            "type": "boolean"
+          },
+          "expected_version": {
+            "minimum": 1.0,
+            "title": "Expected Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "completed",
+          "expected_version"
+        ],
+        "title": "PlanTodoCompletionUpdate",
+        "type": "object"
+      },
+      "PregnancyDiaryEntryCreate": {
+        "properties": {
+          "appointment_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appointment Note"
+          },
+          "attachments": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attachments"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "energy_level": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Energy Level"
+          },
+          "entry_date": {
+            "format": "date",
+            "title": "Entry Date",
+            "type": "string"
+          },
+          "fetal_movement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetal Movement"
+          },
+          "gestational_week": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gestational Week"
+          },
+          "mood": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mood"
+          },
+          "nutrition_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nutrition Note"
+          },
+          "sleep_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sleep Summary"
+          },
+          "symptom_tags": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Tags"
+          }
+        },
+        "required": [
+          "entry_date"
+        ],
+        "title": "PregnancyDiaryEntryCreate",
+        "type": "object"
+      },
       "PregnancyDiaryEntryListResponse": {
         "properties": {
           "items": {
@@ -2414,6 +2646,11 @@
           },
           "content": {
             "title": "Content",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
             "type": "string"
           },
           "energy_level": {
@@ -2463,6 +2700,11 @@
             "items": {},
             "title": "Symptom Tags",
             "type": "array"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
           }
         },
         "required": [
@@ -2479,7 +2721,9 @@
           "nutrition_note",
           "content",
           "attachments",
-          "status"
+          "status",
+          "created_at",
+          "updated_at"
         ],
         "title": "PregnancyDiaryEntryRead",
         "type": "object"
@@ -3199,6 +3443,18 @@
             ],
             "title": "Milk Volume Ml"
           },
+          "plan_task_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Task Id"
+          },
           "pump_end_time": {
             "anyOf": [
               {
@@ -3309,6 +3565,18 @@
             "format": "uuid",
             "title": "Owner User Id",
             "type": "string"
+          },
+          "plan_task_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Task Id"
           },
           "pump_end_time": {
             "anyOf": [
@@ -3959,6 +4227,17 @@
               "maximum": 100,
               "minimum": 1,
               "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
               "type": "integer"
             }
           },
@@ -5147,9 +5426,9 @@
             "name": "poll_interval_seconds",
             "required": false,
             "schema": {
-              "default": 1.0,
+              "default": 0.1,
               "maximum": 5.0,
-              "minimum": 0.1,
+              "minimum": 0.01,
               "title": "Poll Interval Seconds",
               "type": "number"
             }
@@ -7028,6 +7307,17 @@
         "parameters": [
           {
             "in": "query",
+            "name": "plan_type",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 64,
+              "title": "Plan Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "status",
             "required": false,
             "schema": {
@@ -7488,6 +7778,70 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/plans/tasks/{task_id}/state": {
+      "patch": {
+        "operationId": "update_task_state_v1_plans_tasks__task_id__state_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanTaskStateUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanTaskRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Task State",
+        "tags": [
+          "plans"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/plans/{plan_id}": {
       "delete": {
         "operationId": "delete_plan_v1_plans__plan_id__delete",
@@ -7587,6 +7941,95 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/plans/{plan_id}/todos/{item_id}/completion": {
+      "patch": {
+        "operationId": "update_plan_todo_completion_v1_plans__plan_id__todos__item_id__completion_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanTodoCompletionUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Plan Todo Completion",
+        "tags": [
+          "plans"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/pregnancy-diary/entries": {
       "get": {
         "operationId": "list_entries_v1_pregnancy_diary_entries_get",
@@ -7666,6 +8109,56 @@
           }
         ],
         "summary": "List Entries",
+        "tags": [
+          "pregnancy-diary"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "pregnancy-diary",
+        "x-momcozy-stability": "stable"
+      },
+      "post": {
+        "operationId": "create_entry_v1_pregnancy_diary_entries_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PregnancyDiaryEntryCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PregnancyDiaryEntryRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Entry",
         "tags": [
           "pregnancy-diary"
         ],
@@ -7775,8 +8268,8 @@
         "x-momcozy-owner": "pregnancy-diary",
         "x-momcozy-stability": "stable"
       },
-      "put": {
-        "operationId": "upsert_entry_v1_pregnancy_diary_entries__entry_date__put",
+      "patch": {
+        "operationId": "update_entry_v1_pregnancy_diary_entries__entry_date__patch",
         "parameters": [
           {
             "in": "path",
@@ -7826,7 +8319,7 @@
             "HTTPBearer": []
           }
         ],
-        "summary": "Upsert Entry",
+        "summary": "Update Entry",
         "tags": [
           "pregnancy-diary"
         ],

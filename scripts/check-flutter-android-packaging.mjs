@@ -64,18 +64,18 @@ notMatches(
 
 contains(
   "flutter_app/android/app/src/local/res/values/strings.xml",
-  "<string name=\"app_name\">Momcozy Local</string>",
-  "Flutter local label is distinguishable",
+  "<string name=\"app_name\">Momcozy Lab</string>",
+  "Flutter local label matches current unified branding",
 );
 contains(
   "flutter_app/android/app/src/staging/res/values/strings.xml",
-  "<string name=\"app_name\">Momcozy Staging</string>",
-  "Flutter staging label is distinguishable",
+  "<string name=\"app_name\">Momcozy Lab</string>",
+  "Flutter staging label matches current unified branding",
 );
 contains(
   "flutter_app/android/app/src/production/res/values/strings.xml",
-  "<string name=\"app_name\">Momcozy</string>",
-  "Flutter production-shaped label is explicit",
+  "<string name=\"app_name\">Momcozy Lab</string>",
+  "Flutter production-shaped label matches current unified branding",
 );
 
 notMatches(

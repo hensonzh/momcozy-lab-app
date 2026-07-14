@@ -9,6 +9,7 @@ class AgentStreamRequest {
     this.locale = 'en-US',
     this.images = const <AgentStreamImageInput>[],
     this.metadata = const <String, Object?>{},
+    this.idempotencyKey,
   });
 
   final String message;
@@ -18,6 +19,7 @@ class AgentStreamRequest {
   final String locale;
   final List<AgentStreamImageInput> images;
   final Map<String, Object?> metadata;
+  final String? idempotencyKey;
 
   Map<String, Object?> toMap() => {
     'message': message,
@@ -26,6 +28,7 @@ class AgentStreamRequest {
     if (images.isNotEmpty)
       'images': images.map((image) => image.toMap()).toList(growable: false),
     if (metadata.isNotEmpty) 'metadata': metadata,
+    if (idempotencyKey != null) 'idempotencyKey': idempotencyKey,
   };
 
   AgentStreamRequest resume({
@@ -41,6 +44,7 @@ class AgentStreamRequest {
       locale: locale,
       images: images,
       metadata: metadata,
+      idempotencyKey: idempotencyKey,
     );
   }
 }
@@ -99,18 +103,49 @@ Map<String, Object?> buildProductionAgentRunPayload(
   final threadId = request.threadId?.trim();
   final attachments = request.images
       .map((image) => image.toProductionAttachment())
-      .toList(growable: false);
-  final normalizedIdempotencyKey = idempotencyKey?.trim();
+      .toList(growable: true);
+  final formSubmission = _productionFormSubmissionAttachment(request.metadata);
+  if (formSubmission != null) attachments.add(formSubmission);
+  final normalizedIdempotencyKey = (idempotencyKey ?? request.idempotencyKey)
+      ?.trim();
+  final normalizedLocale = request.locale.trim();
+  final clientContext = <String, Object?>{
+    ...request.metadata,
+    if (normalizedLocale.isNotEmpty) 'locale': normalizedLocale,
+  }..remove('form_submission');
 
   return {
     if (threadId != null && threadId.isNotEmpty && _looksLikeUuid(threadId))
       'thread_id': threadId,
     'message': text,
     if (attachments.isNotEmpty) 'attachments': attachments,
+    if (clientContext.isNotEmpty) 'client_context': clientContext,
     'runtime_pattern': 'langgraph_sdk',
-    if (normalizedIdempotencyKey != null &&
-        normalizedIdempotencyKey.isNotEmpty)
+    if (normalizedIdempotencyKey != null && normalizedIdempotencyKey.isNotEmpty)
       'idempotency_key': normalizedIdempotencyKey,
+  };
+}
+
+Map<String, Object?>? _productionFormSubmissionAttachment(
+  Map<String, Object?> metadata,
+) {
+  final rawSubmission = metadata['form_submission'];
+  if (rawSubmission == null) return null;
+  if (rawSubmission is! Map) {
+    throw const AgentStreamPayloadException('Invalid form submission.');
+  }
+  final submission = Map<String, Object?>.from(rawSubmission);
+  final artifactId = submission['artifact_id']?.toString().trim() ?? '';
+  final formId = submission['form_id']?.toString().trim() ?? '';
+  final values = submission['values'];
+  if (artifactId.isEmpty || formId.isEmpty || values is! Map) {
+    throw const AgentStreamPayloadException('Invalid form submission.');
+  }
+  return {
+    'type': 'form_submission',
+    'artifact_id': artifactId,
+    'form_id': formId,
+    'values': Map<String, Object?>.from(values),
   };
 }
 

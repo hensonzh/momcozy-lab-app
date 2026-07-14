@@ -46,8 +46,22 @@ void main() {
         Uri.parse('http://10.0.2.2:8769'),
       );
       expect(
-        AgentStreamEndpoint(uri: Uri.parse('ws://10.0.2.2:8768/api/ag-ui')).uri,
-        Uri.parse('ws://10.0.2.2:8768/api/ag-ui'),
+        AgentStreamEndpoint(
+          uri: Uri.parse('ws://10.0.2.2:8768/api/agent-stream'),
+        ).uri,
+        Uri.parse('ws://10.0.2.2:8768/api/agent-stream'),
+      );
+      expect(
+        TransportSecurityPolicy.requireSecureHttp(
+          Uri.parse('http://192.168.59.35:8000'),
+        ),
+        Uri.parse('http://192.168.59.35:8000'),
+      );
+      expect(
+        TransportSecurityPolicy.requireSecureHttp(
+          Uri.parse('http://172.16.0.10:8000'),
+        ),
+        Uri.parse('http://172.16.0.10:8000'),
       );
     });
 

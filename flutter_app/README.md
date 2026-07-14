@@ -26,17 +26,17 @@ CMake: 3.22.1
 From the parent `MomCozyApp/` directory:
 
 ```bash
-npm run flutter:check
-npm run flutter:init
-npm run flutter:invite-dev
-npm run flutter:release-gate
-npm run flutter:emulator-smoke
+make flutter-check
+make flutter-init
+make flutter-invite-dev
+make flutter-release-gate
+make flutter-emulator-smoke
 ```
 
 Pinned versions live in [`flutter-toolchain.json`](../flutter-toolchain.json);
-`npm run flutter:check` validates the local SDK/JDK/Android directories and versions against that file.
-`npm run flutter:release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, storage migration dry-run, local debug APK, and staging release APK.
-`npm run flutter:emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `flutter_app/build/emulator-smoke/`, and checks the process/window/crash log.
+`make flutter-check` validates the local SDK/JDK/Android directories and versions against that file.
+`make flutter-release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, storage migration dry-run, local debug APK, and staging release APK.
+`make flutter-emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `flutter_app/build/emulator-smoke/`, and checks the process/window/crash log.
 
 From this `flutter_app/` directory:
 
@@ -51,7 +51,7 @@ flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 邀请码登录本地联调用父目录命令：
 
 ```bash
-npm run flutter:invite-dev
+make flutter-invite-dev
 ```
 
 该命令默认连接 `http://10.0.2.2:8000`，不会传入 `MOMCOZY_API_TOKEN` 或
@@ -61,18 +61,17 @@ npm run flutter:invite-dev
 ```bash
 MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5554 \
 MOMCOZY_API_BASE_URL=http://10.0.2.2:8000 \
-npm run flutter:invite-dev
+make flutter-invite-dev
 ```
 
 Agent Hub 默认使用 SSE transport，并可通过 dart-define 配置：
 
 ```bash
 flutter run \
-  --dart-define=MOMCOZY_AGENT_SSE_URL=http://192.168.x.x:8768/api/ag-ui \
   --dart-define=MOMCOZY_API_BASE_URL=http://192.168.x.x:8769 \
+  --dart-define=MOMCOZY_AGENT_RUNS_URL=http://192.168.x.x:8769/v1/agent/runs \
   --dart-define=MOMCOZY_API_TOKEN=APP_API_TEST \
-  --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user \
-  --dart-define=MOMCOZY_AGENT_THREAD_ID=thread-demo
+  --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user
 ```
 
 Android 真机不能使用 `127.0.0.1` 访问电脑上的 Agent 服务，需要改成手机可访问的局域网或公网地址。Android emulator 可使用 `10.0.2.2`。
@@ -90,7 +89,7 @@ Current Android PoC package:
 
 Current Dart test coverage:
 
-- AG-UI stream fixtures parse equivalently across JSONL, SSE eventstream, and WebSocket frame forms.
+- Agent event fixtures parse equivalently across JSONL and SSE eventstream forms.
 - Agent stream reducer fixtures cover reconnect replay idempotency by `event_id` and `sequence`.
 - API envelope fixtures distinguish success, business errors, HTTP errors, and legacy snake/camel aliases.
 - Agent voice fixtures cover STT multipart chunk transcription, timeout fallback, realtime PCM stream cancellation, realtime voice session frames, and WebSocket disconnect behavior.
@@ -116,7 +115,7 @@ Current Dart test coverage:
 - Android MethodChannel adapter fixtures cover `MmcBle` BLE method schemas/events and `PumpSessionNotification` foreground method schemas.
 - Pump agent upload MethodChannel adapter fixtures cover native method schemas and failure events.
 - Pump agent upload fake platform fixtures cover method schemas, call/failure streams, sensitive failure redaction, and duplicate upload dedupe keys.
-- Agent Hub runtime fixtures cover default SSE runner injection, AG-UI payload generation, and route-shell composer send-ready state.
+- Agent Hub runtime fixtures cover default SSE runner injection, production run payload generation, and route-shell composer send-ready state.
 
 Next migration gap:
 
@@ -125,6 +124,6 @@ Next migration gap:
 ## Migration Notes
 
 - Keep the existing Web/Capacitor app as the behavior baseline until Flutter parity gates pass.
-- Add fixtures before feature UI: BLE protocol, AG-UI stream, API envelope, storage migration, and route intents.
+- Add fixtures before feature UI: BLE protocol, Agent SSE stream, API envelope, storage migration, and route intents.
 - Keep native Android capabilities behind typed platform interfaces.
 - `android/gradle.properties` pins `android.aapt2FromMavenOverride` to SDK build-tools 36.0.0 because Maven AAPT2 9.0.1 fails to start on this machine.

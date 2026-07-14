@@ -53,7 +53,7 @@ const requiresReleaseSigning =
   String(env.MOMCOZY_REQUIRE_RELEASE_SIGNING || "").trim() === "1";
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
-  console.error("Missing flutter_app/pubspec.yaml. Run npm run flutter:init first.");
+  console.error("Missing flutter_app/pubspec.yaml. Run make flutter-init first.");
   process.exit(1);
 }
 
@@ -71,23 +71,44 @@ const steps = [
   ["node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot],
   ["node", ["scripts/check-flutter-security-privacy.mjs"], projectRoot],
   ["flutter", ["pub", "get"], flutterAppDir],
-  ["dart", ["format", "--set-exit-if-changed", "lib", "test", "tool"], flutterAppDir],
+  [
+    "dart",
+    [
+      "format",
+      "--set-exit-if-changed",
+      "lib",
+      "test",
+      "integration_test",
+      "tool",
+    ],
+    flutterAppDir,
+  ],
   ["flutter", ["analyze"], flutterAppDir],
   ["flutter", ["test"], flutterAppDir],
   ["dart", ["run", "tool/staging_smoke.dart"], flutterAppDir],
   ["dart", ["run", "tool/storage_migration_dry_run.dart"], flutterAppDir],
-  ["flutter", ["build", "apk", "--debug", "--flavor", "local"], flutterAppDir],
   [
-    "flutter",
+    "node",
     [
-      "build",
-      "apk",
-      "--release",
+      "scripts/build-flutter-android-apk.mjs",
+      "--mode",
+      "debug",
+      "--flavor",
+      "local",
+    ],
+    projectRoot,
+  ],
+  [
+    "node",
+    [
+      "scripts/build-flutter-android-apk.mjs",
+      "--mode",
+      "release",
       "--flavor",
       "staging",
       "--dart-define=MOMCOZY_ENV=staging",
     ],
-    flutterAppDir,
+    projectRoot,
   ],
 ];
 

@@ -43,7 +43,7 @@ MOMCOZY_STAGING_SMOKE_MUTATE=1
 
 ```bash
 MOMCOZY_STAGING_SMOKE_AGENT=1
-MOMCOZY_AGENT_SSE_URL=https://staging-api.example.com/api/ag-ui-ws
+MOMCOZY_AGENT_RUNS_URL=https://staging-api.example.com/v1/agent/runs
 ```
 
 ## 退出码

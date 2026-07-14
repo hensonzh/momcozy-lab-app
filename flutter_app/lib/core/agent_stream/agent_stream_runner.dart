@@ -20,9 +20,11 @@ class AgentStreamRunner {
       }
 
       if (state.isActive) {
-        yield state.markDisconnected(
-          StateError('Agent stream ended before a terminal event.'),
-        );
+        yield state.hasCompletedAssistantMessage
+            ? state.finishVisibleReply()
+            : state.markDisconnected(
+                StateError('Agent stream ended before a terminal event.'),
+              );
       }
     } catch (error) {
       yield state.markDisconnected(error);

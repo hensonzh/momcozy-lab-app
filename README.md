@@ -10,26 +10,26 @@ scripts/       Flutter toolchain、release gate、smoke 和合同校验脚本
 test/          根级测试 fixtures；Flutter 测试在 flutter_app/test/
 ```
 
-根目录 `package.json` 只保留 Flutter 主线相关脚本。旧 Web 的 React/Vite/Capacitor 依赖和 lockfile 保留在 `legacy_web/` 内，如需查看或手动运行旧版实现，请直接进入该目录。
+根目录不再保留 `package.json`。Flutter 主线统一通过 `Makefile` 和 `scripts/` 管理启动、检查、构建和 smoke；旧 Web 的 React/Vite/Capacitor 依赖和 lockfile 只保留在 `legacy_web/` 内，如需查看或手动运行旧版实现，请直接进入该目录。
 
 ## 新版 Flutter
 
 首次检查本地 Flutter 工具链：
 
 ```bash
-npm run flutter:check
+make flutter-check
 ```
 
-启动 Flutter App：
+启动邀请码登录 Flutter App：
 
 ```bash
-npm run flutter:dev
+make flutter-invite-dev
 ```
 
 非真机构建和测试 gate：
 
 ```bash
-npm run flutter:release-gate
+make flutter-release-gate
 ```
 
 ## 文档目录

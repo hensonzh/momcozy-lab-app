@@ -11,6 +11,8 @@ const speechTranscribeChunkEndpoint = '/v1/speech/transcribe-chunk';
 const realtimeVoiceStreamEndpoint = '/v1/realtime-voice-stream';
 const realtimeVoiceSessionEndpoint = '/v1/realtime-voice-session';
 
+typedef AgentVoiceUnauthorizedHandler = FutureOr<bool> Function();
+
 abstract interface class AgentVoiceRepository {
   Future<String?> transcribeSpeechChunk({
     required ApiUploadFile file,
@@ -19,7 +21,21 @@ abstract interface class AgentVoiceRepository {
 
   Stream<List<int>> realtimeVoicePcmStream({required String text});
 
+  Future<AgentVoiceRealtimeSessionConnection> openRealtimeVoiceSession();
+
   Stream<AgentVoiceSessionEvent> realtimeVoiceSession();
+}
+
+abstract interface class AgentVoiceRealtimeSessionConnection {
+  Stream<AgentVoiceSessionEvent> get events;
+
+  Future<void> append(String text);
+
+  Future<void> finish();
+
+  Future<void> cancel();
+
+  Future<void> close();
 }
 
 class AgentVoiceApiRepository implements AgentVoiceRepository {
@@ -28,6 +44,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     required Uri baseUri,
     this.token,
     this.tokenProvider,
+    this.onUnauthorized,
     this.headers = const <String, String>{},
     this.binaryConnector = const _DefaultAgentVoiceBinaryStreamConnector(),
     this.websocketConnector = const _DefaultAgentVoiceWebSocketConnector(),
@@ -37,6 +54,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   final Uri baseUri;
   final String? token;
   final String? Function()? tokenProvider;
+  final AgentVoiceUnauthorizedHandler? onUnauthorized;
   final Map<String, String> headers;
   final AgentVoiceBinaryStreamConnector binaryConnector;
   final AgentVoiceWebSocketConnector websocketConnector;
@@ -66,11 +84,24 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   }
 
   @override
-  Stream<List<int>> realtimeVoicePcmStream({required String text}) {
-    return binaryConnector.get(
-      _resolveHttp(realtimeVoiceStreamEndpoint, query: {'text': text}),
-      headers: _requestHeaders(accept: 'audio/pcm'),
+  Stream<List<int>> realtimeVoicePcmStream({required String text}) async* {
+    final uri = _resolveHttp(
+      realtimeVoiceStreamEndpoint,
+      query: {'text': text},
     );
+    try {
+      await for (final chunk in _openRealtimeVoicePcmStream(uri)) {
+        yield chunk;
+      }
+    } on ApiHttpException catch (error) {
+      if (error.statusCode != HttpStatus.unauthorized ||
+          !await _refreshAfterUnauthorized()) {
+        rethrow;
+      }
+      await for (final chunk in _openRealtimeVoicePcmStream(uri)) {
+        yield chunk;
+      }
+    }
   }
 
   Map<String, Object?> redactedRealtimeVoiceStreamLogContext({
@@ -84,18 +115,21 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
 
   @override
   Stream<AgentVoiceSessionEvent> realtimeVoiceSession() async* {
+    final connection = await openRealtimeVoiceSession();
+    try {
+      yield* connection.events;
+    } finally {
+      await connection.close();
+    }
+  }
+
+  @override
+  Future<AgentVoiceRealtimeSessionConnection> openRealtimeVoiceSession() async {
     final connection = await websocketConnector.connect(
       _resolveWebSocket(realtimeVoiceSessionEndpoint),
       headers: _requestHeaders(accept: 'application/json'),
     );
-
-    try {
-      await for (final frame in connection.frames) {
-        yield parseAgentVoiceSessionFrame(frame);
-      }
-    } finally {
-      await connection.close();
-    }
+    return _AgentVoiceApiRealtimeSessionConnection(connection);
   }
 
   Map<String, Object?> redactedRealtimeVoiceSessionLogContext() {
@@ -135,6 +169,19 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
       if (authToken != null && authToken.isNotEmpty)
         'Authorization': 'Bearer $authToken',
     };
+  }
+
+  Future<bool> _refreshAfterUnauthorized() async {
+    final handler = onUnauthorized;
+    if (handler == null) return false;
+    return await handler();
+  }
+
+  Stream<List<int>> _openRealtimeVoicePcmStream(Uri uri) {
+    return binaryConnector.get(
+      uri,
+      headers: _requestHeaders(accept: 'audio/pcm'),
+    );
   }
 
   Map<String, Object?> _redactedRequestContext(
@@ -204,7 +251,9 @@ class IoAgentVoiceBinaryStreamConnector
 }
 
 abstract interface class AgentVoiceWebSocketConnection {
-  Stream<String> get frames;
+  Stream<Object?> get frames;
+
+  Future<void> send(String text);
 
   Future<void> close();
 }
@@ -236,10 +285,64 @@ class _IoAgentVoiceWebSocketConnection
   final WebSocket socket;
 
   @override
-  Stream<String> get frames => socket.map((frame) => frame.toString());
+  Stream<Object?> get frames => socket.cast<Object?>();
+
+  @override
+  Future<void> send(String text) async {
+    socket.add(text);
+  }
 
   @override
   Future<void> close() => socket.close();
+}
+
+class _AgentVoiceApiRealtimeSessionConnection
+    implements AgentVoiceRealtimeSessionConnection {
+  const _AgentVoiceApiRealtimeSessionConnection(this.connection);
+
+  final AgentVoiceWebSocketConnection connection;
+
+  @override
+  Stream<AgentVoiceSessionEvent> get events {
+    return connection.frames.map(_voiceSessionEventFromTransportFrame);
+  }
+
+  @override
+  Future<void> append(String text) {
+    return _sendJson({'type': 'append', 'text': text});
+  }
+
+  @override
+  Future<void> finish() {
+    return _sendJson({'type': 'finish'});
+  }
+
+  @override
+  Future<void> cancel() {
+    return _sendJson({'type': 'cancel'});
+  }
+
+  @override
+  Future<void> close() {
+    return connection.close();
+  }
+
+  Future<void> _sendJson(Map<String, Object?> payload) {
+    return connection.send(jsonEncode(payload));
+  }
+}
+
+AgentVoiceSessionEvent _voiceSessionEventFromTransportFrame(Object? frame) {
+  if (frame is String) return parseAgentVoiceSessionFrame(frame);
+  if (frame is List<int>) {
+    return AgentVoiceSessionEvent(
+      type: AgentVoiceSessionEventType.audioChunk,
+      audioBytes: frame,
+    );
+  }
+  throw AgentVoiceSessionFrameFormatException(
+    'Unsupported voice session transport frame: ${frame.runtimeType}',
+  );
 }
 
 class _DefaultAgentVoiceBinaryStreamConnector

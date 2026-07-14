@@ -2,17 +2,37 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
+import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_page.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_growth_chart.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_status_cards.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_status_sheets.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/birth_journey_plan_dashboard.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_entry_intent.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 class MomCozyFeaturePage extends StatelessWidget {
   const MomCozyFeaturePage({
@@ -25,6 +45,7 @@ class MomCozyFeaturePage extends StatelessWidget {
     required this.priority,
     this.routeUri,
     this.routeExtra,
+    this.onLogout,
   });
 
   final String path;
@@ -35,6 +56,7 @@ class MomCozyFeaturePage extends StatelessWidget {
   final String priority;
   final Uri? routeUri;
   final Object? routeExtra;
+  final Future<void> Function()? onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +75,35 @@ class MomCozyFeaturePage extends StatelessWidget {
         icon: icon,
         accent: accent,
       ),
-      '/schedule' => _SchedulePage(
+      '/schedule' => ScheduleDashboardPage(
+        key: ValueKey(
+          'schedule-dashboard-${MomCozyRuntimeScope.of(context).currentSession.userId}',
+        ),
         path: path,
-        title: title,
-        summary: summary,
-        icon: icon,
-        accent: accent,
+        repository: MomCozyRuntimeScope.of(context).scheduleRepository,
+        now: MomCozyRuntimeScope.of(context).now,
+        reminderGateway: MomCozyRuntimeScope.of(
+          context,
+        ).scheduleReminderGateway,
+        reminderPreferenceStore: MomCozyRuntimeScope.of(
+          context,
+        ).scheduleReminderPreferenceStore,
+        volumeUnitPreferenceStore: MomCozyRuntimeScope.of(
+          context,
+        ).volumeUnitPreferenceStore,
+        milkPlanChangeStore: MomCozyRuntimeScope.of(
+          context,
+        ).milkPlanChangeStore,
+        deliveryDateLoader: MomCozyRuntimeScope.of(
+          context,
+        ).loadSchedulePostpartumAnchorDate,
+        imageRecognitionGateway: MomCozyRuntimeScope.of(
+          context,
+        ).scheduleImageRecognitionGateway,
+        routeUri: routeUri,
+        routeExtra: routeExtra,
+        onOpenAgent: () =>
+            context.go('/', extra: const {'agentPrefill': '我想调整今天的吸乳排期'}),
       ),
       '/status' => _StatusPage(
         path: path,
@@ -66,6 +111,8 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeUri: routeUri,
+        routeExtra: routeExtra,
       ),
       '/community' => _CommunityPage(
         path: path,
@@ -80,6 +127,7 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        onLogout: onLogout,
       ),
       '/device/manage' => _DeviceManagePage(
         path: path,
@@ -108,6 +156,7 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeExtra: routeExtra,
       ),
       '/ibclc-chat.html' => _IbclcPage(
         path: path,
@@ -115,6 +164,8 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeUri: routeUri,
+        routeExtra: routeExtra,
       ),
       '/media-viewer' => _MediaViewerPage(
         path: path,
@@ -532,11 +583,8 @@ final _statusInteractionStates = Expando<_StatusInteractionState>(
 class _StatusInteractionState {
   String view = 'mom';
   String careStage = 'postpartum';
-  bool growthRecordAdded = false;
-  bool pregnancyDiarySaved = false;
   String milkTrendMode = '周';
   String babyGrowthMetric = '体重';
-  String? activeDetail;
 }
 
 class _StatusPage extends StatefulWidget {
@@ -546,6 +594,8 @@ class _StatusPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeUri,
+    this.routeExtra,
   });
 
   final String path;
@@ -553,225 +603,515 @@ class _StatusPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Uri? routeUri;
+  final Object? routeExtra;
 
   @override
   State<_StatusPage> createState() => _StatusPageState();
 }
 
 class _StatusPageState extends State<_StatusPage> {
-  String _view = 'mom';
-  String _careStage = 'postpartum';
-  bool _growthRecordAdded = false;
-  bool _pregnancyDiarySaved = false;
   String _milkTrendMode = '周';
   String _babyGrowthMetric = '体重';
-  String? _activeDetail;
   late _StatusInteractionState _interactionState = _StatusInteractionState();
   MomCozyApiRuntime? _runtime;
-  late Future<StatusOverview> _overviewFuture;
+  PregnancyDiaryChangeStore? _pregnancyDiaryChangeStore;
+  PregnancyPlanChangeStore? _pregnancyPlanChangeStore;
+  int _handledPregnancyDiaryRevision = 0;
+  int _handledPregnancyPlanRevision = 0;
+  Future<void> _pregnancyDiaryChangeTail = Future<void>.value();
+  Future<void> _pregnancyPlanChangeTail = Future<void>.value();
+  late StatusDashboardController _controller;
+  late Listenable _dashboardListenable;
+  final _growthCurveAnchorKey = GlobalKey();
+  final _growthHighlight = ValueNotifier<bool>(false);
+  Timer? _growthHighlightTimer;
+  final _pregnancyDiaryAnchorKey = GlobalKey();
+  final _birthJourneyAnchorKey = GlobalKey();
+  final _pregnancyDiaryNotice = ValueNotifier<bool>(false);
+  final _birthJourneyNotice = ValueNotifier<bool>(false);
+  Timer? _pregnancyDiaryNoticeTimer;
+  Timer? _birthJourneyNoticeTimer;
+  String? _consumedStatusIntentToken;
+  late final AppLifecycleListener _appLifecycleListener;
+
+  String get _view => _controller.identity.value.value;
+  String get _careStage => _controller.careStage.value.storageValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _appLifecycleListener = AppLifecycleListener(onResume: _handleAppResume);
+  }
+
+  void _handleAppResume() {
+    if (_runtime == null) return;
+    unawaited(_controller.refreshStale());
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
+      if (_runtime != null) {
+        _pregnancyDiaryChangeStore?.removeListener(
+          _handlePregnancyDiaryChangeStore,
+        );
+        _pregnancyPlanChangeStore?.removeListener(
+          _handlePregnancyPlanChangeStore,
+        );
+        _controller.careStage.removeListener(_handleSelectionChanged);
+        _controller.identity.removeListener(_handleSelectionChanged);
+        _controller.dispose();
+      }
       _runtime = runtime;
+      final diaryChangeStore = runtime.pregnancyDiaryChangeStore;
+      final planChangeStore = runtime.pregnancyPlanChangeStore;
+      _pregnancyDiaryChangeStore = diaryChangeStore;
+      _pregnancyPlanChangeStore = planChangeStore;
+      _handledPregnancyDiaryRevision =
+          diaryChangeStore.hasUnread || diaryChangeStore.highlightCard
+          ? diaryChangeStore.revision - 1
+          : diaryChangeStore.revision;
+      _handledPregnancyPlanRevision =
+          planChangeStore.hasUnread || planChangeStore.highlightCard
+          ? planChangeStore.revision - 1
+          : planChangeStore.revision;
+      diaryChangeStore.addListener(_handlePregnancyDiaryChangeStore);
+      planChangeStore.addListener(_handlePregnancyPlanChangeStore);
       _interactionState = _statusInteractionStates[runtime] ??=
           _StatusInteractionState();
-      _view = _interactionState.view;
-      _careStage = _interactionState.careStage;
-      _growthRecordAdded = _interactionState.growthRecordAdded;
-      _pregnancyDiarySaved = _interactionState.pregnancyDiarySaved;
+      if (diaryChangeStore.hasUnread ||
+          diaryChangeStore.highlightCard ||
+          planChangeStore.hasUnread ||
+          planChangeStore.highlightCard) {
+        _interactionState
+          ..view = 'mom'
+          ..careStage = 'pregnancy';
+      }
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
-      _activeDetail = _interactionState.activeDetail;
-      _overviewFuture = runtime.statusRepository.fetchOverview();
+      _controller = runtime.createStatusDashboardController(
+        initialCareStage:
+            StatusCareStage.fromStorage(_interactionState.careStage) ??
+            StatusCareStage.postpartum,
+        initialIdentity: StatusIdentity.fromValue(_interactionState.view),
+      );
+      _controller.careStage.addListener(_handleSelectionChanged);
+      _controller.identity.addListener(_handleSelectionChanged);
+      _dashboardListenable = Listenable.merge([
+        _controller.careStage,
+        _controller.identity,
+        _controller.overview,
+        _controller.pregnancyDiaryEntries,
+      ]);
+      unawaited(_initializeStatusController(runtime));
+      _scheduleStatusEntryIntent();
     }
+  }
+
+  Future<void> _initializeStatusController(MomCozyApiRuntime runtime) async {
+    final revalidatePregnancyPlan =
+        _controller.birthJourneyPlan.value.phase == StatusResourcePhase.data;
+    try {
+      await _controller.initialize();
+    } catch (_) {
+      // Individual resources expose their own error state below.
+    }
+    if (!mounted || !identical(runtime, _runtime)) return;
+    if (revalidatePregnancyPlan) {
+      await _controller.refreshPregnancyPlan();
+    }
+    if (!mounted || !identical(runtime, _runtime)) return;
+    _schedulePregnancyDiaryChangeRefresh(refresh: false);
+    _schedulePregnancyPlanChangeRefresh(refresh: false);
+  }
+
+  void _handlePregnancyDiaryChangeStore() {
+    _schedulePregnancyDiaryChangeRefresh(refresh: true);
+  }
+
+  void _schedulePregnancyDiaryChangeRefresh({required bool refresh}) {
+    final store = _pregnancyDiaryChangeStore;
+    if (store == null || store.revision <= _handledPregnancyDiaryRevision) {
+      return;
+    }
+    final revision = store.revision;
+    final controller = _controller;
+    _handledPregnancyDiaryRevision = revision;
+    _pregnancyDiaryChangeTail = _pregnancyDiaryChangeTail.then(
+      (_) => _refreshAfterPregnancyDiaryChange(
+        store,
+        controller,
+        revision,
+        refresh: refresh,
+      ),
+    );
+  }
+
+  Future<void> _refreshAfterPregnancyDiaryChange(
+    PregnancyDiaryChangeStore store,
+    StatusDashboardController controller,
+    int revision, {
+    required bool refresh,
+  }) async {
+    if (!mounted ||
+        !identical(store, _pregnancyDiaryChangeStore) ||
+        !identical(controller, _controller)) {
+      return;
+    }
+    final shouldShowNotice = store.hasUnread || store.highlightCard;
+    if (shouldShowNotice) _showPregnancyView();
+    if (refresh) await controller.refreshPregnancyDiary();
+    if (!mounted ||
+        !identical(store, _pregnancyDiaryChangeStore) ||
+        !identical(controller, _controller) ||
+        store.revision != revision) {
+      return;
+    }
+    if (controller.pregnancyDiaryEntries.value.phase !=
+        StatusResourcePhase.data) {
+      if (store.highlightCard) store.restoreNavigationNotice();
+      return;
+    }
+    if (!shouldShowNotice) return;
+    if (store.hasUnread) store.transferNavigationNoticeToCard();
+    if (store.highlightCard) {
+      _showPregnancyDiaryNotice(
+        refresh: false,
+        changeStore: store,
+        revision: revision,
+      );
+    }
+  }
+
+  void _handlePregnancyPlanChangeStore() {
+    _schedulePregnancyPlanChangeRefresh(refresh: true);
+  }
+
+  void _schedulePregnancyPlanChangeRefresh({required bool refresh}) {
+    final store = _pregnancyPlanChangeStore;
+    if (store == null || store.revision <= _handledPregnancyPlanRevision) {
+      return;
+    }
+    final revision = store.revision;
+    final controller = _controller;
+    _handledPregnancyPlanRevision = revision;
+    _pregnancyPlanChangeTail = _pregnancyPlanChangeTail.then(
+      (_) => _refreshAfterPregnancyPlanChange(
+        store,
+        controller,
+        revision,
+        refresh: refresh,
+      ),
+    );
+  }
+
+  Future<void> _refreshAfterPregnancyPlanChange(
+    PregnancyPlanChangeStore store,
+    StatusDashboardController controller,
+    int revision, {
+    required bool refresh,
+  }) async {
+    if (!mounted ||
+        !identical(store, _pregnancyPlanChangeStore) ||
+        !identical(controller, _controller)) {
+      return;
+    }
+    final shouldShowNotice = store.hasUnread || store.highlightCard;
+    if (shouldShowNotice) _showPregnancyView();
+    if (refresh) await controller.refreshPregnancyPlan();
+    if (!mounted ||
+        !identical(store, _pregnancyPlanChangeStore) ||
+        !identical(controller, _controller) ||
+        store.revision != revision) {
+      return;
+    }
+    final planResource = controller.birthJourneyPlan.value;
+    final plan = planResource.data;
+    if (planResource.phase != StatusResourcePhase.data ||
+        plan == null ||
+        !plan.hasStructuredContent) {
+      if (store.highlightCard) store.restoreNavigationNotice();
+      return;
+    }
+    if (!shouldShowNotice) return;
+    if (store.hasUnread) store.transferNavigationNoticeToCard();
+    if (store.highlightCard) {
+      _showBirthJourneyNotice(
+        refresh: false,
+        changeStore: store,
+        revision: revision,
+      );
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _StatusPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.routeUri != widget.routeUri ||
+        !identical(oldWidget.routeExtra, widget.routeExtra)) {
+      _scheduleStatusEntryIntent();
+    }
+  }
+
+  void _scheduleStatusEntryIntent() {
+    final intent = statusEntryIntentFromRoute(
+      widget.routeUri,
+      widget.routeExtra,
+    );
+    if (intent == null || intent.token == _consumedStatusIntentToken) return;
+    _consumedStatusIntentToken = intent.token;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      switch (intent.kind) {
+        case StatusEntryIntentKind.growth:
+          _showGrowthHighlight();
+          break;
+        case StatusEntryIntentKind.pregnancyDiary:
+          _showPregnancyDiaryNotice();
+          break;
+        case StatusEntryIntentKind.birthJourney:
+          _showBirthJourneyNotice();
+          break;
+      }
+    });
+  }
+
+  void _showPregnancyDiaryNotice({
+    bool refresh = true,
+    PregnancyDiaryChangeStore? changeStore,
+    int? revision,
+  }) {
+    _showPregnancyView();
+    if (refresh) unawaited(_controller.refreshPregnancyDiary());
+    _pregnancyDiaryNoticeTimer?.cancel();
+    _pregnancyDiaryNotice.value = true;
+    _pregnancyDiaryNoticeTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      _pregnancyDiaryNotice.value = false;
+      _pregnancyDiaryNoticeTimer = null;
+      if (changeStore != null &&
+          changeStore.revision == revision &&
+          changeStore.highlightCard) {
+        changeStore.clearCardNotice();
+      }
+    });
+    _scrollToStatusTarget(_pregnancyDiaryAnchorKey);
+  }
+
+  void _showBirthJourneyNotice({
+    bool refresh = true,
+    PregnancyPlanChangeStore? changeStore,
+    int? revision,
+  }) {
+    _showPregnancyView();
+    if (refresh) unawaited(_controller.refreshPregnancyPlan());
+    _birthJourneyNoticeTimer?.cancel();
+    _birthJourneyNotice.value = true;
+    _birthJourneyNoticeTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      _birthJourneyNotice.value = false;
+      _birthJourneyNoticeTimer = null;
+      if (changeStore != null &&
+          changeStore.revision == revision &&
+          changeStore.highlightCard) {
+        changeStore.clearCardNotice();
+      }
+    });
+    _scrollToStatusTarget(_birthJourneyAnchorKey);
+  }
+
+  void _showPregnancyView() {
+    unawaited(_controller.changeCareStage(StatusCareStage.pregnancy));
+    _controller.selectIdentity(StatusIdentity.mom);
+    _persistInteractionState();
+  }
+
+  void _scrollToStatusTarget(GlobalKey targetKey) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final targetContext = targetKey.currentContext;
+      if (!mounted || targetContext == null) return;
+      unawaited(
+        Scrollable.ensureVisible(
+          targetContext,
+          alignment: 0.35,
+          duration: const Duration(milliseconds: 420),
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    });
+  }
+
+  void _showGrowthHighlight() {
+    unawaited(_controller.changeCareStage(StatusCareStage.postpartum));
+    _controller.selectIdentity(StatusIdentity.baby);
+    _persistInteractionState();
+    unawaited(_controller.refresh());
+    _startGrowthHighlightAnimation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final targetContext = _growthCurveAnchorKey.currentContext;
+      if (!mounted || targetContext == null) return;
+      unawaited(
+        Scrollable.ensureVisible(
+          targetContext,
+          alignment: 0.5,
+          duration: const Duration(milliseconds: 420),
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    });
+  }
+
+  void _startGrowthHighlightAnimation() {
+    _growthHighlightTimer?.cancel();
+    _growthHighlight.value = true;
+    var toggleCount = 0;
+    _growthHighlightTimer = Timer.periodic(const Duration(milliseconds: 500), (
+      timer,
+    ) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      toggleCount += 1;
+      _growthHighlight.value = !_growthHighlight.value;
+      if (toggleCount < 5) return;
+      timer.cancel();
+      _growthHighlightTimer = null;
+      _growthHighlight.value = false;
+    });
   }
 
   void _changeCareStage(String stage) {
     setState(() {
-      _careStage = stage;
-      if (stage == 'pregnancy') _view = 'mom';
-      _activeDetail = null;
+      unawaited(
+        _controller.changeCareStage(
+          StatusCareStage.fromStorage(stage) ?? StatusCareStage.postpartum,
+        ),
+      );
+      unawaited(_controller.loadVisible());
       _persistInteractionState();
     });
+  }
+
+  void _handleSelectionChanged() {
+    _interactionState
+      ..view = _view
+      ..careStage = _careStage;
   }
 
   void _persistInteractionState() {
     _interactionState
       ..view = _view
       ..careStage = _careStage
-      ..growthRecordAdded = _growthRecordAdded
-      ..pregnancyDiarySaved = _pregnancyDiarySaved
       ..milkTrendMode = _milkTrendMode
-      ..babyGrowthMetric = _babyGrowthMetric
-      ..activeDetail = _activeDetail;
+      ..babyGrowthMetric = _babyGrowthMetric;
   }
 
-  void _showDetail(String detail) {
-    setState(() {
-      _activeDetail = detail;
-      _persistInteractionState();
-    });
-  }
-
-  void _closeDetail() {
-    setState(() {
-      _activeDetail = null;
-      _persistInteractionState();
-    });
-  }
-
-  void _recordGrowth() {
-    setState(() {
-      _growthRecordAdded = true;
-      _persistInteractionState();
-    });
-  }
-
-  Future<void> _showGrowthEditor() async {
-    final saved = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('status-growth-editor-dialog'),
-          title: const Text('修改成长指标'),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                key: ValueKey('status-growth-weight-input'),
-                decoration: InputDecoration(labelText: '体重'),
-              ),
-              TextField(
-                key: ValueKey('status-growth-height-input'),
-                decoration: InputDecoration(labelText: '身高'),
-              ),
-              TextField(
-                key: ValueKey('status-growth-head-input'),
-                decoration: InputDecoration(labelText: '头围'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('status-growth-save-button'),
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('保存指标'),
-            ),
-          ],
-        );
-      },
-    );
-    if (saved == true) _recordGrowth();
-  }
-
-  Future<void> _showPregnancyDiaryEditor() async {
-    final saved = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('status-pregnancy-diary-editor-dialog'),
-          title: const Text('记录今天的孕期日记'),
-          content: TextField(
-            key: const ValueKey('status-pregnancy-diary-note-input'),
-            autofocus: true,
-            minLines: 3,
-            maxLines: 5,
-            decoration: const InputDecoration(
-              labelText: '今日记录',
-              hintText: '写下心情、身体感受、胎动或想问医生的问题',
-            ),
-          ),
-          actions: [
-            TextButton(
-              key: const ValueKey('status-pregnancy-diary-cancel-button'),
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('status-pregnancy-diary-save-button'),
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('保存日记'),
-            ),
-          ],
-        );
-      },
-    );
-    if (saved != true || !mounted) return;
-    setState(() {
-      _pregnancyDiarySaved = true;
-      _activeDetail = 'pregnancy-diary';
-      _persistInteractionState();
-    });
+  @override
+  void dispose() {
+    _appLifecycleListener.dispose();
+    _growthHighlightTimer?.cancel();
+    _pregnancyDiaryNoticeTimer?.cancel();
+    _birthJourneyNoticeTimer?.cancel();
+    _growthHighlight.dispose();
+    _pregnancyDiaryNotice.dispose();
+    _birthJourneyNotice.dispose();
+    if (_runtime != null) {
+      _pregnancyDiaryChangeStore?.removeListener(
+        _handlePregnancyDiaryChangeStore,
+      );
+      _pregnancyPlanChangeStore?.removeListener(
+        _handlePregnancyPlanChangeStore,
+      );
+      _controller.careStage.removeListener(_handleSelectionChanged);
+      _controller.identity.removeListener(_handleSelectionChanged);
+      _controller.dispose();
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isMom = _view == 'mom';
-
-    return FutureBuilder<StatusOverview>(
-      future: _overviewFuture,
-      builder: (context, snapshot) {
+    return AnimatedBuilder(
+      animation: _dashboardListenable,
+      builder: (context, _) {
+        final isMom = _view == 'mom';
         final isPregnancy = _careStage == 'pregnancy';
-        const momSubtitle = '妈妈档案待绑定';
-        const babySubtitle = '宝宝档案待绑定';
+        final overviewResource = _controller.overview.value;
+        final overview = overviewResource.data ?? const StatusOverview();
+        final subtitles = _statusIdentitySubtitles(
+          overviewResource: overviewResource,
+          diaryEntries: _controller.pregnancyDiaryEntries.value.data,
+          isPregnancy: isPregnancy,
+        );
 
-        return ListView(
-          key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-          children: [
-            RepaintBoundary(
-              key: const ValueKey('status-profile-selector'),
-              child: Column(
-                children: [
-                  Transform.translate(
-                    offset: const Offset(1, 11),
-                    child: _CareStageSelector(
-                      selectedStage: _careStage,
-                      accent: widget.accent,
-                      onChanged: _changeCareStage,
+        return RefreshIndicator(
+          key: const ValueKey('status-refresh-indicator'),
+          color: MomCozyColors.primary,
+          onRefresh: _controller.refresh,
+          child: CustomScrollView(
+            key: ValueKey('route-page-${widget.path}'),
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StatusPinnedHeaderDelegate(
+                  child: RepaintBoundary(
+                    key: const ValueKey('status-profile-selector'),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                      child: Column(
+                        children: [
+                          _CareStageSelector(
+                            selectedStage: _careStage,
+                            accent: widget.accent,
+                            onChanged: _changeCareStage,
+                          ),
+                          const SizedBox(height: 8),
+                          Expanded(
+                            child: _StatusIdentityTabs(
+                              selected: _view,
+                              momSubtitle: subtitles.mom,
+                              babySubtitle: subtitles.baby,
+                              babyDisabled: isPregnancy,
+                              onChanged: (next) {
+                                if (!_controller.selectIdentity(
+                                  StatusIdentity.fromValue(next),
+                                )) {
+                                  return;
+                                }
+                                unawaited(_controller.loadVisible());
+                                setState(() {
+                                  _persistInteractionState();
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 18),
-                  Transform.translate(
-                    offset: const Offset(0, 5),
-                    child: _StatusIdentityTabs(
-                      selected: _view,
-                      momSubtitle: momSubtitle,
-                      babySubtitle: babySubtitle,
-                      babyDisabled: isPregnancy,
-                      onChanged: (next) {
-                        if (next == 'baby' && isPregnancy) return;
-                        setState(() {
-                          _view = next;
-                          _activeDetail = null;
-                          _persistInteractionState();
-                        });
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            ..._statusOverviewChildren(snapshot, isMom),
-          ],
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate(
+                    _statusOverviewChildren(overview, isMom),
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
   }
 
-  List<Widget> _statusOverviewChildren(
-    AsyncSnapshot<StatusOverview> snapshot,
-    bool isMom,
-  ) {
-    final overview = snapshot.data ?? const StatusOverview();
+  List<Widget> _statusOverviewChildren(StatusOverview overview, bool isMom) {
     final content = isMom
         ? _momStatusChildren(overview)
         : _babyStatusChildren(overview);
@@ -781,351 +1121,304 @@ class _StatusPageState extends State<_StatusPage> {
 
   List<Widget> _momStatusChildren(StatusOverview overview) {
     final isPregnancy = _careStage == 'pregnancy';
-    final mom = overview.mom;
-    final stage = isPregnancy ? '孕期' : _textOr(mom?.stage, '哺乳期');
-    final stageNote = isPregnancy
-        ? '孕期重点：体征与日记'
-        : (mom?.postpartumDay == null
-              ? '产后恢复期'
-              : '产后第 ${mom!.postpartumDay} 天');
 
     if (isPregnancy) {
       return [
-        _StatusPregnancyDiaryPreview(
-          diarySaved: _pregnancyDiarySaved,
-          onViewDiary: () => _showDetail('pregnancy-diary'),
-          onRecordToday: () => unawaited(_showPregnancyDiaryEditor()),
-        ),
-        const SizedBox(height: 18),
-        _StatusPregnancyPlanPreview(),
-        const SizedBox(height: 8),
-        if (_activeDetail == 'pregnancy-diary') ...[
-          _StatusDetailPanel(
-            key: const ValueKey('status-detail-pregnancy-diary'),
-            title: '孕期日记',
-            subtitle: _pregnancyDiarySaved ? '今天的记录已保存' : '最近 7 天记录',
-            rows: _pregnancyDiarySaved
-                ? const [
-                    ('今天', '已保存', '已记录今日心情、身体感受和待咨询问题。'),
-                    ('Agent 建议', '可继续追问', '我可以帮你整理产检问题或回顾最近几天的状态变化。'),
-                  ]
-                : const [
-                    ('最近 7 天', '暂无记录', '记录几天后会展示睡眠、情绪、胎动和身体感受变化。'),
-                    ('产检问题', '暂无', '可以先写下想问医生的问题。'),
-                  ],
-            onClose: _closeDetail,
+        Container(
+          key: _pregnancyDiaryAnchorKey,
+          child: _StatusNoticeHighlight(
+            surfaceKey: const ValueKey('status-pregnancy-diary-notice'),
+            active: _pregnancyDiaryNotice,
+            child: PregnancyDiaryDashboard(
+              key: const ValueKey('status-pregnancy-diary-dashboard'),
+              entries: _controller.pregnancyDiaryEntries,
+              mutation: _controller.diaryMutation,
+              now: _controller.now,
+              onSave: (entryDate, draft) =>
+                  _controller.saveDiary(entryDate: entryDate, draft: draft),
+              onAgentPrompt: (prompt) {
+                context.go('/', extra: {'agentPrefill': prompt});
+              },
+            ),
           ),
-          const SizedBox(height: 8),
-        ],
+        ),
+        const SizedBox(height: 24),
+        Container(
+          key: _birthJourneyAnchorKey,
+          child: _StatusNoticeHighlight(
+            surfaceKey: const ValueKey('status-birth-journey-notice'),
+            active: _birthJourneyNotice,
+            child: BirthJourneyPlanDashboard(
+              key: const ValueKey('status-birth-journey-dashboard'),
+              plan: _controller.birthJourneyPlan,
+              mutation: _controller.planMutation,
+              onDeletePlan: _controller.deleteBirthJourneyPlan,
+              onToggleTodo: (itemId, completed) => _controller.togglePlanTodo(
+                taskId: itemId,
+                completed: completed,
+              ),
+              onRetryPlan: _controller.refreshPregnancyPlan,
+              onAgentPrompt: (prompt, {autoSend = false}) {
+                context.go(
+                  '/',
+                  extra: {
+                    'agentPrefill': prompt,
+                    if (autoSend) 'agentAutoSend': true,
+                  },
+                );
+              },
+            ),
+          ),
+        ),
       ];
     }
 
     return [
-      Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Transform.translate(
-          offset: const Offset(3, -1),
-          child: _StatusModuleGrid(
-            key: const ValueKey('status-postpartum-mom-module-grid'),
-            children: [
-              Transform.translate(
-                offset: const Offset(0, 4),
-                child: _StatusModuleCard(
-                  key: const ValueKey('status-module-milk-output'),
-                  title: '母乳产出',
-                  icon: Icons.water_drop_outlined,
-                  accent: MomCozyColors.primary,
-                  background: const Color(0xfffff7fb),
-                  hiddenTexts: [stage, stageNote],
-                  metrics: [
-                    _StatusModuleMetric(
-                      label: '今日产出',
-                      value: '待记录',
-                      showHelp: true,
-                      helpKey: ValueKey('status-milk-output-info-button'),
-                      onHelpTap: () => _showDetail('milk-info'),
-                    ),
-                    const _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
-                  ],
-                ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, 4),
-                child: _StatusModuleCard(
-                  key: ValueKey('status-module-breast-health'),
-                  title: '乳房健康',
-                  showHelp: true,
-                  helpKey: ValueKey('status-breast-health-info-button'),
-                  onHelpTap: () => _showDetail('breast-info'),
-                  bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
-                  action: '查看《乳房健康日记》',
-                  icon: Icons.favorite_border_rounded,
-                  accent: const Color(0xffb96f55),
-                  background: const Color(0xfffff8f1),
-                  onAction: () => _showDetail('breast-health'),
-                ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, 1),
-                child: _StatusModuleCard(
-                  key: ValueKey('status-module-postpartum-recovery'),
-                  title: '产后恢复',
-                  bodyText: '正在执行盆底肌康复训练',
-                  action: '查看计划',
-                  icon: Icons.self_improvement_rounded,
-                  accent: const Color(0xff388b72),
-                  background: const Color(0xfff2fffb),
-                  onAction: () => _showDetail('postpartum-recovery'),
-                ),
-              ),
-              _StatusModuleCard(
-                key: const ValueKey('status-module-rest-nutrition'),
-                title: '补能与休息',
-                showHelp: true,
-                helpKey: const ValueKey('status-rest-info-button'),
-                onHelpTap: () => _showDetail('rest-info'),
-                bodyText: '待开通睡眠与营养功能',
-                icon: Icons.local_cafe_outlined,
-                accent: const Color(0xffb9792a),
-                background: const Color(0xfffffaf0),
-              ),
-            ],
-          ),
-        ),
-      ),
-      const SizedBox(height: 8),
-      if (_activeDetail == 'milk-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-milk-info'),
-          title: '今日产出说明',
-          subtitle: '母乳产出统计',
-          rows: const [
-            ('今日产出', '待记录', '会汇总吸乳记录与亲喂估算。'),
-            ('今日吸奶', '待同步', '同步后展示次数、时长和左右侧数据。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'breast-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-breast-info'),
-          title: '乳房健康说明',
-          subtitle: '涨奶、硬块和疼痛追踪',
-          rows: const [
-            ('记录内容', '不适位置和疼痛等级', '帮助后续分析风险与护理建议。'),
-            ('异常提醒', '持续疼痛需咨询专业人士', '必要时联系 IBCLC 或医生。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'breast-health') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-breast-health'),
-          title: '乳房健康日记',
-          subtitle: '最近 3 天记录',
-          rows: const [
-            ('三天前 晚间', '轻微涨奶', '右侧乳房有胀感，吸奶后明显缓解。'),
-            ('昨天 上午', '发现硬块', '左侧外上区域摸到硬块，按压时有疼痛感。'),
-            ('今天', '涨奶硬块', '最近出现涨奶和硬块，伴随按压疼痛。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'postpartum-recovery') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-postpartum-recovery'),
-          title: '盆底肌康复训练',
-          subtitle: '产后恢复计划',
-          rows: const [
-            ('第 1-2 天', '已完成', '盆底肌唤醒练习'),
-            ('第 3-5 天', '进行中', '骨盆稳定训练'),
-            ('第 6-7 天', '待开始', '腰背与肩颈放松'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'rest-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-rest-info'),
-          title: '补能与休息说明',
-          subtitle: '睡眠与营养能力建设中',
-          rows: const [
-            ('睡眠', '待开通', '后续会汇总夜间睡眠和白天休息。'),
-            ('营养', '待开通', '后续会记录补水、热量和重点营养。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ],
-      _StatusTrendPreview(
-        key: const ValueKey('status-milk-trend-preview'),
-        selectedMode: _milkTrendMode,
-        onModeChanged: (mode) {
+      PostpartumMomDashboard(
+        key: const ValueKey('status-postpartum-mom-dashboard'),
+        milkTrends: _controller.milkTrends,
+        volumeUnit: _controller.volumeUnit,
+        now: _controller.now,
+        windowDays: _milkTrendMode == '月' ? 30 : 7,
+        onWindowDaysChanged: (days) {
           setState(() {
-            _milkTrendMode = mode;
+            _milkTrendMode = days == 30 ? '月' : '周';
             _persistInteractionState();
           });
+        },
+        onAgentPrompt: (prompt) {
+          context.go('/', extra: {'agentPrefill': prompt});
         },
       ),
     ];
   }
 
   List<Widget> _babyStatusChildren(StatusOverview overview) {
-    final baby = overview.baby;
-    final ageLabel = baby?.ageDays == null ? '待同步' : '${baby!.ageDays} 天';
-
     return [
       _StatusModuleGrid(
         children: [
-          _StatusModuleCard(
-            title: '奶量摄入',
-            icon: Icons.restaurant_outlined,
-            accent: const Color(0xff4f84a6),
-            background: const Color(0xfff4fbff),
-            metrics: [
-              _StatusModuleMetric(label: '今日摄入', value: '待同步'),
-              _StatusModuleMetric(
-                label: '今日喂奶',
-                value: '待同步',
-                helpKey: const ValueKey('status-baby-feed-info-button'),
-                onHelpTap: () => _showDetail('baby-feed-info'),
-              ),
-            ],
+          BabyFeedingCard(
+            records: _controller.feedingRecords,
+            volumeUnit: _controller.volumeUnit,
+            onInfoTap: () => unawaited(showBabyFeedingInfoDialog(context)),
           ),
-          _StatusModuleCard(
-            title: '成长发育',
-            icon: Icons.straighten_outlined,
-            accent: const Color(0xff388b72),
-            background: const Color(0xfff2fffb),
-            hiddenTexts: [_textOr(baby?.nickname, '未设置'), ageLabel],
-            metrics: const [
-              _StatusModuleMetric(label: '体重', value: '待记录'),
-              _StatusModuleMetric(label: '身高', value: '待记录'),
-              _StatusModuleMetric(label: '头围', value: '待记录'),
-            ],
-            actions: [
-              _StatusModuleAction(
-                key: const ValueKey('status-growth-record-action'),
-                label: _growthRecordAdded ? '已添加' : '修改指标',
-                onTap: _showGrowthEditor,
-              ),
-              _StatusModuleAction(
-                key: const ValueKey('status-growth-milestone-action'),
-                label: '成长milestone',
-                onTap: () => _showDetail('growth-milestone'),
-              ),
-            ],
+          BabyGrowthSummaryCard(
+            records: _controller.growthRecords,
+            mutation: _controller.growthMutation,
+            onSave: ({required weightKg, required heightCm, required headCm}) =>
+                _controller.saveGrowth(
+                  weightKg: weightKg,
+                  heightCm: heightCm,
+                  headCm: headCm,
+                ),
+            onMilestoneTap: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.milestone),
+            ),
           ),
-          _StatusModuleCard(
-            title: '宝宝健康',
-            bodyText: '筛查、消化、皮肤和情绪跟踪',
-            icon: Icons.health_and_safety_outlined,
-            accent: const Color(0xff7d64aa),
-            background: const Color(0xfffbf7ff),
-            action: '查看筛查',
-            onAction: () => _showDetail('baby-health'),
+          BabyHealthCard(
+            onOpen: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.health),
+            ),
           ),
-          _StatusModuleCard(
-            title: '宝宝睡眠',
-            bodyText: '总睡眠、最长睡眠、活动和哭闹',
-            icon: Icons.nightlight_outlined,
-            accent: const Color(0xffff9677),
-            background: const Color(0xfffff8f1),
-            action: '查看报告',
-            onAction: () => _showDetail('baby-sleep'),
+          BabySleepCard(
+            onOpen: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.sleep),
+            ),
           ),
         ],
       ),
       const SizedBox(height: 12),
-      if (_activeDetail == 'baby-feed-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-feed-info'),
-          title: '奶量摄入说明',
-          subtitle: '亲喂、瓶喂与辅食记录',
-          rows: const [
-            ('今日摄入', '待同步', '会汇总瓶喂奶量、亲喂估算和辅食。'),
-            ('今日喂奶', '待同步', '同步后展示次数和时间分布。'),
-          ],
-          onClose: _closeDetail,
+      Container(
+        key: _growthCurveAnchorKey,
+        child: _StatusIntentHighlight(
+          surfaceKey: const ValueKey('status-baby-growth-highlight'),
+          active: _growthHighlight,
+          child: BabyGrowthChart(
+            key: const ValueKey('status-baby-growth-curve-preview'),
+            records: _controller.growthRecords,
+            birthDate: overview.baby?.birthDate,
+            selectedMetric: _babyGrowthMetric,
+            onMetricChanged: (metric) {
+              setState(() {
+                _babyGrowthMetric = metric;
+                _persistInteractionState();
+              });
+            },
+          ),
         ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'growth-milestone') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-growth-milestone'),
-          title: '成长 milestone',
-          subtitle: '最近成长事件',
-          rows: const [
-            ('2026.05.28', '说出完整主谓短句', '语言组织能力继续发展。'),
-            ('2026.05.12', '独立上下低矮台阶', '动作计划能力更成熟。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'baby-health') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-health'),
-          title: '宝宝健康',
-          subtitle: '健康筛查入口',
-          rows: const [
-            ('筛查', '自闭症风险筛查', '待接入后台结果。'),
-            ('消化', '消化系统风险筛查', '待接入后台结果。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'baby-sleep') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-sleep'),
-          title: '宝宝睡眠',
-          subtitle: '睡眠报告入口',
-          rows: const [
-            ('今日睡眠', '4h 57min', '夜间睡眠和白天小睡汇总。'),
-            ('报告', '待同步', '同步后展示趋势和建议。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ],
-      _StatusBabyGrowthCurvePreview(
-        key: const ValueKey('status-baby-growth-curve-preview'),
-        selectedMetric: _babyGrowthMetric,
-        onMetricChanged: (metric) {
-          setState(() {
-            _babyGrowthMetric = metric;
-            _persistInteractionState();
-          });
-        },
       ),
     ];
   }
 }
 
-class _StatusModuleMetric {
-  const _StatusModuleMetric({
-    required this.label,
-    required this.value,
-    this.showHelp = false,
-    this.helpKey,
-    this.onHelpTap,
+class _StatusIntentHighlight extends StatelessWidget {
+  const _StatusIntentHighlight({
+    required this.surfaceKey,
+    required this.active,
+    required this.child,
   });
 
-  final String label;
-  final String value;
-  final bool showHelp;
-  final Key? helpKey;
-  final VoidCallback? onHelpTap;
+  final Key surfaceKey;
+  final ValueListenable<bool> active;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: active,
+      child: child,
+      builder: (context, isActive, child) {
+        if (!isActive) {
+          return KeyedSubtree(key: surfaceKey, child: child!);
+        }
+        return AnimatedContainer(
+          key: surfaceKey,
+          duration: const Duration(milliseconds: 180),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isActive
+                  ? const Color(0xff6ee7b7).withValues(alpha: 0.8)
+                  : Colors.transparent,
+              width: 2,
+            ),
+            boxShadow: isActive
+                ? const [
+                    BoxShadow(
+                      color: Color(0x386ee7b7),
+                      blurRadius: 0,
+                      spreadRadius: 4,
+                    ),
+                  ]
+                : const [],
+          ),
+          child: child,
+        );
+      },
+    );
+  }
 }
 
-class _StatusModuleAction {
-  const _StatusModuleAction({required this.label, this.key, this.onTap});
+class _StatusNoticeHighlight extends StatefulWidget {
+  const _StatusNoticeHighlight({
+    required this.surfaceKey,
+    required this.active,
+    required this.child,
+  });
 
-  final Key? key;
-  final String label;
-  final VoidCallback? onTap;
+  final Key surfaceKey;
+  final ValueListenable<bool> active;
+  final Widget child;
+
+  @override
+  State<_StatusNoticeHighlight> createState() => _StatusNoticeHighlightState();
+}
+
+class _StatusNoticeHighlightState extends State<_StatusNoticeHighlight>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1850),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    widget.active.addListener(_syncAnimation);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAnimation();
+  }
+
+  @override
+  void didUpdateWidget(covariant _StatusNoticeHighlight oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.active, widget.active)) {
+      oldWidget.active.removeListener(_syncAnimation);
+      widget.active.addListener(_syncAnimation);
+    }
+    _syncAnimation();
+  }
+
+  void _syncAnimation() {
+    if (!mounted) return;
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (widget.active.value && !disableAnimations) {
+      if (!_controller.isAnimating) _controller.repeat();
+      return;
+    }
+    _controller.stop();
+    _controller.value = 0;
+  }
+
+  @override
+  void dispose() {
+    widget.active.removeListener(_syncAnimation);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: widget.active,
+      child: widget.child,
+      builder: (context, isActive, child) {
+        if (!isActive) {
+          return KeyedSubtree(key: widget.surfaceKey, child: child!);
+        }
+        return AnimatedBuilder(
+          animation: _controller,
+          child: child,
+          builder: (context, child) {
+            final wave = isActive
+                ? (1 - math.cos(_controller.value * math.pi * 2)) / 2
+                : 0.0;
+            return Transform.translate(
+              offset: Offset(0, -2 * wave),
+              child: Transform.scale(
+                scale: 1 + 0.025 * wave,
+                child: AnimatedContainer(
+                  key: widget.surfaceKey,
+                  duration: const Duration(milliseconds: 140),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: isActive
+                          ? MomCozyColors.badge.withValues(alpha: 0.48)
+                          : Colors.transparent,
+                      width: 2,
+                    ),
+                    boxShadow: isActive
+                        ? [
+                            BoxShadow(
+                              color: MomCozyColors.badge.withValues(
+                                alpha: 0.3 * wave,
+                              ),
+                              blurRadius: 34,
+                              spreadRadius: -20,
+                              offset: const Offset(0, 18),
+                            ),
+                          ]
+                        : const [],
+                  ),
+                  child: child,
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
 class _StatusModuleGrid extends StatelessWidget {
-  const _StatusModuleGrid({super.key, required this.children});
+  const _StatusModuleGrid({required this.children});
 
   final List<Widget> children;
 
@@ -1154,1326 +1447,95 @@ class _StatusModuleGrid extends StatelessWidget {
   }
 }
 
-class _StatusModuleCard extends StatelessWidget {
-  const _StatusModuleCard({
-    super.key,
-    required this.title,
-    required this.icon,
-    required this.accent,
-    required this.background,
-    this.bodyText,
-    this.metrics = const [],
-    this.hiddenTexts = const [],
-    this.action,
-    this.onAction,
-    this.actions = const [],
-    this.showHelp = false,
-    this.helpKey,
-    this.onHelpTap,
-  });
-
-  final String title;
-  final String? bodyText;
-  final List<_StatusModuleMetric> metrics;
-  final List<String> hiddenTexts;
-  final String? action;
-  final VoidCallback? onAction;
-  final List<_StatusModuleAction> actions;
-  final bool showHelp;
-  final Key? helpKey;
-  final VoidCallback? onHelpTap;
-  final IconData icon;
-  final Color accent;
-  final Color background;
-
-  @override
-  Widget build(BuildContext context) {
-    final effectiveActions = actions.isNotEmpty
-        ? actions
-        : [
-            if (action != null)
-              _StatusModuleAction(label: action!, onTap: onAction),
-          ];
-    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-      color: const Color(0xff35212c),
-      fontSize: 14,
-      fontWeight: FontWeight.w700,
-      height: 1.05,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: const Color(0xff7a6870),
-      fontSize: 10.5,
-      fontWeight: FontWeight.w500,
-      height: 1.24,
-    );
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.86)),
-        boxShadow: const [],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onAction,
-          child: Stack(
-            children: [
-              Positioned(
-                right: -24,
-                bottom: -32,
-                child: ImageFiltered(
-                  imageFilter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                  child: Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: accent.withValues(alpha: 0.12),
-                    ),
-                  ),
-                ),
-              ),
-              for (final hiddenText in hiddenTexts)
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Opacity(opacity: 0, child: Text(hiddenText)),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: titleStyle,
-                                ),
-                              ),
-                              if (showHelp || onHelpTap != null)
-                                _StatusHelpDot(key: helpKey, onTap: onHelpTap),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: accent.withValues(alpha: 0.16),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(icon, size: 16, color: accent),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: metrics.isNotEmpty ? 20 : 14),
-                    if (metrics.isNotEmpty)
-                      _StatusModuleMetricRows(metrics: metrics)
-                    else if (bodyText != null)
-                      Text(
-                        bodyText!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: helperStyle,
-                      ),
-                    if (effectiveActions.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Transform.translate(
-                        offset: const Offset(-10, 0),
-                        child: Wrap(
-                          spacing: 5,
-                          runSpacing: 4,
-                          children: [
-                            for (final action in effectiveActions)
-                              _StatusModuleActionPill(
-                                key: action.key,
-                                label: action.label,
-                                accent: accent,
-                                onTap: action.onTap,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusModuleMetricRows extends StatelessWidget {
-  const _StatusModuleMetricRows({required this.metrics});
-
-  final List<_StatusModuleMetric> metrics;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (final metric in metrics)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          metric.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: const Color(0xff7a5b68),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ),
-                      if (metric.showHelp || metric.onHelpTap != null)
-                        _StatusHelpDot(
-                          key: metric.helpKey,
-                          size: 14,
-                          onTap: metric.onHelpTap,
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    metric.value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: const Color(0xff35212c),
-                      fontSize: metrics.length >= 3 ? 14 : 16,
-                      fontWeight: FontWeight.w700,
-                      height: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _StatusHelpDot extends StatelessWidget {
-  const _StatusHelpDot({super.key, this.size = 16, this.onTap});
-
-  final double size;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5),
-      child: Semantics(
-        button: onTap != null,
-        label: '说明',
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: size,
-            height: size,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.72),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: MomCozyColors.mutedForeground.withValues(alpha: 0.46),
-              ),
-            ),
-            child: Text(
-              '?',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontSize: size <= 14 ? 8 : 10,
-                height: 1,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusModuleActionPill extends StatelessWidget {
-  const _StatusModuleActionPill({
-    super.key,
-    required this.label,
-    required this.accent,
-    this.onTap,
-  });
-
-  final String label;
-  final Color accent;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: onTap != null,
-      label: label,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.80),
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-          ),
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: accent,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusPregnancyDiaryPreview extends StatelessWidget {
-  const _StatusPregnancyDiaryPreview({
-    required this.diarySaved,
-    required this.onViewDiary,
-    required this.onRecordToday,
-  });
-
-  final bool diarySaved;
-  final VoidCallback onViewDiary;
-  final VoidCallback onRecordToday;
-
-  @override
-  Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
-      color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w900,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: MomCozyColors.mutedForeground,
-      fontWeight: FontWeight.w800,
-      height: 1.35,
-    );
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xffeadfd8)),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-            child: Row(
-              children: [
-                Expanded(child: Text('孕期日记', style: titleStyle)),
-                _StatusOutlinedPill(
-                  key: const ValueKey('status-pregnancy-diary-view-button'),
-                  label: '查看日记',
-                  icon: null,
-                  accent: const Color(0xffa0603a),
-                  onTap: onViewDiary,
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            child: Row(
-              children: const [
-                Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '近7天记录'),
-                ),
-                _StatusVerticalDivider(),
-                Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '健康咨询'),
-                ),
-                _StatusVerticalDivider(),
-                Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '产检问题'),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundImage: AssetImage(MomCozyAssets.agentAvatar),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    '记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。',
-                    style: helperStyle,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '今日日记',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const Spacer(),
-                    _StatusFilledPill(
-                      key: const ValueKey(
-                        'status-pregnancy-diary-record-button',
-                      ),
-                      label: '记录今天',
-                      icon: Icons.edit_outlined,
-                      color: const Color(0xffb06f45),
-                      onTap: onRecordToday,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.35),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: const Color(0xffead2c3),
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        diarySaved
-                            ? '今天的记录已保存，我可以继续帮你整理产检问题或回顾最近几天的状态变化。'
-                            : '今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: FontWeight.w900,
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            radius: 15,
-                            backgroundImage: AssetImage(
-                              MomCozyAssets.agentAvatar,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              '和我聊天时，我会自动记录你的今日情况和健康信息。',
-                              style: helperStyle,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusPregnancyStat extends StatelessWidget {
-  const _StatusPregnancyStat({required this.value, required this.label});
-
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          value,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: const Color(0xff985f3b),
-            fontWeight: FontWeight.w900,
-            height: 1,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: MomCozyColors.mutedForeground,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatusVerticalDivider extends StatelessWidget {
-  const _StatusVerticalDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 44,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      color: const Color(0xffeadfd8),
-    );
-  }
-}
-
-class _StatusPregnancyPlanPreview extends StatelessWidget {
-  const _StatusPregnancyPlanPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xfffbfefd),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xffcae6e0)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              '孕期计划',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          _StatusFilledPill(
-            key: const ValueKey('status-pregnancy-plan-agent-button'),
-            label: '制定孕期计划',
-            icon: null,
-            color: const Color(0xff5f978b),
-            avatar: true,
-            onTap: () =>
-                context.go('/', extra: const {'agentPrefill': '帮我制定孕期计划'}),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusBabyGrowthCurvePreview extends StatelessWidget {
-  const _StatusBabyGrowthCurvePreview({
-    super.key,
-    required this.selectedMetric,
-    required this.onMetricChanged,
-  });
-
-  final String selectedMetric;
-  final ValueChanged<String> onMetricChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 246,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xfffbf7ff),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xffe6d9fb)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: const Color(0xffe5d9ff),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Icon(
-                  Icons.child_care_rounded,
-                  size: 16,
-                  color: Color(0xff7d64aa),
-                ),
-              ),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Text(
-                  '宝宝成长曲线',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.keyboard_arrow_up_rounded,
-                color: MomCozyColors.mutedForeground,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _StatusTrendLegendItem(
-                label: '实际测量',
-                color: const Color(0xff7d64aa),
-                dashed: false,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: const Color(0xff7d64aa),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(width: 10),
-              _StatusTrendLegendItem(
-                label: '同龄参考区间',
-                color: const Color(0xffeee8ff),
-                band: true,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: const Color(0xff7d64aa),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const Spacer(),
-              _StatusSegmentedPills(
-                selected: selectedMetric,
-                options: const ['体重', '身高'],
-                color: const Color(0xff7d64aa),
-                keyPrefix: 'status-baby-growth',
-                onChanged: onMetricChanged,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '当前查看：$selectedMetric',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xff7d64aa),
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const Spacer(),
-          Center(
-            child: Text(
-              '暂无成长曲线数据，录入多项测量后与同龄参考一同展示。',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          const Spacer(),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusDetailPanel extends StatelessWidget {
-  const _StatusDetailPanel({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.rows,
-    required this.onClose,
-  });
-
-  final String title;
-  final String subtitle;
-  final List<(String, String, String)> rows;
-  final VoidCallback onClose;
-
-  @override
-  Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-      color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w900,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: MomCozyColors.mutedForeground,
-      fontWeight: FontWeight.w700,
-      height: 1.35,
-    );
-
-    return DecoratedBox(
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card.withValues(alpha: 0.72),
-        borderColor: MomCozyColors.border.withValues(alpha: 0.72),
-        radius: 18,
-        shadows: MomCozyShadows.soft,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 12, 10, 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: titleStyle),
-                      const SizedBox(height: 3),
-                      Text(subtitle, style: helperStyle),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  tooltip: '关闭详情',
-                  onPressed: onClose,
-                  icon: const Icon(Icons.close_rounded, size: 18),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            for (final row in rows) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 78,
-                      child: Text(
-                        row.$1,
-                        style: helperStyle?.copyWith(
-                          color: const Color(0xff9c6b7f),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(row.$2, style: titleStyle),
-                          const SizedBox(height: 2),
-                          Text(row.$3, style: helperStyle),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusFilledPill extends StatelessWidget {
-  const _StatusFilledPill({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.color,
-    this.avatar = false,
-    this.onTap,
-  });
-
-  final String label;
-  final IconData? icon;
-  final Color color;
-  final bool avatar;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final content = Container(
-      padding: EdgeInsets.fromLTRB(avatar ? 6 : 12, 8, 14, 8),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (avatar) ...[
-            const CircleAvatar(
-              radius: 13,
-              backgroundImage: AssetImage(MomCozyAssets.agentAvatar),
-            ),
-            const SizedBox(width: 6),
-          ] else if (icon != null) ...[
-            Icon(icon, size: 15, color: Colors.white),
-            const SizedBox(width: 6),
-          ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-    if (onTap == null) return content;
-    return Semantics(
-      button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: content,
-      ),
-    );
-  }
-}
-
-class _StatusOutlinedPill extends StatelessWidget {
-  const _StatusOutlinedPill({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.accent,
-    this.onTap,
-  });
-
-  final String label;
-  final IconData? icon;
-  final Color accent;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final content = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        border: Border.all(color: const Color(0xffeadfd8)),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: 15, color: accent),
-            const SizedBox(width: 6),
-          ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: accent,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-    if (onTap == null) return content;
-    return Semantics(
-      button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: content,
-      ),
-    );
-  }
-}
-
-class _StatusSegmentedPills extends StatelessWidget {
-  const _StatusSegmentedPills({
-    required this.selected,
-    required this.options,
-    required this.color,
-    this.keyPrefix,
-    this.onChanged,
-  });
-
-  final String selected;
-  final List<String> options;
-  final Color color;
-  final String? keyPrefix;
-  final ValueChanged<String>? onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final option in options)
-            Semantics(
-              selected: option == selected,
-              button: onChanged != null,
-              label: option,
-              child: GestureDetector(
-                key: keyPrefix == null
-                    ? null
-                    : ValueKey('$keyPrefix-segment-$option'),
-                onTap: onChanged == null ? null : () => onChanged!(option),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: option == selected ? color : Colors.transparent,
-                    borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                  ),
-                  child: Text(
-                    option,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: option == selected ? Colors.white : color,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusTrendPreview extends StatelessWidget {
-  const _StatusTrendPreview({
-    super.key,
-    required this.selectedMode,
-    required this.onModeChanged,
-  });
-
-  final String selectedMode;
-  final ValueChanged<String> onModeChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final modeLabel = selectedMode == '月' ? '近30日趋势' : '近7日趋势';
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xfffffaf0),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xfff0dfc4)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Transform.translate(
-            offset: const Offset(0, -3),
-            child: Row(
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xffffe4b8),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.gps_fixed_rounded,
-                    size: 14,
-                    color: Color(0xffb9792a),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '母乳趋势',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const Icon(
-                  Icons.keyboard_arrow_up_rounded,
-                  size: 16,
-                  color: MomCozyColors.mutedForeground,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Transform.translate(
-            offset: const Offset(1, -1),
-            child: Row(
-              children: [
-                const Expanded(child: _StatusTrendLegend()),
-                _StatusSegmentedPills(
-                  selected: selectedMode,
-                  options: const ['周', '月'],
-                  color: const Color(0xffb9792a),
-                  keyPrefix: 'status-milk-trend',
-                  onChanged: onModeChanged,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            modeLabel,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xff9c7651),
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 188,
-            child: CustomPaint(
-              painter: _StatusTrendPreviewPainter(mode: selectedMode),
-              child: const SizedBox.expand(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusTrendPreviewPainter extends CustomPainter {
-  const _StatusTrendPreviewPainter({required this.mode});
-
-  final String mode;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final labels = mode == '月'
-        ? const ['第1周', '第2周', '第3周', '第4周']
-        : const ['06/26', '06/27', '06/28', '06/29', '06/30', '07/01', '07/02'];
-    final segmentCount = labels.length - 1;
-    final chartRect = Rect.fromLTWH(44, 1, size.width - 58, size.height - 44);
-    final axisPaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-    final linePaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 2.5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final gridPaint = Paint()
-      ..color = const Color(0xffcfe8d8)
-      ..strokeWidth = 1;
-    for (var index = 0; index <= 4; index += 1) {
-      final y = chartRect.top + chartRect.height * index / 4;
-      _drawDashedLine(
-        canvas,
-        Offset(chartRect.left, y),
-        Offset(chartRect.right, y),
-        gridPaint,
-      );
-      _drawChartText(
-        canvas,
-        '${4 - index} mL',
-        Offset(5, y - 7),
-        width: 34,
-        color: const Color(0xff9c7651),
-        fontSize: 8,
-        textAlign: TextAlign.right,
-      );
-    }
-
-    for (var index = 0; index <= segmentCount; index += 1) {
-      final x = chartRect.left + chartRect.width * index / segmentCount;
-      _drawDashedLine(
-        canvas,
-        Offset(x, chartRect.top),
-        Offset(x, chartRect.bottom),
-        gridPaint,
-      );
-    }
-
-    canvas.drawLine(chartRect.topLeft, chartRect.bottomLeft, axisPaint);
-    canvas.drawLine(chartRect.bottomLeft, chartRect.bottomRight, axisPaint);
-    final actual = Path()..moveTo(chartRect.left, chartRect.bottom);
-    final points = <Offset>[
-      for (var index = 0; index <= segmentCount; index += 1)
-        Offset(
-          chartRect.left + chartRect.width * index / segmentCount,
-          chartRect.bottom,
-        ),
-    ];
-    for (final point in points.skip(1)) {
-      actual.lineTo(point.dx, point.dy);
-    }
-    canvas.drawPath(actual, linePaint);
-
-    final dotPaint = Paint()
-      ..color = const Color(0xfffffaf0)
-      ..style = PaintingStyle.fill;
-    final dotBorderPaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-    for (final point in points) {
-      canvas.drawCircle(point, 3, dotPaint);
-      canvas.drawCircle(point, 3, dotBorderPaint);
-    }
-
-    for (var index = 0; index < labels.length; index += 1) {
-      _drawChartText(
-        canvas,
-        labels[index],
-        Offset(points[index].dx - 16, chartRect.bottom + 10),
-        width: 36,
-        color: const Color(0xff9c7651),
-        fontSize: 8,
-        textAlign: TextAlign.center,
-      );
-    }
+({String mom, String baby}) _statusIdentitySubtitles({
+  required StatusResource<StatusOverview> overviewResource,
+  required List<PregnancyDiaryEntry>? diaryEntries,
+  required bool isPregnancy,
+}) {
+  if (overviewResource.phase == StatusResourcePhase.initial ||
+      overviewResource.phase == StatusResourcePhase.loading) {
+    return (mom: '正在加载妈妈信息…', baby: '正在加载宝宝信息…');
   }
 
-  void _drawDashedLine(Canvas canvas, Offset start, Offset end, Paint paint) {
-    const dashWidth = 3.0;
-    const dashGap = 4.0;
-    if ((start.dx - end.dx).abs() < 0.1) {
-      var y = start.dy;
-      while (y < end.dy) {
-        final next = math.min(y + dashWidth, end.dy);
-        canvas.drawLine(Offset(start.dx, y), Offset(end.dx, next), paint);
-        y += dashWidth + dashGap;
+  final overview = overviewResource.data ?? const StatusOverview();
+  if (isPregnancy) {
+    final profileStage = overview.mom?.dueDateOrWeek?.trim() ?? '';
+    String? diaryStage;
+    for (final entry in diaryEntries ?? const <PregnancyDiaryEntry>[]) {
+      final value = entry.gestationalWeek.trim();
+      if (value.isNotEmpty) {
+        diaryStage = value;
+        break;
       }
-      return;
     }
-    var x = start.dx;
-    while (x < end.dx) {
-      final next = math.min(x + dashWidth, end.dx);
-      canvas.drawLine(Offset(x, start.dy), Offset(next, end.dy), paint);
-      x += dashWidth + dashGap;
-    }
+    return (
+      mom: _formatPregnancyStageSubtitle(
+        profileStage.isNotEmpty ? profileStage : diaryStage,
+      ),
+      baby: '宝宝孕育中',
+    );
   }
 
-  void _drawChartText(
-    Canvas canvas,
-    String text,
-    Offset offset, {
-    required double width,
-    required Color color,
-    required double fontSize,
-    TextAlign textAlign = TextAlign.left,
-  }) {
-    final painter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w400,
-          fontFamily: MomCozyTypography.fontFamily,
-          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+  if (overviewResource.hasError) {
+    return (mom: '妈妈档案待绑定', baby: '宝宝档案待绑定');
+  }
+
+  final postpartumDay = overview.mom?.postpartumDay;
+  final babyAgeDay = postpartumDay ?? overview.baby?.ageDays;
+  return (
+    mom: postpartumDay == null
+        ? '暂无有效分娩日期'
+        : '产后第 ${(math.max(0, postpartumDay) ~/ 7) + 1} 周',
+    baby: babyAgeDay == null
+        ? '暂无有效分娩日期'
+        : '宝宝已出生 ${math.max(0, babyAgeDay)} 天',
+  );
+}
+
+String _formatPregnancyStageSubtitle(String? value) {
+  final match = RegExp(
+    r'(?:孕期|孕周|怀孕|孕)?\s*(\d{1,2})\s*(?:周|w|W)',
+  ).firstMatch(value?.trim() ?? '');
+  final week = match?.group(1);
+  return week == null ? '处于孕期' : '孕期 $week 周';
+}
+
+class _StatusPinnedHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const _StatusPinnedHeaderDelegate({required this.child});
+
+  static const extent = 120.0;
+
+  final Widget child;
+
+  @override
+  double get minExtent => extent;
+
+  @override
+  double get maxExtent => extent;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: ColoredBox(
+          key: const ValueKey('status-pinned-header'),
+          color: Theme.of(
+            context,
+          ).scaffoldBackgroundColor.withValues(alpha: 0.92),
+          child: child,
         ),
       ),
-      textAlign: textAlign,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: width);
-    painter.paint(canvas, offset);
-  }
-
-  @override
-  bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) {
-    return oldDelegate.mode != mode;
-  }
-}
-
-class _StatusTrendLegend extends StatelessWidget {
-  const _StatusTrendLegend();
-
-  @override
-  Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: const Color(0xff8a6742),
-      fontSize: 9,
-      fontWeight: FontWeight.w400,
-    );
-    return Wrap(
-      spacing: 9,
-      runSpacing: 6,
-      children: const [
-        _StatusTrendLegendItem(
-          label: '吸乳总量',
-          color: Color(0xffb9792a),
-          dashed: false,
-        ),
-        _StatusTrendLegendItem(
-          label: '含亲喂估算',
-          color: Color(0xff8a5f7d),
-          dashed: true,
-        ),
-        _StatusTrendLegendItem(
-          label: '目标参考区间',
-          color: Color(0xffdff4e8),
-          band: true,
-        ),
-      ].map((item) => item.withStyle(style)).toList(growable: false),
-    );
-  }
-}
-
-class _StatusTrendLegendItem extends StatelessWidget {
-  const _StatusTrendLegendItem({
-    required this.label,
-    required this.color,
-    this.dashed = false,
-    this.band = false,
-    this.style,
-  });
-
-  final String label;
-  final Color color;
-  final bool dashed;
-  final bool band;
-  final TextStyle? style;
-
-  _StatusTrendLegendItem withStyle(TextStyle? nextStyle) {
-    return _StatusTrendLegendItem(
-      label: label,
-      color: color,
-      dashed: dashed,
-      band: band,
-      style: nextStyle,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CustomPaint(
-          size: Size(12, band ? 8 : 2),
-          painter: _StatusTrendLegendMarkPainter(
-            color: color,
-            dashed: dashed,
-            band: band,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(label, style: style),
-      ],
-    );
-  }
-}
-
-class _StatusTrendLegendMarkPainter extends CustomPainter {
-  const _StatusTrendLegendMarkPainter({
-    required this.color,
-    required this.dashed,
-    required this.band,
-  });
-
-  final Color color;
-  final bool dashed;
-  final bool band;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (band) {
-      canvas.drawRect(
-        Offset.zero & size,
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill,
-      );
-      return;
-    }
-
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    if (!dashed) {
-      canvas.drawLine(
-        Offset(0, size.height / 2),
-        Offset(size.width, size.height / 2),
-        paint,
-      );
-      return;
-    }
-    var x = 0.0;
-    while (x < size.width) {
-      final next = (x + 4 > size.width) ? size.width : x + 4;
-      canvas.drawLine(
-        Offset(x, size.height / 2),
-        Offset(next, size.height / 2),
-        paint,
-      );
-      x += 7;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _StatusTrendLegendMarkPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.dashed != dashed ||
-        oldDelegate.band != band;
+  bool shouldRebuild(covariant _StatusPinnedHeaderDelegate oldDelegate) {
+    return oldDelegate.child != child;
   }
 }
 
@@ -2539,35 +1601,41 @@ class _CareStageOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: selected
-          ? Colors.white.withValues(alpha: 0.7)
-          : Colors.transparent,
-      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      child: InkWell(
+    return Semantics(
+      button: true,
+      selected: selected,
+      inMutuallyExclusiveGroup: true,
+      label: label,
+      child: Material(
+        color: selected
+            ? Colors.white.withValues(alpha: 0.7)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        onTap: onTap,
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 24, minWidth: 42),
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-            border: selected
-                ? Border.all(
-                    color: const Color(0xffeadfd8).withValues(alpha: 0.7),
-                  )
-                : null,
-          ),
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: selected
-                  ? const Color(0xff6f5964)
-                  : const Color(0xffaa98a1),
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-              height: 1,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+          onTap: onTap,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 24, minWidth: 42),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              border: selected
+                  ? Border.all(
+                      color: const Color(0xffeadfd8).withValues(alpha: 0.7),
+                    )
+                  : null,
+            ),
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: selected
+                    ? const Color(0xff6f5964)
+                    : const Color(0xffaa98a1),
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                height: 1,
+              ),
             ),
           ),
         ),
@@ -2595,23 +1663,20 @@ class _StatusIdentityTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const gap = 7.0;
+        const gap = 8.0;
         final tabWidth = (constraints.maxWidth - gap) / 2;
 
         return Row(
           children: [
             SizedBox(
               width: tabWidth,
-              child: Transform.translate(
-                offset: selected == 'mom' ? const Offset(0, -5) : Offset.zero,
-                child: _StatusIdentityTab(
-                  value: 'mom',
-                  title: '妈妈',
-                  subtitle: momSubtitle,
-                  asset: MomCozyAssets.momAvatar,
-                  selected: selected == 'mom',
-                  onTap: () => onChanged('mom'),
-                ),
+              child: _StatusIdentityTab(
+                value: 'mom',
+                title: '妈妈',
+                subtitle: momSubtitle,
+                asset: MomCozyAssets.momAvatar,
+                selected: selected == 'mom',
+                onTap: () => onChanged('mom'),
               ),
             ),
             const SizedBox(width: gap),
@@ -2655,73 +1720,75 @@ class _StatusIdentityTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = selected
-        ? MomCozyColors.primary.withValues(alpha: 0.42)
-        : Colors.white.withValues(alpha: 0.70);
     return Semantics(
       selected: selected,
       button: true,
       label: title,
       enabled: !disabled,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: disabled
-              ? MomCozyColors.raised.withValues(alpha: 0.24)
-              : selected
-              ? const Color(0xfffff7fb)
-              : MomCozyColors.raised.withValues(alpha: 0.44),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor, width: selected ? 1.4 : 1),
-        ),
-        child: Material(
-          type: MaterialType.transparency,
-          borderRadius: BorderRadius.circular(16),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            key: ValueKey('status-identity-tab-$value'),
-            onTap: disabled ? null : onTap,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 72),
-              child: Stack(
-                children: [
-                  AnimatedOpacity(
-                    duration: const Duration(milliseconds: 160),
-                    opacity: selected ? 1 : 0,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        width: 4,
-                        height: 44,
-                        decoration: const BoxDecoration(
-                          color: Color(0xffb46f91),
-                          borderRadius: BorderRadius.horizontal(
-                            right: Radius.circular(MomCozyRadii.pill),
+      inMutuallyExclusiveGroup: true,
+      child: Opacity(
+        opacity: disabled
+            ? 0.45
+            : selected
+            ? 1
+            : 0.72,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: disabled
+                ? Colors.white.withValues(alpha: 0.35)
+                : selected
+                ? const Color(0xfffff7fb)
+                : Colors.white.withValues(alpha: 0.45),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: selected
+                  ? const Color(0xffd8adc2)
+                  : Colors.white.withValues(alpha: disabled ? 0.60 : 0.70),
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Material(
+            type: MaterialType.transparency,
+            borderRadius: BorderRadius.circular(16),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              key: ValueKey('status-identity-tab-$value'),
+              onTap: disabled ? null : onTap,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 68),
+                child: Stack(
+                  children: [
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 160),
+                      opacity: selected ? 1 : 0,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          width: 4,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Color(0xffb46f91),
+                            borderRadius: BorderRadius.horizontal(
+                              right: Radius.circular(MomCozyRadii.pill),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Row(
-                      children: [
-                        Opacity(
-                          opacity: disabled
-                              ? 0.45
-                              : selected
-                              ? 1
-                              : 0.75,
-                          child: Container(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: disabled
-                                    ? MomCozyColors.border.withValues(
-                                        alpha: 0.35,
-                                      )
-                                    : selected
+                                color: selected
                                     ? const Color(
                                         0xffb46f91,
                                       ).withValues(alpha: 0.45)
@@ -2736,1988 +1803,56 @@ class _StatusIdentityTab extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelLarge
-                                    ?.copyWith(
-                                      color: disabled
-                                          ? MomCozyColors.mutedForeground
-                                                .withValues(alpha: 0.6)
-                                          : selected
-                                          ? MomCozyColors.foreground
-                                          : MomCozyColors.mutedForeground,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.15,
-                                    ),
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                subtitle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: disabled
-                                          ? MomCozyColors.mutedForeground
-                                                .withValues(alpha: 0.52)
-                                          : selected
-                                          ? MomCozyColors.mutedForeground
-                                          : MomCozyColors.mutedForeground
-                                                .withValues(alpha: 0.75),
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.15,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-String _textOr(String? value, String fallback) {
-  final trimmed = value?.trim();
-  return trimmed == null || trimmed.isEmpty ? fallback : trimmed;
-}
-
-final _scheduleInteractionStates = Expando<_ScheduleInteractionState>(
-  'momcozy-schedule-interaction-state',
-);
-
-class _ScheduleInteractionState {
-  bool pumpReminderEnabled = true;
-  DateTime? selectedDay;
-  Map<String, bool> taskDoneOverrides = {};
-  Map<String, DateTime> delayedTaskReminders = {};
-  Map<String, List<ScheduleTask>> localTasksByDay = {};
-  Map<String, String> editedTaskTitles = {};
-  Set<String> deletedTaskKeys = {};
-  Set<String> skippedTaskKeys = {};
-  int localTaskSequence = 0;
-  bool scheduleAdjustmentQueued = false;
-  String? feedbackMessage;
-}
-
-class _SchedulePage extends StatefulWidget {
-  const _SchedulePage({
-    required this.path,
-    required this.title,
-    required this.summary,
-    required this.icon,
-    required this.accent,
-  });
-
-  final String path;
-  final String title;
-  final String summary;
-  final IconData icon;
-  final Color accent;
-
-  @override
-  State<_SchedulePage> createState() => _SchedulePageState();
-}
-
-class _SchedulePageState extends State<_SchedulePage> {
-  bool _pumpReminderEnabled = true;
-  late Map<String, bool> _taskDoneOverrides = {};
-  late Map<String, DateTime> _delayedTaskReminders = {};
-  late Map<String, List<ScheduleTask>> _localTasksByDay = {};
-  late Map<String, String> _editedTaskTitles = {};
-  late Set<String> _deletedTaskKeys = {};
-  late Set<String> _skippedTaskKeys = {};
-  int _localTaskSequence = 0;
-  bool _scheduleAdjustmentQueued = false;
-  String? _feedbackMessage;
-  String? _editingTaskKey;
-  String _editingTaskTime = '';
-  String _editingTaskTitle = '';
-  late _ScheduleInteractionState _interactionState =
-      _ScheduleInteractionState();
-  MomCozyApiRuntime? _runtime;
-  late DateTime _selectedDay;
-  late Future<ScheduleDayPlan> _dayPlanFuture;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final runtime = MomCozyRuntimeScope.of(context);
-    if (!identical(runtime, _runtime)) {
-      _runtime = runtime;
-      _interactionState = _scheduleInteractionStates[runtime] ??=
-          _ScheduleInteractionState();
-      _pumpReminderEnabled = _interactionState.pumpReminderEnabled;
-      _selectedDay = _interactionState.selectedDay ?? runtime.now();
-      _taskDoneOverrides = _interactionState.taskDoneOverrides;
-      _delayedTaskReminders = _interactionState.delayedTaskReminders;
-      _localTasksByDay = _interactionState.localTasksByDay;
-      _editedTaskTitles = _interactionState.editedTaskTitles;
-      _deletedTaskKeys = _interactionState.deletedTaskKeys;
-      _skippedTaskKeys = _interactionState.skippedTaskKeys;
-      _localTaskSequence = _interactionState.localTaskSequence;
-      _scheduleAdjustmentQueued = _interactionState.scheduleAdjustmentQueued;
-      _feedbackMessage = _interactionState.feedbackMessage;
-      _dayPlanFuture = _fetchDayPlan(runtime);
-    }
-  }
-
-  Future<ScheduleDayPlan> _fetchDayPlan(MomCozyApiRuntime runtime) {
-    return runtime.scheduleRepository.fetchDayPlan(day: _selectedDay);
-  }
-
-  void _selectDay(DateTime day) {
-    final runtime = _runtime;
-    if (runtime == null) return;
-    setState(() {
-      _selectedDay = day;
-      _dayPlanFuture = _fetchDayPlan(runtime);
-      _persistScheduleState();
-    });
-  }
-
-  void _toggleTask(ScheduleTask task, int index, bool? value) {
-    final key = _taskScopedKey(task, index);
-    setState(() {
-      _taskDoneOverrides[key] = value ?? !_taskDone(task, index);
-      _skippedTaskKeys.remove(key);
-      if (_editingTaskKey == key) _editingTaskKey = null;
-      _persistScheduleState();
-    });
-  }
-
-  void _persistScheduleState() {
-    _interactionState
-      ..pumpReminderEnabled = _pumpReminderEnabled
-      ..selectedDay = _selectedDay
-      ..taskDoneOverrides = _taskDoneOverrides
-      ..delayedTaskReminders = _delayedTaskReminders
-      ..localTasksByDay = _localTasksByDay
-      ..editedTaskTitles = _editedTaskTitles
-      ..deletedTaskKeys = _deletedTaskKeys
-      ..skippedTaskKeys = _skippedTaskKeys
-      ..localTaskSequence = _localTaskSequence
-      ..scheduleAdjustmentQueued = _scheduleAdjustmentQueued
-      ..feedbackMessage = _feedbackMessage;
-  }
-
-  DateTime get _today {
-    final runtime = _runtime;
-    return _dateOnly(runtime?.now() ?? DateTime.now());
-  }
-
-  bool get _isSelectedToday => _sameDay(_selectedDay, _today);
-  bool get _isSelectedPast => _dateOnly(_selectedDay).isBefore(_today);
-  bool get _isSelectedFuture => _dateOnly(_selectedDay).isAfter(_today);
-
-  void _setReminderEnabled(bool enabled) {
-    setState(() {
-      _pumpReminderEnabled = enabled;
-      _persistScheduleState();
-    });
-  }
-
-  Future<void> _handleReminderTap() async {
-    if (!_pumpReminderEnabled) {
-      _setReminderEnabled(true);
-      return;
-    }
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('schedule-reminder-confirm-dialog'),
-          title: const Text('关闭计划提醒？'),
-          content: const Text('关闭后，吸奶提醒和每日摘要不会再主动通知你。'),
-          actions: [
-            TextButton(
-              key: const ValueKey('schedule-reminder-cancel'),
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('schedule-reminder-confirm'),
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('确认关闭'),
-            ),
-          ],
-        );
-      },
-    );
-    if (confirmed == true) _setReminderEnabled(false);
-  }
-
-  void _queueScheduleAdjustment() {
-    setState(() {
-      _scheduleAdjustmentQueued = true;
-      _feedbackMessage = '日程调整已提交';
-      _persistScheduleState();
-    });
-  }
-
-  Future<void> _showScheduleAdjustmentDialog() async {
-    final submitted = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('schedule-adjust-upload-dialog'),
-          title: const Text('调整日程'),
-          content: const Text('上传会议日程后，我会按旧 Web 流程重新生成今天的吸乳排期。'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            FilledButton.icon(
-              key: const ValueKey('schedule-adjust-submit'),
-              onPressed: () => Navigator.of(context).pop(true),
-              icon: const Icon(Icons.image_outlined, size: 16),
-              label: const Text('开始上传'),
-            ),
-          ],
-        );
-      },
-    );
-    if (submitted == true) _queueScheduleAdjustment();
-  }
-
-  void _addLocalTask({String? title, String? feedback}) {
-    final dayKey = _dayKey(_selectedDay);
-    final localTasks = _localTasksByDay[dayKey] ?? const <ScheduleTask>[];
-    _localTaskSequence += 1;
-    final remindAt = DateTime(
-      _selectedDay.year,
-      _selectedDay.month,
-      _selectedDay.day,
-      21,
-      30,
-    );
-    final task = ScheduleTask(
-      id: 'local-$dayKey-$_localTaskSequence',
-      title: title ?? '本地补充 ${localTasks.length + 1}',
-      completed: false,
-      remindAt: remindAt,
-    );
-    setState(() {
-      _localTasksByDay[dayKey] = [...localTasks, task];
-      _feedbackMessage = feedback;
-      _persistScheduleState();
-    });
-  }
-
-  void _addQuickActionTask(String label) {
-    _addLocalTask(title: label, feedback: '$label已添加');
-  }
-
-  Future<void> _showAddTaskDialog() async {
-    final controller = TextEditingController(text: '本地补充 1');
-    final title = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('schedule-add-task-dialog'),
-          title: const Text('添加任务'),
-          content: TextField(
-            key: const ValueKey('schedule-add-task-title-input'),
-            controller: controller,
-            autofocus: true,
-            decoration: const InputDecoration(labelText: '任务名称'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('schedule-add-task-submit'),
-              onPressed: () => Navigator.of(context).pop(controller.text),
-              child: const Text('添加'),
-            ),
-          ],
-        );
-      },
-    );
-    final trimmed = title?.trim();
-    if (trimmed == null || trimmed.isEmpty) return;
-    _addLocalTask(title: trimmed);
-  }
-
-  void _deleteTask(ScheduleTask task, int index) {
-    final key = _taskScopedKey(task, index);
-    setState(() {
-      _deletedTaskKeys.add(key);
-      _taskDoneOverrides.remove(key);
-      _delayedTaskReminders.remove(key);
-      _editedTaskTitles.remove(key);
-      _skippedTaskKeys.remove(key);
-      if (_editingTaskKey == key) _editingTaskKey = null;
-      _persistScheduleState();
-    });
-  }
-
-  void _startEditTask(ScheduleTask task, int index) {
-    final key = _taskScopedKey(task, index);
-    if (!_isSelectedToday ||
-        _taskDone(task, index) ||
-        _taskSkipped(task, index)) {
-      return;
-    }
-    setState(() {
-      _editingTaskKey = key;
-      _editingTaskTime = _nullableTimeLabel(_effectiveRemindAt(task, index));
-      _editingTaskTitle = _taskDisplayTitleFor(task, index);
-    });
-  }
-
-  void _cancelTaskEdit() {
-    setState(() => _editingTaskKey = null);
-  }
-
-  void _saveTaskEdit(ScheduleTask task, int index) {
-    final key = _taskScopedKey(task, index);
-    final title = _editingTaskTitle.trim();
-    if (title.isEmpty) return;
-
-    final parsedTime = _parseTaskTime(_editingTaskTime.trim());
-    if (parsedTime == null) {
-      setState(() => _feedbackMessage = '请输入 HH:mm 格式的提醒时间');
-      return;
-    }
-
-    setState(() {
-      _editedTaskTitles[key] = title;
-      _delayedTaskReminders[key] = DateTime(
-        _selectedDay.year,
-        _selectedDay.month,
-        _selectedDay.day,
-        parsedTime.$1,
-        parsedTime.$2,
-      );
-      _editingTaskKey = null;
-      _feedbackMessage = '任务已更新';
-      _persistScheduleState();
-    });
-  }
-
-  Future<void> _showRecordEntryDialog(ScheduleTask task, int index) async {
-    final completed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('schedule-record-entry-dialog'),
-          title: const Text('记录执行数据'),
-          content: const Text('选择本次执行的记录方式，或先仅标记任务完成。'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('吸奶补录'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('喂养记录'),
-            ),
-            FilledButton(
-              key: const ValueKey('schedule-record-complete-only'),
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('仅标记完成'),
-            ),
-          ],
-        );
-      },
-    );
-    if (completed != true) return;
-    setState(() {
-      _taskDoneOverrides[_taskScopedKey(task, index)] = true;
-      _feedbackMessage = '执行记录已完成';
-      _persistScheduleState();
-    });
-  }
-
-  void _delayTask(ScheduleTask task, int index) {
-    final key = _taskScopedKey(task, index);
-    final remindAt = _effectiveRemindAt(task, index);
-    if (remindAt == null) return;
-    setState(() {
-      _delayedTaskReminders[key] = remindAt.add(const Duration(minutes: 30));
-      _feedbackMessage = '顺延半小时已更新';
-      _persistScheduleState();
-    });
-  }
-
-  void _skipTask(ScheduleTask task, int index) {
-    final key = _taskScopedKey(task, index);
-    setState(() {
-      _skippedTaskKeys.add(key);
-      _taskDoneOverrides[key] = false;
-      if (_editingTaskKey == key) _editingTaskKey = null;
-      _feedbackMessage = '已跳过';
-      _persistScheduleState();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<ScheduleDayPlan>(
-      future: _dayPlanFuture,
-      builder: (context, snapshot) {
-        final taskLabel = _isSelectedToday ? '今日任务' : '执行记录';
-        final visibleTasks = snapshot.hasData
-            ? _visibleTasks(snapshot.data!)
-            : const <ScheduleTask>[];
-        final taskCount = snapshot.hasData ? visibleTasks.length : null;
-        final pendingTaskCount = visibleTasks
-            .asMap()
-            .entries
-            .where(
-              (entry) =>
-                  !_taskDone(entry.value, entry.key) &&
-                  !_taskSkipped(entry.value, entry.key),
-            )
-            .length;
-
-        return ListView(
-          key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(16, 34, 16, 96),
-          children: [
-            Transform.translate(
-              offset: const Offset(0, -8),
-              child: _ScheduleDateStrip(
-                key: const ValueKey('schedule-date-strip'),
-                today: _today,
-                selectedDay: _selectedDay,
-                onSelected: _selectDay,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Transform.translate(
-              offset: const Offset(-2, -9),
-              child: _ScheduleContextCard(
-                title: _scheduleContextTitle(),
-                subtitle: '产后第29周（离乳期）',
-                taskLabel: taskLabel,
-                completedCount: taskCount == null
-                    ? 0
-                    : taskCount - pendingTaskCount,
-                totalCount: taskCount ?? 0,
-                reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: () => unawaited(_handleReminderTap()),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Transform.translate(
-              offset: const Offset(-1, 0),
-              child: _ScheduleAgentCard(
-                key: const ValueKey('schedule-agent-card'),
-                reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: () => unawaited(_handleReminderTap()),
-                onConversationTap: () => context.go(
-                  '/',
-                  extra: const {'agentPrefill': '我想调整今天的吸乳排期'},
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Transform.translate(
-              offset: const Offset(1, 1),
-              child: _ScheduleNextTaskCard(
-                subtitle: _nextTaskSubtitle(visibleTasks),
-                task: _nextPendingTask(visibleTasks),
-                taskTitle: _nextPendingTaskTitle(visibleTasks),
-                taskRemindAt: _nextPendingTaskRemindAt(visibleTasks),
-                emptyTitle: _scheduleEmptyHeroTitle(),
-                emptyDescription: _scheduleEmptyHeroDescription(),
-                onComplete: () {
-                  final next = _nextPendingTask(visibleTasks);
-                  if (next == null) return;
-                  final index = visibleTasks.indexOf(next);
-                  unawaited(_showRecordEntryDialog(next, index));
-                },
-                onDelay: () {
-                  final next = _nextPendingTask(visibleTasks);
-                  if (next == null) return;
-                  final index = visibleTasks.indexOf(next);
-                  _delayTask(next, index);
-                },
-                onSkip: () {
-                  final next = _nextPendingTask(visibleTasks);
-                  if (next == null) return;
-                  final index = visibleTasks.indexOf(next);
-                  _skipTask(next, index);
-                },
-              ),
-            ),
-            const SizedBox(height: 30),
-            _ScheduleListToolbar(
-              taskLabel: taskLabel,
-              adjustmentQueued: _scheduleAdjustmentQueued,
-              onAdjust: () => unawaited(_showScheduleAdjustmentDialog()),
-              onAdd: () => unawaited(_showAddTaskDialog()),
-            ),
-            if (_feedbackMessage != null) ...[
-              _ScheduleFeedbackBanner(message: _feedbackMessage!),
-              const SizedBox(height: 8),
-            ],
-            ..._dayPlanChildren(snapshot),
-          ],
-        );
-      },
-    );
-  }
-
-  List<Widget> _dayPlanChildren(AsyncSnapshot<ScheduleDayPlan> snapshot) {
-    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return [
-        const _ScheduleEmptyTaskNotice(),
-        _ScheduleQuickActions(onAction: _addQuickActionTask),
-      ];
-    }
-
-    if (snapshot.hasError) {
-      return [
-        const _ScheduleEmptyTaskNotice(),
-        _ScheduleQuickActions(onAction: _addQuickActionTask),
-      ];
-    }
-
-    final plan = snapshot.data;
-    final tasks = plan == null ? const <ScheduleTask>[] : _visibleTasks(plan);
-    if (tasks.isEmpty) {
-      return [
-        const _ScheduleEmptyTaskNotice(),
-        _ScheduleQuickActions(onAction: _addQuickActionTask),
-      ];
-    }
-
-    return [
-      for (final entry in tasks.asMap().entries)
-        _ScheduleTaskRow(
-          title: _taskListTitleFor(entry.value, entry.key),
-          subtitle: _taskSubtitleFor(entry.value, entry.key),
-          timeLabel: _nullableTimeLabel(
-            _effectiveRemindAt(entry.value, entry.key),
-          ),
-          completed: _taskDone(entry.value, entry.key),
-          skipped: _taskSkipped(entry.value, entry.key),
-          editing: _editingTaskKey == _taskScopedKey(entry.value, entry.key),
-          editTime: _editingTaskTime,
-          editTitle: _editingTaskTitle,
-          accent: _taskAccent(entry.key),
-          onTap: () => _startEditTask(entry.value, entry.key),
-          onDelete: () => _deleteTask(entry.value, entry.key),
-          onChanged: (value) => _toggleTask(entry.value, entry.key, value),
-          onEditTimeChanged: (value) => _editingTaskTime = value,
-          onEditTitleChanged: (value) => _editingTaskTitle = value,
-          onSaveEdit: () => _saveTaskEdit(entry.value, entry.key),
-          onCancelEdit: _cancelTaskEdit,
-        ),
-    ];
-  }
-
-  bool _taskDone(ScheduleTask task, int index) {
-    return _taskDoneOverrides[_taskScopedKey(task, index)] ?? task.completed;
-  }
-
-  bool _taskSkipped(ScheduleTask task, int index) {
-    return _skippedTaskKeys.contains(_taskScopedKey(task, index));
-  }
-
-  DateTime? _effectiveRemindAt(ScheduleTask task, int index) {
-    return _delayedTaskReminders[_taskScopedKey(task, index)] ?? task.remindAt;
-  }
-
-  String _taskDisplayTitleFor(ScheduleTask task, int index) {
-    return _textOr(
-      _editedTaskTitles[_taskScopedKey(task, index)] ?? _taskDisplayTitle(task),
-      '未命名计划',
-    );
-  }
-
-  String _taskListTitleFor(ScheduleTask task, int index) {
-    return _textOr(
-      _editedTaskTitles[_taskScopedKey(task, index)] ?? task.title,
-      '未命名计划',
-    );
-  }
-
-  String _taskSubtitleFor(ScheduleTask task, int index) {
-    return _taskSubtitleWithReminder(_effectiveRemindAt(task, index));
-  }
-
-  List<ScheduleTask> _visibleTasks(ScheduleDayPlan plan) {
-    final dayKey = _dayKey(_selectedDay);
-    final remoteTasks = plan.tasks.where((task) {
-      final remindAt = task.remindAt;
-      return remindAt == null ||
-          _sameDay(remindAt, _selectedDay) ||
-          (_isSelectedToday && remindAt.isAfter(_selectedDay));
-    });
-    final tasks = [...remoteTasks, ...?_localTasksByDay[dayKey]];
-    return tasks
-        .asMap()
-        .entries
-        .where(
-          (entry) => !_deletedTaskKeys.contains(
-            _taskScopedKey(entry.value, entry.key),
-          ),
-        )
-        .map((entry) => entry.value)
-        .toList(growable: false);
-  }
-
-  ScheduleTask? _nextPendingTask(List<ScheduleTask> tasks) {
-    final pending =
-        tasks.asMap().entries.where((entry) {
-          return !_taskDone(entry.value, entry.key) &&
-              !_taskSkipped(entry.value, entry.key) &&
-              _effectiveRemindAt(entry.value, entry.key) != null;
-        }).toList()..sort(
-          (a, b) => _effectiveRemindAt(
-            a.value,
-            a.key,
-          )!.compareTo(_effectiveRemindAt(b.value, b.key)!),
-        );
-    return pending.isEmpty ? null : pending.first.value;
-  }
-
-  DateTime? _nextPendingTaskRemindAt(List<ScheduleTask> tasks) {
-    final task = _nextPendingTask(tasks);
-    if (task == null) return null;
-    final index = tasks.indexOf(task);
-    if (index < 0) return task.remindAt;
-    return _effectiveRemindAt(task, index);
-  }
-
-  String? _nextPendingTaskTitle(List<ScheduleTask> tasks) {
-    final task = _nextPendingTask(tasks);
-    if (task == null) return null;
-    final index = tasks.indexOf(task);
-    if (index < 0) return _taskDisplayTitle(task);
-    return _taskDisplayTitleFor(task, index);
-  }
-
-  String _nextTaskSubtitle(List<ScheduleTask> tasks) {
-    final runtime = _runtime;
-    final now = runtime?.now().toUtc() ?? DateTime.now().toUtc();
-    final task = _nextPendingTask(tasks);
-    if (task == null) return '没有待提醒任务。';
-    final index = tasks.indexOf(task);
-    final remindAt = _effectiveRemindAt(task, index);
-    if (remindAt == null) return '没有待提醒任务。';
-    final title = _textOr(_taskDisplayTitleFor(task, index), '下一项');
-
-    final minutes = remindAt.toUtc().difference(now).inMinutes;
-    if (minutes <= 0) return '$title 已到提醒时间。';
-    const minutesPerHour = 60;
-    const minutesPerDay = 24 * minutesPerHour;
-    final days = minutes ~/ minutesPerDay;
-    final hours = (minutes % minutesPerDay) ~/ minutesPerHour;
-    final remainingMinutes = minutes % minutesPerHour;
-    if (days > 0) {
-      return '$title 还有 $days 天 $hours 小时。';
-    }
-    if (hours > 0) {
-      return '$title 还有 $hours 小时 $remainingMinutes 分钟。';
-    }
-    return '$title 还有 $remainingMinutes 分钟。';
-  }
-
-  (int, int)? _parseTaskTime(String value) {
-    final match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(value);
-    if (match == null) return null;
-    final hour = int.tryParse(match.group(1)!);
-    final minute = int.tryParse(match.group(2)!);
-    if (hour == null || minute == null) return null;
-    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
-    return (hour, minute);
-  }
-
-  String _taskScopedKey(ScheduleTask task, int index) {
-    return '${_dayKey(_selectedDay)}:${_taskKey(task, index)}';
-  }
-
-  String _taskKey(ScheduleTask task, int index) {
-    return task.id.isEmpty ? 'task-$index' : task.id;
-  }
-
-  String _scheduleContextTitle() {
-    if (_isSelectedToday) return '稳奶计划执行中';
-    if (_isSelectedFuture) {
-      return '${_selectedDay.month}月${_selectedDay.day}日 稳奶计划';
-    }
-    return '稳奶计划';
-  }
-
-  String _scheduleEmptyHeroTitle() {
-    if (_isSelectedToday) return '今天还没有计划任务';
-    if (_isSelectedPast) return '这天没有计划任务';
-    return '未来的计划';
-  }
-
-  String _scheduleEmptyHeroDescription() {
-    if (_isSelectedToday) {
-      return '可以先从对话里生成计划并同步到日历，或手动添加任务。';
-    }
-    if (_isSelectedPast) return '没有看到当天的计划任务。';
-    return '系统会在生成计划后同步当天的吸乳和喂养日程。';
-  }
-}
-
-class _ScheduleDateStrip extends StatelessWidget {
-  const _ScheduleDateStrip({
-    super.key,
-    required this.today,
-    required this.selectedDay,
-    required this.onSelected,
-  });
-
-  final DateTime today;
-  final DateTime selectedDay;
-  final ValueChanged<DateTime> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final selectedDate = DateTime(
-      selectedDay.year,
-      selectedDay.month,
-      selectedDay.day,
-    );
-    final todayDate = _dateOnly(today);
-    final showBackToToday = !_sameDay(selectedDate, todayDate);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 2, bottom: 7),
-          child: Transform.translate(
-            offset: const Offset(-4, 4),
-            child: Text(
-              '${selectedDate.year}年${selectedDate.month}月',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(5),
-          decoration: MomCozyDecorations.card(
-            color: MomCozyColors.card,
-            borderColor: MomCozyColors.border.withValues(alpha: 0.5),
-            shadows: MomCozyShadows.soft,
-            radius: 16,
-          ),
-          child: Row(
-            children: [
-              _ScheduleWeekButton(
-                key: const ValueKey('schedule-week-prev-button'),
-                icon: Icons.chevron_left_rounded,
-                onTap: () =>
-                    onSelected(selectedDate.subtract(const Duration(days: 7))),
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    for (var offset = -3; offset <= 3; offset += 1)
-                      Builder(
-                        builder: (context) {
-                          final date = selectedDate.add(Duration(days: offset));
-                          return _DatePill(
-                            key: ValueKey('schedule-date-${_dayKey(date)}'),
-                            day: _sameDay(date, todayDate)
-                                ? '今'
-                                : _weekdayLabel(date),
-                            date: date.day.toString(),
-                            selected: _sameDay(date, selectedDate),
-                            onTap: () => onSelected(date),
-                          );
-                        },
-                      ),
-                  ],
-                ),
-              ),
-              _ScheduleWeekButton(
-                key: const ValueKey('schedule-week-next-button'),
-                icon: Icons.chevron_right_rounded,
-                onTap: () =>
-                    onSelected(selectedDate.add(const Duration(days: 7))),
-              ),
-            ],
-          ),
-        ),
-        if (showBackToToday) ...[
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton.tonal(
-              key: const ValueKey('schedule-back-to-today-button'),
-              onPressed: () => onSelected(todayDate),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(0, 32),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                backgroundColor: MomCozyColors.roseSoft,
-                foregroundColor: MomCozyColors.primary,
-              ),
-              child: const Text('今天'),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-class _ScheduleEmptyTaskNotice extends StatelessWidget {
-  const _ScheduleEmptyTaskNotice();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 14),
-      child: Center(
-        child: Text(
-          '当天暂无执行内容',
-          style: TextStyle(
-            color: MomCozyColors.mutedForeground,
-            fontWeight: FontWeight.w700,
-            fontSize: 12,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleQuickActions extends StatelessWidget {
-  const _ScheduleQuickActions({required this.onAction});
-
-  final ValueChanged<String> onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: const ValueKey('schedule-empty-quick-actions'),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 14, bottom: 22),
-        child: Row(
-          children: [
-            Expanded(
-              child: _ScheduleQuickActionButton(
-                label: '吸奶补录',
-                onPressed: () => onAction('吸奶补录'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _ScheduleQuickActionButton(
-                label: '喂养记录',
-                onPressed: () => onAction('喂养记录'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleQuickActionButton extends StatelessWidget {
-  const _ScheduleQuickActionButton({
-    required this.label,
-    required this.onPressed,
-  });
-
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      child: FilledButton.tonalIcon(
-        onPressed: onPressed,
-        icon: const Icon(Icons.add_rounded, size: 16),
-        label: Text(label),
-        style: FilledButton.styleFrom(
-          backgroundColor: MomCozyColors.raised,
-          foregroundColor: MomCozyColors.foreground,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          textStyle: Theme.of(
-            context,
-          ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleWeekButton extends StatelessWidget {
-  const _ScheduleWeekButton({
-    super.key,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: SizedBox(
-          width: 30,
-          height: 42,
-          child: Icon(icon, size: 19, color: MomCozyColors.mutedForeground),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleAgentCard extends StatelessWidget {
-  const _ScheduleAgentCard({
-    super.key,
-    required this.reminderEnabled,
-    required this.onReminderTap,
-    required this.onConversationTap,
-  });
-
-  final bool reminderEnabled;
-  final VoidCallback onReminderTap;
-  final VoidCallback onConversationTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card.withValues(alpha: 0.7),
-        borderColor: MomCozyColors.primary.withValues(alpha: 0.15),
-        radius: 24,
-        shadows: MomCozyShadows.soft,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipOval(
-            child: Image.asset(
-              MomCozyAssets.agentAvatar,
-              width: 36,
-              height: 36,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    height: 1.45,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    _ScheduleAgentButton(
-                      icon: reminderEnabled
-                          ? Icons.notifications_none_rounded
-                          : Icons.notifications_off_outlined,
-                      label: '提醒开关',
-                      filled: false,
-                      onTap: onReminderTap,
-                    ),
-                    const SizedBox(width: 8),
-                    _ScheduleAgentButton(
-                      icon: Icons.chat_bubble_outline_rounded,
-                      label: '对话',
-                      filled: true,
-                      onTap: onConversationTap,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ScheduleAgentButton extends StatelessWidget {
-  const _ScheduleAgentButton({
-    required this.icon,
-    required this.label,
-    required this.filled,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool filled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: filled ? MomCozyColors.primary : MomCozyColors.background,
-      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        child: Container(
-          height: 32,
-          padding: const EdgeInsets.symmetric(horizontal: 13),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-            border: Border.all(
-              color: filled
-                  ? MomCozyColors.primary
-                  : MomCozyColors.border.withValues(alpha: 0.8),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 14,
-                color: filled ? MomCozyColors.raised : MomCozyColors.foreground,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: filled
-                      ? MomCozyColors.raised
-                      : MomCozyColors.foreground,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleContextCard extends StatelessWidget {
-  const _ScheduleContextCard({
-    required this.title,
-    required this.subtitle,
-    required this.taskLabel,
-    required this.completedCount,
-    required this.totalCount,
-    required this.reminderEnabled,
-    required this.onReminderTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final String taskLabel;
-  final int completedCount;
-  final int totalCount;
-  final bool reminderEnabled;
-  final VoidCallback onReminderTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = totalCount == 0 ? 0.0 : completedCount / totalCount;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.raised,
-        borderColor: MomCozyColors.border.withValues(alpha: 0.4),
-        radius: 24,
-        shadows: MomCozyShadows.soft,
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: 0,
-            top: 0,
-            child: IconButton(
-              key: const ValueKey('schedule-context-reminder-button'),
-              tooltip: reminderEnabled ? '关闭计划提醒' : '开启计划提醒',
-              onPressed: onReminderTap,
-              constraints: const BoxConstraints.tightFor(width: 36, height: 36),
-              padding: EdgeInsets.zero,
-              visualDensity: VisualDensity.compact,
-              style: IconButton.styleFrom(
-                backgroundColor: MomCozyColors.background.withValues(
-                  alpha: 0.9,
-                ),
-                side: BorderSide(
-                  color: MomCozyColors.border.withValues(alpha: 0.5),
-                ),
-                shape: const CircleBorder(),
-                shadowColor: Colors.black.withValues(alpha: 0.08),
-                elevation: 2,
-              ),
-              icon: Icon(
-                reminderEnabled
-                    ? Icons.notifications_none_rounded
-                    : Icons.notifications_off_outlined,
-                size: 18,
-                color: reminderEnabled
-                    ? MomCozyColors.foreground
-                    : MomCozyColors.mutedForeground,
-              ),
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 46),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w700,
-                        height: 1.28,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      reminderEnabled ? '提醒已开启' : '提醒已关闭',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: reminderEnabled
-                            ? MomCozyColors.primary
-                            : MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 18),
-              Row(
-                children: [
-                  Text(
-                    taskLabel,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: MomCozyColors.foreground.withValues(alpha: 0.72),
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '$completedCount/$totalCount',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                child: LinearProgressIndicator(
-                  value: progress.clamp(0, 1),
-                  minHeight: 9,
-                  color: MomCozyColors.primary,
-                  backgroundColor: MomCozyColors.secondary.withValues(
-                    alpha: 0.72,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ScheduleNextTaskCard extends StatelessWidget {
-  const _ScheduleNextTaskCard({
-    required this.subtitle,
-    required this.task,
-    required this.taskTitle,
-    required this.taskRemindAt,
-    required this.emptyTitle,
-    required this.emptyDescription,
-    required this.onComplete,
-    required this.onDelay,
-    required this.onSkip,
-  });
-
-  final String subtitle;
-  final ScheduleTask? task;
-  final String? taskTitle;
-  final DateTime? taskRemindAt;
-  final String emptyTitle;
-  final String emptyDescription;
-  final VoidCallback onComplete;
-  final VoidCallback onDelay;
-  final VoidCallback onSkip;
-
-  @override
-  Widget build(BuildContext context) {
-    final task = this.task;
-    final hasTask = task != null;
-
-    if (!hasTask) {
-      return Container(
-        key: const ValueKey('schedule-empty-task-card'),
-        padding: const EdgeInsets.fromLTRB(18, 24, 18, 20),
-        decoration: MomCozyDecorations.card(
-          color: MomCozyColors.secondary.withValues(alpha: 0.3),
-          borderColor: MomCozyColors.border.withValues(alpha: 0.4),
-          radius: 28,
-          shadows: const [],
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: MomCozyColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.schedule_rounded,
-                size: 34,
-                color: MomCozyColors.primary,
-              ),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              emptyTitle,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 7),
-            Text(
-              emptyDescription,
-              maxLines: 2,
-              overflow: TextOverflow.visible,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w600,
-                height: 1.35,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MomCozyColors.primary.withValues(alpha: 0.15),
-            MomCozyColors.card.withValues(alpha: 0.92),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: MomCozyColors.primary.withValues(alpha: 0.18),
-        ),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            hasTask ? '待执行任务' : '今天还没有待提醒任务',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: MomCozyColors.primary,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _nullableTimeLabel(taskRemindAt),
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            color: MomCozyColors.foreground,
-                            fontWeight: FontWeight.w900,
-                          ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      _textOr(taskTitle, subtitle),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: MomCozyColors.foreground.withValues(alpha: 0.88),
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                constraints: const BoxConstraints(minWidth: 86),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 9,
-                ),
-                decoration: BoxDecoration(
-                  color: MomCozyColors.amberSoft,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: MomCozyColors.amber.withValues(alpha: 0.28),
-                  ),
-                ),
-                child: Text(
-                  subtitle,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Color(0xff7d5730),
-                    fontWeight: FontWeight.w900,
-                    height: 1.2,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          if (hasTask) ...[
-            const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                key: const ValueKey('schedule-next-complete-button'),
-                onPressed: onComplete,
-                icon: const Icon(Icons.check_rounded, size: 17),
-                label: const Text('手动完成并记录数据'),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    key: const ValueKey('schedule-next-delay-button'),
-                    onPressed: onDelay,
-                    icon: const Icon(Icons.schedule_rounded, size: 16),
-                    label: const Text('顺延半小时'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    key: const ValueKey('schedule-next-skip-button'),
-                    onPressed: onSkip,
-                    child: const Text('跳过这次任务'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _ScheduleListToolbar extends StatelessWidget {
-  const _ScheduleListToolbar({
-    required this.taskLabel,
-    required this.adjustmentQueued,
-    required this.onAdjust,
-    required this.onAdd,
-  });
-
-  final String taskLabel;
-  final bool adjustmentQueued;
-  final VoidCallback onAdjust;
-  final VoidCallback onAdd;
-
-  void _showTaskExplanation(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('schedule-task-explanation-dialog'),
-          title: const Text('今日任务说明'),
-          content: const Text('今天的计划任务会同步 Agent 建议、提醒和手动添加内容。完成或删除后，计数会即时更新。'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('知道了'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: const ValueKey('schedule-list-toolbar'),
-      child: Transform.translate(
-        offset: const Offset(-1, 0),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 12, bottom: 4),
-          child: Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Text(
-                      taskLabel,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Tooltip(
-                      message: '今日任务说明',
-                      child: InkWell(
-                        key: const ValueKey('schedule-task-help-button'),
-                        customBorder: const CircleBorder(),
-                        onTap: () => _showTaskExplanation(context),
-                        child: Container(
-                          width: 22,
-                          height: 22,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: MomCozyColors.raised.withValues(alpha: 0.72),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: MomCozyColors.border.withValues(
-                                alpha: 0.6,
-                              ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.labelLarge
+                                      ?.copyWith(
+                                        color: selected
+                                            ? const Color(0xff35212c)
+                                            : MomCozyColors.mutedForeground,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.15,
+                                      ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  subtitle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: selected
+                                            ? const Color(0xff806171)
+                                            : MomCozyColors.mutedForeground,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.15,
+                                      ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: const Icon(
-                            Icons.question_mark_rounded,
-                            size: 12,
-                            color: MomCozyColors.mutedForeground,
-                          ),
-                        ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _ScheduleToolbarIconButton(
-                    buttonKey: const ValueKey('schedule-adjust-button'),
-                    tooltip: '调整日程',
-                    icon: adjustmentQueued
-                        ? Icons.check_circle_outline_rounded
-                        : Icons.image_outlined,
-                    label: adjustmentQueued ? '已提交' : '调整日程',
-                    onPressed: adjustmentQueued ? null : onAdjust,
-                  ),
-                  const SizedBox(width: 8),
-                  _ScheduleToolbarIconButton(
-                    buttonKey: const ValueKey('schedule-add-task-button'),
-                    tooltip: '添加任务',
-                    icon: Icons.add_rounded,
-                    label: '添加任务',
-                    onPressed: onAdd,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleToolbarIconButton extends StatelessWidget {
-  const _ScheduleToolbarIconButton({
-    this.buttonKey,
-    required this.tooltip,
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  final Key? buttonKey;
-  final String tooltip;
-  final IconData icon;
-  final String label;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: OutlinedButton.icon(
-        key: buttonKey,
-        onPressed: onPressed,
-        icon: Icon(icon, size: 14),
-        label: Text(label),
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size(0, 34),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          foregroundColor: MomCozyColors.foreground,
-          side: BorderSide(color: MomCozyColors.border.withValues(alpha: 0.8)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(17),
-          ),
-          textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 0,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleFeedbackBanner extends StatelessWidget {
-  const _ScheduleFeedbackBanner({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.roseSoft.withValues(alpha: 0.48),
-        borderColor: MomCozyColors.primary.withValues(alpha: 0.18),
-        radius: 14,
-        shadows: const [],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.check_circle_outline_rounded,
-              size: 18,
-              color: MomCozyColors.primary,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                message,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: MomCozyColors.foreground,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleTaskRow extends StatelessWidget {
-  const _ScheduleTaskRow({
-    required this.title,
-    required this.subtitle,
-    required this.timeLabel,
-    required this.completed,
-    required this.skipped,
-    required this.editing,
-    required this.editTime,
-    required this.editTitle,
-    required this.accent,
-    required this.onTap,
-    required this.onDelete,
-    required this.onChanged,
-    required this.onEditTimeChanged,
-    required this.onEditTitleChanged,
-    required this.onSaveEdit,
-    required this.onCancelEdit,
-  });
-
-  final String title;
-  final String subtitle;
-  final String timeLabel;
-  final bool completed;
-  final bool skipped;
-  final bool editing;
-  final String editTime;
-  final String editTitle;
-  final Color accent;
-  final VoidCallback onTap;
-  final VoidCallback onDelete;
-  final ValueChanged<bool?> onChanged;
-  final ValueChanged<String> onEditTimeChanged;
-  final ValueChanged<String> onEditTitleChanged;
-  final VoidCallback onSaveEdit;
-  final VoidCallback onCancelEdit;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 9),
-      child: DecoratedBox(
-        decoration: MomCozyDecorations.card(
-          color: completed
-              ? const Color(0xfff0f7ee)
-              : MomCozyColors.card.withValues(alpha: 0.94),
-          borderColor: completed
-              ? const Color(0xffc8dfc2)
-              : MomCozyColors.border.withValues(alpha: 0.72),
-          radius: 16,
-          shadows: const [],
-        ),
-        child: Material(
-          type: MaterialType.transparency,
-          borderRadius: BorderRadius.circular(16),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: editing ? null : onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: editing
-                  ? _buildEditBody(context)
-                  : _buildReadBody(context),
             ),
           ),
         ),
       ),
     );
   }
-
-  Widget _buildReadBody(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 48,
-          child: Text(
-            timeLabel,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: accent,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: skipped
-                      ? MomCozyColors.mutedForeground
-                      : MomCozyColors.foreground,
-                  fontWeight: FontWeight.w900,
-                  decoration: skipped ? TextDecoration.lineThrough : null,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: MomCozyColors.mutedForeground,
-                  fontWeight: FontWeight.w700,
-                  height: 1.22,
-                ),
-              ),
-            ],
-          ),
-        ),
-        IconButton(
-          tooltip: '删除任务',
-          onPressed: onDelete,
-          icon: const Icon(Icons.delete_outline_rounded),
-        ),
-        if (skipped)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: MomCozyColors.secondary.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Text(
-              '已跳过',
-              style: TextStyle(
-                color: MomCozyColors.mutedForeground,
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          )
-        else
-          Checkbox(value: completed, onChanged: onChanged),
-      ],
-    );
-  }
-
-  Widget _buildEditBody(BuildContext context) {
-    final inputStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
-      color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w800,
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '编辑任务',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: MomCozyColors.primary,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            SizedBox(
-              width: 74,
-              child: TextFormField(
-                key: const ValueKey('schedule-task-edit-time-input'),
-                initialValue: editTime,
-                onChanged: onEditTimeChanged,
-                keyboardType: TextInputType.datetime,
-                textInputAction: TextInputAction.next,
-                style: inputStyle,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  labelText: '时间',
-                  hintText: '14:00',
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextFormField(
-                key: const ValueKey('schedule-task-edit-title-input'),
-                initialValue: editTitle,
-                onChanged: onEditTitleChanged,
-                textInputAction: TextInputAction.done,
-                maxLines: 1,
-                style: inputStyle,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  labelText: '任务',
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            TextButton(
-              key: const ValueKey('schedule-task-edit-cancel-button'),
-              onPressed: onCancelEdit,
-              child: const Text('取消'),
-            ),
-            const Spacer(),
-            FilledButton(
-              key: const ValueKey('schedule-task-edit-save-button'),
-              onPressed: onSaveEdit,
-              child: const Text('保存'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _DatePill extends StatelessWidget {
-  const _DatePill({
-    super.key,
-    required this.day,
-    required this.date,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String day;
-  final String date;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.scale(
-      scale: selected ? 1.05 : 1,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: selected ? MomCozyColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected ? MomCozyColors.primary : Colors.transparent,
-          ),
-          boxShadow: selected ? MomCozyShadows.soft : const [],
-        ),
-        child: Material(
-          type: MaterialType.transparency,
-          borderRadius: BorderRadius.circular(15),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: onTap,
-            child: SizedBox(
-              width: 36,
-              height: 44,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    day,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: selected
-                          ? MomCozyColors.raised.withValues(alpha: 0.9)
-                          : MomCozyColors.mutedForeground.withValues(
-                              alpha: 0.65,
-                            ),
-                      fontWeight: FontWeight.w800,
-                      fontSize: 10,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    date,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: selected
-                          ? MomCozyColors.raised
-                          : MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-String _taskSubtitleWithReminder(DateTime? remindAt) {
-  if (remindAt == null) return '暂无提醒时间，可稍后补充。';
-  return '提醒 ${_timeLabel(remindAt)} · 可从通知直接进入相关页面。';
-}
-
-String _taskDisplayTitle(ScheduleTask task) {
-  final title = task.title.trim();
-  final withoutTime = title.replaceFirst(RegExp(r'^\d{1,2}:\d{2}\s+'), '');
-  return withoutTime.trim().isEmpty ? title : withoutTime.trim();
-}
-
-DateTime _dateOnly(DateTime value) {
-  return DateTime(value.year, value.month, value.day);
-}
-
-bool _sameDay(DateTime first, DateTime second) {
-  final left = _dateOnly(first);
-  final right = _dateOnly(second);
-  return left.year == right.year &&
-      left.month == right.month &&
-      left.day == right.day;
-}
-
-Color _taskAccent(int index) {
-  return switch (index % 3) {
-    0 => const Color(0xffb2773b),
-    1 => const Color(0xff43827b),
-    _ => const Color(0xff6b6da8),
-  };
-}
-
-String _timeLabel(DateTime value) {
-  final local = value.toLocal();
-  final hour = local.hour.toString().padLeft(2, '0');
-  final minute = local.minute.toString().padLeft(2, '0');
-  return '$hour:$minute';
-}
-
-String _dayKey(DateTime value) {
-  return '${value.year.toString().padLeft(4, '0')}-'
-      '${value.month.toString().padLeft(2, '0')}-'
-      '${value.day.toString().padLeft(2, '0')}';
-}
-
-String _weekdayLabel(DateTime value) {
-  return switch (value.weekday) {
-    DateTime.monday => '一',
-    DateTime.tuesday => '二',
-    DateTime.wednesday => '三',
-    DateTime.thursday => '四',
-    DateTime.friday => '五',
-    DateTime.saturday => '六',
-    _ => '日',
-  };
 }
 
 class _DevicePage extends StatefulWidget {
@@ -4727,6 +1862,7 @@ class _DevicePage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.onLogout,
   });
 
   final String path;
@@ -4734,6 +1870,7 @@ class _DevicePage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Future<void> Function()? onLogout;
 
   @override
   State<_DevicePage> createState() => _DevicePageState();
@@ -4741,6 +1878,7 @@ class _DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<_DevicePage> {
   bool _isScanning = false;
+  bool _isLoggingOut = false;
   BlePlatform? _blePlatform;
   BlePermissionState _permissionState = BlePermissionState.unknown;
   List<BleDeviceSnapshot> _connectedDevices = const [];
@@ -4928,6 +2066,10 @@ class _DevicePageState extends State<_DevicePage> {
           onAdd: _toggleScan,
           onUser: () => context.go('/device/user'),
           onManage: () => context.go('/device/manage'),
+          onLogout: widget.onLogout == null
+              ? null
+              : () => unawaited(_requestLogout()),
+          isLoggingOut: _isLoggingOut,
         ),
         const SizedBox(height: 14),
         const _DeviceW1Banner(),
@@ -4994,6 +2136,82 @@ class _DevicePageState extends State<_DevicePage> {
     }
     return null;
   }
+
+  Future<void> _requestLogout() async {
+    final onLogout = widget.onLogout;
+    if (onLogout == null || _isLoggingOut) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        key: const ValueKey('device-logout-dialog'),
+        title: const Text('退出登录'),
+        content: const Text('退出后需要重新输入邀请码登录。'),
+        actions: [
+          TextButton(
+            key: const ValueKey('device-logout-cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('device-logout-confirm'),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(dialogContext).colorScheme.error,
+              foregroundColor: Theme.of(dialogContext).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('退出登录'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() {
+      _isLoggingOut = true;
+    });
+    await _disconnectDevicesForLogout();
+    try {
+      await onLogout();
+      if (mounted) {
+        setState(() {
+          _isLoggingOut = false;
+        });
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoggingOut = false;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('退出登录失败，请稍后重试。')));
+    }
+  }
+
+  Future<void> _disconnectDevicesForLogout() async {
+    final ble = _blePlatform;
+    if (ble == null) return;
+    if (_isScanning) {
+      try {
+        await ble.stopScan();
+      } catch (_) {
+        // Authentication cleanup must continue even if BLE teardown fails.
+      }
+    }
+    List<BleDeviceSnapshot> devices = _connectedDevices;
+    try {
+      devices = await ble.getConnectedDevices();
+    } catch (_) {
+      // Fall back to the latest in-memory snapshots.
+    }
+    for (final device in devices.where((device) => device.connected)) {
+      try {
+        await ble.disconnect(device.deviceId);
+      } catch (_) {
+        // Disconnect each device independently before continuing logout.
+      }
+    }
+  }
 }
 
 String _deviceBatteryLabel(BleDeviceSnapshot? device) {
@@ -5037,11 +2255,15 @@ class _DeviceHeader extends StatelessWidget {
     required this.onAdd,
     required this.onUser,
     required this.onManage,
+    required this.isLoggingOut,
+    this.onLogout,
   });
 
   final VoidCallback onAdd;
   final VoidCallback onManage;
   final VoidCallback onUser;
+  final VoidCallback? onLogout;
+  final bool isLoggingOut;
 
   @override
   Widget build(BuildContext context) {
@@ -5058,6 +2280,7 @@ class _DeviceHeader extends StatelessWidget {
           ),
         ),
         PopupMenuButton<String>(
+          enabled: !isLoggingOut,
           tooltip: '打开设备快捷菜单',
           color: MomCozyColors.foreground.withValues(alpha: 0.92),
           elevation: 14,
@@ -5076,17 +2299,34 @@ class _DeviceHeader extends StatelessWidget {
               case 'manage':
                 onManage();
                 break;
+              case 'logout':
+                onLogout?.call();
+                break;
             }
           },
-          itemBuilder: (context) => const [
-            PopupMenuItem(value: 'add', child: _DeviceQuickMenuLabel('添加设备')),
-            PopupMenuDivider(height: 1),
-            PopupMenuItem(value: 'user', child: _DeviceQuickMenuLabel('用户管理')),
-            PopupMenuDivider(height: 1),
-            PopupMenuItem(
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'add',
+              child: _DeviceQuickMenuLabel('添加设备'),
+            ),
+            const PopupMenuDivider(height: 1),
+            const PopupMenuItem(
+              value: 'user',
+              child: _DeviceQuickMenuLabel('用户管理'),
+            ),
+            const PopupMenuDivider(height: 1),
+            const PopupMenuItem(
               value: 'manage',
               child: _DeviceQuickMenuLabel('设备提醒'),
             ),
+            if (onLogout != null) ...[
+              const PopupMenuDivider(height: 1),
+              const PopupMenuItem(
+                key: ValueKey('device-logout-menu-item'),
+                value: 'logout',
+                child: _DeviceQuickMenuLabel('退出登录', color: Color(0xffffa8a8)),
+              ),
+            ],
           ],
           child: Container(
             key: const ValueKey('device-quick-menu-button'),
@@ -5100,7 +2340,12 @@ class _DeviceHeader extends StatelessWidget {
               ),
               boxShadow: MomCozyShadows.soft,
             ),
-            child: const Icon(Icons.add_rounded, size: 20),
+            child: isLoggingOut
+                ? const Padding(
+                    padding: EdgeInsets.all(11),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.add_rounded, size: 20),
           ),
         ),
       ],
@@ -5109,9 +2354,10 @@ class _DeviceHeader extends StatelessWidget {
 }
 
 class _DeviceQuickMenuLabel extends StatelessWidget {
-  const _DeviceQuickMenuLabel(this.label);
+  const _DeviceQuickMenuLabel(this.label, {this.color});
 
   final String label;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -5119,7 +2365,7 @@ class _DeviceQuickMenuLabel extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: MomCozyColors.background,
+          color: color ?? MomCozyColors.background,
           fontWeight: FontWeight.w900,
         ),
       ),
@@ -8188,11 +5434,6 @@ class _CalibrationSideTile extends StatelessWidget {
   }
 }
 
-String _nullableTimeLabel(DateTime? value) {
-  if (value == null) return '--';
-  return _timeLabel(value);
-}
-
 class _CommunityPage extends StatefulWidget {
   const _CommunityPage({
     required this.path,
@@ -9456,6 +6697,10 @@ Future<bool> _postFeatureClientEvent(
   }
 }
 
+String? _requestedCartId(Object? routeExtra) {
+  return routeExtra is HospitalBagCartRouteState ? routeExtra.cartId : null;
+}
+
 class _HospitalBagCartPage extends StatefulWidget {
   const _HospitalBagCartPage({
     required this.path,
@@ -9463,6 +6708,7 @@ class _HospitalBagCartPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeExtra,
   });
 
   final String path;
@@ -9470,6 +6716,7 @@ class _HospitalBagCartPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Object? routeExtra;
 
   @override
   State<_HospitalBagCartPage> createState() => _HospitalBagCartPageState();
@@ -9478,23 +6725,65 @@ class _HospitalBagCartPage extends StatefulWidget {
 class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
   bool _isSyncing = false;
   String? _syncStatus;
-  final Set<String> _removedItemIds = {};
+  HospitalBagCartStore? _cartStore;
+  String _cartId = HospitalBagCartStore.defaultCartId;
+  int _syncGeneration = 0;
+
+  HospitalBagCartSnapshot get _cart =>
+      _cartStore?.snapshot(_cartId) ?? defaultHospitalBagCartSnapshot;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final nextStore = MomCozyRuntimeScope.of(context).hospitalBagCartStore;
+    if (identical(_cartStore, nextStore)) return;
+    _cartStore?.removeListener(_handleCartChanged);
+    _cartStore = nextStore;
+    _cartId = nextStore.activate(_requestedCartId(widget.routeExtra));
+    nextStore.addListener(_handleCartChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant _HospitalBagCartPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.routeExtra == widget.routeExtra) return;
+    final store = _cartStore;
+    if (store != null) {
+      _cartId = store.activate(_requestedCartId(widget.routeExtra));
+    }
+  }
+
+  @override
+  void dispose() {
+    _cartStore?.removeListener(_handleCartChanged);
+    super.dispose();
+  }
+
+  void _handleCartChanged() {
+    if (!mounted) return;
+    final activeCartId =
+        _cartStore?.activeCartId ?? HospitalBagCartStore.defaultCartId;
+    setState(() {
+      if (_cartId == activeCartId) return;
+      _cartId = activeCartId;
+      _syncGeneration += 1;
+      _isSyncing = false;
+      _syncStatus = null;
+    });
+  }
 
   void _resetCart() {
-    setState(() {
-      _removedItemIds.clear();
-    });
-    unawaited(_syncCart());
+    _cartStore?.reset(_cartId);
+    unawaited(_syncCart(_cart));
   }
 
   void _deleteItem(String id) {
-    setState(() {
-      _removedItemIds.add(id);
-    });
-    unawaited(_syncCart());
+    if (_cartStore?.removeItem(cartId: _cartId, itemId: id) != true) return;
+    unawaited(_syncCart(_cart));
   }
 
-  Future<void> _syncCart() async {
+  Future<void> _syncCart(HospitalBagCartSnapshot cart) async {
+    final generation = ++_syncGeneration;
     setState(() {
       _isSyncing = true;
       _syncStatus = null;
@@ -9503,15 +6792,15 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
     try {
       final runtime = MomCozyRuntimeScope.of(context);
       final result = await runtime.hospitalBagCartRepository.syncCart(
-        items: _hospitalBagItems(),
+        cart: cart,
       );
-      if (!mounted) return;
+      if (!mounted || generation != _syncGeneration) return;
       setState(() {
         _isSyncing = false;
         _syncStatus = result.message;
       });
     } catch (_) {
-      if (!mounted) return;
+      if (!mounted || generation != _syncGeneration) return;
       setState(() {
         _isSyncing = false;
         _syncStatus = '本地清单已更新，稍后重试同步。';
@@ -9519,34 +6808,19 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
     }
   }
 
-  List<HospitalBagPackedItem> _hospitalBagItems() {
-    return _visibleCartItems
-        .map(
-          (item) => HospitalBagPackedItem(
-            id: item.id,
-            title: item.name,
-            packed: true,
-          ),
-        )
-        .toList(growable: false);
-  }
-
-  List<_HospitalBagCartItemSpec> get _visibleCartItems => _hospitalBagCartGroups
-      .expand((group) => group.items)
-      .where((item) => !_removedItemIds.contains(item.id))
-      .toList(growable: false);
+  List<HospitalBagCartItem> get _visibleCartItems =>
+      _cart.items.toList(growable: false);
 
   int get _itemCount =>
       _visibleCartItems.fold(0, (sum, item) => sum + item.qty);
 
-  double get _subtotal =>
-      _visibleCartItems.fold(0.0, (sum, item) => sum + item.price * item.qty);
+  double get _subtotal => _cart.totals.subtotal;
 
-  double get _discount => _itemCount > 0 ? _subtotal * 0.08 : 0;
+  double get _discount => _cart.totals.discount;
 
-  double get _total => _subtotal - _discount;
+  double get _total => _cart.totals.total;
 
-  String _money(double amount) => '¥${amount.toStringAsFixed(2)}';
+  String _money(double amount) => formatHospitalBagCartMoney(amount);
 
   void _handleBack() {
     if (context.canPop()) {
@@ -9558,14 +6832,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final visibleGroups = _hospitalBagCartGroups
-        .map(
-          (group) => group.copyWith(
-            items: group.items
-                .where((item) => !_removedItemIds.contains(item.id))
-                .toList(growable: false),
-          ),
-        )
+    final visibleGroups = _cart.groups
         .where((group) => group.items.isNotEmpty)
         .toList(growable: false);
 
@@ -9599,7 +6866,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
                       total: _total,
                       syncStatus: _syncStatus,
                       isSyncing: _isSyncing,
-                      canReset: _removedItemIds.isNotEmpty,
+                      canReset: _cartStore?.canReset(_cartId) == true,
                       onResetCart: _resetCart,
                       money: _money,
                     ),
@@ -9759,7 +7026,7 @@ class _HospitalBagSyncStatusBanner extends StatelessWidget {
 class _HospitalBagGroupSection extends StatelessWidget {
   const _HospitalBagGroupSection({required this.group, required this.onDelete});
 
-  final _HospitalBagCartGroupSpec group;
+  final HospitalBagCartGroup group;
   final ValueChanged<String> onDelete;
 
   @override
@@ -9834,8 +7101,8 @@ class _HospitalBagCartItemTile extends StatelessWidget {
     required this.onDelete,
   });
 
-  final _HospitalBagCartItemSpec item;
-  final _HospitalBagTone tone;
+  final HospitalBagCartItem item;
+  final HospitalBagCartTone tone;
   final double bottomGap;
   final VoidCallback onDelete;
 
@@ -9946,7 +7213,7 @@ class _HospitalBagCartItemTile extends StatelessWidget {
 class _HospitalBagItemActions extends StatelessWidget {
   const _HospitalBagItemActions({required this.item, required this.onDelete});
 
-  final _HospitalBagCartItemSpec item;
+  final HospitalBagCartItem item;
   final VoidCallback onDelete;
 
   @override
@@ -9955,7 +7222,7 @@ class _HospitalBagItemActions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          _hospitalBagMoney(item.price),
+          item.formattedPrice,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: const Color(0xff372330),
             fontSize: 13,
@@ -10008,13 +7275,36 @@ class _HospitalBagItemActions extends StatelessWidget {
 class _HospitalBagItemImage extends StatelessWidget {
   const _HospitalBagItemImage({required this.item, required this.tone});
 
-  final _HospitalBagCartItemSpec item;
-  final _HospitalBagTone tone;
+  final HospitalBagCartItem item;
+  final HospitalBagCartTone tone;
 
   @override
   Widget build(BuildContext context) {
+    final remoteUrl = _hospitalBagRemoteImageUrl(item.imageUrl);
     final assetPath = _hospitalBagItemImageAssets[item.id];
-    if (assetPath == null) return _HospitalBagItemIcon(tone: tone);
+    final fallback = _HospitalBagItemIcon(tone: tone);
+    final image = remoteUrl != null
+        ? Image.network(
+            remoteUrl,
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.high,
+            semanticLabel: item.imageAlt ?? item.name,
+            errorBuilder: (context, error, stackTrace) => fallback,
+          )
+        : assetPath != null
+        ? Image.asset(
+            assetPath,
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.high,
+            semanticLabel: item.imageAlt ?? item.name,
+            errorBuilder: (context, error, stackTrace) => fallback,
+          )
+        : null;
+    if (image == null) return fallback;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
@@ -10025,19 +7315,19 @@ class _HospitalBagItemImage extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(color: const Color(0xfff0e1e7)),
           ),
-          child: Image.asset(
-            assetPath,
-            width: 56,
-            height: 56,
-            fit: BoxFit.cover,
-            filterQuality: FilterQuality.high,
-            errorBuilder: (context, error, stackTrace) =>
-                _HospitalBagItemIcon(tone: tone),
-          ),
+          child: image,
         ),
       ),
     );
   }
+}
+
+String? _hospitalBagRemoteImageUrl(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  final uri = Uri.tryParse(normalized);
+  if (uri == null || !uri.hasAuthority) return null;
+  return uri.scheme == 'https' || uri.scheme == 'http' ? normalized : null;
 }
 
 const _hospitalBagItemImageAssets = {
@@ -10064,15 +7354,15 @@ const _hospitalBagItemImageAssets = {
 class _HospitalBagItemIcon extends StatelessWidget {
   const _HospitalBagItemIcon({required this.tone});
 
-  final _HospitalBagTone tone;
+  final HospitalBagCartTone tone;
 
   @override
   Widget build(BuildContext context) {
     final colors = _hospitalBagToneColors(tone);
     final icon = switch (tone) {
-      _HospitalBagTone.mint => Icons.child_care_rounded,
-      _HospitalBagTone.sky => Icons.favorite_border_rounded,
-      _HospitalBagTone.rose => Icons.inventory_2_outlined,
+      HospitalBagCartTone.mint => Icons.child_care_rounded,
+      HospitalBagCartTone.sky => Icons.favorite_border_rounded,
+      HospitalBagCartTone.rose => Icons.inventory_2_outlined,
     };
     return Container(
       width: 56,
@@ -10391,8 +7681,6 @@ class _HospitalBagFooter extends StatelessWidget {
   }
 }
 
-enum _HospitalBagTone { rose, mint, sky }
-
 class _HospitalBagToneColors {
   const _HospitalBagToneColors({
     required this.background,
@@ -10407,21 +7695,21 @@ class _HospitalBagToneColors {
   final Color border;
 }
 
-_HospitalBagToneColors _hospitalBagToneColors(_HospitalBagTone tone) {
+_HospitalBagToneColors _hospitalBagToneColors(HospitalBagCartTone tone) {
   return switch (tone) {
-    _HospitalBagTone.rose => const _HospitalBagToneColors(
+    HospitalBagCartTone.rose => const _HospitalBagToneColors(
       background: Color(0xfffff0f5),
       iconBackground: Color(0xfff9d9e4),
       foreground: Color(0xffb84d73),
       border: Color(0xfff5cfdb),
     ),
-    _HospitalBagTone.mint => const _HospitalBagToneColors(
+    HospitalBagCartTone.mint => const _HospitalBagToneColors(
       background: Color(0xffedf9f5),
       iconBackground: Color(0xffd4f0e7),
       foreground: Color(0xff267c68),
       border: Color(0xffccebe2),
     ),
-    _HospitalBagTone.sky => const _HospitalBagToneColors(
+    HospitalBagCartTone.sky => const _HospitalBagToneColors(
       background: Color(0xffedf6ff),
       iconBackground: Color(0xffd8ebfb),
       foreground: Color(0xff2f6fa8),
@@ -10430,172 +7718,6 @@ _HospitalBagToneColors _hospitalBagToneColors(_HospitalBagTone tone) {
   };
 }
 
-class _HospitalBagCartGroupSpec {
-  const _HospitalBagCartGroupSpec({
-    required this.title,
-    required this.tone,
-    required this.items,
-  });
-
-  final String title;
-  final _HospitalBagTone tone;
-  final List<_HospitalBagCartItemSpec> items;
-
-  _HospitalBagCartGroupSpec copyWith({List<_HospitalBagCartItemSpec>? items}) {
-    return _HospitalBagCartGroupSpec(
-      title: title,
-      tone: tone,
-      items: items ?? this.items,
-    );
-  }
-}
-
-class _HospitalBagCartItemSpec {
-  const _HospitalBagCartItemSpec({
-    required this.id,
-    required this.name,
-    required this.desc,
-    required this.price,
-  });
-
-  final String id;
-  final String name;
-  final String desc;
-  final double price;
-  int get qty => 1;
-}
-
-String _hospitalBagMoney(double amount) => '¥${amount.toStringAsFixed(2)}';
-
-const _hospitalBagCartGroups = [
-  _HospitalBagCartGroupSpec(
-    title: '妈妈护理',
-    tone: _HospitalBagTone.rose,
-    items: [
-      _HospitalBagCartItemSpec(
-        id: 'mom-pad',
-        name: '产褥垫组合装',
-        desc: '入院与产后前几天使用',
-        price: 59.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-sanitary',
-        name: '产妇卫生巾',
-        desc: '夜用加长款，按住院天数准备',
-        price: 39.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-underwear',
-        name: '一次性内裤',
-        desc: '高腰柔软，产后更方便更换',
-        price: 49.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-wipes',
-        name: '产后护理湿巾',
-        desc: '温和清洁，适合住院随身包',
-        price: 29.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-bottle',
-        name: '产后冲洗瓶',
-        desc: '产后清洁更方便，是否带去医院按医院建议',
-        price: 39.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-briefs',
-        name: '高腰收腹内裤',
-        desc: '不压腹，更适合产后恢复期穿着',
-        price: 69.9,
-      ),
-    ],
-  ),
-  _HospitalBagCartGroupSpec(
-    title: '宝宝出院',
-    tone: _HospitalBagTone.mint,
-    items: [
-      _HospitalBagCartItemSpec(
-        id: 'baby-diaper',
-        name: '新生儿纸尿裤',
-        desc: 'NB 码小包装，避免带太多',
-        price: 59.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-wipes',
-        name: '婴儿柔湿巾',
-        desc: '无香精，适合换尿裤场景',
-        price: 29.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-towel',
-        name: '棉柔巾',
-        desc: '洗脸、擦手、护理都可用',
-        price: 29.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-blanket',
-        name: '宝宝出院包被',
-        desc: '柔软包裹，按季节搭配外层',
-        price: 129,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-clothes',
-        name: '新生儿连体衣礼盒',
-        desc: '出院和回家第一周可替换穿',
-        price: 159,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-bath-towel',
-        name: '婴儿浴巾',
-        desc: '洗澡、包裹和保暖都可用',
-        price: 59.9,
-      ),
-    ],
-  ),
-  _HospitalBagCartGroupSpec(
-    title: '母乳喂养',
-    tone: _HospitalBagTone.sky,
-    items: [
-      _HospitalBagCartItemSpec(
-        id: 'milk-pad',
-        name: '防溢乳垫',
-        desc: '母乳或混合喂养可先备小包装',
-        price: 39.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'milk-cream',
-        name: '乳头护理霜',
-        desc: '哺乳初期不适时可咨询后使用',
-        price: 49.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'milk-storage',
-        name: '储奶袋',
-        desc: '返家后储奶备用，住院可少量准备',
-        price: 49.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'pump-m9',
-        name: 'Momcozy M9 吸奶器',
-        desc: '便携穿戴式双边吸乳，返家后排奶/储奶备用',
-        price: 1087.93,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'milk-bra',
-        name: '哺乳文胸',
-        desc: '产后和哺乳初期更舒适',
-        price: 159,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'milk-bottle',
-        name: '宽口径奶瓶',
-        desc: '混合喂养或返家后备用',
-        price: 89.9,
-      ),
-    ],
-  ),
-];
-
 class _IbclcPage extends StatefulWidget {
   const _IbclcPage({
     required this.path,
@@ -10603,6 +7725,8 @@ class _IbclcPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeUri,
+    this.routeExtra,
   });
 
   final String path;
@@ -10610,6 +7734,8 @@ class _IbclcPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Uri? routeUri;
+  final Object? routeExtra;
 
   @override
   State<_IbclcPage> createState() => _IbclcPageState();
@@ -10623,12 +7749,16 @@ class _IbclcPageState extends State<_IbclcPage> {
   int _connectionStepIndex = 1;
   String? _syncStatus;
   final List<Timer> _connectionTimers = [];
-  static const String _returnToPath = '/status';
   static const _connectionSteps = ['健康信息整理中', '连接中', '连接成功', '对方正在读取背景中'];
+  late final IbclcConsultRouteState _routeState;
 
   @override
   void initState() {
     super.initState();
+    _routeState = IbclcConsultRouteState.fromRoute(
+      extra: widget.routeExtra,
+      uri: widget.routeUri,
+    );
     _scheduleConnectionFlow();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) unawaited(_startConsult());
@@ -10678,41 +7808,51 @@ class _IbclcPageState extends State<_IbclcPage> {
       final result = await runtime.clientEventClient.post(
         AgentStreamClientEventRequest(
           eventType: 'ibclc_consult_started',
+          runId: _routeState.runId,
           label: '用户进入 IBCLC 在线咨询队列',
           occurredAt: runtime.now().toIso8601String(),
           locale: runtime.locale,
-          metadata: const {
-            'consult_id': 'ibclc-flutter-default',
-            'source': 'ibclc-chat',
-            'handoff': 'vendor_h5_native',
-            'return_to': _returnToPath,
-          },
+          metadata: _routeState.eventMetadata(),
         ),
       );
       if (!mounted) return;
       setState(() {
         _consultStarted = true;
         _isStarting = false;
-        _syncStatus = result.sent ? '咨询事件已同步。' : '本地已进入队列，稍后重试同步。';
+        _syncStatus = result.sent ? '咨询事件已同步。' : '已进入咨询，但本次状态未同步。';
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _consultStarted = true;
         _isStarting = false;
-        _syncStatus = '本地已进入队列，稍后重试同步。';
+        _syncStatus = '已进入咨询，但本次状态未同步。';
       });
     }
   }
 
-  void _returnToStatus() {
-    context.go(_returnToPath);
+  void _returnToAgentHub() {
+    context.go(_routeState.returnPath);
   }
 
   void _endConsult() {
     if (_isEnding) return;
     setState(() => _isEnding = true);
-    _returnToStatus();
+    final runtime = MomCozyRuntimeScope.of(context);
+    unawaited(runtime.ibclcConsultStore.markCompleted(_routeState));
+    unawaited(
+      runtime.clientEventClient.post(
+        AgentStreamClientEventRequest(
+          eventType: 'ibclc_consult_completed',
+          runId: _routeState.runId,
+          label: '用户已完成一次 IBCLC 在线咨询',
+          occurredAt: runtime.now().toIso8601String(),
+          locale: runtime.locale,
+          metadata: _routeState.eventMetadata(),
+        ),
+      ),
+    );
+    _returnToAgentHub();
   }
 
   @override
@@ -10728,6 +7868,7 @@ class _IbclcPageState extends State<_IbclcPage> {
               chatReady: _chatReady,
               connectionText: _connectionSteps[_connectionStepIndex],
               syncStatus: _syncStatus,
+              routeState: _routeState,
             ),
           ),
           if (_chatReady) const _IbclcChatComposer(),
@@ -10798,11 +7939,13 @@ class _IbclcChatBody extends StatelessWidget {
     required this.chatReady,
     required this.connectionText,
     required this.syncStatus,
+    required this.routeState,
   });
 
   final bool chatReady;
   final String connectionText;
   final String? syncStatus;
+  final IbclcConsultRouteState routeState;
 
   @override
   Widget build(BuildContext context) {
@@ -10908,7 +8051,7 @@ class _IbclcChatBody extends StatelessWidget {
                     vertical: 12,
                   ),
                   child: Text(
-                    '你好，我是 Emily Chen，IBCLC。我已经看到你从 CoMate 带过来的背景了，你可以先告诉我现在最困扰你的哺乳问题。',
+                    _openingMessage,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: const Color(0xff233c39),
                       height: 1.45,
@@ -10948,6 +8091,18 @@ class _IbclcChatBody extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  String get _openingMessage {
+    final contextParts = <String>[
+      if (routeState.reason.isNotEmpty) '咨询原因：${routeState.reason}',
+      if (routeState.feedingContext.isNotEmpty)
+        '当前情况：${routeState.feedingContext}',
+    ];
+    final contextText = contextParts.isEmpty
+        ? ''
+        : '（${contextParts.join('；')}）';
+    return '你好，我是 ${routeState.consultantName}，IBCLC。我已经看到你从 CoMate 带过来的背景了$contextText，你可以先告诉我现在最困扰你的哺乳问题。';
   }
 }
 
@@ -11233,49 +8388,327 @@ class _MediaViewerContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (media.kind) {
-      'image' => const _ImageViewerStage(),
-      'video' => const _VideoViewerStage(),
-      _ => const _PdfViewerStage(),
+      'image' => _ImageViewerStage(media: media),
+      'video' => _VideoViewerStage(media: media),
+      _ => _PdfViewerStage(media: media),
     };
   }
 }
 
-class _PdfViewerStage extends StatelessWidget {
-  const _PdfViewerStage();
+class _PdfViewerStage extends StatefulWidget {
+  const _PdfViewerStage({required this.media});
+
+  final _MediaViewerRouteState media;
+
+  @override
+  State<_PdfViewerStage> createState() => _PdfViewerStageState();
+}
+
+class _PdfViewerStageState extends State<_PdfViewerStage> {
+  ProductAssetReference? _reference;
+  ProductAssetRepository? _repository;
+  Future<ProductAssetContent>? _content;
+  var _documentRevision = 0;
+  final _pdfController = PdfViewerController();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncContent();
+  }
+
+  @override
+  void didUpdateWidget(_PdfViewerStage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.media.url != widget.media.url ||
+        oldWidget.media.kind != widget.media.kind) {
+      _syncContent();
+    }
+  }
+
+  void _syncContent() {
+    final reference = ProductAssetReference.tryParse(
+      widget.media.url,
+      kind: widget.media.kind,
+      title: widget.media.title,
+    );
+    final repository = MomCozyRuntimeScope.maybeOf(
+      context,
+    )?.productAssetRepository;
+    if (_reference?.assetId == reference?.assetId &&
+        _reference?.kind == reference?.kind &&
+        identical(_repository, repository)) {
+      return;
+    }
+    _reference = reference;
+    _repository = repository;
+    _documentRevision += 1;
+    _content = _load();
+  }
+
+  Future<ProductAssetContent>? _load() {
+    final reference = _reference;
+    final repository = _repository;
+    if (reference == null || repository == null) {
+      return null;
+    }
+    return repository.load(reference);
+  }
+
+  void _retry() {
+    setState(() {
+      _documentRevision += 1;
+      _content = _load();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: MomCozyColors.background,
-      alignment: Alignment.topCenter,
-      padding: const EdgeInsets.only(top: 40),
-      child: Text(
-        '加载 PDF…',
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: MomCozyColors.mutedForeground,
-          fontWeight: FontWeight.w600,
-        ),
+    final reference = _reference;
+    final content = _content;
+    if (reference == null || content == null) {
+      return const _MediaViewerLoadError(
+        message: 'PDF 加载失败',
+        darkBackground: false,
+        icon: Icons.picture_as_pdf_outlined,
+      );
+    }
+    return FutureBuilder<ProductAssetContent>(
+      future: content,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return _MediaViewerLoadError(
+            message: 'PDF 加载失败',
+            darkBackground: false,
+            icon: Icons.picture_as_pdf_outlined,
+            onRetry: _retry,
+          );
+        }
+        final loaded = snapshot.data;
+        if (loaded == null) {
+          return const ColoredBox(
+            color: MomCozyColors.background,
+            child: _MediaViewerLoading(label: '加载 PDF…', darkBackground: false),
+          );
+        }
+        return KeyedSubtree(
+          key: const ValueKey('media-pdf-viewer'),
+          child: PdfViewer.data(
+            loaded.bytes,
+            key: ValueKey('media-pdf-document-$_documentRevision'),
+            sourceName: reference.assetId,
+            controller: _pdfController,
+            params: PdfViewerParams(
+              margin: 8,
+              backgroundColor: MomCozyColors.background,
+              minScale: 0.1,
+              maxScale: 4,
+              panAxis: PanAxis.free,
+              pageDropShadow: const BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+              loadingBannerBuilder: (context, downloaded, total) {
+                return const _MediaViewerLoading(
+                  label: '正在打开 PDF…',
+                  darkBackground: false,
+                );
+              },
+              errorBannerBuilder: (context, error, stackTrace, documentRef) {
+                return _MediaViewerLoadError(
+                  message: 'PDF 加载失败',
+                  darkBackground: false,
+                  icon: Icons.picture_as_pdf_outlined,
+                  onRetry: _retry,
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ImageViewerStage extends StatefulWidget {
+  const _ImageViewerStage({required this.media});
+
+  final _MediaViewerRouteState media;
+
+  @override
+  State<_ImageViewerStage> createState() => _ImageViewerStageState();
+}
+
+class _ImageViewerStageState extends State<_ImageViewerStage> {
+  static const _doubleTapScale = 2.5;
+
+  final _transformationController = TransformationController();
+  Offset? _doubleTapPosition;
+
+  @override
+  void didUpdateWidget(_ImageViewerStage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.media.url != widget.media.url) {
+      _transformationController.value = Matrix4.identity();
+    }
+  }
+
+  @override
+  void dispose() {
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  void _handleDoubleTap() {
+    if (_transformationController.value.getMaxScaleOnAxis() > 1.01) {
+      _transformationController.value = Matrix4.identity();
+      return;
+    }
+    final position = _doubleTapPosition ?? Offset.zero;
+    _transformationController.value =
+        Matrix4.diagonal3Values(_doubleTapScale, _doubleTapScale, 1)
+          ..setTranslationRaw(
+            -position.dx * (_doubleTapScale - 1),
+            -position.dy * (_doubleTapScale - 1),
+            0,
+          );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reference = ProductAssetReference.tryParse(
+      widget.media.url,
+      kind: widget.media.kind,
+      title: widget.media.title,
+    );
+    if (reference == null) {
+      return const _MediaViewerLoadError(message: '图片加载失败');
+    }
+    final repository = MomCozyRuntimeScope.maybeOf(
+      context,
+    )?.productAssetRepository;
+
+    return ColoredBox(
+      color: Colors.black,
+      child: ProductAssetImage(
+        reference: reference,
+        repository: repository,
+        fit: BoxFit.contain,
+        semanticLabel: widget.media.title,
+        loadingBuilder: (context) {
+          return const _MediaViewerLoading(label: '加载图片…');
+        },
+        errorBuilder: (context, error, retry) {
+          return _MediaViewerLoadError(message: '图片加载失败', onRetry: retry);
+        },
+        loadedBuilder: (context, content, image) {
+          return GestureDetector(
+            key: const ValueKey('media-image-viewer'),
+            behavior: HitTestBehavior.opaque,
+            onDoubleTapDown: (details) {
+              _doubleTapPosition = details.localPosition;
+            },
+            onDoubleTap: _handleDoubleTap,
+            child: InteractiveViewer(
+              key: const ValueKey('media-image-interactive-viewer'),
+              transformationController: _transformationController,
+              minScale: 1,
+              maxScale: 5,
+              panEnabled: true,
+              scaleEnabled: true,
+              clipBehavior: Clip.hardEdge,
+              child: SizedBox.expand(child: image),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-class _ImageViewerStage extends StatelessWidget {
-  const _ImageViewerStage();
+class _MediaViewerLoading extends StatelessWidget {
+  const _MediaViewerLoading({required this.label, this.darkBackground = true});
+
+  final String label;
+  final bool darkBackground;
 
   @override
   Widget build(BuildContext context) {
-    return const ColoredBox(
-      color: Colors.black,
-      child: Center(
-        child: Text(
-          '加载图片…',
-          style: TextStyle(
-            color: Color(0xb3ffffff),
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+    final foreground = darkBackground
+        ? const Color(0xb3ffffff)
+        : MomCozyColors.mutedForeground;
+    return Center(
+      key: const ValueKey('media-viewer-loading'),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox.square(
+            dimension: 24,
+            child: CircularProgressIndicator(strokeWidth: 2, color: foreground),
           ),
+          const SizedBox(height: 10),
+          Text(
+            label,
+            style: TextStyle(
+              color: foreground,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MediaViewerLoadError extends StatelessWidget {
+  const _MediaViewerLoadError({
+    required this.message,
+    this.onRetry,
+    this.darkBackground = true,
+    this.icon = Icons.broken_image_outlined,
+  });
+
+  final String message;
+  final VoidCallback? onRetry;
+  final bool darkBackground;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final background = darkBackground ? Colors.black : MomCozyColors.background;
+    final foreground = darkBackground
+        ? const Color(0xb3ffffff)
+        : MomCozyColors.mutedForeground;
+    return ColoredBox(
+      color: background,
+      child: Center(
+        key: const ValueKey('media-viewer-load-error'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: foreground, size: 32),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: TextStyle(
+                color: foreground,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 8),
+              IconButton(
+                key: const ValueKey('media-viewer-retry'),
+                tooltip: '重新加载',
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+                color: foreground,
+              ),
+            ],
+          ],
         ),
       ),
     );
@@ -11283,51 +8716,29 @@ class _ImageViewerStage extends StatelessWidget {
 }
 
 class _VideoViewerStage extends StatelessWidget {
-  const _VideoViewerStage();
+  const _VideoViewerStage({required this.media});
+
+  final _MediaViewerRouteState media;
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: MomCozyColors.background,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            OutlinedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.open_in_full_rounded, size: 18),
-              label: const Text('全屏播放'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: MomCozyColors.foreground,
-                backgroundColor: MomCozyColors.secondary,
-                side: BorderSide.none,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                textStyle: Theme.of(
-                  context,
-                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w800),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: const ColoredBox(
-                  color: Colors.black,
-                  child: Center(
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: Color(0xb3ffffff),
-                      size: 54,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    final reference = ProductAssetReference.tryParse(
+      media.url,
+      kind: media.kind,
+      title: media.title,
+    );
+    final repository = MomCozyRuntimeScope.maybeOf(
+      context,
+    )?.productAssetRepository;
+    if (reference == null || repository == null) {
+      return const _MediaViewerLoadError(
+        message: '视频加载失败',
+        icon: Icons.videocam_off_outlined,
+      );
+    }
+    return ProductAssetVideoPlayer(
+      reference: reference,
+      repository: repository,
     );
   }
 }

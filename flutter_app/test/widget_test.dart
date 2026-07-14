@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
@@ -10,13 +11,88 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import 'support/fixture_api_transport.dart';
+import 'support/fake_agent_voice.dart';
 
 void main() {
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, (call) async {
+          return switch (call.method) {
+            'read' => null,
+            'readAll' => <String, String>{},
+            'containsKey' => false,
+            'write' || 'delete' || 'deleteAll' => null,
+            _ => null,
+          };
+        });
+  });
+
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, null);
+  });
+
+  testWidgets('external Agent links open safely and report launcher failure', (
+    tester,
+  ) async {
+    final launcher = _FakeExternalUrlLauncher(result: false);
+    late BuildContext actionContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) {
+              actionContext = context;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    await dispatchAgentArtifactAction(
+      actionContext,
+      AgentArtifactActionView(
+        label: '专业信息源',
+        icon: Icons.open_in_new_rounded,
+        kind: 'citation',
+        value: 'https://www.who.int/health-topics/breastfeeding',
+        externalUri: Uri.parse(
+          'https://www.who.int/health-topics/breastfeeding',
+        ),
+      ),
+      externalUrlLauncher: launcher,
+    );
+    await tester.pump();
+
+    expect(launcher.opened, [
+      Uri.parse('https://www.who.int/health-topics/breastfeeding'),
+    ]);
+    expect(find.text('无法打开链接，请稍后重试'), findsOneWidget);
+
+    await dispatchAgentArtifactAction(
+      actionContext,
+      AgentArtifactActionView(
+        label: '危险链接',
+        icon: Icons.open_in_new_rounded,
+        kind: 'link',
+        externalUri: Uri.parse('javascript:alert(1)'),
+      ),
+      externalUrlLauncher: launcher,
+    );
+
+    expect(launcher.opened, hasLength(1));
+  });
+
   testWidgets('route shell starts at Agent Hub and navigates bottom tabs', (
     tester,
   ) async {
@@ -31,7 +107,7 @@ void main() {
       tester
           .widget<AgentHubPage>(find.byType(AgentHubPage))
           .interactionStateStore,
-      isNull,
+      isNotNull,
     );
 
     await tester.enterText(
@@ -52,10 +128,39 @@ void main() {
     expect(find.text('计划'), findsWidgets);
   });
 
+  testWidgets('default Agent Hub reads the profile greeting from runtime', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport({
+      'user_id': 'profile-user',
+      'display_name': '小美',
+      'age': 29,
+    });
+    final runtime = MomCozyApiRuntime.fromSession(
+      const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'profile-user',
+        babyId: 'profile-baby',
+        locale: 'zh-CN',
+        accessToken: 'profile-access-token',
+      ),
+      jsonTransport: transport,
+      agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+    );
+
+    await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
+    await tester.pumpAndSettle();
+
+    expect(transport.lastPath, '/v1/profile/me');
+    expect(find.textContaining('嗨 小美'), findsOneWidget);
+    expect(find.textContaining('你希望我怎么称呼你？'), findsNothing);
+  });
+
   testWidgets(
     'route shell keeps Agent Hub stream and voice alive across bottom tabs',
     (tester) async {
       final client = _ControllableAgentStreamClient();
+      final voicePlayer = _WidgetFakeVoicePlaybackPlayer();
       AgentVoicePlaybackCoordinator? shellCoordinator;
 
       await tester.pumpWidget(
@@ -68,6 +173,7 @@ void main() {
               stateCacheKey: runtime,
               runner: AgentStreamRunner(client),
               voicePlaybackCoordinator: voicePlaybackCoordinator,
+              voicePlaybackPlayer: voicePlayer,
               requestBuilder: (message) => AgentStreamRequest(message: message),
             );
           },
@@ -128,7 +234,8 @@ void main() {
           0,
           _agentEvent(id: 'evt-keep-4', type: 'run.completed', sequence: 4),
         );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump();
 
       expect(
         shellCoordinator?.activeSource,
@@ -137,7 +244,8 @@ void main() {
       expect(shellCoordinator?.activeId, 'msg-keep-alive');
 
       await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
       expect(
@@ -150,9 +258,53 @@ void main() {
         findsOneWidget,
       );
 
+      expect(voicePlayer.realtimeSessions, isNotEmpty);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+      expect(shellCoordinator?.activeSource, isNull);
+      expect(
+        voicePlayer.realtimeSessions
+            .map((session) => session.cancelCount)
+            .reduce((left, right) => left + right),
+        1,
+      );
       await client.dispose();
     },
   );
+
+  testWidgets('route shell clears Agent composer focus across bottom tabs', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MomCozyFlutterApp(apiRuntime: _authenticatedRuntime()),
+    );
+    await tester.pumpAndSettle();
+
+    final composer = find.byKey(const ValueKey('agent-composer-input'));
+    await tester.showKeyboard(composer);
+    await tester.enterText(composer, 'Draft stays, keyboard should not');
+    await tester.pump();
+    expect(tester.testTextInput.isVisible, isTrue);
+
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
+    expect(tester.testTextInput.isVisible, isFalse);
+
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      'Draft stays, keyboard should not',
+    );
+    expect(tester.testTextInput.isVisible, isFalse);
+  });
 
   testWidgets('route shell lazily mounts the Agent Hub keep-alive slot', (
     tester,
@@ -225,7 +377,8 @@ void main() {
         'agentAutoSend': true,
       },
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(client.requests, hasLength(1));
     expect(client.requests.single.message, '我已完成孕期计划事项，请继续同步孕期日记');
@@ -300,6 +453,95 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(MomCozyBottomNavigation), findsNothing);
+  });
+
+  testWidgets('route shell ingests cart artifacts before id-only navigation', (
+    tester,
+  ) async {
+    final runtime = _authenticatedRuntime();
+    await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
+    await tester.pumpAndSettle();
+
+    final page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    page.onArtifactAction?.call(
+      AgentArtifactActionView(
+        label: '打开购物车',
+        icon: Icons.shopping_cart_outlined,
+        kind: 'artifact',
+        value: '/hospital-bag-cart',
+        routePath: '/hospital-bag-cart',
+        hospitalBagCartSeed: HospitalBagCartArtifactSeed.tryFromCartUpdate(
+          artifactId: 'shell-personalized',
+          cartUpdate: {
+            'groups': [
+              {
+                'title': '我的清单',
+                'tone': 'sky',
+                'items': [
+                  {
+                    'id': 'shell-custom',
+                    'name': '壳层个性化用品',
+                    'desc': '来自 artifact',
+                    'qty': 1,
+                    'price': 20,
+                  },
+                ],
+              },
+            ],
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('route-page-/hospital-bag-cart')),
+      findsOneWidget,
+    );
+    final featurePage = tester.widget<MomCozyFeaturePage>(
+      find.byType(MomCozyFeaturePage),
+    );
+    expect(featurePage.routeExtra, isA<HospitalBagCartRouteState>());
+    expect(
+      (featurePage.routeExtra! as HospitalBagCartRouteState).cartId,
+      'artifact:shell-personalized',
+    );
+    expect(find.text('壳层个性化用品'), findsOneWidget);
+    expect(find.text('产褥垫组合装'), findsNothing);
+    expect(
+      runtime.hospitalBagCartStore.activeCartId,
+      'artifact:shell-personalized',
+    );
+  });
+
+  testWidgets('route shell clears cart context for a manual new session', (
+    tester,
+  ) async {
+    final runtime = _authenticatedRuntime();
+    runtime.hospitalBagCartStore.ingestArtifact(
+      HospitalBagCartArtifactSeed.tryFromCartUpdate(
+        artifactId: 'previous-session-cart',
+        cartUpdate: {
+          'groups': [
+            {
+              'title': '旧会话清单',
+              'tone': 'rose',
+              'items': [
+                {'id': 'old-item', 'name': '旧会话用品', 'qty': 1, 'price': 10},
+              ],
+            },
+          ],
+        },
+      )!,
+    );
+    await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(runtime.hospitalBagCartStore.activeCartId, isNull);
+    expect(runtime.hospitalBagCartStore.agentClientContext, isNull);
   });
 
   testWidgets('route shell consumes pending native route on startup', (
@@ -407,8 +649,22 @@ void main() {
     await tester.pumpAndSettle();
 
     var page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    final initialPageKey = page.key;
+    final initialStateCacheKey = page.stateCacheKey;
+    expect(
+      (page.interactionStateStore!
+              as FlutterSecureAgentHubInteractionStateStore)
+          .userId,
+      'initial-user',
+    );
     expect(page.requestBuilder('hello').locale, 'zh-CN');
     expect(page.requestBuilder('hello').threadId, isNull);
+    expect(identical(initialStateCacheKey, controller.runtime), isTrue);
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '仅属于 initial-user 的草稿',
+    );
+    await tester.pump();
 
     controller.replaceSession(
       const MomCozySession(
@@ -419,11 +675,27 @@ void main() {
         accessToken: 'secure-access',
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    expect(page.key, isNot(initialPageKey));
+    expect(
+      (page.interactionStateStore!
+              as FlutterSecureAgentHubInteractionStateStore)
+          .userId,
+      'secure-user',
+    );
     expect(page.requestBuilder('hello').locale, 'en-US');
     expect(page.requestBuilder('hello').threadId, isNull);
+    expect(identical(page.stateCacheKey, initialStateCacheKey), isFalse);
+    expect(identical(page.stateCacheKey, controller.runtime), isTrue);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      isEmpty,
+    );
 
     await tester.pumpWidget(const SizedBox.shrink());
     controller.dispose();
@@ -504,6 +776,152 @@ void main() {
     router.dispose();
     controller.dispose();
   });
+
+  testWidgets(
+    'device logout returns to invite login and supports login again',
+    (tester) async {
+      const authenticatedSession = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'logout-user',
+        babyId: 'logout-baby',
+        locale: 'zh-CN',
+        accessToken: 'logout-access',
+        refreshToken: 'logout-refresh',
+      );
+      final store = MemoryMomCozySessionStore(authenticatedSession);
+      final transport = FixtureApiJsonTransport(const {
+        'access_token': 'access-relogin',
+        'refresh_token': 'refresh-relogin',
+        'token_type': 'bearer',
+        'expires_in': 3600,
+        'user': {'id': 'logout-user', 'display_name': 'Logout User'},
+      });
+      final ble = FakeBlePlatform(
+        initialPermission: BlePermissionState.granted,
+        seedDevices: const [
+          BleDeviceSnapshot(
+            side: 'L',
+            deviceId: 'logout-pump-left',
+            deviceName: 'S12 Pro L',
+            connected: true,
+          ),
+        ],
+      );
+      final controller = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: transport,
+          session: authenticatedSession,
+          blePlatform: ble,
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+        ),
+      );
+      final router = createMomCozyRouter(
+        initialLocation: '/device',
+        runtimeController: controller,
+        sessionStore: store,
+        authDeviceIdStore: const _FixedAuthDeviceIdStore('widget-device-001'),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          runtimeController: controller,
+          sessionStore: store,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byTooltip('打开设备快捷菜单'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('退出登录'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('device-logout-confirm')));
+      await tester.pumpAndSettle();
+
+      expect(transport.lastPath, '/v1/auth/logout');
+      expect(await store.readSession(), isNull);
+      expect(controller.runtime.session.isAuthenticated, isFalse);
+      expect(await ble.getConnectedDevices(), isEmpty);
+      expect(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+        findsOneWidget,
+      );
+
+      // Session swaps rebuild production transports, so keep this test on its
+      // deterministic fixture transport for the second invite request.
+      controller.replaceRuntime(
+        MomCozyApiRuntime(
+          jsonTransport: transport,
+          session: controller.runtime.session,
+          blePlatform: ble,
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+        'MCZ-ROUTE-0001',
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
+      await tester.pumpAndSettle();
+
+      expect(transport.lastPath, '/v1/auth/invite-login');
+      expect(transport.lastBody?['invite_code'], 'MCZ-ROUTE-0001');
+      expect(transport.lastBody?['device_id'], 'widget-device-001');
+      expect(controller.runtime.session.isAuthenticated, isTrue);
+      expect((await store.readSession())?.accessToken, 'access-relogin');
+      expect(find.byKey(const ValueKey('route-page-/device')), findsOneWidget);
+
+      router.dispose();
+      controller.dispose();
+    },
+  );
+
+  test(
+    'logout clears the local session when remote revocation fails',
+    () async {
+      const session = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'offline-logout-user',
+        babyId: 'offline-logout-baby',
+        locale: 'zh-CN',
+        accessToken: 'offline-access',
+        refreshToken: 'offline-refresh',
+      );
+      final store = MemoryMomCozySessionStore(session);
+      final controller = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: FixtureApiJsonTransport(const {
+            'status': 503,
+            'error': {
+              'code': 'server_unavailable',
+              'message': 'Service unavailable',
+            },
+          }),
+          session: session,
+        ),
+      );
+
+      await controller.logout(sessionStore: store);
+
+      expect(await store.readSession(), isNull);
+      expect(controller.runtime.session.isAuthenticated, isFalse);
+      controller.dispose();
+    },
+  );
+}
+
+class _FakeExternalUrlLauncher implements ExternalUrlLauncher {
+  _FakeExternalUrlLauncher({required this.result});
+
+  final bool result;
+  final opened = <Uri>[];
+
+  @override
+  Future<bool> open(Uri uri) async {
+    opened.add(uri);
+    return result;
+  }
 }
 
 class _FixedAuthDeviceIdStore implements MomCozyAuthDeviceIdStore {
@@ -542,6 +960,93 @@ class _ControllableAgentStreamClient implements AgentStreamClient {
     }
   }
 }
+
+class _WidgetFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
+  final realtimeSessions = <_WidgetFakeVoiceRealtimePlaybackSession>[];
+  Completer<void>? _active;
+
+  @override
+  Future<void> playText(String text) {
+    _active = Completer<void>();
+    scheduleMicrotask(_completeActiveText);
+    return _active!.future;
+  }
+
+  @override
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  }) {
+    final session = _WidgetFakeVoiceRealtimePlaybackSession();
+    realtimeSessions.add(session);
+    return session;
+  }
+
+  @override
+  Future<void> stop() async {
+    complete();
+    for (final session in realtimeSessions.where(
+      (session) => !session.isDone,
+    )) {
+      await session.cancel();
+    }
+  }
+
+  void complete() {
+    _completeActiveText();
+    for (final session in realtimeSessions.where(
+      (session) => !session.isDone,
+    )) {
+      session.complete();
+    }
+  }
+
+  void _completeActiveText() {
+    final active = _active;
+    if (active != null && !active.isCompleted) {
+      active.complete();
+    }
+  }
+}
+
+class _WidgetFakeVoiceRealtimePlaybackSession
+    implements AgentVoiceRealtimePlaybackSession {
+  final appendedTexts = <String>[];
+  var finishCount = 0;
+  var cancelCount = 0;
+  final Completer<void> _done = Completer<void>();
+
+  bool get isDone => _done.isCompleted;
+
+  @override
+  Future<void> get done => _done.future;
+
+  @override
+  void append(String delta) {
+    appendedTexts.add(delta);
+  }
+
+  @override
+  void flush() {}
+
+  @override
+  void finish() {
+    finishCount += 1;
+  }
+
+  void complete() {
+    if (!_done.isCompleted) _done.complete();
+  }
+
+  @override
+  Future<void> cancel() async {
+    cancelCount += 1;
+    complete();
+  }
+}
+
+const _secureStorageChannel = MethodChannel(
+  'plugins.it_nomads.com/flutter_secure_storage',
+);
 
 AgentStreamEvent _agentEvent({
   required String id,
@@ -585,5 +1090,6 @@ MomCozyApiRuntime _authenticatedRuntime({
     ),
     jsonTransport: FixtureApiJsonTransport(const {'status': 200, 'data': {}}),
     observability: observability,
+    agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
   );
 }

@@ -14,7 +14,7 @@ const toolchainConfig = JSON.parse(
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
   console.log(`Usage:
-  npm run flutter:invite-dev
+  make flutter-invite-dev
 
 Environment overrides:
   MOMCOZY_API_BASE_URL=http://10.0.2.2:8000
@@ -70,7 +70,7 @@ const locale = process.env.MOMCOZY_LOCALE || "zh-CN";
 const resetApp = String(process.env.MOMCOZY_RESET_INVITE_APP || "1").trim() !== "0";
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
-  console.error("Missing flutter_app/pubspec.yaml. Run npm run flutter:init first.");
+  console.error("Missing flutter_app/pubspec.yaml. Run make flutter-init first.");
   process.exit(1);
 }
 

@@ -21,7 +21,17 @@ void main() {
           transcriber: transcriber,
         );
 
-        final result = await controller.captureAndTranscribe();
+        final permission = await controller.startCapture();
+
+        expect(permission, AgentVoiceInputPermissionState.granted);
+        expect(recorder.calls, [
+          'permissionState',
+          'requestPermission',
+          'start',
+        ]);
+        expect(transcriber.recordings, isEmpty);
+
+        final result = await controller.finishCapture();
 
         expect(result.status, AgentVoiceInputResultStatus.transcribed);
         expect(result.text, '今天左侧奶量偏低');
@@ -47,10 +57,9 @@ void main() {
           transcriber: _FakeVoiceTranscriber('ignored'),
         );
 
-        final result = await controller.captureAndTranscribe();
+        final result = await controller.startCapture();
 
-        expect(result.status, AgentVoiceInputResultStatus.permissionDenied);
-        expect(result.permissionState, AgentVoiceInputPermissionState.denied);
+        expect(result, AgentVoiceInputPermissionState.denied);
         expect(recorder.calls, ['permissionState', 'requestPermission']);
       },
     );
@@ -65,10 +74,29 @@ void main() {
         transcriber: _FakeVoiceTranscriber('ignored'),
       );
 
-      await expectLater(controller.captureAndTranscribe(), throwsStateError);
+      await controller.startCapture();
+      await expectLater(controller.finishCapture(), throwsStateError);
 
       expect(recorder.calls, ['permissionState', 'start', 'stop', 'cancel']);
     });
+
+    test(
+      'cancels an active capture without stopping or transcribing',
+      () async {
+        final recorder = _FakeVoiceRecorder();
+        final transcriber = _FakeVoiceTranscriber('ignored');
+        final controller = AgentVoiceInputController(
+          recorder: recorder,
+          transcriber: transcriber,
+        );
+
+        await controller.startCapture();
+        await controller.cancelCapture();
+
+        expect(recorder.calls, ['permissionState', 'start', 'cancel']);
+        expect(transcriber.recordings, isEmpty);
+      },
+    );
   });
 }
 

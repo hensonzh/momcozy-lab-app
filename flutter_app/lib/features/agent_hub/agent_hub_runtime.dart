@@ -39,12 +39,13 @@ AgentStreamRequest buildSessionAgentHubRequest(
   String message, {
   required MomCozySession session,
   String? threadId,
+  Map<String, Object?>? clientContext,
 }) {
   return AgentStreamRequest(
     threadId: _resolvedThreadId(threadId),
     message: message,
     locale: session.locale,
-    metadata: const {'source': 'flutter-agent-hub'},
+    metadata: {'source': 'flutter-agent-hub', ...?clientContext},
   );
 }
 
@@ -63,6 +64,7 @@ AgentStreamRunner createSessionAgentHubRunner(
   MomCozySession session, {
   AgentStreamEndpoint? endpoint,
   String? Function()? accessTokenProvider,
+  AgentStreamUnauthorizedHandler? onUnauthorized,
 }) {
   return AgentStreamRunner(
     SseAgentStreamClient(
@@ -74,6 +76,7 @@ AgentStreamRunner createSessionAgentHubRunner(
               accessTokenProvider: accessTokenProvider,
             ),
         payloadFactory: buildDefaultAgentHubPayload,
+        onUnauthorized: onUnauthorized,
       ),
     ),
   );
@@ -119,6 +122,21 @@ AgentStreamActionClient createSessionAgentHubActionClient(
     endpoint:
         endpoint ??
         sessionAgentHubActionEndpoint(
+          session,
+          accessTokenProvider: accessTokenProvider,
+        ),
+  );
+}
+
+AgentStreamClientEventClient createSessionAgentHubClientEventClient(
+  MomCozySession session, {
+  AgentStreamEndpoint? endpoint,
+  String? Function()? accessTokenProvider,
+}) {
+  return AgentStreamClientEventClient(
+    endpoint:
+        endpoint ??
+        sessionAgentHubSseEndpoint(
           session,
           accessTokenProvider: accessTokenProvider,
         ),

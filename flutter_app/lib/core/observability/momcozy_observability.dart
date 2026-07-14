@@ -113,7 +113,8 @@ class MomCozyObservability {
   }
 }
 
-class ObservedApiJsonTransport implements ApiJsonTransport {
+class ObservedApiJsonTransport
+    implements ApiJsonTransport, ApiJsonMutationTransport {
   ObservedApiJsonTransport({required this.inner, required this.observability});
 
   final ApiJsonTransport inner;
@@ -144,9 +145,73 @@ class ObservedApiJsonTransport implements ApiJsonTransport {
     );
   }
 
+  @override
+  Future<Map<String, Object?>> putJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    return _recordMutation(
+      method: 'PUT',
+      path: path,
+      action: (transport) =>
+          transport.putJson(path, body: body, headers: headers),
+    );
+  }
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    return _recordMutation(
+      method: 'PATCH',
+      path: path,
+      action: (transport) =>
+          transport.patchJson(path, body: body, headers: headers),
+    );
+  }
+
+  @override
+  Future<Map<String, Object?>> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) {
+    return _recordMutation(
+      method: 'DELETE',
+      path: path,
+      successStatusCode: 204,
+      action: (transport) => transport.deleteJson(path, headers: headers),
+    );
+  }
+
+  Future<Map<String, Object?>> _recordMutation({
+    required String method,
+    required String path,
+    int? successStatusCode,
+    required Future<Map<String, Object?>> Function(
+      ApiJsonMutationTransport transport,
+    )
+    action,
+  }) {
+    final transport = inner;
+    if (transport is! ApiJsonMutationTransport) {
+      throw UnsupportedError('JSON mutation transport is not available.');
+    }
+    final mutationTransport = transport as ApiJsonMutationTransport;
+    return _record(
+      method: method,
+      path: path,
+      successStatusCode: successStatusCode,
+      action: () => action(mutationTransport),
+    );
+  }
+
   Future<Map<String, Object?>> _record({
     required String method,
     required String path,
+    int? successStatusCode,
     required Future<Map<String, Object?>> Function() action,
   }) async {
     final watch = Stopwatch()..start();
@@ -157,7 +222,7 @@ class ObservedApiJsonTransport implements ApiJsonTransport {
         method: method,
         path: path,
         elapsed: watch.elapsed,
-        statusCode: _statusCodeFromResponse(response),
+        statusCode: _statusCodeFromResponse(response) ?? successStatusCode,
       );
       return response;
     } catch (error) {

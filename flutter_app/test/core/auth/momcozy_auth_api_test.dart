@@ -305,6 +305,72 @@ void main() {
     });
 
     test(
+      'refreshes authenticated PUT, PATCH, and DELETE mutations once',
+      () async {
+        var current = const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'old-user',
+          babyId: 'baby-001',
+          locale: 'zh-CN',
+          accessToken: 'old-access',
+          refreshToken: 'old-refresh',
+        );
+        final refreshTransport = FixtureApiJsonTransport(_tokenResponse());
+        final mutationTransport = _SequenceTokenTransport([
+          _httpError(401, code: 'authentication_required'),
+          {'operation': 'put'},
+          _httpError(401, code: 'authentication_required'),
+          {'operation': 'patch'},
+          _httpError(401, code: 'authentication_required'),
+          {'operation': 'delete'},
+        ]);
+        final transport = AuthenticatedApiJsonTransport(
+          transportFactory: mutationTransport.forToken,
+          sessionProvider: () => current,
+          refreshCoordinator: MomCozySessionRefreshCoordinator(
+            authRepository: MomCozyAuthApiRepository(
+              transport: refreshTransport,
+            ),
+            store: MemoryMomCozySessionStore(current),
+          ),
+          onSessionChanged: (session) async {
+            current = session;
+          },
+        );
+
+        final putResponse = await transport.putJson(
+          '/v1/pregnancy-diary/entries/2026-07-11',
+          body: const {'mood': '平稳'},
+        );
+        final patchResponse = await transport.patchJson(
+          '/v1/plans/tasks/task-001/completion',
+          body: const {'completed': true},
+        );
+        final deleteResponse = await transport.deleteJson('/v1/plans/plan-001');
+
+        expect(putResponse['operation'], 'put');
+        expect(patchResponse['operation'], 'patch');
+        expect(deleteResponse['operation'], 'delete');
+        expect(mutationTransport.paths, [
+          '/v1/pregnancy-diary/entries/2026-07-11',
+          '/v1/pregnancy-diary/entries/2026-07-11',
+          '/v1/plans/tasks/task-001/completion',
+          '/v1/plans/tasks/task-001/completion',
+          '/v1/plans/plan-001',
+          '/v1/plans/plan-001',
+        ]);
+        expect(mutationTransport.tokens, [
+          'old-access',
+          'access-token-001',
+          'access-token-001',
+          'access-token-001',
+          'access-token-001',
+          'access-token-001',
+        ]);
+      },
+    );
+
+    test(
       'refreshes multipart uploads and retries with the new token',
       () async {
         var current = const MomCozySession(
@@ -427,7 +493,7 @@ class _PerPathTokenTransport {
   }
 }
 
-class _TokenTransport implements ApiJsonTransport {
+class _TokenTransport implements ApiJsonTransport, ApiJsonMutationTransport {
   _TokenTransport({required this.token, required this.onRequest});
 
   final String? token;
@@ -445,6 +511,32 @@ class _TokenTransport implements ApiJsonTransport {
   Future<Map<String, Object?>> postJson(
     String path, {
     Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    return onRequest(path);
+  }
+
+  @override
+  Future<Map<String, Object?>> putJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    return onRequest(path);
+  }
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    return onRequest(path);
+  }
+
+  @override
+  Future<Map<String, Object?>> deleteJson(
+    String path, {
     Map<String, String> headers = const {},
   }) async {
     return onRequest(path);

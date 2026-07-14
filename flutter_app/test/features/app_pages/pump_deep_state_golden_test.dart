@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_ap
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -167,6 +168,7 @@ Future<void> _pumpPumpApp(
 MomCozyApiRuntime _runtime(FixtureApiJsonTransportByPath transport) {
   return MomCozyApiRuntime(
     jsonTransport: transport,
+    agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     blePlatform: FakeBlePlatform(
       initialPermission: BlePermissionState.granted,
       seedDevices: const [

@@ -1,14 +1,36 @@
 # Production Backend API Contract Handoff
 
 This handoff is the human-readable companion to
-`docs/backend-contract/openapi.generated.json`.
+`production_backend/docs/openapi.generated.json`.
 
 ## Contract Sources
 
-- OpenAPI snapshot: `docs/backend-contract/openapi.generated.json`
-- Export command: `python production_backend/scripts/export_openapi.py`
+- OpenAPI snapshot: `production_backend/docs/openapi.generated.json`
+- API surface catalog: `production_backend/docs/api-surface-catalog.md`
+- Export command: `make backend-export-contracts`
 - Runtime base path: `/v1`
 - Error model: stable `{ "error": { "code", "message", "request_id", "details?" } }`
+
+## API Surface Rules
+
+Every OpenAPI operation carries MomCozy extension metadata:
+
+- `x-momcozy-api-surface`: whether the route is app-facing, streaming,
+  internal-service, admin/ops, infra-probe, or deprecated.
+- `x-momcozy-owner`: owning backend module or team boundary.
+- `x-momcozy-client`: intended callers.
+- `x-momcozy-stability`: stability level for client coordination.
+
+Flutter should only integrate routes marked `public_app_api` and the specific
+`runtime_stream_api` routes needed for streaming UX. It must not depend on
+`internal_service_api`, `admin_ops_api`, or `infra_probe_api` routes.
+
+Update flow for API changes:
+
+1. Add or update route metadata in the FastAPI router.
+2. Export OpenAPI.
+3. Regenerate `api-surface-catalog.md`.
+4. Run contract tests.
 
 ## Auth
 
@@ -20,11 +42,11 @@ This handoff is the human-readable companion to
 
 Clients use `Authorization: Bearer <access_token>` for user-facing APIs.
 Refresh tokens are opaque and only sent in request bodies to `/auth/refresh`.
-Invite-login is a beta-access path: the app sends a configured invite code plus
-its stable device id. The first successful login binds that invite code to the
-device id; later logins must use the same device id and receive the same token
-pair contract as signup/login. A different device using an already-bound invite
-code is rejected with `permission_denied`.
+Invite-login is a beta-access path: the mobile app sends a configured invite
+code plus its stable device id. The first successful login binds that invite
+code to the device id; subsequent logins must use the same device id and receive
+the same access/refresh token pair contract as signup/login. A different device
+using an already-bound invite code is rejected with `permission_denied`.
 Service-to-service callers use `X-Service-Key`; this is not a user token and
 must not be used by mobile clients.
 
@@ -35,11 +57,15 @@ must not be used by mobile clients.
 - List: `GET /v1/admin/invite-codes`
 - Disable: `POST /v1/admin/invite-codes/{code}/disable`
 
-These routes are admin/ops-only. The Flutter app must not call them or store
-`X-Service-Key`. Operators use the lightweight admin page/API to create beta
-invite codes and disable a specific code when needed. Managed invite codes are
-stored in Postgres; the first successful app invite login binds a code to the
-stable local `device_id`.
+The lightweight admin page is for operators who need to create and disable beta
+invite codes quickly. The page itself is a static HTML shell; all state-changing
+and listing calls require `X-Service-Key` and are marked `admin_ops_api`.
+
+Managed invite codes live in Postgres and take precedence over legacy
+environment-configured invite codes. The first successful mobile invite login
+binds the code to the app's stable `device_id` and backend user. Disabling the
+code prevents future invite-login attempts, including attempts from the
+previously bound device.
 
 ## Idempotency
 
@@ -118,11 +144,45 @@ path.
 Action API responses likewise expose preview/status metadata only. They do not
 return server-side `apply_payload` or action idempotency keys.
 
+The confirmed `pregnancy.plan.create` apply path also emits the durable
+application event `pregnancy_plan.changed` after the authoritative Plan and
+action result are committed. Its payload is intentionally limited to
+`operation=created`, opaque `plan_id`, `plan_type=pregnancy`,
+`source=agent_action`, and the generic outbox-added `action_id`. Preview,
+confirmation, rejection, and failed apply states do not emit this business
+event, and it never contains the personalized card, plan context, or health
+facts. Clients use it only as an invalidation/notification signal and reload the
+owner-scoped resource through
+`GET /v1/plans?plan_type=pregnancy&status=active`.
+
 ## Files
 
 File upload uses multipart form data at `POST /v1/files/upload`. File metadata
 is owner-scoped and object bytes are stored through the configured object
 storage provider.
+
+## Schedule And Plan Progress
+
+Schedule resources are owner-scoped and never accept a mobile-provided
+`user_id` as authority:
+
+- `GET /v1/plans?plan_type=milk_management&status=active` loads plan context.
+- `GET /v1/plans/tasks/list?task_date=YYYY-MM-DD` loads the selected day.
+- `POST /v1/plans/tasks`, `PATCH/DELETE /v1/plans/tasks/{task_id}` implement
+  task creation and editing.
+- `PATCH /v1/plans/tasks/{task_id}/state` accepts the typed states `pending`,
+  `completed`, and `skipped`.
+- Pumping and feeding creates accept optional `plan_task_id`. When present,
+  record creation and task completion happen in the same database transaction;
+  the record create remains retry-safe through `Idempotency-Key`.
+
+Pregnancy-card todos are not `PlanTask` rows. New pregnancy plan payloads
+persist a stable `item_id` on every structured todo. Clients update one item via
+`PATCH /v1/plans/{plan_id}/todos/{item_id}/completion` with
+`{completed, expected_version}` and an `Idempotency-Key`. The response is the
+complete authoritative `PlanRead` with an incremented `version`. A stale write
+returns `version_conflict`; an old item without `item_id` remains read-only and
+returns `todo_item_not_found`. Clients must never match todo items by title.
 
 ## Product Assets
 
@@ -142,12 +202,13 @@ HTTP voice endpoints require `Authorization: Bearer <access_token>` and never
 accept tokens in URLs. The realtime WebSocket also authenticates through the
 `Authorization` header.
 
-`VOICE_PROVIDER=disabled` is the default stable production contract until a
-managed speech provider is configured. HTTP endpoints return the standard error
-envelope with `code=voice_provider_disabled` and status `503`. The WebSocket
-accepts authenticated clients, sends an `error` frame with the same code, and
-then closes. `VOICE_PROVIDER=local_stub` exists only for local/test contract
-checks and is rejected in production startup validation.
+Voice playback follows the legacy Doubao/Volcengine realtime TTS provider.
+Set `VOICE_PROVIDER=doubao`, `VOICE_API_KEY`, and the TTS resource/voice
+settings from `env/compose.*.env.example`. The Flutter client calls
+`GET /v1/realtime-voice-stream?text=...` with an Authorization header and plays
+the returned PCM chunks through the native PCM player. `VOICE_PROVIDER=disabled`
+keeps the stable `code=voice_provider_disabled` error contract, and
+`VOICE_PROVIDER=local_stub` remains local/test-only.
 
 `VISION_PROVIDER=disabled` is the default stable production contract until a
 managed image analysis provider is configured. The production replacement for
@@ -161,8 +222,8 @@ envelope with `code=vision_provider_disabled` and status `503`.
 Flutter repositories should be generated from or validated against the OpenAPI
 snapshot. Do not build new client code against legacy raw response shapes.
 
-Use `docs/backend-contract/flutter-smoke-flows.json` as the initial integration
+Use `production_backend/docs/flutter-smoke-flows.json` as the initial integration
 smoke fixture for auth, core records/plans/files, agent replay, and voice
 contract checks.
-Use `docs/backend-contract/flutter-client-compatibility.md` for generated
+Use `production_backend/docs/flutter-client-compatibility.md` for generated
 client regeneration and breaking-change rules.

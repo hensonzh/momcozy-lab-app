@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -6,11 +8,22 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/schedule_image_recognition_gateway.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
 
@@ -30,6 +43,7 @@ void main() {
     expect(transport.token, isNull);
     expect(transport.headers, containsPair('X-Momcozy-Client', 'flutter'));
     expect(runtime.observability, same(observed.observability));
+    expect(runtime.scheduleImageRecognitionGateway, isNull);
   });
 
   test('runtime can be bootstrapped from secure session store', () async {
@@ -44,7 +58,12 @@ void main() {
       ),
     );
 
-    final runtime = await MomCozyApiRuntime.bootstrap(store: store);
+    final runtime = await MomCozyApiRuntime.bootstrap(
+      store: store,
+      hospitalBagCartStore: HospitalBagCartStore(
+        persistence: const _EmptyHospitalBagCartPersistence(),
+      ),
+    );
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
     final eventResult = await runtime.clientEventClient.post(
@@ -62,13 +81,70 @@ void main() {
     expect(eventResult.sent, isTrue);
     expect(eventResult.body?['event_type'], 'runtime_bootstrap_test');
     expect(runtime.observability, same(observed.observability));
+    expect(
+      runtime.scheduleImageRecognitionGateway,
+      isA<ApiScheduleImageRecognitionGateway>(),
+    );
   });
+
+  test('runtime bootstrap waits for the active hospital bag cart', () async {
+    final persistence = _DelayedHospitalBagCartPersistence();
+    final cartStore = HospitalBagCartStore(persistence: persistence);
+    final runtimeFuture = MomCozyApiRuntime.bootstrap(
+      store: MemoryMomCozySessionStore(
+        const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'cart-user',
+          babyId: 'cart-baby',
+          locale: 'zh-CN',
+          accessToken: 'cart-access',
+        ),
+      ),
+      hospitalBagCartStore: cartStore,
+    );
+    var completed = false;
+    unawaited(runtimeFuture.then((_) => completed = true));
+    await Future<void>.delayed(Duration.zero);
+    expect(completed, isFalse);
+
+    final seed = _cartSeed('restored-cart');
+    persistence.readCompleter.complete(
+      HospitalBagCartPersistedState(
+        snapshots: {'artifact:restored-cart': seed.snapshot},
+        customizedCartIds: const {'artifact:restored-cart'},
+        activeCartId: 'artifact:restored-cart',
+      ),
+    );
+    final runtime = await runtimeFuture;
+
+    expect(runtime.hospitalBagCartStore.activeCartId, 'artifact:restored-cart');
+    expect(runtime.hospitalBagCartStore.agentClientContext, isNotNull);
+  });
+
+  test(
+    'runtime bootstrap fails closed after bounded cart restore retries',
+    () async {
+      final persistence = _FailingHospitalBagCartPersistence();
+
+      await expectLater(
+        MomCozyApiRuntime.bootstrap(
+          store: MemoryMomCozySessionStore(),
+          hospitalBagCartStore: HospitalBagCartStore(persistence: persistence),
+        ),
+        throwsStateError,
+      );
+      expect(persistence.readCount, 2);
+    },
+  );
 
   test('runtime bootstrap can apply a legacy storage snapshot', () async {
     final migrationStore = _RuntimeMigrationStore();
 
     final runtime = await MomCozyApiRuntime.bootstrap(
       store: MemoryMomCozySessionStore(),
+      hospitalBagCartStore: HospitalBagCartStore(
+        persistence: const _EmptyHospitalBagCartPersistence(),
+      ),
       legacyStorageSnapshot: {
         'localStorage': {
           'mai_debug_user_id': 'legacy-user',
@@ -113,6 +189,8 @@ void main() {
       'user_id': 'user-fixture',
       'delivery_date': '2026-06-11',
     });
+    final statusPreferences = _MemoryStatusPreferenceStore();
+    final volumePreferences = _MemoryVolumeUnitPreferenceStore();
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
       multipartTransport: FixtureApiMultipartTransport({
@@ -122,20 +200,86 @@ void main() {
       userId: 'user-fixture',
       babyId: 'baby-fixture',
       locale: 'zh-CN',
+      statusPreferenceStore: statusPreferences,
+      volumeUnitPreferenceStore: volumePreferences,
     );
 
     expect(runtime.statusRepository, isA<StatusApiRepository>());
+    expect(runtime.agentHubProfileRepository, isA<AgentHubProfileRepository>());
     expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
     expect(runtime.scheduleRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
+    expect(runtime.pregnancyDiaryRepository.transport, same(transport));
+    expect(runtime.pregnancyPlanRepository.transport, same(transport));
+    expect(runtime.statusPreferenceStore, same(statusPreferences));
+    expect(runtime.volumeUnitPreferenceStore, same(volumePreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
+    expect(runtime.productAssetRepository, isA<ProductAssetRepository>());
     expect(runtime.agentVoiceRepository, isA<AgentVoiceApiRepository>());
+    expect(
+      runtime.agentVoicePlaybackPlayer,
+      isA<AgentVoiceApiPlaybackPlayer>(),
+    );
+    expect(
+      runtime.agentVoicePlaybackPlayer,
+      same(runtime.agentVoicePlaybackPlayer),
+    );
     expect(
       runtime.hospitalBagCartRepository,
       isA<HospitalBagCartApiRepository>(),
     );
+    final statusController = runtime.createStatusDashboardController();
+    expect(statusController.babyId, 'baby-fixture');
+    expect(statusController.preferenceStore, same(statusPreferences));
+    expect(statusController.volumeUnitPreferenceStore, same(volumePreferences));
+    expect(
+      statusController.pregnancyDiaryRepository,
+      isA<PregnancyDiaryApiRepository>(),
+    );
+    expect(
+      statusController.pregnancyPlanRepository,
+      isA<PregnancyPlanApiRepository>(),
+    );
+    statusController.dispose();
   });
+
+  test(
+    'schedule postpartum anchor prefers delivery date then birth date',
+    () async {
+      final withDeliveryDate = MomCozyApiRuntime(
+        jsonTransport: FixtureApiJsonTransportByPath({
+          statusProfileEndpoint: const {'delivery_date': '2026-06-11'},
+          statusInfantsEndpoint: const {
+            'items': [
+              {'birth_date': '2026-04-05'},
+            ],
+          },
+        }),
+        userId: 'mom',
+      );
+      final withBirthDateOnly = MomCozyApiRuntime(
+        jsonTransport: FixtureApiJsonTransportByPath({
+          statusProfileEndpoint: const {'user_id': 'mom'},
+          statusInfantsEndpoint: const {
+            'items': [
+              {'birth_date': '2026-04-05'},
+            ],
+          },
+        }),
+        userId: 'mom',
+      );
+
+      expect(
+        await withDeliveryDate.loadSchedulePostpartumAnchorDate(),
+        DateTime(2026, 6, 11),
+      );
+      expect(
+        await withBirthDateOnly.loadSchedulePostpartumAnchorDate(),
+        DateTime(2026, 4, 5),
+      );
+    },
+  );
 
   test('runtime exposes an injected multipart transport lazily', () async {
     final multipart = FixtureApiMultipartTransport({
@@ -318,14 +462,22 @@ void main() {
 
   test('runtime controller replaces runtime and preserves observability', () {
     final observability = MomCozyObservability();
+    final productAssetRepository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: const _NeverProductAssetConnector(),
+    );
     final runtime = MomCozyApiRuntime(
       jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
       userId: 'user-fixture',
       babyId: 'baby-fixture',
       locale: 'zh-CN',
       observability: observability,
+      productAssetRepository: productAssetRepository,
     );
     final controller = MomCozyRuntimeController(runtime);
+    final previousCartStore = runtime.hospitalBagCartStore;
+    final previousConsultStore = runtime.ibclcConsultStore;
+    previousCartStore.ingestArtifact(_cartSeed('previous-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -346,8 +498,60 @@ void main() {
     expect(controller.runtime.userId, 'session-user');
     expect(controller.runtime.session.accessToken, 'session-access');
     expect(controller.runtime.observability, same(observability));
+    expect(
+      controller.runtime.hospitalBagCartStore,
+      isNot(same(previousCartStore)),
+    );
+    expect(controller.runtime.hospitalBagCartStore.agentClientContext, isNull);
+    final cartPersistence = controller.runtime.hospitalBagCartStore.persistence;
+    expect(cartPersistence, isA<FlutterSecureHospitalBagCartPersistence>());
+    expect(
+      (cartPersistence! as FlutterSecureHospitalBagCartPersistence).userId,
+      'session-user',
+    );
+    expect(
+      controller.runtime.ibclcConsultStore,
+      isNot(same(previousConsultStore)),
+    );
+    expect(
+      controller.runtime.productAssetRepository,
+      same(productAssetRepository),
+    );
     controller.dispose();
   });
+
+  test(
+    'runtime controller does not carry an internal voice player to another user',
+    () {
+      final runtime = MomCozyApiRuntime.fromSession(
+        const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'first-user',
+          babyId: 'first-baby',
+          locale: 'zh-CN',
+          accessToken: 'first-access',
+        ),
+      );
+      final firstPlayer = runtime.agentVoicePlaybackPlayer;
+      final controller = MomCozyRuntimeController(runtime);
+
+      controller.replaceSession(
+        const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'second-user',
+          babyId: 'second-baby',
+          locale: 'zh-CN',
+          accessToken: 'second-access',
+        ),
+      );
+
+      expect(
+        controller.runtime.agentVoicePlaybackPlayer,
+        isNot(same(firstPlayer)),
+      );
+      controller.dispose();
+    },
+  );
 
   test('runtime controller keeps auto-refresh transports across sessions', () {
     final observability = MomCozyObservability();
@@ -363,6 +567,9 @@ void main() {
       MomCozyApiRuntime.fromSession(session, observability: observability),
     );
     final store = MemoryMomCozySessionStore(session);
+    final cartStore = controller.runtime.hospitalBagCartStore;
+    final consultStore = controller.runtime.ibclcConsultStore;
+    cartStore.ingestArtifact(_cartSeed('same-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -371,6 +578,12 @@ void main() {
     controller.enableSessionAutoRefresh(store);
 
     expect(notifyCount, 1);
+    expect(controller.runtime.hospitalBagCartStore, same(cartStore));
+    expect(controller.runtime.ibclcConsultStore, same(consultStore));
+    expect(
+      controller.runtime.hospitalBagCartStore.agentClientContext,
+      isNotNull,
+    );
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -389,6 +602,8 @@ void main() {
 
     expect(notifyCount, 2);
     expect(controller.runtime.currentSession.accessToken, 'fresh-access');
+    expect(controller.runtime.hospitalBagCartStore, same(cartStore));
+    expect(controller.runtime.ibclcConsultStore, same(consultStore));
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -400,6 +615,94 @@ void main() {
     expect(controller.runtime.observability, same(observability));
     controller.dispose();
   });
+}
+
+class _MemoryStatusPreferenceStore implements StatusPreferenceStore {
+  StatusCareStage? value;
+
+  @override
+  Future<StatusCareStage?> readCareStage() async => value;
+
+  @override
+  Future<void> writeCareStage(StatusCareStage stage) async {
+    value = stage;
+  }
+}
+
+class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
+  MomCozyVolumeUnit? value;
+
+  @override
+  Future<MomCozyVolumeUnit?> read() async => value;
+
+  @override
+  Future<void> write(MomCozyVolumeUnit unit) async {
+    value = unit;
+  }
+}
+
+class _DelayedHospitalBagCartPersistence implements HospitalBagCartPersistence {
+  final Completer<HospitalBagCartPersistedState?> readCompleter =
+      Completer<HospitalBagCartPersistedState?>();
+
+  @override
+  Future<HospitalBagCartPersistedState?> read() => readCompleter.future;
+
+  @override
+  Future<void> write(HospitalBagCartPersistedState state) async {}
+}
+
+class _EmptyHospitalBagCartPersistence implements HospitalBagCartPersistence {
+  const _EmptyHospitalBagCartPersistence();
+
+  @override
+  Future<HospitalBagCartPersistedState?> read() async => null;
+
+  @override
+  Future<void> write(HospitalBagCartPersistedState state) async {}
+}
+
+class _FailingHospitalBagCartPersistence implements HospitalBagCartPersistence {
+  int readCount = 0;
+
+  @override
+  Future<HospitalBagCartPersistedState?> read() async {
+    readCount += 1;
+    throw StateError('secure cart unavailable');
+  }
+
+  @override
+  Future<void> write(HospitalBagCartPersistedState state) async {}
+}
+
+HospitalBagCartArtifactSeed _cartSeed(String artifactId) {
+  return HospitalBagCartArtifactSeed.tryFromCartUpdate(
+    artifactId: artifactId,
+    cartUpdate: {
+      'groups': [
+        {
+          'title': '我的清单',
+          'tone': 'sky',
+          'items': [
+            {'id': 'custom', 'name': '个性化用品', 'qty': 1, 'price': 10},
+          ],
+        },
+      ],
+    },
+  )!;
+}
+
+class _NeverProductAssetConnector implements ProductAssetHttpConnector {
+  const _NeverProductAssetConnector();
+
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) {
+    throw UnsupportedError('No product asset request expected.');
+  }
 }
 
 class _RuntimeMigrationStore implements StorageMigrationTargetStore {

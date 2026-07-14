@@ -31,7 +31,7 @@ void main() {
       },
     );
 
-    test('retired reminder events no longer open dedicated flows', () {
+    test('keeps retired events generic and maps growth to status', () {
       const retiredEvents = ['summary', 'mom_baby', 'health_issue'];
 
       for (final event in retiredEvents) {
@@ -50,7 +50,40 @@ void main() {
         'notifyJson': '{"event":"grown"}',
       });
 
-      expect(growth?.type, isNot('OpenStatusGrowthHighlight'));
+      expect(growth?.type, 'OpenStatusGrowthHighlight');
+      expect(growth?.path, '/status');
+      expect(growth?.payload, const {
+        'statusIntent': 'growth',
+        'source': 'native-notification',
+      });
+      expect(growth?.consume, 'once');
+
+      final diary = routeIntentFromNativeNotification({
+        'path': '/status?statusIntent=pregnancy-diary',
+      });
+      expect(diary?.type, 'OpenStatusPregnancyDiaryBadge');
+      expect(diary?.payload['statusIntent'], 'pregnancy-diary');
+
+      final plan = routeIntentFromNativeNotification({
+        'path': '/status?statusIntent=birth-journey',
+      });
+      expect(plan?.type, 'OpenStatusBirthJourneyBadge');
+      expect(plan?.payload['statusIntent'], 'birth-journey');
+    });
+
+    test('preserves Android schedule reminder date and task query context', () {
+      final intent = routeIntentFromNativeNotification({
+        'path': '/schedule?date=2026-07-04&task_id=feeding-afternoon',
+      });
+
+      expect(intent?.type, 'OpenScheduleReminder');
+      expect(intent?.path, '/schedule');
+      expect(intent?.payload, const {
+        'source': 'native-notification',
+        'taskId': 'feeding-afternoon',
+        'date': '2026-07-04',
+      });
+      expect(intent?.consume, 'once');
     });
 
     test(
