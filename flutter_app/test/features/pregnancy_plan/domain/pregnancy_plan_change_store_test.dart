@@ -31,6 +31,17 @@ void main() {
       expect(change.source, 'agent_action');
     });
 
+    test('projects updates as privacy-safe invalidation events', () {
+      final change = PregnancyPlanChange.tryFromEvent(
+        _changedEvent(eventId: 'evt-plan-updated', operation: 'updated'),
+      );
+
+      expect(change, isNotNull);
+      expect(change!.operation, 'updated');
+      expect(change.planId, 'plan-pregnancy-1');
+      expect(change.source, 'agent_action');
+    });
+
     test('rejects transient, unrelated, and malformed events', () {
       expect(
         PregnancyPlanChange.tryFromEvent(
@@ -60,7 +71,7 @@ void main() {
       );
       for (final payload in const [
         {
-          'operation': 'updated',
+          'operation': 'archived',
           'plan_id': 'plan-pregnancy-1',
           'plan_type': 'pregnancy',
           'source': 'agent_action',

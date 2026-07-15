@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 
 const _pregnancyPlanChangedEventType = 'pregnancy_plan.changed';
-const _supportedOperations = <String>{'created', 'deleted'};
+const _supportedOperations = <String>{'created', 'updated', 'deleted'};
 const _maxSeenEventIds = 64;
 
 @immutable
