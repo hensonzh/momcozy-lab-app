@@ -662,6 +662,51 @@ data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run
       );
     });
 
+    test('completes safety-blocked runs with the visible assistant guidance', () {
+      var state = const AgentStreamRunState().start();
+      const safetyText =
+          '你描述的情况可能涉及紧急健康风险。请立即联系当地急救服务。本回复不能替代现场医疗评估。';
+      final events = <AgentStreamEvent>[
+        AgentStreamEvent(const {
+          'type': 'message.completed',
+          'run_id': 'run-safety',
+          'payload': {'role': 'user', 'message_id': 'message-user'},
+        }),
+        AgentStreamEvent(const {
+          'type': 'safety.blocked',
+          'run_id': 'run-safety',
+          'payload': {
+            'category': 'health_red_flag',
+            'handoff_type': 'medical_or_emergency_support',
+          },
+        }),
+        AgentStreamEvent(const {
+          'type': 'message.completed',
+          'run_id': 'run-safety',
+          'message_id': 'message-assistant',
+          'payload': {
+            'role': 'assistant',
+            'text': safetyText,
+            'safety_category': 'health_red_flag',
+          },
+        }),
+        AgentStreamEvent(const {
+          'type': 'run.completed',
+          'run_id': 'run-safety',
+          'payload': {'safety_category': 'health_red_flag'},
+        }),
+      ];
+
+      for (final event in events) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.phase, AgentStreamRunPhase.finished);
+      expect(state.textContent, safetyText);
+      expect(state.errorMessage, isNull);
+      expect(state.canRetry, isFalse);
+    });
+
     test(
       'preserves waiting-for-confirmation state without retry affordance',
       () {
