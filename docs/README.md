@@ -12,10 +12,13 @@
 
 ## 常用入口
 
-- Flutter 生产重构计划：`flutter/production-refactor-plan.md`
-- Agent Hub 旧 Web 体验对齐风险台账：`flutter/agent-hub-legacy-web-parity-risk-register.md`
+- Flutter Android 打包策略：`flutter/android-packaging.md`
+- Android APK 自建下载页：`flutter/android-apk-self-hosting.md`
 - Flutter 发布 gate：`flutter/release-gate.md`
 - Flutter 安全隐私 gate：`flutter/security-privacy-gates.md`
 - Flutter staging smoke：`flutter/staging-smoke.md`
+- Flutter 真机与真泵 smoke：`flutter/p0-smoke-checklist.md`
 - BLE 设备协议：`device/设备APP蓝牙通信协议.md`
 - 后端合同快照：`backend-contract/openapi.generated.json`
+- 后端合同交接说明：`backend-contract/api-contract-handoff.md`
+- Flutter client compatibility：`backend-contract/flutter-client-compatibility.md`
