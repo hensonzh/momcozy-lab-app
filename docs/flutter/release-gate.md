@@ -23,6 +23,8 @@ flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 
 `tool/staging_smoke.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
 
+`scripts/build-flutter-android-apk.mjs` 在构建 release APK 前会执行 `flutter clean` 和 `flutter pub get`，避免分发包复用上一源码版本的 AOT 快照。debug 构建仍保留增量构建以缩短本地开发反馈时间。
+
 ## Android Flavors
 
 | Flavor | Application ID | 用途 |
