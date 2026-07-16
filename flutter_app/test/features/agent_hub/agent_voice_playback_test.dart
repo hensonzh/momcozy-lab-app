@@ -295,6 +295,102 @@ void main() {
     expect(connection.finishCount, 1);
   });
 
+  test(
+    'realtime voice receives ahead while native PCM playback is blocked',
+    () async {
+      final connection = _ScriptedRealtimeSessionConnection(
+        audioChunks: const [
+          [1, 2],
+          [3, 4],
+        ],
+      );
+      final pcmPlayer = _BlockingPcmPlayer();
+      final player = AgentVoiceApiPlaybackPlayer(
+        repository: _RecordingVoiceRepository(connection: connection),
+        pcmPlayer: pcmPlayer,
+      );
+
+      final session = player.startRealtimeSession();
+      session.append('这是一段需要连续播报的内容。');
+      session.finish();
+      await pumpEventQueue(times: 5);
+
+      expect(pcmPlayer.writes, hasLength(1));
+      expect(connection.generatedAudioChunks, 2);
+      expect(connection.generatedCompletion, isTrue);
+
+      pcmPlayer.releaseFirstWrite();
+      await session.done;
+
+      expect(pcmPlayer.writes, [
+        [1, 2],
+        [3, 4],
+      ]);
+      expect(pcmPlayer.finishes, 1);
+      expect(pcmPlayer.stops, 0);
+    },
+  );
+
+  test('realtime voice bounds queued PCM while playback is blocked', () async {
+    final connection = _ScriptedRealtimeSessionConnection(
+      audioChunks: const [
+        [1, 2],
+        [3, 4],
+      ],
+    );
+    final pcmPlayer = _BlockingPcmPlayer();
+    final player = AgentVoiceApiPlaybackPlayer(
+      repository: _RecordingVoiceRepository(connection: connection),
+      pcmPlayer: pcmPlayer,
+      maxBufferedPcmBytes: 2,
+    );
+
+    final session = player.startRealtimeSession();
+    session.append('本地队列达到上限后应该施加反压。');
+    session.finish();
+    await pumpEventQueue(times: 5);
+
+    expect(connection.generatedAudioChunks, 2);
+    expect(connection.generatedCompletion, isFalse);
+
+    pcmPlayer.releaseFirstWrite();
+    await session.done;
+
+    expect(connection.generatedCompletion, isTrue);
+    expect(pcmPlayer.writes, [
+      [1, 2],
+      [3, 4],
+    ]);
+  });
+
+  test('realtime voice treats EOF without completion as interrupted', () async {
+    final connection = _ScriptedRealtimeSessionConnection(
+      audioChunks: const [
+        [5, 6],
+      ],
+      includeCompletion: false,
+    );
+    final pcmPlayer = _RecordingPcmPlayer();
+    final player = AgentVoiceApiPlaybackPlayer(
+      repository: _RecordingVoiceRepository(connection: connection),
+      pcmPlayer: pcmPlayer,
+    );
+
+    final session = player.startRealtimeSession();
+    session.append('连接提前结束时也要保留已经收到的尾音。');
+    session.finish();
+
+    await expectLater(
+      session.done,
+      throwsA(isA<AgentVoiceSessionDisconnectedException>()),
+    );
+    expect(pcmPlayer.writes, [
+      [5, 6],
+    ]);
+    expect(pcmPlayer.finishes, 1);
+    expect(pcmPlayer.stops, 0);
+  });
+
   test('realtime voice sends body after a URL line before finish', () async {
     final connection = _RecordingRealtimeSessionConnection();
     final player = AgentVoiceApiPlaybackPlayer(
@@ -360,7 +456,7 @@ class _RecordingVoiceRepository implements AgentVoiceRepository {
   _RecordingVoiceRepository({this.connection});
 
   final texts = <String>[];
-  final _RecordingRealtimeSessionConnection? connection;
+  final AgentVoiceRealtimeSessionConnection? connection;
   var openRealtimeSessionCount = 0;
 
   @override
@@ -467,5 +563,74 @@ class _RecordingRealtimeSessionConnection
     _controller.add(
       const AgentVoiceSessionEvent(type: AgentVoiceSessionEventType.completed),
     );
+  }
+}
+
+class _ScriptedRealtimeSessionConnection
+    implements AgentVoiceRealtimeSessionConnection {
+  _ScriptedRealtimeSessionConnection({
+    required this.audioChunks,
+    this.includeCompletion = true,
+  });
+
+  final List<List<int>> audioChunks;
+  final bool includeCompletion;
+  final appendedTexts = <String>[];
+  var generatedAudioChunks = 0;
+  var generatedCompletion = false;
+  var finishCount = 0;
+  var cancelCount = 0;
+  var closeCount = 0;
+
+  @override
+  Stream<AgentVoiceSessionEvent> get events async* {
+    yield const AgentVoiceSessionEvent(type: AgentVoiceSessionEventType.opened);
+    for (final bytes in audioChunks) {
+      generatedAudioChunks += 1;
+      yield AgentVoiceSessionEvent(
+        type: AgentVoiceSessionEventType.audioChunk,
+        audioBytes: bytes,
+      );
+    }
+    if (includeCompletion) {
+      generatedCompletion = true;
+      yield const AgentVoiceSessionEvent(
+        type: AgentVoiceSessionEventType.completed,
+      );
+    }
+  }
+
+  @override
+  Future<void> append(String text) async {
+    appendedTexts.add(text);
+  }
+
+  @override
+  Future<void> finish() async {
+    finishCount += 1;
+  }
+
+  @override
+  Future<void> cancel() async {
+    cancelCount += 1;
+  }
+
+  @override
+  Future<void> close() async {
+    closeCount += 1;
+  }
+}
+
+class _BlockingPcmPlayer extends _RecordingPcmPlayer {
+  final Completer<void> _firstWriteReleased = Completer<void>();
+
+  @override
+  Future<void> write(List<int> bytes) async {
+    writes.add(bytes);
+    if (writes.length == 1) await _firstWriteReleased.future;
+  }
+
+  void releaseFirstWrite() {
+    if (!_firstWriteReleased.isCompleted) _firstWriteReleased.complete();
   }
 }

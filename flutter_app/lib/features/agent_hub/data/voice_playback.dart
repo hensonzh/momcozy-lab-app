@@ -10,6 +10,7 @@ const defaultAgentVoicePcmPlayerChannelName =
 const agentVoicePlaybackMaxChunkChars = 900;
 const agentVoiceRealtimeMaxSegmentChars = 64;
 const agentVoiceRealtimeMinSegmentChars = 12;
+const agentVoiceRealtimeMaxBufferedPcmBytes = 4 * 1024 * 1024;
 
 final _voiceBareUrlPattern = RegExp(
   r'''\b(?:(?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、]+''',
@@ -92,12 +93,15 @@ class AgentVoiceApiPlaybackPlayer implements AgentVoicePlaybackPlayer {
     AgentVoicePcmPlayer? pcmPlayer,
     this.sampleRate = 24000,
     this.channels = 1,
-  }) : pcmPlayer = pcmPlayer ?? MethodChannelAgentVoicePcmPlayer();
+    this.maxBufferedPcmBytes = agentVoiceRealtimeMaxBufferedPcmBytes,
+  }) : assert(maxBufferedPcmBytes > 0),
+       pcmPlayer = pcmPlayer ?? MethodChannelAgentVoicePcmPlayer();
 
   final AgentVoiceRepository repository;
   final AgentVoicePcmPlayer pcmPlayer;
   final int sampleRate;
   final int channels;
+  final int maxBufferedPcmBytes;
   int _playToken = 0;
 
   @override
@@ -133,6 +137,7 @@ class AgentVoiceApiPlaybackPlayer implements AgentVoicePlaybackPlayer {
       pcmPlayer: pcmPlayer,
       sampleRate: sampleRate,
       channels: channels,
+      maxBufferedPcmBytes: maxBufferedPcmBytes,
       isCurrent: () => token == _playToken,
       mediaNarrationResolver: mediaNarrationResolver,
     );
@@ -152,6 +157,7 @@ class AgentVoiceApiRealtimePlaybackSession
     required this.pcmPlayer,
     required this.sampleRate,
     required this.channels,
+    required this.maxBufferedPcmBytes,
     required this.isCurrent,
     this.mediaNarrationResolver,
     this.maxSegmentChars = agentVoiceRealtimeMaxSegmentChars,
@@ -167,6 +173,7 @@ class AgentVoiceApiRealtimePlaybackSession
   final AgentVoicePcmPlayer pcmPlayer;
   final int sampleRate;
   final int channels;
+  final int maxBufferedPcmBytes;
   final bool Function() isCurrent;
   final AgentVoiceMediaNarrationResolver? mediaNarrationResolver;
   final int maxSegmentChars;
@@ -178,7 +185,11 @@ class AgentVoiceApiRealtimePlaybackSession
   final List<String> _pendingSegments = <String>[];
   AgentVoiceRealtimeSessionConnection? _connection;
   Future<void> _sendQueue = Future<void>.value();
+  Future<void> _pcmWriteQueue = Future<void>.value();
+  Completer<void>? _pcmCapacityAvailable;
   String _buffer = '';
+  int _bufferedPcmBytes = 0;
+  Object? _pcmWriteFailure;
   bool _cancelled = false;
   bool _finished = false;
   bool _finishSent = false;
@@ -220,6 +231,7 @@ class AgentVoiceApiRealtimePlaybackSession
     _buffer = '';
     _textFilter.clear();
     _pendingSegments.clear();
+    _signalPcmCapacityAvailable();
     final connection = _connection;
     if (connection != null) {
       try {
@@ -236,6 +248,7 @@ class AgentVoiceApiRealtimePlaybackSession
 
   Future<void> _run() async {
     Object? failure;
+    var receivedCompletion = false;
     try {
       final connection = await repository.openRealtimeVoiceSession();
       if (_cancelled || !isCurrent()) {
@@ -255,14 +268,22 @@ class AgentVoiceApiRealtimePlaybackSession
             break;
           case AgentVoiceSessionEventType.audioChunk:
             if (event.audioBytes.isNotEmpty) {
-              await pcmPlayer.write(event.audioBytes);
+              await _enqueuePcm(event.audioBytes);
             }
             break;
           case AgentVoiceSessionEventType.completed:
+            receivedCompletion = true;
             return;
           case AgentVoiceSessionEventType.failed:
             throw StateError(event.message ?? '实时语音播报失败');
         }
+      }
+      if (!_cancelled && isCurrent() && !receivedCompletion) {
+        throw const AgentVoiceSessionDisconnectedException(
+          code: 1006,
+          wasClean: false,
+          reason: 'Voice session ended before completion.',
+        );
       }
     } catch (error) {
       failure = error;
@@ -270,8 +291,18 @@ class AgentVoiceApiRealtimePlaybackSession
       await _sendQueue.catchError((Object error) {
         failure ??= error;
       });
-      await _closeConnection();
-      await _stopPcm(immediate: _cancelled || failure != null || !isCurrent());
+      try {
+        await _closeConnection();
+      } catch (error) {
+        failure ??= error;
+      }
+      if (!_cancelled) {
+        await _pcmWriteQueue;
+        failure ??= _pcmWriteFailure;
+      }
+      await _stopPcm(
+        immediate: _cancelled || _pcmWriteFailure != null || !isCurrent(),
+      );
       if (!_done.isCompleted) {
         if (_cancelled || failure == null) {
           _done.complete();
@@ -280,6 +311,44 @@ class AgentVoiceApiRealtimePlaybackSession
         }
       }
     }
+  }
+
+  Future<void> _enqueuePcm(List<int> bytes) async {
+    if (bytes.isEmpty || _cancelled || !isCurrent()) return;
+    while (!_cancelled &&
+        isCurrent() &&
+        _pcmWriteFailure == null &&
+        _bufferedPcmBytes > 0 &&
+        _bufferedPcmBytes + bytes.length > maxBufferedPcmBytes) {
+      final capacity = _pcmCapacityAvailable ??= Completer<void>();
+      await capacity.future;
+    }
+    if (_cancelled || !isCurrent()) return;
+    final writeFailure = _pcmWriteFailure;
+    if (writeFailure != null) throw writeFailure;
+
+    final pcmBytes = Uint8List.fromList(bytes);
+    _bufferedPcmBytes += pcmBytes.length;
+    _pcmWriteQueue = _pcmWriteQueue.then((_) async {
+      try {
+        if (!_cancelled && isCurrent() && _pcmWriteFailure == null) {
+          await pcmPlayer.write(pcmBytes);
+        }
+      } catch (error) {
+        _pcmWriteFailure ??= error;
+      } finally {
+        _bufferedPcmBytes = (_bufferedPcmBytes - pcmBytes.length)
+            .clamp(0, maxBufferedPcmBytes)
+            .toInt();
+        _signalPcmCapacityAvailable();
+      }
+    });
+  }
+
+  void _signalPcmCapacityAvailable() {
+    final capacity = _pcmCapacityAvailable;
+    _pcmCapacityAvailable = null;
+    if (capacity != null && !capacity.isCompleted) capacity.complete();
   }
 
   void _drainBuffer({required bool force}) {

@@ -975,20 +975,20 @@ class MainActivity : FlutterActivity() {
         }
         if (bytes.isNotEmpty()) {
             val writtenBytes = try {
-                track.write(bytes, 0, bytes.size)
+                var offset = 0
+                while (offset < bytes.size) {
+                    val count = track.write(bytes, offset, bytes.size - offset)
+                    if (count <= 0) {
+                        throw IllegalStateException("Unable to write PCM audio output: $count")
+                    }
+                    offset += count
+                }
+                offset
             } catch (error: RuntimeException) {
                 replyVoiceError(
                     result,
                     "voice_pcm_write_failed",
                     error.message ?: "Unable to write PCM audio output"
-                )
-                return
-            }
-            if (writtenBytes < 0) {
-                replyVoiceError(
-                    result,
-                    "voice_pcm_write_failed",
-                    "Unable to write PCM audio output: $writtenBytes"
                 )
                 return
             }
