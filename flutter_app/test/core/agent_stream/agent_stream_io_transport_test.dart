@@ -52,7 +52,7 @@ void main() {
         'poll_interval_seconds': '0.01',
       });
       expect(postedBody['message'], 'Review my pumping pattern.');
-      expect(postedBody['runtime_pattern'], 'langgraph_sdk');
+      expect(postedBody['runtime_pattern'], 'sdk_only');
       expect(postedBody.containsKey('user_id'), isFalse);
       expect(
         runConnector.headers,
@@ -279,13 +279,13 @@ void main() {
       final response = await connector.post(
         Uri.parse('http://${server.address.host}:${server.port}/v1/agent/runs'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'message': '你好', 'runtime_pattern': 'langgraph_sdk'}),
+        body: jsonEncode({'message': '你好', 'runtime_pattern': 'sdk_only'}),
       );
 
       expect(response.statusCode, 201);
       expect(jsonDecode(await receivedBody) as Map<String, Object?>, {
         'message': '你好',
-        'runtime_pattern': 'langgraph_sdk',
+        'runtime_pattern': 'sdk_only',
       });
     });
 
