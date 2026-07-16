@@ -1,8 +1,8 @@
 # Flutter P0 真机与真泵 Smoke Checklist
 
-> 状态：Phase 0 可执行清单。  
-> 目的：Flutter shell 和核心 native PoC 出来后，用同一张表验证 Android 版本差异、BLE、Pump session、Agent stream 和数据上传。  
-> 结论规则：P0 任一阻断项失败，不能替换现有 Capacitor App。
+> 状态：Phase 0 可执行清单。
+> 目的：用同一张表验证 Android 版本差异、BLE、Pump session、Agent stream 和数据上传。
+> 结论规则：P0 任一阻断项失败，当前 Flutter build 不能发布。
 
 ---
 

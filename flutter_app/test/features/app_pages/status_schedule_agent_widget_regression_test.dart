@@ -45,7 +45,7 @@ void main() {
         .setMockMethodCallHandler(_secureStorageChannel, null);
   });
 
-  group('Legacy Web widget parity: 宝宝和我', () {
+  group('Flutter widget regression: 宝宝和我', () {
     testWidgets('covers postpartum mom widgets, trend card, and bottom nav', (
       tester,
     ) async {
@@ -743,7 +743,7 @@ void main() {
     });
   });
 
-  group('Legacy Web widget parity: 计划', () {
+  group('Flutter widget regression: 计划', () {
     testWidgets(
       'transfers an Agent plan update into refreshed highlighted schedule UI',
       (tester) async {
@@ -886,7 +886,7 @@ void main() {
     });
   });
 
-  group('Legacy Web widget parity: 智能体主页', () {
+  group('Flutter widget regression: 智能体主页', () {
     testWidgets(
       'covers shell nav, top controls, transcript, fade, and composer',
       (tester) async {

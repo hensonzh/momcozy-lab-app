@@ -29,7 +29,7 @@ flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 |---|---|---|
 | `local` | `com.momcozymai.app.flutterpoc.local` | 本地开发和 debug smoke。 |
 | `staging` | `com.momcozymai.app.flutterpoc.staging` | 后端 staging / internal distribution smoke。 |
-| `production` | `com.momcozymai.app.flutterpoc` | Flutter production-shaped artifact；正式变更包名策略前不覆盖旧版 appId。 |
+| `production` | `com.momcozymai.app.flutterpoc` | Flutter production-shaped artifact；包名变更须经过独立发布审批。 |
 
 ## Release Signing
 
@@ -56,5 +56,5 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 make flutter-release-gate
 
 - 该 gate 覆盖非真机构建、静态检查、单元/widget/fixture 测试、staging smoke harness 和 storage migration dry-run。
 - 该 gate 静态校验 Flutter appId、FileProvider authority 和外部 deep link 边界。
-- 旧 Web/Capacitor 归档不再属于根 release gate；如需手动验证旧版实现，请在 `legacy_web/` 内单独运行。
+- 根 release gate 仅覆盖当前 Flutter 客户端及其原生集成。
 - 真机安装、BLE、通知、后台服务、Doze、电池优化和真泵行为仍属于 L4 device lab。

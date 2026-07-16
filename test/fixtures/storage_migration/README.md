@@ -1,6 +1,6 @@
 # Storage Migration Fixtures
 
-These fixtures define legacy Web/Capacitor storage input and expected Flutter migration output.
+These fixtures define previously persisted storage input and expected Flutter migration output.
 
 Each fixture uses the same shape:
 

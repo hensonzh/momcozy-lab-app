@@ -1,6 +1,6 @@
 # MomCozy Flutter App
 
-Phase 0 Flutter shell for the MomCozyApp migration.
+Production Flutter client for MomCozyApp.
 
 ## Toolchain Baseline
 
@@ -77,7 +77,7 @@ flutter run \
 Android 真机不能使用 `127.0.0.1` 访问电脑上的 Agent 服务，需要改成手机可访问的局域网或公网地址。Android emulator 可使用 `10.0.2.2`。
 如 cancel 服务和统一 API 分开部署，可额外设置 `MOMCOZY_AGENT_CANCEL_URL`。
 
-Current Android PoC package:
+Current Android package IDs:
 
 - `local` applicationId: `com.momcozymai.app.flutterpoc.local`
 - `staging` applicationId: `com.momcozymai.app.flutterpoc.staging`
@@ -85,7 +85,7 @@ Current Android PoC package:
 - Packaging policy: [docs/flutter/android-packaging.md](../docs/flutter/android-packaging.md)
 - Release gate: [docs/flutter/release-gate.md](../docs/flutter/release-gate.md)
 
-## Phase 0 Contract Tests
+## Contract and Regression Tests
 
 Current Dart test coverage:
 
@@ -117,13 +117,12 @@ Current Dart test coverage:
 - Pump agent upload fake platform fixtures cover method schemas, call/failure streams, sensitive failure redaction, and duplicate upload dedupe keys.
 - Agent Hub runtime fixtures cover default SSE runner injection, production run payload generation, and route-shell composer send-ready state.
 
-Next migration gap:
+Remaining device-lab gap:
 
 - Run Android real-device P0 smoke for BLE, foreground service, background runner uploads, and notification recovery.
 
-## Migration Notes
+## Engineering Notes
 
-- Keep the existing Web/Capacitor app as the behavior baseline until Flutter parity gates pass.
 - Add fixtures before feature UI: BLE protocol, Agent SSE stream, API envelope, storage migration, and route intents.
 - Keep native Android capabilities behind typed platform interfaces.
 - `android/gradle.properties` pins `android.aapt2FromMavenOverride` to SDK build-tools 36.0.0 because Maven AAPT2 9.0.1 fails to start on this machine.
