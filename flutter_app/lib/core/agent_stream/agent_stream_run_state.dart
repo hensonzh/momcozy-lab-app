@@ -91,9 +91,7 @@ class AgentStreamRunState {
   bool get blocksComposer =>
       isActive || phase == AgentStreamRunPhase.waitingForConfirmation;
 
-  bool get canRetry =>
-      phase == AgentStreamRunPhase.error ||
-      phase == AgentStreamRunPhase.disconnected;
+  bool get canRetry => phase == AgentStreamRunPhase.disconnected;
 
   bool get hasTextSegmentGap => pendingTextSegments.isNotEmpty;
 

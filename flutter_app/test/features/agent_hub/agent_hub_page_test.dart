@@ -547,6 +547,42 @@ void main() {
     expect(find.textContaining('连接中断'), findsNothing);
   });
 
+  testWidgets('Agent Hub keeps terminal failure and cancel replies text-only', (
+    tester,
+  ) async {
+    for (final phase in <AgentStreamRunPhase>[
+      AgentStreamRunPhase.error,
+      AgentStreamRunPhase.cancelled,
+    ]) {
+      await tester.pumpWidget(
+        _host(
+          AgentRunTranscript(
+            state: AgentStreamRunState(
+              phase: phase,
+              quickReplies: const ['快捷一', '快捷二', '快捷三'],
+            ),
+            canRetry: true,
+            onRetry: () {},
+            actionCards: const [
+              AgentActionCardView(
+                id: 'terminal-action',
+                title: '不应展示的操作',
+                status: 'confirmation_required',
+              ),
+            ],
+            onConfirmAction: (_) {},
+            onRejectAction: (_) {},
+            onQuickReplySelected: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
+      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
+      expect(find.text('不应展示的操作'), findsNothing);
+    }
+  });
+
   testWidgets('Agent Hub marks active assistant avatar as thinking', (
     tester,
   ) async {
@@ -3611,6 +3647,186 @@ void main() {
     await tester.pump();
 
     expect(find.text('已停止本次回复'), findsOneWidget);
+  });
+
+  testWidgets(
+    'Agent Hub keeps failed copy button-free and accepts the next turn',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'First turn',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'failed-first-turn',
+          'type': 'run.failed',
+          'thread_id': 'thread-terminal-followup',
+          'run_id': 'run-failed-first',
+          'sequence': 1,
+          'payload': {'code': 'runtime_error'},
+        }),
+      );
+      await tester.pump();
+
+      expect(find.text('这次处理没有成功，暂时没有生成回复。你可以重试一次。'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Second turn',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      expect(client.requests, hasLength(2));
+      expect(client.requests.last.runId, isNull);
+      expect(client.requests.last.threadId, 'thread-terminal-followup');
+
+      client.emit(
+        1,
+        AgentStreamEvent(const {
+          'event_id': 'second-turn-message',
+          'type': 'message.completed',
+          'thread_id': 'thread-terminal-followup',
+          'run_id': 'run-second',
+          'message_id': 'message-second',
+          'sequence': 1,
+          'payload': {'role': 'assistant', 'text': 'Second turn response.'},
+        }),
+      );
+      client.emit(
+        1,
+        AgentStreamEvent(const {
+          'event_id': 'second-turn-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-terminal-followup',
+          'run_id': 'run-second',
+          'sequence': 2,
+        }),
+      );
+      await _pumpFrames(tester, 4);
+
+      expect(find.text('Second turn response.'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-static')),
+        findsWidgets,
+      );
+    },
+  );
+
+  testWidgets('Agent Hub settles server cancel before starting the next turn', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    final cancelConnector = _DeferredCancelConnector();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          cancelClient: AgentStreamCancelClient(
+            endpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+            ),
+            connector: cancelConnector,
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'First turn',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'cancel-first-started',
+        'type': 'run.started',
+        'thread_id': 'thread-cancel-followup',
+        'run_id': 'run-cancel-first',
+        'sequence': 1,
+      }),
+    );
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
+    await tester.pump();
+    await cancelConnector.called.future;
+
+    expect(find.text('已停止本次回复'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Second turn after cancel',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+
+    cancelConnector.complete();
+    await _pumpFrames(tester, 4);
+
+    expect(client.requests, hasLength(2));
+    expect(client.requests.last.runId, isNull);
+    expect(client.requests.last.threadId, 'thread-cancel-followup');
+
+    client.emit(
+      1,
+      AgentStreamEvent(const {
+        'event_id': 'cancel-followup-message',
+        'type': 'message.completed',
+        'thread_id': 'thread-cancel-followup',
+        'run_id': 'run-after-cancel',
+        'message_id': 'message-after-cancel',
+        'sequence': 1,
+        'payload': {
+          'role': 'assistant',
+          'text': 'Response after cancellation.',
+        },
+      }),
+    );
+    client.emit(
+      1,
+      AgentStreamEvent(const {
+        'event_id': 'cancel-followup-completed',
+        'type': 'run.completed',
+        'thread_id': 'thread-cancel-followup',
+        'run_id': 'run-after-cancel',
+        'sequence': 2,
+      }),
+    );
+    await _pumpFrames(tester, 4);
+
+    expect(find.text('Response after cancellation.'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+      findsNothing,
+    );
   });
 
   testWidgets(
@@ -8145,6 +8361,28 @@ class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
     this.body = body;
     if (!called.isCompleted) called.complete();
     return const AgentStreamControlHttpResponse(statusCode: 200, body: '{}');
+  }
+}
+
+class _DeferredCancelConnector implements AgentStreamControlHttpConnector {
+  final called = Completer<void>();
+  final _response = Completer<AgentStreamControlHttpResponse>();
+
+  void complete() {
+    if (_response.isCompleted) return;
+    _response.complete(
+      const AgentStreamControlHttpResponse(statusCode: 200, body: '{}'),
+    );
+  }
+
+  @override
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) {
+    if (!called.isCompleted) called.complete();
+    return _response.future;
   }
 }
 
