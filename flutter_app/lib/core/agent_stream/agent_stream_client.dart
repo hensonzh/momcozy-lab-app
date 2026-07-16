@@ -160,6 +160,68 @@ abstract interface class AgentStreamClient {
   Stream<AgentStreamEvent> stream(AgentStreamRequest request);
 }
 
+abstract interface class AgentStreamRetryableFailure {
+  bool get isRetryable;
+}
+
+enum AgentRunLifecycleStatus {
+  queued,
+  running,
+  waitingForConfirmation,
+  completed,
+  failed,
+  cancelled,
+  unknown;
+
+  bool get isActive => this == queued || this == running;
+
+  bool get isTerminal => switch (this) {
+    waitingForConfirmation || completed || failed || cancelled => true,
+    _ => false,
+  };
+}
+
+class AgentRunStatusSnapshot {
+  const AgentRunStatusSnapshot({
+    required this.runId,
+    required this.status,
+    this.threadId,
+    this.errorCode,
+  });
+
+  final String runId;
+  final String? threadId;
+  final AgentRunLifecycleStatus status;
+  final String? errorCode;
+
+  AgentStreamEvent? terminalEvent() {
+    final eventType = switch (status) {
+      AgentRunLifecycleStatus.waitingForConfirmation =>
+        'run.waiting_for_confirmation',
+      AgentRunLifecycleStatus.completed => 'run.completed',
+      AgentRunLifecycleStatus.failed => 'run.failed',
+      AgentRunLifecycleStatus.cancelled => 'run.cancelled',
+      _ => null,
+    };
+    if (eventType == null) return null;
+
+    return AgentStreamEvent({
+      'event_id': 'run-status:$runId:${status.name}',
+      'type': eventType,
+      'run_id': runId,
+      if (threadId?.trim().isNotEmpty ?? false) 'thread_id': threadId,
+      'payload': {
+        'reconciled_from_run_status': true,
+        if (errorCode?.trim().isNotEmpty ?? false) 'code': errorCode,
+      },
+    });
+  }
+}
+
+abstract interface class AgentRunStatusReader {
+  Future<AgentRunStatusSnapshot> read(String runId);
+}
+
 abstract interface class AgentStreamTransport {
   Stream<String> frames(AgentStreamRequest request);
 }

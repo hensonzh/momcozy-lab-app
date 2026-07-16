@@ -51,10 +51,20 @@ class AgentStreamEndpoint {
   });
 }
 
-class AgentStreamTransportException implements Exception {
-  const AgentStreamTransportException(this.message);
+class AgentStreamTransportException
+    implements Exception, AgentStreamRetryableFailure {
+  const AgentStreamTransportException(
+    this.message, {
+    this.statusCode,
+    this.isRetryable = false,
+    this.cause,
+  });
 
   final String message;
+  final int? statusCode;
+  @override
+  final bool isRetryable;
+  final Object? cause;
 
   @override
   String toString() => 'AgentStreamTransportException($message)';
@@ -192,6 +202,13 @@ abstract interface class AgentStreamControlHttpConnector {
   });
 }
 
+abstract interface class AgentStreamControlHttpGetConnector {
+  Future<AgentStreamControlHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+  });
+}
+
 class IoAgentStreamControlHttpConnector
     implements AgentStreamControlHttpConnector {
   IoAgentStreamControlHttpConnector({HttpClient? httpClient})
@@ -215,6 +232,88 @@ class IoAgentStreamControlHttpConnector
       statusCode: response.statusCode,
       body: responseBody,
     );
+  }
+}
+
+class IoAgentStreamControlHttpGetConnector
+    implements AgentStreamControlHttpGetConnector {
+  IoAgentStreamControlHttpGetConnector({HttpClient? httpClient})
+    : _httpClient = httpClient ?? HttpClient();
+
+  final HttpClient _httpClient;
+
+  @override
+  Future<AgentStreamControlHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+  }) async {
+    final request = await _httpClient.getUrl(uri);
+    headers.forEach(request.headers.set);
+
+    final response = await request.close();
+    final responseBody = await response.transform(utf8.decoder).join();
+    return AgentStreamControlHttpResponse(
+      statusCode: response.statusCode,
+      body: responseBody,
+    );
+  }
+}
+
+class ProductionAgentRunStatusReader implements AgentRunStatusReader {
+  const ProductionAgentRunStatusReader({
+    required this.runsEndpoint,
+    this.onUnauthorized,
+    this.connector = const _DefaultControlHttpGetConnector(),
+  });
+
+  final AgentStreamEndpoint runsEndpoint;
+  final AgentStreamUnauthorizedHandler? onUnauthorized;
+  final AgentStreamControlHttpGetConnector connector;
+
+  @override
+  Future<AgentRunStatusSnapshot> read(String runId) async {
+    final normalizedRunId = runId.trim();
+    if (normalizedRunId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing runId.');
+    }
+
+    final uri = _runResourceUri(runsEndpoint.requestUri, normalizedRunId);
+    var response = await _get(uri);
+    if (response.statusCode == HttpStatus.unauthorized &&
+        await _refreshAfterUnauthorized()) {
+      response = await _get(uri);
+    }
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw AgentStreamTransportException(
+        'run status request failed: ${response.statusCode}',
+        statusCode: response.statusCode,
+        isRetryable: _isRetryableHttpStatus(response.statusCode),
+      );
+    }
+
+    final body = response.jsonBody;
+    final responseRunId = body == null ? null : stringField(body, 'id');
+    if (body == null || responseRunId == null || responseRunId.isEmpty) {
+      throw const AgentStreamTransportException(
+        'run status response must include id',
+      );
+    }
+    return AgentRunStatusSnapshot(
+      runId: responseRunId,
+      threadId: stringField(body, 'thread_id'),
+      status: _runLifecycleStatus(stringField(body, 'status')),
+      errorCode: stringField(body, 'error_code'),
+    );
+  }
+
+  Future<AgentStreamControlHttpResponse> _get(Uri uri) {
+    return connector.get(uri, headers: runsEndpoint.requestHeaders());
+  }
+
+  Future<bool> _refreshAfterUnauthorized() async {
+    final handler = onUnauthorized;
+    if (handler == null) return false;
+    return await handler();
   }
 }
 
@@ -326,6 +425,13 @@ Uri _runScopedUri(Uri runsUri, String runId, String suffix) {
     path: '$basePath/$runId/$suffix',
     queryParameters: null,
   );
+}
+
+Uri _runResourceUri(Uri runsUri, String runId) {
+  final basePath = runsUri.path.endsWith('/')
+      ? runsUri.path.substring(0, runsUri.path.length - 1)
+      : runsUri.path;
+  return runsUri.replace(path: '$basePath/$runId', queryParameters: null);
 }
 
 Uri _actionScopedUri(Uri actionsUri, String actionId, String suffix) {
@@ -477,17 +583,29 @@ class IoAgentStreamSseGetConnector implements AgentStreamSseGetConnector {
 
   @override
   Stream<String> get(Uri uri, {required Map<String, String> headers}) async* {
-    final request = await _httpClient.getUrl(uri);
-    headers.forEach(request.headers.set);
+    try {
+      final request = await _httpClient.getUrl(uri);
+      headers.forEach(request.headers.set);
 
-    final response = await request.close();
-    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final response = await request.close();
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw AgentStreamTransportException(
+          'SSE request failed: ${response.statusCode}',
+          statusCode: response.statusCode,
+          isRetryable: _isRetryableHttpStatus(response.statusCode),
+        );
+      }
+
+      yield* _decodeSseBlocks(response.transform(utf8.decoder));
+    } on AgentStreamTransportException {
+      rethrow;
+    } catch (error) {
       throw AgentStreamTransportException(
-        'SSE request failed: ${response.statusCode}',
+        'SSE connection failed.',
+        isRetryable: true,
+        cause: error,
       );
     }
-
-    yield* _decodeSseBlocks(response.transform(utf8.decoder));
   }
 }
 
@@ -540,10 +658,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
         );
 
     try {
-      await for (final frame in streamConnector.get(
-        streamUri,
-        headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
-      )) {
+      await for (final frame in _streamOnce(streamUri)) {
         yield frame;
       }
     } on AgentStreamTransportException catch (error) {
@@ -551,12 +666,28 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
           !await _refreshAfterUnauthorized()) {
         rethrow;
       }
+      await for (final frame in _streamOnce(streamUri)) {
+        yield frame;
+      }
+    }
+  }
+
+  Stream<String> _streamOnce(Uri streamUri) async* {
+    try {
       await for (final frame in streamConnector.get(
         streamUri,
         headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
       )) {
         yield frame;
       }
+    } on AgentStreamTransportException {
+      rethrow;
+    } catch (error) {
+      throw AgentStreamTransportException(
+        'SSE connection failed.',
+        isRetryable: true,
+        cause: error,
+      );
     }
   }
 
@@ -619,7 +750,26 @@ String _agentRunIdempotencyKey() {
 }
 
 bool _isUnauthorizedStreamError(AgentStreamTransportException error) {
-  return error.message.contains('401');
+  return error.statusCode == HttpStatus.unauthorized ||
+      error.message.contains('401');
+}
+
+bool _isRetryableHttpStatus(int statusCode) =>
+    statusCode == HttpStatus.requestTimeout ||
+    statusCode == HttpStatus.tooManyRequests ||
+    statusCode >= HttpStatus.internalServerError;
+
+AgentRunLifecycleStatus _runLifecycleStatus(String? status) {
+  return switch (status?.trim()) {
+    'queued' => AgentRunLifecycleStatus.queued,
+    'running' => AgentRunLifecycleStatus.running,
+    'waiting_for_confirmation' =>
+      AgentRunLifecycleStatus.waitingForConfirmation,
+    'completed' => AgentRunLifecycleStatus.completed,
+    'failed' => AgentRunLifecycleStatus.failed,
+    'cancelled' => AgentRunLifecycleStatus.cancelled,
+    _ => AgentRunLifecycleStatus.unknown,
+  };
 }
 
 class _DefaultSseGetConnector implements AgentStreamSseGetConnector {
@@ -645,6 +795,19 @@ class _DefaultControlHttpConnector implements AgentStreamControlHttpConnector {
       headers: headers,
       body: body,
     );
+  }
+}
+
+class _DefaultControlHttpGetConnector
+    implements AgentStreamControlHttpGetConnector {
+  const _DefaultControlHttpGetConnector();
+
+  @override
+  Future<AgentStreamControlHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+  }) {
+    return IoAgentStreamControlHttpGetConnector().get(uri, headers: headers);
   }
 }
 
