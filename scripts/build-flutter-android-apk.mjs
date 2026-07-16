@@ -31,6 +31,11 @@ let restoreFailure;
 
 try {
   if (removeWasm) {
+    // Internal distribution must not reuse an AOT snapshot from a previous
+    // source revision. A stale snapshot can produce an APK whose assets are
+    // current while its Dart code is not.
+    run("flutter", ["clean"], flutterAppDir);
+    run("flutter", ["pub", "get"], flutterAppDir);
     run("dart", ["run", "pdfrx:remove_wasm_modules"], flutterAppDir);
   }
   run(
