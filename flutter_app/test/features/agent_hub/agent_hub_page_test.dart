@@ -1180,7 +1180,7 @@ void main() {
 
       expect(client.requests, isEmpty);
       expect(find.text('上一轮尚未完成的回复'), findsOneWidget);
-      expect(find.text('连接已中断，可继续接收。'), findsOneWidget);
+      expect(find.text('连接暂时中断，可重试'), findsOneWidget);
       expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
       expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
       expect(player.playedTexts, isEmpty);
@@ -2291,7 +2291,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
-    expect(find.text('连接中断，请重试'), findsOneWidget);
+    expect(find.text('连接暂时中断，可重试'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
   });
 
@@ -4357,7 +4357,8 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('socket closed'), findsOneWidget);
+    expect(find.text('连接暂时中断，可重试'), findsOneWidget);
+    expect(find.textContaining('socket closed'), findsNothing);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-retry-button')));
@@ -7192,7 +7193,8 @@ void main() {
     );
 
     expect(find.text('Partial answer'), findsOneWidget);
-    expect(find.text('socket closed'), findsOneWidget);
+    expect(find.text('连接暂时中断，可重试'), findsOneWidget);
+    expect(find.text('socket closed'), findsNothing);
     expect(find.textContaining('WebSocket'), findsNothing);
     expect(find.textContaining('SSE'), findsNothing);
   });

@@ -50,12 +50,17 @@ AgentStreamRequest buildSessionAgentHubRequest(
 }
 
 AgentStreamRunner createDefaultAgentHubRunner({AgentStreamEndpoint? endpoint}) {
+  final resolvedEndpoint = endpoint ?? defaultAgentHubSseEndpoint();
   return AgentStreamRunner(
     SseAgentStreamClient(
       ProductionAgentSseTransport(
-        runsEndpoint: endpoint ?? defaultAgentHubSseEndpoint(),
+        runsEndpoint: resolvedEndpoint,
         payloadFactory: buildDefaultAgentHubPayload,
       ),
+    ),
+    reconnectPolicy: const AgentStreamReconnectPolicy(),
+    runStatusReader: ProductionAgentRunStatusReader(
+      runsEndpoint: resolvedEndpoint,
     ),
   );
 }
@@ -66,18 +71,24 @@ AgentStreamRunner createSessionAgentHubRunner(
   String? Function()? accessTokenProvider,
   AgentStreamUnauthorizedHandler? onUnauthorized,
 }) {
+  final resolvedEndpoint =
+      endpoint ??
+      sessionAgentHubSseEndpoint(
+        session,
+        accessTokenProvider: accessTokenProvider,
+      );
   return AgentStreamRunner(
     SseAgentStreamClient(
       ProductionAgentSseTransport(
-        runsEndpoint:
-            endpoint ??
-            sessionAgentHubSseEndpoint(
-              session,
-              accessTokenProvider: accessTokenProvider,
-            ),
+        runsEndpoint: resolvedEndpoint,
         payloadFactory: buildDefaultAgentHubPayload,
         onUnauthorized: onUnauthorized,
       ),
+    ),
+    reconnectPolicy: const AgentStreamReconnectPolicy(),
+    runStatusReader: ProductionAgentRunStatusReader(
+      runsEndpoint: resolvedEndpoint,
+      onUnauthorized: onUnauthorized,
     ),
   );
 }

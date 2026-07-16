@@ -118,6 +118,112 @@ void main() {
       },
     );
 
+    test(
+      'production run status reader uses run-scoped authenticated GET',
+      () async {
+        final connector = _RecordingControlHttpGetConnector(
+          const AgentStreamControlHttpResponse(
+            statusCode: 200,
+            body:
+                '{"id":"run-production-001","thread_id":"thread-production-001","status":"waiting_for_confirmation","error_code":""}',
+          ),
+        );
+        final reader = ProductionAgentRunStatusReader(
+          runsEndpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+            token: 'secret-token',
+          ),
+          connector: connector,
+        );
+
+        final snapshot = await reader.read('run-production-001');
+
+        expect(snapshot.runId, 'run-production-001');
+        expect(snapshot.threadId, 'thread-production-001');
+        expect(snapshot.status, AgentRunLifecycleStatus.waitingForConfirmation);
+        expect(connector.uri!.path, '/v1/agent/runs/run-production-001');
+        expect(
+          connector.headers,
+          containsPair('Authorization', 'Bearer secret-token'),
+        );
+      },
+    );
+
+    test('production run status reader refreshes authorization once', () async {
+      var token = 'old-token';
+      var refreshCount = 0;
+      final connector =
+          _RecordingControlHttpGetConnector(
+              const AgentStreamControlHttpResponse(
+                statusCode: 401,
+                body: '{"error":{"code":"unauthorized"}}',
+              ),
+            )
+            ..queuedResponses.add(
+              const AgentStreamControlHttpResponse(
+                statusCode: 200,
+                body:
+                    '{"id":"run-production-001","thread_id":"thread-production-001","status":"completed","error_code":""}',
+              ),
+            );
+      final reader = ProductionAgentRunStatusReader(
+        runsEndpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+          tokenProvider: () => token,
+        ),
+        onUnauthorized: () async {
+          refreshCount += 1;
+          token = 'new-token';
+          return true;
+        },
+        connector: connector,
+      );
+
+      final snapshot = await reader.read('run-production-001');
+
+      expect(snapshot.status, AgentRunLifecycleStatus.completed);
+      expect(refreshCount, 1);
+      expect(connector.requests, hasLength(2));
+      expect(
+        connector.requests.first.headers,
+        containsPair('Authorization', 'Bearer old-token'),
+      );
+      expect(
+        connector.requests.last.headers,
+        containsPair('Authorization', 'Bearer new-token'),
+      );
+    });
+
+    test(
+      'production SSE transport classifies connector failures as retryable',
+      () async {
+        final streamConnector = _RecordingSseGetConnector(const [])
+          ..nextError = StateError('socket closed');
+        final client = SseAgentStreamClient(
+          ProductionAgentSseTransport(
+            runsEndpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+            ),
+            payloadFactory: buildProductionAgentRunPayload,
+            streamConnector: streamConnector,
+          ),
+        );
+
+        await expectLater(
+          client
+              .stream(
+                _request.resume(runId: 'run-production-001', afterSequence: 7),
+              )
+              .toList(),
+          throwsA(
+            isA<AgentStreamTransportException>()
+                .having((error) => error.isRetryable, 'isRetryable', isTrue)
+                .having((error) => error.cause, 'cause', isA<StateError>()),
+          ),
+        );
+      },
+    );
+
     test('endpoint request headers resolve auth token lazily', () {
       var token = 'old-token';
       final endpoint = AgentStreamEndpoint(
@@ -673,6 +779,39 @@ class _RecordingControlHttpConnector
     }
     return response;
   }
+}
+
+class _RecordingControlHttpGetConnector
+    implements AgentStreamControlHttpGetConnector {
+  _RecordingControlHttpGetConnector(this.nextResponse);
+
+  AgentStreamControlHttpResponse nextResponse;
+  final queuedResponses = <AgentStreamControlHttpResponse>[];
+  final requests = <_RecordedControlGetRequest>[];
+  Uri? uri;
+  Map<String, String>? headers;
+
+  @override
+  Future<AgentStreamControlHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+  }) async {
+    this.uri = uri;
+    this.headers = headers;
+    requests.add(_RecordedControlGetRequest(uri: uri, headers: headers));
+    final response = nextResponse;
+    if (queuedResponses.isNotEmpty) {
+      nextResponse = queuedResponses.removeAt(0);
+    }
+    return response;
+  }
+}
+
+class _RecordedControlGetRequest {
+  const _RecordedControlGetRequest({required this.uri, required this.headers});
+
+  final Uri uri;
+  final Map<String, String> headers;
 }
 
 class _RecordedControlRequest {

@@ -29,6 +29,8 @@ void main() {
     expect(payload['runtime_pattern'], 'sdk_only');
     expect(payload.containsKey('thread_id'), isFalse);
     expect(payload.containsKey('user_id'), isFalse);
+    expect(runner.reconnectPolicy.enabled, isTrue);
+    expect(runner.runStatusReader, isA<ProductionAgentRunStatusReader>());
   });
 
   test('default Agent Hub cancel client uses unified API endpoint', () {
@@ -84,6 +86,8 @@ void main() {
     expect(request.message, '  Help me plan today  ');
     expect(payload['message'], 'Help me plan today');
     expect(payload.containsKey('user_id'), isFalse);
+    expect(runner.reconnectPolicy.enabled, isTrue);
+    expect(runner.runStatusReader, isA<ProductionAgentRunStatusReader>());
   });
 
   test('production payload preserves a valid backend thread id', () {

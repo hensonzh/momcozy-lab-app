@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -40,7 +41,7 @@ void main() {
     });
 
     test(
-      'maps transport errors to disconnected state with partial text',
+      'keeps non-retryable transport errors as a manual retry state',
       () async {
         final runner = AgentStreamRunner(
           JsonlAgentStreamClient(
@@ -67,39 +68,73 @@ void main() {
       },
     );
 
-    test('marks streams without terminal events as disconnected', () async {
-      final runner = AgentStreamRunner(
-        JsonlAgentStreamClient(
-          FixtureAgentStreamTransport([
-            jsonEncode(readFixtureMap('agent_events/run_started.json')),
-          ]),
-        ),
-      );
+    test(
+      'automatically resumes the same run after a follow window ends',
+      () async {
+        final client = _SequencedAgentStreamClient([
+          [
+            _event(id: 'evt-run-started', type: 'run.started', sequence: 1),
+            _event(id: 'delta:1-0', type: 'message.delta', text: '追奶'),
+          ],
+          [
+            _event(id: 'delta:1-0', type: 'message.delta', text: '追奶'),
+            _event(id: 'delta:2-0', type: 'message.delta', text: '计划'),
+            _event(
+              id: 'evt-message-completed',
+              type: 'message.completed',
+              sequence: 2,
+              text: '追奶计划',
+            ),
+            _event(
+              id: 'evt-waiting',
+              type: 'run.waiting_for_confirmation',
+              sequence: 3,
+            ),
+          ],
+        ]);
+        final runner = AgentStreamRunner(
+          client,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            transportRetryBaseDelay: Duration.zero,
+          ),
+        );
 
-      final states = await runner.run(_request).toList();
+        final states = await runner.run(_request).toList();
 
-      expect(states.last.phase, AgentStreamRunPhase.disconnected);
-      expect(
-        states.last.errorMessage,
-        contains('ended before a terminal event'),
-      );
-    });
+        expect(states.last.phase, AgentStreamRunPhase.waitingForConfirmation);
+        expect(states.last.textContent, '追奶计划');
+        expect(states.last.errorMessage, isNull);
+        expect(
+          states.where((state) => state.textContent == '追奶'),
+          hasLength(1),
+        );
+        expect(client.requests, hasLength(2));
+        expect(client.requests.first.runId, isNull);
+        expect(client.requests.last.runId, 'run-fixture-001');
+        expect(client.requests.last.threadId, 'thread-fixture-001');
+        expect(client.requests.last.afterSequence, 1);
+      },
+    );
 
     test(
-      'finishes visible replies when streams end after message completion',
+      'keeps listening after message completion until the run is terminal',
       () async {
+        final client = _SequencedAgentStreamClient([
+          [
+            _event(id: 'evt-run-started', type: 'run.started', sequence: 1),
+            _event(
+              id: 'evt-message-completed',
+              type: 'message.completed',
+              sequence: 2,
+              text: 'Final answer',
+            ),
+          ],
+          [_event(id: 'evt-run-completed', type: 'run.completed', sequence: 3)],
+        ]);
         final runner = AgentStreamRunner(
-          JsonlAgentStreamClient(
-            FixtureAgentStreamTransport([
-              jsonEncode(readFixtureMap('agent_events/run_started.json')),
-              jsonEncode({
-                'type': 'message.completed',
-                'thread_id': 'thread-fixture-001',
-                'run_id': 'run-fixture-001',
-                'message_id': 'msg-reply-001',
-                'payload': {'role': 'assistant', 'text': 'Final answer'},
-              }),
-            ]),
+          client,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            transportRetryBaseDelay: Duration.zero,
           ),
         );
 
@@ -108,6 +143,153 @@ void main() {
         expect(states.last.phase, AgentStreamRunPhase.finished);
         expect(states.last.textContent, 'Final answer');
         expect(states.last.errorMessage, isNull);
+      },
+    );
+
+    test(
+      'resumes after a retryable transport failure without duplicating text',
+      () async {
+        final client = _SequencedAgentStreamClient(
+          [
+            [
+              _event(id: 'evt-run-started', type: 'run.started', sequence: 1),
+              _event(id: 'delta:1-0', type: 'message.delta', text: '正在分析'),
+            ],
+            [
+              _event(id: 'delta:1-0', type: 'message.delta', text: '正在分析'),
+              _event(
+                id: 'evt-message-completed',
+                type: 'message.completed',
+                sequence: 2,
+                text: '正在分析',
+              ),
+              _event(
+                id: 'evt-run-completed',
+                type: 'run.completed',
+                sequence: 3,
+              ),
+            ],
+          ],
+          errors: const [_RetryableTestFailure(), null],
+        );
+        final runner = AgentStreamRunner(
+          client,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            transportRetryBaseDelay: Duration.zero,
+          ),
+        );
+
+        final states = await runner.run(_request).toList();
+
+        expect(states.last.phase, AgentStreamRunPhase.finished);
+        expect(states.last.textContent, '正在分析');
+        expect(client.requests, hasLength(2));
+        expect(client.requests.last.runId, 'run-fixture-001');
+        expect(client.requests.last.afterSequence, 1);
+      },
+    );
+
+    test(
+      'does not reconnect after the run subscription is cancelled',
+      () async {
+        final client = _SequencedAgentStreamClient(
+          [
+            [_event(id: 'evt-run-started', type: 'run.started', sequence: 1)],
+            [
+              _event(
+                id: 'evt-run-completed',
+                type: 'run.completed',
+                sequence: 2,
+              ),
+            ],
+          ],
+          errors: const [_RetryableTestFailure(), null],
+        );
+        final runner = AgentStreamRunner(
+          client,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            transportRetryBaseDelay: Duration(milliseconds: 100),
+          ),
+        );
+        final subscription = runner.run(_request).listen((_) {});
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+
+        await subscription.cancel();
+        await Future<void>.delayed(const Duration(milliseconds: 120));
+
+        expect(client.requests, hasLength(1));
+      },
+    );
+
+    test(
+      'reconciles a terminal server status after follow retries are exhausted',
+      () async {
+        final client = _SequencedAgentStreamClient([
+          [
+            _event(id: 'evt-run-started', type: 'run.started', sequence: 1),
+            _event(
+              id: 'evt-message-completed',
+              type: 'message.completed',
+              sequence: 2,
+              text: '计划已生成',
+            ),
+          ],
+        ]);
+        final statusReader = _FixtureRunStatusReader(
+          const AgentRunStatusSnapshot(
+            runId: 'run-fixture-001',
+            threadId: 'thread-fixture-001',
+            status: AgentRunLifecycleStatus.completed,
+          ),
+        );
+        final runner = AgentStreamRunner(
+          client,
+          runStatusReader: statusReader,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            maxFollowWindowReconnects: 0,
+            transportRetryBaseDelay: Duration.zero,
+          ),
+        );
+
+        final states = await runner.run(_request).toList();
+
+        expect(states.last.phase, AgentStreamRunPhase.finished);
+        expect(states.last.textContent, '计划已生成');
+        expect(statusReader.runIds, ['run-fixture-001']);
+        expect(client.requests, hasLength(1));
+      },
+    );
+
+    test(
+      'continues the same run when reconciliation reports it active',
+      () async {
+        final client = _SequencedAgentStreamClient([
+          [_event(id: 'evt-run-started', type: 'run.started', sequence: 1)],
+          [_event(id: 'evt-run-completed', type: 'run.completed', sequence: 2)],
+        ]);
+        final statusReader = _FixtureRunStatusReader(
+          const AgentRunStatusSnapshot(
+            runId: 'run-fixture-001',
+            threadId: 'thread-fixture-001',
+            status: AgentRunLifecycleStatus.running,
+          ),
+        );
+        final runner = AgentStreamRunner(
+          client,
+          runStatusReader: statusReader,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            maxFollowWindowReconnects: 0,
+            maxActiveStatusReconciliations: 1,
+            transportRetryBaseDelay: Duration.zero,
+          ),
+        );
+
+        final states = await runner.run(_request).toList();
+
+        expect(states.last.phase, AgentStreamRunPhase.finished);
+        expect(client.requests, hasLength(2));
+        expect(client.requests.last.runId, 'run-fixture-001');
+        expect(client.requests.last.afterSequence, 1);
       },
     );
 
@@ -209,4 +391,65 @@ class _FailingTransport implements AgentStreamTransport {
     }
     throw StateError('socket closed');
   }
+}
+
+class _SequencedAgentStreamClient implements AgentStreamClient {
+  _SequencedAgentStreamClient(this.attempts, {this.errors = const <Object?>[]});
+
+  final List<List<AgentStreamEvent>> attempts;
+  final List<Object?> errors;
+  final requests = <AgentStreamRequest>[];
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) async* {
+    final attemptIndex = requests.length;
+    requests.add(request);
+    if (attemptIndex >= attempts.length) return;
+    for (final event in attempts[attemptIndex]) {
+      yield event;
+    }
+    if (attemptIndex < errors.length && errors[attemptIndex] != null) {
+      throw errors[attemptIndex]!;
+    }
+  }
+}
+
+class _RetryableTestFailure implements AgentStreamRetryableFailure {
+  const _RetryableTestFailure();
+
+  @override
+  bool get isRetryable => true;
+}
+
+class _FixtureRunStatusReader implements AgentRunStatusReader {
+  _FixtureRunStatusReader(this.snapshot);
+
+  final AgentRunStatusSnapshot snapshot;
+  final runIds = <String>[];
+
+  @override
+  Future<AgentRunStatusSnapshot> read(String runId) async {
+    runIds.add(runId);
+    return snapshot;
+  }
+}
+
+AgentStreamEvent _event({
+  required String id,
+  required String type,
+  int? sequence,
+  String? text,
+}) {
+  return AgentStreamEvent({
+    'event_id': id,
+    'type': type,
+    'thread_id': 'thread-fixture-001',
+    'run_id': 'run-fixture-001',
+    'message_id': 'msg-reply-001',
+    'sequence': ?sequence,
+    'payload': {
+      if (type == 'message.delta') 'text': text,
+      if (type == 'message.completed') ...{'role': 'assistant', 'text': text},
+    },
+  });
 }

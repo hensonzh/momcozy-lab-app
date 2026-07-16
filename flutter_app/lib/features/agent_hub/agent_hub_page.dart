@@ -3743,7 +3743,8 @@ class AgentRunTranscript extends StatelessWidget {
       return '等待确认后继续';
     }
     if (state.phase == AgentStreamRunPhase.disconnected) {
-      return _safeAgentErrorText(state.errorMessage) ?? '连接中断';
+      return _safeAgentErrorText(state.errorMessage, fallback: '连接暂时中断，可重试') ??
+          '连接暂时中断，可重试';
     }
     if (state.phase == AgentStreamRunPhase.error) {
       return _safeAgentErrorText(
