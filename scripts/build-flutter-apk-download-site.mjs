@@ -12,6 +12,8 @@ const projectRoot = path.resolve(scriptDir, "..");
 const flutterAppDir = path.join(projectRoot, "flutter_app");
 const defaultDistDir = path.join(projectRoot, "dist", "android-apk");
 const defaultBaseUrl = "https://download.momcozy.ai/app";
+const qrLabel = "Momcozy Lab";
+const qrFileName = "momcozy-lab-download-qr.svg";
 
 if (process.argv.includes("--help")) {
   console.log(`Usage:
@@ -30,6 +32,8 @@ Environment:
 `);
   process.exit(0);
 }
+
+const QRCode = await loadQrCodeLibrary();
 
 const toolchainConfig = JSON.parse(
   await readFile(path.join(projectRoot, "flutter-toolchain.json"), "utf8"),
@@ -76,17 +80,24 @@ const apkInfo = await stat(artifactPath);
 const sha256 = crypto.createHash("sha256").update(apkBytes).digest("hex");
 const generatedAt = new Date().toISOString();
 const gitCommit = gitShortHead();
-const apkUrl = `releases/${artifactName}`;
+const apkPath = `releases/${artifactName}`;
+const apkUrl = `${baseUrl}/${apkPath}`;
+const qrCodePath = `assets/${qrFileName}`;
+const qrCodeUrl = `${baseUrl}/${qrCodePath}`;
 const manifest = {
-  app: "Momcozy",
+  app: qrLabel,
   platform: "android",
   flavor,
   mode,
   versionName: version.versionName,
   buildNumber: version.buildNumber,
   apkFile: artifactName,
+  apkPath,
   apkUrl,
   pageUrl,
+  qrCodePath,
+  qrCodeUrl,
+  qrCodeLabel: qrLabel,
   sha256,
   sizeBytes: apkInfo.size,
   generatedAt,
@@ -94,6 +105,10 @@ const manifest = {
 };
 
 await writeFile(path.join(releaseDir, `${artifactName}.sha256`), `${sha256}  ${artifactName}\n`);
+await writeFile(
+  path.join(assetDir, qrFileName),
+  renderQrCodeSvg(apkUrl, qrLabel),
+);
 await writeFile(path.join(distDir, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
 await writeFile(path.join(distDir, "index.html"), renderDownloadPage(manifest));
 
@@ -102,6 +117,8 @@ console.log("Android APK download site generated.");
 console.log(`Output: ${path.relative(projectRoot, distDir)}`);
 console.log(`Page:   ${pageUrl}`);
 console.log(`APK:    ${artifactName}`);
+console.log(`APK URL:${apkUrl}`);
+console.log(`QR:     ${qrCodeUrl}`);
 console.log(`SHA256: ${sha256}`);
 
 function buildApk({ flavor, mode }) {
@@ -232,7 +249,11 @@ function renderDownloadPage(manifest) {
       background: #fff;
       overflow-wrap: anywhere;
     }
-    .share strong { display: block; margin-bottom: 10px; }
+    .share { text-align: center; }
+    .share strong { display: block; margin: 12px 0 4px; font-size: 18px; }
+    .share p { font-size: 14px; }
+    .qr { display: block; width: 100%; height: auto; border-radius: 12px; }
+    .download-url { display: block; margin-top: 12px; font-size: 12px; text-align: left; }
     .button {
       display: inline-flex;
       justify-content: center;
@@ -288,8 +309,10 @@ function renderDownloadPage(manifest) {
         </ol>
       </section>
       <aside class="share">
-        <strong>下载页地址</strong>
-        <code>${escapeHtml(manifest.pageUrl)}</code>
+        <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="Momcozy Lab APK 下载二维码" />
+        <strong>${escapeHtml(manifest.qrCodeLabel)}</strong>
+        <p>使用 Android 手机扫码，直接下载 APK</p>
+        <code class="download-url">${escapeHtml(manifest.apkUrl)}</code>
       </aside>
     </div>
   </main>
@@ -298,12 +321,56 @@ function renderDownloadPage(manifest) {
 `;
 }
 
+function renderQrCodeSvg(value, label) {
+  const qr = QRCode.create(value, { errorCorrectionLevel: "H" });
+  const moduleSize = 8;
+  const quietZone = 4;
+  const labelHeight = 56;
+  const qrSize = (qr.modules.size + quietZone * 2) * moduleSize;
+  const canvasHeight = qrSize + labelHeight;
+  const pathCommands = [];
+
+  for (let row = 0; row < qr.modules.size; row += 1) {
+    for (let column = 0; column < qr.modules.size; column += 1) {
+      if (!qr.modules.get(row, column)) continue;
+      const x = (column + quietZone) * moduleSize;
+      const y = (row + quietZone) * moduleSize;
+      pathCommands.push(`M${x} ${y}h${moduleSize}v${moduleSize}h-${moduleSize}z`);
+    }
+  }
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${qrSize} ${canvasHeight}" role="img" aria-labelledby="title description">
+  <title id="title">${escapeXml(label)} APK 下载二维码</title>
+  <desc id="description">扫描后直接下载 Android APK</desc>
+  <rect width="${qrSize}" height="${canvasHeight}" rx="16" fill="#fff" />
+  <path d="${pathCommands.join("")}" fill="#171217" shape-rendering="crispEdges" />
+  <text x="${qrSize / 2}" y="${qrSize + 36}" fill="#342431" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" text-anchor="middle">${escapeXml(label)}</text>
+</svg>
+`;
+}
+
+async function loadQrCodeLibrary() {
+  try {
+    return (await import("qrcode")).default;
+  } catch (error) {
+    if (error?.code === "ERR_MODULE_NOT_FOUND") {
+      console.error("Missing Node build dependencies. Run npm ci from the repository root.");
+      process.exit(1);
+    }
+    throw error;
+  }
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function escapeXml(value) {
+  return escapeHtml(value).replace(/'/g, "&apos;");
 }
 
 function gitShortHead() {
