@@ -261,6 +261,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   StreamSubscription<AgentStreamRunState>? _runSubscription;
   Completer<bool>? _runAcceptanceCompleter;
   Completer<void>? _runSettlementCompleter;
+  Future<void>? _pendingServerCancel;
   bool _followUpStartPending = false;
   bool _newSessionStartPending = false;
   bool _supportTicketSubmitPending = false;
@@ -974,6 +975,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
     _cancelCurrentBubblePlaybackForNewTurn();
     await _waitForCompletedReplyRunSettlement();
+    await _waitForPendingServerCancel();
     if (!mounted || _isComposerLocked) return;
 
     final requestMessage = message.isEmpty ? '请看这张图片' : message;
@@ -1030,6 +1032,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
     _cancelCurrentBubblePlaybackForNewTurn();
     await _waitForCompletedReplyRunSettlement();
+    await _waitForPendingServerCancel();
     if (!mounted || _isComposerLocked) return false;
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
@@ -2236,7 +2239,45 @@ class _AgentHubPageState extends State<AgentHubPage> {
     AgentStreamRunState activeState,
     AgentStreamRequest? activeRequest,
   ) {
-    unawaited(_cancelServerRun(activeState, activeRequest));
+    final operation = _settleServerCancel(activeState, activeRequest);
+    _pendingServerCancel = operation;
+    unawaited(
+      operation.whenComplete(() {
+        if (identical(_pendingServerCancel, operation)) {
+          _pendingServerCancel = null;
+        }
+      }),
+    );
+  }
+
+  Future<void> _settleServerCancel(
+    AgentStreamRunState activeState,
+    AgentStreamRequest? activeRequest,
+  ) async {
+    try {
+      await _cancelServerRun(
+        activeState,
+        activeRequest,
+      ).timeout(_completedReplyCancelTimeout);
+    } catch (_) {
+      // Cancellation is best effort; a new run may still proceed after the
+      // bounded settlement window.
+    }
+  }
+
+  Future<void> _waitForPendingServerCancel() async {
+    final pending = _pendingServerCancel;
+    if (pending == null) return;
+    _setFollowUpStartPending(true);
+    try {
+      await pending;
+    } finally {
+      if (mounted) {
+        _setFollowUpStartPending(false);
+      } else {
+        _followUpStartPending = false;
+      }
+    }
   }
 
   Future<void> _cancelServerRun(
@@ -3495,25 +3536,31 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.idle &&
         state.textContent.trim().isEmpty;
     final text = _primaryText;
-    final artifactCards = state.canPublishArtifactEvents
+    final allowsSupplementaryContent =
+        state.phase != AgentStreamRunPhase.error &&
+        state.phase != AgentStreamRunPhase.cancelled;
+    final artifactCards =
+        allowsSupplementaryContent && state.canPublishArtifactEvents
         ? this.artifactCards ??
               _artifactCardsFromEvents(
                 _artifactEventsForState(state),
                 profileDefaults: profileDefaults,
               )
         : const <AgentArtifactCardView>[];
-    final actionCards =
-        this.actionCards ??
-        _actionCardsFromEvents(
-          _actionEventsForState(state),
-          localActionStatuses,
-        );
-    final citations =
-        this.citations ??
-        AgentCitationMapper.citationsFromEvents(
-          state.events,
-          messageId: state.messageId,
-        );
+    final actionCards = allowsSupplementaryContent
+        ? this.actionCards ??
+              _actionCardsFromEvents(
+                _actionEventsForState(state),
+                localActionStatuses,
+              )
+        : const <AgentActionCardView>[];
+    final citations = allowsSupplementaryContent
+        ? this.citations ??
+              AgentCitationMapper.citationsFromEvents(
+                state.events,
+                messageId: state.messageId,
+              )
+        : const <AgentCitationView>[];
     final quickReplies = state.quickReplies;
     final artifactActionForState = onArtifactAction == null
         ? null
@@ -3541,6 +3588,7 @@ class AgentRunTranscript extends StatelessWidget {
             onArtifactAction!(action);
           };
     final shouldRenderQuickReplies =
+        allowsSupplementaryContent &&
         quickReplies.length == 3 &&
         !state.isAwaitingVisibleReply &&
         !artifactCards.any((card) => card.isForm) &&
@@ -3618,7 +3666,7 @@ class AgentRunTranscript extends StatelessWidget {
                   ],
                 ),
               ],
-              if (canRetry) ...[
+              if (allowsSupplementaryContent && canRetry) ...[
                 const SizedBox(height: 12),
                 FilledButton.tonalIcon(
                   key: const ValueKey('agent-retry-button'),

@@ -647,7 +647,7 @@ data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run
       expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
 
-    test('maps run error events to retryable error state', () {
+    test('maps run error events to non-retryable error state', () {
       var state = const AgentStreamRunState().start();
 
       state = state.applyEvent(
@@ -655,7 +655,7 @@ data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run
       );
 
       expect(state.phase, AgentStreamRunPhase.error);
-      expect(state.canRetry, isTrue);
+      expect(state.canRetry, isFalse);
       expect(
         state.errorMessage,
         'The agent stream timed out before a final response.',
