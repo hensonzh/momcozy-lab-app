@@ -15,7 +15,7 @@ void main() {
 
       expect(payload['thread_id'], '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5');
       expect(payload['message'], 'Please review today\'s pumping pattern.');
-      expect(payload['runtime_pattern'], 'langgraph_sdk');
+      expect(payload['runtime_pattern'], 'sdk_only');
       expect(payload['client_context'], {
         'source': 'flutter-migration-fixture',
         'locale': 'en-US',
