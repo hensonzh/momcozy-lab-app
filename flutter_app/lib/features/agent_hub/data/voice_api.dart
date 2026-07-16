@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 const speechTranscribeChunkEndpoint = '/v1/speech/transcribe-chunk';
 const realtimeVoiceStreamEndpoint = '/v1/realtime-voice-stream';
 const realtimeVoiceSessionEndpoint = '/v1/realtime-voice-session';
+const agentVoiceWebSocketPingInterval = Duration(seconds: 15);
 
 typedef AgentVoiceUnauthorizedHandler = FutureOr<bool> Function();
 
@@ -274,6 +275,7 @@ class IoAgentVoiceWebSocketConnector implements AgentVoiceWebSocketConnector {
     required Map<String, String> headers,
   }) async {
     final socket = await WebSocket.connect(uri.toString(), headers: headers);
+    socket.pingInterval = agentVoiceWebSocketPingInterval;
     return _IoAgentVoiceWebSocketConnection(socket);
   }
 }
