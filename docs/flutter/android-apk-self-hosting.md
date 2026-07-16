@@ -2,15 +2,38 @@
 
 目标：把 Flutter 构建出的 APK 发布到一个 HTTPS 静态地址，同时生成带 “Momcozy Lab” 文本的二维码。用户扫码后会直接下载 APK，也可以打开下载页手动下载。
 
-首次使用先安装锁定的 Node 构建依赖：
+推荐使用一键构建脚本。它会安装锁定的 Node 构建依赖、构建默认的
+`staging release` APK，并生成下载页和二维码：
 
 ```bash
-npm ci
+./scripts/build-flutter-app.sh
 ```
+
+脚本默认使用：
+
+```text
+API:      https://lute-momcozylab.luteos.cloud:8443
+Download: https://lute-momcozylab.luteos.cloud:8443/app
+Variant:  staging release
+```
+
+如需覆盖默认值，可使用环境变量：
+
+```bash
+MOMCOZY_API_BASE_URL=https://api.example.com \
+MOMCOZY_DOWNLOAD_BASE_URL=https://download.example.com/app \
+MOMCOZY_APK_FLAVOR=production \
+./scripts/build-flutter-app.sh
+```
+
+重复构建时可设置 `MOMCOZY_SKIP_NPM_CI=1` 跳过 `npm ci`。正式发布时应
+配置 release signing 环境变量，并设置
+`MOMCOZY_REQUIRE_RELEASE_SIGNING=1`，避免误生成 debug 签名包。
 
 ## 生成下载包
 
-默认生成 `staging release` APK，并输出静态站点到 `dist/android-apk/`：
+底层构建命令仍可单独使用。它默认生成 `staging release` APK，并输出
+静态站点到 `dist/android-apk/`：
 
 ```bash
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
