@@ -1676,7 +1676,7 @@ void main() {
     expect(_composerHasFocus(tester), isTrue);
   });
 
-  testWidgets('Agent quick replies match legacy web chrome', (tester) async {
+  testWidgets('Agent quick replies match the product chrome', (tester) async {
     final selected = <String>[];
 
     await tester.pumpWidget(
@@ -6979,7 +6979,7 @@ void main() {
     );
   });
 
-  testWidgets('Agent Hub renders web search citations like legacy web', (
+  testWidgets('Agent Hub renders web search citations consistently', (
     tester,
   ) async {
     final actions = <AgentArtifactActionView>[];
@@ -7430,7 +7430,7 @@ milk_total: 120ml
     );
   });
 
-  testWidgets('Agent Hub aligns context-ready fallback with legacy web copy', (
+  testWidgets('Agent Hub uses the approved context-ready fallback copy', (
     tester,
   ) async {
     final state = AgentStreamRunState(

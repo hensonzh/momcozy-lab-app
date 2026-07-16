@@ -566,9 +566,7 @@ void main() {
     expect(find.byTooltip('删除关联记录'), findsOneWidget);
   });
 
-  testWidgets('places quick records after the timeline like legacy web', (
-    tester,
-  ) async {
+  testWidgets('places quick records after the timeline', (tester) async {
     await _pumpPage(
       tester,
       _transport(

@@ -7,7 +7,7 @@ import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_ca
 void main() {
   group('Hospital bag cart domain', () {
     test(
-      'parses the complete artifact shape and calculates legacy Web totals',
+      'parses the complete artifact shape and calculates product totals',
       () {
         final snapshot = HospitalBagCartSnapshot.tryFromCartUpdate({
           'groups': [

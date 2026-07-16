@@ -73,7 +73,7 @@ void main() {
       ]);
     });
 
-    test('uses the same primary Agent prompt priority as legacy web', () {
+    test('uses the approved primary Agent prompt priority', () {
       final questions = PregnancyDiaryProjection(
         now: DateTime(2026, 7, 11),
         entries: [

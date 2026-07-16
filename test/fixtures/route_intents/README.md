@@ -1,6 +1,6 @@
 # Route Intent Fixtures
 
-These fixtures define how current Web/Capacitor route inputs should map to Flutter typed route intents.
+These fixtures define how previously persisted route inputs map to Flutter typed route intents.
 
 Common shape:
 

@@ -2,11 +2,11 @@
 
 ## 范围
 
-MomCozy App 会处理妈妈、宝宝、泵奶、喂养、成长、健康问题、语音和咨询数据。Flutter 迁移期间，Web/Capacitor baseline 和 Flutter PoC 必须按同一敏感数据等级处理。
+MomCozy App 会处理妈妈、宝宝、泵奶、喂养、成长、健康问题、语音和咨询数据。Flutter 客户端及其原生集成必须按同一敏感数据等级处理。
 
 ## P0 阻塞门槛
 
-进入 Android platform channel PoC 前，必须满足：
+启用 Android platform channel 能力前，必须满足：
 
 ```text
 [x] Flutter 侧提供统一日志脱敏工具：`core/privacy/log_redactor.dart`

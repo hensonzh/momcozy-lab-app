@@ -25,8 +25,8 @@ android {
     }
 
     defaultConfig {
-        // Keep the Flutter PoC installable beside the current Capacitor app
-        // (`com.momcozymai.app`) until the production cutover is approved.
+        // Preserve the current application ID. Any future package migration
+        // requires an explicit rollout and installed-data compatibility plan.
         applicationId = "com.momcozymai.app.flutterpoc"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.

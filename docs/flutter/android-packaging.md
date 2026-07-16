@@ -1,10 +1,10 @@
 # Flutter Android 打包策略
 
-## P0 临时策略
+## 当前策略
 
-当前 Flutter shell 使用独立 appId，便于本地、staging 和 production-shaped 构建隔离。
+当前 Flutter 客户端保持既有 appId，并通过 flavor 隔离 local、staging 和 production-shaped 构建。
 
-| 项目 | P0 决策 |
+| 项目 | 当前值 |
 | --- | --- |
 | Flutter local appId | `com.momcozymai.app.flutterpoc.local` |
 | Flutter staging appId | `com.momcozymai.app.flutterpoc.staging` |
@@ -15,10 +15,10 @@
 | Release signing | 通过环境变量注入；未注入时 release build 使用 debug signing，仅允许作为本地 smoke artifact。 |
 | Gradle flavor | 已启用 `local`、`staging`、`production` 三个 flavor。 |
 
-## 为什么 PoC appId 必须独立
+## 为什么当前 appId 保持不变
 
-- 不会覆盖用户已有的旧版 App 数据、通知、权限和 BLE 绑定状态。
-- Android platform channel 能力可以单独验证，不影响历史归档实现。
+- 避免未规划的包迁移破坏用户已安装数据、通知、权限和 BLE 绑定状态。
+- local、staging 和 production flavor 仍有清晰的安装与发布边界。
 
 ## Flavor 矩阵
 
@@ -27,7 +27,7 @@
 ```text
 local: 本地开发和 debug smoke，独立 appId。
 staging: 后端 staging / internal distribution smoke，独立 appId。
-production: production-shaped artifact；正式变更包名策略前仍不覆盖旧版 appId。
+production: production-shaped artifact；保持当前基础 appId。
 ```
 
 进入真实分发或灰度前必须先完成：
@@ -37,7 +37,7 @@ production: production-shaped artifact；正式变更包名策略前仍不覆盖
 [x] release keystore secret 注入方案
 [x] appId 与深链、通知、FileProvider authorities 矩阵
 [x] 数据迁移 dry-run 策略
-[ ] 真机覆盖旧版 App 与 Flutter 独立包同装场景
+[ ] 真机升级、覆盖安装和回滚场景
 ```
 
 ## AppId / Deep Link / FileProvider 矩阵
@@ -49,7 +49,7 @@ production: production-shaped artifact；正式变更包名策略前仍不覆盖
 | Deep link / custom scheme | 未声明 | 未声明 | 未声明 |
 | FileProvider authority | 未声明 | 未声明 | 未声明 |
 | Notification owner | Flutter foreground service notification，独立 appId scope | 同左 | 同左 |
-| 数据作用域 | Flutter 独立安装，不覆盖旧版数据 | 同左 | 同左 |
+| 数据作用域 | flavor 独立安装与存储 | 同左 | production scope |
 
 静态校验命令：
 
@@ -61,9 +61,9 @@ make flutter-packaging-check
 
 ## 数据迁移策略
 
-- Flutter 使用独立 appId，同机安装不会覆盖旧版 App 的 WebView storage、Android native service store、通知渠道、权限授权或 FileProvider authority。
-- 正式变更 production-shaped appId 前，必须先完成真机同装/覆盖、storage migration、通知渠道和 BLE 绑定验证。
-- 已迁移到 Flutter 的 legacy storage 规则以 `dart run tool/storage_migration_dry_run.dart` 为非真机前置；真实 installed data 迁移仍需 device lab 和 release owner 确认。
+- 当前 appId 保持不变；未来如需变更，必须先评估 installed data、Android native service store、通知渠道、权限授权和 FileProvider authority。
+- 包名变更前必须完成真机升级/覆盖、storage migration、通知渠道和 BLE 绑定验证。
+- 历史 storage 兼容规则以 `dart run tool/storage_migration_dry_run.dart` 为非真机前置；真实 installed data 迁移仍需 device lab 和 release owner 确认。
 
 Release signing 环境变量：
 

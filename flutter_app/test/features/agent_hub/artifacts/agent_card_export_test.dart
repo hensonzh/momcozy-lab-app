@@ -8,7 +8,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
 
 void main() {
-  test('builds the same sanitized UTC card filename as legacy web', () {
+  test('builds the approved sanitized UTC card filename', () {
     expect(
       buildAgentCardExportFilename(
         cardType: 'birth plan/card',

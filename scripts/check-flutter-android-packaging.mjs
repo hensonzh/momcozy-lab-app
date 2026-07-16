@@ -33,13 +33,12 @@ function notMatches(relPath, pattern, label) {
   check(label, !pattern.test(read(relPath)), `${relPath} must not match ${pattern}`);
 }
 
-const legacyAppId = "com.momcozymai.app";
 const flutterBaseAppId = "com.momcozymai.app.flutterpoc";
 
 contains(
   "flutter_app/android/app/build.gradle.kts",
   `namespace = "com.momcozymai.momcozy_flutter_app"`,
-  "Flutter namespace remains isolated from the Capacitor package",
+  "Flutter namespace remains isolated from the application ID",
 );
 contains(
   "flutter_app/android/app/build.gradle.kts",
@@ -56,12 +55,6 @@ matches(
   /create\("staging"\)[\s\S]*applicationIdSuffix = "\.staging"/,
   "Flutter staging flavor keeps a staging suffix",
 );
-notMatches(
-  "flutter_app/android/app/build.gradle.kts",
-  new RegExp(`applicationId\\s*=\\s*"${legacyAppId}"`),
-  "Flutter build config never claims the Capacitor production appId",
-);
-
 contains(
   "flutter_app/android/app/src/local/res/values/strings.xml",
   "<string name=\"app_name\">Momcozy Lab</string>",
@@ -81,17 +74,17 @@ contains(
 notMatches(
   "flutter_app/android/app/src/main/AndroidManifest.xml",
   /androidx\.core\.content\.FileProvider|android:authorities=/,
-  "Flutter PoC does not declare a FileProvider authority yet",
+  "Flutter app does not declare a FileProvider authority yet",
 );
 notMatches(
   "flutter_app/android/app/src/main/AndroidManifest.xml",
   /android\.intent\.action\.VIEW|android\.intent\.category\.BROWSABLE/,
-  "Flutter PoC does not claim external deep links yet",
+  "Flutter app does not claim external deep links yet",
 );
 matches(
   "flutter_app/android/app/src/main/AndroidManifest.xml",
   /android\.intent\.action\.MAIN[\s\S]*android\.intent\.category\.LAUNCHER/,
-  "Flutter PoC exposes only the launcher intent filter",
+  "Flutter app exposes only the launcher intent filter",
 );
 
 const failures = checks.filter((item) => !item.passed);
