@@ -1252,45 +1252,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _formSubmissionsNotifier.value = next;
   }
 
-  void _handleQuickReplySelected(String text) {
-    final normalizedText = text.trim();
-    if (normalizedText.isEmpty || _isVisibleReplyRunning || _isComposerLocked) {
-      return;
-    }
-    _recordQuickReplyClicked(normalizedText);
-    unawaited(
-      _sendSyntheticUserMessage(
-        requestMessage: normalizedText,
-        optimisticContent: normalizedText,
-      ).then<void>((_) {}),
-    );
-  }
-
-  void _recordQuickReplyClicked(String text) {
-    final clientEventClient = widget.clientEventClient;
-    if (clientEventClient == null) return;
-    final metadata = <String, Object?>{
-      'quick_reply_text': text,
-      if (_state.threadId?.trim().isNotEmpty == true)
-        'thread_id': _state.threadId,
-      if (_state.runId?.trim().isNotEmpty == true) 'run_id': _state.runId,
-      if (_state.messageId?.trim().isNotEmpty == true)
-        'message_id': _state.messageId,
-    };
-    unawaited(
-      clientEventClient.post(
-        AgentStreamClientEventRequest(
-          eventType: 'ui.quick_reply.clicked',
-          runId: _state.runId,
-          label: text,
-          occurredAt: DateTime.now().toUtc().toIso8601String(),
-          locale: _activeRequest?.locale,
-          metadata: metadata,
-        ),
-      ),
-    );
-  }
-
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
     final state = _state;
     final text = _agentAssistantTextForState(state, greeting: _greeting).trim();
@@ -2503,8 +2464,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                           _formSubmissionsNotifier,
                                       formPresentationSession:
                                           _formPresentationSession,
-                                      onQuickReplySelected:
-                                          _handleQuickReplySelected,
+                                      // Generated quick replies are temporarily hidden
+                                      // while the follow-up interaction is redesigned.
+                                      onQuickReplySelected: null,
                                       pendingActionIds: _pendingActionIds,
                                       localActionStatuses: _localActionStatuses,
                                       productAssetRepository:
