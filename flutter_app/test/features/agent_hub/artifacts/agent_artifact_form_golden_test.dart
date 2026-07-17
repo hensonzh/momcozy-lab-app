@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form.dart';
 
 import '../../../support/momcozy_test_fonts.dart';
@@ -70,6 +71,67 @@ void main() {
       }
     });
   }
+
+  testWidgets('collection form entry and dialog match the mobile baseline', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: const ValueKey('artifact-form-dialog-golden-surface'),
+        child: MaterialApp(
+          theme: momCozyTheme(),
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            backgroundColor: MomCozyColors.background,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 42),
+                    Expanded(
+                      child: AgentArtifactPanel(
+                        cards: const [_hospitalBagForm],
+                        onFormSubmit: (_) async => true,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byKey(const ValueKey('artifact-form-dialog-golden-surface')),
+      matchesGoldenFile(
+        '../../../goldens/agent_hub/artifacts/form_entry_390x844.png',
+      ),
+    );
+
+    await tester.tap(
+      find.byKey(
+        const ValueKey('agent-artifact-form-entry-hospital-bag-intake-golden'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byKey(const ValueKey('artifact-form-dialog-golden-surface')),
+      matchesGoldenFile(
+        '../../../goldens/agent_hub/artifacts/form_dialog_390x844.png',
+      ),
+    );
+  });
 }
 
 const _hospitalBagForm = AgentArtifactCardView(
