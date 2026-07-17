@@ -1055,11 +1055,6 @@ class _AgentBirthJourneyItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final title = _displayString(item['title']) ?? '事项';
-    final priorityLabel = _displayStringField(
-      item,
-      'priority_label',
-      'priorityLabel',
-    );
     final reason = _displayString(item['reason']);
     final steps = _displayStringList(item['steps']);
 
@@ -1099,24 +1094,15 @@ class _AgentBirthJourneyItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Wrap(
-                    spacing: 5,
-                    runSpacing: 5,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      if (priorityLabel != null)
-                        _BirthJourneyPriorityTag(label: priorityLabel),
-                      Text(
-                        title,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: const Color(0xff4f4540),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          height: 1.45,
-                          letterSpacing: 0,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    title,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: const Color(0xff4f4540),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      height: 1.45,
+                      letterSpacing: 0,
+                    ),
                   ),
                   if (reason != null) ...[
                     const SizedBox(height: 3),
@@ -1139,38 +1125,6 @@ class _AgentBirthJourneyItem extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BirthJourneyPriorityTag extends StatelessWidget {
-  const _BirthJourneyPriorityTag({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final supportive = label == '建议';
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: supportive ? const Color(0xffeaf6f4) : const Color(0xfffff0e4),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: supportive
-                ? const Color(0xff3f8178)
-                : const Color(0xffa95522),
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            height: 1,
-            letterSpacing: 0,
-          ),
         ),
       ),
     );
