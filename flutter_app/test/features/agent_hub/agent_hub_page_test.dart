@@ -5285,6 +5285,198 @@ void main() {
   });
 
   testWidgets(
+    'artifact form dialog blocks barrier and back dismissal while submitting',
+    (tester) async {
+      final attempts = <Completer<bool>>[];
+      const card = AgentArtifactCardView(
+        id: 'pending-form',
+        title: '信息采集',
+        presentationKind: AgentArtifactPresentationKind.form,
+        formId: 'hospital_bag_intake',
+        formFields: [
+          AgentArtifactFormFieldView(
+            id: 'due_date_or_week',
+            label: '预产期或当前孕周',
+            type: 'text',
+            required: true,
+            defaultValue: '38 周',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentArtifactPanel(
+            cards: const [card],
+            onFormSubmit: (_) {
+              final attempt = Completer<bool>();
+              attempts.add(attempt);
+              return attempt.future;
+            },
+          ),
+        ),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('agent-artifact-form-entry-pending-form')),
+      );
+      await tester.pumpAndSettle();
+
+      final dialog = find.byKey(
+        const ValueKey('agent-artifact-form-dialog-pending-form'),
+      );
+      final submit = find.byKey(
+        const ValueKey('agent-artifact-form-submit-pending-form'),
+      );
+      await tester.tap(submit);
+      await tester.pump();
+      expect(attempts, hasLength(1));
+
+      await tester.tapAt(const Offset(2, 2));
+      await tester.pump();
+      expect(dialog, findsOneWidget);
+
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      expect(dialog, findsOneWidget);
+
+      attempts.single.complete(false);
+      await tester.pumpAndSettle();
+      expect(find.text('提交失败，请重试'), findsOneWidget);
+
+      await tester.tap(submit);
+      await tester.pump();
+      expect(attempts, hasLength(2));
+      attempts.last.complete(true);
+      await tester.pumpAndSettle();
+
+      expect(dialog, findsNothing);
+      expect(find.text('已提交，可点击查看'), findsOneWidget);
+    },
+  );
+
+  testWidgets('artifact form dialog scrolls validation feedback into view', (
+    tester,
+  ) async {
+    final card = AgentArtifactCardView(
+      id: 'long-required-form',
+      title: '待产信息采集',
+      presentationKind: AgentArtifactPresentationKind.form,
+      formId: 'hospital_bag_intake',
+      formFields: [
+        for (var index = 0; index < 12; index++)
+          AgentArtifactFormFieldView(
+            id: 'required_$index',
+            label: '基本信息｜必填字段 ${index + 1}',
+            type: 'text',
+            required: true,
+          ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      _host(AgentArtifactPanel(cards: [card], onFormSubmit: (_) async => true)),
+    );
+    await tester.tap(
+      find.byKey(
+        const ValueKey('agent-artifact-form-entry-long-required-form'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final scrollView = find.byKey(
+      const ValueKey('agent-artifact-form-scroll-long-required-form'),
+    );
+    final scrollController = tester
+        .widget<SingleChildScrollView>(scrollView)
+        .controller!;
+    final position = scrollController.position;
+    expect(position.pixels, 0);
+    expect(position.maxScrollExtent, greaterThan(0));
+
+    await tester.tap(
+      find.byKey(
+        const ValueKey('agent-artifact-form-submit-long-required-form'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final error = find.byKey(
+      const ValueKey('agent-artifact-form-error-long-required-form'),
+    );
+    expect(error, findsOneWidget);
+    expect(position.pixels, greaterThan(0));
+    final scrollRect = tester.getRect(scrollView);
+    final errorRect = tester.getRect(error);
+    expect(errorRect.top, greaterThanOrEqualTo(scrollRect.top));
+    expect(errorRect.bottom, lessThanOrEqualTo(scrollRect.bottom));
+  });
+
+  testWidgets(
+    'artifact form dialog stacks long actions on narrow large-text screens',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      const card = AgentArtifactCardView(
+        id: 'responsive-form',
+        title: '分娩沟通卡信息采集',
+        presentationKind: AgentArtifactPresentationKind.form,
+        formId: 'birth_plan_card_intake',
+        formSubmitLabel: '生成我的沟通卡',
+        formFields: [
+          AgentArtifactFormFieldView(
+            id: 'birth_hospital',
+            label: '生产医院',
+            type: 'text',
+            defaultValue: '市妇幼保健院',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _host(
+          MediaQuery(
+            data: const MediaQueryData(
+              size: Size(320, 640),
+              textScaler: TextScaler.linear(1.6),
+            ),
+            child: AgentArtifactPanel(
+              cards: const [card],
+              onFormSubmit: (_) async => true,
+            ),
+          ),
+        ),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('agent-artifact-form-entry-responsive-form')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      final dialogRect = tester.getRect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-dialog-responsive-form'),
+        ),
+      );
+      final cancelRect = tester.getRect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-cancel-responsive-form'),
+        ),
+      );
+      final submitRect = tester.getRect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-submit-responsive-form'),
+        ),
+      );
+      expect(submitRect.top, greaterThan(cancelRect.bottom));
+      expect(cancelRect.left, greaterThanOrEqualTo(dialogRect.left));
+      expect(submitRect.right, lessThanOrEqualTo(dialogRect.right));
+      expect(find.text('生成我的沟通卡'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
     'Agent Hub resumes stream after action confirmation and keeps backend terminal status',
     (tester) async {
       const actionId = '33333333-3333-3333-3333-333333333333';

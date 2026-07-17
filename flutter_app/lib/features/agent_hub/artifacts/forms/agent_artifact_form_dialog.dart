@@ -379,7 +379,14 @@ class AgentArtifactFormDialog extends StatefulWidget {
 class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
   final GlobalKey<AgentArtifactFormState> _formKey =
       GlobalKey<AgentArtifactFormState>();
+  final ScrollController _scrollController = ScrollController();
   bool _submitting = false;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Future<void> _submit() async {
     if (_submitting) return;
@@ -391,183 +398,244 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
       return;
     }
     setState(() => _submitting = false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      final position = _scrollController.position;
+      if (position.maxScrollExtent <= position.minScrollExtent) return;
+      _scrollController.jumpTo(position.maxScrollExtent);
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  Widget _buildCancelButton({
+    required bool isSubmitted,
+    required bool isSubmitting,
+  }) {
+    return OutlinedButton(
+      key: ValueKey('agent-artifact-form-cancel-${widget.card.id}'),
+      onPressed: isSubmitting ? null : () => Navigator.of(context).pop(),
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(82, 44),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: Text(isSubmitted ? '关闭' : '取消'),
+    );
+  }
+
+  Widget _buildSubmitButton({
+    required bool canSubmit,
+    required bool isSubmitting,
+  }) {
+    return FilledButton.icon(
+      key: ValueKey('agent-artifact-form-submit-${widget.card.id}'),
+      onPressed: !canSubmit || isSubmitting ? null : _submit,
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(96, 44),
+        backgroundColor: const Color(0xff247b76),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      icon: isSubmitting
+          ? const SizedBox.square(
+              dimension: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
+          : const Icon(Icons.check_rounded, size: 18),
+      label: Text(
+        isSubmitting ? '提交中' : widget.card.formSubmitLabel ?? '提交',
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildFooterActions({
+    required bool isSubmitted,
+    required bool isSubmitting,
+    required bool canSubmit,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final useStackedLayout =
+            constraints.maxWidth < 320 ||
+            MediaQuery.textScalerOf(context).scale(14) > 17.5;
+        final cancelButton = _buildCancelButton(
+          isSubmitted: isSubmitted,
+          isSubmitting: isSubmitting,
+        );
+        final submitButton = isSubmitted
+            ? null
+            : _buildSubmitButton(
+                canSubmit: canSubmit,
+                isSubmitting: isSubmitting,
+              );
+
+        if (useStackedLayout) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              cancelButton,
+              if (submitButton != null) ...[
+                const SizedBox(height: 8),
+                submitButton,
+              ],
+            ],
+          );
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            cancelButton,
+            if (submitButton != null) ...[
+              const SizedBox(width: 10),
+              Flexible(child: submitButton),
+            ],
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isSubmitted = widget.submission?.isSubmitted == true;
+    final isSubmitting = _submitting || widget.submission?.isSubmitting == true;
     final canSubmit = widget.onSubmit != null || widget.onAction != null;
-    return Dialog(
-      key: ValueKey('agent-artifact-form-dialog-${widget.card.id}'),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      backgroundColor: Colors.transparent,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: 440,
-          maxHeight: mediaQuery.size.height * 0.8,
-        ),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: const Color(0xfffffdfd),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xffe7dce1)),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x24532f40),
-                blurRadius: 32,
-                offset: Offset(0, 14),
-              ),
-            ],
+    return PopScope(
+      canPop: !isSubmitting,
+      child: Dialog(
+        key: ValueKey('agent-artifact-form-dialog-${widget.card.id}'),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        backgroundColor: Colors.transparent,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 440,
+            maxHeight: mediaQuery.size.height * 0.8,
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(13),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 10, 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 34,
-                        height: 34,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xffedf7f5),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.assignment_outlined,
-                          size: 19,
-                          color: Color(0xff247b76),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.card.title,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(
-                                    color: const Color(0xff30232a),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.3,
-                                  ),
-                            ),
-                            if (widget.card.description case final description?
-                                when description.trim().isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                description,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: const Color(0xff725f69),
-                                      fontSize: 12,
-                                      height: 1.4,
-                                    ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: '取消',
-                        onPressed: _submitting
-                            ? null
-                            : () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close_rounded, size: 20),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 1, color: Color(0xffeee4e8)),
-                Flexible(
-                  child: SingleChildScrollView(
-                    key: ValueKey(
-                      'agent-artifact-form-scroll-${widget.card.id}',
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Theme(
-                      data: Theme.of(context).copyWith(
-                        textTheme: Theme.of(context).textTheme.apply(
-                          bodyColor: const Color(0xff30232a),
-                          fontSizeFactor: 0.92,
-                        ),
-                      ),
-                      child: AgentArtifactForm(
-                        key: _formKey,
-                        card: widget.card,
-                        onAction: widget.onAction,
-                        onSubmit: widget.onSubmit,
-                        submission: widget.submission,
-                        initialDraftValues: widget.initialDraftValues,
-                        onDraftChanged: widget.onDraftChanged,
-                        onSubmitted: widget.onSubmitted,
-                        dialogMode: true,
-                      ),
-                    ),
-                  ),
-                ),
-                const Divider(height: 1, color: Color(0xffeee4e8)),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      OutlinedButton(
-                        key: ValueKey(
-                          'agent-artifact-form-cancel-${widget.card.id}',
-                        ),
-                        onPressed: _submitting
-                            ? null
-                            : () => Navigator.of(context).pop(),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(82, 44),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(isSubmitted ? '关闭' : '取消'),
-                      ),
-                      if (!isSubmitted) ...[
-                        const SizedBox(width: 10),
-                        FilledButton.icon(
-                          key: ValueKey(
-                            'agent-artifact-form-submit-${widget.card.id}',
-                          ),
-                          onPressed: !canSubmit || _submitting ? null : _submit,
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(96, 44),
-                            backgroundColor: const Color(0xff247b76),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          icon: _submitting
-                              ? const SizedBox.square(
-                                  dimension: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Icon(Icons.check_rounded, size: 18),
-                          label: Text(
-                            _submitting
-                                ? '提交中'
-                                : widget.card.formSubmitLabel ?? '提交',
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: const Color(0xfffffdfd),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xffe7dce1)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x24532f40),
+                  blurRadius: 32,
+                  offset: Offset(0, 14),
                 ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(13),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 10, 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: const Color(0xffedf7f5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.assignment_outlined,
+                            size: 19,
+                            color: Color(0xff247b76),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.card.title,
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(
+                                      color: const Color(0xff30232a),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.3,
+                                    ),
+                              ),
+                              if (widget.card.description
+                                  case final description?
+                                  when description.trim().isNotEmpty) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  description,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: const Color(0xff725f69),
+                                        fontSize: 12,
+                                        height: 1.4,
+                                      ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: '取消',
+                          onPressed: isSubmitting
+                              ? null
+                              : () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.close_rounded, size: 20),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1, color: Color(0xffeee4e8)),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      key: ValueKey(
+                        'agent-artifact-form-scroll-${widget.card.id}',
+                      ),
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(16),
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          textTheme: Theme.of(context).textTheme.apply(
+                            bodyColor: const Color(0xff30232a),
+                            fontSizeFactor: 0.92,
+                          ),
+                        ),
+                        child: AgentArtifactForm(
+                          key: _formKey,
+                          card: widget.card,
+                          onAction: widget.onAction,
+                          onSubmit: widget.onSubmit,
+                          submission: widget.submission,
+                          initialDraftValues: widget.initialDraftValues,
+                          onDraftChanged: widget.onDraftChanged,
+                          onSubmitted: widget.onSubmitted,
+                          dialogMode: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1, color: Color(0xffeee4e8)),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                    child: _buildFooterActions(
+                      isSubmitted: isSubmitted,
+                      isSubmitting: isSubmitting,
+                      canSubmit: canSubmit,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
