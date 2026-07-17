@@ -9,6 +9,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
@@ -815,11 +816,13 @@ void main() {
           agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
         ),
       );
+      final lastInviteCodeStore = _MemoryLastInviteCodeStore('MCZ-ROUTE-0001');
       final router = createMomCozyRouter(
         initialLocation: '/device',
         runtimeController: controller,
         sessionStore: store,
         authDeviceIdStore: const _FixedAuthDeviceIdStore('widget-device-001'),
+        lastInviteCodeStore: lastInviteCodeStore,
       );
 
       await tester.pumpWidget(
@@ -846,6 +849,11 @@ void main() {
         find.byKey(const ValueKey('auth-invite-code-field')),
         findsOneWidget,
       );
+      final inviteCodeField = tester.widget<TextField>(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+      );
+      expect(inviteCodeField.decoration?.hintText, 'MCZ-ROUTE-0001');
+      expect(inviteCodeField.controller?.text, isEmpty);
 
       // Session swaps rebuild production transports, so keep this test on its
       // deterministic fixture transport for the second invite request.
@@ -931,6 +939,20 @@ class _FixedAuthDeviceIdStore implements MomCozyAuthDeviceIdStore {
 
   @override
   Future<String> readOrCreateDeviceId() async => deviceId;
+}
+
+class _MemoryLastInviteCodeStore implements MomCozyLastInviteCodeStore {
+  _MemoryLastInviteCodeStore([this.value]);
+
+  String? value;
+
+  @override
+  Future<String?> readLastInviteCode() async => value;
+
+  @override
+  Future<void> writeLastInviteCode(String inviteCode) async {
+    value = inviteCode;
+  }
 }
 
 class _ControllableAgentStreamClient implements AgentStreamClient {
