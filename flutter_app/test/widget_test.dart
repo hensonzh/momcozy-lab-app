@@ -157,6 +157,40 @@ void main() {
   });
 
   testWidgets(
+    'default Agent Hub plays greeting on first open and manual new session',
+    (tester) async {
+      final voicePlayer = _WidgetFakeVoicePlaybackPlayer();
+      final runtime = MomCozyApiRuntime.fromSession(
+        const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'greeting-voice-user',
+          babyId: 'greeting-voice-baby',
+          locale: 'zh-CN',
+          accessToken: 'greeting-voice-access-token',
+        ),
+        jsonTransport: FixtureApiJsonTransport(const {
+          'user_id': 'greeting-voice-user',
+          'display_name': '小美',
+          'age': 29,
+        }),
+        agentVoicePlaybackPlayer: voicePlayer,
+      );
+
+      await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
+      await tester.pumpAndSettle();
+
+      expect(voicePlayer.playedTexts, hasLength(1));
+      expect(voicePlayer.playedTexts.single, contains('嗨 小美'));
+
+      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+      await tester.pumpAndSettle();
+
+      expect(voicePlayer.playedTexts, hasLength(2));
+      expect(voicePlayer.playedTexts.last, contains('嗨 小美'));
+    },
+  );
+
+  testWidgets(
     'route shell keeps Agent Hub stream and voice alive across bottom tabs',
     (tester) async {
       final client = _ControllableAgentStreamClient();
@@ -963,10 +997,12 @@ class _ControllableAgentStreamClient implements AgentStreamClient {
 
 class _WidgetFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   final realtimeSessions = <_WidgetFakeVoiceRealtimePlaybackSession>[];
+  final playedTexts = <String>[];
   Completer<void>? _active;
 
   @override
   Future<void> playText(String text) {
+    playedTexts.add(text);
     _active = Completer<void>();
     scheduleMicrotask(_completeActiveText);
     return _active!.future;

@@ -5366,7 +5366,7 @@ void main() {
     expect(find.text('孕25周'), findsOneWidget);
     expect(find.text('孕 25-27 周'), findsOneWidget);
     expect(find.text('1 个事项'), findsOneWidget);
-    expect(find.text('重要'), findsOneWidget);
+    expect(find.text('重要'), findsNothing);
     expect(find.text('检查结束后及时吃第一餐'), findsOneWidget);
 
     expect(
@@ -5478,7 +5478,7 @@ void main() {
     expect(find.text('孕26周'), findsOneWidget);
     expect(find.text('顺产'), findsOneWidget);
     expect(find.text('孕 26-28 周'), findsOneWidget);
-    expect(find.text('建议'), findsOneWidget);
+    expect(find.text('建议'), findsNothing);
     expect(find.text('记录早晚血压'), findsOneWidget);
 
     expect(
