@@ -569,20 +569,6 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
                                       height: 1.3,
                                     ),
                               ),
-                              if (widget.card.description
-                                  case final description?
-                                  when description.trim().isNotEmpty) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  description,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: const Color(0xff725f69),
-                                        fontSize: 12,
-                                        height: 1.4,
-                                      ),
-                                ),
-                              ],
                             ],
                           ),
                         ),
