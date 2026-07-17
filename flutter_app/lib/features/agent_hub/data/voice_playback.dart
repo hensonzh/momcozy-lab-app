@@ -108,23 +108,12 @@ class AgentVoiceApiPlaybackPlayer implements AgentVoicePlaybackPlayer {
   Future<void> playText(String text) async {
     final chunks = buildAgentVoicePlaybackTextChunks(text);
     if (chunks.isEmpty) return;
-    final token = ++_playToken;
-    await pcmPlayer.start(sampleRate: sampleRate, channels: channels);
-    try {
-      for (final textChunk in chunks) {
-        if (token != _playToken) break;
-        await for (final pcmChunk in repository.realtimeVoicePcmStream(
-          text: textChunk,
-        )) {
-          if (token != _playToken) break;
-          await pcmPlayer.write(pcmChunk);
-        }
-      }
-    } finally {
-      if (token == _playToken) {
-        await pcmPlayer.finish();
-      }
+    final session = startRealtimeSession();
+    for (final textChunk in chunks) {
+      session.append(textChunk);
     }
+    session.finish();
+    await session.done;
   }
 
   @override

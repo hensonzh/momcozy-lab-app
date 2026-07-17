@@ -228,9 +228,15 @@ void main() {
   });
 
   test(
-    'AgentVoiceApiPlaybackPlayer sends sanitized chunks to realtime PCM',
+    'AgentVoiceApiPlaybackPlayer plays one-shot text through realtime session',
     () async {
-      final repository = _RecordingVoiceRepository();
+      final connection = _ScriptedRealtimeSessionConnection(
+        audioChunks: const [
+          [1, 2],
+          [1, 2],
+        ],
+      );
+      final repository = _RecordingVoiceRepository(connection: connection);
       final pcmPlayer = _RecordingPcmPlayer();
       final player = AgentVoiceApiPlaybackPlayer(
         repository: repository,
@@ -242,9 +248,11 @@ void main() {
         '${List.filled(950, '好').join()}',
       );
 
-      expect(repository.texts.length, greaterThan(1));
+      expect(repository.texts, isEmpty);
+      expect(repository.openRealtimeSessionCount, 1);
+      expect(connection.appendedTexts.length, greaterThan(1));
       expect(
-        repository.texts.every(
+        connection.appendedTexts.every(
           (text) =>
               text.length <= agentVoicePlaybackMaxChunkChars &&
               !text.contains('http') &&
@@ -253,7 +261,8 @@ void main() {
         ),
         isTrue,
       );
-      expect(repository.texts.join(), contains('报告'));
+      expect(connection.appendedTexts.join(), contains('报告'));
+      expect(connection.finishCount, 1);
       expect(pcmPlayer.starts, 1);
       expect(pcmPlayer.writes, [
         [1, 2],
