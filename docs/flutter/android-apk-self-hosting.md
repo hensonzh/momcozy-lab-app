@@ -17,6 +17,8 @@ Download: https://lute-momcozylab.luteos.cloud:8443/app
 Variant:  staging release
 ```
 
+上传成功后，脚本会输出 App 发布链接和邀请码管理后台链接。
+
 如需覆盖默认值，可使用环境变量：
 
 ```bash
@@ -46,7 +48,6 @@ make flutter-apk-download-site
 dist/android-apk/
   index.html
   manifest.json
-  assets/momcozy_logo.png
   assets/momcozy-lab-download-qr.svg
   releases/momcozy-android-staging-1.0.0-1.apk
   releases/momcozy-android-staging-1.0.0-1.apk.sha256

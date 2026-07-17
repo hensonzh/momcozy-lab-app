@@ -111,4 +111,6 @@ RSYNC_RSH="${rsync_rsh}" rsync \
   "${PROJECT_ROOT}/dist/android-apk/" \
   "${upload_target}"
 
-printf '\nPublished: %s/\n' "${download_base_url%/}"
+printf '\nDeployment succeeded.\n'
+printf 'App release:        %s/\n' "${download_base_url%/}"
+printf 'Invite code admin:  %s/v1/admin/invite-codes/ui\n' "${api_base_url%/}"
