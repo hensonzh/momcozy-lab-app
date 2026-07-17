@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 
@@ -13,12 +16,14 @@ class MomCozyAuthPage extends StatefulWidget {
     required this.sessionStore,
     this.redirectTo,
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
+    this.lastInviteCodeStore = const FlutterSecureMomCozyLastInviteCodeStore(),
   });
 
   final MomCozyRuntimeController runtimeController;
   final MomCozySessionStore sessionStore;
   final String? redirectTo;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
+  final MomCozyLastInviteCodeStore lastInviteCodeStore;
 
   @override
   State<MomCozyAuthPage> createState() => _MomCozyAuthPageState();
@@ -29,6 +34,13 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
   final FocusNode _inviteCodeFocusNode = FocusNode();
   bool _submitting = false;
   String? _errorText;
+  String? _lastInviteCode;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_loadLastInviteCode());
+  }
 
   @override
   void dispose() {
@@ -74,10 +86,11 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                     textCapitalization: TextCapitalization.characters,
                     autocorrect: false,
                     enableSuggestions: false,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: '邀请码',
-                      hintText: '请输入邀请码',
-                      prefixIcon: Icon(Icons.key_rounded),
+                      hintText: _lastInviteCode ?? '请输入邀请码',
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      prefixIcon: const Icon(Icons.key_rounded),
                     ),
                     onSubmitted: (_) => _submitInvite(),
                   ),
@@ -124,7 +137,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
         inviteCode: inviteCode,
         deviceId: deviceId,
       );
-      await _completeAuth(tokens, runtime);
+      await _completeAuth(tokens, runtime, inviteCode);
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -137,15 +150,54 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
   Future<void> _completeAuth(
     MomCozyAuthTokenResponse tokens,
     MomCozyApiRuntime runtime,
+    String inviteCode,
   ) async {
     final session = tokens.toSession(
       babyId: runtime.babyId,
       locale: runtime.locale,
     );
     await widget.sessionStore.writeSession(session);
+    await _rememberInviteCode(inviteCode, runtime);
     widget.runtimeController.replaceSession(session);
     if (!mounted) return;
     context.go(_safeRedirect(widget.redirectTo) ?? '/');
+  }
+
+  Future<void> _loadLastInviteCode() async {
+    try {
+      final inviteCode = await widget.lastInviteCodeStore.readLastInviteCode();
+      if (!mounted) return;
+      setState(() {
+        _lastInviteCode = trimmedSessionValue(inviteCode);
+      });
+    } catch (error, stackTrace) {
+      widget.runtimeController.runtime.observability.recordNonFatal(
+        error,
+        stackTrace: stackTrace,
+        context: const {
+          'feature': 'auth',
+          'operation': 'read_last_invite_code',
+        },
+      );
+    }
+  }
+
+  Future<void> _rememberInviteCode(
+    String inviteCode,
+    MomCozyApiRuntime runtime,
+  ) async {
+    try {
+      await widget.lastInviteCodeStore.writeLastInviteCode(inviteCode);
+    } catch (error, stackTrace) {
+      runtime.observability.recordNonFatal(
+        error,
+        stackTrace: stackTrace,
+        context: const {
+          'feature': 'auth',
+          'operation': 'write_last_invite_code',
+        },
+      );
+    }
   }
 }
 

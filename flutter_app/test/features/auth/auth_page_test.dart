@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 
@@ -82,6 +83,42 @@ void main() {
     router.dispose();
   });
 
+  testWidgets('auth page shows the last invite code as an empty-field hint', (
+    tester,
+  ) async {
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport(_tokenResponse()),
+      userId: 'demo-user',
+      babyId: 'demo-baby',
+      locale: 'zh-CN',
+    );
+    final controller = MomCozyRuntimeController(runtime);
+    final store = MemoryMomCozySessionStore();
+    final lastInviteCodeStore = _MemoryLastInviteCodeStore(' MCZ-LAST-0001 ');
+    final router = _authRouter(
+      controller: controller,
+      store: store,
+      deviceId: 'flutter-device-001',
+      lastInviteCodeStore: lastInviteCodeStore,
+    );
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+
+    final field = tester.widget<TextField>(
+      find.byKey(const ValueKey('auth-invite-code-field')),
+    );
+    expect(field.decoration?.hintText, 'MCZ-LAST-0001');
+    expect(
+      field.decoration?.floatingLabelBehavior,
+      FloatingLabelBehavior.always,
+    );
+    expect(field.controller?.text, isEmpty);
+
+    controller.dispose();
+    router.dispose();
+  });
+
   testWidgets('invite login writes the issued session and redirects', (
     tester,
   ) async {
@@ -94,10 +131,12 @@ void main() {
     );
     final controller = MomCozyRuntimeController(runtime);
     final store = MemoryMomCozySessionStore();
+    final lastInviteCodeStore = _MemoryLastInviteCodeStore();
     final router = _authRouter(
       controller: controller,
       store: store,
       deviceId: 'flutter-device-001',
+      lastInviteCodeStore: lastInviteCodeStore,
     );
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
@@ -119,6 +158,7 @@ void main() {
     expect(session?.userId, 'invite-user-001');
     expect(session?.refreshToken, 'refresh-token-001');
     expect(controller.runtime.session.userId, 'invite-user-001');
+    expect(lastInviteCodeStore.value, 'mcz-abcd-2345');
     expect(find.text('home'), findsOneWidget);
 
     controller.dispose();
@@ -143,10 +183,12 @@ void main() {
     );
     final controller = MomCozyRuntimeController(runtime);
     final store = MemoryMomCozySessionStore();
+    final lastInviteCodeStore = _MemoryLastInviteCodeStore('MCZ-LAST-0001');
     final router = _authRouter(
       controller: controller,
       store: store,
       deviceId: 'flutter-device-002',
+      lastInviteCodeStore: lastInviteCodeStore,
     );
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
@@ -163,6 +205,7 @@ void main() {
     expect(find.text('邀请码已在其他设备使用过'), findsOneWidget);
     expect(find.text('home'), findsNothing);
     expect(await store.readSession(), isNull);
+    expect(lastInviteCodeStore.value, 'MCZ-LAST-0001');
 
     controller.dispose();
     router.dispose();
@@ -173,6 +216,7 @@ GoRouter _authRouter({
   required MomCozyRuntimeController controller,
   required MomCozySessionStore store,
   required String deviceId,
+  MomCozyLastInviteCodeStore? lastInviteCodeStore,
 }) {
   return GoRouter(
     initialLocation: '/login',
@@ -183,6 +227,8 @@ GoRouter _authRouter({
           runtimeController: controller,
           sessionStore: store,
           authDeviceIdStore: _FixedAuthDeviceIdStore(deviceId),
+          lastInviteCodeStore:
+              lastInviteCodeStore ?? _MemoryLastInviteCodeStore(),
         ),
       ),
       GoRoute(
@@ -229,4 +275,18 @@ class _FixedAuthDeviceIdStore implements MomCozyAuthDeviceIdStore {
 
   @override
   Future<String> readOrCreateDeviceId() async => deviceId;
+}
+
+class _MemoryLastInviteCodeStore implements MomCozyLastInviteCodeStore {
+  _MemoryLastInviteCodeStore([this.value]);
+
+  String? value;
+
+  @override
+  Future<String?> readLastInviteCode() async => value;
+
+  @override
+  Future<void> writeLastInviteCode(String inviteCode) async {
+    value = inviteCode;
+  }
 }
