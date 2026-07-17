@@ -73,7 +73,6 @@ if (!existsSync(buildApkPath)) {
 await mkdir(releaseDir, { recursive: true });
 await mkdir(assetDir, { recursive: true });
 await copyFile(buildApkPath, artifactPath);
-await copyFile(path.join(flutterAppDir, "assets", "images", "momcozy_logo.png"), path.join(assetDir, "momcozy_logo.png"));
 
 const apkBytes = await readFile(artifactPath);
 const apkInfo = await stat(artifactPath);
@@ -201,8 +200,6 @@ function parseDartDefines(value) {
 }
 
 function renderDownloadPage(manifest) {
-  const sizeMb = (manifest.sizeBytes / 1024 / 1024).toFixed(1);
-  const generated = new Date(manifest.generatedAt).toLocaleString("zh-CN", { hour12: false });
   return `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -215,9 +212,7 @@ function renderDownloadPage(manifest) {
       --card: #fff;
       --text: #342431;
       --muted: #7f6b76;
-      --primary: #8a3d5b;
       --border: #eadde2;
-      --soft: #f7eef2;
     }
     * { box-sizing: border-box; }
     body {
@@ -229,92 +224,35 @@ function renderDownloadPage(manifest) {
       background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      text-align: center;
     }
     main {
-      width: min(760px, 100%);
+      width: min(420px, 100%);
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 28px;
+      padding: 32px;
       box-shadow: 0 18px 42px rgba(79, 46, 61, .10);
     }
-    .brand { width: 190px; height: auto; display: block; margin-bottom: 24px; }
-    h1 { margin: 0 0 10px; font-size: clamp(28px, 5vw, 40px); line-height: 1.15; }
-    p { margin: 0; color: var(--muted); line-height: 1.7; }
-    .layout { display: grid; grid-template-columns: 1fr 240px; gap: 28px; align-items: start; margin-top: 26px; }
-    .share {
-      padding: 18px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: #fff;
-      overflow-wrap: anywhere;
-    }
-    .share { text-align: center; }
-    .share strong { display: block; margin: 12px 0 4px; font-size: 18px; }
-    .share p { font-size: 14px; }
-    .qr { display: block; width: 100%; height: auto; border-radius: 12px; }
-    .download-url { display: block; margin-top: 12px; font-size: 12px; text-align: left; }
-    .button {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 48px;
-      padding: 0 24px;
-      border-radius: 999px;
-      margin: 22px 0 16px;
-      background: var(--primary);
-      color: #fff;
-      text-decoration: none;
-      font-weight: 800;
-    }
-    .meta {
-      display: grid;
-      gap: 10px;
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: 16px;
-      background: var(--soft);
-      color: var(--muted);
-      font-size: 14px;
-    }
-    .meta strong { color: var(--text); }
-    code { word-break: break-all; color: var(--text); }
-    ol { margin: 16px 0 0; padding-left: 22px; color: var(--muted); line-height: 1.75; }
+    h1 { margin: 0; font-size: clamp(26px, 7vw, 34px); line-height: 1.2; }
+    .intro { margin: 12px 0 0; color: var(--muted); line-height: 1.6; }
+    .version { margin: 18px 0 22px; font-size: 15px; font-weight: 700; }
+    .qr-link { display: block; border-radius: 18px; }
+    .qr { display: block; width: 100%; height: auto; border-radius: 18px; }
     @media (max-width: 700px) {
-      main { padding: 22px; }
-      .layout { grid-template-columns: 1fr; }
+      body { padding: 16px; }
+      main { padding: 26px 22px; }
     }
   </style>
 </head>
 <body>
   <main>
-    <img class="brand" src="assets/momcozy_logo.png" alt="Momcozy" />
-    <h1>Momcozy Android 内测包</h1>
-    <p>请使用 Android 手机打开本页，或点击按钮下载 APK。下载后根据系统提示允许安装未知来源应用。</p>
-    <div class="layout">
-      <section>
-        <a class="button" href="${escapeHtml(manifest.apkUrl)}" download>下载 APK</a>
-        <div class="meta">
-          <div><strong>版本：</strong>${escapeHtml(manifest.versionName)} (${escapeHtml(manifest.buildNumber)})</div>
-          <div><strong>渠道：</strong>${escapeHtml(manifest.flavor)} / ${escapeHtml(manifest.mode)}</div>
-          <div><strong>大小：</strong>${sizeMb} MB</div>
-          <div><strong>生成时间：</strong>${escapeHtml(generated)}</div>
-          <div><strong>Git：</strong>${escapeHtml(manifest.gitCommit || "-")}</div>
-          <div><strong>SHA256：</strong><code>${escapeHtml(manifest.sha256)}</code></div>
-        </div>
-        <ol>
-          <li>如果浏览器提示风险，请确认下载来源是 Momcozy 内测链接。</li>
-          <li>安装时请选择“允许来自此来源的应用”。</li>
-          <li>如已安装旧包，遇到签名冲突时请先卸载旧包再安装。</li>
-        </ol>
-      </section>
-      <aside class="share">
-        <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="Momcozy Lab APK 下载二维码" />
-        <strong>${escapeHtml(manifest.qrCodeLabel)}</strong>
-        <p>使用 Android 手机扫码，直接下载 APK</p>
-        <code class="download-url">${escapeHtml(manifest.apkUrl)}</code>
-      </aside>
-    </div>
+    <h1>Momcozy Lab 内测版</h1>
+    <p class="intro">使用 Android 手机扫描或点击二维码下载 APK。</p>
+    <p class="version">版本 ${escapeHtml(manifest.versionName)} (${escapeHtml(manifest.buildNumber)})</p>
+    <a class="qr-link" href="${escapeHtml(manifest.apkUrl)}" download aria-label="下载 Momcozy Lab Android APK">
+      <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="Momcozy Lab APK 下载二维码" />
+    </a>
   </main>
 </body>
 </html>
