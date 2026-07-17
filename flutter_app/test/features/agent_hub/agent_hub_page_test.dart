@@ -1796,7 +1796,7 @@ void main() {
     expect(find.text('快捷一'), findsNothing);
   });
 
-  testWidgets('Agent Hub renders quick replies as selectable legacy pills', (
+  testWidgets('Agent Hub hides generated quick replies from legacy payloads', (
     tester,
   ) async {
     final client = _FixtureAgentStreamClient([
@@ -1857,29 +1857,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('我整理好了。'), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-quick-reply-0')), findsOneWidget);
-    expect(find.text('继续聊这个'), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('agent-quick-reply-0')));
-    await tester.pumpAndSettle();
-
-    expect(client.requests, hasLength(2));
-    expect(client.requests.last.message, '继续聊这个');
-    expect(client.requests.last.idempotencyKey, 'request-5');
-    expect(client.requests.last.metadata['workflow_reply'], {
-      'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-      'workflow_type': 'pregnancy_plan',
-      'revision': 4,
-      'step_token': 'opaque-step-token',
-    });
-    expect(recordedClientEvents, hasLength(1));
-    expect(recordedClientEvents.single['event_type'], 'ui.quick_reply.clicked');
-    expect(recordedClientEvents.single['label'], '继续聊这个');
-    expect(
-      recordedClientEvents.single['metadata'],
-      containsPair('quick_reply_text', '继续聊这个'),
-    );
+    expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-quick-reply-0')), findsNothing);
+    expect(find.text('猜你想说'), findsNothing);
+    expect(find.text('继续聊这个'), findsNothing);
+    expect(client.requests, hasLength(1));
+    expect(recordedClientEvents, isEmpty);
   });
 
   testWidgets('Agent Hub reuses backend thread id across follow-up turns', (
@@ -4200,8 +4183,9 @@ void main() {
         find.byKey(const ValueKey('agent-assistant-avatar-static')),
         findsWidgets,
       );
-      expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
-      expect(find.text('继续聊这个'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
+      expect(find.text('猜你想说'), findsNothing);
+      expect(find.text('继续聊这个'), findsNothing);
       expect(
         tester
             .widget<IconButton>(
@@ -6965,18 +6949,8 @@ void main() {
 
       expect(find.textContaining('双胎和 IVF 会影响复查节奏'), findsOneWidget);
       expect(find.text('已提交，可点击查看'), findsOneWidget);
-      expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
-      final noMore = find.byKey(const ValueKey('agent-quick-reply-0'));
-      await tester.scrollUntilVisible(
-        noMore,
-        -220,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(noMore);
-      await tester.pump();
-
-      expect(client.requests, hasLength(1));
+      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
+      expect(find.text('猜你想说'), findsNothing);
 
       client.emit(
         0,
@@ -6989,6 +6963,14 @@ void main() {
         }),
       );
       await _pumpFrames(tester, 4);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '没有了，开始制定',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
 
       expect(client.requests, hasLength(2));
       expect(client.requests.last.message, '没有了，开始制定');
