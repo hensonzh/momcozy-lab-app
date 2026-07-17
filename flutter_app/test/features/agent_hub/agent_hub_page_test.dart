@@ -188,7 +188,7 @@ void main() {
     expect(greetingRect.top - chatRect.top, lessThan(120));
   });
 
-  testWidgets('Agent Hub focuses a newly arrived artifact near viewport top', (
+  testWidgets('Agent Hub keeps a newly arrived form entry in the viewport', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -274,14 +274,30 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'artifact-focus-completed-event',
+        'type': 'message.completed',
+        'thread_id': 'thread-artifact-focus',
+        'run_id': 'run-artifact-focus',
+        'message_id': 'message-artifact-focus',
+        'sequence': 3,
+        'payload': {'role': 'assistant', 'content': '我先说明一下，再请你补充这些信息。'},
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
     final chatRect = tester.getRect(
       find.byKey(const ValueKey('agent-chat-scroll-view')),
     );
     final artifactRect = tester.getRect(
       find.byKey(const ValueKey('agent-artifact-panel')),
     );
-    expect(artifactRect.top, greaterThan(chatRect.top + 70));
-    expect(artifactRect.top, lessThan(chatRect.top + chatRect.height * 0.55));
+    expect(artifactRect.top, greaterThan(chatRect.top));
+    expect(artifactRect.bottom, lessThanOrEqualTo(chatRect.bottom));
   });
 
   testWidgets('Agent Hub publishes a pure artifact on assistant completion', (
@@ -1264,6 +1280,12 @@ void main() {
       );
       await tester.pump();
 
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-profile-default-form'),
+        ),
+      );
+      await tester.pumpAndSettle();
       final inputs = find.byType(TextFormField);
       expect(inputs, findsNWidgets(2));
       await tester.enterText(inputs.at(1), '我手动填的医院');
@@ -1279,6 +1301,7 @@ void main() {
           ),
         ),
       );
+      await tester.pump();
       await tester.pump();
       await tester.pump();
 
@@ -1765,7 +1788,10 @@ void main() {
       ),
     );
 
-    expect(find.text('信息采集'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-artifact-form-entry-quick-reply-form')),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
     expect(find.text('快捷一'), findsNothing);
   });
@@ -4984,15 +5010,28 @@ void main() {
       ),
     );
 
-    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    await tester.pumpWidget(
+      _host(AgentHubPage(interactionStateStore: store), tickersEnabled: true),
+    );
     await tester.pumpAndSettle();
 
-    expect(find.text('38 周'), findsOneWidget);
-    expect(find.text('已提交'), findsOneWidget);
-    final button = tester.widget<FilledButton>(
-      find.byKey(const ValueKey('agent-artifact-form-submit-restored-form')),
+    final entry = find.byKey(
+      const ValueKey('agent-artifact-form-entry-restored-form'),
     );
-    expect(button.onPressed, isNull);
+    expect(entry, findsOneWidget);
+    expect(find.text('已提交，可点击查看'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-artifact-form-dialog-restored-form')),
+      findsNothing,
+    );
+
+    await tester.tap(entry);
+    await tester.pumpAndSettle();
+    expect(find.text('38 周'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-artifact-form-submit-restored-form')),
+      findsNothing,
+    );
     final input = tester.widget<TextField>(
       find.descendant(
         of: find.byKey(const ValueKey('agent-artifact-form-restored-form')),
@@ -5000,6 +5039,249 @@ void main() {
       ),
     );
     expect(input.readOnly, isTrue);
+  });
+
+  testWidgets(
+    'Agent Hub waits for final text then loads and auto-opens a new form once',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(runner: AgentStreamRunner(client)),
+          tickersEnabled: true,
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '帮我准备待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      expect(client.requests, hasLength(1));
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'form-dialog-artifact',
+          'type': 'artifact.created',
+          'thread_id': 'thread-form-dialog',
+          'run_id': 'run-form-dialog',
+          'artifact_id': 'form-dialog-intake',
+          'sequence': 1,
+          'payload': {
+            'artifact_type': 'form',
+            'form': {
+              'id': 'hospital_bag_intake',
+              'title': '待产包信息采集',
+              'fields': [
+                {
+                  'id': 'due_date_or_week',
+                  'label': '预产期或当前孕周',
+                  'type': 'text',
+                  'required': true,
+                  'default_value': '32 周',
+                },
+              ],
+            },
+          },
+        }),
+      );
+      await _pumpFrames(tester, 2);
+      expect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-form-dialog-intake'),
+        ),
+        findsNothing,
+      );
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'form-dialog-delta',
+          'type': 'message.delta',
+          'thread_id': 'thread-form-dialog',
+          'run_id': 'run-form-dialog',
+          'message_id': 'message-form-dialog',
+          'sequence': 2,
+          'payload': {'text': '我先说明一下，再请你补充信息。'},
+        }),
+      );
+      await _pumpFrames(tester, 2);
+      expect(find.text('我先说明一下，再请你补充信息。'), findsOneWidget);
+      expect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-form-dialog-intake'),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('agent-artifact-form-form-dialog-intake')),
+        findsNothing,
+      );
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'form-dialog-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-form-dialog',
+          'run_id': 'run-form-dialog',
+          'message_id': 'message-form-dialog',
+          'sequence': 3,
+          'payload': {'role': 'assistant', 'content': '我先说明一下，再请你补充信息。'},
+        }),
+      );
+      await _pumpFrames(tester, 2);
+
+      expect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-form-dialog-intake'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const ValueKey(
+            'agent-artifact-form-entry-loading-form-dialog-intake',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
+        ),
+        findsNothing,
+      );
+
+      await tester.pump(const Duration(milliseconds: 999));
+      expect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
+        ),
+        findsNothing,
+      );
+      await tester.pump(const Duration(milliseconds: 1));
+      await tester.pump();
+      expect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
+        ),
+        findsOneWidget,
+      );
+
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-cancel-form-dialog-intake'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
+        ),
+        findsNothing,
+      );
+      await tester.pump(const Duration(seconds: 2));
+      expect(
+        find.byKey(
+          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
+        ),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets('cancelled form dialog keeps its draft for manual reopen', (
+    tester,
+  ) async {
+    var submitCount = 0;
+    const card = AgentArtifactCardView(
+      id: 'draft-form',
+      title: '孕期信息采集',
+      description: '用于生成更适合你的孕期计划。',
+      formId: 'birth_journey_basic_info_intake',
+      presentationKind: AgentArtifactPresentationKind.form,
+      formFields: [
+        AgentArtifactFormFieldView(
+          id: 'current_week',
+          label: '当前孕周或预产期',
+          type: 'text',
+          required: true,
+          defaultValue: '32 周',
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentArtifactPanel(
+          cards: const [card],
+          onFormSubmit: (_) async {
+            submitCount += 1;
+            return true;
+          },
+        ),
+      ),
+    );
+
+    final entry = find.byKey(
+      const ValueKey('agent-artifact-form-entry-draft-form'),
+    );
+    expect(entry, findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-artifact-form-draft-form')),
+      findsNothing,
+    );
+
+    await tester.tap(entry);
+    await tester.pumpAndSettle();
+    final input = find.byKey(
+      const ValueKey('agent-artifact-form-input-draft-form-current_week--1'),
+    );
+    expect(input, findsOneWidget);
+    await tester.enterText(input, '35 周');
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-form-cancel-draft-form')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(submitCount, 0);
+    expect(
+      find.byKey(const ValueKey('agent-artifact-form-dialog-draft-form')),
+      findsNothing,
+    );
+
+    await tester.tap(entry);
+    await tester.pumpAndSettle();
+    final reopenedInput = tester.widget<TextFormField>(
+      find.byKey(
+        const ValueKey('agent-artifact-form-input-draft-form-current_week--1'),
+      ),
+    );
+    expect(
+      reopenedInput.controller?.text ?? reopenedInput.initialValue,
+      '35 周',
+    );
+
+    await tester.enterText(input, '');
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-form-cancel-draft-form')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(entry);
+    await tester.pumpAndSettle();
+    final clearedInput = tester.widget<TextFormField>(
+      find.byKey(
+        const ValueKey('agent-artifact-form-input-draft-form-current_week--1'),
+      ),
+    );
+    expect(clearedInput.controller?.text ?? clearedInput.initialValue, isEmpty);
   });
 
   testWidgets(
@@ -5998,6 +6280,12 @@ void main() {
       );
 
       expect(find.text('售后工单'), findsOneWidget);
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-support-ticket-1'),
+        ),
+      );
+      await tester.pumpAndSettle();
       expect(find.text('问题类型'), findsOneWidget);
       expect(find.text('问题描述'), findsOneWidget);
       expect(find.text('产品型号'), findsOneWidget);
@@ -6023,7 +6311,7 @@ void main() {
         startsWith('agent-form-submit-'),
       );
       expect(find.text('已提交售后工单'), findsOneWidget);
-      expect(find.text('已提交'), findsOneWidget);
+      expect(find.text('已提交，可点击查看'), findsOneWidget);
       expect(find.text('信息已确认'), findsNothing);
       expect(find.textContaining('人工客服团队会在 24 小时内主动联系你'), findsOneWidget);
     },
@@ -6061,6 +6349,12 @@ void main() {
         ),
       );
 
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-support-ticket-failure'),
+        ),
+      );
+      await tester.pumpAndSettle();
       final submit = find.byKey(
         const ValueKey('agent-artifact-form-submit-support-ticket-failure'),
       );
@@ -6182,18 +6476,10 @@ void main() {
       ),
     );
 
-    expect(find.text('信息采集'), findsOneWidget);
-    final formFinder = find.byKey(
-      const ValueKey('agent-artifact-form-hospital-bag-form'),
+    final formEntry = find.byKey(
+      const ValueKey('agent-artifact-form-entry-hospital-bag-form'),
     );
-    expect(formFinder, findsOneWidget);
-    expect(find.text('基本信息'), findsOneWidget);
-    expect(find.text('预产期或当前孕周'), findsOneWidget);
-    expect(find.text('生产信息'), findsOneWidget);
-    expect(find.text('分娩方式'), findsOneWidget);
-    expect(find.text('必填'), findsNothing);
-    expect(find.text('*'), findsWidgets);
-    expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
+    expect(formEntry, findsOneWidget);
     expect(find.text('孕期计划'), findsOneWidget);
     expect(find.text('当前阶段'), findsOneWidget);
     expect(find.text('2 个事项'), findsOneWidget);
@@ -6208,6 +6494,20 @@ void main() {
     expect(find.text('打开购物车'), findsOneWidget);
     expect(cartUpdates, hasLength(1));
     expect(cartUpdates.single.snapshot.groups.single.items, hasLength(2));
+
+    await tester.tap(formEntry);
+    await tester.pumpAndSettle();
+    final formFinder = find.byKey(
+      const ValueKey('agent-artifact-form-hospital-bag-form'),
+    );
+    expect(formFinder, findsOneWidget);
+    expect(find.text('基本信息'), findsOneWidget);
+    expect(find.text('预产期或当前孕周'), findsOneWidget);
+    expect(find.text('生产信息'), findsOneWidget);
+    expect(find.text('分娩方式'), findsOneWidget);
+    expect(find.text('必填'), findsNothing);
+    expect(find.text('*'), findsWidgets);
+    expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
 
     await tester.tap(
       find.byKey(
@@ -6267,18 +6567,24 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     expect(find.text('已提交信息采集表单'), findsOneWidget);
+    expect(find.text('已提交，可点击查看'), findsOneWidget);
+    await tester.ensureVisible(formEntry);
+    await tester.pumpAndSettle();
+    await tester.tap(formEntry);
+    await tester.pumpAndSettle();
     expect(find.text('38 周'), findsOneWidget);
-    expect(find.text('已提交'), findsOneWidget);
     expect(
-      tester
-          .widget<FilledButton>(
-            find.byKey(
-              const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
-            ),
-          )
-          .onPressed,
-      isNull,
+      find.byKey(
+        const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
+      ),
+      findsNothing,
     );
+    await tester.tap(
+      find.byKey(
+        const ValueKey('agent-artifact-form-cancel-hospital-bag-form'),
+      ),
+    );
+    await tester.pumpAndSettle();
     expect(client.requests, hasLength(1));
 
     final cartActionFinder = find.byKey(
@@ -6390,6 +6696,12 @@ void main() {
       );
       await tester.pump();
 
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-pregnancy-intake-form'),
+        ),
+      );
+      await tester.pumpAndSettle();
       final submit = find.byKey(
         const ValueKey('agent-artifact-form-submit-pregnancy-intake-form'),
       );
@@ -6460,7 +6772,7 @@ void main() {
       await _pumpFrames(tester, 2);
 
       expect(find.textContaining('双胎和 IVF 会影响复查节奏'), findsOneWidget);
-      expect(find.text('已提交'), findsOneWidget);
+      expect(find.text('已提交，可点击查看'), findsOneWidget);
       expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
       final noMore = find.byKey(const ValueKey('agent-quick-reply-0'));
       await tester.scrollUntilVisible(
@@ -6607,6 +6919,10 @@ void main() {
         ),
       );
 
+      await tester.tap(
+        find.byKey(const ValueKey('agent-artifact-form-entry-form-alignment')),
+      );
+      await tester.pumpAndSettle();
       expect(find.text('基本信息'), findsOneWidget);
       expect(find.text('生产信息'), findsOneWidget);
       expect(find.text('预产期或当前孕周'), findsOneWidget);
@@ -6646,12 +6962,7 @@ void main() {
         actions.single.value,
         contains('"pregnancy_history":["其它：第一胎剖宫产"]'),
       );
-      expect(find.text('已提交'), findsOneWidget);
-
-      await tester.tap(submitFinder);
-      await tester.pump();
-
-      expect(actions, hasLength(1));
+      expect(find.text('已提交，可点击查看'), findsOneWidget);
     },
   );
 
@@ -6690,10 +7001,14 @@ void main() {
         ),
       );
 
+      await tester.tap(
+        find.byKey(const ValueKey('agent-artifact-form-entry-retryable-form')),
+      );
+      await tester.pumpAndSettle();
       final submitFinder = find.byKey(
         const ValueKey('agent-artifact-form-submit-retryable-form'),
       );
-      expect(tester.getSize(submitFinder).width, greaterThan(300));
+      expect(tester.getSize(submitFinder).height, greaterThanOrEqualTo(44));
 
       await tester.tap(submitFinder);
       await tester.pumpAndSettle();
@@ -6706,7 +7021,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(attempts, 2);
-      expect(find.text('已提交'), findsOneWidget);
+      expect(find.text('已提交，可点击查看'), findsOneWidget);
     },
   );
 
@@ -6748,6 +7063,12 @@ void main() {
       ),
     );
 
+    await tester.tap(
+      find.byKey(
+        const ValueKey('agent-artifact-form-entry-retryable-run-form'),
+      ),
+    );
+    await tester.pumpAndSettle();
     final submitFinder = find.byKey(
       const ValueKey('agent-artifact-form-submit-retryable-run-form'),
     );
@@ -6810,6 +7131,10 @@ void main() {
       ),
     );
 
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-form-entry-packing-form')),
+    );
+    await tester.pumpAndSettle();
     expect(find.text('奶瓶'), findsOneWidget);
     expect(find.text('尿布'), findsOneWidget);
     expect(find.byType(ChoiceChip), findsNothing);

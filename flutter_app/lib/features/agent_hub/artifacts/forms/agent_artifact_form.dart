@@ -11,20 +11,28 @@ class AgentArtifactForm extends StatefulWidget {
     this.onAction,
     this.onSubmit,
     this.submission,
+    this.initialDraftValues = const <String, Object?>{},
+    this.onDraftChanged,
+    this.onSubmitted,
+    this.dialogMode = false,
   });
 
   final AgentArtifactCardView card;
   final ValueChanged<AgentArtifactActionView>? onAction;
   final AgentArtifactFormSubmitHandler? onSubmit;
   final AgentArtifactFormSubmission? submission;
+  final Map<String, Object?> initialDraftValues;
+  final ValueChanged<Map<String, Object?>>? onDraftChanged;
+  final VoidCallback? onSubmitted;
+  final bool dialogMode;
 
   @override
-  State<AgentArtifactForm> createState() => _AgentArtifactFormState();
+  AgentArtifactFormState createState() => AgentArtifactFormState();
 }
 
 enum _AgentArtifactFormPhase { editing, submitting, submitted }
 
-class _AgentArtifactFormState extends State<AgentArtifactForm> {
+class AgentArtifactFormState extends State<AgentArtifactForm> {
   late Map<String, Object?> _values;
   late Map<String, String> _otherValues;
   final Set<String> _dirtyFieldIds = <String>{};
@@ -71,30 +79,14 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     final textTheme = Theme.of(context).textTheme;
     final isCollection = _isCollectionForm(widget.card.formId);
     final groups = _formFieldGroups(widget.card);
-
-    return DecoratedBox(
-      key: ValueKey('agent-artifact-form-${widget.card.id}'),
-      decoration: BoxDecoration(
-        color: isCollection ? const Color(0xfffffdfc) : MomCozyColors.raised,
-        borderRadius: BorderRadius.circular(isCollection ? 24 : 12),
-        border: Border.all(
-          color: isCollection ? const Color(0xffeadfe5) : MomCozyColors.border,
-        ),
-        boxShadow: isCollection
-            ? const [
-                BoxShadow(
-                  color: Color(0x0f412a34),
-                  blurRadius: 30,
-                  offset: Offset(0, 10),
-                ),
-              ]
-            : null,
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(isCollection ? 16 : 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+    final content = Padding(
+      padding: widget.dialogMode
+          ? EdgeInsets.zero
+          : EdgeInsets.all(isCollection ? 16 : 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (!widget.dialogMode) ...[
             Text(
               widget.card.title,
               style:
@@ -117,58 +109,63 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
               ),
             ],
             SizedBox(height: isCollection ? 16 : 12),
-            for (var index = 0; index < groups.length; index++) ...[
-              if (groups[index].title.isNotEmpty)
-                _ArtifactFormGroup(
+          ],
+          for (var index = 0; index < groups.length; index++) ...[
+            if (groups[index].title.isNotEmpty)
+              _ArtifactFormGroup(
+                title: groups[index].title,
+                tone: _groupTone(
+                  formId: widget.card.formId,
                   title: groups[index].title,
-                  tone: _groupTone(
-                    formId: widget.card.formId,
-                    title: groups[index].title,
-                    index: index,
-                  ),
-                  children: [
-                    for (
-                      var fieldIndex = 0;
-                      fieldIndex < groups[index].fields.length;
-                      fieldIndex++
-                    ) ...[
-                      _buildField(context, groups[index].fields[fieldIndex]),
-                      if (fieldIndex < groups[index].fields.length - 1)
-                        const SizedBox(height: 12),
-                    ],
-                  ],
-                )
-              else
-                for (
-                  var fieldIndex = 0;
-                  fieldIndex < groups[index].fields.length;
-                  fieldIndex++
-                ) ...[
-                  _buildField(context, groups[index].fields[fieldIndex]),
-                  if (fieldIndex < groups[index].fields.length - 1)
-                    const SizedBox(height: 12),
-                ],
-              if (index < groups.length - 1)
-                SizedBox(height: isCollection ? 16 : 12),
-            ],
-            if (_submitError != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                _submitError!,
-                key: ValueKey('agent-artifact-form-error-${widget.card.id}'),
-                style: textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                  fontWeight: FontWeight.w700,
+                  index: index,
                 ),
+                compact: widget.dialogMode,
+                children: [
+                  for (
+                    var fieldIndex = 0;
+                    fieldIndex < groups[index].fields.length;
+                    fieldIndex++
+                  ) ...[
+                    _buildField(context, groups[index].fields[fieldIndex]),
+                    if (fieldIndex < groups[index].fields.length - 1)
+                      const SizedBox(height: 12),
+                  ],
+                ],
+              )
+            else
+              for (
+                var fieldIndex = 0;
+                fieldIndex < groups[index].fields.length;
+                fieldIndex++
+              ) ...[
+                _buildField(context, groups[index].fields[fieldIndex]),
+                if (fieldIndex < groups[index].fields.length - 1)
+                  const SizedBox(height: 12),
+              ],
+            if (index < groups.length - 1)
+              SizedBox(
+                height: widget.dialogMode ? 18 : (isCollection ? 16 : 12),
               ),
-            ],
+          ],
+          if (_submitError != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _submitError!,
+              key: ValueKey('agent-artifact-form-error-${widget.card.id}'),
+              style: textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+          if (!widget.dialogMode) ...[
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               height: 48,
               child: FilledButton.icon(
                 key: ValueKey('agent-artifact-form-submit-${widget.card.id}'),
-                onPressed: !_canSubmit || _isLocked ? null : _submit,
+                onPressed: !_canSubmit || _isLocked ? null : submit,
                 icon: _submitIcon(),
                 label: Text(_submitLabel()),
                 style: FilledButton.styleFrom(
@@ -197,8 +194,37 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
               ),
             ),
           ],
-        ),
+        ],
       ),
+    );
+
+    return KeyedSubtree(
+      key: ValueKey('agent-artifact-form-${widget.card.id}'),
+      child: widget.dialogMode
+          ? content
+          : DecoratedBox(
+              decoration: BoxDecoration(
+                color: isCollection
+                    ? const Color(0xfffffdfc)
+                    : MomCozyColors.raised,
+                borderRadius: BorderRadius.circular(isCollection ? 24 : 12),
+                border: Border.all(
+                  color: isCollection
+                      ? const Color(0xffeadfe5)
+                      : MomCozyColors.border,
+                ),
+                boxShadow: isCollection
+                    ? const [
+                        BoxShadow(
+                          color: Color(0x0f412a34),
+                          blurRadius: 30,
+                          offset: Offset(0, 10),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: content,
+            ),
     );
   }
 
@@ -417,14 +443,14 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     _setFieldValue(field.id, value);
   }
 
-  Future<void> _submit() async {
+  Future<bool> submit() async {
     for (final field in widget.card.formFields) {
       if (!field.allowOtherInput || !_isOtherSelected(field)) continue;
       if ((_otherValues[field.id]?.trim() ?? '').isEmpty) {
         setState(() {
           _submitError = '请填写：${field.fieldLabel}的其它内容';
         });
-        return;
+        return false;
       }
     }
 
@@ -437,8 +463,11 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
       setState(() {
         _submitError = '请补充：${missingFields.join('、')}';
       });
-      return;
+      return false;
     }
+    widget.onDraftChanged?.call(
+      Map<String, Object?>.unmodifiable(_draftValues()),
+    );
 
     final action = AgentArtifactActionView(
       label: widget.card.formSubmitLabel ?? '提交',
@@ -468,13 +497,15 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     } catch (_) {
       accepted = false;
     }
-    if (!mounted) return;
+    if (!mounted) return accepted;
     setState(() {
       _phase = accepted
           ? _AgentArtifactFormPhase.submitted
           : _AgentArtifactFormPhase.editing;
       _submitError = accepted ? null : '提交失败，请重试';
     });
+    if (accepted) widget.onSubmitted?.call();
+    return accepted;
   }
 
   Widget _submitIcon() {
@@ -528,6 +559,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
       _dirtyFieldIds.add(field.id);
       _submitError = null;
     });
+    _notifyDraftChanged();
   }
 
   void _setFieldValue(String id, Object? value) {
@@ -537,6 +569,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
       _dirtyFieldIds.add(id);
       _submitError = null;
     });
+    _notifyDraftChanged();
   }
 
   void _setOtherFieldValue(String id, String value) {
@@ -546,6 +579,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
       _dirtyFieldIds.add(id);
       _submitError = null;
     });
+    _notifyDraftChanged();
   }
 
   void _resetValues() {
@@ -558,6 +592,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     };
     _otherValues = const <String, String>{};
     _dirtyFieldIds.clear();
+    _applyExternalValues(widget.initialDraftValues, markDirty: true);
     _defaultRevision += 1;
     _submitError = null;
     _phase = _AgentArtifactFormPhase.editing;
@@ -570,11 +605,25 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
       return;
     }
 
+    _applyExternalValues(submission.values);
+    _defaultRevision += 1;
+    _phase = submission.isSubmitted
+        ? _AgentArtifactFormPhase.submitted
+        : _AgentArtifactFormPhase.submitting;
+    _submitError = null;
+  }
+
+  void _applyExternalValues(
+    Map<String, Object?> externalValues, {
+    bool markDirty = false,
+  }) {
+    if (externalValues.isEmpty) return;
     final values = Map<String, Object?>.from(_values);
     final otherValues = Map<String, String>.from(_otherValues);
     for (final field in widget.card.formFields) {
-      if (!submission.values.containsKey(field.id)) continue;
-      final rawValue = submission.values[field.id];
+      if (!externalValues.containsKey(field.id)) continue;
+      final rawValue = externalValues[field.id];
+      if (markDirty) _dirtyFieldIds.add(field.id);
       if (!field.allowOtherInput) {
         values[field.id] = rawValue;
         continue;
@@ -609,11 +658,6 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     }
     _values = values;
     _otherValues = otherValues;
-    _defaultRevision += 1;
-    _phase = submission.isSubmitted
-        ? _AgentArtifactFormPhase.submitted
-        : _AgentArtifactFormPhase.submitting;
-    _submitError = null;
   }
 
   void _mergeUpdatedDefaults() {
@@ -668,6 +712,44 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
       if (_hasFieldValue(value)) values[field.id] = value;
     }
     return values;
+  }
+
+  Map<String, Object?> _draftValues() {
+    final values = <String, Object?>{};
+    for (final field in widget.card.formFields) {
+      if (!_values.containsKey(field.id)) continue;
+      final rawValue = _values[field.id];
+      Object? value = rawValue;
+      final otherValue = _otherValues[field.id]?.trim();
+      if (field.isMultiSelect && rawValue is List) {
+        value = rawValue
+            .whereType<String>()
+            .map((item) {
+              if (field.allowOtherInput &&
+                  otherValue != null &&
+                  otherValue.isNotEmpty &&
+                  _isOtherOption(item)) {
+                return '其它：$otherValue';
+              }
+              return item;
+            })
+            .toList(growable: false);
+      } else if (rawValue is String &&
+          field.allowOtherInput &&
+          otherValue != null &&
+          otherValue.isNotEmpty &&
+          _isOtherOption(rawValue)) {
+        value = '其它：$otherValue';
+      }
+      values[field.id] = value;
+    }
+    return values;
+  }
+
+  void _notifyDraftChanged() {
+    widget.onDraftChanged?.call(
+      Map<String, Object?>.unmodifiable(_draftValues()),
+    );
   }
 
   bool _hasFieldValue(Object? value) {
@@ -799,14 +881,37 @@ class _ArtifactFormGroup extends StatelessWidget {
     required this.title,
     required this.tone,
     required this.children,
+    this.compact = false,
   });
 
   final String title;
   final _ArtifactFormGroupTone tone;
   final List<Widget> children;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    if (compact) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: tone.title,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Divider(height: 1, color: tone.divider),
+          const SizedBox(height: 12),
+          ...children,
+        ],
+      );
+    }
     return DecoratedBox(
       decoration: BoxDecoration(
         color: tone.background,
