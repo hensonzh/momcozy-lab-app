@@ -20,6 +20,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
@@ -299,6 +300,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ValueNotifier<Map<String, AgentArtifactFormSubmission>>(
         const <String, AgentArtifactFormSubmission>{},
       );
+  final AgentArtifactFormPresentationSession _formPresentationSession =
+      AgentArtifactFormPresentationSession();
   bool _autoVoiceEnabled = true;
   bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
@@ -335,6 +338,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void initState() {
     super.initState();
     _restoreCachedInteractionState();
+    _seedExistingFormPresentations();
     _applyHospitalBagCartUpdates(_state);
     _applyPregnancyDiaryChanges(_state);
     _applyPregnancyPlanChanges(_state);
@@ -414,6 +418,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _activeVoicePlaybackIdNotifier.dispose();
     _actionStateRevisionNotifier.dispose();
     _formSubmissionsNotifier.dispose();
+    _formPresentationSession.clear();
     super.dispose();
   }
 
@@ -666,6 +671,16 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ..addAll(snapshot.localActionStatuses);
     _formSubmissionsNotifier.value =
         Map<String, AgentArtifactFormSubmission>.of(snapshot.formSubmissions);
+    _seedExistingFormPresentations();
+  }
+
+  void _seedExistingFormPresentations() {
+    _formPresentationSession.seedExistingFormIds([
+      ..._formArtifactIdsForState(_state),
+      for (final message in _historyMessages)
+        if (message.runState case final runState?)
+          ..._formArtifactIdsForState(runState),
+    ]);
   }
 
   AgentStreamRunState _restoreInterruptedRunState(
@@ -1476,6 +1491,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _composerController.clear();
       _formSubmissionsNotifier.value =
           const <String, AgentArtifactFormSubmission>{};
+      _formPresentationSession.clear();
       setState(() {
         _setRunState(const AgentStreamRunState());
         _historyMessages.clear();
@@ -1630,6 +1646,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || !_state.isActive) return;
     _updateComposerFocusForRun(nextState);
     final shouldFollowLatest = _isNearLatest() || nextState.isActive;
+    _formPresentationSession.registerLiveFormIds(
+      _formArtifactIdsForState(nextState),
+    );
     final artifactProjectionChanged = _artifactProjectionChanged(
       _state,
       nextState,
@@ -1647,8 +1666,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       nextState,
       checkArtifacts: artifactProjectionChanged,
     );
-    final previousArtifactId = _latestPublishedArtifactId(_state);
-    final nextArtifactId = _latestPublishedArtifactId(nextState);
+    final previousArtifactId = _latestVisibleArtifactId(_state);
+    final nextArtifactId = _latestVisibleArtifactId(nextState);
     final shouldFocusArtifact =
         nextArtifactId != null && nextArtifactId != previousArtifactId;
     final activeRequest = _activeRequest;
@@ -2444,6 +2463,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                   onFormSubmit: _handleArtifactFormSubmit,
                                   formSubmissionsListenable:
                                       _formSubmissionsNotifier,
+                                  formPresentationSession:
+                                      _formPresentationSession,
                                   profileDefaults: profileDefaults,
                                 ),
                               ),
@@ -2480,6 +2501,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       onFormSubmit: _handleArtifactFormSubmit,
                                       formSubmissionsListenable:
                                           _formSubmissionsNotifier,
+                                      formPresentationSession:
+                                          _formPresentationSession,
                                       onQuickReplySelected:
                                           _handleQuickReplySelected,
                                       pendingActionIds: _pendingActionIds,
@@ -3078,6 +3101,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.formPresentationSession,
     this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
@@ -3087,6 +3111,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
   final BirthPrepProfileDefaults profileDefaults;
 
   @override
@@ -3102,6 +3127,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
             onArtifactAction: onArtifactAction,
             onFormSubmit: onFormSubmit,
             formSubmissionsListenable: formSubmissionsListenable,
+            formPresentationSession: formPresentationSession,
             profileDefaults: profileDefaults,
           ),
           if (index != messages.length - 1) const SizedBox(height: 20),
@@ -3119,6 +3145,7 @@ class AgentHubHistorySliver extends StatelessWidget {
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.formPresentationSession,
     this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
@@ -3128,6 +3155,7 @@ class AgentHubHistorySliver extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
   final BirthPrepProfileDefaults profileDefaults;
 
   @override
@@ -3145,6 +3173,7 @@ class AgentHubHistorySliver extends StatelessWidget {
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
           formSubmissionsListenable: formSubmissionsListenable,
+          formPresentationSession: formPresentationSession,
           profileDefaults: profileDefaults,
         );
       }, childCount: itemCount),
@@ -3160,6 +3189,7 @@ class _AgentHistoryBubble extends StatelessWidget {
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.formPresentationSession,
     this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
@@ -3169,6 +3199,7 @@ class _AgentHistoryBubble extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
   final BirthPrepProfileDefaults profileDefaults;
 
   @override
@@ -3189,6 +3220,8 @@ class _AgentHistoryBubble extends StatelessWidget {
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
           formSubmissionsListenable: formSubmissionsListenable,
+          formPresentationSession: formPresentationSession,
+          allowFormAutoPresentation: false,
           profileDefaults: profileDefaults,
         );
       }
@@ -3348,6 +3381,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     this.onArtifactAction,
     this.onFormSubmit,
     required this.formSubmissionsListenable,
+    required this.formPresentationSession,
     this.onQuickReplySelected,
     required this.pendingActionIds,
     required this.localActionStatuses,
@@ -3368,6 +3402,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>
   formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession formPresentationSession;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
@@ -3413,6 +3448,8 @@ class _AgentRunTranscriptListenableState
           onArtifactAction: widget.onArtifactAction,
           onFormSubmit: widget.onFormSubmit,
           formSubmissionsListenable: widget.formSubmissionsListenable,
+          formPresentationSession: widget.formPresentationSession,
+          allowFormAutoPresentation: true,
           artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
           pendingActionIds: widget.pendingActionIds,
@@ -3494,6 +3531,8 @@ class AgentRunTranscript extends StatelessWidget {
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.formPresentationSession,
+    this.allowFormAutoPresentation = false,
     this.artifactPanelKey,
     this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
@@ -3516,6 +3555,8 @@ class AgentRunTranscript extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
+  final bool allowFormAutoPresentation;
   final Key? artifactPanelKey;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
@@ -3547,6 +3588,12 @@ class AgentRunTranscript extends StatelessWidget {
                 profileDefaults: profileDefaults,
               )
         : const <AgentArtifactCardView>[];
+    final canShowFormEntries =
+        state.hasCompletedAssistantMessage ||
+        (!state.isActive && state.textContent.trim().isNotEmpty);
+    final visibleArtifactCards = artifactCards
+        .where((card) => !card.isForm || canShowFormEntries)
+        .toList(growable: false);
     final actionCards = allowsSupplementaryContent
         ? this.actionCards ??
               _actionCardsFromEvents(
@@ -3675,14 +3722,18 @@ class AgentRunTranscript extends StatelessWidget {
                   label: const Text('重试'),
                 ),
               ],
-              if (artifactCards.isNotEmpty) ...[
+              if (visibleArtifactCards.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 AgentArtifactPanel(
                   key: artifactPanelKey,
-                  cards: artifactCards,
+                  cards: visibleArtifactCards,
                   onAction: artifactActionForState,
                   onFormSubmit: onFormSubmit,
                   formSubmissionsListenable: formSubmissionsListenable,
+                  formPresentationSession: formPresentationSession,
+                  autoPresentForms:
+                      allowFormAutoPresentation &&
+                      state.hasCompletedAssistantMessage,
                 ),
               ],
               if (actionCards.isNotEmpty) ...[
@@ -5968,15 +6019,21 @@ Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {
       : state.events;
 }
 
-String? _latestPublishedArtifactId(AgentStreamRunState state) {
+Set<String> _formArtifactIdsForState(AgentStreamRunState state) {
+  return _artifactCardsFromEvents(
+    _artifactEventsForState(state),
+  ).where((card) => card.isForm).map((card) => card.id).toSet();
+}
+
+String? _latestVisibleArtifactId(AgentStreamRunState state) {
   if (!state.canPublishArtifactEvents) return null;
-  if (state.artifactEvents.isNotEmpty) {
-    return state.artifactEvents.keys.last;
-  }
-  for (final event in state.events.reversed) {
-    if (!event.type.startsWith('artifact.')) continue;
-    final artifactId = event.artifactId?.trim();
-    if (artifactId != null && artifactId.isNotEmpty) return artifactId;
+  final canShowForms =
+      state.hasCompletedAssistantMessage ||
+      (!state.isActive && state.textContent.trim().isNotEmpty);
+  for (final card in _artifactCardsFromEvents(
+    _artifactEventsForState(state),
+  ).reversed) {
+    if (!card.isForm || canShowForms) return card.id;
   }
   return null;
 }

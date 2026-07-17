@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
@@ -40,6 +41,7 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.runtimeController,
     this.sessionStore = const FlutterSecureMomCozySessionStore(),
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
+    this.lastInviteCodeStore = const FlutterSecureMomCozyLastInviteCodeStore(),
     this.agentHubBuilder,
     this.externalUrlLauncher = const PlatformExternalUrlLauncher(),
   }) : assert(
@@ -53,6 +55,7 @@ class MomCozyFlutterApp extends StatefulWidget {
   final MomCozyRuntimeController? runtimeController;
   final MomCozySessionStore sessionStore;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
+  final MomCozyLastInviteCodeStore lastInviteCodeStore;
   final MomCozyAgentHubBuilder? agentHubBuilder;
   final ExternalUrlLauncher externalUrlLauncher;
 
@@ -73,6 +76,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
         runtimeController: _runtimeController,
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
+        lastInviteCodeStore: widget.lastInviteCodeStore,
         agentHubBuilder: widget.agentHubBuilder,
         externalUrlLauncher: widget.externalUrlLauncher,
       );
@@ -375,6 +379,8 @@ GoRouter createMomCozyRouter({
   MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
   MomCozyAuthDeviceIdStore authDeviceIdStore =
       const FlutterSecureMomCozyAuthDeviceIdStore(),
+  MomCozyLastInviteCodeStore lastInviteCodeStore =
+      const FlutterSecureMomCozyLastInviteCodeStore(),
   MomCozyAgentHubBuilder? agentHubBuilder,
   ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
 }) {
@@ -403,6 +409,7 @@ GoRouter createMomCozyRouter({
             sessionStore: sessionStore,
             redirectTo: state.uri.queryParameters['from'],
             authDeviceIdStore: authDeviceIdStore,
+            lastInviteCodeStore: lastInviteCodeStore,
           ),
         ),
       ShellRoute(

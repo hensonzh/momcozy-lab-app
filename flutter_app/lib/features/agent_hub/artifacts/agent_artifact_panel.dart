@@ -7,7 +7,7 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/card_export.dart';
 
 class AgentArtifactPanel extends StatelessWidget {
@@ -17,6 +17,8 @@ class AgentArtifactPanel extends StatelessWidget {
     this.onAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.formPresentationSession,
+    this.autoPresentForms = false,
     this.cardExportService = const PlatformAgentCardExportService(),
   });
 
@@ -25,6 +27,8 @@ class AgentArtifactPanel extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
+  final bool autoPresentForms;
   final AgentCardExportService cardExportService;
 
   @override
@@ -64,20 +68,26 @@ class AgentArtifactPanel extends StatelessWidget {
   Widget _buildForm(AgentArtifactCardView card) {
     final submissions = formSubmissionsListenable;
     if (submissions == null) {
-      return AgentArtifactForm(
+      return AgentArtifactFormEntry(
+        key: ValueKey('agent-artifact-form-entry-widget-${card.id}'),
         card: card,
         onAction: onAction,
         onSubmit: onFormSubmit,
+        presentationSession: formPresentationSession,
+        autoPresent: autoPresentForms,
       );
     }
     return ValueListenableBuilder<Map<String, AgentArtifactFormSubmission>>(
       valueListenable: submissions,
       builder: (context, values, child) {
-        return AgentArtifactForm(
+        return AgentArtifactFormEntry(
+          key: ValueKey('agent-artifact-form-entry-widget-${card.id}'),
           card: card,
           onAction: onAction,
           onSubmit: onFormSubmit,
           submission: values[card.id],
+          presentationSession: formPresentationSession,
+          autoPresent: autoPresentForms,
         );
       },
     );
