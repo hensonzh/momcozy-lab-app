@@ -36,53 +36,53 @@ function notMatches(relPath, pattern, label) {
 const flutterBaseAppId = "com.momcozymai.app.flutterpoc";
 
 contains(
-  "flutter_app/android/app/build.gradle.kts",
+  "android/app/build.gradle.kts",
   `namespace = "com.momcozymai.momcozy_flutter_app"`,
   "Flutter namespace remains isolated from the application ID",
 );
 contains(
-  "flutter_app/android/app/build.gradle.kts",
+  "android/app/build.gradle.kts",
   `applicationId = "${flutterBaseAppId}"`,
   "Flutter production-shaped applicationId remains independent",
 );
 matches(
-  "flutter_app/android/app/build.gradle.kts",
+  "android/app/build.gradle.kts",
   /create\("local"\)[\s\S]*applicationIdSuffix = "\.local"/,
   "Flutter local flavor keeps a local suffix",
 );
 matches(
-  "flutter_app/android/app/build.gradle.kts",
+  "android/app/build.gradle.kts",
   /create\("staging"\)[\s\S]*applicationIdSuffix = "\.staging"/,
   "Flutter staging flavor keeps a staging suffix",
 );
 contains(
-  "flutter_app/android/app/src/local/res/values/strings.xml",
+  "android/app/src/local/res/values/strings.xml",
   "<string name=\"app_name\">Momcozy Lab</string>",
   "Flutter local label matches current unified branding",
 );
 contains(
-  "flutter_app/android/app/src/staging/res/values/strings.xml",
+  "android/app/src/staging/res/values/strings.xml",
   "<string name=\"app_name\">Momcozy Lab</string>",
   "Flutter staging label matches current unified branding",
 );
 contains(
-  "flutter_app/android/app/src/production/res/values/strings.xml",
+  "android/app/src/production/res/values/strings.xml",
   "<string name=\"app_name\">Momcozy Lab</string>",
   "Flutter production-shaped label matches current unified branding",
 );
 
 notMatches(
-  "flutter_app/android/app/src/main/AndroidManifest.xml",
+  "android/app/src/main/AndroidManifest.xml",
   /androidx\.core\.content\.FileProvider|android:authorities=/,
   "Flutter app does not declare a FileProvider authority yet",
 );
 notMatches(
-  "flutter_app/android/app/src/main/AndroidManifest.xml",
+  "android/app/src/main/AndroidManifest.xml",
   /android\.intent\.action\.VIEW|android\.intent\.category\.BROWSABLE/,
   "Flutter app does not claim external deep links yet",
 );
 matches(
-  "flutter_app/android/app/src/main/AndroidManifest.xml",
+  "android/app/src/main/AndroidManifest.xml",
   /android\.intent\.action\.MAIN[\s\S]*android\.intent\.category\.LAUNCHER/,
   "Flutter app exposes only the launcher intent filter",
 );

@@ -44,18 +44,12 @@ Map<String, Object?> _readJsonObject(File file) {
 }
 
 List<File> _fixtureFiles() {
-  final candidates = [
-    Directory('../test/fixtures/storage_migration'),
-    Directory('test/fixtures/storage_migration'),
-  ];
-  for (final directory in candidates) {
-    if (!directory.existsSync()) continue;
-    return directory
-        .listSync()
-        .whereType<File>()
-        .where((file) => file.path.endsWith('.json'))
-        .toList(growable: false)
-      ..sort((a, b) => a.path.compareTo(b.path));
-  }
-  return const [];
+  final directory = Directory('test/fixtures/storage_migration');
+  if (!directory.existsSync()) return const [];
+  return directory
+      .listSync()
+      .whereType<File>()
+      .where((file) => file.path.endsWith('.json'))
+      .toList(growable: false)
+    ..sort((a, b) => a.path.compareTo(b.path));
 }

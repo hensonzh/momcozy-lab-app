@@ -82,7 +82,7 @@ CI / internal distribution 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制缺�
 make flutter-release-gate
 ```
 
-或在 `flutter_app/` 下单独构建：
+或直接在仓库根目录构建：
 
 ```bash
 flutter build apk --debug --flavor local

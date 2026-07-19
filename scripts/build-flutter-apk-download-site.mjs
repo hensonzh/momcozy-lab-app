@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
-const flutterAppDir = path.join(projectRoot, "flutter_app");
+const flutterAppDir = projectRoot;
 const defaultDistDir = path.join(projectRoot, "dist", "android-apk");
 const defaultBaseUrl = "https://download.momcozy.ai/app";
 const qrLabel = "Momcozy Lab";
@@ -175,7 +175,7 @@ function run(command, args, cwd, env) {
 function parsePubspecVersion(content) {
   const match = content.match(/^version:\s*([^\n#]+)/m);
   if (!match) {
-    throw new Error("Missing version in flutter_app/pubspec.yaml");
+    throw new Error("Missing version in pubspec.yaml");
   }
   const raw = match[1].trim();
   const [versionName, buildNumber = "1"] = raw.split("+");

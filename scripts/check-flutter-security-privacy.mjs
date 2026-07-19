@@ -24,22 +24,22 @@ const forbidContains = (relativePath, needle, description) => {
 };
 
 requireContains(
-  "flutter_app/lib/features/agent_hub/data/voice_api.dart",
+  "lib/features/agent_hub/data/voice_api.dart",
   "TransportSecurityPolicy.requireSecureHttp(baseUri)",
   "Voice API must reuse transport security policy",
 );
 requireContains(
-  "flutter_app/lib/features/agent_hub/data/voice_api.dart",
+  "lib/features/agent_hub/data/voice_api.dart",
   "redactedRealtimeVoiceStreamLogContext",
   "Voice API must expose redacted stream log context",
 );
 requireContains(
-  "flutter_app/lib/core/privacy/log_redactor.dart",
+  "lib/core/privacy/log_redactor.dart",
   "normalized == 'text'",
   "Log redactor must redact free-form voice text",
 );
 requireContains(
-  "flutter_app/lib/core/privacy/log_redactor.dart",
+  "lib/core/privacy/log_redactor.dart",
   "normalized == 'message'",
   "Log redactor must redact free-form message content",
 );

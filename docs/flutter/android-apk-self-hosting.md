@@ -71,7 +71,7 @@ MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
 make flutter-apk-download-site
 
 # 用已有 APK 生成下载页，不重新构建
-MOMCOZY_APK_INPUT=flutter_app/build/app/outputs/flutter-apk/app-staging-release.apk \
+MOMCOZY_APK_INPUT=build/app/outputs/flutter-apk/app-staging-release.apk \
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
 make flutter-apk-download-site
 
