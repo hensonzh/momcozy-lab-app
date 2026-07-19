@@ -5,13 +5,11 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const projectRoot = process.cwd();
-const flutterAppDir = path.join(projectRoot, "flutter_app");
-const pubspecPath = path.join(flutterAppDir, "pubspec.yaml");
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
-const repoRoot = path.resolve(scriptDir, "..");
+const projectRoot = path.resolve(scriptDir, "..");
+const pubspecPath = path.join(projectRoot, "pubspec.yaml");
 const toolchainConfig = JSON.parse(
-  readFileSync(path.join(repoRoot, "flutter-toolchain.json"), "utf8"),
+  readFileSync(path.join(projectRoot, "flutter-toolchain.json"), "utf8"),
 );
 const expandHome = (value) =>
   String(value || "").startsWith("~/")
@@ -40,14 +38,6 @@ const ENV = {
   ].join(path.delimiter),
 };
 
-function run(command, args) {
-  return spawnSync(command, args, {
-    cwd: projectRoot,
-    stdio: "inherit",
-    env: ENV,
-  });
-}
-
 function hasCommand(command, args) {
   const result = spawnSync(command, args, {
     encoding: "utf8",
@@ -63,34 +53,10 @@ if (!hasCommand("flutter", ["--version"])) {
 }
 
 if (existsSync(pubspecPath)) {
-  console.log("flutter_app already exists. Skipping flutter create.");
-  console.log("Next: cd flutter_app && flutter pub get && flutter test");
+  console.log("Flutter project is ready at the repository root.");
+  console.log("Next: flutter pub get && flutter test");
   process.exit(0);
 }
 
-if (existsSync(flutterAppDir)) {
-  console.error("flutter_app exists but pubspec.yaml is missing. Refusing to overwrite it.");
-  process.exit(1);
-}
-
-const create = run("flutter", [
-  "create",
-  "--platforms=android",
-  "--org",
-  "com.momcozymai",
-  "--project-name",
-  "momcozy_flutter_app",
-  "flutter_app",
-]);
-
-if (create.status !== 0) {
-  process.exit(create.status ?? 1);
-}
-
-console.log("");
-console.log("Flutter shell created at flutter_app/.");
-console.log("Next:");
-console.log("  cd flutter_app");
-console.log("  flutter pub get");
-console.log("  flutter test");
-console.log("  flutter build apk --debug");
+console.error("Missing pubspec.yaml at the repository root; refusing to initialize over a non-empty repository.");
+process.exit(1);

@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
-const flutterAppDir = path.join(projectRoot, "flutter_app");
+const flutterAppDir = projectRoot;
 const toolchainConfig = JSON.parse(
   readFileSync(path.join(projectRoot, "flutter-toolchain.json"), "utf8"),
 );
@@ -70,7 +70,7 @@ const locale = process.env.MOMCOZY_LOCALE || "zh-CN";
 const resetApp = String(process.env.MOMCOZY_RESET_INVITE_APP || "1").trim() !== "0";
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
-  console.error("Missing flutter_app/pubspec.yaml. Run make flutter-init first.");
+  console.error("Missing pubspec.yaml at the repository root. Run make flutter-init first.");
   process.exit(1);
 }
 

@@ -22,13 +22,7 @@ void main() {
 }
 
 Iterable<Directory> _privacyAuditRoots() sync* {
-  const candidates = [
-    '../test/fixtures',
-    '../test/goldens',
-    '../test/screenshots',
-    'test/goldens',
-    'test/screenshots',
-  ];
+  const candidates = ['test/fixtures', 'test/goldens', 'test/screenshots'];
   for (final path in candidates) {
     final directory = Directory(path);
     if (directory.existsSync()) yield directory;

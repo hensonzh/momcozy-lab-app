@@ -6,7 +6,7 @@
 make flutter-release-gate
 ```
 
-该 gate 会在 `flutter_app/` 中顺序执行：
+该 gate 会在仓库根目录顺序执行：
 
 ```text
 node scripts/check-flutter-android-packaging.mjs

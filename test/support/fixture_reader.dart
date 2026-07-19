@@ -2,15 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 String readMigrationFixture(String relativePath) {
-  final candidates = [
-    File('../test/fixtures/$relativePath'),
-    File('test/fixtures/$relativePath'),
-  ];
-
-  for (final candidate in candidates) {
-    if (candidate.existsSync()) return candidate.readAsStringSync();
-  }
-
+  final candidate = File('test/fixtures/$relativePath');
+  if (candidate.existsSync()) return candidate.readAsStringSync();
   throw FileSystemException('Fixture not found', relativePath);
 }
 

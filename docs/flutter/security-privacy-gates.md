@@ -97,7 +97,6 @@ isSensitiveLogKey(key)
 ## 验收命令
 
 ```bash
-cd flutter_app
 flutter test test/core/privacy/log_redactor_test.dart
 flutter test test/native/p0_platform_interfaces_test.dart
 make flutter-security-check
