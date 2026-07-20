@@ -175,13 +175,6 @@ class _DiaryCard extends StatelessWidget {
                       const _DiaryStatDivider(),
                       Expanded(
                         child: _DiaryStat(
-                          value: projection.recentHealthNoteCount.toString(),
-                          label: '健康咨询',
-                        ),
-                      ),
-                      const _DiaryStatDivider(),
-                      Expanded(
-                        child: _DiaryStat(
                           value: projection.questionCount.toString(),
                           label: '产检问题',
                         ),
@@ -874,10 +867,6 @@ class _DiaryEntryCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: _bodyStyle(context),
           ),
-          if (entry.healthNotes.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _DiaryHealthNotes(notes: entry.healthNotes.take(2).toList()),
-          ],
           if (signalTags.isNotEmpty || entry.hasAppointmentQuestion) ...[
             const SizedBox(height: 12),
             Wrap(
@@ -889,64 +878,6 @@ class _DiaryEntryCard extends StatelessWidget {
                   const _DiaryTag(label: '有产检问题', emphasized: true),
               ],
             ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _DiaryHealthNotes extends StatelessWidget {
-  const _DiaryHealthNotes({required this.notes});
-
-  final List<PregnancyDiaryHealthNote> notes;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.75),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '健康咨询记录',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xffb66335),
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          for (var index = 0; index < notes.length; index += 1) ...[
-            const SizedBox(height: 8),
-            Text(
-              notes[index].topic.trim().isEmpty
-                  ? '健康咨询'
-                  : notes[index].topic.trim(),
-              style: _bodyStyle(context, fontWeight: FontWeight.w900),
-            ),
-            if (notes[index].userReport.trim().isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Text(
-                notes[index].userReport.trim(),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: _bodyStyle(context),
-              ),
-            ],
-            if (notes[index].followUp.trim().isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Text(
-                notes[index].followUp.trim(),
-                style: _bodyStyle(
-                  context,
-                ).copyWith(color: const Color(0xff8a5b3f)),
-              ),
-            ],
           ],
         ],
       ),

@@ -53,7 +53,7 @@ const requiresReleaseSigning =
   String(env.MOMCOZY_REQUIRE_RELEASE_SIGNING || "").trim() === "1";
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
-  console.error("Missing pubspec.yaml at the repository root. Run make flutter-init first.");
+  console.error("Invalid repository root: missing pubspec.yaml.");
   process.exit(1);
 }
 
@@ -86,7 +86,6 @@ const steps = [
   ["flutter", ["analyze"], flutterAppDir],
   ["flutter", ["test"], flutterAppDir],
   ["dart", ["run", "tool/staging_smoke.dart"], flutterAppDir],
-  ["dart", ["run", "tool/storage_migration_dry_run.dart"], flutterAppDir],
   [
     "node",
     [

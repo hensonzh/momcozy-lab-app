@@ -4,7 +4,7 @@ import 'package:momcozy_flutter_app/features/status/domain/pregnancy_diary_proje
 
 void main() {
   group('PregnancyDiaryProjection', () {
-    test('matches the legacy seven-day counts and question segmentation', () {
+    test('matches seven-day counts and question segmentation', () {
       final projection = PregnancyDiaryProjection(
         now: DateTime(2026, 7, 11, 23, 30),
         entries: [
@@ -12,32 +12,19 @@ void main() {
             id: 'today',
             date: DateTime(2026, 7, 11, 8),
             appointmentNote: '胎动少需要检查吗？\n药还能继续吃吗;',
-            healthNotes: const [
-              PregnancyDiaryHealthNote(id: 'h1', topic: '胎动'),
-            ],
           ),
           _entry(
             id: 'first-day',
             date: DateTime(2026, 7, 5),
             appointmentNote: '需要空腹吗',
-            healthNotes: const [
-              PregnancyDiaryHealthNote(id: 'h2', topic: '睡眠'),
-            ],
           ),
-          _entry(
-            id: 'outside',
-            date: DateTime(2026, 7, 4),
-            healthNotes: const [
-              PregnancyDiaryHealthNote(id: 'h3', topic: '水肿'),
-            ],
-          ),
+          _entry(id: 'outside', date: DateTime(2026, 7, 4)),
           _entry(id: 'future', date: DateTime(2026, 7, 12)),
         ],
       );
 
       expect(projection.today?.id, 'today');
       expect(projection.recentCount, 2);
-      expect(projection.recentHealthNoteCount, 2);
       expect(projection.questionCount, 3);
       expect(projection.entries.map((entry) => entry.id), [
         'future',
@@ -58,9 +45,6 @@ void main() {
         appointmentNote: '需要补钙吗',
         nutritionNote: '今天散步了',
         symptomTags: const ['腰酸', '水肿'],
-        healthNotes: const [
-          PregnancyDiaryHealthNote(id: 'h1', topic: '腹痛', userReport: '需要补钙吗'),
-        ],
       );
 
       expect(PregnancyDiaryProjection.summary(entry), '今日已记录：心情平稳，胎动正常');
@@ -69,7 +53,7 @@ void main() {
         '心情平稳',
         '胎动正常',
         '易醒',
-        '腹痛',
+        '腰酸',
       ]);
     });
 
@@ -81,9 +65,6 @@ void main() {
             id: 'q',
             date: DateTime(2026, 7, 11),
             appointmentNote: '下次检查什么？',
-            healthNotes: const [
-              PregnancyDiaryHealthNote(id: 'h1', topic: '睡眠'),
-            ],
           ),
         ],
       );
@@ -91,20 +72,12 @@ void main() {
       expect(questions.primarySubtitle, '从日记里整理 1 个问题');
       expect(questions.primaryPrompt, '帮我整理孕期日记里的产检问题清单');
 
-      final health = PregnancyDiaryProjection(
+      final recent = PregnancyDiaryProjection(
         now: DateTime(2026, 7, 11),
-        entries: [
-          _entry(
-            id: 'h',
-            date: DateTime(2026, 7, 10),
-            healthNotes: const [
-              PregnancyDiaryHealthNote(id: 'h1', topic: '睡眠'),
-            ],
-          ),
-        ],
+        entries: [_entry(id: 'recent', date: DateTime(2026, 7, 10))],
       );
-      expect(health.primaryAction, '回顾最近记录');
-      expect(health.primaryPrompt, '帮我回顾最近的健康咨询记录');
+      expect(recent.primaryAction, '回顾最近记录');
+      expect(recent.primaryPrompt, '帮我回顾最近7天的孕期日记');
 
       final empty = PregnancyDiaryProjection(
         now: DateTime(2026, 7, 11),
@@ -125,7 +98,6 @@ PregnancyDiaryEntry _entry({
   String appointmentNote = '',
   String nutritionNote = '',
   List<String> symptomTags = const [],
-  List<PregnancyDiaryHealthNote> healthNotes = const [],
 }) {
   return PregnancyDiaryEntry(
     id: id,
@@ -137,6 +109,5 @@ PregnancyDiaryEntry _entry({
     appointmentNote: appointmentNote,
     nutritionNote: nutritionNote,
     symptomTags: symptomTags,
-    healthNotes: healthNotes,
   );
 }

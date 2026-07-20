@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
+import 'package:momcozy_flutter_app/core/storage/user_scoped_storage_key.dart';
 
 const _millilitersToOunces = 0.033814;
 
@@ -67,7 +67,7 @@ class FlutterSecureVolumeUnitPreferenceStore
     try {
       return MomCozyVolumeUnit.fromStorage(jsonDecode(raw));
     } catch (_) {
-      return MomCozyVolumeUnit.fromStorage(raw);
+      return null;
     }
   }
 
@@ -78,6 +78,6 @@ class FlutterSecureVolumeUnitPreferenceStore
 
   String get storageKey {
     final scopedUserId = userId.trim().isEmpty ? 'anonymous' : userId.trim();
-    return storageMigrationScopedKey(scopedUserId, 'preferences.volumeUnit');
+    return userScopedStorageKey(scopedUserId, 'preferences.volumeUnit');
   }
 }

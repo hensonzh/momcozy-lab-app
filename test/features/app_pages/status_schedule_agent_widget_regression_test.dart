@@ -1293,7 +1293,6 @@ MomCozyApiRuntime _runtime({
           'entry_date': '2026-07-03',
           'content': '今天胎动规律，想问医生睡眠问题。',
           'symptom_tags': <String>[],
-          'health_notes': <Object?>[],
         },
         scheduleDayPlanEndpoint: const {
           'items': <Object?>[

@@ -59,5 +59,5 @@ const _routeIntentFixtures = [
   'media_viewer_and_ibclc_return_intents.json',
   'native_notification_analysis_intents.json',
   'plan_and_diary_pending_intents.json',
-  'pump_notification_and_overlay_intents.json',
+  'pump_notification_intents.json',
 ];

@@ -120,7 +120,7 @@ void main() {
 
     test('map pump pending navigation payloads to one-shot intents', () {
       final fixture = readFixtureMap(
-        'route_intents/pump_notification_and_overlay_intents.json',
+        'route_intents/pump_notification_intents.json',
       );
       final input = Map<String, Object?>.from(fixture['input']! as Map);
       final payloads = List<Object?>.from(

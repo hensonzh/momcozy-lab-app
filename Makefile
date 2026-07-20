@@ -14,7 +14,6 @@ export PATH := $(TOOLCHAIN_PATH)
 
 .PHONY: \
 	flutter-check \
-	flutter-init \
 	flutter-invite-dev \
 	flutter-packaging-check \
 	flutter-security-check \
@@ -26,9 +25,6 @@ export PATH := $(TOOLCHAIN_PATH)
 
 flutter-check:
 	node scripts/check-flutter-toolchain.mjs
-
-flutter-init:
-	node scripts/init-flutter-shell.mjs
 
 flutter-invite-dev:
 	node scripts/run-flutter-invite-dev.mjs

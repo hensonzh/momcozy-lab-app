@@ -30,7 +30,7 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  test('uses the migrated account-scoped volume unit key', () async {
+  test('uses the account-scoped volume unit key', () async {
     const first = FlutterSecureVolumeUnitPreferenceStore(userId: 'user/a');
     const second = FlutterSecureVolumeUnitPreferenceStore(userId: 'user/b');
 
@@ -43,7 +43,17 @@ void main() {
     expect(await second.read(), MomCozyVolumeUnit.milliliters);
   });
 
-  test('matches legacy volume formatting exactly', () {
+  test('ignores malformed and unsupported stored values', () async {
+    const store = FlutterSecureVolumeUnitPreferenceStore(userId: 'user');
+
+    values[store.storageKey] = 'oz';
+    expect(await store.read(), isNull);
+
+    values[store.storageKey] = '"cup"';
+    expect(await store.read(), isNull);
+  });
+
+  test('formats volume values consistently', () {
     expect(MomCozyVolumeUnit.milliliters.formatMilliliters(120.4), '120');
     expect(MomCozyVolumeUnit.ounces.formatMilliliters(240), '8.1');
     expect(MomCozyVolumeUnit.ounces.formatMilliliters(-1), '0.0');

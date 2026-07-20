@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
+import 'package:momcozy_flutter_app/core/storage/user_scoped_storage_key.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 
 abstract interface class StatusPreferenceStore {
@@ -26,7 +26,7 @@ class FlutterSecureStatusPreferenceStore implements StatusPreferenceStore {
     try {
       return StatusCareStage.fromStorage(jsonDecode(raw));
     } catch (_) {
-      return StatusCareStage.fromStorage(raw);
+      return null;
     }
   }
 
@@ -40,6 +40,6 @@ class FlutterSecureStatusPreferenceStore implements StatusPreferenceStore {
 
   String get storageKey {
     final scopedUserId = userId.trim().isEmpty ? 'anonymous' : userId.trim();
-    return storageMigrationScopedKey(scopedUserId, 'status.careStage');
+    return userScopedStorageKey(scopedUserId, 'status.careStage');
   }
 }

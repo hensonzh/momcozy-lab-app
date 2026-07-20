@@ -45,7 +45,6 @@ export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
-typedef AgentHubVoiceInput = Future<String?> Function();
 typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
 typedef AgentHubNewSessionHandler = FutureOr<void> Function();
@@ -203,7 +202,6 @@ class AgentHubPage extends StatefulWidget {
     this.greetingProfileLoader,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
-    this.voiceInput,
     this.voiceInputController,
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
@@ -232,7 +230,6 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubGreetingProfileLoader? greetingProfileLoader;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
-  final AgentHubVoiceInput? voiceInput;
   final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
@@ -1293,7 +1290,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _startVoiceInput() {
-    if ((widget.voiceInputController == null && widget.voiceInput == null) ||
+    if (widget.voiceInputController == null ||
         _isComposerLocked ||
         _voiceState.isInputActive) {
       return;
@@ -1340,11 +1337,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _voiceCaptureStart = null;
 
     if (controller == null) {
-      if (!submit) {
-        if (mounted) setState(() => _setVoiceState(const AgentVoiceState()));
-        return;
-      }
-      await _transcribeLegacyVoiceInput();
+      if (mounted) setState(() => _setVoiceState(const AgentVoiceState()));
       return;
     }
 
@@ -1373,29 +1366,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
     try {
       final result = await controller.finishCapture();
-      if (!mounted) return;
-      _applyVoiceInputResult(result);
-    } catch (error) {
-      if (!mounted) return;
-      setState(() {
-        _setVoiceState(_voiceState.fail(error));
-      });
-    }
-  }
-
-  Future<void> _transcribeLegacyVoiceInput() async {
-    if (mounted) {
-      setState(() {
-        _setVoiceState(
-          _voiceState.startTranscribing(draft: _composerController.text),
-        );
-      });
-    }
-
-    try {
-      final result = AgentVoiceInputResult.fromText(
-        await widget.voiceInput?.call(),
-      );
       if (!mounted) return;
       _applyVoiceInputResult(result);
     } catch (error) {
@@ -2545,8 +2515,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                         !isRestoring,
                     canUseVoice:
                         !isRestoring &&
-                        (widget.voiceInputController != null ||
-                            widget.voiceInput != null) &&
+                        widget.voiceInputController != null &&
                         !_isVisibleReplyRunningForState(runState) &&
                         !isComposerLocked &&
                         _voiceState.phase != AgentVoicePhase.transcribing,
@@ -2670,23 +2639,9 @@ _AgentResponseLightRailMode _agentResponseLightRailModeForState(
 }
 
 bool _hasRunningToolWork(AgentStreamRunState state) {
-  final toolEvents = state.toolEvents.isNotEmpty
-      ? state.toolEvents.values
-      : _latestToolEventsFromLegacyEvents(state.events).values;
-  return toolEvents.any(
+  return state.toolEvents.values.any(
     (event) => event.type == 'tool.started' || event.type == 'tool.progress',
   );
-}
-
-Map<String, AgentStreamEvent> _latestToolEventsFromLegacyEvents(
-  List<AgentStreamEvent> events,
-) {
-  final latestToolEvents = <String, AgentStreamEvent>{};
-  for (final event in events) {
-    if (!event.type.startsWith('tool.')) continue;
-    latestToolEvents[event.toolCallId ?? event.mergeKey] = event;
-  }
-  return latestToolEvents;
 }
 
 class _AgentResponseLightRail extends StatefulWidget {
