@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -46,6 +47,18 @@ class ProductAssetHttpResponse {
   final String statusText;
   final String contentType;
   final Uint8List body;
+}
+
+abstract interface class ProductAssetPersistentCache {
+  Future<ProductAssetContent?> read(
+    ProductAssetReference reference, {
+    required ProductAssetVariant variant,
+  });
+
+  Future<void> write(
+    ProductAssetContent content, {
+    required ProductAssetVariant variant,
+  });
 }
 
 abstract interface class ProductAssetHttpConnector {
@@ -104,6 +117,8 @@ class ProductAssetRepository {
     this.headers = const {'X-Momcozy-Client': 'flutter'},
     this.maxImageBytes = 16 * 1024 * 1024,
     this.maxPdfBytes = 32 * 1024 * 1024,
+    this.maxMemoryCacheBytes = 24 * 1024 * 1024,
+    this.persistentCache,
   }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri),
        connector = connector ?? IoProductAssetHttpConnector();
 
@@ -114,19 +129,70 @@ class ProductAssetRepository {
   final Map<String, String> headers;
   final int maxImageBytes;
   final int maxPdfBytes;
+  final int maxMemoryCacheBytes;
+  final ProductAssetPersistentCache? persistentCache;
+  final LinkedHashMap<String, ProductAssetContent> _memoryCache =
+      LinkedHashMap<String, ProductAssetContent>();
+  final Map<String, Future<ProductAssetContent>> _inFlight =
+      <String, Future<ProductAssetContent>>{};
+  int _memoryCacheBytes = 0;
 
-  Future<ProductAssetContent> load(ProductAssetReference reference) async {
+  Future<ProductAssetContent> load(
+    ProductAssetReference reference, {
+    ProductAssetVariant variant = ProductAssetVariant.original,
+  }) {
     if (reference.kind == ProductAssetKind.video) {
-      throw const ProductAssetLoadException(code: 'streaming_asset_required');
+      return Future<ProductAssetContent>.error(
+        const ProductAssetLoadException(code: 'streaming_asset_required'),
+      );
     }
+    if (variant == ProductAssetVariant.display &&
+        reference.kind != ProductAssetKind.image) {
+      return Future<ProductAssetContent>.error(
+        const ProductAssetLoadException(code: 'unsupported_asset_variant'),
+      );
+    }
+    final cacheKey = _cacheKey(reference, variant);
+    final memoryCached = _takeMemoryCached(cacheKey);
+    if (memoryCached != null) return Future.value(memoryCached);
+    final pending = _inFlight[cacheKey];
+    if (pending != null) return pending;
+
+    final future = _loadAndCache(
+      reference,
+      variant: variant,
+      cacheKey: cacheKey,
+    );
+    _inFlight[cacheKey] = future;
+    return future;
+  }
+
+  Future<ProductAssetContent> _loadAndCache(
+    ProductAssetReference reference, {
+    required ProductAssetVariant variant,
+    required String cacheKey,
+  }) async {
     final maxBytes = reference.kind == ProductAssetKind.image
         ? maxImageBytes
         : maxPdfBytes;
     try {
-      var response = await _get(reference, maxBytes: maxBytes);
+      final diskCached = await _readPersistentCache(
+        reference,
+        variant: variant,
+      );
+      if (diskCached != null) {
+        _storeMemoryCached(cacheKey, diskCached);
+        return diskCached;
+      }
+
+      var response = await _get(
+        reference,
+        variant: variant,
+        maxBytes: maxBytes,
+      );
       if (response.statusCode == HttpStatus.unauthorized &&
           await _refreshSession()) {
-        response = await _get(reference, maxBytes: maxBytes);
+        response = await _get(reference, variant: variant, maxBytes: maxBytes);
       }
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw ProductAssetLoadException(
@@ -141,15 +207,20 @@ class ProductAssetRepository {
       if (actualKind != reference.kind) {
         throw const ProductAssetLoadException(code: 'content_type_mismatch');
       }
-      return ProductAssetContent(
+      final content = ProductAssetContent(
         reference: reference,
         contentType: response.contentType,
         bytes: response.body,
       );
+      _storeMemoryCached(cacheKey, content);
+      unawaited(_writePersistentCache(content, variant: variant));
+      return content;
     } on ProductAssetLoadException {
       rethrow;
     } catch (_) {
       throw const ProductAssetLoadException(code: 'network_error');
+    } finally {
+      _inFlight.remove(cacheKey);
     }
   }
 
@@ -169,24 +240,30 @@ class ProductAssetRepository {
 
   Future<ProductAssetHttpResponse> _get(
     ProductAssetReference reference, {
+    required ProductAssetVariant variant,
     required int maxBytes,
   }) {
     return connector.get(
-      _resolve(reference),
+      _resolve(reference, variant: variant),
       headers: _requestHeaders(reference),
       maxBytes: maxBytes,
     );
   }
 
-  Uri _resolve(ProductAssetReference reference) {
+  Uri _resolve(
+    ProductAssetReference reference, {
+    ProductAssetVariant variant = ProductAssetVariant.original,
+  }) {
     final basePath = baseUri.path.endsWith('/')
         ? baseUri.path
         : '${baseUri.path}/';
+    final queryParameters = {
+      ...baseUri.queryParameters,
+      if (variant != ProductAssetVariant.original) 'variant': variant.name,
+    };
     return baseUri.replace(
       path: '$basePath${reference.requestPath.substring(1)}',
-      queryParameters: baseUri.queryParameters.isEmpty
-          ? null
-          : baseUri.queryParameters,
+      queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
   }
 
@@ -206,6 +283,56 @@ class ProductAssetRepository {
       return await callback();
     } catch (_) {
       return false;
+    }
+  }
+
+  String _cacheKey(
+    ProductAssetReference reference,
+    ProductAssetVariant variant,
+  ) => '${reference.assetId}:${reference.kind.name}:${variant.name}';
+
+  ProductAssetContent? _takeMemoryCached(String key) {
+    final cached = _memoryCache.remove(key);
+    if (cached == null) return null;
+    _memoryCache[key] = cached;
+    return cached;
+  }
+
+  void _storeMemoryCached(String key, ProductAssetContent content) {
+    if (maxMemoryCacheBytes <= 0 ||
+        content.bytes.length > maxMemoryCacheBytes) {
+      return;
+    }
+    final previous = _memoryCache.remove(key);
+    if (previous != null) _memoryCacheBytes -= previous.bytes.length;
+    _memoryCache[key] = content;
+    _memoryCacheBytes += content.bytes.length;
+    while (_memoryCacheBytes > maxMemoryCacheBytes && _memoryCache.isNotEmpty) {
+      final oldestKey = _memoryCache.keys.first;
+      final oldest = _memoryCache.remove(oldestKey);
+      if (oldest != null) _memoryCacheBytes -= oldest.bytes.length;
+    }
+  }
+
+  Future<ProductAssetContent?> _readPersistentCache(
+    ProductAssetReference reference, {
+    required ProductAssetVariant variant,
+  }) async {
+    try {
+      return await persistentCache?.read(reference, variant: variant);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _writePersistentCache(
+    ProductAssetContent content, {
+    required ProductAssetVariant variant,
+  }) async {
+    try {
+      await persistentCache?.write(content, variant: variant);
+    } catch (_) {
+      // Cache failures must not turn a successful network load into an error.
     }
   }
 }

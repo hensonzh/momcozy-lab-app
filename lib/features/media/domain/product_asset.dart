@@ -36,6 +36,8 @@ enum ProductAssetKind {
   };
 }
 
+enum ProductAssetVariant { original, display }
+
 class ProductAssetReference {
   const ProductAssetReference({
     required this.assetId,

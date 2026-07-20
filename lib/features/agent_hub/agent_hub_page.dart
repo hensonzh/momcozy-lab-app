@@ -4364,6 +4364,10 @@ class _AgentMarkdownImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = title?.trim().isNotEmpty == true ? title!.trim() : '查看图片';
+    final cacheWidth = (360 * MediaQuery.devicePixelRatioOf(context))
+        .round()
+        .clamp(360, 720)
+        .toInt();
     final productAsset = ProductAssetReference.tryParse(
       url,
       kind: ProductAssetKind.image.routeValue,
@@ -4390,7 +4394,9 @@ class _AgentMarkdownImage extends StatelessWidget {
                 ? ProductAssetImage(
                     reference: productAsset,
                     repository: repository,
+                    variant: ProductAssetVariant.display,
                     fit: BoxFit.contain,
+                    cacheWidth: cacheWidth,
                     semanticLabel: label,
                     loadingBuilder: (context) {
                       return _AgentMarkdownImagePlaceholder(

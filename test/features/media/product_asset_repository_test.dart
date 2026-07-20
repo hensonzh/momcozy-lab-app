@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -177,6 +178,102 @@ void main() {
     expect(request?.headers['Authorization'], 'Bearer fresh-token');
     expect(request?.headers['Accept'], 'video/*');
   });
+
+  test('loads the display image variant and reuses its memory cache', () async {
+    final connector = _FakeProductAssetConnector([
+      ProductAssetHttpResponse(
+        statusCode: 200,
+        statusText: 'OK',
+        contentType: 'image/webp',
+        body: Uint8List.fromList(const [1, 2, 3]),
+      ),
+    ]);
+    final repository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: connector,
+    );
+    final image = ProductAssetReference.tryParse(
+      '/v1/assets/asset-image?kind=image',
+    )!;
+
+    final first = await repository.load(
+      image,
+      variant: ProductAssetVariant.display,
+    );
+    final second = await repository.load(
+      image,
+      variant: ProductAssetVariant.display,
+    );
+
+    expect(identical(first, second), isTrue);
+    expect(connector.requests, hasLength(1));
+    expect(
+      connector.requests.single.uri,
+      Uri.parse(
+        'https://api.example.test/v1/assets/asset-image?variant=display',
+      ),
+    );
+  });
+
+  test('coalesces concurrent loads for the same product asset', () async {
+    final connector = _BlockingProductAssetConnector();
+    final repository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: connector,
+    );
+    final image = ProductAssetReference.tryParse(
+      '/v1/assets/asset-image?kind=image',
+    )!;
+
+    final first = repository.load(image);
+    final second = repository.load(image);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(connector.calls, 1);
+    connector.complete(
+      ProductAssetHttpResponse(
+        statusCode: 200,
+        statusText: 'OK',
+        contentType: 'image/png',
+        body: Uint8List.fromList(const [1, 2, 3]),
+      ),
+    );
+    final results = await Future.wait([first, second]);
+
+    expect(identical(results[0], results[1]), isTrue);
+  });
+
+  test('reuses persistent cache across repository instances', () async {
+    final cache = _FakePersistentProductAssetCache();
+    final reference = ProductAssetReference.tryParse(
+      '/v1/assets/asset-image?kind=image',
+    )!;
+    final firstConnector = _FakeProductAssetConnector([
+      ProductAssetHttpResponse(
+        statusCode: 200,
+        statusText: 'OK',
+        contentType: 'image/png',
+        body: Uint8List.fromList(const [1, 2, 3]),
+      ),
+    ]);
+    final firstRepository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: firstConnector,
+      persistentCache: cache,
+    );
+
+    await firstRepository.load(reference);
+    final secondConnector = _FakeProductAssetConnector(const []);
+    final secondRepository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: secondConnector,
+      persistentCache: cache,
+    );
+    final cached = await secondRepository.load(reference);
+
+    expect(cached.bytes, [1, 2, 3]);
+    expect(secondConnector.requests, isEmpty);
+  });
 }
 
 class _FakeProductAssetConnector implements ProductAssetHttpConnector {
@@ -213,4 +310,45 @@ class _RecordedProductAssetRequest {
   final Uri uri;
   final Map<String, String> headers;
   final int maxBytes;
+}
+
+class _BlockingProductAssetConnector implements ProductAssetHttpConnector {
+  final _response = Completer<ProductAssetHttpResponse>();
+  int calls = 0;
+
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) {
+    calls += 1;
+    return _response.future;
+  }
+
+  void complete(ProductAssetHttpResponse response) {
+    _response.complete(response);
+  }
+}
+
+class _FakePersistentProductAssetCache implements ProductAssetPersistentCache {
+  final _entries = <String, ProductAssetContent>{};
+
+  @override
+  Future<ProductAssetContent?> read(
+    ProductAssetReference reference, {
+    required ProductAssetVariant variant,
+  }) async {
+    return _entries['${reference.assetId}:${reference.kind.name}:${variant.name}'];
+  }
+
+  @override
+  Future<void> write(
+    ProductAssetContent content, {
+    required ProductAssetVariant variant,
+  }) async {
+    final reference = content.reference;
+    _entries['${reference.assetId}:${reference.kind.name}:${variant.name}'] =
+        content;
+  }
 }
