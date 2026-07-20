@@ -7966,11 +7966,7 @@ milk_total: 120ml
           'type': 'run.progress',
           'payload': {
             'label': '正在处理请求。',
-            'semantic': {
-              'label': '我在组织回复～',
-              'surface': 'status_bar',
-              'visibility': 'status',
-            },
+            'semantic': {'label': '我在组织回复～', 'surface': 'status_bar'},
           },
         }),
       ],
@@ -7980,6 +7976,28 @@ milk_total: 120ml
 
     expect(find.text('我在组织回复～'), findsOneWidget);
     expect(find.text('正在处理请求。'), findsNothing);
+  });
+
+  testWidgets('Agent Hub ignores retired visibility-only semantic metadata', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({'type': 'run.started'}),
+        AgentStreamEvent({
+          'type': 'run.progress',
+          'payload': {
+            'semantic': {'label': '不应通过旧字段展示', 'visibility': 'status'},
+          },
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(find.text('不应通过旧字段展示'), findsNothing);
+    expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
   });
 
   testWidgets('Agent Hub keeps thinking note semantic out of status line', (
@@ -7993,11 +8011,7 @@ milk_total: 120ml
           'type': 'run.progress',
           'payload': {
             'label': '我想一下',
-            'semantic': {
-              'label': '我想一下',
-              'surface': 'thinking_note',
-              'visibility': 'hidden',
-            },
+            'semantic': {'label': '我想一下', 'surface': 'thinking_note'},
           },
         }),
       ],
@@ -8102,7 +8116,6 @@ milk_total: 120ml
               'semantic': {
                 'label': '我先看看今天的奶量状态～',
                 'surface': 'work_item',
-                'visibility': 'work_item',
                 'lifecycle': 'running',
               },
             },
@@ -8237,7 +8250,7 @@ milk_total: 120ml
     },
   );
 
-  testWidgets('Agent Hub renders legacy after-tool status and thinking note', (
+  testWidgets('Agent Hub renders after-tool status and thinking note', (
     tester,
   ) async {
     final state = AgentStreamRunState(
@@ -8249,11 +8262,7 @@ milk_total: 120ml
           'payload': {
             'phase': 'model_followup',
             'label': '我接着处理下一步',
-            'semantic': {
-              'label': '我接着处理下一步',
-              'surface': 'status_bar',
-              'visibility': 'status',
-            },
+            'semantic': {'label': '我接着处理下一步', 'surface': 'status_bar'},
           },
         }),
         AgentStreamEvent({
@@ -8261,11 +8270,7 @@ milk_total: 120ml
           'payload': {
             'phase': 'model_reasoning_after_tool',
             'label': '我想一下',
-            'semantic': {
-              'label': '我想一下',
-              'surface': 'thinking_note',
-              'visibility': 'hidden',
-            },
+            'semantic': {'label': '我想一下', 'surface': 'thinking_note'},
           },
         }),
       ],
@@ -8308,11 +8313,7 @@ milk_total: 120ml
             AgentStreamEvent({
               'type': 'artifact.created',
               'payload': {
-                'semantic': {
-                  'label': '孕期计划已经生成啦',
-                  'surface': 'artifact',
-                  'visibility': 'artifact',
-                },
+                'semantic': {'label': '孕期计划已经生成啦', 'surface': 'artifact'},
               },
             }),
           ),
@@ -8329,11 +8330,7 @@ milk_total: 120ml
             AgentStreamEvent({
               'type': 'action.confirmation_required',
               'payload': {
-                'semantic': {
-                  'label': '我需要你确认一下，再继续处理',
-                  'surface': 'action',
-                  'visibility': 'action',
-                },
+                'semantic': {'label': '我需要你确认一下，再继续处理', 'surface': 'action'},
               },
             }),
           ),
@@ -8354,7 +8351,6 @@ milk_total: 120ml
             'semantic': {
               'label': '这轮暂时没处理好',
               'surface': 'status_bar',
-              'visibility': 'status',
               'lifecycle': 'failed',
             },
           },
@@ -8384,11 +8380,7 @@ milk_total: 120ml
           'type': 'run.progress',
           'payload': {
             'label': '这段载荷文案不应展示',
-            'semantic': {
-              'label': '内部完成事件',
-              'surface': 'hidden',
-              'visibility': 'hidden',
-            },
+            'semantic': {'label': '内部完成事件', 'surface': 'hidden'},
           },
         }),
       ],

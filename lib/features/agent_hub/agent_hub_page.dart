@@ -6241,18 +6241,10 @@ String? _semanticStatusTitle(AgentStreamEvent event) {
 }
 
 bool _semanticTargetsAgentStatus(Map<String, Object?> semantic) {
-  const visibleTargets = {
-    'status_bar',
-    'status',
-    'work_item',
-    'artifact',
-    'action',
-  };
+  const visibleTargets = {'status_bar', 'work_item', 'artifact', 'action'};
   final surface = _stringField(semantic, 'surface')?.trim();
   if (surface == 'thinking_note' || surface == 'hidden') return false;
-  final visibility = _stringField(semantic, 'visibility')?.trim();
-  return visibleTargets.contains(surface) ||
-      visibleTargets.contains(visibility);
+  return visibleTargets.contains(surface);
 }
 
 String? _semanticThinkingTitle(AgentStreamEvent event) {
