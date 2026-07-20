@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
@@ -58,6 +59,71 @@ void main() {
     expect(connector.calls, 2);
     expect(find.byKey(const ValueKey('product-asset-image')), findsOneWidget);
   });
+
+  testWidgets('requests a display variant and decodes to the target width', (
+    tester,
+  ) async {
+    final connector = _FakeProductAssetConnector([
+      _response(statusCode: 200, body: _onePixelPng),
+    ]);
+    final repository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: connector,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        ProductAssetImage(
+          reference: _imageReference,
+          repository: repository,
+          variant: ProductAssetVariant.display,
+          cacheWidth: 720,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final image = tester.widget<Image>(
+      find.byKey(const ValueKey('product-asset-image')),
+    );
+    expect(image.image, isA<ResizeImage>());
+    expect((image.image as ResizeImage).width, 720);
+    expect(
+      connector.uris.single,
+      Uri.parse(
+        'https://api.example.test/v1/assets/asset-image?variant=display',
+      ),
+    );
+  });
+
+  testWidgets('agent markdown cards request the display image variant', (
+    tester,
+  ) async {
+    final connector = _FakeProductAssetConnector([
+      _response(statusCode: 200, body: _onePixelPng),
+    ]);
+    final repository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: connector,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentMarkdownText(
+          '![Air1 guide](/v1/assets/asset-image?kind=image)',
+          productAssetRepository: repository,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      connector.uris.single,
+      Uri.parse(
+        'https://api.example.test/v1/assets/asset-image?variant=display',
+      ),
+    );
+  });
 }
 
 Widget _host(Widget child) {
@@ -100,6 +166,7 @@ class _FakeProductAssetConnector implements ProductAssetHttpConnector {
 
   final List<ProductAssetHttpResponse> _responses;
   int calls = 0;
+  final uris = <Uri>[];
 
   @override
   Future<ProductAssetHttpResponse> get(
@@ -108,6 +175,7 @@ class _FakeProductAssetConnector implements ProductAssetHttpConnector {
     required int maxBytes,
   }) async {
     calls += 1;
+    uris.add(uri);
     return _responses.removeAt(0);
   }
 }

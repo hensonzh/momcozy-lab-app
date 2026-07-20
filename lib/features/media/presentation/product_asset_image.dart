@@ -17,10 +17,13 @@ class ProductAssetImage extends StatefulWidget {
     super.key,
     required this.reference,
     required this.repository,
+    this.variant = ProductAssetVariant.original,
     this.fit = BoxFit.contain,
     this.alignment = Alignment.center,
     this.filterQuality = FilterQuality.medium,
     this.semanticLabel,
+    this.cacheWidth,
+    this.cacheHeight,
     this.loadingBuilder,
     this.errorBuilder,
     this.loadedBuilder,
@@ -28,10 +31,13 @@ class ProductAssetImage extends StatefulWidget {
 
   final ProductAssetReference reference;
   final ProductAssetRepository? repository;
+  final ProductAssetVariant variant;
   final BoxFit fit;
   final AlignmentGeometry alignment;
   final FilterQuality filterQuality;
   final String? semanticLabel;
+  final int? cacheWidth;
+  final int? cacheHeight;
   final ProductAssetImageLoadingBuilder? loadingBuilder;
   final ProductAssetImageErrorBuilder? errorBuilder;
   final ProductAssetImageLoadedBuilder? loadedBuilder;
@@ -54,7 +60,8 @@ class _ProductAssetImageState extends State<ProductAssetImage> {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.repository, widget.repository) ||
         oldWidget.reference.assetId != widget.reference.assetId ||
-        oldWidget.reference.kind != widget.reference.kind) {
+        oldWidget.reference.kind != widget.reference.kind ||
+        oldWidget.variant != widget.variant) {
       _content = _load();
     }
   }
@@ -66,7 +73,7 @@ class _ProductAssetImageState extends State<ProductAssetImage> {
         const ProductAssetLoadException(code: 'repository_unavailable'),
       );
     }
-    return repository.load(widget.reference);
+    return repository.load(widget.reference, variant: widget.variant);
   }
 
   void _retry() {
@@ -98,6 +105,8 @@ class _ProductAssetImageState extends State<ProductAssetImage> {
           filterQuality: widget.filterQuality,
           gaplessPlayback: true,
           semanticLabel: widget.semanticLabel,
+          cacheWidth: widget.cacheWidth,
+          cacheHeight: widget.cacheHeight,
           errorBuilder: (context, error, stackTrace) {
             return widget.errorBuilder?.call(context, error, _retry) ??
                 _DefaultProductAssetImageError(onRetry: _retry);
