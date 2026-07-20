@@ -5,6 +5,7 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
 import '../../support/momcozy_test_fonts.dart';
 
@@ -37,24 +38,26 @@ final _agentStates = [
   _AgentGoldenState(
     label: 'streaming state',
     fileName: 'streaming_state_mobile.png',
-    build: () => AgentHubPage(
-      state: AgentStreamRunState(
-        phase: AgentStreamRunPhase.streaming,
-        threadId: 'thread-streaming-001',
-        runId: 'run-streaming-001',
-        messageId: 'msg-streaming-001',
-        textContent: '我正在读取今天的泵奶记录，并同步检查左右侧节奏。',
-        events: [
-          AgentStreamEvent(const {
-            'type': 'tool.started',
-            'thread_id': 'thread-streaming-001',
-            'run_id': 'run-streaming-001',
-            'tool_call_id': 'call-pump-summary',
-            'payload': {'tool_name': 'pump_session_summary_query'},
-          }),
-        ],
-      ),
-    ),
+    build: () {
+      final toolEvent = AgentStreamEvent(const {
+        'type': 'tool.started',
+        'thread_id': 'thread-streaming-001',
+        'run_id': 'run-streaming-001',
+        'tool_call_id': 'call-pump-summary',
+        'payload': {'tool_name': 'pump_session_summary_query'},
+      });
+      return AgentHubPage(
+        state: AgentStreamRunState(
+          phase: AgentStreamRunPhase.streaming,
+          threadId: 'thread-streaming-001',
+          runId: 'run-streaming-001',
+          messageId: 'msg-streaming-001',
+          textContent: '我正在读取今天的泵奶记录，并同步检查左右侧节奏。',
+          events: [toolEvent],
+          toolEvents: {'call-pump-summary': toolEvent},
+        ),
+      );
+    },
   ),
   _AgentGoldenState(
     label: 'cancelled state',
@@ -86,7 +89,12 @@ final _agentStates = [
   _AgentGoldenState(
     label: 'voice error state',
     fileName: 'voice_error_state_mobile.png',
-    build: () => AgentHubPage(voiceInput: _failingVoiceInput),
+    build: () => AgentHubPage(
+      voiceInputController: AgentVoiceInputController(
+        recorder: const _GoldenVoiceRecorder(),
+        transcriber: const _FailingVoiceTranscriber(),
+      ),
+    ),
     drive: (tester) async {
       await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
       await tester.pump();
@@ -184,7 +192,40 @@ Future<void> _pumpAgentHub(WidgetTester tester, Widget child) async {
 
 Future<void> _noOpDrive(WidgetTester tester) async {}
 
-Future<String?> _failingVoiceInput() async {
-  await Future<void>.delayed(Duration.zero);
-  throw StateError('microphone unavailable');
+class _GoldenVoiceRecorder implements AgentVoiceRecorder {
+  const _GoldenVoiceRecorder();
+
+  @override
+  Future<void> cancel() async {}
+
+  @override
+  Future<AgentVoiceInputPermissionState> permissionState() async {
+    return AgentVoiceInputPermissionState.granted;
+  }
+
+  @override
+  Future<AgentVoiceInputPermissionState> requestPermission() async {
+    return AgentVoiceInputPermissionState.granted;
+  }
+
+  @override
+  Future<void> start() async {}
+
+  @override
+  Future<AgentVoiceRecording?> stop() async {
+    return const AgentVoiceRecording(
+      name: 'speech.webm',
+      mimeType: 'audio/webm',
+      bytes: [1],
+    );
+  }
+}
+
+class _FailingVoiceTranscriber implements AgentVoiceTranscriber {
+  const _FailingVoiceTranscriber();
+
+  @override
+  Future<String?> transcribe(AgentVoiceRecording recording) async {
+    throw StateError('microphone unavailable');
+  }
 }

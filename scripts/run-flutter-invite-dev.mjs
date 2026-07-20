@@ -70,7 +70,7 @@ const locale = process.env.MOMCOZY_LOCALE || "zh-CN";
 const resetApp = String(process.env.MOMCOZY_RESET_INVITE_APP || "1").trim() !== "0";
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
-  console.error("Missing pubspec.yaml at the repository root. Run make flutter-init first.");
+  console.error("Invalid repository root: missing pubspec.yaml.");
   process.exit(1);
 }
 

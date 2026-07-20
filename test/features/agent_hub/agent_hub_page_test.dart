@@ -2403,15 +2403,16 @@ void main() {
         readMigrationFixture('agent_events/text_stream_basic.jsonl'),
       ),
     );
+    final recorder = _PageFakeVoiceRecorder();
 
     await tester.pumpWidget(
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
-          voiceInput: () async {
-            await Future<void>.delayed(Duration.zero);
-            return '今天左侧奶量偏低';
-          },
+          voiceInputController: AgentVoiceInputController(
+            recorder: recorder,
+            transcriber: _PageFakeVoiceTranscriber('今天左侧奶量偏低'),
+          ),
         ),
       ),
     );
@@ -2445,21 +2446,22 @@ void main() {
   testWidgets('Agent Hub voice button enters hold mode before transcription', (
     tester,
   ) async {
-    var voiceCaptures = 0;
     final client = _FixtureAgentStreamClient(
       parseAgentJsonl(
         readMigrationFixture('agent_events/text_stream_basic.jsonl'),
       ),
     );
+    final recorder = _PageFakeVoiceRecorder();
+    final transcriber = _PageFakeVoiceTranscriber('语音草稿');
 
     await tester.pumpWidget(
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
-          voiceInput: () async {
-            voiceCaptures += 1;
-            return '语音草稿';
-          },
+          voiceInputController: AgentVoiceInputController(
+            recorder: recorder,
+            transcriber: transcriber,
+          ),
         ),
       ),
     );
@@ -2478,7 +2480,7 @@ void main() {
     );
     expect(find.text('按住说话'), findsOneWidget);
     expect(find.text('原始草稿'), findsNothing);
-    expect(voiceCaptures, 0);
+    expect(transcriber.recordings, isEmpty);
 
     final holdGesture = await tester.startGesture(
       tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
@@ -2488,7 +2490,7 @@ void main() {
     await holdGesture.up();
     await tester.pumpAndSettle();
 
-    expect(voiceCaptures, 1);
+    expect(transcriber.recordings, hasLength(1));
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
@@ -4574,7 +4576,6 @@ void main() {
             mimeType: 'image/png',
             name: 'blocked-during-confirmation.png',
           ),
-          voiceInput: () async => '待确认时不能覆盖输入框',
         ),
       ),
     );
@@ -8088,25 +8089,25 @@ milk_total: 120ml
   testWidgets('Agent Hub uses tool semantic labels for loop status', (
     tester,
   ) async {
-    final state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.streaming,
-      events: [
-        AgentStreamEvent({
-          'type': 'tool.started',
-          'payload': {
-            'tool_call_id': 'tool-milk-status',
-            'tool_name': 'records.milk_status.read',
-            'label': '奶量状态',
-            'semantic': {
-              'label': '我先看看今天的奶量状态～',
-              'surface': 'work_item',
-              'visibility': 'work_item',
-              'lifecycle': 'running',
+    final state =
+        const AgentStreamRunState(
+          phase: AgentStreamRunPhase.streaming,
+        ).applyEvent(
+          AgentStreamEvent({
+            'type': 'tool.started',
+            'payload': {
+              'tool_call_id': 'tool-milk-status',
+              'tool_name': 'records.milk_status.read',
+              'label': '奶量状态',
+              'semantic': {
+                'label': '我先看看今天的奶量状态～',
+                'surface': 'work_item',
+                'visibility': 'work_item',
+                'lifecycle': 'running',
+              },
             },
-          },
-        }),
-      ],
-    );
+          }),
+        );
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 

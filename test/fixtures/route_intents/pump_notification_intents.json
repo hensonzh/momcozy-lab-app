@@ -1,0 +1,41 @@
+{
+  "id": "route-pump-notification-intents",
+  "description": "Pump foreground and auto-end notifications become typed route intents.",
+  "input": {
+    "pendingNavigatePayloads": [
+      {
+        "path": "/pump",
+        "autoEndTeardown": false,
+        "notifyJson": null
+      },
+      {
+        "path": "/",
+        "autoEndTeardown": true,
+        "notifyJson": null
+      }
+    ]
+  },
+  "expectedIntents": [
+    {
+      "type": "OpenPumpSession",
+      "path": "/pump",
+      "payload": {
+        "source": "pumpForegroundNotification"
+      },
+      "consume": "once"
+    },
+    {
+      "type": "OpenAgentHubAndRunPumpTeardown",
+      "path": "/",
+      "payload": {
+        "source": "pumpAutoEndNotification",
+        "dedupe": "tryRunPumpAutoEndOffPumpTeardownOnce"
+      },
+      "consume": "once"
+    }
+  ],
+  "assertions": [
+    "pump notification route is consumed once",
+    "auto-end teardown only runs for path / with autoEndTeardown true"
+  ]
+}

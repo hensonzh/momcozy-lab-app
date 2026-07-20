@@ -78,8 +78,8 @@ isSensitiveLogKey(key)
 
 ```text
 [x] token、refresh token、长期 session secret 进入 secure storage
-[x] demo/dev user id 明确标记 dev-only，不作为正式身份体系；legacy `mai_debug_user_id` 仅作为 storage migration continuity 输入，正式 session 仍由 `MomCozySession`/secure store 管理
-[x] conversation/thread id 迁移时按 user scope 隔离；`StorageMigrationExecutor` 使用 `momcozy.storageMigration.v1.user.<encoded-user-id>.*`
+[x] demo/dev user id 明确标记 dev-only，不作为正式身份体系；正式 session 由 `MomCozySession`/secure store 管理
+[x] 账户偏好通过 `userScopedStorageKey()` 按 user scope 隔离
 [x] 多用户切换清理 chat、calibration、device、pending route、pump runtime scoped cache；`MomCozySessionManager.switchAccount()` 先调用 `MomCozyScopedCacheStore`
 [x] 登出/删除用户后清理 scoped cache 和 native pending state；logout 已接入 `MomCozyScopedCacheStore`，账户删除流程必须复用同一 hook
 ```

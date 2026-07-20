@@ -31,7 +31,6 @@ From the `MomCozyApp/` repository root:
 
 ```bash
 make flutter-check
-make flutter-init
 make flutter-invite-dev
 make flutter-release-gate
 make flutter-emulator-smoke
@@ -39,7 +38,7 @@ make flutter-emulator-smoke
 
 Pinned versions live in [`flutter-toolchain.json`](flutter-toolchain.json);
 `make flutter-check` validates the local SDK/JDK/Android directories and versions against that file.
-`make flutter-release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, storage migration dry-run, local debug APK, and staging release APK.
+`make flutter-release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, local debug APK, and staging release APK.
 `make flutter-emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `build/emulator-smoke/`, and checks the process/window/crash log.
 
 Direct Flutter commands also run from the repository root:
@@ -99,10 +98,8 @@ Current Dart test coverage:
 - Agent voice fixtures cover STT multipart chunk transcription, timeout fallback, realtime PCM stream cancellation, realtime voice session frames, and WebSocket disconnect behavior.
 - Agent Hub widget tests cover composer text send, image attachment payloads, voice transcription fill-in, stop, retry, and user-facing work progress.
 - Staging smoke CLI validates env parsing, safe default skip, optional staging HTTP/client-event/media upload probes, and optional Agent SSE probe.
-- Storage migration dry-run CLI covers legacy fixture batches and reports unhandled legacy keys before app cutover.
 - Privacy fixtures cover shared log redaction for sensitive keys and URL query parameters.
 - BLE fixtures cover request packet goldens, standalone hex files, valid/invalid frame parsing, parser edge cases, cross-platform parity cases, and side mapping.
-- Storage migration fixtures cover valid core state and malformed legacy fallback.
 - Route intent fixtures cover native notification navigation plus unsafe/unknown fallback routes.
 - Pump device snapshot reducer fixtures cover E1/D0/D6/0x80/BF protocol frames and left/right side isolation.
 - Pump device snapshot binding fixtures cover BLE notification stream consumption and notify subscription seeding.
@@ -127,6 +124,6 @@ Remaining device-lab gap:
 
 ## Engineering Notes
 
-- Add fixtures before feature UI: BLE protocol, Agent SSE stream, API envelope, storage migration, and route intents.
+- Add fixtures before feature UI: BLE protocol, Agent SSE stream, API envelope, and route intents.
 - Keep native Android capabilities behind typed platform interfaces.
 - `android/gradle.properties` pins `android.aapt2FromMavenOverride` to SDK build-tools 36.0.0 because Maven AAPT2 9.0.1 fails to start on this machine.

@@ -63,7 +63,6 @@ make flutter-packaging-check
 
 - 当前 appId 保持不变；未来如需变更，必须先评估 installed data、Android native service store、通知渠道、权限授权和 FileProvider authority。
 - 包名变更前必须完成真机升级/覆盖、storage migration、通知渠道和 BLE 绑定验证。
-- 历史 storage 兼容规则以 `dart run tool/storage_migration_dry_run.dart` 为非真机前置；真实 installed data 迁移仍需 device lab 和 release owner 确认。
 
 Release signing 环境变量：
 

@@ -31,28 +31,25 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  test(
-    'stores care stage under an account-scoped migration-compatible key',
-    () async {
-      const first = FlutterSecureStatusPreferenceStore(userId: 'user/a');
-      const second = FlutterSecureStatusPreferenceStore(userId: 'user/b');
+  test('stores care stage under an account-scoped key', () async {
+    const first = FlutterSecureStatusPreferenceStore(userId: 'user/a');
+    const second = FlutterSecureStatusPreferenceStore(userId: 'user/b');
 
-      await first.writeCareStage(StatusCareStage.pregnancy);
-      await second.writeCareStage(StatusCareStage.postpartum);
+    await first.writeCareStage(StatusCareStage.pregnancy);
+    await second.writeCareStage(StatusCareStage.postpartum);
 
-      expect(first.storageKey, contains('user.user%2Fa.status.careStage'));
-      expect(second.storageKey, contains('user.user%2Fb.status.careStage'));
-      expect(await first.readCareStage(), StatusCareStage.pregnancy);
-      expect(await second.readCareStage(), StatusCareStage.postpartum);
-    },
-  );
+    expect(first.storageKey, contains('user.user%2Fa.status.careStage'));
+    expect(second.storageKey, contains('user.user%2Fb.status.careStage'));
+    expect(await first.readCareStage(), StatusCareStage.pregnancy);
+    expect(await second.readCareStage(), StatusCareStage.postpartum);
+  });
 
-  test('accepts plain legacy values and ignores invalid values', () async {
-    const store = FlutterSecureStatusPreferenceStore(userId: 'legacy-user');
+  test('ignores malformed and unsupported stored values', () async {
+    const store = FlutterSecureStatusPreferenceStore(userId: 'user');
     values[store.storageKey] = 'pregnancy';
-    expect(await store.readCareStage(), StatusCareStage.pregnancy);
+    expect(await store.readCareStage(), isNull);
 
-    values[store.storageKey] = 'unexpected';
+    values[store.storageKey] = '"unexpected"';
     expect(await store.readCareStage(), isNull);
   });
 }

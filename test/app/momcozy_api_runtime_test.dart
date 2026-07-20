@@ -9,7 +9,6 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
@@ -136,34 +135,6 @@ void main() {
       expect(persistence.readCount, 2);
     },
   );
-
-  test('runtime bootstrap can apply a legacy storage snapshot', () async {
-    final migrationStore = _RuntimeMigrationStore();
-
-    final runtime = await MomCozyApiRuntime.bootstrap(
-      store: MemoryMomCozySessionStore(),
-      hospitalBagCartStore: HospitalBagCartStore(
-        persistence: const _EmptyHospitalBagCartPersistence(),
-      ),
-      legacyStorageSnapshot: {
-        'localStorage': {
-          'mai_debug_user_id': 'legacy-user',
-          'mai_agent_conversation_id': 'legacy-conv',
-        },
-      },
-      storageMigrationTargetStore: migrationStore,
-    );
-
-    expect(runtime.storageMigrationResult?.applied, isTrue);
-    expect(migrationStore.version, currentStorageMigrationVersion);
-    expect(
-      migrationStore.values[storageMigrationScopedKey(
-        'legacy-user',
-        'agent.conversationId',
-      )],
-      'legacy-conv',
-    );
-  });
 
   test('runtime can be created directly from session', () {
     final runtime = MomCozyApiRuntime.fromSession(
@@ -703,25 +674,4 @@ class _NeverProductAssetConnector implements ProductAssetHttpConnector {
   }) {
     throw UnsupportedError('No product asset request expected.');
   }
-}
-
-class _RuntimeMigrationStore implements StorageMigrationTargetStore {
-  int? version;
-  final values = <String, Object?>{};
-
-  @override
-  Future<int?> readMigrationVersion() async => version;
-
-  @override
-  Future<void> writeMigrationValue(String key, Object? value) async {
-    values[key] = value;
-  }
-
-  @override
-  Future<void> writeMigrationVersion(int version) async {
-    this.version = version;
-  }
-
-  @override
-  Future<void> removeLegacyKey(String bucket, String key) async {}
 }

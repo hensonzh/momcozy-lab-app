@@ -120,22 +120,6 @@ PregnancyDiaryEntry _entry(Map<String, Object?> data) {
     nutritionNote: _string(data['nutrition_note']),
     attachments: _list(data['attachments']),
     status: _string(data['status']),
-    healthNotes: _healthNotes(data['health_notes']),
-  );
-}
-
-List<PregnancyDiaryHealthNote> _healthNotes(Object? value) {
-  if (value is! List) return const <PregnancyDiaryHealthNote>[];
-  return List<PregnancyDiaryHealthNote>.unmodifiable(
-    value.whereType<Map>().map((raw) {
-      final map = Map<String, Object?>.from(raw);
-      return PregnancyDiaryHealthNote(
-        id: _string(map['id'] ?? map['note_id']),
-        topic: _string(map['topic']),
-        userReport: _string(map['user_report']),
-        followUp: _string(map['follow_up']),
-      );
-    }),
   );
 }
 

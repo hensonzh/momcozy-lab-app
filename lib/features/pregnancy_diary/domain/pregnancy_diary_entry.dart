@@ -13,7 +13,6 @@ class PregnancyDiaryEntry {
     this.content = '',
     this.attachments = const <Object?>[],
     this.status = '',
-    this.healthNotes = const <PregnancyDiaryHealthNote>[],
   });
 
   final String id;
@@ -30,25 +29,7 @@ class PregnancyDiaryEntry {
   final List<Object?> attachments;
   final String status;
 
-  // Kept as a read-only compatibility projection for older Status payloads.
-  // The current pregnancy-diary API does not persist health_notes.
-  final List<PregnancyDiaryHealthNote> healthNotes;
-
   bool get hasAppointmentQuestion => appointmentNote.trim().isNotEmpty;
-}
-
-class PregnancyDiaryHealthNote {
-  const PregnancyDiaryHealthNote({
-    required this.id,
-    required this.topic,
-    this.userReport = '',
-    this.followUp = '',
-  });
-
-  final String id;
-  final String topic;
-  final String userReport;
-  final String followUp;
 }
 
 class PregnancyDiaryDraft {

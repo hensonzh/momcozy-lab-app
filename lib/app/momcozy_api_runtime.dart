@@ -8,7 +8,6 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
@@ -96,7 +95,6 @@ class MomCozyApiRuntime {
     ScheduleReminderGateway? scheduleReminderGateway,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
-    this.storageMigrationResult,
     DateTime Function()? now,
     this.supportsSessionAutoRefresh = false,
     this._currentSessionProvider,
@@ -246,7 +244,6 @@ class MomCozyApiRuntime {
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
-    StorageMigrationApplyResult? storageMigrationResult,
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
@@ -337,7 +334,6 @@ class MomCozyApiRuntime {
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
       session: session,
-      storageMigrationResult: storageMigrationResult,
       observability: runtimeObservability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
@@ -378,8 +374,6 @@ class MomCozyApiRuntime {
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
-    Map<String, Object?>? legacyStorageSnapshot,
-    StorageMigrationTargetStore? storageMigrationTargetStore,
   }) async {
     final manager = MomCozySessionManager(
       store: store,
@@ -394,15 +388,6 @@ class MomCozyApiRuntime {
           ),
     );
     final session = await manager.bootstrap();
-    final storageMigrationResult = legacyStorageSnapshot == null
-        ? null
-        : await StorageMigrationExecutor(
-            storageMigrationTargetStore ??
-                const FlutterSecureStorageMigrationTargetStore(),
-          ).applyInputIfNeeded(
-            legacyStorageSnapshot,
-            context: {'envDefaultUserId': session.userId},
-          );
     final runtime = MomCozyApiRuntime.fromSession(
       session,
       jsonTransport: jsonTransport,
@@ -410,7 +395,6 @@ class MomCozyApiRuntime {
       multipartTransport: multipartTransport,
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
-      storageMigrationResult: storageMigrationResult,
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
@@ -429,7 +413,6 @@ class MomCozyApiRuntime {
 
   final ApiJsonTransport jsonTransport;
   final MomCozySession session;
-  final StorageMigrationApplyResult? storageMigrationResult;
   final MomCozyObservability observability;
   final HospitalBagCartStore hospitalBagCartStore;
   late final IbclcConsultStore ibclcConsultStore;

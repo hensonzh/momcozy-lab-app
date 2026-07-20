@@ -9,7 +9,7 @@ import 'package:momcozy_flutter_app/features/status/presentation/status_dashboar
 
 void main() {
   group('PregnancyDiaryDashboard', () {
-    testWidgets('renders loading and measured legacy diary summaries locally', (
+    testWidgets('renders loading and measured diary summaries locally', (
       tester,
     ) async {
       await _setViewport(tester);
@@ -24,14 +24,13 @@ void main() {
           date: DateTime(2026, 7, 11),
           content: '今天散步了半小时',
           appointmentNote: '下次需要做什么检查？',
-          healthNotes: const [PregnancyDiaryHealthNote(id: 'h1', topic: '胎动')],
         ),
         _entry(id: 'yesterday', date: DateTime(2026, 7, 10)),
       ]);
       await tester.pump();
 
       expect(find.text('2'), findsOneWidget);
-      expect(find.text('1'), findsNWidgets(2));
+      expect(find.text('1'), findsOneWidget);
       expect(find.text('今天散步了半小时'), findsOneWidget);
       expect(find.text('下次需要做什么检查？'), findsOneWidget);
     });
@@ -377,14 +376,12 @@ PregnancyDiaryEntry _entry({
   required DateTime date,
   String content = '',
   String appointmentNote = '',
-  List<PregnancyDiaryHealthNote> healthNotes = const [],
 }) {
   return PregnancyDiaryEntry(
     id: id,
     entryDate: date,
     content: content,
     appointmentNote: appointmentNote,
-    healthNotes: healthNotes,
   );
 }
 

@@ -55,7 +55,7 @@ const apkPath = path.join(
 const screenshotDir = path.join(flutterAppDir, "build/emulator-smoke");
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
-  console.error("Missing pubspec.yaml at the repository root. Run make flutter-init first.");
+  console.error("Invalid repository root: missing pubspec.yaml.");
   process.exit(1);
 }
 

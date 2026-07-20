@@ -30,7 +30,7 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  test('uses the account-scoped storage migration reminder key', () async {
+  test('uses the account-scoped reminder key', () async {
     const first = FlutterSecureScheduleReminderPreferenceStore(
       userId: 'user/a',
     );

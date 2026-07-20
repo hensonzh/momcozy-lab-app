@@ -7,10 +7,6 @@ class PregnancyDiaryProjection {
   }) : entries = _sortEntries(entries),
        today = _findToday(entries, now),
        recentCount = _recentEntries(entries, now).length,
-       recentHealthNotes = _recentEntries(
-         entries,
-         now,
-       ).expand((entry) => entry.healthNotes).toList(growable: false),
        questionCount = entries.fold<int>(
          0,
          (total, entry) => total + _questionCount(entry.appointmentNote),
@@ -19,10 +15,7 @@ class PregnancyDiaryProjection {
   final List<PregnancyDiaryEntry> entries;
   final PregnancyDiaryEntry? today;
   final int recentCount;
-  final List<PregnancyDiaryHealthNote> recentHealthNotes;
   final int questionCount;
-
-  int get recentHealthNoteCount => recentHealthNotes.length;
 
   List<String> get todayTextBlocks => textBlocks(today);
 
@@ -33,7 +26,6 @@ class PregnancyDiaryProjection {
 
   String get primaryPrompt {
     if (questionCount > 0) return '帮我整理孕期日记里的产检问题清单';
-    if (recentHealthNotes.isNotEmpty) return '帮我回顾最近的健康咨询记录';
     return '帮我回顾最近7天的孕期日记';
   }
 
@@ -45,10 +37,6 @@ class PregnancyDiaryProjection {
       _compact(entry.sleepSummary),
     ].where((part) => part.isNotEmpty).take(2).toList(growable: false);
     if (parts.isNotEmpty) return '今日已记录：${parts.join('，')}';
-    if (entry.healthNotes.isNotEmpty) {
-      final topic = _compact(entry.healthNotes.first.topic);
-      return '今日已记录：${topic.isEmpty ? '健康咨询' : topic}';
-    }
     final content = _compact(entry.content);
     return content.isNotEmpty ? '今日已记录：$content' : '今天已有孕期记录';
   }
@@ -59,7 +47,6 @@ class PregnancyDiaryProjection {
       entry.content,
       entry.appointmentNote,
       entry.nutritionNote,
-      ...entry.healthNotes.map((note) => note.userReport),
     ];
     final seen = <String>{};
     return candidates
@@ -73,7 +60,6 @@ class PregnancyDiaryProjection {
           if (_compact(entry.mood).isNotEmpty) '心情${_compact(entry.mood)}',
           entry.fetalMovement,
           entry.sleepSummary,
-          ...entry.healthNotes.map((note) => note.topic),
           ...entry.symptomTags,
         ]
         .map(_compact)
