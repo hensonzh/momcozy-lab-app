@@ -238,7 +238,9 @@ void main() {
       expect(find.textContaining('I am still'), findsOneWidget);
 
       await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
-      await tester.pumpAndSettle();
+      // Auto-reply voice keeps the speaking animation active while the Agent
+      // tab is offstage, so waiting for every frame to settle would never end.
+      await tester.pump();
 
       expect(
         find.byKey(const ValueKey('route-page-/schedule')),
@@ -271,6 +273,7 @@ void main() {
         );
       await tester.pump();
       await tester.pump();
+      expect(client.cancelCount, 1);
 
       expect(
         shellCoordinator?.activeSource,
@@ -303,7 +306,6 @@ void main() {
             .reduce((left, right) => left + right),
         1,
       );
-      await client.dispose();
     },
   );
 
