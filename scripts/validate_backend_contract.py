@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_DIR = ROOT / "docs" / "backend-contract"
 OPENAPI_PATH = CONTRACT_DIR / "openapi.generated.json"
 SMOKE_FLOWS_PATH = CONTRACT_DIR / "flutter-smoke-flows.json"
+FORBIDDEN_REPOSITORY_PATHS = ("production_backend/", "flutter_app/")
 
 REQUIRED_OPENAPI_PATHS = {
     "/v1/auth/signup",
@@ -65,6 +66,15 @@ AUTH_EXEMPT_PATHS = {
 
 def main() -> int:
     errors: list[str] = []
+    for document in sorted(CONTRACT_DIR.glob("*.md")):
+        content = document.read_text()
+        for legacy_path in FORBIDDEN_REPOSITORY_PATHS:
+            if legacy_path in content:
+                errors.append(
+                    f"{document.relative_to(ROOT)} references removed repository "
+                    f"wrapper: {legacy_path}"
+                )
+
     schema = _read_json_object(OPENAPI_PATH)
     smoke_flows = _read_json_object(SMOKE_FLOWS_PATH)
     paths = schema.get("paths")

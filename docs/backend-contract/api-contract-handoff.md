@@ -1,12 +1,12 @@
 # Production Backend API Contract Handoff
 
 This handoff is the human-readable companion to
-`production_backend/docs/openapi.generated.json`.
+`docs/openapi.generated.json`.
 
 ## Contract Sources
 
-- OpenAPI snapshot: `production_backend/docs/openapi.generated.json`
-- API surface catalog: `production_backend/docs/api-surface-catalog.md`
+- OpenAPI snapshot: `docs/openapi.generated.json`
+- API surface catalog: `docs/api-surface-catalog.md`
 - Export command: `make backend-export-contracts`
 - Runtime base path: `/v1`
 - Error model: stable `{ "error": { "code", "message", "request_id", "details?" } }`
@@ -222,8 +222,8 @@ envelope with `code=vision_provider_disabled` and status `503`.
 Flutter repositories should be generated from or validated against the OpenAPI
 snapshot. Do not build new client code against legacy raw response shapes.
 
-Use `production_backend/docs/flutter-smoke-flows.json` as the initial integration
+Use `docs/flutter-smoke-flows.json` as the initial integration
 smoke fixture for auth, core records/plans/files, agent replay, and voice
 contract checks.
-Use `production_backend/docs/flutter-client-compatibility.md` for generated
+Use `docs/flutter-client-compatibility.md` for generated
 client regeneration and breaking-change rules.
