@@ -81,7 +81,6 @@ class AgentStreamEvent {
   String? get semanticLabel =>
       stringField(semantic, 'label') ?? stringField(semantic, 'title');
   String? get semanticSurface => stringField(semantic, 'surface');
-  String? get semanticVisibility => stringField(semantic, 'visibility');
   String? get semanticLifecycle => stringField(semantic, 'lifecycle');
   String? get semanticMergeKey => stringField(semantic, 'merge_key');
 

@@ -153,11 +153,7 @@ void main() {
       });
       final rawSemantic = AgentStreamEvent(const {
         'type': 'run.progress',
-        'semantic': {
-          'label': '我想一下',
-          'surface': 'thinking_note',
-          'visibility': 'hidden',
-        },
+        'semantic': {'label': '我想一下', 'surface': 'thinking_note'},
       });
 
       expect(payloadSemantic.semanticLabel, '我在组织回复～');
@@ -166,7 +162,6 @@ void main() {
       expect(payloadSemantic.semanticMergeKey, 'progress:response_finalizing');
       expect(rawSemantic.semanticLabel, '我想一下');
       expect(rawSemantic.semanticSurface, 'thinking_note');
-      expect(rawSemantic.semanticVisibility, 'hidden');
     });
 
     test('uses payload tool call ids as stable reducer keys', () {
