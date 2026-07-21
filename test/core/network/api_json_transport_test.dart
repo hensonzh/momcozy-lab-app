@@ -288,6 +288,45 @@ void main() {
       },
     );
   });
+
+  group('IoApiMultipartTransport', () {
+    test('sends query parameters separately from the upload path', () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      final receivedUri = server.first.then((request) async {
+        final uri = request.uri;
+        await request.drain<void>();
+        request.response
+          ..statusCode = HttpStatus.created
+          ..headers.contentType = ContentType.json
+          ..write('{"id":"file-001"}');
+        await request.response.close();
+        return uri;
+      });
+      final transport = IoApiMultipartTransport(
+        baseUri: Uri.parse(
+          'http://${server.address.host}:${server.port}/api?existing=1',
+        ),
+      );
+
+      final response = await transport.uploadMultipart(
+        '/v1/files/upload',
+        query: const {'temporary': true},
+        file: const ApiUploadFile(
+          name: 'photo.png',
+          mimeType: 'image/png',
+          sizeBytes: 3,
+          bytes: [1, 2, 3],
+        ),
+      );
+
+      expect(response['id'], 'file-001');
+      expect(
+        await receivedUri,
+        Uri.parse('/api/v1/files/upload?existing=1&temporary=true'),
+      );
+    });
+  });
 }
 
 class _RecordingApiHttpConnector implements ApiHttpConnector {

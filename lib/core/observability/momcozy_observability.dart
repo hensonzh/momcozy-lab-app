@@ -251,6 +251,7 @@ class ObservedApiMultipartTransport implements ApiMultipartTransport {
   @override
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
+    Map<String, Object?> query = const {},
     Map<String, Object?> fields = const {},
     Map<String, String> headers = const {},
     required ApiUploadFile file,
@@ -259,6 +260,7 @@ class ObservedApiMultipartTransport implements ApiMultipartTransport {
     try {
       final response = await inner.uploadMultipart(
         path,
+        query: query,
         fields: fields,
         headers: headers,
         file: file,
