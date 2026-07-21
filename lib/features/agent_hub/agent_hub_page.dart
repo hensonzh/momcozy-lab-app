@@ -1422,6 +1422,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           image.fileId.trim().isEmpty) {
         final bytes = _decodeAgentImageBytes(image.dataUrl);
         final uploaded = await mediaRepository.uploadFile(
+          temporary: true,
           file: ApiUploadFile(
             name: image.name.trim().isEmpty ? 'image.png' : image.name.trim(),
             mimeType: image.mimeType.trim().isEmpty
@@ -1476,6 +1477,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       final document = await pickDocument();
       if (document != null) {
         final uploaded = await mediaRepository.uploadFile(
+          temporary: true,
           file: ApiUploadFile(
             name: document.name.trim().isEmpty
                 ? 'document.pdf'
@@ -1651,18 +1653,52 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _removeAttachedImage(int index) {
     if (index < 0 || index >= _attachedImages.length) return;
+    final removed = _attachedImages[index];
     setState(() {
       _attachedImages.removeAt(index);
     });
     _persistInteractionState();
+    unawaited(_deleteAbandonedAttachments([removed.fileId]));
   }
 
   void _removeAttachedFile(int index) {
     if (index < 0 || index >= _attachedFiles.length) return;
+    final removed = _attachedFiles[index];
     setState(() {
       _attachedFiles.removeAt(index);
     });
     _persistInteractionState();
+    unawaited(_deleteAbandonedAttachments([removed.fileId]));
+  }
+
+  Iterable<String> _attachedFileIds() sync* {
+    for (final image in _attachedImages) {
+      yield image.fileId;
+    }
+    for (final file in _attachedFiles) {
+      yield file.fileId;
+    }
+  }
+
+  Future<void> _deleteAbandonedAttachments(Iterable<String> fileIds) async {
+    final repository = widget.mediaRepository;
+    if (repository == null) return;
+    final normalizedIds = fileIds
+        .map((fileId) => fileId.trim())
+        .where((fileId) => fileId.isNotEmpty)
+        .toSet();
+    await Future.wait(
+      normalizedIds.map((fileId) async {
+        try {
+          await repository.deleteFile(
+            fileId: fileId,
+            idempotencyKey: 'agent-draft-discard:$fileId',
+          );
+        } catch (_) {
+          // The server-side temporary-file TTL is the durable cleanup fallback.
+        }
+      }),
+    );
   }
 
   Future<void> _openConversationHistory() async {
@@ -1710,6 +1746,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
       widget.voicePlaybackCoordinator?.cancel();
       _cancelRunSubscription();
+      final abandonedAttachmentIds = _attachedFileIds().toList();
       _composerController.clear();
       _formPresentationSession.clear();
       _formSubmissionsNotifier.value =
@@ -1736,6 +1773,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _notifyActionStateChanged();
       _persistInteractionState();
       _flushPersistentInteractionState();
+      unawaited(_deleteAbandonedAttachments(abandonedAttachmentIds));
       _scheduleScrollToLatest();
       _armOlderConversationHistoryLoading();
 
@@ -1786,6 +1824,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
       _dismissComposerKeyboardOnRunAccepted = false;
       _cancelRunSubscription();
+      final abandonedAttachmentIds = _attachedFileIds().toList();
       _composerController.clear();
       _formSubmissionsNotifier.value =
           const <String, AgentArtifactFormSubmission>{};
@@ -1811,6 +1850,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _notifyActionStateChanged();
       _persistInteractionState();
       _flushPersistentInteractionState();
+      unawaited(_deleteAbandonedAttachments(abandonedAttachmentIds));
       unawaited(_refreshGreetingAndMaybePlayVoice());
     } catch (_) {
       // Keep the current session visible when its durable cart clear fails.
