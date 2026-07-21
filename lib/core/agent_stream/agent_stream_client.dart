@@ -52,6 +52,7 @@ class AgentStreamRequest {
 class AgentStreamImageInput {
   const AgentStreamImageInput({
     required this.dataUrl,
+    this.fileId = '',
     this.mimeType = 'image/png',
     this.name = 'image.png',
     this.size = 0,
@@ -59,6 +60,7 @@ class AgentStreamImageInput {
   });
 
   final String dataUrl;
+  final String fileId;
   final String mimeType;
   final String name;
   final int size;
@@ -66,20 +68,45 @@ class AgentStreamImageInput {
 
   Map<String, Object?> toMap() => {
     'dataUrl': dataUrl,
+    if (fileId.trim().isNotEmpty) 'fileId': fileId.trim(),
     'mimeType': mimeType,
     'name': name,
     'size': size,
     'detail': detail,
   };
 
-  Map<String, Object?> toProductionAttachment() => {
-    'type': 'image',
-    'data_url': dataUrl,
-    'mime_type': mimeType.trim().isEmpty ? 'image/png' : mimeType,
-    'name': name.trim().isEmpty ? 'image.png' : name,
-    'size': size,
-    'detail': detail.trim().isEmpty ? 'auto' : detail,
-  };
+  Map<String, Object?> toProductionAttachment() {
+    final normalizedFileId = fileId.trim();
+    return {
+      'type': 'image',
+      if (normalizedFileId.isNotEmpty)
+        'file_id': normalizedFileId
+      else
+        'data_url': dataUrl,
+      'mime_type': mimeType.trim().isEmpty ? 'image/png' : mimeType,
+      'name': name.trim().isEmpty ? 'image.png' : name,
+      'size': size,
+      'detail': detail.trim().isEmpty ? 'auto' : detail,
+    };
+  }
+
+  AgentStreamImageInput copyWith({
+    String? dataUrl,
+    String? fileId,
+    String? mimeType,
+    String? name,
+    int? size,
+    String? detail,
+  }) {
+    return AgentStreamImageInput(
+      dataUrl: dataUrl ?? this.dataUrl,
+      fileId: fileId ?? this.fileId,
+      mimeType: mimeType ?? this.mimeType,
+      name: name ?? this.name,
+      size: size ?? this.size,
+      detail: detail ?? this.detail,
+    );
+  }
 }
 
 class AgentStreamPayloadException implements Exception {

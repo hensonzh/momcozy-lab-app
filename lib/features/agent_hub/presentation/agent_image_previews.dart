@@ -5,10 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 
+typedef AgentImageContentLoader = Future<Uint8List> Function(String fileId);
+
 class AgentSentImages extends StatelessWidget {
-  const AgentSentImages({super.key, required this.images});
+  const AgentSentImages({
+    super.key,
+    required this.images,
+    this.loadImageContent,
+  });
 
   final List<AgentStreamImageInput> images;
+  final AgentImageContentLoader? loadImageContent;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +31,11 @@ class AgentSentImages extends StatelessWidget {
           for (var index = 0; index < images.length; index++)
             GestureDetector(
               key: ValueKey('agent-sent-image-$index'),
-              onTap: () => _showSentImage(context, images[index]),
+              onTap: () => _showSentImage(
+                context,
+                images[index],
+                loadImageContent: loadImageContent,
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: SizedBox(
@@ -34,6 +45,7 @@ class AgentSentImages extends StatelessWidget {
                     image: images[index],
                     fit: BoxFit.cover,
                     cacheWidth: 360,
+                    showLoadHint: true,
                   ),
                 ),
               ),
@@ -106,7 +118,11 @@ class AgentComposerImageAttachment extends StatelessWidget {
   }
 }
 
-Future<void> _showSentImage(BuildContext context, AgentStreamImageInput image) {
+Future<void> _showSentImage(
+  BuildContext context,
+  AgentStreamImageInput image, {
+  AgentImageContentLoader? loadImageContent,
+}) {
   return showDialog<void>(
     context: context,
     barrierColor: Colors.black.withValues(alpha: 0.92),
@@ -121,9 +137,9 @@ Future<void> _showSentImage(BuildContext context, AgentStreamImageInput image) {
                   minScale: 0.8,
                   maxScale: 4,
                   child: Center(
-                    child: _AgentDataUrlImage(
+                    child: _AgentFullScreenImage(
                       image: image,
-                      fit: BoxFit.contain,
+                      loadImageContent: loadImageContent,
                     ),
                   ),
                 ),
@@ -150,16 +166,72 @@ Future<void> _showSentImage(BuildContext context, AgentStreamImageInput image) {
   );
 }
 
+class _AgentFullScreenImage extends StatefulWidget {
+  const _AgentFullScreenImage({
+    required this.image,
+    required this.loadImageContent,
+  });
+
+  final AgentStreamImageInput image;
+  final AgentImageContentLoader? loadImageContent;
+
+  @override
+  State<_AgentFullScreenImage> createState() => _AgentFullScreenImageState();
+}
+
+class _AgentFullScreenImageState extends State<_AgentFullScreenImage> {
+  Future<Uint8List>? _remoteBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    final fileId = widget.image.fileId.trim();
+    final loader = widget.loadImageContent;
+    if (widget.image.dataUrl.trim().isEmpty &&
+        fileId.isNotEmpty &&
+        loader != null) {
+      _remoteBytes = loader(fileId);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localBytes = _decodeDataUrl(widget.image.dataUrl);
+    if (localBytes != null) {
+      return Image.memory(localBytes, fit: BoxFit.contain);
+    }
+    final remoteBytes = _remoteBytes;
+    if (remoteBytes == null) return const _AgentImageFallback();
+    return FutureBuilder<Uint8List>(
+      future: remoteBytes,
+      builder: (context, snapshot) {
+        final bytes = snapshot.data;
+        if (bytes != null && bytes.isNotEmpty) {
+          return Image.memory(
+            bytes,
+            fit: BoxFit.contain,
+            errorBuilder: (_, _, _) => const _AgentImageFallback(),
+          );
+        }
+        if (snapshot.hasError) return const _AgentImageFallback();
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+}
+
 class _AgentDataUrlImage extends StatefulWidget {
   const _AgentDataUrlImage({
     required this.image,
     required this.fit,
     this.cacheWidth,
+    this.showLoadHint = false,
   });
 
   final AgentStreamImageInput image;
   final BoxFit fit;
   final int? cacheWidth;
+  final bool showLoadHint;
 
   @override
   State<_AgentDataUrlImage> createState() => _AgentDataUrlImageState();
@@ -185,7 +257,9 @@ class _AgentDataUrlImageState extends State<_AgentDataUrlImage> {
   @override
   Widget build(BuildContext context) {
     final bytes = _bytes;
-    if (bytes == null) return const _AgentImageFallback();
+    if (bytes == null) {
+      return _AgentImageFallback(showLoadHint: widget.showLoadHint);
+    }
     return Image.memory(
       bytes,
       fit: widget.fit,
@@ -197,18 +271,39 @@ class _AgentDataUrlImageState extends State<_AgentDataUrlImage> {
 }
 
 class _AgentImageFallback extends StatelessWidget {
-  const _AgentImageFallback();
+  const _AgentImageFallback({this.showLoadHint = false});
+
+  final bool showLoadHint;
 
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
       color: MomCozyColors.muted,
-      child: const Center(
-        child: Icon(
-          Icons.image_not_supported_outlined,
-          size: 20,
-          color: MomCozyColors.mutedForeground,
-        ),
+      child: Center(
+        child: showLoadHint
+            ? const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.image_outlined,
+                    size: 22,
+                    color: MomCozyColors.mutedForeground,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '点击查看',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: MomCozyColors.mutedForeground,
+                    ),
+                  ),
+                ],
+              )
+            : const Icon(
+                Icons.image_not_supported_outlined,
+                size: 20,
+                color: MomCozyColors.mutedForeground,
+              ),
       ),
     );
   }

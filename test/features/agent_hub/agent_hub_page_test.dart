@@ -12,6 +12,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
@@ -23,6 +24,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
@@ -1992,11 +1994,13 @@ void main() {
         readMigrationFixture('agent_events/text_stream_basic.jsonl'),
       ),
     );
+    final mediaRepository = _FakeAgentImageMediaRepository();
 
     await tester.pumpWidget(
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
+          mediaRepository: mediaRepository,
           pickImage: (_) async => const AgentStreamImageInput(
             dataUrl:
                 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
@@ -2046,6 +2050,12 @@ void main() {
     expect(client.requests.single.message, 'Review this display');
     expect(client.requests.single.images, hasLength(1));
     expect(client.requests.single.images.single.name, 'pump-display.png');
+    expect(
+      client.requests.single.images.single.fileId,
+      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+    );
+    expect(client.requests.single.images.single.dataUrl, isEmpty);
+    expect(mediaRepository.uploadedFiles.single.bytes, isNotEmpty);
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsNothing,
@@ -9176,5 +9186,24 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Future<void> dispose(int playerId) async {
     disposedIds.add(playerId);
     await _eventsById.remove(playerId)?.close();
+  }
+}
+
+class _FakeAgentImageMediaRepository implements MediaRepository {
+  final uploadedFiles = <ApiUploadFile>[];
+
+  @override
+  Future<UploadedMediaFile> uploadFile({
+    required ApiUploadFile file,
+    String? idempotencyKey,
+  }) async {
+    uploadedFiles.add(file);
+    return const UploadedMediaFile(
+      id: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+      name: 'pump-display.png',
+      sizeBytes: 68,
+      extension: 'png',
+      mimeType: 'image/png',
+    );
   }
 }

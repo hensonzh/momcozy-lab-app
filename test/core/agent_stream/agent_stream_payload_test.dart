@@ -129,6 +129,30 @@ void main() {
       expect(image['name'], 'pump-display-fixture.png');
     });
 
+    test('prefers an uploaded image file reference over inline bytes', () {
+      final payload = buildProductionAgentRunPayload(
+        const AgentStreamRequest(
+          message: 'Please review this image.',
+          images: [
+            AgentStreamImageInput(
+              dataUrl: 'data:image/png;base64,YQ==',
+              fileId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+              mimeType: 'image/png',
+              name: 'uploaded.png',
+              size: 1,
+              detail: 'high',
+            ),
+          ],
+        ),
+      );
+
+      final image =
+          (payload['attachments']! as List<Object?>).single!
+              as Map<String, Object?>;
+      expect(image['file_id'], '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518');
+      expect(image.containsKey('data_url'), isFalse);
+    });
+
     test(
       'maps trusted form submission metadata to a structured attachment',
       () {
