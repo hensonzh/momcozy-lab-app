@@ -145,6 +145,7 @@ AgentConversationHistory _buildConversationHistory({
         role: message.role,
         content: message.content,
         images: message.images,
+        files: message.files,
         runState:
             message.role == AgentConversationMessageRole.assistant &&
                 message.runId != null
@@ -221,8 +222,11 @@ _ConversationWireMessage? _wireMessageFromValue(Object? value) {
       ? Map<String, Object?>.from(content)
       : const <String, Object?>{};
   final images = _imagesFromAttachments(contentMap['attachments']);
+  final files = _filesFromAttachments(contentMap['attachments']);
   final text = _string(contentMap['text']).trim();
-  if (id.isEmpty || (text.isEmpty && images.isEmpty)) return null;
+  if (id.isEmpty || (text.isEmpty && images.isEmpty && files.isEmpty)) {
+    return null;
+  }
   final runId = _string(map['run_id']).trim();
   return _ConversationWireMessage(
     id: id,
@@ -230,6 +234,7 @@ _ConversationWireMessage? _wireMessageFromValue(Object? value) {
     role: role,
     content: text,
     images: images,
+    files: files,
   );
 }
 
@@ -261,6 +266,31 @@ List<AgentStreamImageInput> _imagesFromAttachments(Object? value) {
   return List<AgentStreamImageInput>.unmodifiable(images);
 }
 
+List<AgentStreamFileInput> _filesFromAttachments(Object? value) {
+  if (value is! List) return const <AgentStreamFileInput>[];
+  final files = <AgentStreamFileInput>[];
+  for (final item in value) {
+    if (item is! Map) continue;
+    final map = Map<String, Object?>.from(item);
+    if (_string(map['type']).trim() != 'file') continue;
+    final fileId = _string(map['file_id'] ?? map['fileId']).trim();
+    if (fileId.isEmpty) continue;
+    final mimeType = _string(
+      map['content_type'] ?? map['mime_type'] ?? map['mimeType'],
+    ).trim();
+    final name = _string(map['name'] ?? map['original_filename']).trim();
+    files.add(
+      AgentStreamFileInput(
+        fileId: fileId,
+        mimeType: mimeType.isEmpty ? 'application/pdf' : mimeType,
+        name: name.isEmpty ? 'document.pdf' : name,
+        size: _int(map['size']) ?? 0,
+      ),
+    );
+  }
+  return List<AgentStreamFileInput>.unmodifiable(files);
+}
+
 String _eventKey(AgentStreamEvent event) {
   final eventId = event.eventId?.trim();
   if (eventId != null && eventId.isNotEmpty) return 'event:$eventId';
@@ -282,6 +312,7 @@ class _ConversationWireMessage {
     required this.role,
     required this.content,
     required this.images,
+    required this.files,
   });
 
   final String id;
@@ -289,4 +320,5 @@ class _ConversationWireMessage {
   final AgentConversationMessageRole role;
   final String content;
   final List<AgentStreamImageInput> images;
+  final List<AgentStreamFileInput> files;
 }

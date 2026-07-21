@@ -56,10 +56,15 @@ void main() {
       });
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+      await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+      expect(
+        find.byKey(const ValueKey('agent-attachment-menu')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('agent-attachment-photo-button')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);

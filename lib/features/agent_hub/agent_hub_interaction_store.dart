@@ -11,6 +11,7 @@ class AgentHubInteractionSnapshot {
     this.historyMessages = const <AgentHubHistorySnapshot>[],
     this.composerText = '',
     this.attachedImages = const <AgentStreamImageInput>[],
+    this.attachedFiles = const <AgentStreamFileInput>[],
     this.autoVoiceEnabled = true,
     this.activeRequest,
     this.localActionStatuses = const <String, String>{},
@@ -21,6 +22,7 @@ class AgentHubInteractionSnapshot {
   final List<AgentHubHistorySnapshot> historyMessages;
   final String composerText;
   final List<AgentStreamImageInput> attachedImages;
+  final List<AgentStreamFileInput> attachedFiles;
   final bool autoVoiceEnabled;
   final AgentStreamRequest? activeRequest;
   final Map<String, String> localActionStatuses;
@@ -35,6 +37,7 @@ class AgentHubInteractionSnapshot {
         historyMessages.isNotEmpty ||
         composerText.trim().isNotEmpty ||
         attachedImages.isNotEmpty ||
+        attachedFiles.isNotEmpty ||
         activeRequest != null ||
         localActionStatuses.isNotEmpty ||
         formSubmissions.isNotEmpty ||
@@ -54,6 +57,7 @@ class AgentHubInteractionSnapshot {
       (message) =>
           includeImageData ||
           message.content.trim().isNotEmpty ||
+          message.files.isNotEmpty ||
           message.runState != null,
     ))
       'historyMessages': historyMessages
@@ -61,6 +65,7 @@ class AgentHubInteractionSnapshot {
             (message) =>
                 includeImageData ||
                 message.content.trim().isNotEmpty ||
+                message.files.isNotEmpty ||
                 message.runState != null,
           )
           .map((message) => message.toMap(includeImageData: includeImageData))
@@ -68,6 +73,8 @@ class AgentHubInteractionSnapshot {
     if (composerText.isNotEmpty) 'composerText': composerText,
     if (includeImageData && attachedImages.isNotEmpty)
       'attachedImages': attachedImages.map(_imageToMap).toList(growable: false),
+    if (attachedFiles.isNotEmpty)
+      'attachedFiles': attachedFiles.map(_fileToMap).toList(growable: false),
     'autoVoiceEnabled': autoVoiceEnabled,
     if (activeRequest != null &&
         (includeImageData || activeRequest!.images.isEmpty))
@@ -96,6 +103,7 @@ class AgentHubInteractionSnapshot {
       historyMessages: historyMessages,
       composerText: _string(map['composerText']) ?? '',
       attachedImages: _imagesFromList(map['attachedImages']),
+      attachedFiles: _filesFromList(map['attachedFiles']),
       autoVoiceEnabled: map['autoVoiceEnabled'] != false,
       activeRequest: activeRequest,
       localActionStatuses: _stringMap(map['localActionStatuses']),
@@ -110,12 +118,14 @@ class AgentHubHistorySnapshot {
     required this.content,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
+    this.files = const <AgentStreamFileInput>[],
   });
 
   final String role;
   final String content;
   final AgentStreamRunState? runState;
   final List<AgentStreamImageInput> images;
+  final List<AgentStreamFileInput> files;
 
   Map<String, Object?> toMap({bool includeImageData = true}) => {
     'role': role,
@@ -123,6 +133,8 @@ class AgentHubHistorySnapshot {
     if (runState != null) 'runState': runState!.toMap(),
     if (includeImageData && images.isNotEmpty)
       'images': images.map(_imageToMap).toList(growable: false),
+    if (files.isNotEmpty)
+      'files': files.map(_fileToMap).toList(growable: false),
   };
 
   static AgentHubHistorySnapshot? fromMap(Object? value) {
@@ -130,13 +142,15 @@ class AgentHubHistorySnapshot {
     final map = Map<String, Object?>.from(value);
     final content = _string(map['content'])?.trim() ?? '';
     final images = _imagesFromList(map['images']);
-    if (content.isEmpty && images.isEmpty) return null;
+    final files = _filesFromList(map['files']);
+    if (content.isEmpty && images.isEmpty && files.isEmpty) return null;
     final role = _string(map['role']) == 'user' ? 'user' : 'assistant';
     final runStateValue = map['runState'] ?? map['run_state'];
     return AgentHubHistorySnapshot(
       role: role,
       content: content,
       images: images,
+      files: files,
       runState: runStateValue is Map
           ? AgentStreamRunState.fromMap(
               Map<String, Object?>.from(runStateValue),
@@ -222,6 +236,13 @@ List<AgentStreamImageInput> _imagesFromList(Object? value) {
   );
 }
 
+List<AgentStreamFileInput> _filesFromList(Object? value) {
+  if (value is! List) return const <AgentStreamFileInput>[];
+  return List<AgentStreamFileInput>.unmodifiable(
+    value.map(_fileFromMap).whereType<AgentStreamFileInput>(),
+  );
+}
+
 Map<String, String> _stringMap(Object? value) {
   if (value is! Map) return const <String, String>{};
   final result = <String, String>{};
@@ -270,6 +291,8 @@ Map<String, Object?> _requestToMap(AgentStreamRequest request) => {
   'locale': request.locale,
   if (request.images.isNotEmpty)
     'images': request.images.map(_imageToMap).toList(growable: false),
+  if (request.files.isNotEmpty)
+    'files': request.files.map(_fileToMap).toList(growable: false),
   if (request.metadata.isNotEmpty) 'metadata': request.metadata,
   if (request.idempotencyKey != null) 'idempotencyKey': request.idempotencyKey,
 };
@@ -321,6 +344,7 @@ AgentStreamRequest _requestWithImages(
     afterSequence: request.afterSequence,
     locale: request.locale,
     images: images,
+    files: request.files,
     metadata: request.metadata,
     idempotencyKey: request.idempotencyKey,
   );
@@ -359,6 +383,7 @@ AgentStreamRequest? _requestFromMap(Object? value) {
         : _int(map['afterSequence']),
     locale: _string(map['locale']) ?? 'zh-CN',
     images: _imagesFromList(map['images']),
+    files: _filesFromList(map['files']),
     metadata: metadata is Map
         ? Map<String, Object?>.from(metadata)
         : const <String, Object?>{},
@@ -392,5 +417,32 @@ AgentStreamImageInput? _imageFromMap(Object? value) {
     name: _string(map['name']) ?? 'image.png',
     size: _int(map['size']),
     detail: _string(map['detail']) ?? 'auto',
+  );
+}
+
+Map<String, Object?> _fileToMap(AgentStreamFileInput file) => {
+  'fileId': file.fileId,
+  'mimeType': file.mimeType,
+  'name': file.name,
+  'size': file.size,
+};
+
+AgentStreamFileInput? _fileFromMap(Object? value) {
+  if (value is! Map) return null;
+  final map = Map<String, Object?>.from(value);
+  final fileId = _string(map['fileId']) ?? _string(map['file_id']) ?? '';
+  if (fileId.trim().isEmpty) return null;
+  return AgentStreamFileInput(
+    fileId: fileId,
+    mimeType:
+        _string(map['mimeType']) ??
+        _string(map['mime_type']) ??
+        _string(map['content_type']) ??
+        'application/pdf',
+    name:
+        _string(map['name']) ??
+        _string(map['original_filename']) ??
+        'document.pdf',
+    size: _int(map['size']),
   );
 }
