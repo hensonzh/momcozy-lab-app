@@ -43,6 +43,7 @@ class AgentSentImages extends StatelessWidget {
                   height: itemHeight,
                   child: _AgentDataUrlImage(
                     image: images[index],
+                    loadImageContent: loadImageContent,
                     fit: BoxFit.cover,
                     cacheWidth: 360,
                     showLoadHint: true,
@@ -224,12 +225,14 @@ class _AgentDataUrlImage extends StatefulWidget {
   const _AgentDataUrlImage({
     required this.image,
     required this.fit,
+    this.loadImageContent,
     this.cacheWidth,
     this.showLoadHint = false,
   });
 
   final AgentStreamImageInput image;
   final BoxFit fit;
+  final AgentImageContentLoader? loadImageContent;
   final int? cacheWidth;
   final bool showLoadHint;
 
@@ -239,34 +242,71 @@ class _AgentDataUrlImage extends StatefulWidget {
 
 class _AgentDataUrlImageState extends State<_AgentDataUrlImage> {
   late Uint8List? _bytes;
+  Future<Uint8List>? _remoteBytes;
 
   @override
   void initState() {
     super.initState();
-    _bytes = _decodeDataUrl(widget.image.dataUrl);
+    _resolveImage();
   }
 
   @override
   void didUpdateWidget(covariant _AgentDataUrlImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.image.dataUrl != widget.image.dataUrl) {
-      _bytes = _decodeDataUrl(widget.image.dataUrl);
+    if (oldWidget.image.dataUrl != widget.image.dataUrl ||
+        oldWidget.image.fileId != widget.image.fileId ||
+        (oldWidget.loadImageContent == null &&
+            widget.loadImageContent != null)) {
+      _resolveImage();
+    }
+  }
+
+  void _resolveImage() {
+    _bytes = _decodeDataUrl(widget.image.dataUrl);
+    _remoteBytes = null;
+    final fileId = widget.image.fileId.trim();
+    final loader = widget.loadImageContent;
+    if (_bytes == null && fileId.isNotEmpty && loader != null) {
+      _remoteBytes = loader(fileId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final bytes = _bytes;
-    if (bytes == null) {
-      return _AgentImageFallback(showLoadHint: widget.showLoadHint);
+    if (bytes != null) {
+      return Image.memory(
+        bytes,
+        fit: widget.fit,
+        cacheWidth: widget.cacheWidth,
+        gaplessPlayback: true,
+        errorBuilder: (_, _, _) => const _AgentImageFallback(),
+      );
     }
-    return Image.memory(
-      bytes,
-      fit: widget.fit,
-      cacheWidth: widget.cacheWidth,
-      gaplessPlayback: true,
-      errorBuilder: (_, _, _) => const _AgentImageFallback(),
-    );
+    final remoteBytes = _remoteBytes;
+    if (remoteBytes != null) {
+      return FutureBuilder<Uint8List>(
+        future: remoteBytes,
+        builder: (context, snapshot) {
+          final loadedBytes = snapshot.data;
+          if (loadedBytes != null && loadedBytes.isNotEmpty) {
+            return Image.memory(
+              loadedBytes,
+              fit: widget.fit,
+              cacheWidth: widget.cacheWidth,
+              gaplessPlayback: true,
+              errorBuilder: (_, _, _) =>
+                  _AgentImageFallback(showLoadHint: widget.showLoadHint),
+            );
+          }
+          if (snapshot.hasError) {
+            return _AgentImageFallback(showLoadHint: widget.showLoadHint);
+          }
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+        },
+      );
+    }
+    return _AgentImageFallback(showLoadHint: widget.showLoadHint);
   }
 }
 

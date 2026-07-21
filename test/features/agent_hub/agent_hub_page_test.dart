@@ -2081,6 +2081,7 @@ void main() {
       findsNothing,
     );
     expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
+    expect(find.text('点击查看'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
     await tester.pumpAndSettle();

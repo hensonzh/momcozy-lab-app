@@ -57,6 +57,7 @@ class AgentHubInteractionSnapshot {
       (message) =>
           includeImageData ||
           message.content.trim().isNotEmpty ||
+          message.images.any(_hasFileReference) ||
           message.files.isNotEmpty ||
           message.runState != null,
     ))
@@ -65,19 +66,25 @@ class AgentHubInteractionSnapshot {
             (message) =>
                 includeImageData ||
                 message.content.trim().isNotEmpty ||
+                message.images.any(_hasFileReference) ||
                 message.files.isNotEmpty ||
                 message.runState != null,
           )
           .map((message) => message.toMap(includeImageData: includeImageData))
           .toList(growable: false),
     if (composerText.isNotEmpty) 'composerText': composerText,
-    if (includeImageData && attachedImages.isNotEmpty)
-      'attachedImages': attachedImages.map(_imageToMap).toList(growable: false),
+    if (attachedImages.any(
+      (image) => includeImageData || _hasFileReference(image),
+    ))
+      'attachedImages': _imagesToPersistenceMaps(
+        attachedImages,
+        includeImageData: includeImageData,
+      ),
     if (attachedFiles.isNotEmpty)
       'attachedFiles': attachedFiles.map(_fileToMap).toList(growable: false),
     'autoVoiceEnabled': autoVoiceEnabled,
     if (activeRequest != null &&
-        (includeImageData || activeRequest!.images.isEmpty))
+        (includeImageData || activeRequest!.images.every(_hasFileReference)))
       'activeRequest': _requestToPersistenceMap(
         activeRequest!,
         historyMessages,
@@ -131,8 +138,11 @@ class AgentHubHistorySnapshot {
     'role': role,
     'content': content,
     if (runState != null) 'runState': runState!.toMap(),
-    if (includeImageData && images.isNotEmpty)
-      'images': images.map(_imageToMap).toList(growable: false),
+    if (images.any((image) => includeImageData || _hasFileReference(image)))
+      'images': _imagesToPersistenceMaps(
+        images,
+        includeImageData: includeImageData,
+      ),
     if (files.isNotEmpty)
       'files': files.map(_fileToMap).toList(growable: false),
   };
@@ -303,7 +313,14 @@ Map<String, Object?> _requestToPersistenceMap(
   bool includeImageData = true,
 }) {
   if (!includeImageData) {
-    return _requestToMap(_requestWithImages(request, const []));
+    return {
+      ..._requestToMap(_requestWithImages(request, const [])),
+      if (request.images.isNotEmpty)
+        'images': _imagesToPersistenceMaps(
+          request.images,
+          includeImageData: false,
+        ),
+    };
   }
   if (request.images.isEmpty) return _requestToMap(request);
   for (final message in historyMessages.reversed) {
@@ -400,6 +417,29 @@ Map<String, Object?> _imageToMap(AgentStreamImageInput image) => {
   'size': image.size,
   'detail': image.detail,
 };
+
+bool _hasFileReference(AgentStreamImageInput image) =>
+    image.fileId.trim().isNotEmpty;
+
+List<Map<String, Object?>> _imagesToPersistenceMaps(
+  List<AgentStreamImageInput> images, {
+  required bool includeImageData,
+}) {
+  return images
+      .where((image) => includeImageData || _hasFileReference(image))
+      .map(
+        (image) => includeImageData
+            ? _imageToMap(image)
+            : <String, Object?>{
+                'fileId': image.fileId.trim(),
+                'mimeType': image.mimeType,
+                'name': image.name,
+                'size': image.size,
+                'detail': image.detail,
+              },
+      )
+      .toList(growable: false);
+}
 
 AgentStreamImageInput? _imageFromMap(Object? value) {
   if (value is! Map) return null;
