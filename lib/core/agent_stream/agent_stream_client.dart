@@ -8,6 +8,7 @@ class AgentStreamRequest {
     this.afterSequence = 0,
     this.locale = 'en-US',
     this.images = const <AgentStreamImageInput>[],
+    this.files = const <AgentStreamFileInput>[],
     this.metadata = const <String, Object?>{},
     this.idempotencyKey,
   });
@@ -18,6 +19,7 @@ class AgentStreamRequest {
   final int afterSequence;
   final String locale;
   final List<AgentStreamImageInput> images;
+  final List<AgentStreamFileInput> files;
   final Map<String, Object?> metadata;
   final String? idempotencyKey;
 
@@ -27,6 +29,8 @@ class AgentStreamRequest {
     if (locale.trim().isNotEmpty) 'locale': locale,
     if (images.isNotEmpty)
       'images': images.map((image) => image.toMap()).toList(growable: false),
+    if (files.isNotEmpty)
+      'files': files.map((file) => file.toMap()).toList(growable: false),
     if (metadata.isNotEmpty) 'metadata': metadata,
     if (idempotencyKey != null) 'idempotencyKey': idempotencyKey,
   };
@@ -43,10 +47,54 @@ class AgentStreamRequest {
       afterSequence: afterSequence < 0 ? 0 : afterSequence,
       locale: locale,
       images: images,
+      files: files,
       metadata: metadata,
       idempotencyKey: idempotencyKey,
     );
   }
+}
+
+class AgentStreamFileInput {
+  const AgentStreamFileInput({
+    required this.fileId,
+    this.mimeType = 'application/pdf',
+    this.name = 'document.pdf',
+    this.size = 0,
+  });
+
+  final String fileId;
+  final String mimeType;
+  final String name;
+  final int size;
+
+  Map<String, Object?> toMap() => {
+    'fileId': fileId,
+    'mimeType': mimeType,
+    'name': name,
+    'size': size,
+  };
+
+  Map<String, Object?> toProductionAttachment() => {
+    'type': 'file',
+    'file_id': fileId.trim(),
+    'content_type': mimeType.trim().isEmpty
+        ? 'application/pdf'
+        : mimeType.trim(),
+    'original_filename': name.trim().isEmpty ? 'document.pdf' : name.trim(),
+    'size': size,
+  };
+
+  @override
+  bool operator ==(Object other) {
+    return other is AgentStreamFileInput &&
+        other.fileId == fileId &&
+        other.mimeType == mimeType &&
+        other.name == name &&
+        other.size == size;
+  }
+
+  @override
+  int get hashCode => Object.hash(fileId, mimeType, name, size);
 }
 
 class AgentStreamImageInput {
@@ -131,6 +179,9 @@ Map<String, Object?> buildProductionAgentRunPayload(
   final attachments = request.images
       .map((image) => image.toProductionAttachment())
       .toList(growable: true);
+  attachments.addAll(
+    request.files.map((file) => file.toProductionAttachment()),
+  );
   final formSubmission = _productionFormSubmissionAttachment(request.metadata);
   if (formSubmission != null) attachments.add(formSubmission);
   final normalizedIdempotencyKey = (idempotencyKey ?? request.idempotencyKey)

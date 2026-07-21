@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -18,11 +19,13 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
@@ -72,7 +75,10 @@ void main() {
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-attachment-button')),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
     expect(
@@ -93,7 +99,7 @@ void main() {
     );
 
     final imageButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-image-button')),
+      find.byKey(const ValueKey('agent-attachment-button')),
     );
     expect(imageButton.onPressed, isNull);
     final voiceButton = tester.widget<IconButton>(
@@ -765,10 +771,12 @@ void main() {
       '开始新的问题',
     );
     await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    expect(find.byKey(const ValueKey('agent-attachment-menu')), findsOneWidget);
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
     await tester.pumpAndSettle();
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
@@ -781,7 +789,7 @@ void main() {
     expect(newSessionStarted, isTrue);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
     expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-attachment-menu')), findsNothing);
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsNothing,
@@ -2013,19 +2021,31 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    final composerTopBeforeMenu = tester.getTopLeft(
+      find.byKey(const ValueKey('agent-composer-surface')),
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
-    expect(find.text('拍照'), findsOneWidget);
-    expect(find.text('上传'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-attachment-menu')), findsOneWidget);
+    expect(find.text('相机'), findsOneWidget);
+    expect(find.text('照片'), findsOneWidget);
+    expect(find.text('文件'), findsOneWidget);
+    expect(find.text('拍照'), findsNothing);
+    expect(find.text('上传'), findsNothing);
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('agent-composer-surface'))),
+      composerTopBeforeMenu,
+    );
 
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-attachment-menu')), findsNothing);
 
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
     await tester.pumpAndSettle();
 
     expect(
@@ -2072,6 +2092,60 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('Agent Hub uploads and sends a PDF file attachment', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+    final mediaRepository = _FakeAgentImageMediaRepository();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          mediaRepository: mediaRepository,
+          pickDocument: () async => AgentHubLocalDocument(
+            bytes: Uint8List.fromList('%PDF-1.4\nfixture'.codeUnits),
+            mimeType: 'application/pdf',
+            name: 'checkup-report.pdf',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-file-button')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('agent-file-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(find.byType(AgentComposerFileAttachment), findsOneWidget);
+    expect(find.text('checkup-report.pdf'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(client.requests.single.message, '请查看这个文件');
+    expect(client.requests.single.images, isEmpty);
+    expect(client.requests.single.files, hasLength(1));
+    expect(client.requests.single.files.single.name, 'checkup-report.pdf');
+    expect(
+      client.requests.single.files.single.fileId,
+      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+    );
+    expect(mediaRepository.uploadedFiles.single.mimeType, 'application/pdf');
+    expect(find.byKey(const ValueKey('agent-sent-file-0')), findsOneWidget);
+  });
+
   testWidgets('Agent Hub keeps camera and gallery image sources distinct', (
     tester,
   ) async {
@@ -2093,13 +2167,17 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-photo-camera-button')));
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-camera-button')),
+    );
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
     await tester.pumpAndSettle();
 
     expect(sources, [
@@ -2153,9 +2231,11 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
     await tester.pumpAndSettle();
 
     expect(
@@ -2224,9 +2304,11 @@ void main() {
       find.byKey(const ValueKey('agent-composer-input')),
       '跨模块回来继续问',
     );
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
     await tester.pumpAndSettle();
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
@@ -2336,9 +2418,11 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-photo-camera-button')));
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-camera-button')),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -3661,7 +3745,8 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(find.text('正在组织答案～'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
@@ -4348,7 +4433,8 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(find.text('正在组织答案～'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
@@ -4604,7 +4690,9 @@ void main() {
     );
     expect(
       tester
-          .widget<IconButton>(find.byKey(const ValueKey('agent-image-button')))
+          .widget<IconButton>(
+            find.byKey(const ValueKey('agent-attachment-button')),
+          )
           .onPressed,
       isNull,
     );
@@ -7723,7 +7811,11 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('正在组织答案～'), findsOneWidget);
       expect(find.text('I can help'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -8434,7 +8526,7 @@ milk_total: 120ml
     );
   });
 
-  testWidgets('Agent Hub hides thinking note after reply text starts', (
+  testWidgets('Agent Hub switches status copy after reply text starts', (
     tester,
   ) async {
     final state = AgentStreamRunState(
@@ -8453,61 +8545,123 @@ milk_total: 120ml
 
     expect(find.text('好的，我先给你一个方向。'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
-  });
-
-  testWidgets('Agent Hub keeps backend progress visible until first token', (
-    tester,
-  ) async {
-    final client = _ControllableAgentStreamClient();
-    addTearDown(client.dispose);
-
-    await tester.pumpWidget(
-      _host(AgentHubPage(runner: AgentStreamRunner(client))),
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '帮我生成待产包',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pump();
-
-    client.emit(
-      0,
-      AgentStreamEvent({
-        'event_id': 'evt-progress-before-token',
-        'type': 'run.progress',
-        'thread_id': 'thread-progress',
-        'run_id': 'run-progress',
-        'sequence': 1,
-        'payload': {'label': '正在生成待产包信息采集表单'},
-      }),
-    );
-    await tester.pump();
-
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('正在生成待产包信息采集表单'), findsOneWidget);
-
-    client.emit(
-      0,
-      AgentStreamEvent({
-        'event_id': 'evt-first-token',
-        'type': 'message.delta',
-        'thread_id': 'thread-progress',
-        'run_id': 'run-progress',
-        'message_id': 'msg-progress',
-        'sequence': 2,
-        'payload': {'text': '好的'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(find.text('好的'), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.text('正在组织答案～'), findsOneWidget);
   });
+
+  testWidgets(
+    'Agent Hub keeps status through user persistence and token streaming',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '帮我生成待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-run-queued',
+          'type': 'run.queued',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'sequence': 1,
+          'payload': {'label': '我已经收到你的消息啦～'},
+        }),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-user-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'message_id': 'msg-user',
+          'sequence': 2,
+          'payload': {'role': 'user'},
+        }),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-progress-before-token',
+          'type': 'run.progress',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'sequence': 3,
+          'payload': {'label': '正在生成待产包信息采集表单'},
+        }),
+      );
+      await tester.pump();
+
+      expect(find.text('正在生成待产包信息采集表单'), findsOneWidget);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-first-token',
+          'type': 'message.delta',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'message_id': 'msg-progress',
+          'sequence': 4,
+          'payload': {'text': '好的'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('好的'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('正在组织答案～'), findsOneWidget);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-assistant-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'message_id': 'msg-progress',
+          'sequence': 5,
+          'payload': {'role': 'assistant', 'text': '好的，我已经整理好了。'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('好的，我已经整理好了。'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    },
+  );
 
   testWidgets('Agent Hub status line uses queued and started events', (
     tester,
@@ -8605,7 +8759,7 @@ void _expectComposerControlsInsideSurface(WidgetTester tester) {
     find.byKey(const ValueKey('agent-composer-surface')),
   );
   for (final key in [
-    'agent-image-button',
+    'agent-attachment-button',
     'agent-voice-button',
     'agent-send-button',
   ]) {
@@ -8634,7 +8788,7 @@ void _expectComposerControlsVerticallyCentered(WidgetTester tester) {
     find.byKey(const ValueKey('agent-composer-surface')),
   );
   final imageRect = tester.getRect(
-    find.byKey(const ValueKey('agent-image-button')),
+    find.byKey(const ValueKey('agent-attachment-button')),
   );
   final voiceRect = tester.getRect(
     find.byKey(const ValueKey('agent-voice-button')),

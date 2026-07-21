@@ -12,10 +12,12 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_conversation_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/platform_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_voice_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
@@ -438,6 +440,7 @@ class MomCozyApiRuntime {
   late final bool _hasInjectedAgentVoicePlaybackPlayer;
   AgentVoiceInputController? _agentVoiceInputController;
   AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
+  AgentHubPlatformDocumentPicker? _agentHubPlatformDocumentPicker;
   ProductAssetRepository? _productAssetRepository;
   MediaContentRepository? _mediaContentRepository;
   StatusPreferenceStore? _statusPreferenceStore;
@@ -653,6 +656,12 @@ class MomCozyApiRuntime {
 
   AgentHubImagePicker get agentHubImagePicker {
     return (_agentHubPlatformImagePicker ??= AgentHubPlatformImagePicker())
+        .pick;
+  }
+
+  AgentHubDocumentPicker get agentHubDocumentPicker {
+    return (_agentHubPlatformDocumentPicker ??=
+            AgentHubPlatformDocumentPicker())
         .pick;
   }
 

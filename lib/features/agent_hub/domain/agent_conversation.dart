@@ -25,12 +25,14 @@ class AgentConversationMessage {
     required this.content,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
+    this.files = const <AgentStreamFileInput>[],
   });
 
   final AgentConversationMessageRole role;
   final String content;
   final AgentStreamRunState? runState;
   final List<AgentStreamImageInput> images;
+  final List<AgentStreamFileInput> files;
 }
 
 class AgentConversationHistory {
