@@ -109,6 +109,7 @@ class ApiHttpException implements Exception {
 abstract interface class ApiMultipartTransport {
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
+    Map<String, Object?> query = const {},
     Map<String, Object?> fields = const {},
     Map<String, String> headers = const {},
     required ApiUploadFile file,
@@ -408,13 +409,14 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
   @override
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
+    Map<String, Object?> query = const {},
     Map<String, Object?> fields = const {},
     Map<String, String> headers = const {},
     required ApiUploadFile file,
   }) async {
     final boundary = '----momcozy-${DateTime.now().microsecondsSinceEpoch}';
     final body = _multipartBody(boundary, fields, file);
-    final request = await _httpClient.postUrl(_resolve(path));
+    final request = await _httpClient.postUrl(_resolve(path, query: query));
     _requestHeaders(
       boundary,
       extraHeaders: headers,
@@ -430,12 +432,20 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
     );
   }
 
-  Uri _resolve(String path) {
+  Uri _resolve(String path, {Map<String, Object?> query = const {}}) {
     final basePath = baseUri.path.endsWith('/')
         ? baseUri.path
         : '${baseUri.path}/';
     final nextPath = path.startsWith('/') ? path.substring(1) : path;
-    return baseUri.replace(path: '$basePath$nextPath');
+    final nextQuery = <String, String>{
+      ...baseUri.queryParameters,
+      for (final entry in query.entries)
+        if (entry.value != null) entry.key: entry.value.toString(),
+    };
+    return baseUri.replace(
+      path: '$basePath$nextPath',
+      queryParameters: nextQuery.isEmpty ? null : nextQuery,
+    );
   }
 
   Map<String, String> _requestHeaders(

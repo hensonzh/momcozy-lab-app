@@ -17,7 +17,8 @@ class MediaApiRepository implements MediaRepository {
   }) async {
     final normalizedIdempotencyKey = idempotencyKey?.trim();
     final response = await transport.uploadMultipart(
-      temporary ? '$mediaUploadEndpoint?temporary=true' : mediaUploadEndpoint,
+      mediaUploadEndpoint,
+      query: {if (temporary) 'temporary': true},
       headers: {
         if (normalizedIdempotencyKey != null &&
             normalizedIdempotencyKey.isNotEmpty)
