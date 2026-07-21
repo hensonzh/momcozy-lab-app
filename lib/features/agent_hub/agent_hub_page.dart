@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -13,6 +14,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
@@ -25,14 +27,17 @@ import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_conversation_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
@@ -198,10 +203,13 @@ class AgentHubPage extends StatefulWidget {
     this.cancelClient,
     this.actionClient,
     this.clientEventClient,
+    this.conversationRepository,
     this.interactionStateStore,
     this.greetingProfileLoader,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
+    this.mediaRepository,
+    this.loadImageContent,
     this.voiceInputController,
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
@@ -226,10 +234,13 @@ class AgentHubPage extends StatefulWidget {
   final AgentStreamCancelClient? cancelClient;
   final AgentStreamActionClient? actionClient;
   final AgentStreamClientEventClient? clientEventClient;
+  final AgentConversationRepository? conversationRepository;
   final AgentHubInteractionStateStore? interactionStateStore;
   final AgentHubGreetingProfileLoader? greetingProfileLoader;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
+  final MediaRepository? mediaRepository;
+  final AgentImageContentLoader? loadImageContent;
   final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
@@ -263,6 +274,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _followUpStartPending = false;
   bool _newSessionStartPending = false;
   bool _supportTicketSubmitPending = false;
+  bool _conversationSwitchPending = false;
+  int _sessionOperationGeneration = 0;
+  int? _conversationHistoryBeforeSequence;
+  bool _olderConversationHistoryLoading = false;
+  bool _olderConversationHistoryLoadArmed = false;
+  Object? _olderConversationHistoryError;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
   Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
@@ -285,6 +302,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final ValueNotifier<bool> _composerLockedNotifier = ValueNotifier<bool>(
     false,
   );
+  final ValueNotifier<bool> _sessionMutationPendingNotifier =
+      ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _conversationSwitchEnabledNotifier =
+      ValueNotifier<bool>(true);
   final ValueNotifier<_AgentResponseLightRailMode>
   _responseLightRailModeNotifier = ValueNotifier<_AgentResponseLightRailMode>(
     _AgentResponseLightRailMode.idle,
@@ -303,6 +324,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
   bool _showPhotoMenu = false;
+  bool _imageUploadPending = false;
   Timer? _persistentWriteTimer;
   Timer? _activeRunPersistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
@@ -343,7 +365,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
     _composerController.addListener(_persistInteractionState);
-    _chatScrollController.addListener(_updateLatestButtonVisibility);
+    _chatScrollController.addListener(_handleChatScroll);
     _syncVoicePlaybackIdleSubscription();
     _syncIbclcConsultStore(null, widget.ibclcConsultStore);
     _initializeInteractionState();
@@ -404,13 +426,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _flushPersistentInteractionState();
     _composerController.removeListener(_persistInteractionState);
     _chatScrollController
-      ..removeListener(_updateLatestButtonVisibility)
+      ..removeListener(_handleChatScroll)
       ..dispose();
     _composerController.dispose();
     _composerFocusNode.dispose();
     _runStateNotifier.dispose();
     _visibleReplyRunningNotifier.dispose();
     _composerLockedNotifier.dispose();
+    _sessionMutationPendingNotifier.dispose();
+    _conversationSwitchEnabledNotifier.dispose();
     _responseLightRailModeNotifier.dispose();
     _activeVoicePlaybackIdNotifier.dispose();
     _actionStateRevisionNotifier.dispose();
@@ -471,6 +495,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _isVisibleReplyRunningForState(state),
     );
     _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    _syncConversationSwitchEnabled();
     _setNotifierValue(
       _responseLightRailModeNotifier,
       _agentResponseLightRailModeForState(state),
@@ -788,6 +813,92 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
   }
 
+  void _handleChatScroll() {
+    _updateLatestButtonVisibility();
+    if (!_olderConversationHistoryLoadArmed ||
+        _olderConversationHistoryLoading ||
+        _olderConversationHistoryError != null ||
+        _conversationHistoryBeforeSequence == null ||
+        !_chatScrollController.hasClients ||
+        _chatScrollController.position.pixels > 120) {
+      return;
+    }
+    unawaited(_loadOlderConversationHistory());
+  }
+
+  void _armOlderConversationHistoryLoading() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _olderConversationHistoryLoadArmed = true;
+    });
+  }
+
+  Future<void> _loadOlderConversationHistory() async {
+    final repository = widget.conversationRepository;
+    final threadId = (_state.threadId ?? _activeRequest?.threadId)?.trim();
+    final beforeSequence = _conversationHistoryBeforeSequence;
+    if (repository == null ||
+        threadId == null ||
+        threadId.isEmpty ||
+        beforeSequence == null ||
+        _olderConversationHistoryLoading) {
+      return;
+    }
+
+    final operationGeneration = _sessionOperationGeneration;
+    final oldExtent = _chatScrollController.hasClients
+        ? _chatScrollController.position.maxScrollExtent
+        : 0.0;
+    final oldPixels = _chatScrollController.hasClients
+        ? _chatScrollController.position.pixels
+        : 0.0;
+    setState(() {
+      _olderConversationHistoryLoading = true;
+      _olderConversationHistoryError = null;
+    });
+    try {
+      final page = await repository.loadConversation(
+        threadId,
+        beforeSequence: beforeSequence,
+      );
+      if (!mounted ||
+          operationGeneration != _sessionOperationGeneration ||
+          threadId != (_state.threadId ?? _activeRequest?.threadId) ||
+          beforeSequence != _conversationHistoryBeforeSequence) {
+        return;
+      }
+      final olderMessages = _historyMessagesFromOlderConversationPage(page);
+      setState(() {
+        _historyMessages.insertAll(0, olderMessages);
+        _conversationHistoryBeforeSequence = page.nextBeforeSequence;
+        _olderConversationHistoryLoading = false;
+        _olderConversationHistoryError = null;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_chatScrollController.hasClients) return;
+        final position = _chatScrollController.position;
+        final target = (oldPixels + position.maxScrollExtent - oldExtent)
+            .clamp(position.minScrollExtent, position.maxScrollExtent)
+            .toDouble();
+        position.jumpTo(target);
+        _updateLatestButtonVisibility();
+      });
+    } catch (error) {
+      if (!mounted || operationGeneration != _sessionOperationGeneration) {
+        return;
+      }
+      setState(() {
+        _olderConversationHistoryLoading = false;
+        _olderConversationHistoryError = error;
+      });
+    } finally {
+      if (mounted &&
+          operationGeneration == _sessionOperationGeneration &&
+          _olderConversationHistoryLoading) {
+        setState(() => _olderConversationHistoryLoading = false);
+      }
+    }
+  }
+
   bool _isNearLatest([double threshold = 80]) {
     if (!_chatScrollController.hasClients) return true;
     final position = _chatScrollController.position;
@@ -925,6 +1036,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _followUpStartPending ||
       _newSessionStartPending ||
       _supportTicketSubmitPending ||
+      _conversationSwitchPending ||
       _isComposerLockedForState(_state);
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
@@ -992,15 +1104,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
     final requestMessage = message.isEmpty ? '请看这张图片' : message;
     final sentImages = List<AgentStreamImageInput>.unmodifiable(
-      _attachedImages,
+      _attachedImages.map(
+        (image) =>
+            image.fileId.trim().isEmpty ? image : image.copyWith(dataUrl: ''),
+      ),
     );
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithWorkflowReply(
-      _requestWithImages(
-        widget.requestBuilder(requestMessage),
-        _attachedImages,
-      ),
+      _requestWithImages(widget.requestBuilder(requestMessage), sentImages),
       _state.workflowReply,
     );
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
@@ -1262,23 +1374,53 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _attachImage(AgentImageInputSource source) async {
     final pickImage = widget.pickImage;
-    if (pickImage == null || _isComposerLocked) return;
+    if (pickImage == null || _isComposerLocked || _imageUploadPending) return;
+    setState(() {
+      _imageUploadPending = true;
+    });
     AgentStreamImageInput? image;
+    Object? failure;
     try {
       image = await pickImage(source);
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _showPhotoMenu = false;
-      });
+      final mediaRepository = widget.mediaRepository;
+      if (image != null &&
+          mediaRepository != null &&
+          image.fileId.trim().isEmpty) {
+        final bytes = _decodeAgentImageBytes(image.dataUrl);
+        final uploaded = await mediaRepository.uploadFile(
+          file: ApiUploadFile(
+            name: image.name.trim().isEmpty ? 'image.png' : image.name.trim(),
+            mimeType: image.mimeType.trim().isEmpty
+                ? 'image/png'
+                : image.mimeType.trim(),
+            sizeBytes: bytes.length,
+            bytes: bytes,
+          ),
+        );
+        final fileId = uploaded.id.trim();
+        if (fileId.isEmpty) {
+          throw StateError('Image upload did not return a file id.');
+        }
+        image = image.copyWith(fileId: fileId, size: bytes.length);
+      }
+    } catch (error) {
+      failure = error;
+    }
+    if (!mounted) return;
+    setState(() {
+      _imageUploadPending = false;
+      _showPhotoMenu = false;
+      if (image != null && failure == null) {
+        _attachedImages.add(image);
+      }
+    });
+    if (failure != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('图片上传失败，请重试。')));
       return;
     }
-    if (!mounted || image == null) return;
-    final selectedImage = image;
-    setState(() {
-      _attachedImages.add(selectedImage);
-      _showPhotoMenu = false;
-    });
+    if (image == null) return;
     _persistInteractionState();
   }
 
@@ -1407,8 +1549,109 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
   }
 
+  Future<void> _openConversationHistory() async {
+    final repository = widget.conversationRepository;
+    if (repository == null || _isSessionMutationPending) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    await showAgentConversationPanel(
+      context: context,
+      repository: repository,
+      activeThreadId: _state.threadId ?? _activeRequest?.threadId,
+      canSwitchListenable: _conversationSwitchEnabledNotifier,
+      onSelected: _switchConversation,
+      onDismissed: _cancelPendingConversationSwitch,
+    );
+  }
+
+  Future<bool> _switchConversation(String threadId) async {
+    final repository = widget.conversationRepository;
+    final normalizedThreadId = threadId.trim();
+    if (repository == null ||
+        normalizedThreadId.isEmpty ||
+        _isVisibleReplyRunning ||
+        _conversationSwitchPending ||
+        _newSessionStartPending) {
+      return false;
+    }
+    if (normalizedThreadId == (_state.threadId ?? _activeRequest?.threadId)) {
+      return true;
+    }
+
+    final operationGeneration = ++_sessionOperationGeneration;
+    _setConversationSwitchPending(true);
+    try {
+      final history = await repository.loadConversation(normalizedThreadId);
+      if (!mounted ||
+          operationGeneration != _sessionOperationGeneration ||
+          !_conversationSwitchPending) {
+        return false;
+      }
+
+      widget.voicePlaybackCoordinator?.cancel();
+      _cancelRunSubscription();
+      _composerController.clear();
+      _formPresentationSession.clear();
+      _formSubmissionsNotifier.value =
+          const <String, AgentArtifactFormSubmission>{};
+      setState(() {
+        _historyMessages = history.messages
+            .map(_historyMessageFromConversation)
+            .toList(growable: true);
+        _conversationHistoryBeforeSequence = history.nextBeforeSequence;
+        _olderConversationHistoryLoading = false;
+        _olderConversationHistoryLoadArmed = false;
+        _olderConversationHistoryError = null;
+        _setRunState(history.currentState);
+        _attachedImages.clear();
+        _showPhotoMenu = false;
+        _pendingActionIds.clear();
+        _localActionStatuses.clear();
+        _activeRequest = null;
+        _setVoiceState(const AgentVoiceState());
+        _pendingAutoVoiceReplay = null;
+        _resetAutoVoiceProgress();
+      });
+      _seedExistingFormPresentations();
+      _notifyActionStateChanged();
+      _persistInteractionState();
+      _flushPersistentInteractionState();
+      _scheduleScrollToLatest();
+      _armOlderConversationHistoryLoading();
+
+      if (history.currentState.isActive &&
+          history.currentState.runId?.trim().isNotEmpty == true &&
+          widget.runner != null) {
+        await _resumeCurrentRun(preserveActionState: true);
+      }
+      return true;
+    } catch (_) {
+      return false;
+    } finally {
+      if (operationGeneration == _sessionOperationGeneration) {
+        _setConversationSwitchPending(false);
+      }
+    }
+  }
+
+  void _cancelPendingConversationSwitch() {
+    if (!_conversationSwitchPending) return;
+    _sessionOperationGeneration += 1;
+    _setConversationSwitchPending(false);
+  }
+
+  void _setConversationSwitchPending(bool value) {
+    if (_conversationSwitchPending == value) return;
+    _conversationSwitchPending = value;
+    _publishSessionMutationState();
+  }
+
   Future<void> _startNewSession() async {
-    if (_isVisibleReplyRunning || _newSessionStartPending) return;
+    if (_isVisibleReplyRunning ||
+        _newSessionStartPending ||
+        _conversationSwitchPending) {
+      return;
+    }
+    final operationGeneration = ++_sessionOperationGeneration;
     _setNewSessionStartPending(true);
     try {
       if (_state.isActive) {
@@ -1416,7 +1659,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
       widget.voicePlaybackCoordinator?.cancel();
       await widget.onNewSession?.call();
-      if (!mounted) return;
+      if (!mounted || operationGeneration != _sessionOperationGeneration) {
+        return;
+      }
       _dismissComposerKeyboardOnRunAccepted = false;
       _cancelRunSubscription();
       _composerController.clear();
@@ -1426,6 +1671,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
       setState(() {
         _setRunState(const AgentStreamRunState());
         _historyMessages.clear();
+        _conversationHistoryBeforeSequence = null;
+        _olderConversationHistoryLoading = false;
+        _olderConversationHistoryLoadArmed = false;
+        _olderConversationHistoryError = null;
         _attachedImages.clear();
         _showPhotoMenu = false;
         _pendingActionIds.clear();
@@ -1444,10 +1693,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     } catch (_) {
       // Keep the current session visible when its durable cart clear fails.
     } finally {
-      if (mounted) {
-        _setNewSessionStartPending(false);
-      } else {
-        _newSessionStartPending = false;
+      if (operationGeneration == _sessionOperationGeneration) {
+        if (mounted) {
+          _setNewSessionStartPending(false);
+        } else {
+          _newSessionStartPending = false;
+        }
       }
     }
   }
@@ -1455,7 +1706,33 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _setNewSessionStartPending(bool value) {
     if (_newSessionStartPending == value) return;
     _newSessionStartPending = value;
+    _publishSessionMutationState();
+  }
+
+  bool get _isSessionMutationPending =>
+      _newSessionStartPending || _conversationSwitchPending;
+
+  void _publishSessionMutationState() {
+    _setNotifierValue(
+      _sessionMutationPendingNotifier,
+      _isSessionMutationPending,
+    );
     _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    _syncConversationSwitchEnabled();
+  }
+
+  void _syncConversationSwitchEnabled() {
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _syncConversationSwitchEnabled();
+      });
+      return;
+    }
+    _setNotifierValue(
+      _conversationSwitchEnabledNotifier,
+      !_isVisibleReplyRunning && !_isSessionMutationPending,
+    );
   }
 
   void _cancelCurrentBubblePlaybackForNewTurn() {
@@ -2351,13 +2628,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
           ),
           Column(
             children: [
-              ValueListenableBuilder<bool>(
-                valueListenable: _visibleReplyRunningNotifier,
-                builder: (context, isVisibleReplyRunning, child) {
+              ListenableBuilder(
+                listenable: Listenable.merge([
+                  _visibleReplyRunningNotifier,
+                  _sessionMutationPendingNotifier,
+                ]),
+                builder: (context, child) {
+                  final isVisibleReplyRunning =
+                      _visibleReplyRunningNotifier.value;
+                  final isSessionMutationPending =
+                      _sessionMutationPendingNotifier.value;
                   return AgentHubTopBar(
                     showControls: _interactionRestoreResolved,
                     autoVoiceEnabled: _autoVoiceEnabled,
-                    isRunning: isVisibleReplyRunning,
+                    isRunning:
+                        isVisibleReplyRunning || isSessionMutationPending,
+                    onOpenConversations:
+                        widget.conversationRepository == null ||
+                            isSessionMutationPending
+                        ? null
+                        : _openConversationHistory,
                     onToggleAutoVoice: _toggleAutoVoice,
                     onNewSession: _startNewSession,
                   );
@@ -2378,6 +2668,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
                           key: const ValueKey('agent-chat-scroll-view'),
                           controller: _chatScrollController,
                           slivers: [
+                            if (_conversationHistoryBeforeSequence != null ||
+                                _olderConversationHistoryLoading ||
+                                _olderConversationHistoryError != null)
+                              SliverToBoxAdapter(
+                                child: _AgentOlderConversationHistoryControl(
+                                  loading: _olderConversationHistoryLoading,
+                                  failed:
+                                      _olderConversationHistoryError != null,
+                                  onLoad: _loadOlderConversationHistory,
+                                ),
+                              ),
                             if (_historyMessages.isNotEmpty)
                               SliverPadding(
                                 padding: const EdgeInsets.fromLTRB(
@@ -2388,6 +2689,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 ),
                                 sliver: AgentHubHistorySliver(
                                   messages: _historyMessages,
+                                  loadImageContent: widget.loadImageContent,
                                   productAssetRepository:
                                       widget.productAssetRepository,
                                   onArtifactAction: _handleArtifactAction,
@@ -2511,6 +2813,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     showPhotoMenu: _showPhotoMenu,
                     canAttachImage:
                         widget.pickImage != null &&
+                        !_imageUploadPending &&
                         !isComposerLocked &&
                         !isRestoring,
                     canUseVoice:
@@ -2556,6 +2859,7 @@ class AgentHubTopBar extends StatelessWidget {
     required this.showControls,
     required this.autoVoiceEnabled,
     required this.isRunning,
+    this.onOpenConversations,
     required this.onToggleAutoVoice,
     required this.onNewSession,
   });
@@ -2563,6 +2867,7 @@ class AgentHubTopBar extends StatelessWidget {
   final bool showControls;
   final bool autoVoiceEnabled;
   final bool isRunning;
+  final VoidCallback? onOpenConversations;
   final VoidCallback onToggleAutoVoice;
   final VoidCallback onNewSession;
 
@@ -2575,48 +2880,106 @@ class AgentHubTopBar extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: showControls
-              ? [
-                  IconButton(
-                    key: const ValueKey('agent-auto-voice-button'),
-                    onPressed: onToggleAutoVoice,
-                    icon: Icon(
-                      autoVoiceEnabled
-                          ? Icons.volume_up_outlined
-                          : Icons.volume_off_outlined,
-                      size: 16,
-                    ),
-                    tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
-                    color: autoVoiceEnabled
-                        ? Colors.black
-                        : MomCozyColors.background,
-                    style: IconButton.styleFrom(
-                      backgroundColor: autoVoiceEnabled
-                          ? Colors.transparent
-                          : const Color(0xff7a6670),
-                      fixedSize: const Size.square(36),
-                      minimumSize: const Size.square(36),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    key: const ValueKey('agent-new-session-button'),
-                    onPressed: isRunning ? null : onNewSession,
-                    icon: const Icon(Icons.add_rounded, size: 16),
-                    tooltip: '新建会话',
-                    color: const Color(0xff3b2f36),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      fixedSize: const Size.square(36),
-                      minimumSize: const Size.square(36),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ),
-                ]
-              : const [SizedBox(width: 36, height: 56)],
+          children: [
+            if (showControls && onOpenConversations != null)
+              IconButton(
+                key: const ValueKey('agent-conversation-history-button'),
+                onPressed: onOpenConversations,
+                icon: const Icon(Icons.menu_rounded, size: 20),
+                tooltip: '打开会话历史',
+                color: const Color(0xff3b2f36),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  fixedSize: const Size.square(36),
+                  minimumSize: const Size.square(36),
+                  padding: EdgeInsets.zero,
+                ),
+              )
+            else
+              const SizedBox.square(dimension: 36),
+            const Spacer(),
+            if (showControls) ...[
+              IconButton(
+                key: const ValueKey('agent-auto-voice-button'),
+                onPressed: onToggleAutoVoice,
+                icon: Icon(
+                  autoVoiceEnabled
+                      ? Icons.volume_up_outlined
+                      : Icons.volume_off_outlined,
+                  size: 16,
+                ),
+                tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
+                color: autoVoiceEnabled
+                    ? Colors.black
+                    : MomCozyColors.background,
+                style: IconButton.styleFrom(
+                  backgroundColor: autoVoiceEnabled
+                      ? Colors.transparent
+                      : const Color(0xff7a6670),
+                  fixedSize: const Size.square(36),
+                  minimumSize: const Size.square(36),
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+              const SizedBox(width: 4),
+              IconButton(
+                key: const ValueKey('agent-new-session-button'),
+                onPressed: isRunning ? null : onNewSession,
+                icon: const Icon(Icons.add_rounded, size: 16),
+                tooltip: '新建会话',
+                color: const Color(0xff3b2f36),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  fixedSize: const Size.square(36),
+                  minimumSize: const Size.square(36),
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+            ],
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _AgentOlderConversationHistoryControl extends StatelessWidget {
+  const _AgentOlderConversationHistoryControl({
+    required this.loading,
+    required this.failed,
+    required this.onLoad,
+  });
+
+  final bool loading;
+  final bool failed;
+  final VoidCallback onLoad;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      child: Center(
+        child: loading
+            ? const SizedBox.square(
+                key: ValueKey('agent-conversation-older-loading'),
+                dimension: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : TextButton.icon(
+                key: ValueKey(
+                  failed
+                      ? 'agent-conversation-older-retry'
+                      : 'agent-conversation-older-load',
+                ),
+                onPressed: onLoad,
+                icon: Icon(
+                  failed
+                      ? Icons.refresh_rounded
+                      : Icons.keyboard_arrow_up_rounded,
+                  size: 18,
+                ),
+                label: Text(failed ? '加载失败，点击重试' : '加载更早消息'),
+              ),
       ),
     );
   }
@@ -2845,6 +3208,18 @@ AgentStreamRequest _requestWithImages(
   );
 }
 
+List<int> _decodeAgentImageBytes(String dataUrl) {
+  final marker = dataUrl.indexOf(',');
+  if (marker < 0 || !dataUrl.substring(0, marker).contains(';base64')) {
+    throw const FormatException('Image input is not a Base64 data URL.');
+  }
+  final bytes = base64Decode(dataUrl.substring(marker + 1));
+  if (bytes.isEmpty) {
+    throw const FormatException('Image input is empty.');
+  }
+  return bytes;
+}
+
 AgentStreamRequest _requestWithIdempotencyKey(
   AgentStreamRequest request,
   String? idempotencyKey,
@@ -2945,6 +3320,37 @@ AgentHubHistoryMessage _historyMessageFromSnapshot(
   );
 }
 
+AgentHubHistoryMessage _historyMessageFromConversation(
+  AgentConversationMessage message,
+) {
+  return AgentHubHistoryMessage(
+    role: message.role == AgentConversationMessageRole.user
+        ? AgentHubHistoryRole.user
+        : AgentHubHistoryRole.assistant,
+    content: message.content,
+    runState: message.runState,
+    images: message.images,
+  );
+}
+
+List<AgentHubHistoryMessage> _historyMessagesFromOlderConversationPage(
+  AgentConversationHistory page,
+) {
+  final messages = page.messages
+      .map(_historyMessageFromConversation)
+      .toList(growable: true);
+  if (hasAgentConversationAssistantProjection(page.currentState)) {
+    messages.add(
+      AgentHubHistoryMessage(
+        role: AgentHubHistoryRole.assistant,
+        content: page.currentState.textContent,
+        runState: page.currentState,
+      ),
+    );
+  }
+  return messages;
+}
+
 AgentHubHistorySnapshot _historySnapshotFromMessage(
   AgentHubHistoryMessage message,
 ) {
@@ -3015,6 +3421,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
     super.key,
     required this.messages,
     this.productAssetRepository,
+    this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
@@ -3024,6 +3431,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
 
   final List<AgentHubHistoryMessage> messages;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
@@ -3040,6 +3448,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            loadImageContent: loadImageContent,
             productAssetRepository: productAssetRepository,
             onArtifactAction: onArtifactAction,
             onFormSubmit: onFormSubmit,
@@ -3059,6 +3468,7 @@ class AgentHubHistorySliver extends StatelessWidget {
     super.key,
     required this.messages,
     this.productAssetRepository,
+    this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
@@ -3068,6 +3478,7 @@ class AgentHubHistorySliver extends StatelessWidget {
 
   final List<AgentHubHistoryMessage> messages;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
@@ -3086,6 +3497,7 @@ class AgentHubHistorySliver extends StatelessWidget {
         return _AgentHistoryBubble(
           key: ValueKey('agent-history-$messageIndex'),
           message: messages[messageIndex],
+          loadImageContent: loadImageContent,
           productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
@@ -3103,6 +3515,7 @@ class _AgentHistoryBubble extends StatelessWidget {
     super.key,
     required this.message,
     this.productAssetRepository,
+    this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
@@ -3112,6 +3525,7 @@ class _AgentHistoryBubble extends StatelessWidget {
 
   final AgentHubHistoryMessage message;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
@@ -3182,7 +3596,10 @@ class _AgentHistoryBubble extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   if (message.images.isNotEmpty)
-                    AgentSentImages(images: message.images),
+                    AgentSentImages(
+                      images: message.images,
+                      loadImageContent: loadImageContent,
+                    ),
                   if (message.images.isNotEmpty && message.content.isNotEmpty)
                     const SizedBox(height: 8),
                   if (message.content.isNotEmpty)

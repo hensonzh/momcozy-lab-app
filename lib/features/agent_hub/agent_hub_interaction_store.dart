@@ -369,6 +369,7 @@ AgentStreamRequest? _requestFromMap(Object? value) {
 
 Map<String, Object?> _imageToMap(AgentStreamImageInput image) => {
   'dataUrl': image.dataUrl,
+  if (image.fileId.trim().isNotEmpty) 'fileId': image.fileId.trim(),
   'mimeType': image.mimeType,
   'name': image.name,
   'size': image.size,
@@ -379,9 +380,13 @@ AgentStreamImageInput? _imageFromMap(Object? value) {
   if (value is! Map) return null;
   final map = Map<String, Object?>.from(value);
   final dataUrl = _string(map['dataUrl']) ?? _string(map['data_url']);
-  if (dataUrl == null || dataUrl.trim().isEmpty) return null;
+  final fileId = _string(map['fileId']) ?? _string(map['file_id']) ?? '';
+  if ((dataUrl == null || dataUrl.trim().isEmpty) && fileId.trim().isEmpty) {
+    return null;
+  }
   return AgentStreamImageInput(
-    dataUrl: dataUrl,
+    dataUrl: dataUrl ?? '',
+    fileId: fileId,
     mimeType:
         _string(map['mimeType']) ?? _string(map['mime_type']) ?? 'image/png',
     name: _string(map['name']) ?? 'image.png',

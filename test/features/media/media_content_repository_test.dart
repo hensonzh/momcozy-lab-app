@@ -1,0 +1,57 @@
+import 'dart:typed_data';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+
+void main() {
+  test('loads an authenticated owned image only when requested', () async {
+    final connector = _FakeBinaryConnector(
+      ProductAssetHttpResponse(
+        statusCode: 200,
+        statusText: 'OK',
+        contentType: 'image/png',
+        body: Uint8List.fromList([1, 2, 3]),
+      ),
+    );
+    final repository = MediaContentRepository(
+      baseUri: Uri.parse('https://api.example.com'),
+      tokenProvider: () => 'access-token',
+      connector: connector,
+    );
+
+    final bytes = await repository.loadImage(
+      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+    );
+
+    expect(bytes, [1, 2, 3]);
+    expect(
+      connector.uri.path,
+      '/v1/files/0ea4b76d-2bc4-4ab8-91b7-3b24df53c518/content',
+    );
+    expect(connector.headers['Authorization'], 'Bearer access-token');
+    expect(connector.headers['Accept'], 'image/*');
+    expect(connector.maxBytes, 10 * 1024 * 1024);
+  });
+}
+
+class _FakeBinaryConnector implements ProductAssetHttpConnector {
+  _FakeBinaryConnector(this.response);
+
+  final ProductAssetHttpResponse response;
+  late Uri uri;
+  Map<String, String> headers = const {};
+  int maxBytes = 0;
+
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) async {
+    this.uri = uri;
+    this.headers = headers;
+    this.maxBytes = maxBytes;
+    return response;
+  }
+}
