@@ -3661,7 +3661,8 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(find.text('正在组织答案～'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
@@ -4348,7 +4349,8 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(find.text('正在组织答案～'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
@@ -7723,7 +7725,11 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('正在组织答案～'), findsOneWidget);
       expect(find.text('I can help'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -8434,7 +8440,7 @@ milk_total: 120ml
     );
   });
 
-  testWidgets('Agent Hub hides thinking note after reply text starts', (
+  testWidgets('Agent Hub switches status copy after reply text starts', (
     tester,
   ) async {
     final state = AgentStreamRunState(
@@ -8453,61 +8459,123 @@ milk_total: 120ml
 
     expect(find.text('好的，我先给你一个方向。'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
-  });
-
-  testWidgets('Agent Hub keeps backend progress visible until first token', (
-    tester,
-  ) async {
-    final client = _ControllableAgentStreamClient();
-    addTearDown(client.dispose);
-
-    await tester.pumpWidget(
-      _host(AgentHubPage(runner: AgentStreamRunner(client))),
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '帮我生成待产包',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pump();
-
-    client.emit(
-      0,
-      AgentStreamEvent({
-        'event_id': 'evt-progress-before-token',
-        'type': 'run.progress',
-        'thread_id': 'thread-progress',
-        'run_id': 'run-progress',
-        'sequence': 1,
-        'payload': {'label': '正在生成待产包信息采集表单'},
-      }),
-    );
-    await tester.pump();
-
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('正在生成待产包信息采集表单'), findsOneWidget);
-
-    client.emit(
-      0,
-      AgentStreamEvent({
-        'event_id': 'evt-first-token',
-        'type': 'message.delta',
-        'thread_id': 'thread-progress',
-        'run_id': 'run-progress',
-        'message_id': 'msg-progress',
-        'sequence': 2,
-        'payload': {'text': '好的'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(find.text('好的'), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.text('正在组织答案～'), findsOneWidget);
   });
+
+  testWidgets(
+    'Agent Hub keeps status through user persistence and token streaming',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '帮我生成待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-run-queued',
+          'type': 'run.queued',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'sequence': 1,
+          'payload': {'label': '我已经收到你的消息啦～'},
+        }),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-user-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'message_id': 'msg-user',
+          'sequence': 2,
+          'payload': {'role': 'user'},
+        }),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-progress-before-token',
+          'type': 'run.progress',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'sequence': 3,
+          'payload': {'label': '正在生成待产包信息采集表单'},
+        }),
+      );
+      await tester.pump();
+
+      expect(find.text('正在生成待产包信息采集表单'), findsOneWidget);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-first-token',
+          'type': 'message.delta',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'message_id': 'msg-progress',
+          'sequence': 4,
+          'payload': {'text': '好的'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('好的'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('正在组织答案～'), findsOneWidget);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-assistant-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'message_id': 'msg-progress',
+          'sequence': 5,
+          'payload': {'role': 'assistant', 'text': '好的，我已经整理好了。'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('好的，我已经整理好了。'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    },
+  );
 
   testWidgets('Agent Hub status line uses queued and started events', (
     tester,

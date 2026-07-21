@@ -4117,7 +4117,14 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.streaming ||
         state.phase == AgentStreamRunPhase.waitingForConfirmation ||
         state.phase == AgentStreamRunPhase.error;
-    if (!supportsLoopDecor || state.textContent.trim().isNotEmpty) {
+    if (!supportsLoopDecor || state.hasCompletedAssistantMessage) {
+      return const _AgentLoopDecorState();
+    }
+    if (state.phase == AgentStreamRunPhase.streaming &&
+        state.textContent.trim().isNotEmpty) {
+      return const _AgentLoopDecorState(statusTitle: '正在组织答案～');
+    }
+    if (state.textContent.trim().isNotEmpty) {
       return const _AgentLoopDecorState();
     }
     return _agentLoopDecorStateFromEvents(state.events);
@@ -6606,8 +6613,7 @@ String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
 }
 
 bool _eventStopsAgentLoopDecor(AgentStreamEvent event) {
-  return event.type == 'message.delta' ||
-      event.type == 'message.completed' ||
+  return (event.type == 'message.completed' && event.role != 'user') ||
       event.type == 'run.completed' ||
       event.type == 'run.failed' ||
       event.type == 'run.cancelled';
