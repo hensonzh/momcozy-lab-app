@@ -41,132 +41,135 @@ void main() {
     );
   });
 
-  test('restores normalized transcript without assistant completion events', () async {
-    final transport = FixtureApiJsonTransport({
-      'thread': {
-        'id': 'thread-restore',
-        'title': '喂养节奏',
-        'status': 'active',
-        'metadata': <String, Object?>{},
-        'created_at': '2026-07-19T08:00:00Z',
-        'updated_at': '2026-07-20T08:00:00Z',
-      },
-      'items': [
-        {
-          'id': 'message-user-1',
-          'run_id': 'run-1',
-          'role': 'user',
-          'message_type': 'text',
-          'content': {
-            'text': '第一问',
-            'attachments': [
-              {
-                'type': 'image',
-                'data_url': 'data:image/png;base64,must-not-be-restored',
-                'file_id': '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
-                'content_type': 'image/png',
-                'original_filename': '记录.png',
-                'size': 1,
-                'detail': 'high',
-              },
-              {
-                'type': 'file',
-                'file_id': '948ed99d-2600-45d9-886a-0068d7593529',
-                'content_type': 'application/pdf',
-                'original_filename': '产检报告.pdf',
-                'size': 2048,
-              },
-            ],
-          },
-          'status': 'completed',
-          'sequence': 1,
+  test(
+    'restores normalized transcript without assistant completion events',
+    () async {
+      final transport = FixtureApiJsonTransport({
+        'thread': {
+          'id': 'thread-restore',
+          'title': '喂养节奏',
+          'status': 'active',
+          'metadata': <String, Object?>{},
           'created_at': '2026-07-19T08:00:00Z',
+          'updated_at': '2026-07-20T08:00:00Z',
         },
-        {
-          'id': 'message-assistant-1',
-          'run_id': 'run-1',
-          'role': 'assistant',
-          'message_type': 'text',
-          'content': {'text': '第一答'},
-          'status': 'completed',
-          'sequence': 2,
-          'created_at': '2026-07-19T08:01:00Z',
-        },
-        {
-          'id': 'message-user-2',
-          'run_id': 'run-2',
-          'role': 'user',
-          'message_type': 'text',
-          'content': {'text': '第二问', 'attachments': <Object?>[]},
-          'status': 'completed',
-          'sequence': 3,
-          'created_at': '2026-07-20T08:00:00Z',
-        },
-        {
-          'id': 'message-assistant-2',
-          'run_id': 'run-2',
-          'role': 'assistant',
-          'message_type': 'text',
-          'content': {'text': '第二答'},
-          'status': 'completed',
-          'sequence': 4,
-          'created_at': '2026-07-20T08:01:00Z',
-        },
-      ],
-      'events': [
-        {
-          'event_id': 'event-run-1-completed',
-          'thread_id': 'thread-restore',
-          'run_id': 'run-1',
-          'sequence': 1,
-          'type': 'run.completed',
-          'payload': <String, Object?>{},
-          'created_at': '2026-07-19T08:01:01Z',
-        },
-        {
-          'event_id': 'event-run-2-completed',
-          'thread_id': 'thread-restore',
-          'run_id': 'run-2',
-          'sequence': 1,
-          'type': 'run.completed',
-          'payload': <String, Object?>{},
-          'created_at': '2026-07-20T08:01:01Z',
-        },
-      ],
-      'next_before_sequence': null,
-    });
-    final repository = AgentConversationApiRepository(transport: transport);
+        'items': [
+          {
+            'id': 'message-user-1',
+            'run_id': 'run-1',
+            'role': 'user',
+            'message_type': 'text',
+            'content': {
+              'text': '第一问',
+              'attachments': [
+                {
+                  'type': 'image',
+                  'data_url': 'data:image/png;base64,must-not-be-restored',
+                  'file_id': '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+                  'content_type': 'image/png',
+                  'original_filename': '记录.png',
+                  'size': 1,
+                  'detail': 'high',
+                },
+                {
+                  'type': 'file',
+                  'file_id': '948ed99d-2600-45d9-886a-0068d7593529',
+                  'content_type': 'application/pdf',
+                  'original_filename': '产检报告.pdf',
+                  'size': 2048,
+                },
+              ],
+            },
+            'status': 'completed',
+            'sequence': 1,
+            'created_at': '2026-07-19T08:00:00Z',
+          },
+          {
+            'id': 'message-assistant-1',
+            'run_id': 'run-1',
+            'role': 'assistant',
+            'message_type': 'text',
+            'content': {'text': '第一答'},
+            'status': 'completed',
+            'sequence': 2,
+            'created_at': '2026-07-19T08:01:00Z',
+          },
+          {
+            'id': 'message-user-2',
+            'run_id': 'run-2',
+            'role': 'user',
+            'message_type': 'text',
+            'content': {'text': '第二问', 'attachments': <Object?>[]},
+            'status': 'completed',
+            'sequence': 3,
+            'created_at': '2026-07-20T08:00:00Z',
+          },
+          {
+            'id': 'message-assistant-2',
+            'run_id': 'run-2',
+            'role': 'assistant',
+            'message_type': 'text',
+            'content': {'text': '第二答'},
+            'status': 'completed',
+            'sequence': 4,
+            'created_at': '2026-07-20T08:01:00Z',
+          },
+        ],
+        'events': [
+          {
+            'event_id': 'event-run-1-completed',
+            'thread_id': 'thread-restore',
+            'run_id': 'run-1',
+            'sequence': 1,
+            'type': 'run.completed',
+            'payload': <String, Object?>{},
+            'created_at': '2026-07-19T08:01:01Z',
+          },
+          {
+            'event_id': 'event-run-2-completed',
+            'thread_id': 'thread-restore',
+            'run_id': 'run-2',
+            'sequence': 1,
+            'type': 'run.completed',
+            'payload': <String, Object?>{},
+            'created_at': '2026-07-20T08:01:01Z',
+          },
+        ],
+        'next_before_sequence': null,
+      });
+      final repository = AgentConversationApiRepository(transport: transport);
 
-    final history = await repository.loadConversation('thread-restore');
+      final history = await repository.loadConversation('thread-restore');
 
-    expect(
-      transport.lastPath,
-      '$agentConversationsEndpoint/thread-restore/history',
-    );
-    expect(transport.lastQuery, {'limit': 20});
-    expect(history.thread.id, 'thread-restore');
-    expect(history.messages.map((message) => message.content), [
-      '第一问',
-      '第一答',
-      '第二问',
-    ]);
-    expect(history.messages.first.images.single.name, '记录.png');
-    expect(
-      history.messages.first.images.single.fileId,
-      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
-    );
-    expect(history.messages.first.images.single.dataUrl, isEmpty);
-    expect(history.messages.first.files.single.name, '产检报告.pdf');
-    expect(
-      history.messages.first.files.single.fileId,
-      '948ed99d-2600-45d9-886a-0068d7593529',
-    );
-    expect(history.messages[1].runState?.textContent, '第一答');
-    expect(history.currentState.threadId, 'thread-restore');
-    expect(history.currentState.runId, 'run-2');
-    expect(history.currentState.textContent, '第二答');
-    expect(history.currentState.hasCompletedAssistantMessage, isTrue);
-  });
+      expect(
+        transport.lastPath,
+        '$agentConversationsEndpoint/thread-restore/history',
+      );
+      expect(transport.lastQuery, {'limit': 20});
+      expect(history.thread.id, 'thread-restore');
+      expect(history.messages.map((message) => message.content), [
+        '第一问',
+        '第一答',
+        '第二问',
+      ]);
+      expect(history.messages.first.images.single.name, '记录.png');
+      expect(
+        history.messages.first.images.single.fileId,
+        '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+      );
+      expect(history.messages.first.images.single.dataUrl, isEmpty);
+      expect(history.messages.first.files.single.name, '产检报告.pdf');
+      expect(
+        history.messages.first.files.single.fileId,
+        '948ed99d-2600-45d9-886a-0068d7593529',
+      );
+      expect(history.messages[1].runState?.textContent, '第一答');
+      expect(history.currentState.threadId, 'thread-restore');
+      expect(history.currentState.runId, 'run-2');
+      expect(history.currentState.textContent, '第二答');
+      expect(history.currentState.hasCompletedAssistantMessage, isTrue);
+    },
+  );
 
   test('loads only the requested history page', () async {
     final thread = {
