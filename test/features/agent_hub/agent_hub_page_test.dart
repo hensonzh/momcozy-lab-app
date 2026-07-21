@@ -2093,6 +2093,85 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('Agent Hub locks draft actions while an attachment is pending', (
+    tester,
+  ) async {
+    final pickCompleter = Completer<AgentStreamImageInput?>();
+    final client = _FixtureAgentStreamClient(const <AgentStreamEvent>[]);
+    var newSessionStarted = false;
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          pickImage: (_) => pickCompleter.future,
+          onNewSession: () => newSessionStarted = true,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '保留这条草稿',
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byKey(const ValueKey('agent-new-session-button')),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .enabled,
+      isFalse,
+    );
+    expect(client.requests, isEmpty);
+    expect(newSessionStarted, isFalse);
+
+    pickCompleter.complete(
+      const AgentStreamImageInput(
+        dataUrl: 'data:image/png;base64,fixture',
+        mimeType: 'image/png',
+        name: 'pending-image.png',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '保留这条草稿',
+    );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+          .onPressed,
+      isNotNull,
+    );
+  });
+
   testWidgets('Agent Hub uploads and sends a PDF file attachment', (
     tester,
   ) async {
