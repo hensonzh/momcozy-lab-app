@@ -1050,6 +1050,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _newSessionStartPending ||
       _supportTicketSubmitPending ||
       _conversationSwitchPending ||
+      _attachmentUploadPending ||
       _isComposerLockedForState(_state);
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
@@ -1410,9 +1411,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         !_canAddAttachment) {
       return;
     }
-    setState(() {
-      _attachmentUploadPending = true;
-    });
+    _setAttachmentUploadPending(true);
     AgentStreamImageInput? image;
     Object? failure;
     try {
@@ -1448,6 +1447,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _attachedImages.add(image);
       }
     });
+    _publishAttachmentUploadState();
     if (failure != null) {
       ScaffoldMessenger.of(
         context,
@@ -1468,9 +1468,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         !_canAddAttachment) {
       return;
     }
-    setState(() {
-      _attachmentUploadPending = true;
-    });
+    _setAttachmentUploadPending(true);
 
     AgentStreamFileInput? file;
     Object? failure;
@@ -1508,6 +1506,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _attachedFiles.add(file);
       }
     });
+    _publishAttachmentUploadState();
     if (failure != null) {
       final message = switch (failure) {
         AgentDocumentInputException(code: 'file_too_large') => '文件不能超过 10MB。',
@@ -1522,6 +1521,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     if (file == null) return;
     _persistInteractionState();
+  }
+
+  void _setAttachmentUploadPending(bool value) {
+    if (_attachmentUploadPending == value) return;
+    setState(() {
+      _attachmentUploadPending = value;
+    });
+    _publishAttachmentUploadState();
+  }
+
+  void _publishAttachmentUploadState() {
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    _syncConversationSwitchEnabled();
   }
 
   bool get _canAddAttachment =>
@@ -1655,7 +1667,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _openConversationHistory() async {
     final repository = widget.conversationRepository;
-    if (repository == null || _isSessionMutationPending) return;
+    if (repository == null ||
+        _isSessionMutationPending ||
+        _attachmentUploadPending) {
+      return;
+    }
     FocusManager.instance.primaryFocus?.unfocus();
     await showAgentConversationPanel(
       context: context,
@@ -1673,6 +1689,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (repository == null ||
         normalizedThreadId.isEmpty ||
         _isVisibleReplyRunning ||
+        _attachmentUploadPending ||
         _conversationSwitchPending ||
         _newSessionStartPending) {
       return false;
@@ -1751,6 +1768,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _startNewSession() async {
     if (_isVisibleReplyRunning ||
+        _attachmentUploadPending ||
         _newSessionStartPending ||
         _conversationSwitchPending) {
       return;
@@ -1835,7 +1853,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     _setNotifierValue(
       _conversationSwitchEnabledNotifier,
-      !_isVisibleReplyRunning && !_isSessionMutationPending,
+      !_isVisibleReplyRunning &&
+          !_isSessionMutationPending &&
+          !_attachmentUploadPending,
     );
   }
 
@@ -2746,10 +2766,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     showControls: _interactionRestoreResolved,
                     autoVoiceEnabled: _autoVoiceEnabled,
                     isRunning:
-                        isVisibleReplyRunning || isSessionMutationPending,
+                        isVisibleReplyRunning ||
+                        isSessionMutationPending ||
+                        _attachmentUploadPending,
                     onOpenConversations:
                         widget.conversationRepository == null ||
-                            isSessionMutationPending
+                            isSessionMutationPending ||
+                            _attachmentUploadPending
                         ? null
                         : _openConversationHistory,
                     onToggleAutoVoice: _toggleAutoVoice,
