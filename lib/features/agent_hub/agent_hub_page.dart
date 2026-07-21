@@ -1123,6 +1123,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
               ? '请查看这个文件'
               : '请看这张图片');
     final sentImages = List<AgentStreamImageInput>.unmodifiable(
+      _attachedImages,
+    );
+    final requestImages = List<AgentStreamImageInput>.unmodifiable(
       _attachedImages.map(
         (image) =>
             image.fileId.trim().isEmpty ? image : image.copyWith(dataUrl: ''),
@@ -1133,7 +1136,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithWorkflowReply(
       _requestWithFiles(
-        _requestWithImages(widget.requestBuilder(requestMessage), sentImages),
+        _requestWithImages(
+          widget.requestBuilder(requestMessage),
+          requestImages,
+        ),
         sentFiles,
       ),
       _state.workflowReply,

@@ -6,7 +6,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 
 void main() {
-  testWidgets('history image loads original bytes only after user opens it', (
+  testWidgets('history image loads its authenticated thumbnail by file id', (
     tester,
   ) async {
     var loadCount = 0;
@@ -34,14 +34,17 @@ void main() {
       ),
     );
 
-    expect(loadCount, 0);
-    expect(find.text('点击查看'), findsOneWidget);
+    await tester.pump();
+
+    expect(loadCount, 1);
+    expect(find.text('点击查看'), findsNothing);
+    expect(find.byType(Image), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
     await tester.pump();
     await tester.pump();
 
-    expect(loadCount, 1);
+    expect(loadCount, 2);
     expect(
       find.byKey(const ValueKey('agent-sent-image-close')),
       findsOneWidget,
