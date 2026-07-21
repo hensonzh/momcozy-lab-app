@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
@@ -186,6 +187,7 @@ void main() {
     expect(runtime.volumeUnitPreferenceStore, same(volumePreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
+    expect(runtime.mediaContentRepository, isA<MediaContentRepository>());
     expect(runtime.productAssetRepository, isA<ProductAssetRepository>());
     expect(runtime.agentVoiceRepository, isA<AgentVoiceApiRepository>());
     expect(

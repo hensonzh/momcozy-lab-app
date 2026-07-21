@@ -9,6 +9,7 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/agent_conversation_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
@@ -18,6 +19,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart'
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_file_cache.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
@@ -437,6 +439,7 @@ class MomCozyApiRuntime {
   AgentVoiceInputController? _agentVoiceInputController;
   AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
   ProductAssetRepository? _productAssetRepository;
+  MediaContentRepository? _mediaContentRepository;
   StatusPreferenceStore? _statusPreferenceStore;
   ScheduleReminderPreferenceStore? _scheduleReminderPreferenceStore;
   ScheduleReminderGateway? _scheduleReminderGateway;
@@ -514,6 +517,10 @@ class MomCozyApiRuntime {
 
   AgentHubProfileRepository get agentHubProfileRepository {
     return AgentHubProfileRepository(transport: jsonTransport);
+  }
+
+  AgentConversationApiRepository get agentConversationRepository {
+    return AgentConversationApiRepository(transport: jsonTransport);
   }
 
   SupportTicketApiRepository get supportTicketRepository {
@@ -596,6 +603,14 @@ class MomCozyApiRuntime {
 
   MediaApiRepository get mediaRepository {
     return MediaApiRepository(transport: multipartTransport);
+  }
+
+  MediaContentRepository get mediaContentRepository {
+    return _mediaContentRepository ??= MediaContentRepository(
+      baseUri: Uri.parse(_defaultApiBaseUrl),
+      tokenProvider: () => currentSession.accessToken,
+      onUnauthorized: agentStreamUnauthorizedHandler,
+    );
   }
 
   ScheduleImageRecognitionGateway? get scheduleImageRecognitionGateway {
