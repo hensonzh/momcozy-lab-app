@@ -134,16 +134,18 @@ void main() {
       () async {
         final sink = MemoryMomCozyTelemetrySink();
         final observability = MomCozyObservability(sink: sink);
+        final inner = FixtureApiMultipartTransport(const {
+          'status': 200,
+          'data': {'id': 'file-001'},
+        });
         final transport = ObservedApiMultipartTransport(
-          inner: FixtureApiMultipartTransport(const {
-            'status': 200,
-            'data': {'id': 'file-001'},
-          }),
+          inner: inner,
           observability: observability,
         );
 
         await transport.uploadMultipart(
           '/v1/files/upload',
+          query: const {'temporary': true},
           fields: const {'user_id': 'demo-user'},
           file: const ApiUploadFile(
             name: 'private-image.png',
@@ -153,6 +155,7 @@ void main() {
         );
 
         expect(sink.events.single.name, 'api.request');
+        expect(inner.lastQuery, {'temporary': true});
         expect(sink.events.single.attributes, {
           'method': 'MULTIPART',
           'path': '/v1/files/upload',

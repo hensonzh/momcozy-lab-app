@@ -177,6 +177,7 @@ class FixtureApiMultipartTransport implements ApiMultipartTransport {
   final Map<String, Object?> response;
   final Object? failure;
   String? lastPath;
+  Map<String, Object?>? lastQuery;
   Map<String, Object?>? lastFields;
   Map<String, String>? lastHeaders;
   ApiUploadFile? lastFile;
@@ -184,11 +185,13 @@ class FixtureApiMultipartTransport implements ApiMultipartTransport {
   @override
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
+    Map<String, Object?> query = const {},
     Map<String, Object?> fields = const {},
     Map<String, String> headers = const {},
     required ApiUploadFile file,
   }) async {
     lastPath = path;
+    lastQuery = Map<String, Object?>.from(query);
     lastFields = Map<String, Object?>.from(fields);
     lastHeaders = Map<String, String>.from(headers);
     lastFile = file;

@@ -56,7 +56,8 @@ void main() {
         transport: transport,
       ).uploadFile(file: _file, temporary: true);
 
-      expect(transport.lastPath, '$mediaUploadEndpoint?temporary=true');
+      expect(transport.lastPath, mediaUploadEndpoint);
+      expect(transport.lastQuery, {'temporary': true});
     });
 
     test('deletes an abandoned temporary file idempotently', () async {
