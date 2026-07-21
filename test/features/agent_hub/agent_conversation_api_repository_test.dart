@@ -41,7 +41,7 @@ void main() {
     );
   });
 
-  test('restores thread messages through the existing event reducer', () async {
+  test('restores normalized transcript without assistant completion events', () async {
     final transport = FixtureApiJsonTransport({
       'thread': {
         'id': 'thread-restore',
@@ -115,45 +115,19 @@ void main() {
       ],
       'events': [
         {
-          'event_id': 'event-run-1-message',
-          'thread_id': 'thread-restore',
-          'run_id': 'run-1',
-          'sequence': 1,
-          'type': 'message.completed',
-          'payload': {
-            'message_id': 'message-assistant-1',
-            'role': 'assistant',
-            'text': '第一答',
-          },
-          'created_at': '2026-07-19T08:01:00Z',
-        },
-        {
           'event_id': 'event-run-1-completed',
           'thread_id': 'thread-restore',
           'run_id': 'run-1',
-          'sequence': 2,
+          'sequence': 1,
           'type': 'run.completed',
           'payload': <String, Object?>{},
           'created_at': '2026-07-19T08:01:01Z',
         },
         {
-          'event_id': 'event-run-2-message',
-          'thread_id': 'thread-restore',
-          'run_id': 'run-2',
-          'sequence': 1,
-          'type': 'message.completed',
-          'payload': {
-            'message_id': 'message-assistant-2',
-            'role': 'assistant',
-            'text': '第二答',
-          },
-          'created_at': '2026-07-20T08:01:00Z',
-        },
-        {
           'event_id': 'event-run-2-completed',
           'thread_id': 'thread-restore',
           'run_id': 'run-2',
-          'sequence': 2,
+          'sequence': 1,
           'type': 'run.completed',
           'payload': <String, Object?>{},
           'created_at': '2026-07-20T08:01:01Z',
