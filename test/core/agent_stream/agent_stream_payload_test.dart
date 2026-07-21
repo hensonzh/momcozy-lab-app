@@ -129,6 +129,32 @@ void main() {
       expect(image['name'], 'pump-display-fixture.png');
     });
 
+    test('adds owned PDF references to the production run create contract', () {
+      final payload = buildProductionAgentRunPayload(
+        const AgentStreamRequest(
+          message: '请阅读这份产检报告。',
+          files: [
+            AgentStreamFileInput(
+              fileId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+              mimeType: 'application/pdf',
+              name: 'checkup-report.pdf',
+              size: 2048,
+            ),
+          ],
+        ),
+      );
+
+      expect(payload['attachments'], [
+        {
+          'type': 'file',
+          'file_id': '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+          'content_type': 'application/pdf',
+          'original_filename': 'checkup-report.pdf',
+          'size': 2048,
+        },
+      ]);
+    });
+
     test('prefers an uploaded image file reference over inline bytes', () {
       final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(

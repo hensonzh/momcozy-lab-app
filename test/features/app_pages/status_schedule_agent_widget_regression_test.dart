@@ -927,7 +927,7 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.byKey(const ValueKey('agent-image-button')),
+          find.byKey(const ValueKey('agent-attachment-button')),
           findsOneWidget,
         );
         expect(
@@ -949,7 +949,7 @@ void main() {
         expect(agentAvatarImage.assetName, MomCozyAssets.agentAvatar);
 
         final imageButton = tester.widget<IconButton>(
-          find.byKey(const ValueKey('agent-image-button')),
+          find.byKey(const ValueKey('agent-attachment-button')),
         );
         expect(imageButton.onPressed, isNotNull);
         final voiceButton = tester.widget<IconButton>(
@@ -1091,10 +1091,15 @@ void main() {
       );
       expect(find.text('助手消息 17'), findsOneWidget);
 
-      await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+      await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+      expect(
+        find.byKey(const ValueKey('agent-attachment-menu')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('agent-attachment-photo-button')),
+      );
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('agent-image-attachment-chip')),
