@@ -301,15 +301,20 @@ class AuthenticatedApiMultipartTransport implements ApiMultipartTransport {
   @override
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
+    Map<String, Object?> query = const {},
     Map<String, Object?> fields = const {},
     Map<String, String> headers = const {},
     required ApiUploadFile file,
   }) async {
     final initialSession = sessionProvider();
     try {
-      return await transportFactory(
-        initialSession.accessToken,
-      ).uploadMultipart(path, fields: fields, headers: headers, file: file);
+      return await transportFactory(initialSession.accessToken).uploadMultipart(
+        path,
+        query: query,
+        fields: fields,
+        headers: headers,
+        file: file,
+      );
     } catch (error) {
       if (!_shouldRefresh(error)) rethrow;
       final refreshed = await refreshCoordinator.refresh(initialSession);
@@ -317,9 +322,13 @@ class AuthenticatedApiMultipartTransport implements ApiMultipartTransport {
       if (!refreshed.isAuthenticated) {
         rethrow;
       }
-      return transportFactory(
-        refreshed.accessToken,
-      ).uploadMultipart(path, fields: fields, headers: headers, file: file);
+      return transportFactory(refreshed.accessToken).uploadMultipart(
+        path,
+        query: query,
+        fields: fields,
+        headers: headers,
+        file: file,
+      );
     }
   }
 }

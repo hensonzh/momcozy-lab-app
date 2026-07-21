@@ -403,6 +403,7 @@ void main() {
 
         final response = await transport.uploadMultipart(
           '/v1/files/upload',
+          query: {'temporary': true},
           fields: {'owner_type': 'user'},
           file: const ApiUploadFile(
             name: 'photo.png',
@@ -414,6 +415,10 @@ void main() {
 
         expect(response['file_id'], 'file-001');
         expect(uploadTransport.paths, ['/v1/files/upload', '/v1/files/upload']);
+        expect(uploadTransport.queries, [
+          {'temporary': true},
+          {'temporary': true},
+        ]);
         expect(uploadTransport.tokens, ['old-access', 'access-token-001']);
         expect(current.accessToken, 'access-token-001');
       },
@@ -549,12 +554,14 @@ class _SequenceMultipartTokenTransport {
   final List<Map<String, Object?>> responses;
   final List<String> tokens = [];
   final List<String> paths = [];
+  final List<Map<String, Object?>> queries = [];
 
   ApiMultipartTransport forToken(String? token) {
     return _MultipartTokenTransport(
       token: token,
-      onRequest: (path) {
+      onRequest: (path, query) {
         paths.add(path);
+        queries.add(Map<String, Object?>.from(query));
         tokens.add(token ?? '');
         final response = responses.removeAt(0);
         if (isHttpErrorBody(response)) {
@@ -570,16 +577,18 @@ class _MultipartTokenTransport implements ApiMultipartTransport {
   _MultipartTokenTransport({required this.token, required this.onRequest});
 
   final String? token;
-  final Map<String, Object?> Function(String path) onRequest;
+  final Map<String, Object?> Function(String path, Map<String, Object?> query)
+  onRequest;
 
   @override
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
+    Map<String, Object?> query = const {},
     Map<String, Object?> fields = const {},
     Map<String, String> headers = const {},
     required ApiUploadFile file,
   }) async {
-    return onRequest(path);
+    return onRequest(path, query);
   }
 }
 
