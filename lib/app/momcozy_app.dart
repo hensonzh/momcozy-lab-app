@@ -1474,6 +1474,7 @@ Widget _buildDefaultAgentHubPage(
       runtime.session,
       accessTokenProvider: currentAccessToken,
     ),
+    conversationRepository: runtime.agentConversationRepository,
     greetingProfileLoader:
         runtime.agentHubProfileRepository.fetchGreetingProfile,
     requestBuilder: (message) => buildSessionAgentHubRequest(
@@ -1484,6 +1485,8 @@ Widget _buildDefaultAgentHubPage(
     voicePlaybackCoordinator: voicePlaybackCoordinator,
     voicePlaybackPlayer: runtime.agentVoicePlaybackPlayer,
     pickImage: runtime.agentHubImagePicker,
+    mediaRepository: runtime.mediaRepository,
+    loadImageContent: runtime.mediaContentRepository.loadImage,
     voiceInputController: runtime.agentVoiceInputController,
     productAssetRepository: runtime.productAssetRepository,
     ibclcConsultStore: runtime.ibclcConsultStore,
