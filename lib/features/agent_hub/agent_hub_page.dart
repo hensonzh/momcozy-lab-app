@@ -214,6 +214,7 @@ class AgentHubPage extends StatefulWidget {
     this.pickImage,
     this.pickDocument,
     this.mediaRepository,
+    this.loadImageThumbnail,
     this.loadImageContent,
     this.voiceInputController,
     this.voicePlaybackCoordinator,
@@ -246,6 +247,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubImagePicker? pickImage;
   final AgentHubDocumentPicker? pickDocument;
   final MediaRepository? mediaRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
@@ -2856,6 +2858,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 ),
                                 sliver: AgentHubHistorySliver(
                                   messages: _historyMessages,
+                                  loadImageThumbnail: widget.loadImageThumbnail,
                                   loadImageContent: widget.loadImageContent,
                                   productAssetRepository:
                                       widget.productAssetRepository,
@@ -3625,6 +3628,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
     super.key,
     required this.messages,
     this.productAssetRepository,
+    this.loadImageThumbnail,
     this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3635,6 +3639,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
 
   final List<AgentHubHistoryMessage> messages;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3652,6 +3657,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            loadImageThumbnail: loadImageThumbnail,
             loadImageContent: loadImageContent,
             productAssetRepository: productAssetRepository,
             onArtifactAction: onArtifactAction,
@@ -3672,6 +3678,7 @@ class AgentHubHistorySliver extends StatelessWidget {
     super.key,
     required this.messages,
     this.productAssetRepository,
+    this.loadImageThumbnail,
     this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3682,6 +3689,7 @@ class AgentHubHistorySliver extends StatelessWidget {
 
   final List<AgentHubHistoryMessage> messages;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3701,6 +3709,7 @@ class AgentHubHistorySliver extends StatelessWidget {
         return _AgentHistoryBubble(
           key: ValueKey('agent-history-$messageIndex'),
           message: messages[messageIndex],
+          loadImageThumbnail: loadImageThumbnail,
           loadImageContent: loadImageContent,
           productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
@@ -3719,6 +3728,7 @@ class _AgentHistoryBubble extends StatelessWidget {
     super.key,
     required this.message,
     this.productAssetRepository,
+    this.loadImageThumbnail,
     this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3729,6 +3739,7 @@ class _AgentHistoryBubble extends StatelessWidget {
 
   final AgentHubHistoryMessage message;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3802,6 +3813,7 @@ class _AgentHistoryBubble extends StatelessWidget {
                   if (message.images.isNotEmpty)
                     AgentSentImages(
                       images: message.images,
+                      loadImageThumbnail: loadImageThumbnail,
                       loadImageContent: loadImageContent,
                     ),
                   if (message.images.isNotEmpty && message.files.isNotEmpty)

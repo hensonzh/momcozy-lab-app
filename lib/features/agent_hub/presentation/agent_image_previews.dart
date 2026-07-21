@@ -11,10 +11,12 @@ class AgentSentImages extends StatelessWidget {
   const AgentSentImages({
     super.key,
     required this.images,
+    this.loadImageThumbnail,
     this.loadImageContent,
   });
 
   final List<AgentStreamImageInput> images;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
 
   @override
@@ -43,7 +45,7 @@ class AgentSentImages extends StatelessWidget {
                   height: itemHeight,
                   child: _AgentDataUrlImage(
                     image: images[index],
-                    loadImageContent: loadImageContent,
+                    loadImageContent: loadImageThumbnail,
                     fit: BoxFit.cover,
                     cacheWidth: 360,
                     showLoadHint: true,
