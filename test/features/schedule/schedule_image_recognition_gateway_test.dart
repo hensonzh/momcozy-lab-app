@@ -251,6 +251,7 @@ class _FakeMediaRepository implements MediaRepository {
   Future<UploadedMediaFile> uploadFile({
     required ApiUploadFile file,
     String? idempotencyKey,
+    bool temporary = false,
   }) async {
     files.add(file);
     idempotencyKeys.add(idempotencyKey);
@@ -262,6 +263,12 @@ class _FakeMediaRepository implements MediaRepository {
       mimeType: 'image/png',
     );
   }
+
+  @override
+  Future<void> deleteFile({
+    required String fileId,
+    String? idempotencyKey,
+  }) async {}
 }
 
 class _FakeSseConnector implements AgentStreamSseGetConnector {

@@ -737,6 +737,7 @@ void main() {
     tester,
   ) async {
     var newSessionStarted = false;
+    final mediaRepository = _FakeAgentImageMediaRepository();
 
     await tester.pumpWidget(
       _host(
@@ -751,8 +752,10 @@ void main() {
               content: '我建议你先观察舒适度和间隔。',
             ),
           ],
+          mediaRepository: mediaRepository,
           pickImage: (_) async => const AgentStreamImageInput(
-            dataUrl: 'data:image/png;base64,fixture',
+            dataUrl:
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
             mimeType: 'image/png',
             name: 'staged-before-new-session.png',
           ),
@@ -801,6 +804,9 @@ void main() {
           ?.text,
       '',
     );
+    expect(mediaRepository.deletedFileIds, [
+      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+    ]);
   });
 
   testWidgets(
@@ -2076,11 +2082,14 @@ void main() {
     );
     expect(client.requests.single.images.single.dataUrl, isEmpty);
     expect(mediaRepository.uploadedFiles.single.bytes, isNotEmpty);
+    expect(mediaRepository.temporaryUploads, [true]);
+    expect(mediaRepository.deletedFileIds, isEmpty);
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsNothing,
     );
     expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
+    expect(find.text('点击查看'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
     await tester.pumpAndSettle();
@@ -2090,6 +2099,85 @@ void main() {
     );
     await tester.tap(find.byKey(const ValueKey('agent-sent-image-close')));
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('Agent Hub locks draft actions while an attachment is pending', (
+    tester,
+  ) async {
+    final pickCompleter = Completer<AgentStreamImageInput?>();
+    final client = _FixtureAgentStreamClient(const <AgentStreamEvent>[]);
+    var newSessionStarted = false;
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          pickImage: (_) => pickCompleter.future,
+          onNewSession: () => newSessionStarted = true,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '保留这条草稿',
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byKey(const ValueKey('agent-new-session-button')),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .enabled,
+      isFalse,
+    );
+    expect(client.requests, isEmpty);
+    expect(newSessionStarted, isFalse);
+
+    pickCompleter.complete(
+      const AgentStreamImageInput(
+        dataUrl: 'data:image/png;base64,fixture',
+        mimeType: 'image/png',
+        name: 'pending-image.png',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '保留这条草稿',
+    );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+          .onPressed,
+      isNotNull,
+    );
   });
 
   testWidgets('Agent Hub uploads and sends a PDF file attachment', (
@@ -2143,7 +2231,44 @@ void main() {
       '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
     );
     expect(mediaRepository.uploadedFiles.single.mimeType, 'application/pdf');
+    expect(mediaRepository.temporaryUploads, [true]);
     expect(find.byKey(const ValueKey('agent-sent-file-0')), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub deletes a temporary upload when it is removed', (
+    tester,
+  ) async {
+    final mediaRepository = _FakeAgentImageMediaRepository();
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(
+            _FixtureAgentStreamClient(const <AgentStreamEvent>[]),
+          ),
+          mediaRepository: mediaRepository,
+          pickImage: (_) async => const AgentStreamImageInput(
+            dataUrl:
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+            mimeType: 'image/png',
+            name: 'discard-me.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
+    await tester.pumpAndSettle();
+
+    expect(mediaRepository.temporaryUploads, [true]);
+    expect(mediaRepository.deletedFileIds, [
+      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+    ]);
   });
 
   testWidgets('Agent Hub keeps camera and gallery image sources distinct', (
@@ -9345,13 +9470,17 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
 
 class _FakeAgentImageMediaRepository implements MediaRepository {
   final uploadedFiles = <ApiUploadFile>[];
+  final temporaryUploads = <bool>[];
+  final deletedFileIds = <String>[];
 
   @override
   Future<UploadedMediaFile> uploadFile({
     required ApiUploadFile file,
     String? idempotencyKey,
+    bool temporary = false,
   }) async {
     uploadedFiles.add(file);
+    temporaryUploads.add(temporary);
     return const UploadedMediaFile(
       id: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
       name: 'pump-display.png',
@@ -9359,5 +9488,13 @@ class _FakeAgentImageMediaRepository implements MediaRepository {
       extension: 'png',
       mimeType: 'image/png',
     );
+  }
+
+  @override
+  Future<void> deleteFile({
+    required String fileId,
+    String? idempotencyKey,
+  }) async {
+    deletedFileIds.add(fileId);
   }
 }

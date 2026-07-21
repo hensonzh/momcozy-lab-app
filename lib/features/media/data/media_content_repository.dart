@@ -22,6 +22,8 @@ class MediaContentRepository {
     ProductAssetHttpConnector? connector,
     this.headers = const {'X-Momcozy-Client': 'flutter'},
     this.maxImageBytes = 10 * 1024 * 1024,
+    this.maxThumbnailBytes = 1024 * 1024,
+    this.maxCachedThumbnails = 64,
   }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri),
        connector = connector ?? IoProductAssetHttpConnector();
 
@@ -31,17 +33,63 @@ class MediaContentRepository {
   final ProductAssetHttpConnector connector;
   final Map<String, String> headers;
   final int maxImageBytes;
+  final int maxThumbnailBytes;
+  final int maxCachedThumbnails;
+  final Map<String, Future<Uint8List>> _thumbnailLoads = {};
 
-  Future<Uint8List> loadImage(String fileId) async {
+  Future<Uint8List> loadImage(String fileId) {
+    return _loadImageVariant(
+      fileId: _validateFileId(fileId),
+      variant: 'content',
+      maxBytes: maxImageBytes,
+    );
+  }
+
+  Future<Uint8List> loadImageThumbnail(String fileId) {
+    final normalizedFileId = _validateFileId(fileId);
+    final cached = _thumbnailLoads[normalizedFileId];
+    if (cached != null) return cached;
+
+    late final Future<Uint8List> load;
+    load =
+        _loadImageVariant(
+          fileId: normalizedFileId,
+          variant: 'thumbnail',
+          maxBytes: maxThumbnailBytes,
+        ).then(
+          (bytes) => bytes,
+          onError: (Object error, StackTrace stackTrace) {
+            if (identical(_thumbnailLoads[normalizedFileId], load)) {
+              _thumbnailLoads.remove(normalizedFileId);
+            }
+            Error.throwWithStackTrace(error, stackTrace);
+          },
+        );
+    _thumbnailLoads[normalizedFileId] = load;
+    while (_thumbnailLoads.length > maxCachedThumbnails) {
+      _thumbnailLoads.remove(_thumbnailLoads.keys.first);
+    }
+    return load;
+  }
+
+  String _validateFileId(String fileId) {
     final normalizedFileId = fileId.trim();
     if (!_uuidPattern.hasMatch(normalizedFileId)) {
       throw const MediaContentLoadException(code: 'invalid_file_id');
     }
+    return normalizedFileId;
+  }
+
+  Future<Uint8List> _loadImageVariant({
+    required String fileId,
+    required String variant,
+    required int maxBytes,
+  }) async {
     try {
-      var response = await _get(normalizedFileId);
+      var response = await _get(fileId, variant: variant, maxBytes: maxBytes);
       if (response.statusCode == HttpStatus.unauthorized &&
           await _refreshSession()) {
-        response = await _get(normalizedFileId);
+        response = await _get(fileId, variant: variant, maxBytes: maxBytes);
       }
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw MediaContentLoadException(
@@ -52,7 +100,7 @@ class MediaContentRepository {
       if (!response.contentType.toLowerCase().startsWith('image/')) {
         throw const MediaContentLoadException(code: 'content_type_mismatch');
       }
-      if (response.body.isEmpty || response.body.length > maxImageBytes) {
+      if (response.body.isEmpty || response.body.length > maxBytes) {
         throw const MediaContentLoadException(code: 'image_size_invalid');
       }
       return response.body;
@@ -63,20 +111,24 @@ class MediaContentRepository {
     }
   }
 
-  Future<ProductAssetHttpResponse> _get(String fileId) {
+  Future<ProductAssetHttpResponse> _get(
+    String fileId, {
+    required String variant,
+    required int maxBytes,
+  }) {
     return connector.get(
-      _resolve(fileId),
+      _resolve(fileId, variant: variant),
       headers: _requestHeaders(),
-      maxBytes: maxImageBytes,
+      maxBytes: maxBytes,
     );
   }
 
-  Uri _resolve(String fileId) {
+  Uri _resolve(String fileId, {required String variant}) {
     final basePath = baseUri.path.endsWith('/')
         ? baseUri.path
         : '${baseUri.path}/';
     return baseUri.replace(
-      path: '${basePath}v1/files/${Uri.encodeComponent(fileId)}/content',
+      path: '${basePath}v1/files/${Uri.encodeComponent(fileId)}/$variant',
       queryParameters: baseUri.queryParameters.isEmpty
           ? null
           : baseUri.queryParameters,
