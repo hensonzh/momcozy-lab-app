@@ -49,6 +49,35 @@ void main() {
       expect(uploaded.mimeType, isEmpty);
     });
 
+    test('marks agent draft uploads as temporary', () async {
+      final transport = FixtureApiMultipartTransport({'id': 'file-001'});
+
+      await MediaApiRepository(
+        transport: transport,
+      ).uploadFile(file: _file, temporary: true);
+
+      expect(transport.lastPath, '$mediaUploadEndpoint?temporary=true');
+    });
+
+    test('deletes an abandoned temporary file idempotently', () async {
+      final mutationTransport = FixtureApiJsonTransport(const {});
+      final repository = MediaApiRepository(
+        transport: FixtureApiMultipartTransport(const {}),
+        mutationTransport: mutationTransport,
+      );
+
+      await repository.deleteFile(
+        fileId: ' file-001 ',
+        idempotencyKey: ' discard-file-001 ',
+      );
+
+      expect(mutationTransport.lastMethod, 'DELETE');
+      expect(mutationTransport.lastPath, '/v1/files/file-001');
+      expect(mutationTransport.lastHeaders, {
+        'Idempotency-Key': 'discard-file-001',
+      });
+    });
+
     test('keeps HTTP, cancel, and timeout failures distinct', () async {
       await expectLater(
         MediaApiRepository(

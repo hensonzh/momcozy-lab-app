@@ -214,6 +214,7 @@ class AgentHubPage extends StatefulWidget {
     this.pickImage,
     this.pickDocument,
     this.mediaRepository,
+    this.loadImageThumbnail,
     this.loadImageContent,
     this.voiceInputController,
     this.voicePlaybackCoordinator,
@@ -246,6 +247,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubImagePicker? pickImage;
   final AgentHubDocumentPicker? pickDocument;
   final MediaRepository? mediaRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
@@ -1050,6 +1052,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _newSessionStartPending ||
       _supportTicketSubmitPending ||
       _conversationSwitchPending ||
+      _attachmentUploadPending ||
       _isComposerLockedForState(_state);
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
@@ -1123,6 +1126,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
               ? '请查看这个文件'
               : '请看这张图片');
     final sentImages = List<AgentStreamImageInput>.unmodifiable(
+      _attachedImages,
+    );
+    final requestImages = List<AgentStreamImageInput>.unmodifiable(
       _attachedImages.map(
         (image) =>
             image.fileId.trim().isEmpty ? image : image.copyWith(dataUrl: ''),
@@ -1133,7 +1139,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithWorkflowReply(
       _requestWithFiles(
-        _requestWithImages(widget.requestBuilder(requestMessage), sentImages),
+        _requestWithImages(
+          widget.requestBuilder(requestMessage),
+          requestImages,
+        ),
         sentFiles,
       ),
       _state.workflowReply,
@@ -1404,9 +1413,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         !_canAddAttachment) {
       return;
     }
-    setState(() {
-      _attachmentUploadPending = true;
-    });
+    _setAttachmentUploadPending(true);
     AgentStreamImageInput? image;
     Object? failure;
     try {
@@ -1417,6 +1424,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           image.fileId.trim().isEmpty) {
         final bytes = _decodeAgentImageBytes(image.dataUrl);
         final uploaded = await mediaRepository.uploadFile(
+          temporary: true,
           file: ApiUploadFile(
             name: image.name.trim().isEmpty ? 'image.png' : image.name.trim(),
             mimeType: image.mimeType.trim().isEmpty
@@ -1442,6 +1450,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _attachedImages.add(image);
       }
     });
+    _publishAttachmentUploadState();
     if (failure != null) {
       ScaffoldMessenger.of(
         context,
@@ -1462,9 +1471,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         !_canAddAttachment) {
       return;
     }
-    setState(() {
-      _attachmentUploadPending = true;
-    });
+    _setAttachmentUploadPending(true);
 
     AgentStreamFileInput? file;
     Object? failure;
@@ -1472,6 +1479,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       final document = await pickDocument();
       if (document != null) {
         final uploaded = await mediaRepository.uploadFile(
+          temporary: true,
           file: ApiUploadFile(
             name: document.name.trim().isEmpty
                 ? 'document.pdf'
@@ -1502,6 +1510,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _attachedFiles.add(file);
       }
     });
+    _publishAttachmentUploadState();
     if (failure != null) {
       final message = switch (failure) {
         AgentDocumentInputException(code: 'file_too_large') => '文件不能超过 10MB。',
@@ -1516,6 +1525,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     if (file == null) return;
     _persistInteractionState();
+  }
+
+  void _setAttachmentUploadPending(bool value) {
+    if (_attachmentUploadPending == value) return;
+    setState(() {
+      _attachmentUploadPending = value;
+    });
+    _publishAttachmentUploadState();
+  }
+
+  void _publishAttachmentUploadState() {
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    _syncConversationSwitchEnabled();
   }
 
   bool get _canAddAttachment =>
@@ -1633,23 +1655,61 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _removeAttachedImage(int index) {
     if (index < 0 || index >= _attachedImages.length) return;
+    final removed = _attachedImages[index];
     setState(() {
       _attachedImages.removeAt(index);
     });
     _persistInteractionState();
+    unawaited(_deleteAbandonedAttachments([removed.fileId]));
   }
 
   void _removeAttachedFile(int index) {
     if (index < 0 || index >= _attachedFiles.length) return;
+    final removed = _attachedFiles[index];
     setState(() {
       _attachedFiles.removeAt(index);
     });
     _persistInteractionState();
+    unawaited(_deleteAbandonedAttachments([removed.fileId]));
+  }
+
+  Iterable<String> _attachedFileIds() sync* {
+    for (final image in _attachedImages) {
+      yield image.fileId;
+    }
+    for (final file in _attachedFiles) {
+      yield file.fileId;
+    }
+  }
+
+  Future<void> _deleteAbandonedAttachments(Iterable<String> fileIds) async {
+    final repository = widget.mediaRepository;
+    if (repository == null) return;
+    final normalizedIds = fileIds
+        .map((fileId) => fileId.trim())
+        .where((fileId) => fileId.isNotEmpty)
+        .toSet();
+    await Future.wait(
+      normalizedIds.map((fileId) async {
+        try {
+          await repository.deleteFile(
+            fileId: fileId,
+            idempotencyKey: 'agent-draft-discard:$fileId',
+          );
+        } catch (_) {
+          // The server-side temporary-file TTL is the durable cleanup fallback.
+        }
+      }),
+    );
   }
 
   Future<void> _openConversationHistory() async {
     final repository = widget.conversationRepository;
-    if (repository == null || _isSessionMutationPending) return;
+    if (repository == null ||
+        _isSessionMutationPending ||
+        _attachmentUploadPending) {
+      return;
+    }
     FocusManager.instance.primaryFocus?.unfocus();
     await showAgentConversationPanel(
       context: context,
@@ -1667,6 +1727,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (repository == null ||
         normalizedThreadId.isEmpty ||
         _isVisibleReplyRunning ||
+        _attachmentUploadPending ||
         _conversationSwitchPending ||
         _newSessionStartPending) {
       return false;
@@ -1687,6 +1748,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
       widget.voicePlaybackCoordinator?.cancel();
       _cancelRunSubscription();
+      final abandonedAttachmentIds = _attachedFileIds().toList();
       _composerController.clear();
       _formPresentationSession.clear();
       _formSubmissionsNotifier.value =
@@ -1713,6 +1775,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _notifyActionStateChanged();
       _persistInteractionState();
       _flushPersistentInteractionState();
+      unawaited(_deleteAbandonedAttachments(abandonedAttachmentIds));
       _scheduleScrollToLatest();
       _armOlderConversationHistoryLoading();
 
@@ -1745,6 +1808,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _startNewSession() async {
     if (_isVisibleReplyRunning ||
+        _attachmentUploadPending ||
         _newSessionStartPending ||
         _conversationSwitchPending) {
       return;
@@ -1762,6 +1826,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
       _dismissComposerKeyboardOnRunAccepted = false;
       _cancelRunSubscription();
+      final abandonedAttachmentIds = _attachedFileIds().toList();
       _composerController.clear();
       _formSubmissionsNotifier.value =
           const <String, AgentArtifactFormSubmission>{};
@@ -1787,6 +1852,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _notifyActionStateChanged();
       _persistInteractionState();
       _flushPersistentInteractionState();
+      unawaited(_deleteAbandonedAttachments(abandonedAttachmentIds));
       unawaited(_refreshGreetingAndMaybePlayVoice());
     } catch (_) {
       // Keep the current session visible when its durable cart clear fails.
@@ -1829,7 +1895,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     _setNotifierValue(
       _conversationSwitchEnabledNotifier,
-      !_isVisibleReplyRunning && !_isSessionMutationPending,
+      !_isVisibleReplyRunning &&
+          !_isSessionMutationPending &&
+          !_attachmentUploadPending,
     );
   }
 
@@ -2740,10 +2808,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     showControls: _interactionRestoreResolved,
                     autoVoiceEnabled: _autoVoiceEnabled,
                     isRunning:
-                        isVisibleReplyRunning || isSessionMutationPending,
+                        isVisibleReplyRunning ||
+                        isSessionMutationPending ||
+                        _attachmentUploadPending,
                     onOpenConversations:
                         widget.conversationRepository == null ||
-                            isSessionMutationPending
+                            isSessionMutationPending ||
+                            _attachmentUploadPending
                         ? null
                         : _openConversationHistory,
                     onToggleAutoVoice: _toggleAutoVoice,
@@ -2787,6 +2858,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 ),
                                 sliver: AgentHubHistorySliver(
                                   messages: _historyMessages,
+                                  loadImageThumbnail: widget.loadImageThumbnail,
                                   loadImageContent: widget.loadImageContent,
                                   productAssetRepository:
                                       widget.productAssetRepository,
@@ -3556,6 +3628,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
     super.key,
     required this.messages,
     this.productAssetRepository,
+    this.loadImageThumbnail,
     this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3566,6 +3639,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
 
   final List<AgentHubHistoryMessage> messages;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3583,6 +3657,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            loadImageThumbnail: loadImageThumbnail,
             loadImageContent: loadImageContent,
             productAssetRepository: productAssetRepository,
             onArtifactAction: onArtifactAction,
@@ -3603,6 +3678,7 @@ class AgentHubHistorySliver extends StatelessWidget {
     super.key,
     required this.messages,
     this.productAssetRepository,
+    this.loadImageThumbnail,
     this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3613,6 +3689,7 @@ class AgentHubHistorySliver extends StatelessWidget {
 
   final List<AgentHubHistoryMessage> messages;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3632,6 +3709,7 @@ class AgentHubHistorySliver extends StatelessWidget {
         return _AgentHistoryBubble(
           key: ValueKey('agent-history-$messageIndex'),
           message: messages[messageIndex],
+          loadImageThumbnail: loadImageThumbnail,
           loadImageContent: loadImageContent,
           productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
@@ -3650,6 +3728,7 @@ class _AgentHistoryBubble extends StatelessWidget {
     super.key,
     required this.message,
     this.productAssetRepository,
+    this.loadImageThumbnail,
     this.loadImageContent,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3660,6 +3739,7 @@ class _AgentHistoryBubble extends StatelessWidget {
 
   final AgentHubHistoryMessage message;
   final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3733,6 +3813,7 @@ class _AgentHistoryBubble extends StatelessWidget {
                   if (message.images.isNotEmpty)
                     AgentSentImages(
                       images: message.images,
+                      loadImageThumbnail: loadImageThumbnail,
                       loadImageContent: loadImageContent,
                     ),
                   if (message.images.isNotEmpty && message.files.isNotEmpty)

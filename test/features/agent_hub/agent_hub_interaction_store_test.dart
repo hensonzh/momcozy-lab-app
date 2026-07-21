@@ -228,6 +228,44 @@ void main() {
     expect(restored.activeRequest, isNull);
   });
 
+  test(
+    'uploaded image references survive secure persistence without bytes',
+    () {
+      const image = AgentStreamImageInput(
+        dataUrl: 'data:image/png;base64,large-sensitive-payload',
+        fileId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+        mimeType: 'image/png',
+        name: 'sent.png',
+        size: 24,
+        detail: 'low',
+      );
+      const snapshot = AgentHubInteractionSnapshot(
+        attachedImages: [image],
+        historyMessages: [
+          AgentHubHistorySnapshot(role: 'user', content: '', images: [image]),
+        ],
+        activeRequest: AgentStreamRequest(message: '请看这张图片', images: [image]),
+      );
+
+      final encoded = jsonEncode(snapshot.toMap(includeImageData: false));
+      final restored = AgentHubInteractionSnapshot.fromMap(
+        Map<String, Object?>.from(jsonDecode(encoded) as Map),
+      );
+
+      expect(encoded, isNot(contains('large-sensitive-payload')));
+      expect(encoded, contains(image.fileId));
+      expect(restored.attachedImages.single.fileId, image.fileId);
+      expect(restored.attachedImages.single.dataUrl, isEmpty);
+      expect(
+        restored.historyMessages.single.images.single.fileId,
+        image.fileId,
+      );
+      expect(restored.historyMessages.single.images.single.dataUrl, isEmpty);
+      expect(restored.activeRequest?.images.single.fileId, image.fileId);
+      expect(restored.activeRequest?.images.single.dataUrl, isEmpty);
+    },
+  );
+
   test('PDF draft and request metadata survive secure persistence', () {
     const file = AgentStreamFileInput(
       fileId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',

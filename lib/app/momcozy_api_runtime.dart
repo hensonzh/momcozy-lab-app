@@ -605,7 +605,13 @@ class MomCozyApiRuntime {
   }
 
   MediaApiRepository get mediaRepository {
-    return MediaApiRepository(transport: multipartTransport);
+    final transport = jsonTransport;
+    return MediaApiRepository(
+      transport: multipartTransport,
+      mutationTransport: transport is ApiJsonMutationTransport
+          ? transport as ApiJsonMutationTransport
+          : null,
+    );
   }
 
   MediaContentRepository get mediaContentRepository {
