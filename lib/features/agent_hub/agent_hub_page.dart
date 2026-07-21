@@ -26,6 +26,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_art
 import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
@@ -33,6 +34,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_conversation_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
@@ -64,6 +66,7 @@ const _agentSkillAssetBaseUrl = String.fromEnvironment(
 const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 const _completedReplyRunSettlementTimeout = Duration(seconds: 2);
 const _completedReplyCancelTimeout = Duration(seconds: 2);
+const _agentRunAttachmentLimit = 20;
 const _supportTicketSubmittedReply =
     '已经帮你提交工单啦，我们的人工客服团队会在 24 小时内主动联系你，陪你一起跟进这个问题。很抱歉这次没能直接帮你解决，给你添麻烦了。接下来还请稍微耐心等待一下，我们会尽力协助你把问题处理好。';
 
@@ -186,6 +189,7 @@ class _AgentHubInteractionState {
   List<AgentHubHistoryMessage>? historyMessages;
   String composerText = '';
   List<AgentStreamImageInput> attachedImages = const <AgentStreamImageInput>[];
+  List<AgentStreamFileInput> attachedFiles = const <AgentStreamFileInput>[];
   bool autoVoiceEnabled = true;
   AgentStreamRequest? activeRequest;
   Map<String, String> localActionStatuses = const <String, String>{};
@@ -208,6 +212,7 @@ class AgentHubPage extends StatefulWidget {
     this.greetingProfileLoader,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
+    this.pickDocument,
     this.mediaRepository,
     this.loadImageContent,
     this.voiceInputController,
@@ -239,6 +244,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubGreetingProfileLoader? greetingProfileLoader;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
+  final AgentHubDocumentPicker? pickDocument;
   final MediaRepository? mediaRepository;
   final AgentImageContentLoader? loadImageContent;
   final AgentVoiceInputController? voiceInputController;
@@ -285,6 +291,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
   int _voiceCaptureGeneration = 0;
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
+  final List<AgentStreamFileInput> _attachedFiles = <AgentStreamFileInput>[];
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
   final Set<String> _appliedHospitalBagCartUpdates = <String>{};
@@ -323,8 +330,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _autoVoiceEnabled = true;
   bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
-  bool _showPhotoMenu = false;
-  bool _imageUploadPending = false;
+  bool _attachmentUploadPending = false;
   Timer? _persistentWriteTimer;
   Timer? _activeRunPersistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
@@ -545,6 +551,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       text: interactionState.composerText,
     );
     _attachedImages.addAll(interactionState.attachedImages);
+    _attachedFiles.addAll(interactionState.attachedFiles);
     _autoVoiceEnabled = interactionState.autoVoiceEnabled;
     _activeRequest = interactionState.activeRequest;
     _localActionStatuses.addAll(interactionState.localActionStatuses);
@@ -588,6 +595,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ..historyMessages = [..._historyMessages]
         ..composerText = _composerController.text
         ..attachedImages = [..._attachedImages]
+        ..attachedFiles = [..._attachedFiles]
         ..autoVoiceEnabled = _autoVoiceEnabled
         ..activeRequest = _activeRequest
         ..localActionStatuses = {..._localActionStatuses}
@@ -663,6 +671,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _historyMessages.isNotEmpty ||
         _composerController.text.trim().isNotEmpty ||
         _attachedImages.isNotEmpty ||
+        _attachedFiles.isNotEmpty ||
         _activeRequest != null ||
         _localActionStatuses.isNotEmpty ||
         _formSubmissionsNotifier.value.isNotEmpty;
@@ -686,6 +695,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _attachedImages
       ..clear()
       ..addAll(snapshot.attachedImages);
+    _attachedFiles
+      ..clear()
+      ..addAll(snapshot.attachedFiles);
     _autoVoiceEnabled = snapshot.autoVoiceEnabled;
     _activeRequest = snapshot.activeRequest;
     _localActionStatuses
@@ -722,6 +734,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           .toList(growable: false),
       composerText: _composerController.text,
       attachedImages: [..._attachedImages],
+      attachedFiles: [..._attachedFiles],
       autoVoiceEnabled: _autoVoiceEnabled,
       activeRequest: _activeRequest,
       localActionStatuses: {..._localActionStatuses},
@@ -1092,7 +1105,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final runner = widget.runner;
     final message = _composerController.text.trim();
     if (runner == null ||
-        (message.isEmpty && _attachedImages.isEmpty) ||
+        (message.isEmpty &&
+            _attachedImages.isEmpty &&
+            _attachedFiles.isEmpty) ||
         _isComposerLocked) {
       return;
     }
@@ -1102,17 +1117,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
     await _waitForPendingServerCancel();
     if (!mounted || _isComposerLocked) return;
 
-    final requestMessage = message.isEmpty ? '请看这张图片' : message;
+    final requestMessage = message.isNotEmpty
+        ? message
+        : (_attachedFiles.isNotEmpty && _attachedImages.isEmpty
+              ? '请查看这个文件'
+              : '请看这张图片');
     final sentImages = List<AgentStreamImageInput>.unmodifiable(
       _attachedImages.map(
         (image) =>
             image.fileId.trim().isEmpty ? image : image.copyWith(dataUrl: ''),
       ),
     );
+    final sentFiles = List<AgentStreamFileInput>.unmodifiable(_attachedFiles);
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithWorkflowReply(
-      _requestWithImages(widget.requestBuilder(requestMessage), sentImages),
+      _requestWithFiles(
+        _requestWithImages(widget.requestBuilder(requestMessage), sentImages),
+        sentFiles,
+      ),
       _state.workflowReply,
     );
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
@@ -1130,10 +1153,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
           role: AgentHubHistoryRole.user,
           content: message,
           images: sentImages,
+          files: sentFiles,
         ),
       );
       _attachedImages.clear();
-      _showPhotoMenu = false;
+      _attachedFiles.clear();
       _pendingAutoVoiceReplay = null;
     });
     _persistInteractionState();
@@ -1187,7 +1211,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ),
       );
       _attachedImages.clear();
-      _showPhotoMenu = false;
+      _attachedFiles.clear();
       _pendingAutoVoiceReplay = null;
     });
     _persistInteractionState();
@@ -1374,9 +1398,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _attachImage(AgentImageInputSource source) async {
     final pickImage = widget.pickImage;
-    if (pickImage == null || _isComposerLocked || _imageUploadPending) return;
+    if (pickImage == null ||
+        _isComposerLocked ||
+        _attachmentUploadPending ||
+        !_canAddAttachment) {
+      return;
+    }
     setState(() {
-      _imageUploadPending = true;
+      _attachmentUploadPending = true;
     });
     AgentStreamImageInput? image;
     Object? failure;
@@ -1408,8 +1437,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     if (!mounted) return;
     setState(() {
-      _imageUploadPending = false;
-      _showPhotoMenu = false;
+      _attachmentUploadPending = false;
       if (image != null && failure == null) {
         _attachedImages.add(image);
       }
@@ -1424,12 +1452,74 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
   }
 
-  void _togglePhotoMenu() {
-    if (widget.pickImage == null || _isComposerLocked) return;
+  Future<void> _attachDocument() async {
+    final pickDocument = widget.pickDocument;
+    final mediaRepository = widget.mediaRepository;
+    if (pickDocument == null ||
+        mediaRepository == null ||
+        _isComposerLocked ||
+        _attachmentUploadPending ||
+        !_canAddAttachment) {
+      return;
+    }
     setState(() {
-      _showPhotoMenu = !_showPhotoMenu;
+      _attachmentUploadPending = true;
     });
+
+    AgentStreamFileInput? file;
+    Object? failure;
+    try {
+      final document = await pickDocument();
+      if (document != null) {
+        final uploaded = await mediaRepository.uploadFile(
+          file: ApiUploadFile(
+            name: document.name.trim().isEmpty
+                ? 'document.pdf'
+                : document.name.trim(),
+            mimeType: 'application/pdf',
+            sizeBytes: document.size,
+            bytes: document.bytes,
+          ),
+        );
+        final fileId = uploaded.id.trim();
+        if (fileId.isEmpty) {
+          throw StateError('Document upload did not return a file id.');
+        }
+        file = AgentStreamFileInput(
+          fileId: fileId,
+          mimeType: 'application/pdf',
+          name: document.name,
+          size: document.size,
+        );
+      }
+    } catch (error) {
+      failure = error;
+    }
+    if (!mounted) return;
+    setState(() {
+      _attachmentUploadPending = false;
+      if (file != null && failure == null) {
+        _attachedFiles.add(file);
+      }
+    });
+    if (failure != null) {
+      final message = switch (failure) {
+        AgentDocumentInputException(code: 'file_too_large') => '文件不能超过 10MB。',
+        AgentDocumentInputException(code: 'unsupported_file_type') =>
+          '暂仅支持 PDF 文件。',
+        _ => '文件上传失败，请重试。',
+      };
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+      return;
+    }
+    if (file == null) return;
+    _persistInteractionState();
   }
+
+  bool get _canAddAttachment =>
+      _attachedImages.length + _attachedFiles.length < _agentRunAttachmentLimit;
 
   void _startVoiceInput() {
     if (widget.voiceInputController == null ||
@@ -1549,6 +1639,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
   }
 
+  void _removeAttachedFile(int index) {
+    if (index < 0 || index >= _attachedFiles.length) return;
+    setState(() {
+      _attachedFiles.removeAt(index);
+    });
+    _persistInteractionState();
+  }
+
   Future<void> _openConversationHistory() async {
     final repository = widget.conversationRepository;
     if (repository == null || _isSessionMutationPending) return;
@@ -1603,7 +1701,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _olderConversationHistoryError = null;
         _setRunState(history.currentState);
         _attachedImages.clear();
-        _showPhotoMenu = false;
+        _attachedFiles.clear();
         _pendingActionIds.clear();
         _localActionStatuses.clear();
         _activeRequest = null;
@@ -1676,7 +1774,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _olderConversationHistoryLoadArmed = false;
         _olderConversationHistoryError = null;
         _attachedImages.clear();
-        _showPhotoMenu = false;
+        _attachedFiles.clear();
         _pendingActionIds.clear();
         _localActionStatuses.clear();
         _activeRequest = null;
@@ -2810,12 +2908,23 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     images: List<AgentStreamImageInput>.unmodifiable(
                       _attachedImages,
                     ),
-                    showPhotoMenu: _showPhotoMenu,
+                    files: List<AgentStreamFileInput>.unmodifiable(
+                      _attachedFiles,
+                    ),
                     canAttachImage:
                         widget.pickImage != null &&
-                        !_imageUploadPending &&
+                        !_attachmentUploadPending &&
+                        _canAddAttachment &&
                         !isComposerLocked &&
                         !isRestoring,
+                    canAttachFile:
+                        widget.pickDocument != null &&
+                        widget.mediaRepository != null &&
+                        !_attachmentUploadPending &&
+                        _canAddAttachment &&
+                        !isComposerLocked &&
+                        !isRestoring,
+                    isAttachmentPending: _attachmentUploadPending,
                     canUseVoice:
                         !isRestoring &&
                         widget.voiceInputController != null &&
@@ -2829,12 +2938,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     onChanged: (_) {},
                     onSend: _sendMessage,
                     onCancel: _cancelRun,
-                    onTogglePhotoMenu: _togglePhotoMenu,
                     onTakePhoto: () =>
                         unawaited(_attachImage(AgentImageInputSource.camera)),
-                    onUploadImage: () =>
+                    onPickPhoto: () =>
                         unawaited(_attachImage(AgentImageInputSource.gallery)),
+                    onPickFile: () => unawaited(_attachDocument()),
                     onRemoveImage: _removeAttachedImage,
+                    onRemoveFile: _removeAttachedFile,
                     onVoiceStart: _startVoiceInput,
                     onVoiceEnd: (submit) =>
                         unawaited(_finishVoiceInput(submit: submit)),
@@ -3203,6 +3313,23 @@ AgentStreamRequest _requestWithImages(
     threadId: request.threadId,
     locale: request.locale,
     images: [...request.images, ...images],
+    files: request.files,
+    metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
+  );
+}
+
+AgentStreamRequest _requestWithFiles(
+  AgentStreamRequest request,
+  List<AgentStreamFileInput> files,
+) {
+  if (files.isEmpty) return request;
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    locale: request.locale,
+    images: request.images,
+    files: [...request.files, ...files],
     metadata: request.metadata,
     idempotencyKey: request.idempotencyKey,
   );
@@ -3233,6 +3360,7 @@ AgentStreamRequest _requestWithIdempotencyKey(
     afterSequence: request.afterSequence,
     locale: request.locale,
     images: request.images,
+    files: request.files,
     metadata: request.metadata,
     idempotencyKey: normalized,
   );
@@ -3250,6 +3378,7 @@ AgentStreamRequest _requestWithMetadata(
     afterSequence: request.afterSequence,
     locale: request.locale,
     images: request.images,
+    files: request.files,
     metadata: {...request.metadata, ...metadata},
     idempotencyKey: request.idempotencyKey,
   );
@@ -3279,6 +3408,7 @@ AgentStreamRequest _requestWithThreadId(
     threadId: normalizedThreadId,
     locale: request.locale,
     images: request.images,
+    files: request.files,
     metadata: request.metadata,
     idempotencyKey: request.idempotencyKey,
   );
@@ -3292,12 +3422,14 @@ class AgentHubHistoryMessage {
     required this.content,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
+    this.files = const <AgentStreamFileInput>[],
   });
 
   final AgentHubHistoryRole role;
   final String content;
   final AgentStreamRunState? runState;
   final List<AgentStreamImageInput> images;
+  final List<AgentStreamFileInput> files;
 
   String get roleLabel {
     return switch (role) {
@@ -3317,6 +3449,7 @@ AgentHubHistoryMessage _historyMessageFromSnapshot(
     content: snapshot.content,
     runState: snapshot.runState,
     images: snapshot.images,
+    files: snapshot.files,
   );
 }
 
@@ -3330,6 +3463,7 @@ AgentHubHistoryMessage _historyMessageFromConversation(
     content: message.content,
     runState: message.runState,
     images: message.images,
+    files: message.files,
   );
 }
 
@@ -3359,6 +3493,7 @@ AgentHubHistorySnapshot _historySnapshotFromMessage(
     content: message.content,
     runState: _historyRunStateForPersistence(message),
     images: message.images,
+    files: message.files,
   );
 }
 
@@ -3600,7 +3735,12 @@ class _AgentHistoryBubble extends StatelessWidget {
                       images: message.images,
                       loadImageContent: loadImageContent,
                     ),
-                  if (message.images.isNotEmpty && message.content.isNotEmpty)
+                  if (message.images.isNotEmpty && message.files.isNotEmpty)
+                    const SizedBox(height: 8),
+                  if (message.files.isNotEmpty)
+                    AgentSentFiles(files: message.files),
+                  if ((message.images.isNotEmpty || message.files.isNotEmpty) &&
+                      message.content.isNotEmpty)
                     const SizedBox(height: 8),
                   if (message.content.isNotEmpty)
                     Text(message.content, style: textStyle),
@@ -4117,7 +4257,14 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.streaming ||
         state.phase == AgentStreamRunPhase.waitingForConfirmation ||
         state.phase == AgentStreamRunPhase.error;
-    if (!supportsLoopDecor || state.textContent.trim().isNotEmpty) {
+    if (!supportsLoopDecor || state.hasCompletedAssistantMessage) {
+      return const _AgentLoopDecorState();
+    }
+    if (state.phase == AgentStreamRunPhase.streaming &&
+        state.textContent.trim().isNotEmpty) {
+      return const _AgentLoopDecorState(statusTitle: '正在组织答案～');
+    }
+    if (state.textContent.trim().isNotEmpty) {
       return const _AgentLoopDecorState();
     }
     return _agentLoopDecorStateFromEvents(state.events);
@@ -5700,18 +5847,21 @@ class AgentComposerBar extends StatefulWidget {
     required this.isRunning,
     required this.isInputLocked,
     required this.images,
-    required this.showPhotoMenu,
+    required this.files,
     required this.canAttachImage,
+    required this.canAttachFile,
+    required this.isAttachmentPending,
     required this.canUseVoice,
     required this.voicePhase,
     this.voicePlaybackFailed = false,
     required this.onChanged,
     required this.onSend,
     required this.onCancel,
-    required this.onTogglePhotoMenu,
     required this.onTakePhoto,
-    required this.onUploadImage,
+    required this.onPickPhoto,
+    required this.onPickFile,
     required this.onRemoveImage,
+    required this.onRemoveFile,
     required this.onVoiceStart,
     required this.onVoiceEnd,
   });
@@ -5722,18 +5872,21 @@ class AgentComposerBar extends StatefulWidget {
   final bool isRunning;
   final bool isInputLocked;
   final List<AgentStreamImageInput> images;
-  final bool showPhotoMenu;
+  final List<AgentStreamFileInput> files;
   final bool canAttachImage;
+  final bool canAttachFile;
+  final bool isAttachmentPending;
   final bool canUseVoice;
   final AgentVoicePhase voicePhase;
   final bool voicePlaybackFailed;
   final ValueChanged<String> onChanged;
   final VoidCallback onSend;
   final VoidCallback onCancel;
-  final VoidCallback onTogglePhotoMenu;
   final VoidCallback onTakePhoto;
-  final VoidCallback onUploadImage;
+  final VoidCallback onPickPhoto;
+  final VoidCallback onPickFile;
   final ValueChanged<int> onRemoveImage;
+  final ValueChanged<int> onRemoveFile;
   final VoidCallback onVoiceStart;
   final ValueChanged<bool> onVoiceEnd;
 
@@ -5743,12 +5896,13 @@ class AgentComposerBar extends StatefulWidget {
 
 class _AgentComposerBarState extends State<AgentComposerBar> {
   static const double _controlSize = 32;
+  static const double _attachmentControlSize = 40;
   static const double _surfaceMinHeight = 48;
   static const double _surfaceHorizontalInset = 12;
   static const double _surfaceVerticalInset = 8;
   static const double _controlGap = 8;
   static const double _inputLeftInset =
-      _surfaceHorizontalInset + _controlSize + _controlGap;
+      _surfaceHorizontalInset + _attachmentControlSize + _controlGap;
   static const double _inputRightInset =
       _surfaceHorizontalInset + (_controlSize * 2) + (_controlGap * 2);
   static const double _expandedInputHorizontalInset = 20;
@@ -5759,6 +5913,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   bool _voiceMode = false;
   bool _voicePressed = false;
   String? _textDraftBeforeVoice;
+  final MenuController _attachmentMenuController = MenuController();
 
   @override
   void initState() {
@@ -5769,9 +5924,17 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   @override
   void didUpdateWidget(covariant AgentComposerBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller == widget.controller) return;
-    oldWidget.controller.removeListener(_handleControllerChanged);
-    widget.controller.addListener(_handleControllerChanged);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_handleControllerChanged);
+      widget.controller.addListener(_handleControllerChanged);
+    }
+    if (!widget.canAttachImage &&
+        !widget.canAttachFile &&
+        _attachmentMenuController.isOpen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _attachmentMenuController.close();
+      });
+    }
   }
 
   @override
@@ -5829,6 +5992,53 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     widget.onVoiceEnd(submit);
   }
 
+  Widget _attachmentMenuItem({
+    required Key key,
+    required String label,
+    required IconData icon,
+    required VoidCallback? onPressed,
+  }) {
+    return MenuItemButton(
+      key: key,
+      onPressed: onPressed == null
+          ? null
+          : () {
+              _attachmentMenuController.close();
+              onPressed();
+            },
+      style: MenuItemButton.styleFrom(
+        minimumSize: const Size(220, 60),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      child: Row(
+        children: [
+          DecoratedBox(
+            decoration: const BoxDecoration(
+              color: MomCozyColors.muted,
+              shape: BoxShape.circle,
+            ),
+            child: SizedBox.square(
+              dimension: 44,
+              child: Icon(icon, size: 24, color: MomCozyColors.foreground),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: MomCozyTypography.fontFamily,
+              fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: MomCozyColors.foreground,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -5837,16 +6047,18 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final isInputLocked = widget.isInputLocked;
     final images = widget.images;
     final imageCount = images.length;
+    final files = widget.files;
+    final fileCount = files.length;
     final canSend =
-        widget.canSend && (controller.text.trim().isNotEmpty || imageCount > 0);
-    final showPhotoMenu = widget.showPhotoMenu;
+        widget.canSend &&
+        (controller.text.trim().isNotEmpty || imageCount > 0 || fileCount > 0);
     final canAttachImage = widget.canAttachImage;
+    final canAttachFile = widget.canAttachFile;
     final canUseVoice = widget.canUseVoice;
     final voicePhase = widget.voicePhase;
     final onChanged = widget.onChanged;
     final onSend = widget.onSend;
     final onCancel = widget.onCancel;
-    final onTogglePhotoMenu = widget.onTogglePhotoMenu;
     final sendIsStop = isRunning && !canSend;
     final sendLooksActive = canSend || sendIsStop;
     const inputTextStyle = TextStyle(
@@ -5864,59 +6076,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (showPhotoMenu) ...[
-              Padding(
-                key: const ValueKey('agent-photo-menu'),
-                padding: const EdgeInsets.only(bottom: 8),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: MomCozyColors.card.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: MomCozyColors.border.withValues(alpha: 0.62),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xff754c5e).withValues(alpha: 0.12),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: FilledButton.tonalIcon(
-                            key: const ValueKey('agent-photo-camera-button'),
-                            onPressed: canAttachImage
-                                ? widget.onTakePhoto
-                                : null,
-                            icon: const Icon(
-                              Icons.photo_camera_outlined,
-                              size: 18,
-                            ),
-                            label: const Text('拍照'),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            key: const ValueKey('agent-photo-upload-button'),
-                            onPressed: canAttachImage
-                                ? widget.onUploadImage
-                                : null,
-                            icon: const Icon(Icons.upload_rounded, size: 18),
-                            label: const Text('上传'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
             if (imageCount > 0) ...[
               SizedBox(
                 key: const ValueKey('agent-image-attachment-chip'),
@@ -5951,6 +6110,49 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             onRemove: isInputLocked
                                 ? null
                                 : () => widget.onRemoveImage(index),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+            if (fileCount > 0) ...[
+              SizedBox(
+                key: const ValueKey('agent-file-attachment-chip'),
+                height: 78,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Text(
+                        '文件 $fileCount',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: MomCozyColors.mutedForeground,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: fileCount,
+                        separatorBuilder: (_, _) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          return AgentComposerFileAttachment(
+                            key: ValueKey('agent-file-attachment-$index'),
+                            file: files[index],
+                            removeButtonKey: ValueKey(
+                              index == 0
+                                  ? 'agent-remove-file-button'
+                                  : 'agent-remove-file-$index',
+                            ),
+                            onRemove: isInputLocked
+                                ? null
+                                : () => widget.onRemoveFile(index),
                           );
                         },
                       ),
@@ -6124,24 +6326,120 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         inputFrame,
                         positionControl(
                           left: _surfaceHorizontalInset,
-                          child: IconButton(
-                            key: const ValueKey('agent-image-button'),
-                            onPressed: canAttachImage
-                                ? onTogglePhotoMenu
-                                : null,
-                            icon: const Icon(
-                              Icons.add_photo_alternate_outlined,
-                              size: 20,
+                          child: MenuAnchor(
+                            controller: _attachmentMenuController,
+                            consumeOutsideTap: true,
+                            alignmentOffset: const Offset(-12, -8),
+                            style: MenuStyle(
+                              backgroundColor: const WidgetStatePropertyAll(
+                                MomCozyColors.card,
+                              ),
+                              padding: const WidgetStatePropertyAll(
+                                EdgeInsets.all(8),
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                  side: BorderSide(
+                                    color: MomCozyColors.border.withValues(
+                                      alpha: 0.62,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              elevation: const WidgetStatePropertyAll(12),
+                              shadowColor: WidgetStatePropertyAll(
+                                const Color(0xff754c5e).withValues(alpha: 0.2),
+                              ),
                             ),
-                            tooltip: '添加图片',
-                            color: MomCozyColors.mutedForeground,
-                            visualDensity: VisualDensity.compact,
-                            constraints: const BoxConstraints.tightFor(
-                              width: _controlSize,
-                              height: _controlSize,
-                            ),
-                            padding: EdgeInsets.zero,
-                            style: controlButtonStyle,
+                            menuChildren: [
+                              SizedBox(
+                                key: const ValueKey('agent-attachment-menu'),
+                                width: 228,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _attachmentMenuItem(
+                                      key: const ValueKey(
+                                        'agent-attachment-camera-button',
+                                      ),
+                                      label: '相机',
+                                      icon: Icons.photo_camera_outlined,
+                                      onPressed: canAttachImage
+                                          ? widget.onTakePhoto
+                                          : null,
+                                    ),
+                                    _attachmentMenuItem(
+                                      key: const ValueKey(
+                                        'agent-attachment-photo-button',
+                                      ),
+                                      label: '照片',
+                                      icon: Icons.photo_library_outlined,
+                                      onPressed: canAttachImage
+                                          ? widget.onPickPhoto
+                                          : null,
+                                    ),
+                                    _attachmentMenuItem(
+                                      key: const ValueKey(
+                                        'agent-attachment-file-button',
+                                      ),
+                                      label: '文件',
+                                      icon: Icons.attach_file_rounded,
+                                      onPressed: canAttachFile
+                                          ? widget.onPickFile
+                                          : null,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            builder: (context, menuController, child) {
+                              final canOpenMenu =
+                                  canAttachImage || canAttachFile;
+                              return IconButton(
+                                key: const ValueKey('agent-attachment-button'),
+                                onPressed:
+                                    canOpenMenu && !widget.isAttachmentPending
+                                    ? () {
+                                        if (menuController.isOpen) {
+                                          menuController.close();
+                                        } else {
+                                          menuController.open();
+                                        }
+                                      }
+                                    : null,
+                                icon: widget.isAttachmentPending
+                                    ? const SizedBox.square(
+                                        dimension: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Icon(Icons.add_rounded, size: 28),
+                                tooltip: '添加附件',
+                                color: MomCozyColors.foreground,
+                                visualDensity: VisualDensity.compact,
+                                constraints: const BoxConstraints.tightFor(
+                                  width: _attachmentControlSize,
+                                  height: _attachmentControlSize,
+                                ),
+                                padding: EdgeInsets.zero,
+                                style: IconButton.styleFrom(
+                                  fixedSize: const Size.square(
+                                    _attachmentControlSize,
+                                  ),
+                                  minimumSize: const Size.square(
+                                    _attachmentControlSize,
+                                  ),
+                                  maximumSize: const Size.square(
+                                    _attachmentControlSize,
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  padding: EdgeInsets.zero,
+                                ),
+                              );
+                            },
                           ),
                         ),
                         positionControl(
@@ -6612,8 +6910,7 @@ String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
 }
 
 bool _eventStopsAgentLoopDecor(AgentStreamEvent event) {
-  return event.type == 'message.delta' ||
-      event.type == 'message.completed' ||
+  return (event.type == 'message.completed' && event.role != 'user') ||
       event.type == 'run.completed' ||
       event.type == 'run.failed' ||
       event.type == 'run.cancelled';

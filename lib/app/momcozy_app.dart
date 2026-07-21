@@ -1485,6 +1485,7 @@ Widget _buildDefaultAgentHubPage(
     voicePlaybackCoordinator: voicePlaybackCoordinator,
     voicePlaybackPlayer: runtime.agentVoicePlaybackPlayer,
     pickImage: runtime.agentHubImagePicker,
+    pickDocument: runtime.agentHubDocumentPicker,
     mediaRepository: runtime.mediaRepository,
     loadImageContent: runtime.mediaContentRepository.loadImage,
     voiceInputController: runtime.agentVoiceInputController,

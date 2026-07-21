@@ -69,6 +69,13 @@ void main() {
                 'size': 1,
                 'detail': 'high',
               },
+              {
+                'type': 'file',
+                'file_id': '948ed99d-2600-45d9-886a-0068d7593529',
+                'content_type': 'application/pdf',
+                'original_filename': '产检报告.pdf',
+                'size': 2048,
+              },
             ],
           },
           'status': 'completed',
@@ -175,6 +182,11 @@ void main() {
       '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
     );
     expect(history.messages.first.images.single.dataUrl, isEmpty);
+    expect(history.messages.first.files.single.name, '产检报告.pdf');
+    expect(
+      history.messages.first.files.single.fileId,
+      '948ed99d-2600-45d9-886a-0068d7593529',
+    );
     expect(history.messages[1].runState?.textContent, '第一答');
     expect(history.currentState.threadId, 'thread-restore');
     expect(history.currentState.runId, 'run-2');

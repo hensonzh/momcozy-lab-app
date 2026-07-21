@@ -228,6 +228,32 @@ void main() {
     expect(restored.activeRequest, isNull);
   });
 
+  test('PDF draft and request metadata survive secure persistence', () {
+    const file = AgentStreamFileInput(
+      fileId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+      mimeType: 'application/pdf',
+      name: 'checkup-report.pdf',
+      size: 2048,
+    );
+    const snapshot = AgentHubInteractionSnapshot(
+      attachedFiles: [file],
+      historyMessages: [
+        AgentHubHistorySnapshot(role: 'user', content: '', files: [file]),
+      ],
+      activeRequest: AgentStreamRequest(message: '请查看这个文件', files: [file]),
+    );
+
+    final encoded = jsonEncode(snapshot.toMap(includeImageData: false));
+    final restored = AgentHubInteractionSnapshot.fromMap(
+      Map<String, Object?>.from(jsonDecode(encoded) as Map),
+    );
+
+    expect(encoded, contains('checkup-report.pdf'));
+    expect(restored.attachedFiles, [file]);
+    expect(restored.historyMessages.single.files, [file]);
+    expect(restored.activeRequest?.files, [file]);
+  });
+
   test('submitted artifact forms and request idempotency round-trip', () {
     final snapshot = AgentHubInteractionSnapshot(
       activeRequest: const AgentStreamRequest(
