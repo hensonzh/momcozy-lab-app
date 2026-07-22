@@ -1104,16 +1104,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
   }
 
-  void _handleDeviceWorkflowActionSelected(String message) {
-    if (_isVisibleReplyRunning || _isComposerLocked) return;
-    unawaited(
-      _sendSyntheticUserMessage(
-        requestMessage: message,
-        optimisticContent: message,
-      ).then<void>((_) {}),
-    );
-  }
-
   Future<void> _sendMessage() async {
     final runner = widget.runner;
     final message = _composerController.text.trim();
@@ -2919,8 +2909,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       // Generated quick replies are temporarily hidden
                                       // while the follow-up interaction is redesigned.
                                       onQuickReplySelected: null,
-                                      onDeviceWorkflowActionSelected:
-                                          _handleDeviceWorkflowActionSelected,
                                       pendingActionIds: _pendingActionIds,
                                       localActionStatuses: _localActionStatuses,
                                       productAssetRepository:
@@ -3950,7 +3938,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     required this.formSubmissionsListenable,
     required this.formPresentationSession,
     this.onQuickReplySelected,
-    this.onDeviceWorkflowActionSelected,
     required this.pendingActionIds,
     required this.localActionStatuses,
     this.productAssetRepository,
@@ -3972,7 +3959,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   formSubmissionsListenable;
   final AgentArtifactFormPresentationSession formPresentationSession;
   final ValueChanged<String>? onQuickReplySelected;
-  final ValueChanged<String>? onDeviceWorkflowActionSelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
@@ -4021,7 +4007,6 @@ class _AgentRunTranscriptListenableState
           allowFormAutoPresentation: true,
           artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
-          onDeviceWorkflowActionSelected: widget.onDeviceWorkflowActionSelected,
           pendingActionIds: widget.pendingActionIds,
           productAssetRepository: widget.productAssetRepository,
           profileDefaults: widget.profileDefaults,
@@ -4105,7 +4090,6 @@ class AgentRunTranscript extends StatelessWidget {
     this.allowFormAutoPresentation = false,
     this.artifactPanelKey,
     this.onQuickReplySelected,
-    this.onDeviceWorkflowActionSelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
     this.productAssetRepository,
@@ -4130,7 +4114,6 @@ class AgentRunTranscript extends StatelessWidget {
   final bool allowFormAutoPresentation;
   final Key? artifactPanelKey;
   final ValueChanged<String>? onQuickReplySelected;
-  final ValueChanged<String>? onDeviceWorkflowActionSelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
@@ -4212,12 +4195,6 @@ class AgentRunTranscript extends StatelessWidget {
         !state.isAwaitingVisibleReply &&
         !artifactCards.any((card) => card.isForm) &&
         onQuickReplySelected != null;
-    final shouldRenderDeviceWorkflowActions =
-        allowsSupplementaryContent &&
-        state.phase == AgentStreamRunPhase.finished &&
-        state.hasCompletedAssistantMessage &&
-        state.workflowReply?['workflow_type'] == 'device_unboxing' &&
-        onDeviceWorkflowActionSelected != null;
     final avatarMode = _avatarMode;
     final loopDecor = _loopDecorState;
     final thinkingNoteTitle = loopDecor.thinkingTitle;
@@ -4328,12 +4305,6 @@ class AgentRunTranscript extends StatelessWidget {
                 AgentCitationList(
                   citations: citations,
                   onAction: onArtifactAction,
-                ),
-              ],
-              if (shouldRenderDeviceWorkflowActions) ...[
-                const SizedBox(height: 16),
-                _AgentDeviceWorkflowActions(
-                  onSelected: onDeviceWorkflowActionSelected!,
                 ),
               ],
               if (shouldRenderQuickReplies) ...[
@@ -4568,45 +4539,6 @@ class _AgentQuickReplyPill extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _AgentDeviceWorkflowActions extends StatelessWidget {
-  const _AgentDeviceWorkflowActions({required this.onSelected});
-
-  final ValueChanged<String> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      container: true,
-      label: '开箱指导操作',
-      child: Wrap(
-        key: const ValueKey('agent-device-workflow-actions'),
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          FilledButton.tonalIcon(
-            key: const ValueKey('agent-device-workflow-complete'),
-            onPressed: () => onSelected('完成了'),
-            icon: const Icon(Icons.check_rounded, size: 18),
-            label: const Text('完成了'),
-          ),
-          OutlinedButton.icon(
-            key: const ValueKey('agent-device-workflow-help'),
-            onPressed: () => onSelected('我遇到问题了'),
-            icon: const Icon(Icons.help_outline_rounded, size: 18),
-            label: const Text('遇到问题'),
-          ),
-          OutlinedButton.icon(
-            key: const ValueKey('agent-device-workflow-pause'),
-            onPressed: () => onSelected('稍后继续'),
-            icon: const Icon(Icons.pause_rounded, size: 18),
-            label: const Text('稍后继续'),
-          ),
-        ],
       ),
     );
   }
