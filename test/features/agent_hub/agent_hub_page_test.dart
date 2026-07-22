@@ -4185,6 +4185,11 @@ void main() {
       );
       await tester.pump();
 
+      expect(
+        find.byKey(const ValueKey('agent-device-workflow-actions')),
+        findsNothing,
+      );
+
       await tester.enterText(
         find.byKey(const ValueKey('agent-composer-input')),
         'Second turn',
@@ -4220,90 +4225,6 @@ void main() {
       expect(cancelConnector.called.isCompleted, isFalse);
       expect(find.text('Analysis is ready.'), findsOneWidget);
       expect(tester.takeException(), isNull);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub renders deterministic device workflow actions and preserves the reply cursor',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(AgentHubPage(runner: AgentStreamRunner(client))),
-      );
-
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '开始 Air1 开箱指导',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'device-actions-message-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-device-actions',
-          'run_id': 'run-device-actions',
-          'message_id': 'msg-device-actions',
-          'sequence': 1,
-          'payload': {
-            'role': 'assistant',
-            'text': '先完成当前清点步骤。',
-            'workflow_reply': {
-              'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-              'workflow_type': 'device_unboxing',
-              'revision': 3,
-              'step_token': 'device-actions-token',
-            },
-          },
-        }),
-      );
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'device-actions-run-completed',
-          'type': 'run.completed',
-          'thread_id': 'thread-device-actions',
-          'run_id': 'run-device-actions',
-          'sequence': 2,
-        }),
-      );
-      await _pumpFrames(tester, 4);
-
-      expect(
-        find.byKey(const ValueKey('agent-device-workflow-actions')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('agent-device-workflow-complete')),
-        findsOneWidget,
-      );
-      expect(find.text('遇到问题'), findsOneWidget);
-      expect(find.text('稍后继续'), findsOneWidget);
-      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
-
-      await tester.tap(
-        find.byKey(const ValueKey('agent-device-workflow-complete')),
-      );
-      await _pumpFrames(tester, 4);
-
-      expect(client.requests, hasLength(2));
-      expect(client.requests.last.message, '完成了');
-      expect(client.requests.last.threadId, 'thread-device-actions');
-      expect(client.requests.last.metadata['workflow_reply'], {
-        'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-        'workflow_type': 'device_unboxing',
-        'revision': 3,
-        'step_token': 'device-actions-token',
-      });
-      expect(
-        find.byKey(const ValueKey('agent-device-workflow-actions')),
-        findsNothing,
-      );
     },
   );
 
