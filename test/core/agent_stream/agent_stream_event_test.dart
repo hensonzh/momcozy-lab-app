@@ -199,8 +199,8 @@ void main() {
       final result = AgentStreamEvent(const {
         'type': 'tool.completed',
         'payload': {
-          'tool_call_id': 'call-skill',
-          'safe_output': {'service_skill_id': 'birth-prep'},
+          'tool_call_id': 'call-profile',
+          'safe_output': {'preferred_name': 'Mai'},
         },
       });
 
@@ -218,12 +218,12 @@ void main() {
         'payload': {
           'role': 'assistant',
           'text':
-              '我先帮你看一下。\n{"service_skill_id":"milk-management","status":"service_skill_loaded"}',
+              '我先帮你看一下。\n{"tool_name":"profile_read","safe_output":{"preferred_name":"Mai"}}',
         },
       });
 
       expect(event.completedText, '我先帮你看一下。');
-      expect(event.completedText, isNot(contains('service_skill_id')));
+      expect(event.completedText, isNot(contains('tool_name')));
     });
 
     test('does not extract quick replies from assistant text JSON fallback', () {
