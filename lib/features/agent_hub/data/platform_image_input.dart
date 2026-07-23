@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 
 class AgentHubPlatformImagePicker {
-  AgentHubPlatformImagePicker({ImagePicker? picker})
+  AgentHubPlatformImagePicker({ImagePicker? picker, this.uploadRepository})
     : _picker = picker ?? ImagePicker();
 
   static const double _maxSide = 2048;
@@ -13,6 +16,7 @@ class AgentHubPlatformImagePicker {
   static const int _maxImageBytes = 10 * 1024 * 1024;
 
   final ImagePicker _picker;
+  final MediaRepository? uploadRepository;
 
   Future<AgentStreamImageInput?> pick(AgentImageInputSource source) async {
     final recovered = await _recoverLostImage();
@@ -41,13 +45,48 @@ class AgentHubPlatformImagePicker {
       throw const AgentImageInputException('Selected file is not an image.');
     }
     final name = _imageName(file.name, mimeType);
+    final assetId = await _uploadImage(
+      bytes: bytes,
+      mimeType: mimeType,
+      name: name,
+    );
     return AgentStreamImageInput(
+      assetId: assetId,
       dataUrl: 'data:$mimeType;base64,${base64Encode(bytes)}',
       mimeType: mimeType,
       name: name,
       size: bytes.length,
       detail: 'auto',
     );
+  }
+
+  Future<String> _uploadImage({
+    required List<int> bytes,
+    required String mimeType,
+    required String name,
+  }) async {
+    final repository = uploadRepository;
+    if (repository == null) return '';
+    final uploaded = await repository.uploadFile(
+      file: ApiUploadFile(
+        name: name,
+        mimeType: mimeType,
+        sizeBytes: bytes.length,
+        bytes: bytes,
+      ),
+      idempotencyKey: _newImageUploadIdempotencyKey(),
+    );
+    final assetId = uploaded.id.trim();
+    if (assetId.isEmpty) {
+      throw const AgentImageInputException('Image upload result is invalid.');
+    }
+    return assetId;
+  }
+
+  String _newImageUploadIdempotencyKey() {
+    final random = Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    return 'agent-image-${base64UrlEncode(bytes).replaceAll('=', '')}';
   }
 
   Future<XFile?> _recoverLostImage() async {

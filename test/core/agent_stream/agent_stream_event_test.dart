@@ -193,7 +193,7 @@ void main() {
         'type': 'tool.progress',
         'payload': {
           'tool_call_id': 'call-profile',
-          'safe_args': {'display_name': 'henson'},
+          'safe_args': {'preferred_name': 'henson'},
         },
       });
       final result = AgentStreamEvent(const {

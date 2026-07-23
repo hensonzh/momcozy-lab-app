@@ -202,6 +202,8 @@ class AgentHubPage extends StatefulWidget {
     this.greetingProfileLoader,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
+    this.discardImage,
+    this.loadImageBytes,
     this.voiceInputController,
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
@@ -230,6 +232,8 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubGreetingProfileLoader? greetingProfileLoader;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
+  final AgentHubImageDiscarder? discardImage;
+  final AgentHubImageBytesLoader? loadImageBytes;
   final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
@@ -263,6 +267,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _followUpStartPending = false;
   bool _newSessionStartPending = false;
   bool _supportTicketSubmitPending = false;
+  bool _imageUploadPending = false;
+  bool _imageDeletePending = false;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
   Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
@@ -925,6 +931,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _followUpStartPending ||
       _newSessionStartPending ||
       _supportTicketSubmitPending ||
+      _imageUploadPending ||
+      _imageDeletePending ||
       _isComposerLockedForState(_state);
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
@@ -1045,6 +1053,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelCurrentBubblePlaybackForNewTurn();
     await _waitForCompletedReplyRunSettlement();
     await _waitForPendingServerCancel();
+    if (!mounted || _isComposerLocked) return false;
+    if (_attachedImages.isNotEmpty) {
+      _setImageDeletePending(true);
+      try {
+        if (!await _discardAllAttachedImages()) return false;
+      } finally {
+        if (mounted) {
+          _setImageDeletePending(false);
+        } else {
+          _imageDeletePending = false;
+        }
+      }
+    }
     if (!mounted || _isComposerLocked) return false;
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
@@ -1263,23 +1284,32 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _attachImage(AgentImageInputSource source) async {
     final pickImage = widget.pickImage;
     if (pickImage == null || _isComposerLocked) return;
-    AgentStreamImageInput? image;
-    try {
-      image = await pickImage(source);
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _showPhotoMenu = false;
-      });
-      return;
-    }
-    if (!mounted || image == null) return;
-    final selectedImage = image;
     setState(() {
-      _attachedImages.add(selectedImage);
+      _imageUploadPending = true;
       _showPhotoMenu = false;
     });
-    _persistInteractionState();
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    try {
+      final image = await pickImage(source);
+      if (image == null) return;
+      if (!mounted) {
+        await _discardUploadedImage(image);
+        return;
+      }
+      setState(() {
+        _attachedImages.add(image);
+      });
+      _persistInteractionState();
+    } catch (_) {
+      return;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _imageUploadPending = false;
+        });
+        _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+      }
+    }
   }
 
   void _togglePhotoMenu() {
@@ -1399,18 +1429,66 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
   }
 
-  void _removeAttachedImage(int index) {
-    if (index < 0 || index >= _attachedImages.length) return;
-    setState(() {
-      _attachedImages.removeAt(index);
-    });
-    _persistInteractionState();
+  Future<bool> _discardUploadedImage(AgentStreamImageInput image) async {
+    final assetId = image.assetId.trim();
+    final discardImage = widget.discardImage;
+    if (assetId.isEmpty || discardImage == null) return true;
+    try {
+      await discardImage(assetId);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> _removeAttachedImage(int index) async {
+    if (_imageDeletePending || index < 0 || index >= _attachedImages.length) {
+      return;
+    }
+    final image = _attachedImages[index];
+    _setImageDeletePending(true);
+    try {
+      if (!await _discardUploadedImage(image) || !mounted) return;
+      final currentIndex = _attachedImages.indexOf(image);
+      if (currentIndex < 0) return;
+      setState(() {
+        _attachedImages.removeAt(currentIndex);
+      });
+      _persistInteractionState();
+    } finally {
+      if (mounted) {
+        _setImageDeletePending(false);
+      } else {
+        _imageDeletePending = false;
+      }
+    }
+  }
+
+  Future<bool> _discardAllAttachedImages() async {
+    while (_attachedImages.isNotEmpty) {
+      final image = _attachedImages.first;
+      if (!await _discardUploadedImage(image) || !mounted) return false;
+      final currentIndex = _attachedImages.indexOf(image);
+      if (currentIndex >= 0) {
+        setState(() {
+          _attachedImages.removeAt(currentIndex);
+        });
+        _persistInteractionState();
+      }
+    }
+    return true;
   }
 
   Future<void> _startNewSession() async {
-    if (_isVisibleReplyRunning || _newSessionStartPending) return;
+    if (_isVisibleReplyRunning ||
+        _newSessionStartPending ||
+        _imageUploadPending ||
+        _imageDeletePending) {
+      return;
+    }
     _setNewSessionStartPending(true);
     try {
+      if (!await _discardAllAttachedImages()) return;
       if (_state.isActive) {
         _sendBestEffortServerCancel(_state, _activeRequest);
       }
@@ -1455,6 +1533,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _setNewSessionStartPending(bool value) {
     if (_newSessionStartPending == value) return;
     _newSessionStartPending = value;
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+  }
+
+  void _setImageDeletePending(bool value) {
+    if (_imageDeletePending == value) return;
+    _imageDeletePending = value;
     _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
   }
 
@@ -2388,6 +2472,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 ),
                                 sliver: AgentHubHistorySliver(
                                   messages: _historyMessages,
+                                  loadImageBytes: widget.loadImageBytes,
                                   productAssetRepository:
                                       widget.productAssetRepository,
                                   onArtifactAction: _handleArtifactAction,
@@ -2508,6 +2593,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     images: List<AgentStreamImageInput>.unmodifiable(
                       _attachedImages,
                     ),
+                    loadImageBytes: widget.loadImageBytes,
                     showPhotoMenu: _showPhotoMenu,
                     canAttachImage:
                         widget.pickImage != null &&
@@ -2531,7 +2617,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                         unawaited(_attachImage(AgentImageInputSource.camera)),
                     onUploadImage: () =>
                         unawaited(_attachImage(AgentImageInputSource.gallery)),
-                    onRemoveImage: _removeAttachedImage,
+                    onRemoveImage: (index) =>
+                        unawaited(_removeAttachedImage(index)),
                     onVoiceStart: _startVoiceInput,
                     onVoiceEnd: (submit) =>
                         unawaited(_finishVoiceInput(submit: submit)),
@@ -3014,6 +3101,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
   const AgentHubHistoryPanel({
     super.key,
     required this.messages,
+    this.loadImageBytes,
     this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3023,6 +3111,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
   });
 
   final List<AgentHubHistoryMessage> messages;
+  final AgentHubImageBytesLoader? loadImageBytes;
   final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3040,6 +3129,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            loadImageBytes: loadImageBytes,
             productAssetRepository: productAssetRepository,
             onArtifactAction: onArtifactAction,
             onFormSubmit: onFormSubmit,
@@ -3058,6 +3148,7 @@ class AgentHubHistorySliver extends StatelessWidget {
   const AgentHubHistorySliver({
     super.key,
     required this.messages,
+    this.loadImageBytes,
     this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3067,6 +3158,7 @@ class AgentHubHistorySliver extends StatelessWidget {
   });
 
   final List<AgentHubHistoryMessage> messages;
+  final AgentHubImageBytesLoader? loadImageBytes;
   final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3086,6 +3178,7 @@ class AgentHubHistorySliver extends StatelessWidget {
         return _AgentHistoryBubble(
           key: ValueKey('agent-history-$messageIndex'),
           message: messages[messageIndex],
+          loadImageBytes: loadImageBytes,
           productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
@@ -3102,6 +3195,7 @@ class _AgentHistoryBubble extends StatelessWidget {
   const _AgentHistoryBubble({
     super.key,
     required this.message,
+    this.loadImageBytes,
     this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
@@ -3111,6 +3205,7 @@ class _AgentHistoryBubble extends StatelessWidget {
   });
 
   final AgentHubHistoryMessage message;
+  final AgentHubImageBytesLoader? loadImageBytes;
   final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
@@ -3182,7 +3277,10 @@ class _AgentHistoryBubble extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   if (message.images.isNotEmpty)
-                    AgentSentImages(images: message.images),
+                    AgentSentImages(
+                      images: message.images,
+                      loadImageBytes: loadImageBytes,
+                    ),
                   if (message.images.isNotEmpty && message.content.isNotEmpty)
                     const SizedBox(height: 8),
                   if (message.content.isNotEmpty)
@@ -5277,6 +5375,7 @@ class AgentComposerBar extends StatefulWidget {
     required this.isRunning,
     required this.isInputLocked,
     required this.images,
+    this.loadImageBytes,
     required this.showPhotoMenu,
     required this.canAttachImage,
     required this.canUseVoice,
@@ -5299,6 +5398,7 @@ class AgentComposerBar extends StatefulWidget {
   final bool isRunning;
   final bool isInputLocked;
   final List<AgentStreamImageInput> images;
+  final AgentHubImageBytesLoader? loadImageBytes;
   final bool showPhotoMenu;
   final bool canAttachImage;
   final bool canUseVoice;
@@ -5520,6 +5620,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                           return AgentComposerImageAttachment(
                             key: ValueKey('agent-image-attachment-$index'),
                             image: images[index],
+                            loadImageBytes: widget.loadImageBytes,
                             removeButtonKey: ValueKey(
                               index == 0
                                   ? 'agent-remove-image-button'

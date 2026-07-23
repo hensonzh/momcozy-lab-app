@@ -9,6 +9,7 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/agent_image_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
@@ -435,6 +436,8 @@ class MomCozyApiRuntime {
   late final bool _hasInjectedAgentVoicePlaybackPlayer;
   AgentVoiceInputController? _agentVoiceInputController;
   AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
+  AgentHubPlatformImagePicker? _agentHubLocalImagePicker;
+  AgentImageAssetRepository? _agentImageAssetRepository;
   ProductAssetRepository? _productAssetRepository;
   StatusPreferenceStore? _statusPreferenceStore;
   ScheduleReminderPreferenceStore? _scheduleReminderPreferenceStore;
@@ -508,7 +511,7 @@ class MomCozyApiRuntime {
 
   Future<DateTime?> loadSchedulePostpartumAnchorDate() async {
     final overview = await statusRepository.fetchOverview();
-    return overview.mom?.deliveryDate ?? overview.baby?.birthDate;
+    return overview.baby?.birthDate;
   }
 
   AgentHubProfileRepository get agentHubProfileRepository {
@@ -601,7 +604,9 @@ class MomCozyApiRuntime {
     if (!currentSession.isAuthenticated) return null;
     return _scheduleImageRecognitionGateway ??=
         ApiScheduleImageRecognitionGateway(
-          imagePicker: agentHubImagePicker,
+          imagePicker:
+              (_agentHubLocalImagePicker ??= AgentHubPlatformImagePicker())
+                  .pick,
           mediaRepository: mediaRepository,
           baseUri: Uri.parse(_defaultApiBaseUrl),
           tokenProvider: () => currentSession.accessToken,
@@ -635,8 +640,18 @@ class MomCozyApiRuntime {
   }
 
   AgentHubImagePicker get agentHubImagePicker {
-    return (_agentHubPlatformImagePicker ??= AgentHubPlatformImagePicker())
-        .pick;
+    return (_agentHubPlatformImagePicker ??= AgentHubPlatformImagePicker(
+      uploadRepository: mediaRepository,
+    )).pick;
+  }
+
+  AgentImageAssetRepository get agentImageAssetRepository {
+    return _agentImageAssetRepository ??= AgentImageAssetRepository(
+      mutationTransport: jsonTransport,
+      baseUri: Uri.parse(_defaultApiBaseUrl),
+      tokenProvider: () => currentSession.accessToken,
+      onUnauthorized: agentStreamUnauthorizedHandler,
+    );
   }
 
   AgentVoiceInputController get agentVoiceInputController {

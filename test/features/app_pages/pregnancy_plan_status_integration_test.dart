@@ -679,7 +679,7 @@ class _PlanTransport implements ApiJsonTransport {
     if (path == statusProfileEndpoint) {
       return const {
         'user_id': 'plan-widget-user',
-        'delivery_date': '2026-09-01',
+        'estimated_due_date': '2026-09-01',
       };
     }
     if (path == statusInfantsEndpoint) {

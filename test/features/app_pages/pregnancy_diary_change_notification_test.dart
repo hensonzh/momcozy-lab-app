@@ -511,7 +511,7 @@ class _SequencedDiaryTransport implements ApiJsonTransport {
     if (path == statusProfileEndpoint) {
       return const {
         'user_id': 'diary-widget-user',
-        'delivery_date': '2026-09-01',
+        'estimated_due_date': '2026-09-01',
       };
     }
     if (path == statusInfantsEndpoint) {

@@ -363,8 +363,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('哺乳期'), findsWidgets);
-      expect(find.text('产后第 3 周'), findsOneWidget);
-      expect(find.text('宝宝已出生 20 天'), findsOneWidget);
+      expect(find.text('产后第 13 周'), findsOneWidget);
+      expect(find.text('宝宝已出生 87 天'), findsOneWidget);
       expect(find.text('母乳产出'), findsOneWidget);
       expect(find.text('120mL'), findsOneWidget);
       expect(find.text('1次'), findsOneWidget);
@@ -373,7 +373,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('成长发育'), findsOneWidget);
-      expect(find.text('宝宝已出生 20 天'), findsOneWidget);
+      expect(find.text('宝宝已出生 87 天'), findsOneWidget);
       expect(find.text('6.2kg'), findsOneWidget);
       expect(find.text('64.5cm'), findsOneWidget);
       expect(find.text('42cm'), findsOneWidget);
@@ -416,7 +416,7 @@ void main() {
     });
 
     testWidgets(
-      'status pregnancy header matches legacy subtitle and disables baby',
+      'status pregnancy header shows estimated due date and disables baby',
       (tester) async {
         await tester.pumpWidget(
           _FeaturePageHost(
@@ -424,7 +424,7 @@ void main() {
             jsonTransport: FixtureApiJsonTransportByPath({
               statusProfileEndpoint: const {
                 'user_id': 'demo-user-fixture',
-                'delivery_date': '2026-10-01',
+                'estimated_due_date': '2026-10-01',
                 'birth_prep_due_date_or_week': '孕周 28 周',
               },
               statusInfantsEndpoint: const {'items': <Object?>[]},
@@ -438,7 +438,7 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        expect(find.text('孕期 28 周'), findsOneWidget);
+        expect(find.text('预产期 2026-10-01'), findsOneWidget);
         expect(find.text('宝宝孕育中'), findsOneWidget);
         final babyTab = tester.widget<InkWell>(
           find.byKey(const ValueKey('status-identity-tab-baby')),
@@ -505,14 +505,14 @@ void main() {
           jsonTransport: FixtureApiJsonTransportByPath({
             statusProfileEndpoint: const {
               'user_id': 'demo-user-fixture',
-              'delivery_date': '2026-02-24',
+              'estimated_due_date': '2026-02-24',
             },
             statusInfantsEndpoint: const {
               'items': [
                 {
                   'id': 'demo-baby-fixture',
                   'owner_user_id': 'demo-user-fixture',
-                  'infant_name': 'Mia Sophia Long Profile Name',
+                  'name': 'Mia Sophia Long Profile Name',
                   'birth_date': '2025-12-26',
                   'sex': 'female',
                   'status': 'active',
@@ -531,8 +531,8 @@ void main() {
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('产后第 19 周'), findsOneWidget);
-      expect(find.text('宝宝已出生 127 天'), findsOneWidget);
+      expect(find.text('产后第 27 周'), findsOneWidget);
+      expect(find.text('宝宝已出生 187 天'), findsOneWidget);
       expect(find.text('Mia Sophia Long Profile Name'), findsNothing);
       expect(find.text('成长发育'), findsOneWidget);
       expect(find.text('待记录'), findsWidgets);
@@ -2294,14 +2294,14 @@ MomCozyApiRuntime _appRuntime({
         FixtureApiJsonTransportByPath({
           statusProfileEndpoint: const <String, Object?>{
             'user_id': 'demo-user-fixture',
-            'delivery_date': '2026-06-11',
+            'estimated_due_date': '2026-06-11',
           },
           statusInfantsEndpoint: const <String, Object?>{
             'items': <Object?>[
               <String, Object?>{
                 'id': 'demo-baby-fixture',
                 'owner_user_id': 'demo-user-fixture',
-                'infant_name': 'Mia',
+                'name': 'Mia',
                 'birth_date': '2026-04-05',
                 'sex': 'female',
                 'status': 'active',

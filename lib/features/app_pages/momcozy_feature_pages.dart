@@ -1459,7 +1459,7 @@ class _StatusModuleGrid extends StatelessWidget {
 
   final overview = overviewResource.data ?? const StatusOverview();
   if (isPregnancy) {
-    final profileStage = overview.mom?.dueDateOrWeek?.trim() ?? '';
+    final estimatedDueDate = overview.mom?.estimatedDueDate;
     String? diaryStage;
     for (final entry in diaryEntries ?? const <PregnancyDiaryEntry>[]) {
       final value = entry.gestationalWeek.trim();
@@ -1469,9 +1469,9 @@ class _StatusModuleGrid extends StatelessWidget {
       }
     }
     return (
-      mom: _formatPregnancyStageSubtitle(
-        profileStage.isNotEmpty ? profileStage : diaryStage,
-      ),
+      mom: estimatedDueDate == null
+          ? _formatPregnancyStageSubtitle(diaryStage)
+          : '预产期 ${estimatedDueDate.toIso8601String().split('T').first}',
       baby: '宝宝孕育中',
     );
   }

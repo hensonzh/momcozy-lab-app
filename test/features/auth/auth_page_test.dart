@@ -245,7 +245,7 @@ Map<String, Object?> _tokenResponse() {
     'refresh_token': 'refresh-token-001',
     'expires_in': 3600,
     'token_type': 'bearer',
-    'user': {'id': 'invite-user-001', 'display_name': 'Invite User'},
+    'user': {'id': 'invite-user-001'},
   };
 }
 

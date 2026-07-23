@@ -12,17 +12,11 @@ class StatusOverview {
 }
 
 class MomStatus {
-  const MomStatus({
-    this.stage,
-    this.postpartumDay,
-    this.deliveryDate,
-    this.dueDateOrWeek,
-  });
+  const MomStatus({this.stage, this.postpartumDay, this.estimatedDueDate});
 
   final String? stage;
   final int? postpartumDay;
-  final DateTime? deliveryDate;
-  final String? dueDateOrWeek;
+  final DateTime? estimatedDueDate;
 }
 
 class BabyStatus {

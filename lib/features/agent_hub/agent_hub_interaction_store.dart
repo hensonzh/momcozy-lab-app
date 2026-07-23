@@ -54,23 +54,37 @@ class AgentHubInteractionSnapshot {
       (message) =>
           includeImageData ||
           message.content.trim().isNotEmpty ||
-          message.runState != null,
+          message.runState != null ||
+          _assetBackedImages(message.images).isNotEmpty,
     ))
       'historyMessages': historyMessages
           .where(
             (message) =>
                 includeImageData ||
                 message.content.trim().isNotEmpty ||
-                message.runState != null,
+                message.runState != null ||
+                _assetBackedImages(message.images).isNotEmpty,
           )
           .map((message) => message.toMap(includeImageData: includeImageData))
           .toList(growable: false),
     if (composerText.isNotEmpty) 'composerText': composerText,
-    if (includeImageData && attachedImages.isNotEmpty)
-      'attachedImages': attachedImages.map(_imageToMap).toList(growable: false),
+    if ((includeImageData ? attachedImages : _assetBackedImages(attachedImages))
+        .isNotEmpty)
+      'attachedImages':
+          (includeImageData
+                  ? attachedImages
+                  : _assetBackedImages(attachedImages))
+              .map(
+                (image) =>
+                    _imageToMap(image, includeImageData: includeImageData),
+              )
+              .toList(growable: false),
     'autoVoiceEnabled': autoVoiceEnabled,
     if (activeRequest != null &&
-        (includeImageData || activeRequest!.images.isEmpty))
+        (includeImageData ||
+            activeRequest!.images.every(
+              (image) => image.assetId.trim().isNotEmpty,
+            )))
       'activeRequest': _requestToPersistenceMap(
         activeRequest!,
         historyMessages,
@@ -117,13 +131,22 @@ class AgentHubHistorySnapshot {
   final AgentStreamRunState? runState;
   final List<AgentStreamImageInput> images;
 
-  Map<String, Object?> toMap({bool includeImageData = true}) => {
-    'role': role,
-    'content': content,
-    if (runState != null) 'runState': runState!.toMap(),
-    if (includeImageData && images.isNotEmpty)
-      'images': images.map(_imageToMap).toList(growable: false),
-  };
+  Map<String, Object?> toMap({bool includeImageData = true}) {
+    final persistedImages = includeImageData
+        ? images
+        : _assetBackedImages(images);
+    return {
+      'role': role,
+      'content': content,
+      if (runState != null) 'runState': runState!.toMap(),
+      if (persistedImages.isNotEmpty)
+        'images': persistedImages
+            .map(
+              (image) => _imageToMap(image, includeImageData: includeImageData),
+            )
+            .toList(growable: false),
+    };
+  }
 
   static AgentHubHistorySnapshot? fromMap(Object? value) {
     if (value is! Map) return null;
@@ -262,14 +285,19 @@ int _int(Object? value, {int fallback = 0}) {
   return fallback;
 }
 
-Map<String, Object?> _requestToMap(AgentStreamRequest request) => {
+Map<String, Object?> _requestToMap(
+  AgentStreamRequest request, {
+  bool includeImageData = true,
+}) => {
   'message': request.message,
   if (request.threadId != null) 'threadId': request.threadId,
   if (request.runId != null) 'runId': request.runId,
   'afterSequence': request.afterSequence,
   'locale': request.locale,
   if (request.images.isNotEmpty)
-    'images': request.images.map(_imageToMap).toList(growable: false),
+    'images': request.images
+        .map((image) => _imageToMap(image, includeImageData: includeImageData))
+        .toList(growable: false),
   if (request.metadata.isNotEmpty) 'metadata': request.metadata,
   if (request.idempotencyKey != null) 'idempotencyKey': request.idempotencyKey,
 };
@@ -279,19 +307,24 @@ Map<String, Object?> _requestToPersistenceMap(
   List<AgentHubHistorySnapshot> historyMessages, {
   bool includeImageData = true,
 }) {
-  if (!includeImageData) {
-    return _requestToMap(_requestWithImages(request, const []));
+  final persistedRequest = includeImageData
+      ? request
+      : _requestWithImages(request, _assetBackedImages(request.images));
+  if (persistedRequest.images.isEmpty) {
+    return _requestToMap(persistedRequest, includeImageData: includeImageData);
   }
-  if (request.images.isEmpty) return _requestToMap(request);
   for (final message in historyMessages.reversed) {
     if (message.role != 'user') continue;
-    if (!_sameImages(message.images, request.images)) break;
+    final persistedMessageImages = includeImageData
+        ? message.images
+        : _assetBackedImages(message.images);
+    if (!_sameImages(persistedMessageImages, persistedRequest.images)) break;
     return {
-      ..._requestToMap(_requestWithImages(request, const [])),
+      ..._requestToMap(_requestWithImages(persistedRequest, const [])),
       'imagesFromHistory': true,
     };
   }
-  return _requestToMap(request);
+  return _requestToMap(persistedRequest, includeImageData: includeImageData);
 }
 
 AgentStreamRequest? _requestFromPersistenceMap(
@@ -334,7 +367,8 @@ bool _sameImages(
   for (var index = 0; index < left.length; index++) {
     final a = left[index];
     final b = right[index];
-    if (a.dataUrl != b.dataUrl ||
+    if (a.assetId != b.assetId ||
+        a.dataUrl != b.dataUrl ||
         a.mimeType != b.mimeType ||
         a.name != b.name ||
         a.size != b.size ||
@@ -367,8 +401,18 @@ AgentStreamRequest? _requestFromMap(Object? value) {
   );
 }
 
-Map<String, Object?> _imageToMap(AgentStreamImageInput image) => {
-  'dataUrl': image.dataUrl,
+List<AgentStreamImageInput> _assetBackedImages(
+  List<AgentStreamImageInput> images,
+) => images
+    .where((image) => image.assetId.trim().isNotEmpty)
+    .toList(growable: false);
+
+Map<String, Object?> _imageToMap(
+  AgentStreamImageInput image, {
+  bool includeImageData = true,
+}) => {
+  if (image.assetId.trim().isNotEmpty) 'assetId': image.assetId,
+  if (includeImageData) 'dataUrl': image.dataUrl,
   'mimeType': image.mimeType,
   'name': image.name,
   'size': image.size,
@@ -378,9 +422,11 @@ Map<String, Object?> _imageToMap(AgentStreamImageInput image) => {
 AgentStreamImageInput? _imageFromMap(Object? value) {
   if (value is! Map) return null;
   final map = Map<String, Object?>.from(value);
-  final dataUrl = _string(map['dataUrl']) ?? _string(map['data_url']);
-  if (dataUrl == null || dataUrl.trim().isEmpty) return null;
+  final assetId = _string(map['assetId']) ?? _string(map['asset_id']) ?? '';
+  final dataUrl = _string(map['dataUrl']) ?? _string(map['data_url']) ?? '';
+  if (assetId.trim().isEmpty && dataUrl.trim().isEmpty) return null;
   return AgentStreamImageInput(
+    assetId: assetId,
     dataUrl: dataUrl,
     mimeType:
         _string(map['mimeType']) ?? _string(map['mime_type']) ?? 'image/png',

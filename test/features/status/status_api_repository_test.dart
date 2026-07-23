@@ -9,20 +9,17 @@ void main() {
     test('maps production profile and infant overview', () async {
       final transport = FixtureApiJsonTransportByPath({
         statusProfileEndpoint: {
-          'user_id': 'user-001',
-          'display_name': 'Mom',
-          'delivery_date': '2026-05-20',
-          'birth_prep_due_date_or_week': '孕 32 周',
+          'preferred_name': 'Mom',
+          'age': 30,
+          'estimated_due_date': '2026-05-20',
         },
         statusInfantsEndpoint: {
           'items': [
             {
               'id': 'infant-001',
-              'owner_user_id': 'user-001',
-              'infant_name': 'Baby',
+              'name': 'Baby',
               'birth_date': '2026-05-20',
-              'sex': 'female',
-              'status': 'active',
+              'sex_at_birth': 'female',
             },
           ],
         },
@@ -39,8 +36,7 @@ void main() {
       expect(transport.lastQuery, isEmpty);
       expect(overview.mom?.stage, '哺乳期');
       expect(overview.mom?.postpartumDay, 42);
-      expect(overview.mom?.deliveryDate, DateTime.parse('2026-05-20'));
-      expect(overview.mom?.dueDateOrWeek, '孕 32 周');
+      expect(overview.mom?.estimatedDueDate, DateTime.parse('2026-05-20'));
       expect(overview.baby?.id, 'infant-001');
       expect(overview.baby?.nickname, 'Baby');
       expect(overview.baby?.ageDays, 42);
@@ -50,7 +46,11 @@ void main() {
     test('maps empty profile and infants list', () async {
       final repository = StatusApiRepository(
         transport: FixtureApiJsonTransportByPath({
-          statusProfileEndpoint: const {'user_id': 'user-001'},
+          statusProfileEndpoint: const {
+            'preferred_name': null,
+            'age': null,
+            'estimated_due_date': null,
+          },
           statusInfantsEndpoint: const {'items': []},
         }),
         now: () => DateTime.utc(2026, 7, 1),
@@ -98,7 +98,7 @@ void main() {
           transport: FixtureApiJsonTransportByPath({
             statusProfileEndpoint: const {
               'user_id': 'user-local-day',
-              'delivery_date': '2026-06-30',
+              'estimated_due_date': '2026-06-30',
             },
             statusInfantsEndpoint: const {
               'items': [

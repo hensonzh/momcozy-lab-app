@@ -133,8 +133,7 @@ void main() {
     tester,
   ) async {
     final transport = FixtureApiJsonTransport({
-      'user_id': 'profile-user',
-      'display_name': '小美',
+      'preferred_name': '小美',
       'age': 29,
     });
     final runtime = MomCozyApiRuntime.fromSession(
@@ -170,8 +169,7 @@ void main() {
           accessToken: 'greeting-voice-access-token',
         ),
         jsonTransport: FixtureApiJsonTransport(const {
-          'user_id': 'greeting-voice-user',
-          'display_name': '小美',
+          'preferred_name': '小美',
           'age': 29,
         }),
         agentVoicePlaybackPlayer: voicePlayer,
@@ -771,7 +769,7 @@ void main() {
       'refresh_token': 'refresh-login',
       'token_type': 'bearer',
       'expires_in': 3600,
-      'user': {'id': 'login-user', 'display_name': 'Login User'},
+      'user': {'id': 'login-user'},
     });
     final controller = MomCozyRuntimeController(
       MomCozyApiRuntime(jsonTransport: transport),
@@ -831,7 +829,7 @@ void main() {
         'refresh_token': 'refresh-relogin',
         'token_type': 'bearer',
         'expires_in': 3600,
-        'user': {'id': 'logout-user', 'display_name': 'Logout User'},
+        'user': {'id': 'logout-user'},
       });
       final ble = FakeBlePlatform(
         initialPermission: BlePermissionState.granted,

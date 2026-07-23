@@ -109,6 +109,7 @@ void main() {
           metadata: {'source': 'flutter-migration-fixture'},
           images: [
             AgentStreamImageInput(
+              assetId: '7b8aa8c8-2c49-48c4-9cad-80f438a6c979',
               dataUrl:
                   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
               mimeType: 'image/png',
@@ -124,9 +125,25 @@ void main() {
 
       expect(payload.containsKey('thread_id'), isFalse);
       expect(image['type'], 'image');
-      expect(image['data_url'], startsWith('data:image/png;base64,'));
-      expect(image['mime_type'], 'image/png');
-      expect(image['name'], 'pump-display-fixture.png');
+      expect(image['asset_id'], '7b8aa8c8-2c49-48c4-9cad-80f438a6c979');
+      expect(image.containsKey('data_url'), isFalse);
+      expect(image.containsKey('mime_type'), isFalse);
+    });
+
+    test('rejects an image whose object-storage upload is not complete', () {
+      expect(
+        () => buildProductionAgentRunPayload(
+          const AgentStreamRequest(
+            message: 'Please review this image.',
+            images: [
+              AgentStreamImageInput(
+                dataUrl: 'data:image/png;base64,cHJldmlldw==',
+              ),
+            ],
+          ),
+        ),
+        throwsA(isA<AgentStreamPayloadException>()),
+      );
     });
 
     test(
