@@ -505,10 +505,6 @@ bool _looksLikeStructuredAgentJson(Object? value) {
     'tool_name',
     'safe_args',
     'safe_output',
-    'service_skill_id',
-    'skill_version',
-    'tool_scope',
-    'business_facts',
     'preferred_name',
     'profile',
     'quick_replies',
@@ -517,7 +513,7 @@ bool _looksLikeStructuredAgentJson(Object? value) {
   };
   if (keys.intersection(structuredKeys).isNotEmpty) return true;
   final status = value['status']?.toString() ?? '';
-  return status == 'service_skill_loaded' || status.startsWith('needs_');
+  return status.startsWith('needs_');
 }
 
 String? _textFromStructuredJson(Object? value) {

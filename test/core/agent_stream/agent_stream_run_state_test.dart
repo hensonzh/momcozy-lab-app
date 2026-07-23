@@ -666,7 +666,7 @@ id: 2
 data: {"type":"tool.progress","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"tool_call_id":"call-profile","safe_args":{"preferred_name":"henson"}}}
 
 id: 3
-data: {"type":"tool.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"tool_call_id":"call-skill","safe_output":{"service_skill_id":"birth-prep"}}}
+data: {"type":"tool.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"tool_call_id":"call-profile","safe_output":{"preferred_name":"Mai"}}}
 
 id: 4
 data: {"type":"message.delta","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"message_stream_id":"msg-canonical-tools","delta":"你好 henson"}}
@@ -686,7 +686,6 @@ data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run
       expect(state.phase, AgentStreamRunPhase.finished);
       expect(state.textContent, '你好 henson');
       expect(state.textContent, isNot(contains('preferred_name')));
-      expect(state.textContent, isNot(contains('service_skill_id')));
       expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
 
