@@ -4635,6 +4635,42 @@ void main() {
     expect(find.textContaining('agent request timeout'), findsNothing);
   });
 
+  testWidgets(
+    'Agent Hub reuses the turn idempotency key when run creation is retried',
+    (tester) async {
+      final client = _RetryBeforeRunCreatedAgentStreamClient();
+
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '帮我整理待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
+
+      expect(client.requests, hasLength(1));
+      expect(client.requests.single.runId, isNull);
+      expect(client.requests.single.idempotencyKey, isNotEmpty);
+      expect(find.text('请求超时，请稍后重试'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('agent-retry-button')));
+      await tester.pumpAndSettle();
+
+      expect(client.requests, hasLength(2));
+      expect(client.requests.last.runId, isNull);
+      expect(
+        client.requests.last.idempotencyKey,
+        client.requests.first.idempotencyKey,
+      );
+      expect(find.text('待产包信息表已打开。'), findsOneWidget);
+    },
+  );
+
   testWidgets('Agent Hub maps offline send failure to retryable copy', (
     tester,
   ) async {
@@ -9118,6 +9154,45 @@ class _RetryAgentStreamClient implements AgentStreamClient {
   }
 }
 
+class _RetryBeforeRunCreatedAgentStreamClient implements AgentStreamClient {
+  final requests = <AgentStreamRequest>[];
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) async* {
+    requests.add(request);
+    await Future<void>.delayed(Duration.zero);
+
+    if (requests.length == 1) {
+      throw TimeoutException('run create timeout');
+    }
+
+    yield AgentStreamEvent(const {
+      'event_id': 'evt-run-created-1',
+      'type': 'run.queued',
+      'thread_id': 'thread-created',
+      'run_id': 'run-created',
+      'sequence': 1,
+      'payload': {'label': '我已经收到你的消息啦～'},
+    });
+    yield AgentStreamEvent(const {
+      'event_id': 'evt-run-created-2',
+      'type': 'message.completed',
+      'thread_id': 'thread-created',
+      'run_id': 'run-created',
+      'message_id': 'msg-created',
+      'sequence': 2,
+      'payload': {'role': 'assistant', 'text': '待产包信息表已打开。'},
+    });
+    yield AgentStreamEvent(const {
+      'event_id': 'evt-run-created-3',
+      'type': 'run.completed',
+      'thread_id': 'thread-created',
+      'run_id': 'run-created',
+      'sequence': 3,
+    });
+  }
+}
+
 class _FailingAgentStreamClient implements AgentStreamClient {
   _FailingAgentStreamClient(this.error);
 
@@ -9143,6 +9218,7 @@ class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
     required String body,
+    Duration? timeout,
   }) async {
     this.uri = uri;
     this.headers = headers;
@@ -9168,6 +9244,7 @@ class _DeferredCancelConnector implements AgentStreamControlHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
     required String body,
+    Duration? timeout,
   }) {
     if (!called.isCompleted) called.complete();
     return _response.future;
@@ -9193,6 +9270,7 @@ class _RecordingActionConnector implements AgentStreamControlHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
     required String body,
+    Duration? timeout,
   }) async {
     this.uri = uri;
     this.headers = headers;
