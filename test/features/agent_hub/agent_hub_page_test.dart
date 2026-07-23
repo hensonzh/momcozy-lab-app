@@ -5548,10 +5548,10 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       const card = AgentArtifactCardView(
         id: 'responsive-form',
-        title: '分娩沟通卡信息采集',
+        title: '待产包信息采集',
         presentationKind: AgentArtifactPresentationKind.form,
-        formId: 'birth_plan_card_intake',
-        formSubmitLabel: '生成我的沟通卡',
+        formId: 'hospital_bag_intake',
+        formSubmitLabel: '整理待产包',
         formFields: [
           AgentArtifactFormFieldView(
             id: 'birth_hospital',
@@ -5600,7 +5600,7 @@ void main() {
       expect(submitRect.top, greaterThan(cancelRect.bottom));
       expect(cancelRect.left, greaterThanOrEqualTo(dialogRect.left));
       expect(submitRect.right, lessThanOrEqualTo(dialogRect.right));
-      expect(find.text('生成我的沟通卡'), findsOneWidget);
+      expect(find.text('整理待产包'), findsOneWidget);
     },
   );
 
@@ -5902,24 +5902,6 @@ void main() {
         }),
         AgentStreamEvent({
           'type': 'artifact.created',
-          'artifact_id': 'birth-plan-card',
-          'payload': {
-            'artifact_type': 'birth_plan_card',
-            'card': {
-              'card_type': 'birth_plan_card',
-              'schema_version': '1.0',
-              'card_json': {
-                'title': '分娩沟通单',
-                'communication': ['希望先解释每一步'],
-                'pain_relief': ['优先尝试非药物缓解'],
-                'questions_for_hospital': ['什么情况需要转剖宫产？'],
-                'medical_notes': ['妊娠糖尿病史'],
-              },
-            },
-          },
-        }),
-        AgentStreamEvent({
-          'type': 'artifact.created',
           'artifact_id': 'hospital-bag-card',
           'payload': {
             'artifact_type': 'hospital_bag_card',
@@ -5972,15 +5954,6 @@ void main() {
     expect(find.text('检查结束后及时吃第一餐'), findsOneWidget);
 
     expect(
-      find.byKey(const ValueKey('agent-artifact-birth-plan-card')),
-      findsOneWidget,
-    );
-    expect(find.text('沟通卡片内容'), findsOneWidget);
-    expect(find.text('疼痛缓解'), findsOneWidget);
-    expect(find.text('希望先解释每一步'), findsOneWidget);
-    expect(find.text('医疗或安全信息'), findsOneWidget);
-
-    expect(
       find.byKey(const ValueKey('agent-artifact-hospital-bag-card')),
       findsOneWidget,
     );
@@ -5994,10 +5967,6 @@ void main() {
     expect(find.text('保存图片'), findsNothing);
     expect(
       find.byKey(const ValueKey('agent-card-export-birth-journey-card')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-card-export-birth-plan-card')),
       findsNothing,
     );
     expect(
@@ -6040,18 +6009,6 @@ void main() {
         }),
         AgentStreamEvent({
           'type': 'artifact.created',
-          'artifact_id': 'birth-plan-camel-card',
-          'payload': {
-            'artifact_type': 'birth_plan_card',
-            'card_json': {
-              'title': '分娩沟通单',
-              'painRelief': ['优先尝试非药物缓解'],
-              'medicalNotes': ['妊娠糖尿病史'],
-            },
-          },
-        }),
-        AgentStreamEvent({
-          'type': 'artifact.created',
           'artifact_id': 'hospital-bag-camel-card',
           'payload': {
             'artifact_type': 'hospital_bag_card',
@@ -6082,15 +6039,6 @@ void main() {
     expect(find.text('孕 26-28 周'), findsOneWidget);
     expect(find.text('建议'), findsNothing);
     expect(find.text('记录早晚血压'), findsOneWidget);
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-birth-plan-camel-card')),
-      findsOneWidget,
-    );
-    expect(find.text('疼痛缓解'), findsOneWidget);
-    expect(find.text('优先尝试非药物缓解'), findsOneWidget);
-    expect(find.text('医疗或安全信息'), findsOneWidget);
-    expect(find.text('妊娠糖尿病史'), findsOneWidget);
 
     expect(
       find.byKey(const ValueKey('agent-artifact-hospital-bag-camel-card')),
@@ -6126,13 +6074,6 @@ void main() {
         ),
       );
 
-      expect(find.text('分娩沟通单'), findsOneWidget);
-      expect(find.text('希望医护先解释每一步'), findsOneWidget);
-      expect(find.text('出生后尽早肌肤接触'), findsOneWidget);
-      expect(
-        find.text('这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。'),
-        findsOneWidget,
-      );
       expect(find.text('待产包'), findsOneWidget);
       expect(find.text('证件文件包'), findsOneWidget);
       expect(find.text('妈妈住院包'), findsOneWidget);

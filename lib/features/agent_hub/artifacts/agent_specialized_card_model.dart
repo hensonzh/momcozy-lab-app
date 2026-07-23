@@ -4,33 +4,6 @@ sealed class AgentSpecializedArtifactView {
   String get title;
 }
 
-class AgentBirthPlanCardView extends AgentSpecializedArtifactView {
-  const AgentBirthPlanCardView({
-    required this.title,
-    required this.sections,
-    required this.medicalNotes,
-    required this.disclaimer,
-  });
-
-  @override
-  final String title;
-  final List<AgentBirthPlanSectionView> sections;
-  final List<String> medicalNotes;
-  final String disclaimer;
-}
-
-class AgentBirthPlanSectionView {
-  const AgentBirthPlanSectionView({
-    required this.id,
-    required this.title,
-    required this.values,
-  });
-
-  final String id;
-  final String title;
-  final List<String> values;
-}
-
 class AgentHospitalBagCardView extends AgentSpecializedArtifactView {
   const AgentHospitalBagCardView({
     required this.title,

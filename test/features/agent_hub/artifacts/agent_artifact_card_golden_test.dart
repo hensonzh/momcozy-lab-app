@@ -130,45 +130,6 @@ const _cardCases = [
     ),
   ),
   _CardGoldenCase(
-    label: 'birth plan card',
-    fileName: 'birth_plan',
-    card: AgentArtifactCardView(
-      id: 'birth-plan-golden',
-      title: '分娩沟通单',
-      artifactType: 'birth_plan_card',
-      schemaVersion: '1.0',
-      presentationKind: AgentArtifactPresentationKind.birthPlanCard,
-      cardJson: {
-        'communication': ['希望每一步操作前先解释'],
-        'pain_relief': ['优先尝试非药物缓解方式'],
-        'baby_after_birth': ['情况允许时尽早肌肤接触'],
-        'medical_notes': ['妊娠糖尿病史'],
-      },
-      specializedView: AgentBirthPlanCardView(
-        title: '分娩沟通单',
-        sections: [
-          AgentBirthPlanSectionView(
-            id: 'communication',
-            title: '沟通方式',
-            values: ['希望每一步操作前先解释'],
-          ),
-          AgentBirthPlanSectionView(
-            id: 'pain_relief',
-            title: '疼痛缓解',
-            values: ['优先尝试非药物缓解方式'],
-          ),
-          AgentBirthPlanSectionView(
-            id: 'baby_after_birth',
-            title: '宝宝出生后',
-            values: ['情况允许时尽早肌肤接触'],
-          ),
-        ],
-        medicalNotes: ['妊娠糖尿病史'],
-        disclaimer: '这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。',
-      ),
-    ),
-  ),
-  _CardGoldenCase(
     label: 'hospital bag card',
     fileName: 'hospital_bag',
     card: AgentArtifactCardView(

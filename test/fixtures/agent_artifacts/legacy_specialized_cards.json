@@ -2,32 +2,6 @@
   "events": [
     {
       "type": "artifact.created",
-      "artifact_id": "legacy-birth-plan-card",
-      "payload": {
-        "artifact_type": "card",
-        "card": {
-          "card_type": "birth_plan_card",
-          "schema_version": "1.0",
-          "card_json": {
-            "title": "Birth Plan Card",
-            "communicationPreferences": [
-              "1. 希望医护先解释每一步",
-              {"backup": "我还没想好，请帮我整理成温和版本"},
-              "待确认"
-            ],
-            "labor_preferences": {"movement": ["自由走动", "自由走动"]},
-            "painReliefPreferences": {"first": "优先尝试非药物缓解"},
-            "babyAfterBirthPreferences": ["skin-to-skin"],
-            "ifPlansChange": {
-              "whatMattersMost": ["先说明原因", "2、让我和家人确认"]
-            },
-            "medicalNotes": ["妊娠糖尿病史", "还不确定"]
-          }
-        }
-      }
-    },
-    {
-      "type": "artifact.created",
       "artifact_id": "legacy-hospital-bag-card",
       "payload": {
         "artifact_type": "card",

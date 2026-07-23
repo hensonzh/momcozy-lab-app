@@ -256,13 +256,6 @@ AgentArtifactPresentationKind _presentationKind({
             cardJson.containsKey('todoPlan') ||
             cardJson.containsKey('owner') =>
       AgentArtifactPresentationKind.birthJourneyPlanCard,
-    'birth_plan_card'
-        when cardJson.containsKey('communication') ||
-            cardJson.containsKey('pain_relief') ||
-            cardJson.containsKey('painRelief') ||
-            cardJson.containsKey('medical_notes') ||
-            cardJson.containsKey('medicalNotes') =>
-      AgentArtifactPresentationKind.birthPlanCard,
     'hospital_bag_card'
         when cardJson.containsKey('packing_groups') ||
             cardJson.containsKey('packingGroups') =>
@@ -290,7 +283,6 @@ Map<String, Object?> _directCardPayload(
     'milk_analysis_card' ||
     'milk_plan_card' ||
     'birth_journey_plan_card' ||
-    'birth_plan_card' ||
     'hospital_bag_card' ||
     'ibclc_consult' ||
     'ibclc_consult_card' => payload,
@@ -825,7 +817,6 @@ String _artifactSubject(String? type) {
     'milk_analysis_card' => '奶量分析',
     'milk_plan_card' || 'milk_plan_preview' => '奶量计划',
     'birth_journey_plan_card' => '孕期计划',
-    'birth_plan_card' => '分娩计划',
     'hospital_bag_card' || 'hospital_bag_cart' => '待产包',
     'ibclc_consult_card' => 'IBCLC 咨询入口',
     _ => '结果',
