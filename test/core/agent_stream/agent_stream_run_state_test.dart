@@ -394,6 +394,49 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
       },
     );
 
+    test(
+      'persists the latest pregnancy workflow prompt across restoration',
+      () {
+        final state = const AgentStreamRunState().start().applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-workflow-prompt-001',
+            'type': 'message.completed',
+            'thread_id': 'thread-workflow-prompt-001',
+            'run_id': 'run-workflow-prompt-001',
+            'payload': {
+              'role': 'assistant',
+              'text': '你目前做过产检了吗？',
+              'workflow_prompt': {
+                'schema_version': 'pregnancy_plan_workflow_context.v1',
+                'workflow_type': 'pregnancy_plan',
+                'status': 'active',
+                'phase': 'checkup_done_question',
+                'current_step': {
+                  'id': 'checkup_done',
+                  'kind': 'single_choice',
+                  'question': '你目前做过产检了吗？',
+                  'allow_free_text': false,
+                  'options': [
+                    {'id': 'confirm_checkup_done', 'label': '做过产检'},
+                  ],
+                },
+                'editable_steps': <Object?>[],
+                'allowed_commands': ['answer_current', 'pause'],
+              },
+            },
+          }),
+        );
+
+        final restored = AgentStreamRunState.fromMap(state.toMap());
+
+        expect(restored.workflowPrompt?.currentStep.id, 'checkup_done');
+        expect(restored.workflowPrompt?.allowedCommands, {
+          'answer_current',
+          'pause',
+        });
+      },
+    );
+
     test('does not replace indexed streamed text on completed mismatch', () {
       var state = const AgentStreamRunState().start();
 
