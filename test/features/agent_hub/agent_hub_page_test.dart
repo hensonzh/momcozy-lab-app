@@ -6563,7 +6563,7 @@ void main() {
             'schema_version': '1.0',
             'status': 'created',
             'payload': {
-              'tool_name': 'support.ticket.propose',
+              'tool_name': 'support_ticket_propose',
               'submit_label': '确认并提交',
               'ticket': {
                 'issue_type': 'malfunction',
@@ -8347,7 +8347,7 @@ milk_total: 120ml
             'type': 'tool.started',
             'payload': {
               'tool_call_id': 'tool-milk-status',
-              'tool_name': 'records.milk_status.read',
+              'tool_name': 'records_milk_status_read',
               'label': '奶量状态',
               'semantic': {
                 'label': '我先看看今天的奶量状态～',
