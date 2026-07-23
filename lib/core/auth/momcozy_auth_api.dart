@@ -15,7 +15,6 @@ class MomCozyAuthApiRepository {
   Future<MomCozyAuthTokenResponse> signup({
     required String email,
     required String password,
-    String displayName = '',
     String deviceId = '',
   }) async {
     final response = await transport.postJson(
@@ -23,7 +22,6 @@ class MomCozyAuthApiRepository {
       body: {
         'email': email.trim(),
         'password': password,
-        if (displayName.trim().isNotEmpty) 'display_name': displayName.trim(),
         if (deviceId.trim().isNotEmpty) 'device_id': deviceId.trim(),
       },
     );
@@ -113,17 +111,13 @@ class MomCozyAuthTokenResponse {
 }
 
 class MomCozyAuthUser {
-  const MomCozyAuthUser({required this.id, required this.displayName});
+  const MomCozyAuthUser({required this.id});
 
   factory MomCozyAuthUser.fromMap(Map<String, Object?> map) {
-    return MomCozyAuthUser(
-      id: _requiredString(map, 'id'),
-      displayName: _requiredString(map, 'display_name'),
-    );
+    return MomCozyAuthUser(id: _requiredString(map, 'id'));
   }
 
   final String id;
-  final String displayName;
 }
 
 class MomCozySessionRefreshCoordinator {

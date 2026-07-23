@@ -729,6 +729,7 @@ void main() {
     tester,
   ) async {
     var newSessionStarted = false;
+    final imageLifecycle = <String>[];
 
     await tester.pumpWidget(
       _host(
@@ -744,11 +745,18 @@ void main() {
             ),
           ],
           pickImage: (_) async => const AgentStreamImageInput(
+            assetId: 'staged-file-001',
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'staged-before-new-session.png',
           ),
-          onNewSession: () => newSessionStarted = true,
+          discardImage: (assetId) async {
+            imageLifecycle.add('discard:$assetId');
+          },
+          onNewSession: () {
+            imageLifecycle.add('new-session');
+            newSessionStarted = true;
+          },
         ),
       ),
     );
@@ -774,9 +782,10 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(newSessionStarted, isTrue);
+    expect(imageLifecycle, ['discard:staged-file-001', 'new-session']);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
     expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
@@ -1233,7 +1242,7 @@ void main() {
       _host(
         AgentHubPage(
           greetingProfileLoader: () async =>
-              const AgentHubGreetingProfile(displayName: '小美', age: 29),
+              const AgentHubGreetingProfile(preferredName: '小美', age: 29),
           voicePlaybackCoordinator: coordinator,
           voicePlaybackPlayer: player,
         ),
@@ -1293,7 +1302,7 @@ void main() {
 
       profileCompleter.complete(
         const AgentHubGreetingProfile(
-          displayName: '小美',
+          preferredName: '小美',
           age: 31,
           birthPrepDefaults: BirthPrepProfileDefaults(
             age: 31,
@@ -1426,7 +1435,7 @@ void main() {
   ) async {
     final coordinator = AgentVoicePlaybackCoordinator();
     final player = _PageFakeVoicePlaybackPlayer();
-    var displayName = '小美';
+    var preferredName = '小美';
     var loadCount = 0;
 
     await tester.pumpWidget(
@@ -1434,7 +1443,10 @@ void main() {
         AgentHubPage(
           greetingProfileLoader: () async {
             loadCount += 1;
-            return AgentHubGreetingProfile(displayName: displayName, age: 29);
+            return AgentHubGreetingProfile(
+              preferredName: preferredName,
+              age: 29,
+            );
           },
           voicePlaybackCoordinator: coordinator,
           voicePlaybackPlayer: player,
@@ -1449,7 +1461,7 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    displayName = '安安';
+    preferredName = '安安';
     await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
     await tester.pump();
     await tester.pump();
@@ -2062,6 +2074,54 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets(
+    'Agent Hub disables send until the selected image upload completes',
+    (tester) async {
+      final upload = Completer<AgentStreamImageInput?>();
+      final client = _FixtureAgentStreamClient(const []);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            pickImage: (_) => upload.future,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '请看这张图',
+      );
+      await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+      await tester.pump();
+
+      expect(
+        tester
+            .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+            .onPressed,
+        isNull,
+      );
+
+      upload.complete(
+        const AgentStreamImageInput(
+          assetId: '7b8aa8c8-2c49-48c4-9cad-80f438a6c979',
+          dataUrl: 'data:image/png;base64,cHJldmlldw==',
+          mimeType: 'image/png',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+            .onPressed,
+        isNotNull,
+      );
+    },
+  );
+
   testWidgets('Agent Hub keeps camera and gallery image sources distinct', (
     tester,
   ) async {
@@ -2124,6 +2184,7 @@ void main() {
   testWidgets('Agent Hub removes image attachment before sending', (
     tester,
   ) async {
+    final discardedAssetIds = <String>[];
     final client = _FixtureAgentStreamClient(
       parseAgentJsonl(
         readMigrationFixture('agent_events/text_stream_basic.jsonl'),
@@ -2135,10 +2196,14 @@ void main() {
         AgentHubPage(
           runner: AgentStreamRunner(client),
           pickImage: (_) async => const AgentStreamImageInput(
+            assetId: 'before-send-file-001',
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'before-send.png',
           ),
+          discardImage: (assetId) async {
+            discardedAssetIds.add(assetId);
+          },
         ),
       ),
     );
@@ -2160,8 +2225,9 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
+    expect(discardedAssetIds, ['before-send-file-001']);
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsNothing,
@@ -2184,6 +2250,34 @@ void main() {
 
     expect(client.requests.single.message, 'Send text only');
     expect(client.requests.single.images, isEmpty);
+  });
+
+  testWidgets('Agent Hub retains an attachment when server deletion fails', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          pickImage: (_) async => const AgentStreamImageInput(
+            assetId: 'undeleted-file-001',
+            dataUrl: 'data:image/png;base64,fixture',
+          ),
+          discardImage: (_) async => throw StateError('delete failed'),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Agent Hub restores draft and image attachment by cache key', (
@@ -2253,6 +2347,55 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('图片 1'), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub renders persisted image refs through the asset loader', (
+    tester,
+  ) async {
+    const image = AgentStreamImageInput(
+      assetId: 'persisted-file-001',
+      dataUrl: '',
+      mimeType: 'image/png',
+      name: 'persisted.png',
+      size: 68,
+    );
+    final loadedAssetIds = <String>[];
+    final store = _MemoryAgentHubInteractionStateStore(
+      const AgentHubInteractionSnapshot(
+        historyMessages: [
+          AgentHubHistorySnapshot(
+            role: 'user',
+            content: '历史图片',
+            images: [image],
+          ),
+        ],
+        attachedImages: [image],
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          interactionStateStore: store,
+          loadImageBytes: (assetId) async {
+            loadedAssetIds.add(assetId);
+            return base64Decode(
+              'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(loadedAssetIds, isNotEmpty);
+    expect(loadedAssetIds.toSet(), {'persisted-file-001'});
+    expect(find.byIcon(Icons.image_not_supported_outlined), findsNothing);
   });
 
   testWidgets('Agent Hub clears cached active runs when restored', (
@@ -7264,6 +7407,99 @@ void main() {
     expect(find.text('已提交'), findsNothing);
     expect(tester.widget<FilledButton>(submitFinder).onPressed, isNotNull);
   });
+
+  testWidgets(
+    'Agent Hub discards staged images before sending a synthetic form message',
+    (tester) async {
+      final discardedAssetIds = <String>[];
+      final client = _FixtureAgentStreamClient([
+        AgentStreamEvent(const {
+          'event_id': 'staged-image-form-run-queued',
+          'type': 'run.queued',
+          'thread_id': 'thread-staged-image-form',
+          'run_id': 'run-staged-image-form',
+          'sequence': 1,
+        }),
+      ]);
+      final formEvent = _formArtifactEvent(
+        id: 'staged-image-form',
+        form: const {
+          'id': 'hospital_bag_intake',
+          'title': '信息采集',
+          'fields': [
+            {
+              'id': 'due_date_or_week',
+              'label': '预产期或当前孕周',
+              'type': 'text',
+              'required': true,
+              'default': '38 周',
+            },
+          ],
+        },
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请确认信息。',
+              events: [formEvent],
+            ),
+            pickImage: (_) async => const AgentStreamImageInput(
+              assetId: 'staged-before-form-submit',
+              dataUrl: 'data:image/png;base64,fixture',
+              mimeType: 'image/png',
+              name: 'staged.png',
+            ),
+            discardImage: (assetId) async {
+              discardedAssetIds.add(assetId);
+            },
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('agent-image-attachment-chip')),
+        findsOneWidget,
+      );
+
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-staged-image-form'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.descendant(
+          of: find.byKey(
+            const ValueKey('agent-artifact-form-staged-image-form'),
+          ),
+          matching: find.byType(TextFormField),
+        ),
+        '38 周',
+      );
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-submit-staged-image-form'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(client.requests, hasLength(1));
+      expect(discardedAssetIds, ['staged-before-form-submit']);
+      expect(client.requests.single.images, isEmpty);
+      expect(
+        find.byKey(const ValueKey('agent-image-attachment-chip')),
+        findsNothing,
+      );
+    },
+  );
 
   testWidgets('Agent Hub treats legacy checkbox_group fields as multi-select', (
     tester,

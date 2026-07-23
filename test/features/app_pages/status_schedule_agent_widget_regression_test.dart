@@ -1209,14 +1209,14 @@ MomCozyApiRuntime _runtime({
       {
         statusProfileEndpoint: const {
           'user_id': 'demo-user-fixture',
-          'delivery_date': '2026-06-12',
+          'estimated_due_date': '2026-06-12',
         },
         statusInfantsEndpoint: const {
           'items': [
             {
               'id': 'demo-baby-fixture',
               'owner_user_id': 'demo-user-fixture',
-              'infant_name': 'Mia',
+              'name': 'Mia',
               'birth_date': '2026-04-06',
               'sex': 'female',
               'status': 'active',

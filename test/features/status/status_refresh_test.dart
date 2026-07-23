@@ -23,7 +23,7 @@ void main() {
     final transport = FixtureApiJsonTransportByPath({
       statusProfileEndpoint: const {
         'user_id': 'refresh-user',
-        'delivery_date': '2026-06-20',
+        'estimated_due_date': '2026-06-20',
       },
       statusInfantsEndpoint: const {'items': <Object?>[]},
       feedingRecordsEndpoint: const {'items': <Object?>[]},
@@ -90,7 +90,7 @@ void main() {
     final transport = FixtureApiJsonTransportByPath({
       statusProfileEndpoint: const {
         'user_id': 'cache-user',
-        'delivery_date': '2026-06-20',
+        'estimated_due_date': '2026-06-20',
       },
       statusInfantsEndpoint: const {'items': <Object?>[]},
       feedingRecordsEndpoint: const {'items': <Object?>[]},

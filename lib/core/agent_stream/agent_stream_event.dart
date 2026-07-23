@@ -500,7 +500,7 @@ bool _looksLikeStructuredAgentJson(Object? value) {
     'skill_version',
     'tool_scope',
     'business_facts',
-    'display_name',
+    'preferred_name',
     'profile',
     'quick_replies',
     'quickReplies',

@@ -158,7 +158,7 @@ void main() {
   test('runtime creates typed repositories over the injected transport', () {
     final transport = FixtureApiJsonTransport({
       'user_id': 'user-fixture',
-      'delivery_date': '2026-06-11',
+      'estimated_due_date': '2026-06-11',
     });
     final statusPreferences = _MemoryStatusPreferenceStore();
     final volumePreferences = _MemoryVolumeUnitPreferenceStore();
@@ -215,42 +215,39 @@ void main() {
     statusController.dispose();
   });
 
-  test(
-    'schedule postpartum anchor prefers delivery date then birth date',
-    () async {
-      final withDeliveryDate = MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransportByPath({
-          statusProfileEndpoint: const {'delivery_date': '2026-06-11'},
-          statusInfantsEndpoint: const {
-            'items': [
-              {'birth_date': '2026-04-05'},
-            ],
-          },
-        }),
-        userId: 'mom',
-      );
-      final withBirthDateOnly = MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransportByPath({
-          statusProfileEndpoint: const {'user_id': 'mom'},
-          statusInfantsEndpoint: const {
-            'items': [
-              {'birth_date': '2026-04-05'},
-            ],
-          },
-        }),
-        userId: 'mom',
-      );
+  test('schedule postpartum anchor uses the infant birth date', () async {
+    final withDeliveryDate = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransportByPath({
+        statusProfileEndpoint: const {'estimated_due_date': '2026-06-11'},
+        statusInfantsEndpoint: const {
+          'items': [
+            {'birth_date': '2026-04-05'},
+          ],
+        },
+      }),
+      userId: 'mom',
+    );
+    final withBirthDateOnly = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransportByPath({
+        statusProfileEndpoint: const {'user_id': 'mom'},
+        statusInfantsEndpoint: const {
+          'items': [
+            {'birth_date': '2026-04-05'},
+          ],
+        },
+      }),
+      userId: 'mom',
+    );
 
-      expect(
-        await withDeliveryDate.loadSchedulePostpartumAnchorDate(),
-        DateTime(2026, 6, 11),
-      );
-      expect(
-        await withBirthDateOnly.loadSchedulePostpartumAnchorDate(),
-        DateTime(2026, 4, 5),
-      );
-    },
-  );
+    expect(
+      await withDeliveryDate.loadSchedulePostpartumAnchorDate(),
+      DateTime(2026, 4, 5),
+    );
+    expect(
+      await withBirthDateOnly.loadSchedulePostpartumAnchorDate(),
+      DateTime(2026, 4, 5),
+    );
+  });
 
   test('runtime exposes an injected multipart transport lazily', () async {
     final multipart = FixtureApiMultipartTransport({

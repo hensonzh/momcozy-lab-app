@@ -13,13 +13,8 @@ class AgentHubProfileRepository {
     final profile = await transport.getJson(agentHubProfileEndpoint);
     final birthPrepDefaults = BirthPrepProfileDefaults.fromProfileMap(profile);
     return AgentHubGreetingProfile(
-      displayName: _string(
-        profile['display_name'] ?? profile['displayName'],
-      ).trim(),
+      preferredName: _string(profile['preferred_name']).trim(),
       age: birthPrepDefaults.age,
-      onboardingSkipped:
-          profile['profile_onboarding_skipped'] == true ||
-          profile['profileOnboardingSkipped'] == true,
       birthPrepDefaults: birthPrepDefaults,
     );
   }

@@ -20,53 +20,7 @@ class BirthPrepProfileDefaults {
   ) {
     return BirthPrepProfileDefaults(
       age: _profileAge(profile['age']),
-      dueDateOrWeek: _firstProfileText(profile, const [
-        'birth_prep_due_date_or_week',
-        'birthPrepDueDateOrWeek',
-        'delivery_date',
-        'deliveryDate',
-      ]),
-      ivf: _firstProfileText(profile, const ['birth_prep_ivf', 'birthPrepIvf']),
-      fetusCount: _firstProfileText(profile, const [
-        'birth_prep_fetus_count',
-        'birthPrepFetusCount',
-      ]),
-      cityOrCountry: _firstProfileText(profile, const [
-        'birth_prep_city_or_country',
-        'birthPrepCityOrCountry',
-      ]),
-      birthHospital: _firstProfileText(profile, const [
-        'birth_prep_birth_hospital',
-        'birthPrepBirthHospital',
-      ]),
-      birthPath: _firstProfileText(profile, const [
-        'birth_prep_birth_path',
-        'birthPrepBirthPath',
-      ]),
-      firstBirth: _firstProfileText(profile, const [
-        'birth_prep_first_birth',
-        'birthPrepFirstBirth',
-      ]),
-      feedingIntention: _firstProfileText(profile, const [
-        'birth_prep_feeding_intention',
-        'birthPrepFeedingIntention',
-      ]),
-      returnToWorkTiming: _firstProfileText(profile, const [
-        'birth_prep_return_to_work_timing',
-        'birthPrepReturnToWorkTiming',
-      ]),
-      supportPerson: _firstProfileText(profile, const [
-        'birth_prep_support_person',
-        'birthPrepSupportPerson',
-      ]),
-      pregnancyHistoryOrNotes: _firstProfileText(profile, const [
-        'birth_prep_pregnancy_history_or_notes',
-        'birthPrepPregnancyHistoryOrNotes',
-      ]),
-      topWorries: _firstProfileText(profile, const [
-        'birth_prep_top_worries',
-        'birthPrepTopWorries',
-      ]),
+      dueDateOrWeek: _firstProfileText(profile, const ['estimated_due_date']),
     );
   }
 

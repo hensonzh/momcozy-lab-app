@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 
 void main() {
   late ImagePickerPlatform originalPlatform;
@@ -78,6 +80,44 @@ void main() {
       'data:image/jpeg;base64,${base64Encode([0xff, 0xd8, 0xff, 0xe0])}',
     );
   });
+
+  test(
+    'uploads the selected image before returning its stable asset id',
+    () async {
+      final repository = _FakeMediaRepository();
+
+      final image = await AgentHubPlatformImagePicker(
+        uploadRepository: repository,
+      ).pick(AgentImageInputSource.gallery);
+
+      expect(image?.assetId, '7b8aa8c8-2c49-48c4-9cad-80f438a6c979');
+      expect(repository.files, hasLength(1));
+      expect(repository.files.single.bytes, [1, 2, 3, 4]);
+      expect(repository.files.single.mimeType, 'image/jpeg');
+      expect(repository.idempotencyKeys.single, startsWith('agent-image-'));
+    },
+  );
+}
+
+class _FakeMediaRepository implements MediaRepository {
+  final List<ApiUploadFile> files = [];
+  final List<String?> idempotencyKeys = [];
+
+  @override
+  Future<UploadedMediaFile> uploadFile({
+    required ApiUploadFile file,
+    String? idempotencyKey,
+  }) async {
+    files.add(file);
+    idempotencyKeys.add(idempotencyKey);
+    return const UploadedMediaFile(
+      id: '7b8aa8c8-2c49-48c4-9cad-80f438a6c979',
+      name: 'photo.jpg',
+      sizeBytes: 4,
+      extension: 'jpg',
+      mimeType: 'image/jpeg',
+    );
+  }
 }
 
 class _FakeImagePickerPlatform extends ImagePickerPlatform {

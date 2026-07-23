@@ -51,6 +51,7 @@ class AgentStreamRequest {
 
 class AgentStreamImageInput {
   const AgentStreamImageInput({
+    this.assetId = '',
     required this.dataUrl,
     this.mimeType = 'image/png',
     this.name = 'image.png',
@@ -58,6 +59,7 @@ class AgentStreamImageInput {
     this.detail = 'auto',
   });
 
+  final String assetId;
   final String dataUrl;
   final String mimeType;
   final String name;
@@ -65,6 +67,7 @@ class AgentStreamImageInput {
   final String detail;
 
   Map<String, Object?> toMap() => {
+    if (assetId.trim().isNotEmpty) 'assetId': assetId,
     'dataUrl': dataUrl,
     'mimeType': mimeType,
     'name': name,
@@ -72,14 +75,19 @@ class AgentStreamImageInput {
     'detail': detail,
   };
 
-  Map<String, Object?> toProductionAttachment() => {
-    'type': 'image',
-    'data_url': dataUrl,
-    'mime_type': mimeType.trim().isEmpty ? 'image/png' : mimeType,
-    'name': name.trim().isEmpty ? 'image.png' : name,
-    'size': size,
-    'detail': detail.trim().isEmpty ? 'auto' : detail,
-  };
+  Map<String, Object?> toProductionAttachment() {
+    final normalizedAssetId = assetId.trim();
+    if (normalizedAssetId.isEmpty) {
+      throw const AgentStreamPayloadException(
+        'Image upload must complete before sending.',
+      );
+    }
+    return {
+      'type': 'image',
+      'asset_id': normalizedAssetId,
+      'detail': detail.trim().isEmpty ? 'auto' : detail,
+    };
+  }
 }
 
 class AgentStreamPayloadException implements Exception {

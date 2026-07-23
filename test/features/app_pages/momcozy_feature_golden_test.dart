@@ -267,14 +267,14 @@ MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
     jsonTransport: FixtureApiJsonTransportByPath({
       statusProfileEndpoint: const <String, Object?>{
         'user_id': 'demo-user-fixture',
-        'delivery_date': '2026-06-11',
+        'estimated_due_date': '2026-06-11',
       },
       statusInfantsEndpoint: const <String, Object?>{
         'items': <Object?>[
           <String, Object?>{
             'id': 'demo-baby-fixture',
             'owner_user_id': 'demo-user-fixture',
-            'infant_name': 'Mia',
+            'name': 'Mia',
             'birth_date': '2026-04-05',
             'sex': 'female',
             'status': 'active',

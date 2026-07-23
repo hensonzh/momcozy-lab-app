@@ -5,28 +5,23 @@ const agentHubDefaultGreeting =
 
 class AgentHubGreetingProfile {
   const AgentHubGreetingProfile({
-    this.displayName = '',
+    this.preferredName = '',
     this.age,
-    this.onboardingSkipped = false,
     this.birthPrepDefaults = const BirthPrepProfileDefaults(),
   });
 
-  final String displayName;
+  final String preferredName;
   final int? age;
-  final bool onboardingSkipped;
   final BirthPrepProfileDefaults birthPrepDefaults;
 
-  bool get needsOnboarding {
-    if (onboardingSkipped) return false;
-    return displayName.trim().isEmpty || age == null;
-  }
+  bool get needsOnboarding => preferredName.trim().isEmpty || age == null;
 }
 
 typedef AgentHubGreetingProfileLoader =
     Future<AgentHubGreetingProfile?> Function();
 
 String agentHubGreetingForProfile(AgentHubGreetingProfile? profile) {
-  final name = profile?.displayName.trim() ?? '';
+  final name = profile?.preferredName.trim() ?? '';
   if (name.isEmpty || profile?.age == null) return agentHubDefaultGreeting;
   return '嗨 $name， \n\n今天想聊点什么呢？ \n\n把你现在最关心的事情告诉我就好，我会陪你一起梳理。';
 }

@@ -4,11 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 
 class AgentSentImages extends StatelessWidget {
-  const AgentSentImages({super.key, required this.images});
+  const AgentSentImages({super.key, required this.images, this.loadImageBytes});
 
   final List<AgentStreamImageInput> images;
+  final AgentHubImageBytesLoader? loadImageBytes;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,11 @@ class AgentSentImages extends StatelessWidget {
           for (var index = 0; index < images.length; index++)
             GestureDetector(
               key: ValueKey('agent-sent-image-$index'),
-              onTap: () => _showSentImage(context, images[index]),
+              onTap: () => _showSentImage(
+                context,
+                images[index],
+                loadImageBytes: loadImageBytes,
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: SizedBox(
@@ -32,6 +38,7 @@ class AgentSentImages extends StatelessWidget {
                   height: itemHeight,
                   child: _AgentDataUrlImage(
                     image: images[index],
+                    loadImageBytes: loadImageBytes,
                     fit: BoxFit.cover,
                     cacheWidth: 360,
                   ),
@@ -50,11 +57,13 @@ class AgentComposerImageAttachment extends StatelessWidget {
     required this.image,
     required this.removeButtonKey,
     required this.onRemove,
+    this.loadImageBytes,
   });
 
   final AgentStreamImageInput image;
   final Key removeButtonKey;
   final VoidCallback? onRemove;
+  final AgentHubImageBytesLoader? loadImageBytes;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +84,7 @@ class AgentComposerImageAttachment extends StatelessWidget {
                 ),
                 child: _AgentDataUrlImage(
                   image: image,
+                  loadImageBytes: loadImageBytes,
                   fit: BoxFit.cover,
                   cacheWidth: 192,
                 ),
@@ -106,7 +116,11 @@ class AgentComposerImageAttachment extends StatelessWidget {
   }
 }
 
-Future<void> _showSentImage(BuildContext context, AgentStreamImageInput image) {
+Future<void> _showSentImage(
+  BuildContext context,
+  AgentStreamImageInput image, {
+  AgentHubImageBytesLoader? loadImageBytes,
+}) {
   return showDialog<void>(
     context: context,
     barrierColor: Colors.black.withValues(alpha: 0.92),
@@ -123,6 +137,7 @@ Future<void> _showSentImage(BuildContext context, AgentStreamImageInput image) {
                   child: Center(
                     child: _AgentDataUrlImage(
                       image: image,
+                      loadImageBytes: loadImageBytes,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -153,11 +168,13 @@ Future<void> _showSentImage(BuildContext context, AgentStreamImageInput image) {
 class _AgentDataUrlImage extends StatefulWidget {
   const _AgentDataUrlImage({
     required this.image,
+    this.loadImageBytes,
     required this.fit,
     this.cacheWidth,
   });
 
   final AgentStreamImageInput image;
+  final AgentHubImageBytesLoader? loadImageBytes;
   final BoxFit fit;
   final int? cacheWidth;
 
@@ -167,27 +184,63 @@ class _AgentDataUrlImage extends StatefulWidget {
 
 class _AgentDataUrlImageState extends State<_AgentDataUrlImage> {
   late Uint8List? _bytes;
+  Future<Uint8List>? _assetBytes;
 
   @override
   void initState() {
     super.initState();
-    _bytes = _decodeDataUrl(widget.image.dataUrl);
+    _prepareImage();
   }
 
   @override
   void didUpdateWidget(covariant _AgentDataUrlImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.image.dataUrl != widget.image.dataUrl) {
-      _bytes = _decodeDataUrl(widget.image.dataUrl);
+    if (oldWidget.image.dataUrl != widget.image.dataUrl ||
+        oldWidget.image.assetId != widget.image.assetId ||
+        oldWidget.loadImageBytes != widget.loadImageBytes) {
+      _prepareImage();
+    }
+  }
+
+  void _prepareImage() {
+    _bytes = _decodeDataUrl(widget.image.dataUrl);
+    _assetBytes = null;
+    final assetId = widget.image.assetId.trim();
+    final loader = widget.loadImageBytes;
+    if (_bytes == null && assetId.isNotEmpty && loader != null) {
+      _assetBytes = loader(assetId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final bytes = _bytes;
-    if (bytes == null) return const _AgentImageFallback();
+    if (bytes != null) return _memoryImage(bytes);
+    final assetBytes = _assetBytes;
+    if (assetBytes == null) return const _AgentImageFallback();
+    return FutureBuilder<Uint8List>(
+      future: assetBytes,
+      builder: (context, snapshot) {
+        final loadedBytes = snapshot.data;
+        if (loadedBytes != null) return _memoryImage(loadedBytes);
+        if (snapshot.hasError) return const _AgentImageFallback();
+        return const ColoredBox(
+          color: MomCozyColors.muted,
+          child: Center(
+            child: SizedBox.square(
+              dimension: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _memoryImage(Uint8List bytes) {
     return Image.memory(
       bytes,
+      key: const ValueKey('agent-image-bytes'),
       fit: widget.fit,
       cacheWidth: widget.cacheWidth,
       gaplessPlayback: true,

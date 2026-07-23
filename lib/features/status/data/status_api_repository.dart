@@ -20,26 +20,26 @@ class StatusApiRepository implements StatusRepository {
         ? _mapOrNull(infantItems.first)
         : null;
     return StatusOverview(
-      mom: _momStatus(profile, now: now),
+      mom: _momStatus(profile, firstInfant, now: now),
       baby: _babyStatus(firstInfant, now: now),
     );
   }
 }
 
-MomStatus? _momStatus(Map<String, Object?>? data, {DateTime Function()? now}) {
-  if (data == null || data.isEmpty) return null;
-  final deliveryDate = _date(data['delivery_date']);
-  final dueDateOrWeek = _string(
-    data['birth_prep_due_date_or_week'] ?? data['birthPrepDueDateOrWeek'],
-  );
-  if (deliveryDate == null && dueDateOrWeek?.trim().isNotEmpty != true) {
+MomStatus? _momStatus(
+  Map<String, Object?>? data,
+  Map<String, Object?>? infant, {
+  DateTime Function()? now,
+}) {
+  final estimatedDueDate = _date(data?['estimated_due_date']);
+  final birthDate = _date(infant?['birth_date']);
+  if (estimatedDueDate == null && birthDate == null) {
     return null;
   }
   return MomStatus(
-    stage: _stageFromDeliveryDate(deliveryDate, now: now),
-    postpartumDay: _ageDays(deliveryDate, now: now),
-    deliveryDate: deliveryDate,
-    dueDateOrWeek: dueDateOrWeek,
+    stage: birthDate == null ? '孕期' : '哺乳期',
+    postpartumDay: _ageDays(birthDate, now: now),
+    estimatedDueDate: estimatedDueDate,
   );
 }
 
@@ -50,10 +50,8 @@ BabyStatus? _babyStatus(
   if (data == null || data.isEmpty) return null;
   final birthDate = _date(data['birth_date']);
   return BabyStatus(
-    id: _string(data['id'] ?? data['infant_id'] ?? data['infantId']),
-    nickname: _string(
-      data['infant_name'] ?? data['nickname'] ?? data['nickName'],
-    ),
+    id: _string(data['id']),
+    nickname: _string(data['name']),
     ageDays: _ageDays(birthDate, now: now),
     birthDate: birthDate,
   );
@@ -73,14 +71,6 @@ DateTime? _date(Object? value) {
 DateTime _today(DateTime Function()? now) {
   final value = (now ?? DateTime.now)();
   return DateTime(value.year, value.month, value.day);
-}
-
-String? _stageFromDeliveryDate(
-  DateTime? deliveryDate, {
-  DateTime Function()? now,
-}) {
-  if (deliveryDate == null) return null;
-  return deliveryDate.isAfter(_today(now)) ? '孕期' : '哺乳期';
 }
 
 int? _ageDays(DateTime? date, {DateTime Function()? now}) {

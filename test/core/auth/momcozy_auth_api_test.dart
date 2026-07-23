@@ -30,24 +30,21 @@ void main() {
       expect(tokens.refreshToken, 'refresh-token-001');
       expect(tokens.expiresIn, 3600);
       expect(tokens.user.id, 'user-001');
-      expect(tokens.user.displayName, 'Test User');
     });
 
-    test('signup sends optional fields only when present', () async {
+    test('signup sends account fields only', () async {
       final transport = FixtureApiJsonTransport(_tokenResponse());
       final repository = MomCozyAuthApiRepository(transport: transport);
 
       await repository.signup(
         email: 'new@example.test',
         password: 'strong-password',
-        displayName: ' New Mom ',
       );
 
       expect(transport.lastPath, authSignupEndpoint);
       expect(transport.lastBody, {
         'email': 'new@example.test',
         'password': 'strong-password',
-        'display_name': 'New Mom',
       });
       expect(transport.lastBody, isNot(containsPair('device_id', anything)));
     });
@@ -427,7 +424,7 @@ Map<String, Object?> _tokenResponse() {
     'refresh_token': 'refresh-token-001',
     'expires_in': 3600,
     'token_type': 'bearer',
-    'user': {'id': 'user-001', 'display_name': 'Test User'},
+    'user': {'id': 'user-001'},
   };
 }
 

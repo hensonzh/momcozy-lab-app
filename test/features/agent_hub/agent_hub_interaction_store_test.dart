@@ -202,8 +202,9 @@ void main() {
     },
   );
 
-  test('secure persistence projection omits image bytes and image retries', () {
+  test('secure persistence keeps asset refs but omits image bytes', () {
     const image = AgentStreamImageInput(
+      assetId: '7a6d4223-7aef-45e4-aec4-19c61bd3978a',
       dataUrl: 'data:image/png;base64,large-sensitive-payload',
       mimeType: 'image/png',
       name: 'sent.png',
@@ -223,9 +224,16 @@ void main() {
     );
 
     expect(encoded, isNot(contains('large-sensitive-payload')));
-    expect(restored.attachedImages, isEmpty);
-    expect(restored.historyMessages.single.images, isEmpty);
-    expect(restored.activeRequest, isNull);
+    expect(encoded, contains('7a6d4223-7aef-45e4-aec4-19c61bd3978a'));
+    expect(restored.attachedImages.single.assetId, image.assetId);
+    expect(restored.attachedImages.single.dataUrl, isEmpty);
+    expect(
+      restored.historyMessages.single.images.single.assetId,
+      image.assetId,
+    );
+    expect(restored.historyMessages.single.images.single.dataUrl, isEmpty);
+    expect(restored.activeRequest?.images.single.assetId, image.assetId);
+    expect(restored.activeRequest?.images.single.dataUrl, isEmpty);
   });
 
   test('submitted artifact forms and request idempotency round-trip', () {
