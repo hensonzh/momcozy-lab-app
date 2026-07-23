@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'agent_workflow_prompt.dart';
+
 class AgentStreamEvent {
   AgentStreamEvent(this.raw);
 
@@ -134,6 +136,13 @@ class AgentStreamEvent {
         payload['workflowReply'] ??
         raw['workflow_reply'] ??
         raw['workflowReply'],
+  );
+
+  AgentWorkflowPrompt? get workflowPrompt => AgentWorkflowPrompt.tryParse(
+    payload['workflow_prompt'] ??
+        payload['workflowPrompt'] ??
+        raw['workflow_prompt'] ??
+        raw['workflowPrompt'],
   );
 
   String? get _rawCompletedText {
