@@ -151,6 +151,10 @@ String _formSubmissionIdempotencyKey({
   return 'agent-form-submit-${sha256.convert(utf8.encode(canonicalPayload))}';
 }
 
+String _newAgentRunIdempotencyKey() {
+  return 'agent-run-${DateTime.now().microsecondsSinceEpoch}';
+}
+
 Object? _canonicalJsonValue(Object? value) {
   if (value is Map) {
     final entries =
@@ -2208,7 +2212,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (runner == null || (initialState == null && _isComposerLocked)) {
       return false;
     }
-    final requestWithThread = _requestWithConversationThread(request);
+    final requestWithIdempotency =
+        request.runId?.trim().isNotEmpty == true ||
+            request.idempotencyKey?.trim().isNotEmpty == true
+        ? request
+        : _requestWithIdempotencyKey(request, _newAgentRunIdempotencyKey());
+    final requestWithThread = _requestWithConversationThread(
+      requestWithIdempotency,
+    );
 
     _cancelRunSubscription();
     final acceptance = awaitServerRunSignal ? Completer<bool>() : null;

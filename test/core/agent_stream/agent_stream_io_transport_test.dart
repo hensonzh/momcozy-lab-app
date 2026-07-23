@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -221,6 +222,42 @@ void main() {
                 .having((error) => error.cause, 'cause', isA<StateError>()),
           ),
         );
+      },
+    );
+
+    test(
+      'production SSE transport times out run creation as retryable',
+      () async {
+        final runConnector = _NeverCompletingControlHttpConnector();
+        final client = SseAgentStreamClient(
+          ProductionAgentSseTransport(
+            runsEndpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+            ),
+            payloadFactory: buildProductionAgentRunPayload,
+            runConnector: runConnector,
+            runCreationTimeout: const Duration(milliseconds: 10),
+          ),
+        );
+
+        await expectLater(
+          client.stream(_request).toList(),
+          throwsA(
+            isA<AgentStreamTransportException>()
+                .having((error) => error.isRetryable, 'isRetryable', isTrue)
+                .having(
+                  (error) => error.message,
+                  'message',
+                  contains('run create timeout'),
+                )
+                .having(
+                  (error) => error.cause,
+                  'cause',
+                  isA<TimeoutException>(),
+                ),
+          ),
+        );
+        expect(runConnector.requestCount, 1);
       },
     );
 
@@ -759,6 +796,7 @@ class _RecordingControlHttpConnector
     Uri uri, {
     required Map<String, String> headers,
     required String body,
+    Duration? timeout,
   }) async {
     this.uri = uri;
     this.headers = headers;
@@ -778,6 +816,22 @@ class _RecordingControlHttpConnector
       nextResponse = queuedResponses.removeAt(0);
     }
     return response;
+  }
+}
+
+class _NeverCompletingControlHttpConnector
+    implements AgentStreamControlHttpConnector {
+  int requestCount = 0;
+
+  @override
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+    Duration? timeout,
+  }) {
+    requestCount += 1;
+    return Completer<AgentStreamControlHttpResponse>().future;
   }
 }
 

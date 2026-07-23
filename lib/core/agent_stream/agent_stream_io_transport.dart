@@ -199,6 +199,7 @@ abstract interface class AgentStreamControlHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
     required String body,
+    Duration? timeout,
   });
 }
 
@@ -221,16 +222,32 @@ class IoAgentStreamControlHttpConnector
     Uri uri, {
     required Map<String, String> headers,
     required String body,
-  }) async {
-    final request = await _httpClient.postUrl(uri);
-    headers.forEach(request.headers.set);
-    request.add(utf8.encode(body));
+    Duration? timeout,
+  }) {
+    HttpClientRequest? activeRequest;
+    Future<AgentStreamControlHttpResponse> send() async {
+      final request = await _httpClient.postUrl(uri);
+      activeRequest = request;
+      headers.forEach(request.headers.set);
+      request.add(utf8.encode(body));
 
-    final response = await request.close();
-    final responseBody = await response.transform(utf8.decoder).join();
-    return AgentStreamControlHttpResponse(
-      statusCode: response.statusCode,
-      body: responseBody,
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+      return AgentStreamControlHttpResponse(
+        statusCode: response.statusCode,
+        body: responseBody,
+      );
+    }
+
+    final operation = send();
+    if (timeout == null) return operation;
+    return operation.timeout(
+      timeout,
+      onTimeout: () {
+        final error = TimeoutException('HTTP POST timeout.', timeout);
+        activeRequest?.abort(error);
+        throw error;
+      },
     );
   }
 }
@@ -631,6 +648,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
     this.onUnauthorized,
     this.runConnector = const _DefaultControlHttpConnector(),
     this.streamConnector = const _DefaultSseGetConnector(),
+    this.runCreationTimeout = const Duration(seconds: 15),
   });
 
   final AgentStreamEndpoint runsEndpoint;
@@ -638,6 +656,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
   final AgentStreamUnauthorizedHandler? onUnauthorized;
   final AgentStreamControlHttpConnector runConnector;
   final AgentStreamSseGetConnector streamConnector;
+  final Duration runCreationTimeout;
 
   @override
   Stream<String> frames(AgentStreamRequest request) async* {
@@ -692,6 +711,20 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
   }
 
   Future<String> _createRun(AgentStreamRequest request) async {
+    try {
+      return await _createRunWithinDeadline(
+        request,
+      ).timeout(runCreationTimeout);
+    } on TimeoutException catch (error) {
+      throw AgentStreamTransportException(
+        'run create timeout.',
+        isRetryable: true,
+        cause: error,
+      );
+    }
+  }
+
+  Future<String> _createRunWithinDeadline(AgentStreamRequest request) async {
     final payload = Map<String, Object?>.from(payloadFactory(request));
     final idempotencyKey =
         stringField(payload, 'idempotency_key') ?? _agentRunIdempotencyKey();
@@ -735,6 +768,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
         'Idempotency-Key': idempotencyKey,
       },
       body: jsonEncode(payload),
+      timeout: runCreationTimeout,
     );
   }
 
@@ -789,11 +823,13 @@ class _DefaultControlHttpConnector implements AgentStreamControlHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
     required String body,
+    Duration? timeout,
   }) {
     return IoAgentStreamControlHttpConnector().post(
       uri,
       headers: headers,
       body: body,
+      timeout: timeout,
     );
   }
 }
