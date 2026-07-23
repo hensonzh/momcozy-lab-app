@@ -69,19 +69,16 @@ Map<String, Object?> normalizeAgentArtifactForm(
     }
   }
 
-  final isBirthPlan = formId == 'birth_plan_card_intake';
   final isBirthJourneyBasic = formId == 'birth_journey_basic_info_intake';
   final isHospitalBag =
       formId == 'hospital_bag_intake' ||
-      (!isBirthPlan &&
-          !isBirthJourneyBasic &&
-          _looksLikeHospitalBagForm(fields));
+      (!isBirthJourneyBasic && _looksLikeHospitalBagForm(fields));
 
   normalizedForm['id'] = isHospitalBag ? 'hospital_bag_intake' : formId;
   normalizedForm.remove('defaultValues');
   normalizedForm['default_values'] = {...profileValues, ...formValues};
 
-  if (isHospitalBag || isBirthPlan) {
+  if (isHospitalBag) {
     normalizedForm['title'] = '信息采集';
     normalizedForm['description'] = '';
   }
@@ -92,7 +89,6 @@ Map<String, Object?> normalizeAgentArtifactForm(
     if (isHospitalBag && _removedHospitalBagFieldIds.contains(id)) continue;
     var next = Map<String, Object?>.from(field);
     if (isHospitalBag) next = _normalizeHospitalBagField(next);
-    if (isBirthPlan) next = _normalizeBirthPlanField(next);
     if (isBirthJourneyBasic && _birthJourneyRequiredFieldIds.contains(id)) {
       next['required'] = true;
     }
@@ -116,17 +112,6 @@ Map<String, Object?> _normalizeHospitalBagField(Map<String, Object?> field) {
   }
   if (id == 'birth_path') {
     field['label'] = _replaceFieldLabel(field['label'], '分娩方式');
-    field['default_value'] = _normalizedBirthPath(field['default_value']);
-  }
-  field.remove('helpText');
-  field['help_text'] = '';
-  return field;
-}
-
-Map<String, Object?> _normalizeBirthPlanField(Map<String, Object?> field) {
-  if (_string(field['id']) == 'birth_path') {
-    field['label'] = _replaceFieldLabel(field['label'], '医生目前建议的生产方式');
-    field['options'] = const ['顺产', '剖宫产', '还没确定'];
     field['default_value'] = _normalizedBirthPath(field['default_value']);
   }
   field.remove('helpText');

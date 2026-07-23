@@ -120,12 +120,7 @@ class _RecordingCardExportService implements AgentCardExportService {
   }) async {}
 }
 
-const _exportScopeCards = [
-  _journeyCard,
-  _birthPlanCard,
-  _hospitalBagCard,
-  _milkPlanCard,
-];
+const _exportScopeCards = [_journeyCard, _hospitalBagCard, _milkPlanCard];
 
 const _journeyCard = AgentArtifactCardView(
   id: 'journey',
@@ -155,26 +150,6 @@ const _journeyCard = AgentArtifactCardView(
       ],
     },
   },
-);
-
-const _birthPlanCard = AgentArtifactCardView(
-  id: 'birth-plan',
-  title: '分娩沟通单',
-  artifactType: 'birth_plan_card',
-  schemaVersion: '1.0',
-  presentationKind: AgentArtifactPresentationKind.birthPlanCard,
-  specializedView: AgentBirthPlanCardView(
-    title: '分娩沟通单',
-    sections: [
-      AgentBirthPlanSectionView(
-        id: 'communication',
-        title: '沟通方式',
-        values: ['每一步操作前先解释'],
-      ),
-    ],
-    medicalNotes: [],
-    disclaimer: '请优先遵循医生和医院建议。',
-  ),
 );
 
 const _hospitalBagCard = AgentArtifactCardView(

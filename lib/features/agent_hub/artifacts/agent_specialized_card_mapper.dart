@@ -3,9 +3,7 @@ import 'dart:convert';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 
-const _birthPlanDisclaimer = '这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。';
 const _hospitalBagSubtitle = '住院母婴必备用品 · 32～34周准备 · 36周完成';
-const _birthPlanItemLimit = 20;
 
 const _suppressedPersonalizationItemLabels = <String>{
   '检查报告/化验单',
@@ -26,7 +24,6 @@ AgentSpecializedArtifactView? mapAgentSpecializedCard({
   String consultIdFallbackArtifactId = '',
 }) {
   return switch (presentationKind) {
-    AgentArtifactPresentationKind.birthPlanCard => _birthPlanCard(cardJson),
     AgentArtifactPresentationKind.hospitalBagCard => _hospitalBagCard(cardJson),
     AgentArtifactPresentationKind.ibclcConsultCard => _ibclcConsultCard(
       cardJson.isNotEmpty ? cardJson : payload,
@@ -88,154 +85,6 @@ AgentIbclcConsultCardView _ibclcConsultCard(
       source['preferred_language'] ?? source['preferredLanguage'],
     ),
   );
-}
-
-AgentBirthPlanCardView _birthPlanCard(Map<String, Object?> cardJson) {
-  final sectionSpecs = <({String id, String title, Object? value})>[
-    (
-      id: 'communication',
-      title: '沟通方式',
-      value:
-          cardJson['communication'] ??
-          cardJson['communication_preferences'] ??
-          cardJson['communicationPreferences'],
-    ),
-    (
-      id: 'labor_preferences',
-      title: '生产时偏好',
-      value: cardJson['labor_preferences'] ?? cardJson['laborPreferences'],
-    ),
-    (
-      id: 'intervention_preferences',
-      title: '需要先沟通的操作',
-      value:
-          cardJson['intervention_preferences'] ??
-          cardJson['interventionPreferences'],
-    ),
-    (
-      id: 'pain_relief',
-      title: '疼痛缓解',
-      value:
-          cardJson['pain_relief'] ??
-          cardJson['painRelief'] ??
-          cardJson['pain_relief_preferences'] ??
-          cardJson['painReliefPreferences'],
-    ),
-    (
-      id: 'baby_after_birth',
-      title: '宝宝出生后',
-      value:
-          cardJson['baby_after_birth'] ??
-          cardJson['babyAfterBirth'] ??
-          cardJson['baby_after_birth_preferences'] ??
-          cardJson['babyAfterBirthPreferences'],
-    ),
-    (
-      id: 'if_plans_change',
-      title: '计划变化时',
-      value: cardJson['if_plans_change'] ?? cardJson['ifPlansChange'],
-    ),
-    (
-      id: 'emergency_authorization',
-      title: '紧急情况',
-      value:
-          cardJson['emergency_authorization'] ??
-          cardJson['emergencyAuthorization'],
-    ),
-    (
-      id: 'questions_for_hospital',
-      title: '提前问医院',
-      value:
-          cardJson['questions_for_hospital'] ??
-          cardJson['questionsForHospital'],
-    ),
-  ];
-  final sections = <AgentBirthPlanSectionView>[];
-  for (final spec in sectionSpecs) {
-    final values = _compactBirthPlanList(spec.value);
-    if (values.isEmpty) continue;
-    sections.add(
-      AgentBirthPlanSectionView(id: spec.id, title: spec.title, values: values),
-    );
-  }
-  final title = _normalizeBirthPlanValue(cardJson['title']);
-  final disclaimer = _normalizeBirthPlanValue(cardJson['disclaimer']);
-  return AgentBirthPlanCardView(
-    title: title.isEmpty ? '分娩沟通单' : title,
-    sections: List<AgentBirthPlanSectionView>.unmodifiable(sections),
-    medicalNotes: _compactBirthPlanList(
-      cardJson['medical_notes'] ?? cardJson['medicalNotes'],
-      maxItems: 3,
-    ),
-    disclaimer: disclaimer.isEmpty ? _birthPlanDisclaimer : disclaimer,
-  );
-}
-
-List<String> _compactBirthPlanList(
-  Object? value, {
-  int maxItems = _birthPlanItemLimit,
-}) {
-  final flattened = <Object?>[];
-
-  void flatten(Object? current) {
-    if (current is List) {
-      for (final item in current) {
-        flatten(item);
-      }
-      return;
-    }
-    if (current is Map) {
-      for (final item in current.values) {
-        flatten(item);
-      }
-      return;
-    }
-    if (_hasDisplayValue(current)) flattened.add(current);
-  }
-
-  flatten(value);
-  final seen = <String>{};
-  final values = <String>[];
-  for (final item in flattened) {
-    final normalized = _normalizeBirthPlanValue(item);
-    if (normalized.isEmpty ||
-        _isConfirmPlaceholder(normalized) ||
-        !seen.add(normalized)) {
-      continue;
-    }
-    values.add(normalized);
-    if (values.length >= maxItems) break;
-  }
-  return List<String>.unmodifiable(values);
-}
-
-String _normalizeBirthPlanValue(Object? value) {
-  var text = _formatPlainValue(value)
-      .trim()
-      .replaceFirst(RegExp(r'^\s*\d+[.)、．]\s*'), '')
-      .replaceAll(RegExp(r'\s+'), ' ');
-  const labels = <String, String>{
-    'birth plan card': '分娩沟通单',
-    'labor room communication priority card': '产房沟通重点',
-    'vaginal': '顺产',
-    'planned_c_section': '剖宫产',
-    'c_section': '剖宫产',
-    'c-section': '剖宫产',
-    'cesarean': '剖宫产',
-    '计划剖宫产': '剖宫产',
-    '剖腹产': '剖宫产',
-    '刨腹产': '剖宫产',
-    'skin-to-skin': '出生后尽早肌肤接触',
-    'skin to skin': '出生后尽早肌肤接触',
-    '我还没想好，请帮我整理成温和版本': '希望医护团队在关键步骤前先解释，并给我一点时间确认。',
-  };
-  final mapped = labels[text.toLowerCase()] ?? labels[text];
-  if (mapped != null) return mapped;
-  text = text.replaceAll(
-    RegExp('skin-to-skin|skin to skin', caseSensitive: false),
-    '出生后尽早肌肤接触',
-  );
-  return text;
 }
 
 AgentHospitalBagCardView _hospitalBagCard(Map<String, Object?> cardJson) {
@@ -618,12 +467,6 @@ String _firstText(Map<String, Object?> map, List<String> keys) {
   return '';
 }
 
-String _formatPlainValue(Object? value) {
-  if (value is List) return value.map(_formatPlainValue).join(', ');
-  if (value is Map) return jsonEncode(value);
-  return value?.toString() ?? '';
-}
-
 String _formatLabel(String value) {
   return value
       .replaceAll('_', ' ')
@@ -635,13 +478,6 @@ String _formatLabel(String value) {
             : '${part.substring(0, 1).toUpperCase()}${part.substring(1)}',
       )
       .join(' ');
-}
-
-bool _hasDisplayValue(Object? value) {
-  if (value == null || value == '') return false;
-  if (value is List) return value.isNotEmpty;
-  if (value is Map) return value.isNotEmpty;
-  return true;
 }
 
 bool _isConfirmPlaceholder(Object? value) {

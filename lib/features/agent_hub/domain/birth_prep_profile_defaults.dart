@@ -64,7 +64,6 @@ String canonicalAgentFormId(String value) {
   final normalized = value.trim();
   return const <String, String>{
         'hospitalBagIntake': 'hospital_bag_intake',
-        'birthPlanCardIntake': 'birth_plan_card_intake',
         'birthJourneyBasicInfoIntake': 'birth_journey_basic_info_intake',
       }[normalized] ??
       normalized;

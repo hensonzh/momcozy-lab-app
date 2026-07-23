@@ -994,42 +994,8 @@ const _hospitalBagTones = [
   ),
 ];
 
-const _birthPlanTones = [
-  _ArtifactFormGroupTone(
-    background: Color(0xfff3fbf8),
-    border: Color(0xffd7e8e4),
-    divider: Color(0xffc8e2dc),
-    title: Color(0xff236357),
-  ),
-  _ArtifactFormGroupTone(
-    background: Color(0xfffff5f8),
-    border: Color(0xffead6e0),
-    divider: Color(0xffeccbd8),
-    title: Color(0xff7a3150),
-  ),
-  _ArtifactFormGroupTone(
-    background: Color(0xfff5f7ff),
-    border: Color(0xffd9e0f4),
-    divider: Color(0xffcbd6f2),
-    title: Color(0xff354f95),
-  ),
-  _ArtifactFormGroupTone(
-    background: Color(0xfffff8ee),
-    border: Color(0xffeadcc8),
-    divider: Color(0xffead7bb),
-    title: Color(0xff7a5425),
-  ),
-  _ArtifactFormGroupTone(
-    background: Color(0xfff3faff),
-    border: Color(0xffd8e6ee),
-    divider: Color(0xffcbe0ea),
-    title: Color(0xff2b6077),
-  ),
-];
-
 bool _isCollectionForm(String? formId) {
   return formId == 'hospital_bag_intake' ||
-      formId == 'birth_plan_card_intake' ||
       formId == 'birth_journey_basic_info_intake';
 }
 
@@ -1038,22 +1004,8 @@ _ArtifactFormGroupTone _groupTone({
   required String title,
   required int index,
 }) {
-  final tones = formId == 'birth_plan_card_intake'
-      ? _birthPlanTones
-      : _hospitalBagTones;
-  final titleIndexes = formId == 'birth_plan_card_intake'
-      ? const {
-          '基本信息': 0,
-          '支持与沟通': 1,
-          '生产过程': 2,
-          '疼痛和舒适': 3,
-          '宝宝出生后': 4,
-          '临时变化': 5,
-          '提前问医院': 6,
-          '舒适与计划变化': 3,
-          '医院确认与安全': 6,
-        }
-      : const {'基本信息': 0, '生产信息': 1, '医院信息': 2, '偏好信息': 3};
+  const tones = _hospitalBagTones;
+  const titleIndexes = {'基本信息': 0, '生产信息': 1, '医院信息': 2, '偏好信息': 3};
   final toneIndex = titleIndexes[title] ?? index;
   return tones[toneIndex % tones.length];
 }

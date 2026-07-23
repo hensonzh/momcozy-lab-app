@@ -420,27 +420,9 @@ void main() {
       ]);
     });
 
-    test('normalizes birth plan and basic-info form contracts', () {
+    test('normalizes basic-info form contracts', () {
       final cards = AgentArtifactMapper.cardsFromEvents(
         [
-          _formEvent(
-            id: 'birth-plan-form',
-            form: {
-              'id': 'birthPlanCardIntake',
-              'title': '旧分娩表单',
-              'description': '会被清理',
-              'fields': [
-                {
-                  'id': 'birthPath',
-                  'label': '基本信息｜生产方式',
-                  'type': 'select',
-                  'defaultValue': 'cesarean',
-                  'options': ['顺产', '计划剖宫产'],
-                  'helpText': '帮助',
-                },
-              ],
-            },
-          ),
           _formEvent(
             id: 'basic-info-form',
             form: {
@@ -474,16 +456,7 @@ void main() {
         ),
       );
 
-      final birthPlan = cards[0];
-      expect(birthPlan.formId, 'birth_plan_card_intake');
-      expect(birthPlan.title, '信息采集');
-      expect(birthPlan.description, '');
-      expect(birthPlan.formFields.single.label, '基本信息｜医生目前建议的生产方式');
-      expect(birthPlan.formFields.single.options, ['顺产', '剖宫产', '还没确定']);
-      expect(birthPlan.formFields.single.defaultValue, '剖宫产');
-      expect(birthPlan.formFields.single.helpText, '');
-
-      final basic = cards[1];
+      final basic = cards.single;
       expect(basic.formId, 'birth_journey_basic_info_intake');
       expect(
         basic.formFields
@@ -528,7 +501,7 @@ void main() {
       });
     });
 
-    test('normalizes legacy specialized cards into stable view models', () {
+    test('normalizes legacy hospital-bag cards into stable view models', () {
       final fixture = readFixtureMap(
         'agent_artifacts/legacy_specialized_cards.json',
       );
@@ -538,37 +511,9 @@ void main() {
 
       final cards = AgentArtifactMapper.cardsFromEvents(events);
 
-      final birthPlan = cards[0].specializedView as AgentBirthPlanCardView;
-      expect(cards[0].title, '分娩沟通单');
-      expect(
-        birthPlan.sections
-            .firstWhere((section) => section.id == 'communication')
-            .values,
-        ['希望医护先解释每一步', '希望医护团队在关键步骤前先解释，并给我一点时间确认。'],
-      );
-      expect(
-        birthPlan.sections
-            .firstWhere((section) => section.id == 'labor_preferences')
-            .values,
-        ['自由走动'],
-      );
-      expect(
-        birthPlan.sections
-            .firstWhere((section) => section.id == 'baby_after_birth')
-            .values,
-        ['出生后尽早肌肤接触'],
-      );
-      expect(
-        birthPlan.sections
-            .firstWhere((section) => section.id == 'if_plans_change')
-            .values,
-        ['先说明原因', '让我和家人确认'],
-      );
-      expect(birthPlan.medicalNotes, ['妊娠糖尿病史']);
-      expect(birthPlan.disclaimer, '这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。');
-
-      final hospitalBag = cards[1].specializedView as AgentHospitalBagCardView;
-      expect(cards[1].title, '待产包');
+      final hospitalBag =
+          cards.single.specializedView as AgentHospitalBagCardView;
+      expect(cards.single.title, '待产包');
       expect(hospitalBag.groups.map((group) => group.id), [
         'documents',
         'mom_hospital_bag',
@@ -587,16 +532,8 @@ void main() {
       expect(hospitalBag.groups[1].items[2].description, '按住院天数增减。');
     });
 
-    test('keeps malformed specialized card values renderable', () {
+    test('keeps malformed hospital-bag card values renderable', () {
       final cards = AgentArtifactMapper.cardsFromEvents([
-        _artifactEvent(
-          id: 'sparse-birth-plan',
-          type: 'birth_plan_card',
-          payload: {
-            'title': '',
-            'communication': [null, '', '待确认', <String, Object?>{}],
-          },
-        ),
         _artifactEvent(
           id: 'sparse-hospital-bag',
           type: 'hospital_bag_card',
@@ -613,13 +550,9 @@ void main() {
         ),
       ]);
 
-      final birthPlan = cards[0].specializedView as AgentBirthPlanCardView;
-      expect(cards[0].title, '分娩沟通单');
-      expect(birthPlan.sections, isEmpty);
-      expect(birthPlan.disclaimer, isNotEmpty);
-
-      final hospitalBag = cards[1].specializedView as AgentHospitalBagCardView;
-      expect(cards[1].title, '待产包');
+      final hospitalBag =
+          cards.single.specializedView as AgentHospitalBagCardView;
+      expect(cards.single.title, '待产包');
       expect(hospitalBag.groups, hasLength(1));
       expect(hospitalBag.groups.single.title, '自定义分组');
       expect(hospitalBag.groups.single.items.single.label, '物品');

@@ -75,7 +75,6 @@ enum AgentArtifactPresentationKind {
   milkPlanCard,
   milkPlanPreview,
   birthJourneyPlanCard,
-  birthPlanCard,
   hospitalBagCard,
   hospitalBagCart,
   ibclcConsultCard,
