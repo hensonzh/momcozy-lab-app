@@ -649,6 +649,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
     this.runConnector = const _DefaultControlHttpConnector(),
     this.streamConnector = const _DefaultSseGetConnector(),
     this.runCreationTimeout = const Duration(seconds: 15),
+    this.streamIdleTimeout = const Duration(seconds: 45),
   });
 
   final AgentStreamEndpoint runsEndpoint;
@@ -657,6 +658,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
   final AgentStreamControlHttpConnector runConnector;
   final AgentStreamSseGetConnector streamConnector;
   final Duration runCreationTimeout;
+  final Duration streamIdleTimeout;
 
   @override
   Stream<String> frames(AgentStreamRequest request) async* {
@@ -693,10 +695,15 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
 
   Stream<String> _streamOnce(Uri streamUri) async* {
     try {
-      await for (final frame in streamConnector.get(
-        streamUri,
-        headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
-      )) {
+      await for (final frame
+          in streamConnector
+              .get(
+                streamUri,
+                headers: runsEndpoint.requestHeaders(
+                  accept: 'text/event-stream',
+                ),
+              )
+              .timeout(streamIdleTimeout)) {
         yield frame;
       }
     } on AgentStreamTransportException {
