@@ -261,6 +261,42 @@ void main() {
       },
     );
 
+    test(
+      'production SSE transport treats an idle stream as retryable',
+      () async {
+        final streamConnector = _NeverCompletingSseGetConnector();
+        final client = SseAgentStreamClient(
+          ProductionAgentSseTransport(
+            runsEndpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+            ),
+            payloadFactory: buildProductionAgentRunPayload,
+            streamConnector: streamConnector,
+            streamIdleTimeout: const Duration(milliseconds: 10),
+          ),
+        );
+
+        await expectLater(
+          client
+              .stream(
+                _request.resume(runId: 'run-production-001', afterSequence: 12),
+              )
+              .toList(),
+          throwsA(
+            isA<AgentStreamTransportException>()
+                .having((error) => error.isRetryable, 'isRetryable', isTrue)
+                .having(
+                  (error) => error.cause,
+                  'cause',
+                  isA<TimeoutException>(),
+                ),
+          ),
+        );
+        expect(streamConnector.requestCount, 1);
+        await streamConnector.dispose();
+      },
+    );
+
     test('endpoint request headers resolve auth token lazily', () {
       var token = 'old-token';
       final endpoint = AgentStreamEndpoint(
@@ -833,6 +869,19 @@ class _NeverCompletingControlHttpConnector
     requestCount += 1;
     return Completer<AgentStreamControlHttpResponse>().future;
   }
+}
+
+class _NeverCompletingSseGetConnector implements AgentStreamSseGetConnector {
+  final _controller = StreamController<String>();
+  int requestCount = 0;
+
+  @override
+  Stream<String> get(Uri uri, {required Map<String, String> headers}) {
+    requestCount += 1;
+    return _controller.stream;
+  }
+
+  Future<void> dispose() => _controller.close();
 }
 
 class _RecordingControlHttpGetConnector
