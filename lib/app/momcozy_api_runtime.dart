@@ -739,6 +739,8 @@ class MomCozyRuntimeController extends ChangeNotifier {
 
   MomCozyApiRuntime get runtime => _runtime;
 
+  MomCozySession get currentSession => _currentSession;
+
   void replaceRuntime(MomCozyApiRuntime runtime) {
     if (identical(_runtime, runtime)) return;
     final previous = _runtime;
@@ -758,7 +760,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
       );
     }
     _runtime = runtime;
-    _currentSession = runtime.currentSession;
+    _currentSession = runtime.session;
     notifyListeners();
   }
 

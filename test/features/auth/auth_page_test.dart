@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -83,7 +85,7 @@ void main() {
     router.dispose();
   });
 
-  testWidgets('auth page shows the last invite code as an empty-field hint', (
+  testWidgets('auth page restores the last invite code as an editable value', (
     tester,
   ) async {
     final runtime = MomCozyApiRuntime(
@@ -108,12 +110,48 @@ void main() {
     final field = tester.widget<TextField>(
       find.byKey(const ValueKey('auth-invite-code-field')),
     );
-    expect(field.decoration?.hintText, 'MCZ-LAST-0001');
+    expect(field.decoration?.hintText, '请输入邀请码');
     expect(
       field.decoration?.floatingLabelBehavior,
       FloatingLabelBehavior.always,
     );
-    expect(field.controller?.text, isEmpty);
+    expect(field.controller?.text, 'MCZ-LAST-0001');
+
+    controller.dispose();
+    router.dispose();
+  });
+
+  testWidgets('late invite restore does not overwrite user input', (
+    tester,
+  ) async {
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport(_tokenResponse()),
+      userId: 'demo-user',
+      babyId: 'demo-baby',
+      locale: 'zh-CN',
+    );
+    final controller = MomCozyRuntimeController(runtime);
+    final store = MemoryMomCozySessionStore();
+    final lastInviteCodeStore = _DeferredLastInviteCodeStore();
+    final router = _authRouter(
+      controller: controller,
+      store: store,
+      deviceId: 'flutter-device-001',
+      lastInviteCodeStore: lastInviteCodeStore,
+    );
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-invite-code-field')),
+      'MCZ-NEW-0002',
+    );
+    lastInviteCodeStore.complete('MCZ-LAST-0001');
+    await tester.pumpAndSettle();
+
+    final field = tester.widget<TextField>(
+      find.byKey(const ValueKey('auth-invite-code-field')),
+    );
+    expect(field.controller?.text, 'MCZ-NEW-0002');
 
     controller.dispose();
     router.dispose();
@@ -289,4 +327,16 @@ class _MemoryLastInviteCodeStore implements MomCozyLastInviteCodeStore {
   Future<void> writeLastInviteCode(String inviteCode) async {
     value = inviteCode;
   }
+}
+
+class _DeferredLastInviteCodeStore implements MomCozyLastInviteCodeStore {
+  final _value = Completer<String?>();
+
+  void complete(String? value) => _value.complete(value);
+
+  @override
+  Future<String?> readLastInviteCode() => _value.future;
+
+  @override
+  Future<void> writeLastInviteCode(String inviteCode) async {}
 }

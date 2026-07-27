@@ -888,8 +888,8 @@ void main() {
       final inviteCodeField = tester.widget<TextField>(
         find.byKey(const ValueKey('auth-invite-code-field')),
       );
-      expect(inviteCodeField.decoration?.hintText, 'MCZ-ROUTE-0001');
-      expect(inviteCodeField.controller?.text, isEmpty);
+      expect(inviteCodeField.decoration?.hintText, '请输入邀请码');
+      expect(inviteCodeField.controller?.text, 'MCZ-ROUTE-0001');
 
       // Session swaps rebuild production transports, so keep this test on its
       // deterministic fixture transport for the second invite request.
@@ -902,10 +902,6 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('auth-invite-code-field')),
-        'MCZ-ROUTE-0001',
-      );
       await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
       await tester.pumpAndSettle();
 
