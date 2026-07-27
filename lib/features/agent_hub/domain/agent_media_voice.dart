@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
 
 const _deviceGuidanceImageSpokenLabel = '我放了一张当前步骤的对照图，你可以边看图边完成这一步。';
 final _deviceGuidanceImagePathPattern = RegExp(

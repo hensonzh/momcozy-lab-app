@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:app/features/agent_hub/data/ibclc_consult_store.dart';
 
 class IbclcConsultStoreScope extends InheritedNotifier<IbclcConsultStore> {
   const IbclcConsultStoreScope({

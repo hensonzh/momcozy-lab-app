@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
+import 'package:app/features/status/presentation/pregnancy_diary_dashboard.dart';
+import 'package:app/features/status/presentation/status_dashboard_controller.dart';
 
 void main() {
   group('PregnancyDiaryDashboard', () {

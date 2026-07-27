@@ -18,6 +18,7 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
 
 Environment overrides:
   MOMCOZY_API_BASE_URL=http://10.0.2.2:8000
+  MOMCOZY_AGENT_API_BASE_URL=http://10.0.2.2:8010
   MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5554
   MOMCOZY_RESET_INVITE_APP=0
   MOMCOZY_DEFAULT_USER_ID=invite-bootstrap-user
@@ -62,6 +63,8 @@ const packageName =
   "com.momcozymai.app.flutterpoc.local";
 const apiBaseUrl =
   process.env.MOMCOZY_API_BASE_URL || "http://10.0.2.2:8000";
+const agentApiBaseUrl =
+  process.env.MOMCOZY_AGENT_API_BASE_URL || "http://10.0.2.2:8010";
 const defaultUserId =
   process.env.MOMCOZY_DEFAULT_USER_ID || "invite-bootstrap-user";
 const defaultBabyId =
@@ -130,6 +133,7 @@ const flutterArgs = [
   "--flavor",
   "local",
   `--dart-define=MOMCOZY_API_BASE_URL=${apiBaseUrl}`,
+  `--dart-define=MOMCOZY_AGENT_API_BASE_URL=${agentApiBaseUrl}`,
   `--dart-define=MOMCOZY_DEFAULT_USER_ID=${defaultUserId}`,
   `--dart-define=MOMCOZY_DEFAULT_BABY_ID=${defaultBabyId}`,
   `--dart-define=MOMCOZY_LOCALE=${locale}`,
@@ -137,7 +141,8 @@ const flutterArgs = [
 ];
 
 console.log(`Starting Flutter invite-login dev app on ${deviceId}`);
-console.log(`Backend API: ${apiBaseUrl}`);
+console.log(`Product API: ${apiBaseUrl}`);
+console.log(`Agent Runtime API: ${agentApiBaseUrl}`);
 console.log("No bootstrap API token will be passed; the app should open the invite login page.");
 
 const result = spawnSync("flutter", flutterArgs, {

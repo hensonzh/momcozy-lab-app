@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/core/network/api_json_transport.dart';
 
 const authSignupEndpoint = '/v1/auth/signup';
 const authLoginEndpoint = '/v1/auth/login';

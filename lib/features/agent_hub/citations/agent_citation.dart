@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/routing/safe_link_target.dart';
 
 const agentWebSearchCitationsEventName = 'momcozy.web_search.citations';
 

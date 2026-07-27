@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:app/features/agent_hub/domain/ibclc_consult.dart';
 
 void main() {
   test(

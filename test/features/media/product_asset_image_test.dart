@@ -3,9 +3,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
-import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
+import 'package:app/features/media/domain/product_asset.dart';
+import 'package:app/features/media/presentation/product_asset_image.dart';
 
 void main() {
   testWidgets('renders loaded product asset bytes as an in-memory image', (

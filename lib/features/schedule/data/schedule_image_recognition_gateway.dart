@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
-import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_image_recognition.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/network/transport_security_policy.dart';
+import 'package:app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:app/features/media/domain/media_upload.dart';
+import 'package:app/features/schedule/domain/schedule_image_recognition.dart';
 
 const _maxPreviewTasks = 32;
 const _supportedScheduleImageTypes = <String>{

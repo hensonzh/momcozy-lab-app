@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_image_recognition.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
-import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_page.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/preferences/volume_unit_preference.dart';
+import 'package:app/features/schedule/data/schedule_api_repository.dart';
+import 'package:app/features/schedule/domain/schedule_plan.dart';
+import 'package:app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:app/features/schedule/domain/schedule_image_recognition.dart';
+import 'package:app/features/schedule/domain/schedule_reminder.dart';
+import 'package:app/features/schedule/presentation/schedule_dashboard_page.dart';
 
 import '../../support/fixture_api_transport.dart';
 

@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/pump_session/domain/pump_workstate.dart';
 
 const pumpWorkstateEndpoint = '/v1/devices/pump-telemetry';
 

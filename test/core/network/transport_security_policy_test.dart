@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/network/transport_security_policy.dart';
 
 void main() {
   group('TransportSecurityPolicy', () {

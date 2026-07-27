@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/platform_voice_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:app/features/agent_hub/data/platform_voice_input.dart';
+import 'package:app/features/agent_hub/domain/agent_voice.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

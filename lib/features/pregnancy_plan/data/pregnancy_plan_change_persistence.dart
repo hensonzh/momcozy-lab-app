@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
+import 'package:app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 
 class FlutterSecurePregnancyPlanChangePersistence
     implements PregnancyPlanChangePersistence {

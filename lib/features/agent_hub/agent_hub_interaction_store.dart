@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 class AgentHubInteractionSnapshot {
   const AgentHubInteractionSnapshot({
@@ -294,6 +294,8 @@ Map<String, Object?> _requestToMap(
   if (request.runId != null) 'runId': request.runId,
   'afterSequence': request.afterSequence,
   'locale': request.locale,
+  if (request.timezone != null) 'timezone': request.timezone,
+  if (request.messageSentAt != null) 'messageSentAt': request.messageSentAt,
   if (request.images.isNotEmpty)
     'images': request.images
         .map((image) => _imageToMap(image, includeImageData: includeImageData))
@@ -353,6 +355,8 @@ AgentStreamRequest _requestWithImages(
     runId: request.runId,
     afterSequence: request.afterSequence,
     locale: request.locale,
+    timezone: request.timezone,
+    messageSentAt: request.messageSentAt,
     images: images,
     metadata: request.metadata,
     idempotencyKey: request.idempotencyKey,
@@ -392,6 +396,9 @@ AgentStreamRequest? _requestFromMap(Object? value) {
         ? _int(map['after_sequence'])
         : _int(map['afterSequence']),
     locale: _string(map['locale']) ?? 'zh-CN',
+    timezone: _string(map['timezone']),
+    messageSentAt:
+        _string(map['messageSentAt']) ?? _string(map['message_sent_at']),
     images: _imagesFromList(map['images']),
     metadata: metadata is Map
         ? Map<String, Object?>.from(metadata)

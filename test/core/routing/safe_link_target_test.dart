@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
+import 'package:app/core/routing/safe_link_target.dart';
 
 void main() {
   group('SafeLinkTarget', () {

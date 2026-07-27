@@ -1,21 +1,12 @@
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/core/agent_stream/agent_stream_runner.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/features/agent_hub/agent_hub_interaction_store.dart';
 
-const _defaultAgentHubRunsUrl = String.fromEnvironment(
-  'MOMCOZY_AGENT_RUNS_URL',
-);
 const _defaultAgentHubApiBaseUrl = String.fromEnvironment(
-  'MOMCOZY_API_BASE_URL',
-  defaultValue: 'http://127.0.0.1:8769',
-);
-const _defaultAgentHubCancelUrl = String.fromEnvironment(
-  'MOMCOZY_AGENT_CANCEL_URL',
-);
-const _defaultAgentHubActionsUrl = String.fromEnvironment(
-  'MOMCOZY_AGENT_ACTIONS_URL',
+  'MOMCOZY_AGENT_API_BASE_URL',
+  defaultValue: 'http://127.0.0.1:8010',
 );
 const _defaultAgentHubToken = String.fromEnvironment('MOMCOZY_API_TOKEN');
 const _defaultAgentHubThreadId = String.fromEnvironment(
@@ -41,11 +32,15 @@ AgentStreamRequest buildSessionAgentHubRequest(
   String? threadId,
   Map<String, Object?>? clientContext,
 }) {
+  final hospitalBagCart = clientContext?['hospital_bag_cart'];
   return AgentStreamRequest(
     threadId: _resolvedThreadId(threadId),
     message: message,
     locale: session.locale,
-    metadata: {'source': 'flutter-agent-hub', ...?clientContext},
+    metadata: {
+      'source': 'flutter-agent-hub',
+      if (hospitalBagCart is Map) 'hospital_bag_cart': hospitalBagCart,
+    },
   );
 }
 
@@ -161,41 +156,23 @@ AgentHubInteractionStateStore createSessionAgentHubInteractionStateStore(
 }
 
 AgentStreamEndpoint defaultAgentHubSseEndpoint() {
-  final explicitRunsUrl = _defaultAgentHubRunsUrl.trim();
-  return _agentHubEndpoint(
-    explicitRunsUrl.isEmpty
-        ? _agentHubApiUri('/v1/agent/runs')
-        : Uri.parse(explicitRunsUrl),
-  );
+  return _agentHubEndpoint(_agentHubApiUri('/v1/agent/runs'));
 }
 
 AgentStreamEndpoint defaultAgentHubCancelEndpoint() {
-  final explicitCancelUrl = _defaultAgentHubCancelUrl.trim();
-  return _agentHubEndpoint(
-    explicitCancelUrl.isEmpty
-        ? _agentHubApiUri('/v1/agent/runs')
-        : Uri.parse(explicitCancelUrl),
-  );
+  return _agentHubEndpoint(_agentHubApiUri('/v1/agent/runs'));
 }
 
 AgentStreamEndpoint defaultAgentHubActionEndpoint() {
-  final explicitActionsUrl = _defaultAgentHubActionsUrl.trim();
-  return _agentHubEndpoint(
-    explicitActionsUrl.isEmpty
-        ? _agentHubApiUri('/v1/agent/actions')
-        : Uri.parse(explicitActionsUrl),
-  );
+  return _agentHubEndpoint(_agentHubApiUri('/v1/agent/actions'));
 }
 
 AgentStreamEndpoint sessionAgentHubSseEndpoint(
   MomCozySession session, {
   String? Function()? accessTokenProvider,
 }) {
-  final explicitRunsUrl = _defaultAgentHubRunsUrl.trim();
   return _agentHubEndpoint(
-    explicitRunsUrl.isEmpty
-        ? _agentHubApiUri('/v1/agent/runs')
-        : Uri.parse(explicitRunsUrl),
+    _agentHubApiUri('/v1/agent/runs'),
     token: session.accessToken,
     tokenProvider: accessTokenProvider,
   );
@@ -205,11 +182,8 @@ AgentStreamEndpoint sessionAgentHubCancelEndpoint(
   MomCozySession session, {
   String? Function()? accessTokenProvider,
 }) {
-  final explicitCancelUrl = _defaultAgentHubCancelUrl.trim();
   return _agentHubEndpoint(
-    explicitCancelUrl.isEmpty
-        ? _agentHubApiUri('/v1/agent/runs')
-        : Uri.parse(explicitCancelUrl),
+    _agentHubApiUri('/v1/agent/runs'),
     token: session.accessToken,
     tokenProvider: accessTokenProvider,
   );
@@ -219,11 +193,8 @@ AgentStreamEndpoint sessionAgentHubActionEndpoint(
   MomCozySession session, {
   String? Function()? accessTokenProvider,
 }) {
-  final explicitActionsUrl = _defaultAgentHubActionsUrl.trim();
   return _agentHubEndpoint(
-    explicitActionsUrl.isEmpty
-        ? _agentHubApiUri('/v1/agent/actions')
-        : Uri.parse(explicitActionsUrl),
+    _agentHubApiUri('/v1/agent/actions'),
     token: session.accessToken,
     tokenProvider: accessTokenProvider,
   );
@@ -244,8 +215,18 @@ AgentStreamEndpoint _agentHubEndpoint(
 }
 
 Uri _agentHubApiUri(String path) {
-  final base = Uri.parse(_defaultAgentHubApiBaseUrl);
-  return base.replace(path: path);
+  final base = Uri.parse(_defaultAgentHubApiBaseUrl.trim());
+  final normalizedBasePath = base.path.endsWith('/')
+      ? base.path.substring(0, base.path.length - 1)
+      : base.path;
+  final normalizedPath = path.startsWith('/') ? path : '/$path';
+  return Uri(
+    scheme: base.scheme,
+    userInfo: base.userInfo,
+    host: base.host,
+    port: base.hasPort ? base.port : null,
+    path: '$normalizedBasePath$normalizedPath',
+  );
 }
 
 Map<String, Object?> buildDefaultAgentHubPayload(AgentStreamRequest request) {

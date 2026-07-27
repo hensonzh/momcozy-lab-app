@@ -1,11 +1,12 @@
 # Production Backend API Contract Handoff
 
-This handoff is the human-readable companion to
-`docs/openapi.generated.json`.
+This handoff is the human-readable companion to the Product and Agent Runtime
+OpenAPI snapshots.
 
 ## Contract Sources
 
-- OpenAPI snapshot: `docs/openapi.generated.json`
+- Product snapshot: `product.openapi.generated.json`
+- Agent Runtime snapshot: `agent-runtime.openapi.generated.json`
 - API surface catalog: `docs/api-surface-catalog.md`
 - Export command: `make backend-export-contracts`
 - Runtime base path: `/v1`
@@ -27,10 +28,9 @@ Flutter should only integrate routes marked `public_app_api` and the specific
 
 Update flow for API changes:
 
-1. Add or update route metadata in the FastAPI router.
-2. Export OpenAPI.
-3. Regenerate `api-surface-catalog.md`.
-4. Run contract tests.
+1. Export OpenAPI from the owning Product or Agent Runtime service.
+2. Replace only that service's Flutter snapshot.
+3. Run contract tests.
 
 ## Auth
 
@@ -86,6 +86,9 @@ current public route that accepts a target `owner_user_id`, and it requires
 
 ## Agent Streaming
 
+- Agent Runtime base is configured independently through
+  `MOMCOZY_AGENT_API_BASE_URL`; Product and file-upload requests continue to
+  use `MOMCOZY_API_BASE_URL`.
 - Replay page: `GET /v1/agent/runs/{run_id}/events`
 - SSE replay stream: `GET /v1/agent/runs/{run_id}/stream`
 

@@ -2,22 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
-import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
-import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_runner.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/preferences/volume_unit_preference.dart';
+import 'package:app/features/agent_hub/agent_hub_page.dart';
+import 'package:app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
+import 'package:app/features/records/data/records_api_repository.dart';
+import 'package:app/features/status/data/status_api_repository.dart';
+import 'package:app/features/status/data/status_preference_store.dart';
+import 'package:app/features/status/domain/status_selection.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
 
 void main() {
   testWidgets('bottom navigation reacts to runtime diary unread state', (

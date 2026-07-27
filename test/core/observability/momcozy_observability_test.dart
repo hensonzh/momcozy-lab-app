@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/observability/momcozy_observability.dart';
 
 import '../../support/fixture_api_transport.dart';
 

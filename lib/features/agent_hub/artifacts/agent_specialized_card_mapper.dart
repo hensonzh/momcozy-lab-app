@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/domain/ibclc_consult.dart';
 
 const _hospitalBagSubtitle = '住院母婴必备用品 · 32～34周准备 · 36周完成';
 

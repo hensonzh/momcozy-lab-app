@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/core/agent_stream/agent_run_create_context.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
 
 import '../../support/fixture_reader.dart';
 
@@ -28,6 +29,7 @@ void main() {
             token: 'secret-token',
           ),
           payloadFactory: buildProductionAgentRunPayload,
+          runCreateContextProvider: _runCreateContextProvider,
           runConnector: runConnector,
           streamConnector: streamConnector,
         ),
@@ -53,6 +55,12 @@ void main() {
       });
       expect(postedBody['message'], 'Review my pumping pattern.');
       expect(postedBody['runtime_pattern'], 'sdk_only');
+      expect(postedBody['client_context'], {
+        'source': 'io-transport-test',
+        'locale': 'en-US',
+        'timezone': 'Asia/Shanghai',
+        'message_sent_at': '2026-07-26T16:30:00+08:00',
+      });
       expect(postedBody.containsKey('user_id'), isFalse);
       expect(
         runConnector.headers,
@@ -73,6 +81,7 @@ void main() {
         final streamConnector = _RecordingSseGetConnector([
           'data: {"event_id":"evt-8","thread_id":"thread-production-001","run_id":"run-production-001","sequence":8,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:02Z"}\n\n',
         ]);
+        final runCreateContextProvider = _RecordingRunCreateContextProvider();
         final client = SseAgentStreamClient(
           ProductionAgentSseTransport(
             runsEndpoint: AgentStreamEndpoint(
@@ -80,6 +89,7 @@ void main() {
               token: 'secret-token',
             ),
             payloadFactory: buildProductionAgentRunPayload,
+            runCreateContextProvider: runCreateContextProvider,
             runConnector: runConnector,
             streamConnector: streamConnector,
           ),
@@ -97,6 +107,7 @@ void main() {
 
         expect(events.map((event) => event.type), ['run.completed']);
         expect(runConnector.uri, isNull);
+        expect(runCreateContextProvider.calls, 0);
         expect(
           streamConnector.uri!.path,
           '/v1/agent/runs/run-production-001/stream',
@@ -146,6 +157,33 @@ void main() {
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
         );
+      },
+    );
+
+    test(
+      'production run status reader treats expired runs as terminal',
+      () async {
+        final connector = _RecordingControlHttpGetConnector(
+          const AgentStreamControlHttpResponse(
+            statusCode: 200,
+            body:
+                '{"id":"run-expired-001","thread_id":"thread-expired-001","status":"expired","error_code":"run_expired"}',
+          ),
+        );
+        final reader = ProductionAgentRunStatusReader(
+          runsEndpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8010/v1/agent/runs'),
+          ),
+          connector: connector,
+        );
+
+        final snapshot = await reader.read('run-expired-001');
+        final terminal = snapshot.terminalEvent();
+
+        expect(snapshot.status, AgentRunLifecycleStatus.expired);
+        expect(snapshot.status.isTerminal, isTrue);
+        expect(terminal?.type, 'run.expired');
+        expect(terminal?.payload['code'], 'run_expired');
       },
     );
 
@@ -274,6 +312,7 @@ void main() {
               tokenProvider: () => token,
             ),
             payloadFactory: buildProductionAgentRunPayload,
+            runCreateContextProvider: _runCreateContextProvider,
             onUnauthorized: () async {
               refreshCount += 1;
               token = 'new-token';
@@ -507,7 +546,7 @@ void main() {
           const AgentStreamControlHttpResponse(
             statusCode: 200,
             body:
-                '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"confirmed","side_effect_level":"medium","preview_payload":{},"idempotency_key":"agent-action-action-fixture-001","error_code":"","events":[{"type":"action.queued","action_id":"action-fixture-001","run_id":"run-fixture-001","payload":{"status":"queued"}}]}',
+                '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"applied","side_effect_level":"medium","preview_payload":{},"expires_at":null,"confirmed_at":"2026-07-26T00:00:00Z","applied_at":"2026-07-26T00:00:01Z","failed_at":null,"error_code":""}',
           ),
         );
         final client = AgentStreamActionClient(
@@ -522,13 +561,13 @@ void main() {
           const AgentStreamActionConfirmRequest(
             actionId: 'action-fixture-001',
             editedApplyPayload: {'priority': 'normal'},
+            idempotencyKey: 'explicit-confirm-key',
           ),
         );
 
         expect(confirmed.accepted, isTrue);
-        expect(confirmed.actionStatus, 'confirmed');
-        expect(confirmed.events.single.type, 'action.queued');
-        expect(confirmed.events.single.mergeKey, 'action:action-fixture-001');
+        expect(confirmed.actionStatus, 'applied');
+        expect(confirmed.events, isEmpty);
         expect(
           connector.uri!.path,
           '/v1/agent/actions/action-fixture-001/confirm',
@@ -543,7 +582,7 @@ void main() {
         );
         expect(
           connector.headers,
-          containsPair('Idempotency-Key', 'agent-action-action-fixture-001'),
+          containsPair('Idempotency-Key', 'explicit-confirm-key'),
         );
         expect(jsonDecode(connector.body!) as Map<String, Object?>, {
           'edited_apply_payload': {'priority': 'normal'},
@@ -552,7 +591,7 @@ void main() {
         connector.nextResponse = const AgentStreamControlHttpResponse(
           statusCode: 200,
           body:
-              '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"rejected","side_effect_level":"medium","preview_payload":{},"idempotency_key":"","error_code":"rejected_by_user"}',
+              '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"rejected","side_effect_level":"medium","preview_payload":{},"expires_at":null,"confirmed_at":null,"applied_at":null,"failed_at":null,"error_code":"rejected_by_user"}',
         );
 
         final rejected = await client.reject(
@@ -700,6 +739,31 @@ void main() {
       },
     );
   });
+}
+
+const _runCreateContextProvider = _FixedRunCreateContextProvider();
+
+class _FixedRunCreateContextProvider implements AgentRunCreateContextProvider {
+  const _FixedRunCreateContextProvider();
+
+  @override
+  Future<AgentRunCreateContext> load() async {
+    return const AgentRunCreateContext(
+      timezone: 'Asia/Shanghai',
+      messageSentAt: '2026-07-26T16:30:00+08:00',
+    );
+  }
+}
+
+class _RecordingRunCreateContextProvider
+    implements AgentRunCreateContextProvider {
+  var calls = 0;
+
+  @override
+  Future<AgentRunCreateContext> load() async {
+    calls += 1;
+    return _runCreateContextProvider.load();
+  }
 }
 
 const _request = AgentStreamRequest(

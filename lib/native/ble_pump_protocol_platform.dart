@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:momcozy_flutter_app/core/ble/ble_protocol.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:app/core/ble/ble_protocol.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
 
 const defaultPumpCommandCharacteristicUuid =
     '0000af01-0000-1000-8000-00805f9b34fb';

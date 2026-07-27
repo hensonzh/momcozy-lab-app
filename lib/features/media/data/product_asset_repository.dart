@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart';
-import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:app/core/network/transport_security_policy.dart';
+import 'package:app/features/media/domain/product_asset.dart';
 
 class ProductAssetContent {
   const ProductAssetContent({

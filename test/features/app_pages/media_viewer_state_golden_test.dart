@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fake_video_player_platform.dart';

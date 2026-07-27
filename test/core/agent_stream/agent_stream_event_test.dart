@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
 
 import '../../support/fixture_reader.dart';
 
@@ -261,74 +261,6 @@ void main() {
         expect(event.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
       },
     );
-
-    test(
-      'extracts an opaque workflow reply cursor from completed messages',
-      () {
-        final event = AgentStreamEvent(const {
-          'type': 'message.completed',
-          'payload': {
-            'role': 'assistant',
-            'text': '目前双胎类型确认了吗？',
-            'workflow_reply': {
-              'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-              'workflow_type': 'pregnancy_plan',
-              'revision': 4,
-              'step_token': 'opaque-step-token',
-            },
-          },
-        });
-
-        expect(event.workflowReply, {
-          'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-          'workflow_type': 'pregnancy_plan',
-          'revision': 4,
-          'step_token': 'opaque-step-token',
-        });
-      },
-    );
-
-    test('extracts a typed pregnancy workflow prompt', () {
-      final event = AgentStreamEvent(const {
-        'type': 'message.completed',
-        'payload': {
-          'role': 'assistant',
-          'text': '你目前做过产检了吗？',
-          'workflow_prompt': {
-            'schema_version': 'pregnancy_plan_workflow_context.v1',
-            'workflow_type': 'pregnancy_plan',
-            'status': 'active',
-            'phase': 'checkup_done_question',
-            'current_step': {
-              'id': 'checkup_done',
-              'kind': 'single_choice',
-              'question': '你目前做过产检了吗？',
-              'allow_free_text': false,
-              'options': [
-                {'id': 'confirm_checkup_done', 'label': '做过产检'},
-                {'id': 'confirm_no_checkup_yet', 'label': '还没做过'},
-              ],
-            },
-            'editable_steps': [
-              {'id': 'basic_intake', 'label': '基础信息', 'answer': '已提交'},
-            ],
-            'allowed_commands': ['answer_current', 'pause', 'unknown_command'],
-            'private_state': 'drop-me',
-          },
-        },
-      });
-
-      final prompt = event.workflowPrompt;
-
-      expect(prompt?.currentStep.id, 'checkup_done');
-      expect(prompt?.currentStep.options.map((option) => option.id), [
-        'confirm_checkup_done',
-        'confirm_no_checkup_yet',
-      ]);
-      expect(prompt?.editableSteps.single.id, 'basic_intake');
-      expect(prompt?.allowedCommands, {'answer_current', 'pause'});
-      expect(prompt?.toMap().containsKey('private_state'), isFalse);
-    });
 
     test('ignores incomplete quick reply sets', () {
       final event = AgentStreamEvent(const {

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import '../network/transport_security_policy.dart';
 import '../privacy/log_redactor.dart';
+import 'agent_run_create_context.dart';
 import 'agent_stream_client.dart';
 import 'agent_stream_event.dart';
 
@@ -138,13 +139,9 @@ class AgentStreamActionConfirmRequest {
       throw const AgentStreamPayloadException('Missing actionId.');
     }
 
-    final normalizedIdempotencyKey = idempotencyKey?.trim();
     return {
       if (editedApplyPayload != null)
         'edited_apply_payload': editedApplyPayload,
-      if (normalizedIdempotencyKey != null &&
-          normalizedIdempotencyKey.isNotEmpty)
-        'idempotency_key': normalizedIdempotencyKey,
     };
   }
 }
@@ -625,19 +622,22 @@ Stream<String> _decodeSseBlocks(Stream<String> chunks) async* {
 }
 
 class ProductionAgentSseTransport implements AgentStreamTransport {
-  const ProductionAgentSseTransport({
+  ProductionAgentSseTransport({
     required this.runsEndpoint,
     required this.payloadFactory,
     this.onUnauthorized,
     this.runConnector = const _DefaultControlHttpConnector(),
     this.streamConnector = const _DefaultSseGetConnector(),
-  });
+    AgentRunCreateContextProvider? runCreateContextProvider,
+  }) : runCreateContextProvider =
+           runCreateContextProvider ?? PlatformAgentRunCreateContextProvider();
 
   final AgentStreamEndpoint runsEndpoint;
   final AgentStreamPayloadFactory payloadFactory;
   final AgentStreamUnauthorizedHandler? onUnauthorized;
   final AgentStreamControlHttpConnector runConnector;
   final AgentStreamSseGetConnector streamConnector;
+  final AgentRunCreateContextProvider runCreateContextProvider;
 
   @override
   Stream<String> frames(AgentStreamRequest request) async* {
@@ -692,7 +692,10 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
   }
 
   Future<String> _createRun(AgentStreamRequest request) async {
-    final payload = Map<String, Object?>.from(payloadFactory(request));
+    final runCreateContext = await runCreateContextProvider.load();
+    final payload = Map<String, Object?>.from(
+      payloadFactory(request.withRunCreateContext(runCreateContext)),
+    );
     final idempotencyKey =
         stringField(payload, 'idempotency_key') ?? _agentRunIdempotencyKey();
     payload['idempotency_key'] = idempotencyKey;
@@ -768,6 +771,7 @@ AgentRunLifecycleStatus _runLifecycleStatus(String? status) {
     'completed' => AgentRunLifecycleStatus.completed,
     'failed' => AgentRunLifecycleStatus.failed,
     'cancelled' => AgentRunLifecycleStatus.cancelled,
+    'expired' => AgentRunLifecycleStatus.expired,
     _ => AgentRunLifecycleStatus.unknown,
   };
 }

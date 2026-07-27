@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/app/momcozy_design_system.dart';
 
 import '../../../support/momcozy_test_fonts.dart';
 

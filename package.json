@@ -1,5 +1,5 @@
 {
-  "name": "momcozy-app-build-tools",
+  "name": "app-build-tools",
   "private": true,
   "type": "module",
   "engines": {

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:app/features/schedule/domain/milk_plan_change_store.dart';
 
 class FlutterSecureMilkPlanChangePersistence
     implements MilkPlanChangePersistence {

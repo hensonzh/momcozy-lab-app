@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/baby_growth_chart.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/features/records/domain/records.dart';
+import 'package:app/features/status/presentation/baby_growth_chart.dart';
+import 'package:app/features/status/presentation/status_dashboard_controller.dart';
 
 void main() {
   group('BabyGrowthChart', () {

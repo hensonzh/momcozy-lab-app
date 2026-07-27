@@ -1,24 +1,24 @@
 import 'dart:async';
 
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
-import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
-import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/privacy/log_redactor.dart';
+import 'package:app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/features/media/data/media_api_repository.dart';
+import 'package:app/features/pump_session/data/pump_workstate_api_repository.dart';
+import 'package:app/features/pump_session/domain/pump_workstate.dart';
+import 'package:app/features/records/data/records_api_repository.dart';
+import 'package:app/features/schedule/data/schedule_api_repository.dart';
+import 'package:app/features/status/data/status_api_repository.dart';
 
 class StagingSmokeConfig {
   const StagingSmokeConfig({
     required this.enabled,
     required this.apiBaseUri,
-    required this.agentRunsUri,
+    required this.agentApiBaseUri,
     required this.session,
     this.includeMutating = false,
     this.includeAgentStream = false,
@@ -29,15 +29,15 @@ class StagingSmokeConfig {
     final apiBase = Uri.parse(
       _envOrDefault(env, 'MOMCOZY_API_BASE_URL', 'http://127.0.0.1:8769'),
     );
-    final agentRunsUrl = _envOrNull(env, 'MOMCOZY_AGENT_RUNS_URL');
+    final agentApiBase = Uri.parse(
+      _envOrDefault(env, 'MOMCOZY_AGENT_API_BASE_URL', 'http://127.0.0.1:8010'),
+    );
     return StagingSmokeConfig(
       enabled: _flag(env, 'MOMCOZY_STAGING_SMOKE'),
       includeMutating: _flag(env, 'MOMCOZY_STAGING_SMOKE_MUTATE'),
       includeAgentStream: _flag(env, 'MOMCOZY_STAGING_SMOKE_AGENT'),
       apiBaseUri: apiBase,
-      agentRunsUri: agentRunsUrl == null
-          ? apiBase.replace(path: '/v1/agent/runs')
-          : Uri.parse(agentRunsUrl),
+      agentApiBaseUri: agentApiBase,
       session: MomCozySession.fromEnvironment(
         accessToken: _envOrDefault(env, 'MOMCOZY_API_TOKEN', ''),
         refreshToken: _envOrDefault(env, 'MOMCOZY_REFRESH_TOKEN', ''),
@@ -52,9 +52,11 @@ class StagingSmokeConfig {
   final bool includeMutating;
   final bool includeAgentStream;
   final Uri apiBaseUri;
-  final Uri agentRunsUri;
+  final Uri agentApiBaseUri;
   final MomCozySession session;
   final Duration timeout;
+
+  Uri get agentRunsUri => _appendPath(agentApiBaseUri, '/v1/agent/runs');
 }
 
 abstract interface class StagingSmokeProbe {
@@ -411,6 +413,20 @@ String? _envOrNull(Map<String, String> env, String key) {
   final value = env[key]?.trim();
   if (value == null || value.isEmpty) return null;
   return value;
+}
+
+Uri _appendPath(Uri base, String path) {
+  final normalizedBasePath = base.path.endsWith('/')
+      ? base.path.substring(0, base.path.length - 1)
+      : base.path;
+  final normalizedPath = path.startsWith('/') ? path : '/$path';
+  return Uri(
+    scheme: base.scheme,
+    userInfo: base.userInfo,
+    host: base.host,
+    port: base.hasPort ? base.port : null,
+    path: '$normalizedBasePath$normalizedPath',
+  );
 }
 
 bool _flag(Map<String, String> env, String key) {

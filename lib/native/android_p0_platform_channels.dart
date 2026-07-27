@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:app/core/ble/pump_device_snapshot.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
 
 const defaultMmcBleChannelName = 'com.momcozymai.flutter/mmc_ble';
 const defaultPumpSessionNotificationChannelName =

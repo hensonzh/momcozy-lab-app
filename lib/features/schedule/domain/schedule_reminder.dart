@@ -1,4 +1,4 @@
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
+import 'package:app/features/schedule/domain/schedule_plan.dart';
 
 abstract interface class ScheduleReminderGateway {
   bool get isSupported;

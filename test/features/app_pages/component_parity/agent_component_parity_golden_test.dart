@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/features/agent_hub/agent_hub_page.dart';
+import 'package:app/features/agent_hub/domain/agent_voice.dart';
 
 import '../../../support/momcozy_test_fonts.dart';
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
-import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_page.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/features/schedule/data/schedule_api_repository.dart';
+import 'package:app/features/schedule/domain/schedule_plan.dart';
+import 'package:app/features/schedule/domain/schedule_reminder.dart';
+import 'package:app/features/schedule/presentation/schedule_dashboard_page.dart';
 
 import '../../../support/fixture_api_transport.dart';
 import '../../../support/momcozy_test_fonts.dart';

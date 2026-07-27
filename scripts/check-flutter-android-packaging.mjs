@@ -37,7 +37,7 @@ const flutterBaseAppId = "com.momcozymai.app.flutterpoc";
 
 contains(
   "android/app/build.gradle.kts",
-  `namespace = "com.momcozymai.momcozy_flutter_app"`,
+  `namespace = "com.momcozymai.app"`,
   "Flutter namespace remains isolated from the application ID",
 );
 contains(

@@ -9,7 +9,7 @@
 | Flutter local appId | `com.momcozymai.app.flutterpoc.local` |
 | Flutter staging appId | `com.momcozymai.app.flutterpoc.staging` |
 | Flutter production-shaped appId | `com.momcozymai.app.flutterpoc` |
-| Flutter namespace | `com.momcozymai.momcozy_flutter_app` |
+| Flutter namespace | `com.momcozymai.app` |
 | App label | 当前三个 flavor 统一为 `Momcozy Lab`；安装隔离仍由 appId 保证。 |
 | Debug signing | 使用 Android debug keystore，仅用于本机和真机 smoke。 |
 | Release signing | 通过环境变量注入；未注入时 release build 使用 debug signing，仅允许作为本地 smoke artifact。 |

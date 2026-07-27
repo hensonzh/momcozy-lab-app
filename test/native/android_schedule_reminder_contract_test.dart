@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const kotlinRoot =
-      'android/app/src/main/kotlin/com/momcozymai/momcozy_flutter_app';
+  const kotlinRoot = 'android/app/src/main/kotlin/com/momcozymai/app';
 
   test('Android schedule reminders use bounded inexact local alarms', () {
     final scheduler = File(

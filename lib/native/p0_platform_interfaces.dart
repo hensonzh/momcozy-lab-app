@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
-import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
+import 'package:app/core/ble/pump_device_snapshot.dart';
+import 'package:app/core/privacy/log_redactor.dart';
 
 enum BlePermissionState { unknown, denied, permanentlyDenied, granted }
 

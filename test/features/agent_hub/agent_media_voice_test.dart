@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/features/agent_hub/domain/agent_media_voice.dart';
 
 void main() {
   test('normalizes production media voice metadata and URL aliases', () {

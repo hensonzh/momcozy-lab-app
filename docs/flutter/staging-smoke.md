@@ -25,6 +25,7 @@ dart run tool/staging_smoke.dart
 ```bash
 MOMCOZY_STAGING_SMOKE=1 \
 MOMCOZY_API_BASE_URL=https://staging-api.example.com \
+MOMCOZY_AGENT_API_BASE_URL=https://staging-agent.example.com \
 MOMCOZY_API_TOKEN=replace-with-staging-token \
 MOMCOZY_DEFAULT_USER_ID=replace-with-staging-user \
 MOMCOZY_DEFAULT_BABY_ID=replace-with-staging-baby \
@@ -41,7 +42,6 @@ MOMCOZY_STAGING_SMOKE_MUTATE=1
 
 ```bash
 MOMCOZY_STAGING_SMOKE_AGENT=1
-MOMCOZY_AGENT_RUNS_URL=https://staging-api.example.com/v1/agent/runs
 ```
 
 ## 退出码
@@ -52,6 +52,8 @@ MOMCOZY_AGENT_RUNS_URL=https://staging-api.example.com/v1/agent/runs
 ## 安全边界
 
 - token 通过 `Authorization: Bearer ...` 注入，不写入日志。
+- Product 探针使用 `MOMCOZY_API_BASE_URL`；Agent 探针仅使用
+  `MOMCOZY_AGENT_API_BASE_URL`，并由它派生 `/v1/agent/*` 地址。
 - smoke 失败信息会脱敏 Bearer token 和 `token=` query 参数。
 - 写入类探针必须显式设置 `MOMCOZY_STAGING_SMOKE_MUTATE=1`。
 - Agent 文本流必须显式设置 `MOMCOZY_STAGING_SMOKE_AGENT=1`。

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
+import 'package:app/features/media/domain/product_asset.dart';
 
 typedef ProductAssetImageLoadingBuilder = Widget Function(BuildContext context);
 typedef ProductAssetImageErrorBuilder =

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_entry_intent.dart';
+import 'package:app/features/status/presentation/status_entry_intent.dart';
 
 void main() {
   group('Status entry intent', () {

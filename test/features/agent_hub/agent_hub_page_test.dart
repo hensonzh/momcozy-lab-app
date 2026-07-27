@@ -5,28 +5,27 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_workflow_prompt.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:app/core/agent_stream/agent_stream_runner.dart';
+import 'package:app/features/agent_hub/agent_hub_interaction_store.dart';
+import 'package:app/features/agent_hub/agent_hub_page.dart';
+import 'package:app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:app/features/agent_hub/data/support_ticket_api_repository.dart';
+import 'package:app/features/agent_hub/data/voice_playback.dart';
+import 'package:app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:app/features/agent_hub/domain/agent_voice.dart';
+import 'package:app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_reader.dart';
@@ -1823,12 +1822,6 @@ void main() {
         'payload': {
           'role': 'assistant',
           'text': '我整理好了。',
-          'workflow_reply': {
-            'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-            'workflow_type': 'pregnancy_plan',
-            'revision': 4,
-            'step_token': 'opaque-step-token',
-          },
           'quick_replies': [
             {'text': '继续聊这个'},
             {'text': '给我更多细节'},
@@ -1877,173 +1870,6 @@ void main() {
     expect(client.requests, hasLength(1));
     expect(recordedClientEvents, isEmpty);
   });
-
-  testWidgets(
-    'Agent Hub submits pregnancy workflow choices with cursor and command',
-    (tester) async {
-      final client = _NeverEndingAgentStreamClient();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            state: _pregnancyPlanRunState(),
-            runner: AgentStreamRunner(client),
-          ),
-        ),
-      );
-
-      expect(
-        find.byKey(const ValueKey('pregnancy-plan-workflow-card')),
-        findsOneWidget,
-      );
-      await tester.tap(
-        find.byKey(
-          const ValueKey('pregnancy-plan-option-confirm_no_checkup_yet'),
-        ),
-      );
-      await _pumpUntil(tester, () => client.requests.isNotEmpty);
-
-      final request = client.requests.single;
-      expect(request.message, '还没做过');
-      expect(request.metadata['workflow_reply'], {
-        'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-        'workflow_type': 'pregnancy_plan',
-        'revision': 4,
-        'step_token': 'opaque-step-token',
-      });
-      expect(request.metadata['workflow_command'], {
-        'schema_version': 'pregnancy_plan_command.v1',
-        'workflow_type': 'pregnancy_plan',
-        'command': 'answer_current',
-        'step_id': 'checkup_done',
-        'choice_id': 'confirm_no_checkup_yet',
-      });
-    },
-  );
-
-  testWidgets(
-    'Agent Hub keeps free composer input outside pregnancy workflow',
-    (tester) async {
-      final client = _NeverEndingAgentStreamClient();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            state: _pregnancyPlanRunState(),
-            runner: AgentStreamRunner(client),
-          ),
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '先问一下，感冒能喝温水吗？',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await _pumpUntil(tester, () => client.requests.isNotEmpty);
-
-      final request = client.requests.single;
-      expect(request.message, '先问一下，感冒能喝温水吗？');
-      expect(request.metadata.containsKey('workflow_reply'), isFalse);
-      expect(request.metadata.containsKey('workflow_command'), isFalse);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub submits pregnancy intake form as a deterministic workflow command',
-    (tester) async {
-      tester.view.physicalSize = const Size(800, 1000);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final client = _NeverEndingAgentStreamClient();
-      addTearDown(client.dispose);
-      final formEvent = _formArtifactEvent(
-        id: 'pregnancy-workflow-form',
-        form: const {
-          'id': 'birth_journey_basic_info_intake',
-          'title': '孕周与基本情况',
-          'submit_label': '提交',
-          'fields': [
-            {
-              'id': 'current_week',
-              'label': '当前孕周或预产期',
-              'type': 'text',
-              'required': true,
-              'default_value': '28周',
-            },
-          ],
-        },
-      );
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              threadId: 'thread-pregnancy-form-command',
-              textContent: '请填写孕期基础信息。',
-              completedAssistantMessageReceived: true,
-              events: [formEvent],
-              workflowReply: const {
-                'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-                'workflow_type': 'pregnancy_plan',
-                'revision': 2,
-                'step_token': 'form-step-token',
-              },
-              workflowPrompt: const AgentWorkflowPrompt(
-                schemaVersion: AgentWorkflowPrompt.pregnancyPlanSchemaVersion,
-                workflowType: AgentWorkflowPrompt.pregnancyPlanWorkflowType,
-                status: 'active',
-                phase: 'collecting_intake',
-                currentStep: AgentWorkflowStep(
-                  id: 'basic_intake',
-                  kind: 'form',
-                  question: '',
-                  allowFreeText: false,
-                ),
-                allowedCommands: {'submit_form', 'pause', 'abandon'},
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.tap(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-pregnancy-workflow-form'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final submit = find.byKey(
-        const ValueKey('agent-artifact-form-submit-pregnancy-workflow-form'),
-      );
-      await tester.ensureVisible(submit);
-      await tester.tap(submit);
-      await _pumpUntil(tester, () => client.requests.isNotEmpty);
-
-      final request = client.requests.single;
-      expect(request.metadata['workflow_reply'], {
-        'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-        'workflow_type': 'pregnancy_plan',
-        'revision': 2,
-        'step_token': 'form-step-token',
-      });
-      expect(request.metadata['workflow_command'], {
-        'schema_version': 'pregnancy_plan_command.v1',
-        'workflow_type': 'pregnancy_plan',
-        'command': 'submit_form',
-        'step_id': 'basic_intake',
-      });
-      expect(request.metadata['form_submission'], {
-        'artifact_id': 'pregnancy-workflow-form',
-        'form_id': 'birth_journey_basic_info_intake',
-        'values': {'current_week': '28周'},
-      });
-    },
-  );
 
   testWidgets('Agent Hub reuses backend thread id across follow-up turns', (
     tester,
@@ -4262,16 +4088,7 @@ void main() {
           'run_id': 'run-followup-completed',
           'message_id': 'msg-followup-completed',
           'sequence': 1,
-          'payload': {
-            'role': 'assistant',
-            'text': 'Analysis is ready.',
-            'workflow_reply': {
-              'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-              'workflow_type': 'device_unboxing',
-              'revision': 2,
-              'step_token': 'device-step-token',
-            },
-          },
+          'payload': {'role': 'assistant', 'text': 'Analysis is ready.'},
         }),
       );
       await tester.pump();
@@ -4302,12 +4119,7 @@ void main() {
       expect(client.requests, hasLength(2));
       expect(client.requests.last.message, 'Second turn');
       expect(client.requests.last.threadId, 'thread-followup-completed');
-      expect(client.requests.last.metadata['workflow_reply'], {
-        'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-        'workflow_type': 'device_unboxing',
-        'revision': 2,
-        'step_token': 'device-step-token',
-      });
+      expect(client.requests.last.metadata, {'source': 'flutter-agent-hub'});
       expect(cancelConnector.called.isCompleted, isFalse);
       expect(find.text('Analysis is ready.'), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -8902,46 +8714,6 @@ AgentStreamEvent _productionArtifactEvent({
       },
     },
   });
-}
-
-AgentStreamRunState _pregnancyPlanRunState() {
-  return const AgentStreamRunState(
-    phase: AgentStreamRunPhase.finished,
-    threadId: 'thread-pregnancy-plan',
-    textContent: '你目前做过产检了吗？',
-    completedAssistantMessageReceived: true,
-    workflowReply: {
-      'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-      'workflow_type': 'pregnancy_plan',
-      'revision': 4,
-      'step_token': 'opaque-step-token',
-    },
-    workflowPrompt: AgentWorkflowPrompt(
-      schemaVersion: AgentWorkflowPrompt.pregnancyPlanSchemaVersion,
-      workflowType: AgentWorkflowPrompt.pregnancyPlanWorkflowType,
-      status: 'active',
-      phase: 'checkup_done_question',
-      currentStep: AgentWorkflowStep(
-        id: 'checkup_done',
-        kind: 'single_choice',
-        question: '你目前做过产检了吗？',
-        allowFreeText: false,
-        options: [
-          AgentWorkflowOption(id: 'confirm_checkup_done', label: '做过产检'),
-          AgentWorkflowOption(id: 'confirm_no_checkup_yet', label: '还没做过'),
-          AgentWorkflowOption(id: 'confirm_checkup_unknown', label: '不确定'),
-        ],
-      ),
-      editableSteps: [
-        AgentWorkflowEditableStep(
-          id: 'basic_intake',
-          label: '基础信息',
-          answer: '已提交',
-        ),
-      ],
-      allowedCommands: {'answer_current', 'edit_answer', 'pause', 'abandon'},
-    ),
-  );
 }
 
 Widget _host(Widget child, {bool tickersEnabled = false}) {

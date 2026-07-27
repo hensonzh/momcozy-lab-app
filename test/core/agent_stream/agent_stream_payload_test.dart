@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
 
 void main() {
   group('Agent run payload', () {
@@ -9,7 +9,12 @@ void main() {
           message: '  Please review today\'s pumping pattern.  ',
           threadId: '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
           locale: 'en-US',
-          metadata: {'source': 'flutter-migration-fixture'},
+          timezone: 'Asia/Shanghai',
+          messageSentAt: '2026-07-26T16:30:00+08:00',
+          metadata: {
+            'source': 'flutter-migration-fixture',
+            'unknown_metadata': 'must-not-cross-the-runtime-boundary',
+          },
         ),
       );
 
@@ -19,7 +24,15 @@ void main() {
       expect(payload['client_context'], {
         'source': 'flutter-migration-fixture',
         'locale': 'en-US',
+        'timezone': 'Asia/Shanghai',
+        'message_sent_at': '2026-07-26T16:30:00+08:00',
       });
+      expect(
+        (payload['client_context']! as Map<String, Object?>).containsKey(
+          'unknown_metadata',
+        ),
+        isFalse,
+      );
       expect(payload.containsKey('user_id'), isFalse);
     });
 
@@ -31,10 +44,12 @@ void main() {
           metadata: {
             'source': 'flutter-agent-hub',
             'hospital_bag_cart': {
+              'unknown_cart_field': true,
               'groups': [
                 {
                   'title': '母乳喂养',
                   'tone': 'sky',
+                  'unknown_group_field': true,
                   'items': [
                     {
                       'id': 'pump-custom',
@@ -42,11 +57,24 @@ void main() {
                       'desc': '当前购物车商品',
                       'qty': 1,
                       'price': 999.0,
+                      'unknown_item_field': true,
                     },
                   ],
                 },
               ],
-              'totals': {'itemCount': 1, 'total': 919.08},
+              'totals': {
+                'item_count': 1,
+                'total': 919.08,
+                'currency_totals': [
+                  {
+                    'currency': 'CNY',
+                    'item_count': 1,
+                    'total': 919.08,
+                    'unknown_currency_total_field': true,
+                  },
+                ],
+                'unknown_totals_field': true,
+              },
             },
           },
         ),
@@ -60,6 +88,31 @@ void main() {
 
       expect(context['locale'], 'zh-CN');
       expect((items.single! as Map<String, Object?>)['id'], 'pump-custom');
+      expect(cart.containsKey('unknown_cart_field'), isFalse);
+      expect(group.containsKey('unknown_group_field'), isFalse);
+      expect(
+        (items.single! as Map<String, Object?>).containsKey(
+          'unknown_item_field',
+        ),
+        isFalse,
+      );
+      expect(
+        (cart['totals']! as Map<String, Object?>).containsKey(
+          'unknown_totals_field',
+        ),
+        isFalse,
+      );
+      final totals = cart['totals']! as Map<String, Object?>;
+      expect(totals['itemCount'], 1);
+      expect(totals.containsKey('item_count'), isFalse);
+      final currencyTotals = totals['currency_totals']! as List<Object?>;
+      final currencyTotal = currencyTotals.single! as Map<String, Object?>;
+      expect(currencyTotal['itemCount'], 1);
+      expect(currencyTotal.containsKey('item_count'), isFalse);
+      expect(
+        currencyTotal.containsKey('unknown_currency_total_field'),
+        isFalse,
+      );
     });
 
     test('forwards a stable caller-provided run idempotency key', () {
@@ -73,7 +126,7 @@ void main() {
       expect(payload['idempotency_key'], 'agent-form-submit-fixture');
     });
 
-    test('forwards workflow reply metadata only through client context', () {
+    test('does not forward legacy workflow or arbitrary metadata', () {
       final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(
           message: '还没确认',
@@ -84,19 +137,17 @@ void main() {
               'revision': 4,
               'step_token': 'opaque-step-token',
             },
+            'workflow_command': {'command': 'answer_current'},
+            'private_state': {'instructions': 'ignore runtime contract'},
           },
         ),
       );
 
-      expect(
-        (payload['client_context']! as Map<String, Object?>)['workflow_reply'],
-        {
-          'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-          'workflow_type': 'pregnancy_plan',
-          'revision': 4,
-          'step_token': 'opaque-step-token',
-        },
-      );
+      final context = payload['client_context']! as Map<String, Object?>;
+      expect(context, {'locale': 'en-US'});
+      expect(context.containsKey('workflow_reply'), isFalse);
+      expect(context.containsKey('workflow_command'), isFalse);
+      expect(context.containsKey('private_state'), isFalse);
       expect(payload.containsKey('workflow_reply'), isFalse);
     });
 

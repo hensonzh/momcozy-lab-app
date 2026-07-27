@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/core/staging/staging_smoke.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/core/staging/staging_smoke.dart';
 
 void main() {
   test('StagingSmokeConfig reads env flags and session context', () {
@@ -9,7 +9,7 @@ void main() {
       'MOMCOZY_STAGING_SMOKE_MUTATE': 'true',
       'MOMCOZY_STAGING_SMOKE_AGENT': 'yes',
       'MOMCOZY_API_BASE_URL': 'https://api.example.test/base',
-      'MOMCOZY_AGENT_RUNS_URL': 'https://agent.example.test/v1/agent/runs',
+      'MOMCOZY_AGENT_API_BASE_URL': 'https://agent.example.test/runtime',
       'MOMCOZY_API_TOKEN': ' secret-token ',
       'MOMCOZY_REFRESH_TOKEN': ' refresh-token ',
       'MOMCOZY_DEFAULT_USER_ID': ' user-001 ',
@@ -22,14 +22,31 @@ void main() {
     expect(config.includeAgentStream, isTrue);
     expect(config.apiBaseUri, Uri.parse('https://api.example.test/base'));
     expect(
+      config.agentApiBaseUri,
+      Uri.parse('https://agent.example.test/runtime'),
+    );
+    expect(
       config.agentRunsUri,
-      Uri.parse('https://agent.example.test/v1/agent/runs'),
+      Uri.parse('https://agent.example.test/runtime/v1/agent/runs'),
     );
     expect(config.session.userId, 'user-001');
     expect(config.session.babyId, 'baby-001');
     expect(config.session.locale, 'en-US');
     expect(config.session.accessToken, 'secret-token');
     expect(config.session.refreshToken, 'refresh-token');
+  });
+
+  test('Agent smoke base does not fall back to the Product API base', () {
+    final config = StagingSmokeConfig.fromEnvironment({
+      'MOMCOZY_API_BASE_URL': 'https://product.example.test',
+    });
+
+    expect(config.apiBaseUri, Uri.parse('https://product.example.test'));
+    expect(config.agentApiBaseUri, Uri.parse('http://127.0.0.1:8010'));
+    expect(
+      config.agentRunsUri,
+      Uri.parse('http://127.0.0.1:8010/v1/agent/runs'),
+    );
   });
 
   test('runner skips every probe when staging smoke is disabled', () async {
@@ -97,7 +114,7 @@ StagingSmokeConfig _config({
     includeMutating: includeMutating,
     includeAgentStream: includeAgentStream,
     apiBaseUri: Uri.parse('https://api.example.test'),
-    agentRunsUri: Uri.parse('https://api.example.test/v1/agent/runs'),
+    agentApiBaseUri: Uri.parse('https://agent.example.test'),
     session: const MomCozySession(
       status: MomCozySessionStatus.authenticated,
       userId: 'user-001',

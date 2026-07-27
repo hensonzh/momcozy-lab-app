@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/birth_journey_plan_dashboard.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/features/status/domain/birth_journey_plan.dart';
+import 'package:app/features/status/presentation/birth_journey_plan_dashboard.dart';
+import 'package:app/features/status/presentation/status_dashboard_controller.dart';
 
 import '../../support/momcozy_test_fonts.dart';
 

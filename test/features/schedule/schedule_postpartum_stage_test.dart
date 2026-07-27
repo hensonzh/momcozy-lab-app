@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_postpartum_stage.dart';
+import 'package:app/features/schedule/domain/schedule_postpartum_stage.dart';
 
 void main() {
   group('schedulePostpartumStageLabel', () {

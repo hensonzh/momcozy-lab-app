@@ -7,44 +7,42 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_workflow_prompt.dart';
-import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/workflows/pregnancy_plan_workflow_card.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
-import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:app/core/agent_stream/agent_stream_runner.dart';
+import 'package:app/core/routing/safe_link_target.dart';
+import 'package:app/features/agent_hub/agent_hub_interaction_store.dart';
+import 'package:app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_voice.dart';
+import 'package:app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
+import 'package:app/features/agent_hub/citations/agent_citation.dart';
+import 'package:app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:app/features/agent_hub/data/support_ticket_api_repository.dart';
+import 'package:app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:app/features/agent_hub/domain/agent_media_voice.dart';
+import 'package:app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:app/features/agent_hub/domain/agent_voice.dart';
+import 'package:app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
+import 'package:app/features/media/domain/product_asset.dart';
+import 'package:app/features/media/presentation/product_asset_image.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
+import 'package:app/features/schedule/domain/milk_plan_change_store.dart';
 import 'package:video_player/video_player.dart';
 
-export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+export 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+export 'package:app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentArtifactActionHandler =
@@ -143,11 +141,6 @@ String _formSubmissionIdempotencyKey({
     }),
   );
   return 'agent-form-submit-${sha256.convert(utf8.encode(canonicalPayload))}';
-}
-
-String _workflowCommandIdempotencyKey(Map<String, Object?> workflowMetadata) {
-  final canonicalPayload = jsonEncode(_canonicalJsonValue(workflowMetadata));
-  return 'agent-workflow-command-${sha256.convert(utf8.encode(canonicalPayload))}';
 }
 
 Object? _canonicalJsonValue(Object? value) {
@@ -1011,19 +1004,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
-    var request = _requestWithImages(
+    final request = _requestWithImages(
       widget.requestBuilder(requestMessage),
       _attachedImages,
     );
-    final pregnancyUploadMetadata = _pregnancyPlanCheckupUploadMetadata();
-    if (pregnancyUploadMetadata.isNotEmpty) {
-      request = _requestWithIdempotencyKey(
-        _requestWithMetadata(request, pregnancyUploadMetadata),
-        _workflowCommandIdempotencyKey(pregnancyUploadMetadata),
-      );
-    } else {
-      request = _requestWithWorkflowReply(request, _state.workflowReply);
-    }
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
     if (interruptedState != null) {
       _cancelRunSubscription();
@@ -1083,12 +1067,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithIdempotencyKey(
-      _requestWithWorkflowReply(
-        _requestWithMetadata(
-          widget.requestBuilder(requestMessage.trim()),
-          metadata,
-        ),
-        _state.workflowReply,
+      _requestWithMetadata(
+        widget.requestBuilder(requestMessage.trim()),
+        metadata,
       ),
       idempotencyKey,
     );
@@ -1115,58 +1096,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
     _scheduleScrollToLatest();
     return _startRun(request, awaitServerRunSignal: awaitServerRunSignal);
-  }
-
-  Future<void> _handlePregnancyPlanWorkflowCommand(
-    AgentWorkflowCommand command,
-  ) async {
-    final prompt = _state.workflowPrompt;
-    final workflowReply = _state.workflowReply;
-    if (prompt == null ||
-        !prompt.isPregnancyPlan ||
-        workflowReply == null ||
-        workflowReply['workflow_type'] !=
-            AgentWorkflowPrompt.pregnancyPlanWorkflowType ||
-        !prompt.allowedCommands.contains(command.command)) {
-      return;
-    }
-    await _sendSyntheticUserMessage(
-      requestMessage: command.optimisticText,
-      optimisticContent: command.optimisticText,
-      metadata: {
-        'workflow_reply': workflowReply,
-        'workflow_command': command.toMap(),
-      },
-      idempotencyKey: _workflowCommandIdempotencyKey({
-        'workflow_reply': workflowReply,
-        'workflow_command': command.toMap(),
-      }),
-      awaitServerRunSignal: true,
-    );
-  }
-
-  Map<String, Object?> _pregnancyPlanCheckupUploadMetadata() {
-    final prompt = _state.workflowPrompt;
-    final workflowReply = _state.workflowReply;
-    if (_attachedImages.isEmpty ||
-        prompt == null ||
-        !prompt.isPregnancyPlan ||
-        prompt.currentStep.id != 'checkup_records' ||
-        !prompt.allowedCommands.contains('answer_current') ||
-        workflowReply == null ||
-        workflowReply['workflow_type'] !=
-            AgentWorkflowPrompt.pregnancyPlanWorkflowType) {
-      return const {};
-    }
-    return {
-      'workflow_reply': workflowReply,
-      'workflow_command': AgentWorkflowCommand(
-        command: 'answer_current',
-        stepId: prompt.currentStep.id,
-        choiceId: 'mark_checkup_records_uploaded',
-        optimisticText: '使用已上传的产检记录',
-      ).toMap(),
-    };
   }
 
   void _handleArtifactAction(AgentArtifactActionView action) {
@@ -1239,7 +1168,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           : await _sendSyntheticUserMessage(
               requestMessage: _formSubmitRequestMessage(action),
               optimisticContent: '已提交信息采集表单',
-              metadata: _formSubmissionMetadataWithWorkflowCommand(action),
+              metadata: _formSubmissionMetadata(action),
               idempotencyKey: idempotencyKey,
               awaitServerRunSignal: true,
             );
@@ -1258,33 +1187,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     _persistInteractionState();
     return accepted;
-  }
-
-  Map<String, Object?> _formSubmissionMetadataWithWorkflowCommand(
-    AgentArtifactActionView action,
-  ) {
-    final metadata = _formSubmissionMetadata(action);
-    final submission = _formSubmissionFromAction(action);
-    final prompt = _state.workflowPrompt;
-    final workflowReply = _state.workflowReply;
-    if (submission?.formId != 'birth_journey_basic_info_intake' ||
-        prompt == null ||
-        !prompt.isPregnancyPlan ||
-        !prompt.allowedCommands.contains('submit_form') ||
-        workflowReply == null ||
-        workflowReply['workflow_type'] !=
-            AgentWorkflowPrompt.pregnancyPlanWorkflowType) {
-      return metadata;
-    }
-    return {
-      ...metadata,
-      'workflow_reply': workflowReply,
-      'workflow_command': AgentWorkflowCommand(
-        command: 'submit_form',
-        stepId: prompt.currentStep.id,
-        optimisticText: '已提交孕期基础信息',
-      ).toMap(),
-    };
   }
 
   Future<bool> _submitSupportTicket({
@@ -2614,8 +2516,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       // Generated quick replies are temporarily hidden
                                       // while the follow-up interaction is redesigned.
                                       onQuickReplySelected: null,
-                                      onWorkflowCommand:
-                                          _handlePregnancyPlanWorkflowCommand,
                                       pendingActionIds: _pendingActionIds,
                                       localActionStatuses: _localActionStatuses,
                                       productAssetRepository:
@@ -3020,6 +2920,8 @@ AgentStreamRequest _requestWithImages(
     message: request.message,
     threadId: request.threadId,
     locale: request.locale,
+    timezone: request.timezone,
+    messageSentAt: request.messageSentAt,
     images: [...request.images, ...images],
     metadata: request.metadata,
     idempotencyKey: request.idempotencyKey,
@@ -3038,6 +2940,8 @@ AgentStreamRequest _requestWithIdempotencyKey(
     runId: request.runId,
     afterSequence: request.afterSequence,
     locale: request.locale,
+    timezone: request.timezone,
+    messageSentAt: request.messageSentAt,
     images: request.images,
     metadata: request.metadata,
     idempotencyKey: normalized,
@@ -3055,22 +2959,12 @@ AgentStreamRequest _requestWithMetadata(
     runId: request.runId,
     afterSequence: request.afterSequence,
     locale: request.locale,
+    timezone: request.timezone,
+    messageSentAt: request.messageSentAt,
     images: request.images,
     metadata: {...request.metadata, ...metadata},
     idempotencyKey: request.idempotencyKey,
   );
-}
-
-AgentStreamRequest _requestWithWorkflowReply(
-  AgentStreamRequest request,
-  Map<String, Object?>? workflowReply,
-) {
-  if (workflowReply == null || workflowReply.isEmpty) return request;
-  if (workflowReply['workflow_type'] ==
-      AgentWorkflowPrompt.pregnancyPlanWorkflowType) {
-    return request;
-  }
-  return _requestWithMetadata(request, {'workflow_reply': workflowReply});
 }
 
 AgentStreamRequest _requestWithThreadId(
@@ -3088,6 +2982,8 @@ AgentStreamRequest _requestWithThreadId(
     message: request.message,
     threadId: normalizedThreadId,
     locale: request.locale,
+    timezone: request.timezone,
+    messageSentAt: request.messageSentAt,
     images: request.images,
     metadata: request.metadata,
     idempotencyKey: request.idempotencyKey,
@@ -3496,7 +3392,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     required this.formSubmissionsListenable,
     required this.formPresentationSession,
     this.onQuickReplySelected,
-    this.onWorkflowCommand,
     required this.pendingActionIds,
     required this.localActionStatuses,
     this.productAssetRepository,
@@ -3518,7 +3413,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   formSubmissionsListenable;
   final AgentArtifactFormPresentationSession formPresentationSession;
   final ValueChanged<String>? onQuickReplySelected;
-  final AgentWorkflowCommandHandler? onWorkflowCommand;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
@@ -3567,7 +3461,6 @@ class _AgentRunTranscriptListenableState
           allowFormAutoPresentation: true,
           artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
-          onWorkflowCommand: widget.onWorkflowCommand,
           pendingActionIds: widget.pendingActionIds,
           productAssetRepository: widget.productAssetRepository,
           profileDefaults: widget.profileDefaults,
@@ -3651,7 +3544,6 @@ class AgentRunTranscript extends StatelessWidget {
     this.allowFormAutoPresentation = false,
     this.artifactPanelKey,
     this.onQuickReplySelected,
-    this.onWorkflowCommand,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
     this.productAssetRepository,
@@ -3676,7 +3568,6 @@ class AgentRunTranscript extends StatelessWidget {
   final bool allowFormAutoPresentation;
   final Key? artifactPanelKey;
   final ValueChanged<String>? onQuickReplySelected;
-  final AgentWorkflowCommandHandler? onWorkflowCommand;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
@@ -3727,7 +3618,6 @@ class AgentRunTranscript extends StatelessWidget {
               )
         : const <AgentCitationView>[];
     final quickReplies = state.quickReplies;
-    final workflowPrompt = state.workflowPrompt;
     final artifactActionForState = onArtifactAction == null
         ? null
         : (AgentArtifactActionView action) {
@@ -3759,12 +3649,6 @@ class AgentRunTranscript extends StatelessWidget {
         !state.isAwaitingVisibleReply &&
         !artifactCards.any((card) => card.isForm) &&
         onQuickReplySelected != null;
-    final shouldRenderWorkflowPrompt =
-        allowsSupplementaryContent &&
-        !state.isAwaitingVisibleReply &&
-        workflowPrompt != null &&
-        workflowPrompt.isPregnancyPlan &&
-        onWorkflowCommand != null;
     final avatarMode = _avatarMode;
     final loopDecor = _loopDecorState;
     final thinkingNoteTitle = loopDecor.thinkingTitle;
@@ -3875,13 +3759,6 @@ class AgentRunTranscript extends StatelessWidget {
                 AgentCitationList(
                   citations: citations,
                   onAction: onArtifactAction,
-                ),
-              ],
-              if (shouldRenderWorkflowPrompt) ...[
-                SizedBox(height: citations.isNotEmpty ? 20 : 16),
-                PregnancyPlanWorkflowCard(
-                  prompt: workflowPrompt,
-                  onCommand: onWorkflowCommand!,
                 ),
               ],
               if (shouldRenderQuickReplies) ...[

@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:app/app/momcozy_design_system.dart';
 
 enum BabyStatusPanel { health, milestone, sleep }
 

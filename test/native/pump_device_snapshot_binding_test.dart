@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/ble/ble_protocol.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
-import 'package:momcozy_flutter_app/native/pump_device_snapshot_binding.dart';
+import 'package:app/core/ble/ble_protocol.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
+import 'package:app/native/pump_device_snapshot_binding.dart';
 
 import '../support/fixture_reader.dart';
 

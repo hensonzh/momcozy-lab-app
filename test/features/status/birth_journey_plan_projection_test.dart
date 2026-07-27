@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan.dart';
-import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
+import 'package:app/features/pregnancy_plan/domain/pregnancy_plan.dart';
+import 'package:app/features/status/domain/birth_journey_plan.dart';
 
 void main() {
   group('projectBirthJourneyPlan', () {

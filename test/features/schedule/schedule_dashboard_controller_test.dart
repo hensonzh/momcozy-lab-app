@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
-import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_controller.dart';
+import 'package:app/features/schedule/domain/schedule_plan.dart';
+import 'package:app/features/schedule/presentation/schedule_dashboard_controller.dart';
 
 void main() {
   test(

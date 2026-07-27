@@ -12,7 +12,8 @@
 脚本默认使用：
 
 ```text
-API:      https://lute-momcozylab.luteos.cloud:8443
+Product:  https://lute-momcozylab.luteos.cloud:8443
+Agent:    https://lute-momcozylab.luteos.cloud:8443
 Download: https://lute-momcozylab.luteos.cloud:8443/app
 Variant:  staging release
 ```
@@ -23,6 +24,7 @@ Variant:  staging release
 
 ```bash
 MOMCOZY_API_BASE_URL=https://api.example.com \
+MOMCOZY_AGENT_API_BASE_URL=https://agent.example.com \
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.example.com/app \
 MOMCOZY_APK_FLAVOR=production \
 ./scripts/build-flutter-app.sh
@@ -84,7 +86,7 @@ make flutter-apk-download-site
 额外 Dart define 可以用逗号传入：
 
 ```bash
-MOMCOZY_APK_DART_DEFINES='MOMCOZY_API_BASE_URL=https://api.example.com,MOMCOZY_FEATURE_X=1' \
+MOMCOZY_APK_DART_DEFINES='MOMCOZY_API_BASE_URL=https://api.example.com,MOMCOZY_AGENT_API_BASE_URL=https://agent.example.com,MOMCOZY_FEATURE_X=1' \
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
 make flutter-apk-download-site
 ```

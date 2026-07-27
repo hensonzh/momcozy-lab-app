@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
-import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
+import 'package:app/features/media/domain/product_asset.dart';
+import 'package:app/features/media/presentation/product_asset_video_player.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 

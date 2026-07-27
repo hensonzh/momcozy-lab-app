@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 class AgentArtifactCardRegistry {
   const AgentArtifactCardRegistry._();

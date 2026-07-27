@@ -45,7 +45,7 @@ const packageName =
   "com.momcozymai.app.flutterpoc.local";
 const activityName =
   process.env.MOMCOZY_FLUTTER_EMULATOR_ACTIVITY ||
-  "com.momcozymai.momcozy_flutter_app.MainActivity";
+  "com.momcozymai.app.MainActivity";
 const skipBuild =
   String(process.env.MOMCOZY_FLUTTER_EMULATOR_SKIP_BUILD || "").trim() === "1";
 const apkPath = path.join(

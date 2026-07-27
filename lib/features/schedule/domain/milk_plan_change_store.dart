@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
 
 const _milkPlanChangedEventType = 'milk_plan.changed';
 const _maxSeenEventIds = 64;

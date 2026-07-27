@@ -1,4 +1,4 @@
-package com.momcozymai.momcozy_flutter_app
+package com.momcozymai.app
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -29,12 +29,14 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.util.Locale
+import java.util.TimeZone
 import java.util.UUID
 
 class MainActivity : FlutterActivity() {
     private lateinit var mmcBleChannel: MethodChannel
     private lateinit var pumpNotificationChannel: MethodChannel
     private lateinit var voicePcmPlayerChannel: MethodChannel
+    private lateinit var agentRunContextChannel: MethodChannel
     private lateinit var pumpAgentUploadHandler: PumpAgentUploadChannelHandler
     private lateinit var pumpAgentBackgroundRunner: PumpAgentBackgroundRunner
     private var scanCallback: ScanCallback? = null
@@ -71,6 +73,17 @@ class MainActivity : FlutterActivity() {
             VOICE_PCM_PLAYER_CHANNEL
         )
         voicePcmPlayerChannel.setMethodCallHandler(::handleVoicePcmPlayerCall)
+        agentRunContextChannel = MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            AGENT_RUN_CONTEXT_CHANNEL
+        )
+        agentRunContextChannel.setMethodCallHandler { call, result ->
+            if (call.method == "localTimezone") {
+                result.success(TimeZone.getDefault().id)
+            } else {
+                result.notImplemented()
+            }
+        }
         val pumpAgentUploadChannel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             PUMP_AGENT_UPLOAD_CHANNEL
@@ -1122,6 +1135,8 @@ class MainActivity : FlutterActivity() {
             "com.momcozymai.flutter/pump_agent_upload"
         private const val VOICE_PCM_PLAYER_CHANNEL =
             "com.momcozymai.flutter/voice_pcm_player"
+        private const val AGENT_RUN_CONTEXT_CHANNEL =
+            "com.momcozymai.app/agent_run_context"
         private const val VOICE_PCM_THREAD_NAME = "MomCozyVoicePcm"
         private const val VOICE_PCM_FINISH_POLL_MS = 40L
         private const val VOICE_PCM_FINISH_MIN_DRAIN_MS = 160L

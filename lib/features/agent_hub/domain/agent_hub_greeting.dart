@@ -1,4 +1,4 @@
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 
 const agentHubDefaultGreeting =
     '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';

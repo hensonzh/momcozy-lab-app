@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/status/domain/baby_status_projection.dart';
+import 'package:app/features/records/domain/records.dart';
+import 'package:app/features/status/domain/baby_status_projection.dart';
 
 void main() {
   group('BabyFeedingProjection', () {

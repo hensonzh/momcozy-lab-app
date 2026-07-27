@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
+import 'package:app/features/records/domain/records.dart';
 
 class PostpartumMilkProjection {
   PostpartumMilkProjection._({

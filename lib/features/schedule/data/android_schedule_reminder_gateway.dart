@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
-import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
+import 'package:app/features/schedule/domain/schedule_plan.dart';
+import 'package:app/features/schedule/domain/schedule_reminder.dart';
+import 'package:app/native/android_p0_platform_channels.dart';
 
 const _maxNativeScheduleReminders = 64;
 

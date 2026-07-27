@@ -1,6 +1,6 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 
 const agentHubProfileEndpoint = '/v1/profile/me';
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
+import 'package:app/features/status/data/status_api_repository.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
 import '../../support/fake_agent_voice.dart';
