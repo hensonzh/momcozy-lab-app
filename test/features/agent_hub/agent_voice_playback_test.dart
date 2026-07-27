@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
@@ -483,14 +482,6 @@ class _RecordingVoiceRepository implements AgentVoiceRepository {
   @override
   Stream<AgentVoiceSessionEvent> realtimeVoiceSession() {
     return const Stream<AgentVoiceSessionEvent>.empty();
-  }
-
-  @override
-  Future<String?> transcribeSpeechChunk({
-    required ApiUploadFile file,
-    String? language,
-  }) async {
-    return null;
   }
 }
 

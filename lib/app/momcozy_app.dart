@@ -1489,7 +1489,6 @@ Widget _buildDefaultAgentHubPage(
     mediaRepository: runtime.mediaRepository,
     loadImageThumbnail: runtime.mediaContentRepository.loadImageThumbnail,
     loadImageContent: runtime.mediaContentRepository.loadImage,
-    voiceInputController: runtime.agentVoiceInputController,
     productAssetRepository: runtime.productAssetRepository,
     ibclcConsultStore: runtime.ibclcConsultStore,
     supportTicketSubmitter: runtime.supportTicketRepository.submit,

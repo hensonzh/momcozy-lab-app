@@ -6,92 +6,10 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
-import '../../support/fixture_api_transport.dart';
 import '../../support/fixture_reader.dart';
 
 void main() {
   group('Agent voice API repository', () {
-    test('transcribes a speech chunk through multipart contract', () async {
-      final multipart = FixtureApiMultipartTransport(const {
-        'text': '  hello from voice  ',
-      });
-      final repository = AgentVoiceApiRepository(
-        multipartTransport: multipart,
-        baseUri: Uri.parse('http://127.0.0.1:8769'),
-        token: 'voice-token',
-      );
-
-      final text = await repository.transcribeSpeechChunk(
-        language: 'zh-CN',
-        file: const ApiUploadFile(
-          name: 'speech.wav',
-          mimeType: 'audio/wav',
-          sizeBytes: 4,
-          bytes: [1, 2, 3, 4],
-        ),
-      );
-
-      expect(text, 'hello from voice');
-      expect(multipart.lastPath, speechTranscribeChunkEndpoint);
-      expect(multipart.lastFields, {'language': 'zh-CN'});
-      expect(multipart.lastHeaders, containsPair('Accept', 'application/json'));
-      expect(
-        multipart.lastHeaders,
-        containsPair('Authorization', 'Bearer voice-token'),
-      );
-      expect(multipart.lastFile!.mimeType, 'audio/wav');
-    });
-
-    test('returns null for ignorable single chunk timeout fixture', () async {
-      final fixture = readFixtureMap(
-        'api/voice/speech_transcribe_chunk_timeout.json',
-      );
-      final behavior = fixture['expected_client_behavior']! as Map;
-      final multipart = FixtureApiMultipartTransport(const {
-        'status': 200,
-        'data': {},
-      }, failure: const ApiRequestTimeoutException());
-      final repository = AgentVoiceApiRepository(
-        multipartTransport: multipart,
-        baseUri: Uri.parse('http://127.0.0.1:8769'),
-      );
-
-      final text = await repository.transcribeSpeechChunk(
-        file: const ApiUploadFile(
-          name: 'speech.webm',
-          mimeType: 'audio/webm',
-          sizeBytes: 3,
-          bytes: [1, 2, 3],
-        ),
-      );
-
-      expect(behavior['ignore_single_chunk'], isTrue);
-      expect(text, isNull);
-      expect(multipart.lastPath, speechTranscribeChunkEndpoint);
-    });
-
-    test('rethrows speech chunk cancellation for user barge-in', () async {
-      final multipart = FixtureApiMultipartTransport(const {
-        'status': 200,
-        'data': {},
-      }, failure: const ApiRequestCancelledException());
-      final repository = AgentVoiceApiRepository(
-        multipartTransport: multipart,
-        baseUri: Uri.parse('http://127.0.0.1:8769'),
-      );
-
-      expect(
-        repository.transcribeSpeechChunk(
-          file: const ApiUploadFile(
-            name: 'speech.webm',
-            mimeType: 'audio/webm',
-            sizeBytes: 3,
-          ),
-        ),
-        throwsA(isA<ApiRequestCancelledException>()),
-      );
-    });
-
     test(
       'opens realtime PCM stream without using text stream parser',
       () async {
@@ -100,10 +18,6 @@ void main() {
           [3, 4],
         ]);
         final repository = AgentVoiceApiRepository(
-          multipartTransport: FixtureApiMultipartTransport(const {
-            'status': 200,
-            'data': {},
-          }),
           baseUri: Uri.parse('http://127.0.0.1:8769'),
           token: 'voice-token',
           headers: const {'X-Momcozy-Client': 'flutter'},
@@ -136,10 +50,6 @@ void main() {
         [1],
       ]);
       final repository = AgentVoiceApiRepository(
-        multipartTransport: FixtureApiMultipartTransport(const {
-          'status': 200,
-          'data': {},
-        }),
         baseUri: Uri.parse('http://127.0.0.1:8769'),
         tokenProvider: () => token,
         binaryConnector: connector,
@@ -177,10 +87,6 @@ void main() {
         ],
       ]);
       final repository = AgentVoiceApiRepository(
-        multipartTransport: FixtureApiMultipartTransport(const {
-          'status': 200,
-          'data': {},
-        }),
         baseUri: Uri.parse('http://127.0.0.1:8769'),
         tokenProvider: () => token,
         onUnauthorized: () {
@@ -213,10 +119,6 @@ void main() {
     test('rejects remote plaintext voice base URLs', () {
       expect(
         () => AgentVoiceApiRepository(
-          multipartTransport: FixtureApiMultipartTransport(const {
-            'status': 200,
-            'data': {},
-          }),
           baseUri: Uri.parse('http://voice.example.test'),
         ),
         throwsArgumentError,
@@ -225,10 +127,6 @@ void main() {
 
     test('builds redacted realtime voice log contexts', () {
       final repository = AgentVoiceApiRepository(
-        multipartTransport: FixtureApiMultipartTransport(const {
-          'status': 200,
-          'data': {},
-        }),
         baseUri: Uri.parse('https://voice.example.test/base'),
         token: 'voice-token',
         headers: const {'X-Momcozy-Client': 'flutter'},
@@ -266,10 +164,6 @@ void main() {
         failure: const ApiRequestCancelledException(),
       );
       final repository = AgentVoiceApiRepository(
-        multipartTransport: FixtureApiMultipartTransport(const {
-          'status': 200,
-          'data': {},
-        }),
         baseUri: Uri.parse('http://127.0.0.1:8769'),
         binaryConnector: connector,
       );
@@ -294,10 +188,6 @@ void main() {
         );
         final connector = _RecordingVoiceWebSocketConnector(connection);
         final repository = AgentVoiceApiRepository(
-          multipartTransport: FixtureApiMultipartTransport(const {
-            'status': 200,
-            'data': {},
-          }),
           baseUri: Uri.parse('https://api.example.test/base'),
           token: 'voice-token',
           websocketConnector: connector,
@@ -340,10 +230,6 @@ void main() {
           ),
         );
         final repository = AgentVoiceApiRepository(
-          multipartTransport: FixtureApiMultipartTransport(const {
-            'status': 200,
-            'data': {},
-          }),
           baseUri: Uri.parse('http://127.0.0.1:8769'),
           websocketConnector: _RecordingVoiceWebSocketConnector(connection),
         );

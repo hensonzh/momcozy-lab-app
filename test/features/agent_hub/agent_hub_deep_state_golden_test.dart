@@ -5,7 +5,6 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
 import '../../support/momcozy_test_fonts.dart';
 
@@ -20,7 +19,6 @@ void main() {
         ) async {
           await _setViewport(tester, viewport.size);
           await _pumpAgentHub(tester, state.build());
-          await state.drive(tester);
 
           await expectLater(
             find.byKey(_goldenSurfaceKey),
@@ -86,29 +84,6 @@ final _agentStates = [
       ),
     ),
   ),
-  _AgentGoldenState(
-    label: 'voice error state',
-    fileName: 'voice_error_state_mobile.png',
-    build: () => AgentHubPage(
-      showVoiceInputButton: true,
-      voiceInputController: AgentVoiceInputController(
-        recorder: const _GoldenVoiceRecorder(),
-        transcriber: const _FailingVoiceTranscriber(),
-      ),
-    ),
-    drive: (tester) async {
-      await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
-      await tester.pump();
-      final holdGesture = await tester.startGesture(
-        tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
-      );
-      await tester.pump();
-      await holdGesture.up();
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
-      expect(find.text('语音输入失败'), findsNothing);
-    },
-  ),
 ];
 
 class _AgentGoldenState {
@@ -116,13 +91,11 @@ class _AgentGoldenState {
     required this.label,
     required this.fileName,
     required this.build,
-    this.drive = _noOpDrive,
   });
 
   final String label;
   final String fileName;
   final Widget Function() build;
-  final Future<void> Function(WidgetTester tester) drive;
 }
 
 const _goldenViewports = [
@@ -189,44 +162,4 @@ Future<void> _pumpAgentHub(WidgetTester tester, Widget child) async {
     ).timeout(const Duration(seconds: 5));
   });
   await tester.pumpAndSettle();
-}
-
-Future<void> _noOpDrive(WidgetTester tester) async {}
-
-class _GoldenVoiceRecorder implements AgentVoiceRecorder {
-  const _GoldenVoiceRecorder();
-
-  @override
-  Future<void> cancel() async {}
-
-  @override
-  Future<AgentVoiceInputPermissionState> permissionState() async {
-    return AgentVoiceInputPermissionState.granted;
-  }
-
-  @override
-  Future<AgentVoiceInputPermissionState> requestPermission() async {
-    return AgentVoiceInputPermissionState.granted;
-  }
-
-  @override
-  Future<void> start() async {}
-
-  @override
-  Future<AgentVoiceRecording?> stop() async {
-    return const AgentVoiceRecording(
-      name: 'speech.webm',
-      mimeType: 'audio/webm',
-      bytes: [1],
-    );
-  }
-}
-
-class _FailingVoiceTranscriber implements AgentVoiceTranscriber {
-  const _FailingVoiceTranscriber();
-
-  @override
-  Future<String?> transcribe(AgentVoiceRecording recording) async {
-    throw StateError('microphone unavailable');
-  }
 }

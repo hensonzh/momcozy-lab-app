@@ -14,7 +14,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_re
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/platform_voice_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
@@ -438,7 +437,6 @@ class MomCozyApiRuntime {
   ApiMultipartTransport? _multipartTransport;
   AgentVoicePlaybackPlayer? _agentVoicePlaybackPlayer;
   late final bool _hasInjectedAgentVoicePlaybackPlayer;
-  AgentVoiceInputController? _agentVoiceInputController;
   AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
   AgentHubPlatformDocumentPicker? _agentHubPlatformDocumentPicker;
   ProductAssetRepository? _productAssetRepository;
@@ -645,7 +643,6 @@ class MomCozyApiRuntime {
 
   AgentVoiceApiRepository get agentVoiceRepository {
     return AgentVoiceApiRepository(
-      multipartTransport: multipartTransport,
       baseUri: Uri.parse(_defaultApiBaseUrl),
       token: session.accessToken,
       tokenProvider: () => currentSession.accessToken,
@@ -669,16 +666,6 @@ class MomCozyApiRuntime {
     return (_agentHubPlatformDocumentPicker ??=
             AgentHubPlatformDocumentPicker())
         .pick;
-  }
-
-  AgentVoiceInputController get agentVoiceInputController {
-    return _agentVoiceInputController ??= AgentVoiceInputController(
-      recorder: AgentHubPlatformVoiceRecorder(),
-      transcriber: AgentVoiceApiInputTranscriber(
-        repository: agentVoiceRepository,
-        language: locale,
-      ),
-    );
   }
 
   HospitalBagCartApiRepository get hospitalBagCartRepository {
