@@ -90,6 +90,7 @@ final _agentStates = [
     label: 'voice error state',
     fileName: 'voice_error_state_mobile.png',
     build: () => AgentHubPage(
+      showVoiceInputButton: true,
       voiceInputController: AgentVoiceInputController(
         recorder: const _GoldenVoiceRecorder(),
         transcriber: const _FailingVoiceTranscriber(),

@@ -222,6 +222,7 @@ class AgentHubPage extends StatefulWidget {
     this.loadImageThumbnail,
     this.loadImageContent,
     this.voiceInputController,
+    this.showVoiceInputButton = false,
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
     this.productAssetRepository,
@@ -255,6 +256,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
   final AgentVoiceInputController? voiceInputController;
+  final bool showVoiceInputButton;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
   final ProductAssetRepository? productAssetRepository;
@@ -3027,6 +3029,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                         !isRestoring,
                     isAttachmentPending: _attachmentUploadPending,
                     attachmentUploadProgress: _attachmentUploadProgress,
+                    showVoiceInputButton: widget.showVoiceInputButton,
                     canUseVoice:
                         !isRestoring &&
                         widget.voiceInputController != null &&
@@ -5963,6 +5966,7 @@ class AgentComposerBar extends StatefulWidget {
     required this.canAttachFile,
     required this.isAttachmentPending,
     this.attachmentUploadProgress,
+    this.showVoiceInputButton = false,
     required this.canUseVoice,
     required this.voicePhase,
     this.voicePlaybackFailed = false,
@@ -5989,6 +5993,7 @@ class AgentComposerBar extends StatefulWidget {
   final bool canAttachFile;
   final bool isAttachmentPending;
   final double? attachmentUploadProgress;
+  final bool showVoiceInputButton;
   final bool canUseVoice;
   final AgentVoicePhase voicePhase;
   final bool voicePlaybackFailed;
@@ -6016,8 +6021,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   static const double _controlGap = 8;
   static const double _inputLeftInset =
       _surfaceHorizontalInset + _attachmentControlSize + _controlGap;
-  static const double _inputRightInset =
-      _surfaceHorizontalInset + (_controlSize * 2) + (_controlGap * 2);
   static const double _expandedInputHorizontalInset = 20;
   static const double _expandedInputTopInset = 14;
   static const double _expandedInputBottomInset =
@@ -6047,6 +6050,11 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _attachmentMenuController.close();
       });
+    }
+    if (!widget.showVoiceInputButton && _voiceMode) {
+      _voiceMode = false;
+      _voicePressed = false;
+      _textDraftBeforeVoice = null;
     }
   }
 
@@ -6167,7 +6175,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
         (controller.text.trim().isNotEmpty || imageCount > 0 || fileCount > 0);
     final canAttachImage = widget.canAttachImage;
     final canAttachFile = widget.canAttachFile;
-    final canUseVoice = widget.canUseVoice;
     final voicePhase = widget.voicePhase;
     final onChanged = widget.onChanged;
     final onSend = widget.onSend;
@@ -6289,10 +6296,10 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         _expandedInputHorizontalInset,
                         _expandedInputBottomInset,
                       )
-                    : const EdgeInsets.fromLTRB(
+                    : EdgeInsets.fromLTRB(
                         _inputLeftInset,
                         _surfaceVerticalInset,
-                        _inputRightInset,
+                        _compactInputRightInset,
                         _surfaceVerticalInset,
                       );
                 Widget positionControl({
@@ -6557,30 +6564,31 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             },
                           ),
                         ),
-                        positionControl(
-                          right:
-                              _surfaceHorizontalInset +
-                              _controlSize +
-                              _controlGap,
-                          child: IconButton(
-                            key: const ValueKey('agent-voice-button'),
-                            onPressed: canUseVoice || _voiceMode
-                                ? _toggleVoiceMode
-                                : null,
-                            icon: Icon(_voiceIcon, size: 20),
-                            tooltip: _voiceTooltip,
-                            color: voicePhase == AgentVoicePhase.listening
-                                ? colorScheme.primary
-                                : MomCozyColors.mutedForeground,
-                            visualDensity: VisualDensity.compact,
-                            constraints: const BoxConstraints.tightFor(
-                              width: _controlSize,
-                              height: _controlSize,
+                        if (widget.showVoiceInputButton)
+                          positionControl(
+                            right:
+                                _surfaceHorizontalInset +
+                                _controlSize +
+                                _controlGap,
+                            child: IconButton(
+                              key: const ValueKey('agent-voice-button'),
+                              onPressed: widget.canUseVoice || _voiceMode
+                                  ? _toggleVoiceMode
+                                  : null,
+                              icon: Icon(_voiceIcon, size: 20),
+                              tooltip: _voiceTooltip,
+                              color: voicePhase == AgentVoicePhase.listening
+                                  ? colorScheme.primary
+                                  : MomCozyColors.mutedForeground,
+                              visualDensity: VisualDensity.compact,
+                              constraints: const BoxConstraints.tightFor(
+                                width: _controlSize,
+                                height: _controlSize,
+                              ),
+                              padding: EdgeInsets.zero,
+                              style: controlButtonStyle,
                             ),
-                            padding: EdgeInsets.zero,
-                            style: controlButtonStyle,
                           ),
-                        ),
                         positionControl(
                           right: _surfaceHorizontalInset,
                           child: IconButton(
@@ -6682,8 +6690,17 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 
   double _compactInputTextWidth(double surfaceWidth) {
-    return surfaceWidth - _inputLeftInset - _inputRightInset - _lineWrapGuard;
+    return surfaceWidth -
+        _inputLeftInset -
+        _compactInputRightInset -
+        _lineWrapGuard;
   }
+
+  double get _compactInputRightInset =>
+      _surfaceHorizontalInset +
+      _controlSize +
+      _controlGap +
+      (widget.showVoiceInputButton ? _controlSize + _controlGap : 0);
 
   int _visualLineCountForWidth(
     BuildContext context,
