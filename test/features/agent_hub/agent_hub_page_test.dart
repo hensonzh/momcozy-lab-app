@@ -312,7 +312,7 @@ void main() {
         AgentHubPage(
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.streaming,
-            artifactEvents: {'milk-plan-001': artifactEvent},
+            artifactEvents: {'milk-analysis-001': artifactEvent},
             completedAssistantMessageReceived: true,
           ),
         ),
@@ -535,7 +535,7 @@ void main() {
         AgentHubPage(
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.error,
-            artifactEvents: {'milk-plan-001': artifactEvent},
+            artifactEvents: {'milk-analysis-001': artifactEvent},
           ),
         ),
       ),
@@ -1061,7 +1061,7 @@ void main() {
               AgentStreamEvent(const {
                 'event_id': 'evt-diary-restored',
                 'sequence': 7,
-                'type': 'pregnancy_diary.changed',
+                'type': 'diary.changed',
                 'thread_id': 'thread-domain-restore',
                 'run_id': 'run-domain-restore',
                 'payload': {
@@ -3038,22 +3038,20 @@ void main() {
     client.emit(
       0,
       AgentStreamEvent(const {
-        'event_id': 'evt-media-voice-tool',
-        'type': 'tool.completed',
+        'event_id': 'evt-media-voice-artifact',
+        'type': 'artifact.created',
         'thread_id': 'thread-media-voice',
         'run_id': 'run-media-voice',
-        'tool_call_id': 'tool-media-voice',
+        'artifact_id': 'artifact-media-voice',
         'sequence': 1,
         'payload': {
-          'safe_output': {
-            'media_voice': [
-              {
-                'media_id': '/v1/assets/asset-image?kind=image',
-                'voice_policy': 'announce',
-                'spoken_label': '我放了一张阀门安装方向图。',
-              },
-            ],
-          },
+          'media_voice': [
+            {
+              'media_id': '/v1/assets/asset-image?kind=image',
+              'voice_policy': 'announce',
+              'spoken_label': '我放了一张阀门安装方向图。',
+            },
+          ],
         },
       }),
     );
@@ -3109,26 +3107,24 @@ void main() {
         0,
         AgentStreamEvent(const {
           'event_id': 'evt-standalone-media-voice',
-          'type': 'tool.completed',
+          'type': 'artifact.created',
           'thread_id': 'thread-standalone-media-voice',
           'run_id': 'run-standalone-media-voice',
-          'tool_call_id': 'tool-standalone-media-voice',
+          'artifact_id': 'artifact-standalone-media-voice',
           'sequence': 1,
           'payload': {
-            'safe_output': {
-              'media_voice': [
-                {
-                  'media_id': '/v1/assets/instructional-image',
-                  'voice_policy': 'announce',
-                  'spoken_label': '我放了一张安装方向图，你可以对照检查。',
-                },
-                {
-                  'media_id': '/v1/assets/decorative-image',
-                  'voice_policy': 'silent',
-                  'spoken_label': '这句不应该播报。',
-                },
-              ],
-            },
+            'media_voice': [
+              {
+                'media_id': '/v1/assets/instructional-image',
+                'voice_policy': 'announce',
+                'spoken_label': '我放了一张安装方向图，你可以对照检查。',
+              },
+              {
+                'media_id': '/v1/assets/decorative-image',
+                'voice_policy': 'silent',
+                'spoken_label': '这句不应该播报。',
+              },
+            ],
           },
         }),
       );
@@ -3184,22 +3180,20 @@ void main() {
       client.emit(
         0,
         AgentStreamEvent(const {
-          'event_id': 'evt-deduped-media-voice-tool',
-          'type': 'tool.completed',
+          'event_id': 'evt-deduped-media-voice-artifact',
+          'type': 'artifact.created',
           'thread_id': 'thread-deduped-media-voice',
           'run_id': 'run-deduped-media-voice',
-          'tool_call_id': 'tool-deduped-media-voice',
+          'artifact_id': 'artifact-deduped-media-voice',
           'sequence': 1,
           'payload': {
-            'safe_output': {
-              'media_voice': [
-                {
-                  'media_id': '/v1/assets/valve-image',
-                  'voice_policy': 'announce',
-                  'spoken_label': '我放了一张阀门安装方向图。',
-                },
-              ],
-            },
+            'media_voice': [
+              {
+                'media_id': '/v1/assets/valve-image',
+                'voice_policy': 'announce',
+                'spoken_label': '我放了一张阀门安装方向图。',
+              },
+            ],
           },
         }),
       );
@@ -4914,14 +4908,16 @@ void main() {
     tester,
   ) async {
     final artifactEvent = _productionArtifactEvent(
-      id: 'restored-history-preview',
-      type: 'milk_plan_preview',
+      id: 'restored-history-analysis',
+      type: 'milk_analysis_card',
       payload: {
-        'title': '历史奶量计划',
-        'summary': '这张卡片来自上一次会话。',
-        'direction': 'maintain',
-        'tasks': [
-          {'title': '20:00 泵奶'},
+        'title': '历史奶量分析',
+        'headline': '这张分析卡来自上一次会话。',
+        'sections': [
+          {
+            'title': '近 7 天记录',
+            'items': ['共记录 8 次吸奶'],
+          },
         ],
       },
     );
@@ -4930,14 +4926,14 @@ void main() {
             .applyEvent(artifactEvent)
             .copyWith(
               phase: AgentStreamRunPhase.finished,
-              textContent: '这是上一次的计划。',
+              textContent: '这是上一次的分析。',
             );
     final store = _MemoryAgentHubInteractionStateStore(
       AgentHubInteractionSnapshot(
         historyMessages: [
           AgentHubHistorySnapshot(
             role: 'assistant',
-            content: '这是上一次的计划。',
+            content: '这是上一次的分析。',
             runState: historicalRunState,
           ),
         ],
@@ -4947,14 +4943,12 @@ void main() {
     await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
     await tester.pumpAndSettle();
 
-    expect(find.text('这是上一次的计划。'), findsOneWidget);
+    expect(find.text('这是上一次的分析。'), findsOneWidget);
     expect(
-      find.byKey(
-        const ValueKey('agent-artifact-milk-preview-restored-history-preview'),
-      ),
+      find.byKey(const ValueKey('agent-artifact-restored-history-analysis')),
       findsOneWidget,
     );
-    expect(find.text('20:00 泵奶'), findsOneWidget);
+    expect(find.text('共记录 8 次吸奶'), findsOneWidget);
   });
 
   testWidgets('Agent Hub does not archive an unpublished failed artifact', (
@@ -4974,7 +4968,7 @@ void main() {
           interactionStateStore: store,
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.error,
-            artifactEvents: {'milk-plan-001': artifactEvent},
+            artifactEvents: {'milk-analysis-001': artifactEvent},
           ),
         ),
       ),
@@ -5751,23 +5745,22 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('agent-artifact-card-milk-plan-001')),
+      find.byKey(const ValueKey('agent-artifact-card-milk-analysis-001')),
       findsOneWidget,
     );
-    expect(find.text('Milk supply plan'), findsOneWidget);
-    expect(find.text('Draft'), findsOneWidget);
+    expect(find.text('Milk supply analysis'), findsOneWidget);
+    expect(find.text('Ready'), findsOneWidget);
     expect(
-      find.text('Draft card generated from safe artifact payload.'),
+      find.text('Analysis card generated from a structured artifact payload.'),
       findsOneWidget,
     );
     expect(find.text('Review flange comfort'), findsWidgets);
     expect(find.text('Track two more pumping sessions'), findsWidgets);
     expect(find.text('打开结果卡片'), findsOneWidget);
-    expect(find.textContaining('milk_plan_preview_create'), findsNothing);
     expect(find.textContaining('{"'), findsNothing);
 
     await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-action-milk-plan-001-0')),
+      find.byKey(const ValueKey('agent-artifact-action-milk-analysis-001-0')),
     );
     await tester.pump();
   });
@@ -5794,7 +5787,7 @@ void main() {
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.finished,
             textContent: 'I prepared indexed cards.',
-            artifactEvents: {'milk-plan-001': artifactEvent},
+            artifactEvents: {'milk-analysis-001': artifactEvent},
             actionEvents: {'action-indexed-001': actionEvent},
           ),
         ),
@@ -5803,7 +5796,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('agent-artifact-card-milk-plan-001')),
+      find.byKey(const ValueKey('agent-artifact-card-milk-analysis-001')),
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
@@ -5819,29 +5812,26 @@ void main() {
       events: [
         AgentStreamEvent({
           'type': 'artifact.created',
-          'artifact_id': 'milk-plan-card',
+          'artifact_id': 'milk-analysis-card',
           'payload': {
-            'artifact_type': 'milk_plan_card',
+            'artifact_type': 'milk_analysis_card',
             'card': {
-              'card_type': 'milk_plan_card',
+              'card_type': 'milk_analysis_card',
               'schema_version': '1.0',
               'card_json': {
-                'title': '追奶计划',
+                'title': '奶量分析',
                 'sections': [
                   {
                     'id': 'target',
-                    'title': '目标',
+                    'title': '当前情况',
                     'tone': 'normal',
-                    'items': ['当前每日奶量约 549 ml，目标约 709.2 ml。'],
+                    'items': ['当前每日奶量约 549 ml。'],
                   },
                   {
-                    'id': 'plan',
-                    'title': '计划',
+                    'id': 'next',
+                    'title': '下一步',
                     'tone': 'info',
-                    'metrics': [
-                      {'label': '周期', 'value': '3 天', 'detail': '从明天开始'},
-                    ],
-                    'items': ['新增 1 个吸奶任务。'],
+                    'items': ['继续记录舒适度并观察趋势。'],
                   },
                 ],
               },
@@ -5914,13 +5904,12 @@ void main() {
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
     expect(
-      find.byKey(const ValueKey('agent-artifact-milk-plan-card')),
+      find.byKey(const ValueKey('agent-artifact-milk-analysis-card')),
       findsOneWidget,
     );
-    expect(find.text('目标'), findsOneWidget);
-    expect(find.text('周期'), findsOneWidget);
-    expect(find.text('3 天'), findsOneWidget);
-    expect(find.text('新增 1 个吸奶任务。'), findsOneWidget);
+    expect(find.text('当前情况'), findsOneWidget);
+    expect(find.text('下一步'), findsOneWidget);
+    expect(find.text('继续记录舒适度并观察趋势。'), findsOneWidget);
 
     expect(
       find.byKey(const ValueKey('agent-artifact-birth-journey-card')),
@@ -6104,18 +6093,16 @@ void main() {
           },
         ),
         _productionArtifactEvent(
-          id: 'milk-preview-current',
-          type: 'milk_plan_preview',
+          id: 'milk-analysis-current',
+          type: 'milk_analysis_card',
           payload: {
-            'title': '三天泵奶计划',
-            'summary': '将晚间泵奶提前，先观察三天。',
-            'direction': 'maintain',
-            'days': 3,
-            'tasks': [
-              {'title': '20:00 泵奶', 'detail': '保持舒适档位'},
-            ],
-            'reminders': [
-              {'title': '及时补水'},
+            'title': '奶量分析',
+            'headline': '近 7 天奶量整体稳定。',
+            'sections': [
+              {
+                'title': '记录概览',
+                'items': ['继续记录泵奶量与舒适度'],
+              },
             ],
           },
         ),
@@ -6166,15 +6153,11 @@ void main() {
     expect(find.textContaining('隐私政策'), findsOneWidget);
 
     expect(
-      find.byKey(
-        const ValueKey('agent-artifact-milk-preview-milk-preview-current'),
-      ),
+      find.byKey(const ValueKey('agent-artifact-milk-analysis-current')),
       findsOneWidget,
     );
-    expect(find.text('将晚间泵奶提前，先观察三天。'), findsOneWidget);
-    expect(find.text('维持当前节奏'), findsOneWidget);
-    expect(find.textContaining('20:00 泵奶'), findsOneWidget);
-    expect(find.text('及时补水'), findsOneWidget);
+    expect(find.text('近 7 天奶量整体稳定。'), findsOneWidget);
+    expect(find.text('继续记录泵奶量与舒适度'), findsOneWidget);
 
     expect(
       find.byKey(const ValueKey('agent-artifact-cart-cart-current')),
@@ -8381,7 +8364,7 @@ milk_total: 120ml
                   'type': 'artifact.created',
                   'payload': {
                     'artifact_id': 'artifact-plan-001',
-                    'artifact_type': 'milk_plan_card',
+                    'artifact_type': 'milk_analysis_card',
                   },
                 }),
               ],

@@ -99,6 +99,8 @@ PregnancyPlan? _pregnancyPlan(Map<String, Object?> data) {
     status: 'active',
     source: _string(data['source']) ?? '',
     payload: payload,
+    startsOn: _optionalDate(data['starts_on'], field: 'starts_on'),
+    endsOn: _optionalDate(data['ends_on'], field: 'ends_on'),
   );
 }
 
@@ -112,4 +114,14 @@ String? _string(Object? value) {
   if (value is! String) return null;
   final normalized = value.trim();
   return normalized.isEmpty ? null : normalized;
+}
+
+DateTime? _optionalDate(Object? value, {required String field}) {
+  if (value == null) return null;
+  final text = _string(value);
+  final parsed = text == null ? null : DateTime.tryParse(text);
+  if (parsed == null) {
+    throw FormatException('Plan $field is not a valid date.');
+  }
+  return DateTime(parsed.year, parsed.month, parsed.day);
 }

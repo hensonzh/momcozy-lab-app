@@ -781,6 +781,7 @@ void main() {
         runtime.milkPlanChangeStore.record(
           const MilkPlanChange(
             eventId: 'schedule-parity-plan-update',
+            operation: MilkPlanChangeOperation.updated,
             affectedDateKeys: ['2026-07-05'],
           ),
         );

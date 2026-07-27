@@ -62,6 +62,9 @@ versioning plan.
   part of the production backend contract.
 - Treat transient `message.delta` events as provisional typing UI and replace
   them with assistant `message.completed.payload.text`.
+- Treat `tool.completed.payload.output_summary` as the only UI-facing tool
+  result summary. Full canonical tool output is runtime/model state and is not
+  exposed to the mobile client.
 - Reconnect agent streams with `after_sequence`; do not replay by parsing text.
 - Persist a minimal, user-scoped Agent Hub snapshot for app restart recovery:
   `thread_id`, `run_id`, `last_sequence`, rendered event/action state, draft
@@ -87,6 +90,14 @@ versioning plan.
   `version` as `expected_version`. Replace local plan state with the returned
   `PlanRead`; on `version_conflict`, reload before retrying. Never fall back to
   title matching when `item_id` is absent.
+- Accept optional `starts_on` and `ends_on` lifecycle dates on `PlanRead`.
+- Treat durable `diary.changed` as a privacy-safe diary invalidation signal;
+  deduplicate it by `event_id` and reload the authoritative daily diary.
+- Treat durable `milk_plan.changed` as a privacy-safe Schedule invalidation
+  signal for an existing plan. Accept `operation=updated`, `deleted`, or
+  `rescheduled`, then refresh owner-scoped authoritative plan/task data. New
+  milk-plan creation and its preview/card artifacts are not supported client
+  flows.
 - Treat `voice_provider_disabled` as a stable unavailable-state response for
   voice UI; do not fall back to legacy realtime voice endpoints.
 

@@ -2928,8 +2928,8 @@ class _RecordIntentTransport extends FixtureApiJsonTransportByPath {
 AgentStreamEvent _milkPlanChangedEvent({
   required String eventId,
   required List<String> affectedDates,
-  String operation = 'created',
-  String reason = 'created',
+  String operation = 'updated',
+  String reason = 'plan_metadata_updated',
 }) {
   return AgentStreamEvent({
     'event_id': eventId,

@@ -41,6 +41,7 @@ class AgentArtifactMapper {
       _stringField(payload, 'artifact_type', 'artifactType'),
       _stringField(artifact, 'artifact_type', 'artifactType'),
     ]);
+    if (_isRetiredMilkPlanCreationType(artifactType)) return null;
     final isSupportTicket = _isSupportTicketType(artifactType);
     final supportTicket = isSupportTicket
         ? _firstMap([
@@ -131,6 +132,7 @@ class AgentArtifactMapper {
       _stringField(cardEnvelope, 'card_type', 'cardType'),
       _stringField(cardJson, 'card_type', 'cardType'),
     ]);
+    if (_isRetiredMilkPlanCreationType(cardType)) return null;
     final presentationKind = _presentationKind(
       artifactType: artifactType,
       cardType: cardType,
@@ -246,11 +248,6 @@ AgentArtifactPresentationKind _presentationKind({
         when cardJson.containsKey('sections') ||
             cardJson.containsKey('headline') =>
       AgentArtifactPresentationKind.milkAnalysisCard,
-    'milk_plan_card'
-        when cardJson.containsKey('sections') ||
-            cardJson.containsKey('headline') =>
-      AgentArtifactPresentationKind.milkPlanCard,
-    'milk_plan_preview' => AgentArtifactPresentationKind.milkPlanPreview,
     'birth_journey_plan_card'
         when cardJson.containsKey('todo_plan') ||
             cardJson.containsKey('todoPlan') ||
@@ -281,7 +278,6 @@ Map<String, Object?> _directCardPayload(
 ) {
   return switch (artifactType) {
     'milk_analysis_card' ||
-    'milk_plan_card' ||
     'birth_journey_plan_card' ||
     'hospital_bag_card' ||
     'ibclc_consult' ||
@@ -293,6 +289,10 @@ Map<String, Object?> _directCardPayload(
 bool _isIbclcConsultType(String? artifactType) {
   return artifactType == 'ibclc_consult' ||
       artifactType == 'ibclc_consult_card';
+}
+
+bool _isRetiredMilkPlanCreationType(String? type) {
+  return type == 'milk_plan_card' || type == 'milk_plan_preview';
 }
 
 List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
@@ -815,7 +815,6 @@ String _artifactSubject(String? type) {
     'form' => '信息采集',
     'support_ticket' || 'support_ticket_draft' => '售后工单',
     'milk_analysis_card' => '奶量分析',
-    'milk_plan_card' || 'milk_plan_preview' => '奶量计划',
     'birth_journey_plan_card' => '孕期计划',
     'hospital_bag_card' || 'hospital_bag_cart' => '待产包',
     'ibclc_consult_card' => 'IBCLC 咨询入口',

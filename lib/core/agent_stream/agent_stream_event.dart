@@ -463,7 +463,7 @@ bool _looksLikeStructuredAgentJson(Object? value) {
     'tool_call_id',
     'tool_name',
     'safe_args',
-    'safe_output',
+    'output_summary',
     'preferred_name',
     'profile',
     'quick_replies',

@@ -70,30 +70,6 @@ void main() {
 
 const _cardCases = [
   _CardGoldenCase(
-    label: 'milk plan card',
-    fileName: 'milk_plan',
-    card: AgentArtifactCardView(
-      id: 'milk-plan-golden',
-      title: '三天泵奶计划',
-      artifactType: 'milk_plan_card',
-      schemaVersion: '1.0',
-      presentationKind: AgentArtifactPresentationKind.milkPlanCard,
-      cardJson: {
-        'subtitle': '结合最近记录生成',
-        'headline': '保持舒适的前提下，把晚间泵奶稍微提前。',
-        'sections': [
-          {
-            'title': '计划',
-            'metrics': [
-              {'label': '周期', 'value': '3 天', 'detail': '从明天开始'},
-            ],
-            'items': ['20:00 泵奶并记录舒适度', '观察三天后再调整节奏'],
-          },
-        ],
-      },
-    ),
-  ),
-  _CardGoldenCase(
     label: 'birth journey card',
     fileName: 'birth_journey',
     card: AgentArtifactCardView(
@@ -202,28 +178,6 @@ const _cardCases = [
         ],
         disclaimer: '最终请以医院实际要求为准。',
       ),
-    ),
-  ),
-  _CardGoldenCase(
-    label: 'milk plan preview',
-    fileName: 'milk_plan_preview',
-    card: AgentArtifactCardView(
-      id: 'milk-preview-golden',
-      title: '三天泵奶计划',
-      artifactType: 'milk_plan_preview',
-      schemaVersion: 'v1',
-      presentationKind: AgentArtifactPresentationKind.milkPlanPreview,
-      payload: {
-        'summary': '将晚间泵奶提前，先观察三天。',
-        'direction': 'maintain',
-        'days': 3,
-        'tasks': [
-          {'title': '20:00 泵奶', 'detail': '保持舒适档位'},
-        ],
-        'reminders': [
-          {'title': '及时补水'},
-        ],
-      },
     ),
   ),
   _CardGoldenCase(

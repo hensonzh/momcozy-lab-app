@@ -131,6 +131,10 @@ the provisional streaming buffer and must be replaced by the persisted assistant
 natural-language assistant text, provider raw events, or legacy AG-UI event
 names.
 
+`tool.completed` exposes only the bounded UI-facing `payload.output_summary`.
+The canonical tool result remains runtime/model state and is not a mobile
+response contract.
+
 ## Agent Action Events
 
 Action events use `action_id` as the reducer key. `action.confirmation_required`
@@ -157,6 +161,23 @@ event, and it never contains the personalized card, plan context, or health
 facts. Clients use it only as an invalidation/notification signal and reload the
 owner-scoped resource through
 `GET /v1/plans?plan_type=pregnancy&status=active`.
+
+Plan responses may include optional `starts_on` and `ends_on` lifecycle dates.
+Expired active plans are excluded from current lists and schedule timelines.
+
+New `milk_management` plan creation is retired. Existing owner-scoped milk
+plans remain readable, updatable, deletable, and available to schedule-task
+management. Their changes emit `milk_plan.changed` with operations such as
+`updated`, `deleted`, or `rescheduled`; clients use the event only to invalidate
+and reload authoritative plan/task data. The App does not render the retired
+milk-plan creation preview or card artifact families.
+
+## Diary
+
+The persisted diary resource is generic. Durable `diary.changed` events carry
+only mutation metadata and are used by the App to invalidate and reload its
+authoritative daily diary view. The existing pregnancy-diary HTTP endpoints
+remain the current Flutter adapter over that resource.
 
 ## Files
 

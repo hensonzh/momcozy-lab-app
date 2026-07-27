@@ -22,6 +22,8 @@ class PregnancyPlan {
     required this.status,
     required this.source,
     required this.payload,
+    this.startsOn,
+    this.endsOn,
   });
 
   final String id;
@@ -32,6 +34,8 @@ class PregnancyPlan {
   final String status;
   final String source;
   final Map<String, Object?> payload;
+  final DateTime? startsOn;
+  final DateTime? endsOn;
 
   Map<String, Object?> get card {
     final raw = payload['card'];

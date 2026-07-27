@@ -180,8 +180,8 @@ Iterable<Map<String, Object?>> _mediaVoiceItemsFromEvent(
     ?_decodedMap(event.raw['content']),
   ];
   const nestedKeys = [
-    'safe_output',
-    'safeOutput',
+    'output_summary',
+    'outputSummary',
     'tool_result',
     'toolResult',
     'result',

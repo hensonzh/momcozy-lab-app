@@ -606,7 +606,7 @@ id: 2
 data: {"type":"tool.progress","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"tool_call_id":"call-profile","safe_args":{"preferred_name":"henson"}}}
 
 id: 3
-data: {"type":"tool.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"tool_call_id":"call-profile","safe_output":{"preferred_name":"Mai"}}}
+data: {"type":"tool.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"tool_call_id":"call-profile","output_summary":{"status":"completed"}}}
 
 id: 4
 data: {"type":"message.delta","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"message_stream_id":"msg-canonical-tools","delta":"你好 henson"}}

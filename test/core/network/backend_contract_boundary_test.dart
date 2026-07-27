@@ -38,6 +38,7 @@ void main() {
       isEmpty,
     );
     expect(productPaths, contains('/v1/auth/login'));
+    expect(productPaths, contains('/v1/profile/lactation'));
     expect(productPaths, isNot(contains('/v1/agent/runs')));
     expect(agentRuntimePaths, contains('/v1/agent/runs'));
     expect(agentRuntimePaths, isNot(contains('/v1/auth/login')));
@@ -47,6 +48,46 @@ void main() {
     expect(
       File('docs/backend-contract/openapi.generated.json').existsSync(),
       isFalse,
+    );
+  });
+
+  test('keeps optional plan lifecycle dates in the Product contract', () {
+    final components = productOpenApi['components']! as Map<String, Object?>;
+    final schemas = components['schemas']! as Map<String, Object?>;
+    final planRead = schemas['PlanRead']! as Map<String, Object?>;
+    final properties = planRead['properties']! as Map<String, Object?>;
+    final required = (planRead['required'] as List<Object?>?) ?? const [];
+
+    expect(properties, containsPair('starts_on', isA<Map>()));
+    expect(properties, containsPair('ends_on', isA<Map>()));
+    expect(required, isNot(contains('starts_on')));
+    expect(required, isNot(contains('ends_on')));
+  });
+
+  test('does not expose retired milk-plan creation in Product contracts', () {
+    final components = productOpenApi['components']! as Map<String, Object?>;
+    final schemas = components['schemas']! as Map<String, Object?>;
+    final request = schemas['AgentPlansActionRequest']! as Map<String, Object?>;
+    final properties = request['properties']! as Map<String, Object?>;
+    final actionType = properties['action_type']! as Map<String, Object?>;
+    final values = actionType['enum']! as List<Object?>;
+
+    expect(values, isNot(contains('plans.milk_plan.create')));
+  });
+
+  test('tracks the generic diary and unified schedule agent contracts', () {
+    final productPaths = _paths(productOpenApi);
+
+    expect(productPaths, contains('/v1/internal/agent/diary'));
+    expect(
+      productPaths,
+      contains('/v1/internal/agent/actions/diary.entry/apply'),
+    );
+    expect(productPaths, contains('/v1/internal/agent/schedule-timeline'));
+    expect(productPaths, isNot(contains('/v1/internal/agent/pregnancy-diary')));
+    expect(
+      productPaths,
+      isNot(contains('/v1/internal/agent/lactation/timeline')),
     );
   });
 

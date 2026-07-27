@@ -153,7 +153,7 @@ void main() {
           harness.transport.getCount(path),
           countsBeforeChange[path]! +
               (path == pregnancyDiaryEntriesEndpoint ? 1 : 0),
-          reason: 'a pregnancy_diary.changed event must only refetch diaries',
+          reason: 'a diary.changed event must only refetch diaries',
         );
       }
       expect(find.text('Agent 写入后的日记'), findsOneWidget);
@@ -420,7 +420,7 @@ AgentStreamEvent _changedEvent({
   return AgentStreamEvent({
     'event_id': eventId,
     'sequence': sequence,
-    'type': 'pregnancy_diary.changed',
+    'type': 'diary.changed',
     'thread_id': 'thread-diary',
     'run_id': 'run-diary',
     'payload': const {
@@ -449,7 +449,7 @@ AgentStreamEvent _toolEvent({
     'tool_call_id': 'call-$sequence',
     'payload': {
       'tool_name': toolName,
-      'safe_output': {'status': status},
+      'output_summary': {'status': status},
     },
   });
 }
