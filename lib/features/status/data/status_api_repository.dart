@@ -2,6 +2,7 @@ import 'package:app/core/network/api_json_transport.dart';
 import 'package:app/features/status/domain/status_overview.dart';
 
 const statusProfileEndpoint = '/v1/profile/me';
+const statusLactationProfileEndpoint = '/v1/profile/lactation';
 const statusInfantsEndpoint = '/v1/profile/infants';
 const statusOverviewEndpoint = statusProfileEndpoint;
 
@@ -14,13 +15,16 @@ class StatusApiRepository implements StatusRepository {
   @override
   Future<StatusOverview> fetchOverview() async {
     final profile = await transport.getJson(statusProfileEndpoint);
+    final lactationProfile = await transport.getJson(
+      statusLactationProfileEndpoint,
+    );
     final infants = await transport.getJson(statusInfantsEndpoint);
     final infantItems = infants['items'];
     final firstInfant = infantItems is List && infantItems.isNotEmpty
         ? _mapOrNull(infantItems.first)
         : null;
     return StatusOverview(
-      mom: _momStatus(profile, firstInfant, now: now),
+      mom: _momStatus(profile, lactationProfile, firstInfant, now: now),
       baby: _babyStatus(firstInfant, now: now),
     );
   }
@@ -28,17 +32,21 @@ class StatusApiRepository implements StatusRepository {
 
 MomStatus? _momStatus(
   Map<String, Object?>? data,
+  Map<String, Object?>? lactationProfile,
   Map<String, Object?>? infant, {
   DateTime Function()? now,
 }) {
   final estimatedDueDate = _date(data?['estimated_due_date']);
+  final actualDeliveryDate = _date(lactationProfile?['actual_delivery_date']);
   final birthDate = _date(infant?['birth_date']);
-  if (estimatedDueDate == null && birthDate == null) {
+  if (estimatedDueDate == null &&
+      actualDeliveryDate == null &&
+      birthDate == null) {
     return null;
   }
   return MomStatus(
-    stage: birthDate == null ? '孕期' : '哺乳期',
-    postpartumDay: _ageDays(birthDate, now: now),
+    stage: actualDeliveryDate == null && birthDate == null ? '孕期' : '哺乳期',
+    postpartumDay: _ageDays(actualDeliveryDate, now: now),
     estimatedDueDate: estimatedDueDate,
   );
 }

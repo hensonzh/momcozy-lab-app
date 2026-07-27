@@ -25,6 +25,7 @@ void main() {
         'user_id': 'refresh-user',
         'estimated_due_date': '2026-06-20',
       },
+      statusLactationProfileEndpoint: const {'actual_delivery_date': null},
       statusInfantsEndpoint: const {'items': <Object?>[]},
       feedingRecordsEndpoint: const {'items': <Object?>[]},
       milkTrendsEndpoint: const {'items': <Object?>[]},
@@ -92,6 +93,7 @@ void main() {
         'user_id': 'cache-user',
         'estimated_due_date': '2026-06-20',
       },
+      statusLactationProfileEndpoint: const {'actual_delivery_date': null},
       statusInfantsEndpoint: const {'items': <Object?>[]},
       feedingRecordsEndpoint: const {'items': <Object?>[]},
       milkTrendsEndpoint: const {'items': <Object?>[]},
@@ -118,6 +120,7 @@ void main() {
     final countsBeforeReturn = Map<String, int>.fromEntries(
       [
         statusProfileEndpoint,
+        statusLactationProfileEndpoint,
         statusInfantsEndpoint,
         feedingRecordsEndpoint,
         milkTrendsEndpoint,

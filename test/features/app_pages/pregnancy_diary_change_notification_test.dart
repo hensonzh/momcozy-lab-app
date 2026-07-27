@@ -514,6 +514,9 @@ class _SequencedDiaryTransport implements ApiJsonTransport {
         'estimated_due_date': '2026-09-01',
       };
     }
+    if (path == statusLactationProfileEndpoint) {
+      return const {'actual_delivery_date': null};
+    }
     if (path == statusInfantsEndpoint) {
       return const {'items': <Object?>[]};
     }
@@ -542,6 +545,7 @@ class _SequencedDiaryTransport implements ApiJsonTransport {
 
 const _statusGetEndpoints = [
   statusProfileEndpoint,
+  statusLactationProfileEndpoint,
   statusInfantsEndpoint,
   feedingRecordsEndpoint,
   milkTrendsEndpoint,
