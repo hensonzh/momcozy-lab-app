@@ -79,7 +79,7 @@ void main() {
       find.byKey(const ValueKey('agent-attachment-button')),
       findsOneWidget,
     );
-    expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-voice-button')), findsNothing);
     expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-static')),
@@ -102,10 +102,6 @@ void main() {
       find.byKey(const ValueKey('agent-attachment-button')),
     );
     expect(imageButton.onPressed, isNull);
-    final voiceButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-voice-button')),
-    );
-    expect(voiceButton.onPressed, isNull);
     final sendButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-send-button')),
     );
@@ -2630,6 +2626,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
+          showVoiceInputButton: true,
           voiceInputController: AgentVoiceInputController(
             recorder: recorder,
             transcriber: _PageFakeVoiceTranscriber('今天左侧奶量偏低'),
@@ -2679,6 +2676,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
+          showVoiceInputButton: true,
           voiceInputController: AgentVoiceInputController(
             recorder: recorder,
             transcriber: transcriber,
@@ -2739,6 +2737,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
+          showVoiceInputButton: true,
           voiceInputController: AgentVoiceInputController(
             recorder: recorder,
             transcriber: _PageFakeVoiceTranscriber('ignored'),
@@ -2777,6 +2776,7 @@ void main() {
     await tester.pumpWidget(
       _host(
         AgentHubPage(
+          showVoiceInputButton: true,
           voiceInputController: AgentVoiceInputController(
             recorder: recorder,
             transcriber: transcriber,
@@ -2821,6 +2821,7 @@ void main() {
       await tester.pumpWidget(
         _host(
           AgentHubPage(
+            showVoiceInputButton: true,
             voiceInputController: AgentVoiceInputController(
               recorder: recorder,
               transcriber: transcriber,
@@ -2860,6 +2861,7 @@ void main() {
     await tester.pumpWidget(
       _host(
         AgentHubPage(
+          showVoiceInputButton: true,
           voiceInputController: AgentVoiceInputController(
             recorder: recorder,
             transcriber: transcriber,
@@ -4876,12 +4878,7 @@ void main() {
           .onPressed,
       isNull,
     );
-    expect(
-      tester
-          .widget<IconButton>(find.byKey(const ValueKey('agent-voice-button')))
-          .onPressed,
-      isNull,
-    );
+    expect(find.byKey(const ValueKey('agent-voice-button')), findsNothing);
     expect(
       tester
           .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
@@ -8982,11 +8979,7 @@ void _expectComposerControlsInsideSurface(WidgetTester tester) {
   final surfaceRect = tester.getRect(
     find.byKey(const ValueKey('agent-composer-surface')),
   );
-  for (final key in [
-    'agent-attachment-button',
-    'agent-voice-button',
-    'agent-send-button',
-  ]) {
+  for (final key in ['agent-attachment-button', 'agent-send-button']) {
     final rect = tester.getRect(find.byKey(ValueKey(key)));
     expect(rect.left, greaterThanOrEqualTo(surfaceRect.left));
     expect(rect.right, lessThanOrEqualTo(surfaceRect.right));
@@ -9014,18 +9007,13 @@ void _expectComposerControlsVerticallyCentered(WidgetTester tester) {
   final imageRect = tester.getRect(
     find.byKey(const ValueKey('agent-attachment-button')),
   );
-  final voiceRect = tester.getRect(
-    find.byKey(const ValueKey('agent-voice-button')),
-  );
   final sendRect = tester.getRect(
     find.byKey(const ValueKey('agent-send-button')),
   );
 
   expect(imageRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
-  expect(voiceRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
   expect(sendRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
-  expect(imageRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
-  expect(sendRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
+  expect(imageRect.center.dy, closeTo(sendRect.center.dy, 0.5));
 }
 
 void _expectComposerInputVerticallyCentered(WidgetTester tester) {
