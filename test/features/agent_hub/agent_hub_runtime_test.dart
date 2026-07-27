@@ -26,7 +26,7 @@ void main() {
     expect(request.threadId, isNull);
     expect(request.locale, 'zh-CN');
     expect(payload['message'], 'Review my pattern');
-    expect(payload['runtime_pattern'], 'sdk_only');
+    expect(payload['runtime_pattern'], 'legacy_adapter');
     expect(payload.containsKey('thread_id'), isFalse);
     expect(payload.containsKey('user_id'), isFalse);
     expect(runner.reconnectPolicy.enabled, isTrue);

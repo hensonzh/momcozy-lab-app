@@ -54,7 +54,7 @@ void main() {
         'poll_interval_seconds': '0.01',
       });
       expect(postedBody['message'], 'Review my pumping pattern.');
-      expect(postedBody['runtime_pattern'], 'sdk_only');
+      expect(postedBody['runtime_pattern'], 'legacy_adapter');
       expect(postedBody['client_context'], {
         'source': 'io-transport-test',
         'locale': 'en-US',
@@ -424,13 +424,16 @@ void main() {
       final response = await connector.post(
         Uri.parse('http://${server.address.host}:${server.port}/v1/agent/runs'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'message': '你好', 'runtime_pattern': 'sdk_only'}),
+        body: jsonEncode({
+          'message': '你好',
+          'runtime_pattern': 'legacy_adapter',
+        }),
       );
 
       expect(response.statusCode, 201);
       expect(jsonDecode(await receivedBody) as Map<String, Object?>, {
         'message': '你好',
-        'runtime_pattern': 'sdk_only',
+        'runtime_pattern': 'legacy_adapter',
       });
     });
 
