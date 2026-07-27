@@ -53,7 +53,9 @@ class ApiScheduleImageRecognitionGateway
           '请选择 PNG、JPG 或 WEBP 格式的日程截图。',
         );
       }
-      final bytes = _decodeImageBytes(image.dataUrl, mimeType: mimeType);
+      final bytes =
+          image.localBytes ??
+          _decodeImageBytes(image.dataUrl, mimeType: mimeType);
       final uploaded = await mediaRepository.uploadFile(
         file: ApiUploadFile(
           name: image.name.trim().isEmpty
@@ -62,6 +64,7 @@ class ApiScheduleImageRecognitionGateway
           mimeType: mimeType,
           sizeBytes: bytes.length,
           bytes: bytes,
+          openRead: image.openRead,
         ),
         idempotencyKey: _uploadIdempotencyKey(),
       );

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -34,11 +33,9 @@ void main() {
     expect(camera?.mimeType, 'image/jpeg');
     expect(camera?.name, 'photo.jpg');
     expect(camera?.size, 4);
-    expect(
-      camera?.dataUrl,
-      'data:image/jpeg;base64,${base64Encode([1, 2, 3, 4])}',
-    );
-    expect(gallery?.dataUrl, camera?.dataUrl);
+    expect(camera?.dataUrl, isEmpty);
+    expect(camera?.localBytes, [1, 2, 3, 4]);
+    expect(gallery?.localBytes, camera?.localBytes);
   });
 
   test('restores Android lost image before opening another picker', () async {
@@ -57,7 +54,8 @@ void main() {
 
     expect(platform.sources, isEmpty);
     expect(image?.name, 'photo.png');
-    expect(image?.dataUrl, 'data:image/png;base64,${base64Encode([7, 8])}');
+    expect(image?.dataUrl, isEmpty);
+    expect(image?.localBytes, [7, 8]);
   });
 
   test('uses JPEG magic bytes when Android keeps a HEIC filename', () async {
@@ -73,10 +71,8 @@ void main() {
 
     expect(image?.mimeType, 'image/jpeg');
     expect(image?.name, 'photo.jpg');
-    expect(
-      image?.dataUrl,
-      'data:image/jpeg;base64,${base64Encode([0xff, 0xd8, 0xff, 0xe0])}',
-    );
+    expect(image?.dataUrl, isEmpty);
+    expect(image?.localBytes, [0xff, 0xd8, 0xff, 0xe0]);
   });
 }
 

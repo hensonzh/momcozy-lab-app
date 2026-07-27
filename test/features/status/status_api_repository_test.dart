@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -115,5 +117,48 @@ void main() {
         expect(overview.baby?.ageDays, 1);
       },
     );
+
+    test('starts profile and infant reads in parallel', () async {
+      final transport = _DeferredStatusTransport();
+      final repository = StatusApiRepository(transport: transport);
+
+      final overview = repository.fetchOverview();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(transport.startedPaths, {
+        statusProfileEndpoint,
+        statusInfantsEndpoint,
+      });
+      transport.complete(statusProfileEndpoint, const {'user_id': 'user-001'});
+      transport.complete(statusInfantsEndpoint, const {'items': []});
+      await overview;
+    });
   });
+}
+
+class _DeferredStatusTransport implements ApiJsonTransport {
+  final startedPaths = <String>{};
+  final _responses = <String, Completer<Map<String, Object?>>>{};
+
+  void complete(String path, Map<String, Object?> response) {
+    _responses[path]!.complete(response);
+  }
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) {
+    startedPaths.add(path);
+    return (_responses[path] ??= Completer<Map<String, Object?>>()).future;
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    throw UnimplementedError();
+  }
 }

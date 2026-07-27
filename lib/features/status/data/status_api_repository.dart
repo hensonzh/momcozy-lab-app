@@ -13,8 +13,12 @@ class StatusApiRepository implements StatusRepository {
 
   @override
   Future<StatusOverview> fetchOverview() async {
-    final profile = await transport.getJson(statusProfileEndpoint);
-    final infants = await transport.getJson(statusInfantsEndpoint);
+    final responses = await Future.wait([
+      transport.getJson(statusProfileEndpoint),
+      transport.getJson(statusInfantsEndpoint),
+    ]);
+    final profile = responses[0];
+    final infants = responses[1];
     final infantItems = infants['items'];
     final firstInfant = infantItems is List && infantItems.isNotEmpty
         ? _mapOrNull(infantItems.first)

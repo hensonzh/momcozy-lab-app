@@ -231,6 +231,21 @@ void main() {
       },
     );
 
+    test('starts the visible branch before the overview finishes', () async {
+      final status = _FakeStatusRepository(deferFetch: true);
+      final records = _FakeRecordsRepository();
+      final controller = _controller(status: status, records: records);
+      addTearDown(controller.dispose);
+
+      final initialize = controller.initialize();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(status.fetchCount, 1);
+      expect(records.milkTrendFetchCount, 1);
+      status.completeFetch();
+      await initialize;
+    });
+
     test(
       'rejects a disposed account request before it can populate cache',
       () async {

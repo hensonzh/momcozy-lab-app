@@ -2015,9 +2015,11 @@ void main() {
         AgentHubPage(
           runner: AgentStreamRunner(client),
           mediaRepository: mediaRepository,
-          pickImage: (_) async => const AgentStreamImageInput(
-            dataUrl:
-                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+          pickImage: (_) async => AgentStreamImageInput(
+            dataUrl: '',
+            localBytes: base64Decode(
+              'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+            ),
             mimeType: 'image/png',
             name: 'pump-display.png',
             size: 68,

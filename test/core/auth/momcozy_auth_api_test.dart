@@ -159,6 +159,42 @@ void main() {
       expect(expired.refreshToken, isNull);
       expect((await store.readSession())?.status, MomCozySessionStatus.expired);
     });
+
+    test(
+      'keeps session publication inside the shared refresh operation',
+      () async {
+        final transport = _DeferredRefreshTransport(_tokenResponse());
+        final coordinator = MomCozySessionRefreshCoordinator(
+          authRepository: MomCozyAuthApiRepository(transport: transport),
+          store: MemoryMomCozySessionStore(),
+        );
+        final publication = Completer<void>();
+        const current = MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'old-user',
+          babyId: 'baby-001',
+          locale: 'zh-CN',
+          accessToken: 'old-access',
+          refreshToken: 'old-refresh',
+        );
+
+        final first = coordinator.refresh(
+          current,
+          onSessionChanged: (_) => publication.future,
+        );
+        transport.complete();
+        await Future<void>.delayed(Duration.zero);
+        final second = coordinator.refresh(
+          current,
+          onSessionChanged: (_) async {},
+        );
+
+        expect(transport.refreshCallCount, 1);
+        publication.complete();
+        final sessions = await Future.wait([first, second]);
+        expect(identical(sessions.first, sessions.last), isTrue);
+      },
+    );
   });
 
   group('AuthenticatedApiJsonTransport', () {
@@ -261,6 +297,49 @@ void main() {
           'access-token-001',
           'access-token-001',
         ]);
+      },
+    );
+
+    test(
+      'retries a stale 401 with the latest access token without refreshing',
+      () async {
+        var current = const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'user-001',
+          babyId: 'baby-001',
+          locale: 'zh-CN',
+          accessToken: 'old-access',
+          refreshToken: 'old-refresh',
+        );
+        final refreshTransport = FixtureApiJsonTransport(_tokenResponse());
+        final businessTransport = _DeferredUnauthorizedTokenTransport();
+        final transport = AuthenticatedApiJsonTransport(
+          transportFactory: businessTransport.forToken,
+          sessionProvider: () => current,
+          refreshCoordinator: MomCozySessionRefreshCoordinator(
+            authRepository: MomCozyAuthApiRepository(
+              transport: refreshTransport,
+            ),
+            store: MemoryMomCozySessionStore(current),
+          ),
+          onSessionChanged: (session) async {
+            current = session;
+          },
+        );
+
+        final request = transport.getJson('/v1/profile/me');
+        await businessTransport.started.future;
+        current = current.copyWith(
+          accessToken: 'new-access',
+          refreshToken: 'new-refresh',
+        );
+        businessTransport.completeUnauthorized();
+
+        final response = await request;
+
+        expect(response['status'], 200);
+        expect(businessTransport.tokens, ['old-access', 'new-access']);
+        expect(refreshTransport.lastPath, isNull);
       },
     );
 
@@ -622,5 +701,57 @@ class _DeferredRefreshTransport implements ApiJsonTransport {
     refreshCallCount += 1;
     await _completer.future;
     return response;
+  }
+}
+
+class _DeferredUnauthorizedTokenTransport {
+  final started = Completer<void>();
+  final _unauthorized = Completer<void>();
+  final tokens = <String>[];
+
+  void completeUnauthorized() {
+    if (!_unauthorized.isCompleted) _unauthorized.complete();
+  }
+
+  ApiJsonTransport forToken(String? token) {
+    return _DeferredTokenTransport(
+      onGet: (path) async {
+        tokens.add(token ?? '');
+        if (token == 'old-access') {
+          if (!started.isCompleted) started.complete();
+          await _unauthorized.future;
+          throw ApiHttpException.fromBody(
+            _httpError(401, code: 'authentication_required'),
+          );
+        }
+        return {
+          'status': 200,
+          'data': {'ok': true},
+        };
+      },
+    );
+  }
+}
+
+class _DeferredTokenTransport implements ApiJsonTransport {
+  _DeferredTokenTransport({required this.onGet});
+
+  final Future<Map<String, Object?>> Function(String path) onGet;
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) {
+    return onGet(path);
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    throw UnimplementedError();
   }
 }

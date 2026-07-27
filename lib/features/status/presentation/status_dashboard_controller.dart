@@ -168,21 +168,22 @@ class StatusDashboardController {
       selectionResolved = true;
     });
     unawaited(restoreVolumeUnit());
+    final overviewLoad = _requestResource(
+      StatusDashboardResource.overview,
+      showLoading: true,
+      force: false,
+    );
+    await Future.any<void>([selection, Future<void>.microtask(() {})]);
+    final requestedCareStage = careStage.value;
+    final requestedIdentity = identity.value;
     await Future.wait<void>([
-      Future.any<void>([selection, Future<void>.microtask(() {})]),
-      _requestResource(
-        StatusDashboardResource.overview,
+      overviewLoad,
+      _requestResources(
+        _visibleBranchResources(),
         showLoading: true,
         force: false,
       ),
     ]);
-    final requestedCareStage = careStage.value;
-    final requestedIdentity = identity.value;
-    await _requestResources(
-      _visibleBranchResources(),
-      showLoading: true,
-      force: false,
-    );
     Future<void> loadRestoredBranchIfChanged() {
       if (_disposed ||
           (careStage.value == requestedCareStage &&
