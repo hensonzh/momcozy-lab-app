@@ -284,45 +284,6 @@ void main() {
     expect(uploaded.id, 'file-runtime');
   });
 
-  test(
-    'runtime exposes voice repository over the session multipart transport',
-    () async {
-      final multipart = FixtureApiMultipartTransport(const {
-        'transcript': 'runtime voice text',
-      });
-      final runtime = MomCozyApiRuntime.fromSession(
-        const MomCozySession(
-          status: MomCozySessionStatus.authenticated,
-          userId: 'voice-user',
-          babyId: 'voice-baby',
-          locale: 'zh-CN',
-          accessToken: 'voice-access',
-        ),
-        multipartTransport: multipart,
-      );
-
-      final voiceText = await runtime.agentVoiceRepository
-          .transcribeSpeechChunk(
-            file: const ApiUploadFile(
-              name: 'voice.wav',
-              mimeType: 'audio/wav',
-              sizeBytes: 4,
-            ),
-          );
-      final repository = runtime.agentVoiceRepository;
-
-      expect(repository.token, 'voice-access');
-      expect(repository.multipartTransport, same(multipart));
-      expect(voiceText, 'runtime voice text');
-      expect(multipart.lastPath, speechTranscribeChunkEndpoint);
-      expect(multipart.lastFields, isEmpty);
-      expect(
-        multipart.lastHeaders,
-        containsPair('Authorization', 'Bearer voice-access'),
-      );
-    },
-  );
-
   test('runtime exposes an injected BLE platform lazily', () async {
     final ble = FakeBlePlatform(
       initialPermission: BlePermissionState.granted,

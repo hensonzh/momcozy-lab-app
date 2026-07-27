@@ -1,23 +1,6 @@
 import 'dart:convert';
 
-enum AgentVoicePhase {
-  idle,
-  listening,
-  transcribing,
-  playing,
-  cancelled,
-  permissionDenied,
-  error,
-}
-
-enum AgentVoiceInputPermissionState {
-  unknown,
-  granted,
-  denied,
-  permanentlyDenied,
-}
-
-enum AgentVoiceInputResultStatus { transcribed, empty, permissionDenied }
+enum AgentVoicePhase { idle, playing, cancelled, error }
 
 enum AgentVoicePlaybackSource { autoReply, greeting, notification }
 
@@ -29,108 +12,34 @@ typedef AgentVoiceMediaNarrationResolver =
 class AgentVoiceState {
   const AgentVoiceState({
     this.phase = AgentVoicePhase.idle,
-    this.transcriptDraft = '',
     this.playbackId,
     this.errorMessage,
   });
 
   final AgentVoicePhase phase;
-  final String transcriptDraft;
   final String? playbackId;
   final String? errorMessage;
 
-  bool get isInputActive {
-    return phase == AgentVoicePhase.listening ||
-        phase == AgentVoicePhase.transcribing;
-  }
-
   bool get isPlaybackActive => phase == AgentVoicePhase.playing;
-
-  AgentVoiceState startListening() {
-    return const AgentVoiceState(phase: AgentVoicePhase.listening);
-  }
-
-  AgentVoiceState startTranscribing({String draft = ''}) {
-    return AgentVoiceState(
-      phase: AgentVoicePhase.transcribing,
-      transcriptDraft: draft,
-    );
-  }
-
-  AgentVoiceState applyTranscription(String text) {
-    return AgentVoiceState(transcriptDraft: text.trim());
-  }
 
   AgentVoiceState startPlayback(String playbackId) {
     return AgentVoiceState(
       phase: AgentVoicePhase.playing,
       playbackId: playbackId,
-      transcriptDraft: transcriptDraft,
     );
   }
 
   AgentVoiceState cancelPlayback() {
-    return AgentVoiceState(
-      phase: AgentVoicePhase.cancelled,
-      transcriptDraft: transcriptDraft,
-    );
-  }
-
-  AgentVoiceState markPermissionDenied(
-    AgentVoiceInputPermissionState permissionState,
-  ) {
-    return AgentVoiceState(
-      phase: AgentVoicePhase.permissionDenied,
-      transcriptDraft: transcriptDraft,
-      errorMessage: switch (permissionState) {
-        AgentVoiceInputPermissionState.permanentlyDenied => '麦克风权限已关闭',
-        _ => '麦克风权限未开启',
-      },
-    );
+    return const AgentVoiceState(phase: AgentVoicePhase.cancelled);
   }
 
   AgentVoiceState fail(Object error) {
     return AgentVoiceState(
       phase: AgentVoicePhase.error,
-      transcriptDraft: transcriptDraft,
       playbackId: playbackId,
       errorMessage: error.toString(),
     );
   }
-}
-
-class AgentVoiceRecording {
-  const AgentVoiceRecording({
-    required this.name,
-    required this.mimeType,
-    this.bytes = const <int>[],
-    this.path,
-    this.durationMs,
-  });
-
-  final String name;
-  final String mimeType;
-  final List<int> bytes;
-  final String? path;
-  final int? durationMs;
-
-  int get sizeBytes => bytes.length;
-
-  bool get isEmpty {
-    return bytes.isEmpty && (path == null || path!.trim().isEmpty);
-  }
-}
-
-abstract interface class AgentVoiceRecorder {
-  Future<AgentVoiceInputPermissionState> permissionState();
-  Future<AgentVoiceInputPermissionState> requestPermission();
-  Future<void> start();
-  Future<AgentVoiceRecording?> stop();
-  Future<void> cancel();
-}
-
-abstract interface class AgentVoiceTranscriber {
-  Future<String?> transcribe(AgentVoiceRecording recording);
 }
 
 abstract interface class AgentVoicePlaybackPlayer {
@@ -153,140 +62,6 @@ abstract interface class AgentVoiceRealtimePlaybackSession {
   Future<void> cancel();
 
   Future<void> get done;
-}
-
-class AgentVoiceInputResult {
-  const AgentVoiceInputResult._({
-    required this.status,
-    this.text,
-    this.permissionState,
-  });
-
-  factory AgentVoiceInputResult.fromText(String? text) {
-    final trimmed = text?.trim();
-    if (trimmed == null || trimmed.isEmpty) {
-      return const AgentVoiceInputResult.empty();
-    }
-    return AgentVoiceInputResult._(
-      status: AgentVoiceInputResultStatus.transcribed,
-      text: trimmed,
-    );
-  }
-
-  const AgentVoiceInputResult.empty()
-    : this._(status: AgentVoiceInputResultStatus.empty);
-
-  const AgentVoiceInputResult.permissionDenied(
-    AgentVoiceInputPermissionState permissionState,
-  ) : this._(
-        status: AgentVoiceInputResultStatus.permissionDenied,
-        permissionState: permissionState,
-      );
-
-  final AgentVoiceInputResultStatus status;
-  final String? text;
-  final AgentVoiceInputPermissionState? permissionState;
-}
-
-class AgentVoiceInputController {
-  AgentVoiceInputController({
-    required this.recorder,
-    required this.transcriber,
-  });
-
-  final AgentVoiceRecorder recorder;
-  final AgentVoiceTranscriber transcriber;
-  Future<AgentVoiceInputPermissionState>? _startFuture;
-  bool _captureActive = false;
-  AgentVoiceInputPermissionState _lastPermission =
-      AgentVoiceInputPermissionState.unknown;
-
-  Future<AgentVoiceInputPermissionState> startCapture() {
-    if (_captureActive) {
-      return Future.value(AgentVoiceInputPermissionState.granted);
-    }
-    final pending = _startFuture;
-    if (pending != null) return pending;
-    final next = _startCapture();
-    _startFuture = next;
-    return next.whenComplete(() {
-      if (identical(_startFuture, next)) _startFuture = null;
-    });
-  }
-
-  Future<AgentVoiceInputPermissionState> _startCapture() async {
-    final permission = await _ensurePermission();
-    _lastPermission = permission;
-    if (permission != AgentVoiceInputPermissionState.granted) {
-      return permission;
-    }
-
-    try {
-      await recorder.start();
-      _captureActive = true;
-      return permission;
-    } catch (_) {
-      await _cancelRecorderQuietly();
-      rethrow;
-    }
-  }
-
-  Future<AgentVoiceInputResult> finishCapture() async {
-    final pending = _startFuture;
-    if (pending != null) await pending;
-    if (!_captureActive) {
-      if (_lastPermission != AgentVoiceInputPermissionState.unknown &&
-          _lastPermission != AgentVoiceInputPermissionState.granted) {
-        return AgentVoiceInputResult.permissionDenied(_lastPermission);
-      }
-      return const AgentVoiceInputResult.empty();
-    }
-
-    _captureActive = false;
-    try {
-      final recording = await recorder.stop();
-      if (recording == null || recording.isEmpty) {
-        return const AgentVoiceInputResult.empty();
-      }
-      return AgentVoiceInputResult.fromText(
-        await transcriber.transcribe(recording),
-      );
-    } catch (_) {
-      await _cancelRecorderQuietly();
-      rethrow;
-    }
-  }
-
-  Future<void> cancelCapture() async {
-    final pending = _startFuture;
-    if (pending != null) {
-      try {
-        await pending;
-      } catch (_) {
-        return;
-      }
-    }
-    if (!_captureActive) return;
-    _captureActive = false;
-    await recorder.cancel();
-  }
-
-  Future<AgentVoiceInputPermissionState> _ensurePermission() async {
-    final current = await recorder.permissionState();
-    if (current == AgentVoiceInputPermissionState.granted ||
-        current == AgentVoiceInputPermissionState.permanentlyDenied) {
-      return current;
-    }
-    return recorder.requestPermission();
-  }
-
-  Future<void> _cancelRecorderQuietly() async {
-    try {
-      await recorder.cancel();
-    } catch (_) {
-      // Best-effort cleanup; preserve the original recording/transcription error.
-    }
-  }
 }
 
 class AgentVoicePlaybackRequestResult {

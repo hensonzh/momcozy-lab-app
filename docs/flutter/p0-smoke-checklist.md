@@ -48,7 +48,6 @@
 | PERM-01 | BLE 首次允许 | 进入 Device，授予 BLE 权限。 | 可扫描设备，不展示错误态。 |  |  |
 | PERM-02 | BLE 拒绝 | 拒绝 BLE 权限后重试。 | 展示可恢复提示，可打开系统设置。 |  |  |
 | PERM-03 | 通知权限 | Android 13+ 首次请求通知权限。 | 前台服务和普通提醒有明确降级。 |  |  |
-| PERM-04 | 麦克风权限 | Agent 语音输入请求权限。 | 允许后可录音，拒绝后不崩溃。 |  |  |
 | PERM-05 | Overlay 权限 | 如果保留悬浮窗，打开授权页并返回。 | 授权状态刷新，未授权时降级到通知。 |  |  |
 | BLE-01 | 扫描 | Device 页扫描。 | 能发现目标泵，空结果有可读提示。 |  |  |
 | BLE-02 | 左设备连接 | 连接左泵。 | L side connected，R side 不被污染。 |  |  |
@@ -78,7 +77,6 @@
 | AGENT-03 | Artifact | 触发 card/form artifact。 | artifact 独立渲染，不从文本猜 schema。 |  |  |
 | AGENT-04 | 取消 | 流式输出中取消。 | transport 关闭，调用 cancel，输入恢复。 |  |  |
 | AGENT-05 | 断线 | 中途断网或关闭后端。 | 展示可重试错误，partial content 保留。 |  |  |
-| VOICE-01 | 语音输入 | 麦克风输入并转写。 | STT 有结果或可恢复错误。 |  |  |
 | VOICE-02 | 自动播放 | Agent 文本流触发 TTS。 | 可播放、可打断，不覆盖通知语音状态。 |  |  |
 | ROUTE-01 | 计划提醒跳转 | 触发 schedule reminder notification。 | 跳转到 Schedule，并只消费一次。 |  |  |
 | ROUTE-02 | milk analysis 跳转 | 触发 milk analysis notification。 | 跳转到目标 route / artifact anchor。 |  |  |

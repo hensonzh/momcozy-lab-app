@@ -221,8 +221,6 @@ class AgentHubPage extends StatefulWidget {
     this.mediaRepository,
     this.loadImageThumbnail,
     this.loadImageContent,
-    this.voiceInputController,
-    this.showVoiceInputButton = false,
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
     this.productAssetRepository,
@@ -255,8 +253,6 @@ class AgentHubPage extends StatefulWidget {
   final MediaRepository? mediaRepository;
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
-  final AgentVoiceInputController? voiceInputController;
-  final bool showVoiceInputButton;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
   final ProductAssetRepository? productAssetRepository;
@@ -297,8 +293,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Object? _olderConversationHistoryError;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
-  Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
-  int _voiceCaptureGeneration = 0;
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final List<AgentStreamFileInput> _attachedFiles = <AgentStreamFileInput>[];
   final Set<String> _pendingActionIds = <String>{};
@@ -433,8 +427,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   void dispose() {
-    _voiceCaptureGeneration += 1;
-    unawaited(widget.voiceInputController?.cancelCapture());
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
     widget.ibclcConsultStore?.removeListener(_handleIbclcConsultStoreChanged);
@@ -1566,116 +1558,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   bool get _canAddAttachment =>
       _attachedImages.length + _attachedFiles.length < _agentRunAttachmentLimit;
-
-  void _startVoiceInput() {
-    if (widget.voiceInputController == null ||
-        _isComposerLocked ||
-        _voiceState.isInputActive) {
-      return;
-    }
-
-    setState(() {
-      _setVoiceState(_voiceState.startListening());
-    });
-
-    final controller = widget.voiceInputController;
-    if (controller == null) return;
-    final generation = ++_voiceCaptureGeneration;
-    final start = _beginVoiceCapture(controller, generation);
-    _voiceCaptureStart = start;
-  }
-
-  Future<AgentVoiceInputPermissionState> _beginVoiceCapture(
-    AgentVoiceInputController controller,
-    int generation,
-  ) async {
-    try {
-      final permission = await controller.startCapture();
-      if (mounted &&
-          generation == _voiceCaptureGeneration &&
-          permission != AgentVoiceInputPermissionState.granted) {
-        setState(() {
-          _setVoiceState(_voiceState.markPermissionDenied(permission));
-        });
-      }
-      return permission;
-    } catch (error) {
-      if (mounted && generation == _voiceCaptureGeneration) {
-        setState(() {
-          _setVoiceState(_voiceState.fail(error));
-        });
-      }
-      return AgentVoiceInputPermissionState.unknown;
-    }
-  }
-
-  Future<void> _finishVoiceInput({required bool submit}) async {
-    final controller = widget.voiceInputController;
-    final start = _voiceCaptureStart;
-    _voiceCaptureStart = null;
-
-    if (controller == null) {
-      if (mounted) setState(() => _setVoiceState(const AgentVoiceState()));
-      return;
-    }
-
-    final permission = start == null
-        ? AgentVoiceInputPermissionState.unknown
-        : await start;
-    if (!submit) {
-      try {
-        await controller.cancelCapture();
-      } catch (error) {
-        if (mounted) setState(() => _setVoiceState(_voiceState.fail(error)));
-        return;
-      }
-      if (mounted) setState(() => _setVoiceState(const AgentVoiceState()));
-      return;
-    }
-    if (permission != AgentVoiceInputPermissionState.granted) return;
-
-    if (mounted) {
-      setState(() {
-        _setVoiceState(
-          _voiceState.startTranscribing(draft: _composerController.text),
-        );
-      });
-    }
-
-    try {
-      final result = await controller.finishCapture();
-      if (!mounted) return;
-      _applyVoiceInputResult(result);
-    } catch (error) {
-      if (!mounted) return;
-      setState(() {
-        _setVoiceState(_voiceState.fail(error));
-      });
-    }
-  }
-
-  void _applyVoiceInputResult(AgentVoiceInputResult result) {
-    setState(() {
-      if (result.status == AgentVoiceInputResultStatus.permissionDenied) {
-        _setVoiceState(
-          _voiceState.markPermissionDenied(
-            result.permissionState ?? AgentVoiceInputPermissionState.denied,
-          ),
-        );
-        return;
-      }
-
-      final text = result.text;
-      if (text != null && text.isNotEmpty) {
-        _composerController.text = text;
-        _composerController.selection = TextSelection.collapsed(
-          offset: _composerController.text.length,
-        );
-      }
-      _setVoiceState(_voiceState.applyTranscription(text ?? ''));
-    });
-    _persistInteractionState();
-  }
 
   void _removeAttachedImage(int index) {
     if (index < 0 || index >= _attachedImages.length) return;
@@ -2994,7 +2876,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   _composerLockedNotifier,
                 ]),
                 builder: (context, child) {
-                  final runState = _runStateNotifier.value;
                   final isVisibleReplyRunning =
                       _visibleReplyRunningNotifier.value;
                   final isComposerLocked = _composerLockedNotifier.value;
@@ -3029,17 +2910,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                         !isRestoring,
                     isAttachmentPending: _attachmentUploadPending,
                     attachmentUploadProgress: _attachmentUploadProgress,
-                    showVoiceInputButton: widget.showVoiceInputButton,
-                    canUseVoice:
-                        !isRestoring &&
-                        widget.voiceInputController != null &&
-                        !_isVisibleReplyRunningForState(runState) &&
-                        !isComposerLocked &&
-                        _voiceState.phase != AgentVoicePhase.transcribing,
-                    voicePhase: _voiceState.phase,
-                    voicePlaybackFailed:
-                        _voiceState.phase == AgentVoicePhase.error &&
-                        _voiceState.playbackId != null,
                     onChanged: (_) {},
                     onSend: _sendMessage,
                     onCancel: _cancelRun,
@@ -3050,9 +2920,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     onPickFile: () => unawaited(_attachDocument()),
                     onRemoveImage: _removeAttachedImage,
                     onRemoveFile: _removeAttachedFile,
-                    onVoiceStart: _startVoiceInput,
-                    onVoiceEnd: (submit) =>
-                        unawaited(_finishVoiceInput(submit: submit)),
                   );
                 },
               ),
@@ -5966,10 +5833,6 @@ class AgentComposerBar extends StatefulWidget {
     required this.canAttachFile,
     required this.isAttachmentPending,
     this.attachmentUploadProgress,
-    this.showVoiceInputButton = false,
-    required this.canUseVoice,
-    required this.voicePhase,
-    this.voicePlaybackFailed = false,
     required this.onChanged,
     required this.onSend,
     required this.onCancel,
@@ -5978,8 +5841,6 @@ class AgentComposerBar extends StatefulWidget {
     required this.onPickFile,
     required this.onRemoveImage,
     required this.onRemoveFile,
-    required this.onVoiceStart,
-    required this.onVoiceEnd,
   });
 
   final TextEditingController controller;
@@ -5993,10 +5854,6 @@ class AgentComposerBar extends StatefulWidget {
   final bool canAttachFile;
   final bool isAttachmentPending;
   final double? attachmentUploadProgress;
-  final bool showVoiceInputButton;
-  final bool canUseVoice;
-  final AgentVoicePhase voicePhase;
-  final bool voicePlaybackFailed;
   final ValueChanged<String> onChanged;
   final VoidCallback onSend;
   final VoidCallback onCancel;
@@ -6005,8 +5862,6 @@ class AgentComposerBar extends StatefulWidget {
   final VoidCallback onPickFile;
   final ValueChanged<int> onRemoveImage;
   final ValueChanged<int> onRemoveFile;
-  final VoidCallback onVoiceStart;
-  final ValueChanged<bool> onVoiceEnd;
 
   @override
   State<AgentComposerBar> createState() => _AgentComposerBarState();
@@ -6026,9 +5881,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   static const double _expandedInputBottomInset =
       _surfaceVerticalInset + _controlSize + 18;
   static const double _lineWrapGuard = 10;
-  bool _voiceMode = false;
-  bool _voicePressed = false;
-  String? _textDraftBeforeVoice;
   final MenuController _attachmentMenuController = MenuController();
 
   @override
@@ -6051,11 +5903,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
         if (mounted) _attachmentMenuController.close();
       });
     }
-    if (!widget.showVoiceInputButton && _voiceMode) {
-      _voiceMode = false;
-      _voicePressed = false;
-      _textDraftBeforeVoice = null;
-    }
   }
 
   @override
@@ -6067,50 +5914,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   void _handleControllerChanged() {
     if (!mounted) return;
     setState(() {});
-  }
-
-  void _toggleVoiceMode() {
-    if (_voicePressed) return;
-    if (!_voiceMode && !widget.canUseVoice) return;
-    setState(() {
-      if (_voiceMode) {
-        if (widget.controller.text.trim().isEmpty &&
-            _textDraftBeforeVoice != null) {
-          widget.controller.text = _textDraftBeforeVoice!;
-          widget.controller.selection = TextSelection.collapsed(
-            offset: widget.controller.text.length,
-          );
-        }
-        _voiceMode = false;
-        _textDraftBeforeVoice = null;
-        return;
-      }
-
-      _textDraftBeforeVoice = widget.controller.text;
-      if (widget.controller.text.isNotEmpty) {
-        widget.controller.clear();
-        widget.onChanged('');
-      }
-      _voiceMode = true;
-    });
-  }
-
-  void _startVoiceHold() {
-    if (!_voiceMode || !widget.canUseVoice || _voicePressed) return;
-    setState(() {
-      _voicePressed = true;
-    });
-    widget.onVoiceStart();
-  }
-
-  void _finishVoiceHold({required bool submit}) {
-    if (!_voicePressed) return;
-    setState(() {
-      _voicePressed = false;
-      _voiceMode = false;
-      _textDraftBeforeVoice = null;
-    });
-    widget.onVoiceEnd(submit);
   }
 
   Widget _attachmentMenuItem({
@@ -6175,7 +5978,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
         (controller.text.trim().isNotEmpty || imageCount > 0 || fileCount > 0);
     final canAttachImage = widget.canAttachImage;
     final canAttachFile = widget.canAttachFile;
-    final voicePhase = widget.voicePhase;
     final onChanged = widget.onChanged;
     final onSend = widget.onSend;
     final onCancel = widget.onCancel;
@@ -6299,7 +6101,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                     : EdgeInsets.fromLTRB(
                         _inputLeftInset,
                         _surfaceVerticalInset,
-                        _compactInputRightInset,
+                        _inputRightInset,
                         _surfaceVerticalInset,
                       );
                 Widget positionControl({
@@ -6334,89 +6136,42 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   );
                 }
 
-                final composerInput = _voiceMode
-                    ? GestureDetector(
-                        key: const ValueKey('agent-voice-hold-button'),
-                        onTapDown: (_) => _startVoiceHold(),
-                        onTapUp: (_) => _finishVoiceHold(submit: true),
-                        onTapCancel: () => _finishVoiceHold(submit: false),
-                        child: Semantics(
-                          button: true,
-                          label: _voicePressed ? '松开填入语音输入' : '按住说话',
-                          child: Container(
-                            height: 32,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: _voicePressed
-                                  ? const Color(0xfff8eef3)
-                                  : colorScheme.primary.withValues(alpha: 0.06),
-                              borderRadius: BorderRadius.circular(
-                                MomCozyRadii.pill,
-                              ),
-                              border: Border.all(
-                                color: _voicePressed
-                                    ? const Color(0xffe5cdd8)
-                                    : Colors.transparent,
-                              ),
-                            ),
-                            child: Text(
-                              _voicePressed ? '我在听，松开后文字填入输入框' : '按住说话',
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelMedium
-                                  ?.copyWith(
-                                    color: _voicePressed
-                                        ? const Color(0xff563544)
-                                        : MomCozyColors.foreground,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
-                          ),
-                        ),
-                      )
-                    : TextField(
-                        key: const ValueKey('agent-composer-input'),
-                        controller: controller,
-                        focusNode: widget.focusNode,
-                        minLines: 1,
-                        maxLines: 5,
-                        keyboardType: TextInputType.multiline,
-                        textInputAction: TextInputAction.newline,
-                        enabled: !isInputLocked,
-                        style: inputTextStyle,
-                        onChanged: onChanged,
-                        scrollPadding: const EdgeInsets.only(bottom: 96),
-                        decoration: InputDecoration(
-                          hintText: '和 CozyMate 聊聊...',
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          filled: false,
-                          isDense: true,
-                          isCollapsed: true,
-                          contentPadding: EdgeInsets.zero,
-                          hintStyle: TextStyle(
-                            fontFamily: MomCozyTypography.fontFamily,
-                            fontFamilyFallback:
-                                MomCozyTypography.fontFamilyFallback,
-                            fontSize: 14,
-                            height: 1.6,
-                            color: MomCozyColors.mutedForeground.withValues(
-                              alpha: 0.82,
-                            ),
-                          ),
-                        ),
-                      );
+                final composerInput = TextField(
+                  key: const ValueKey('agent-composer-input'),
+                  controller: controller,
+                  focusNode: widget.focusNode,
+                  minLines: 1,
+                  maxLines: 5,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  enabled: !isInputLocked,
+                  style: inputTextStyle,
+                  onChanged: onChanged,
+                  scrollPadding: const EdgeInsets.only(bottom: 96),
+                  decoration: InputDecoration(
+                    hintText: '和 CozyMate 聊聊...',
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    filled: false,
+                    isDense: true,
+                    isCollapsed: true,
+                    contentPadding: EdgeInsets.zero,
+                    hintStyle: TextStyle(
+                      fontFamily: MomCozyTypography.fontFamily,
+                      fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                      fontSize: 14,
+                      height: 1.6,
+                      color: MomCozyColors.mutedForeground.withValues(
+                        alpha: 0.82,
+                      ),
+                    ),
+                  ),
+                );
                 final inputFrame = Padding(
                   key: const ValueKey('agent-composer-input-frame'),
                   padding: inputPadding,
                   child: composerInput,
-                );
-                final controlButtonStyle = IconButton.styleFrom(
-                  fixedSize: const Size.square(_controlSize),
-                  minimumSize: const Size.square(_controlSize),
-                  maximumSize: const Size.square(_controlSize),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  padding: EdgeInsets.zero,
                 );
 
                 return DecoratedBox(
@@ -6564,31 +6319,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             },
                           ),
                         ),
-                        if (widget.showVoiceInputButton)
-                          positionControl(
-                            right:
-                                _surfaceHorizontalInset +
-                                _controlSize +
-                                _controlGap,
-                            child: IconButton(
-                              key: const ValueKey('agent-voice-button'),
-                              onPressed: widget.canUseVoice || _voiceMode
-                                  ? _toggleVoiceMode
-                                  : null,
-                              icon: Icon(_voiceIcon, size: 20),
-                              tooltip: _voiceTooltip,
-                              color: voicePhase == AgentVoicePhase.listening
-                                  ? colorScheme.primary
-                                  : MomCozyColors.mutedForeground,
-                              visualDensity: VisualDensity.compact,
-                              constraints: const BoxConstraints.tightFor(
-                                width: _controlSize,
-                                height: _controlSize,
-                              ),
-                              padding: EdgeInsets.zero,
-                              style: controlButtonStyle,
-                            ),
-                          ),
                         positionControl(
                           right: _surfaceHorizontalInset,
                           child: IconButton(
@@ -6650,24 +6380,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                 );
               },
             ),
-            if (_voiceStatusLabel != null) ...[
-              const SizedBox(height: 4),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  _voiceStatusLabel!,
-                  key: const ValueKey('agent-voice-status'),
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color:
-                        voicePhase == AgentVoicePhase.error ||
-                            voicePhase == AgentVoicePhase.permissionDenied
-                        ? colorScheme.error
-                        : colorScheme.primary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),
@@ -6690,17 +6402,11 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 
   double _compactInputTextWidth(double surfaceWidth) {
-    return surfaceWidth -
-        _inputLeftInset -
-        _compactInputRightInset -
-        _lineWrapGuard;
+    return surfaceWidth - _inputLeftInset - _inputRightInset - _lineWrapGuard;
   }
 
-  double get _compactInputRightInset =>
-      _surfaceHorizontalInset +
-      _controlSize +
-      _controlGap +
-      (widget.showVoiceInputButton ? _controlSize + _controlGap : 0);
+  static const double _inputRightInset =
+      _surfaceHorizontalInset + _controlSize + _controlGap;
 
   int _visualLineCountForWidth(
     BuildContext context,
@@ -6714,37 +6420,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       maxLines: 100,
     )..layout(maxWidth: maxWidth.clamp(1.0, double.infinity));
     return painter.computeLineMetrics().length.clamp(1, 100);
-  }
-
-  IconData get _voiceIcon {
-    if (_voiceMode) return Icons.keyboard_alt_outlined;
-    return switch (widget.voicePhase) {
-      AgentVoicePhase.listening => Icons.graphic_eq_rounded,
-      AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
-      AgentVoicePhase.playing => Icons.volume_up_outlined,
-      _ => Icons.mic_none_rounded,
-    };
-  }
-
-  String get _voiceTooltip {
-    if (_voiceMode) return '切换到文字输入';
-    return switch (widget.voicePhase) {
-      AgentVoicePhase.listening => '正在听',
-      AgentVoicePhase.transcribing => '正在转写',
-      AgentVoicePhase.playing => '正在播放语音',
-      AgentVoicePhase.cancelled => '语音播放已停止',
-      _ => '语音输入',
-    };
-  }
-
-  String? get _voiceStatusLabel {
-    return switch (widget.voicePhase) {
-      AgentVoicePhase.listening => '正在听',
-      AgentVoicePhase.transcribing => '正在整理语音',
-      AgentVoicePhase.playing => null,
-      AgentVoicePhase.cancelled => null,
-      _ => null,
-    };
   }
 }
 

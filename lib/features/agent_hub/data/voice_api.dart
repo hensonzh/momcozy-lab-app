@@ -7,7 +7,6 @@ import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart'
 import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
-const speechTranscribeChunkEndpoint = '/v1/speech/transcribe-chunk';
 const realtimeVoiceStreamEndpoint = '/v1/realtime-voice-stream';
 const realtimeVoiceSessionEndpoint = '/v1/realtime-voice-session';
 const agentVoiceWebSocketPingInterval = Duration(seconds: 15);
@@ -15,11 +14,6 @@ const agentVoiceWebSocketPingInterval = Duration(seconds: 15);
 typedef AgentVoiceUnauthorizedHandler = FutureOr<bool> Function();
 
 abstract interface class AgentVoiceRepository {
-  Future<String?> transcribeSpeechChunk({
-    required ApiUploadFile file,
-    String? language,
-  });
-
   Stream<List<int>> realtimeVoicePcmStream({required String text});
 
   Future<AgentVoiceRealtimeSessionConnection> openRealtimeVoiceSession();
@@ -41,7 +35,6 @@ abstract interface class AgentVoiceRealtimeSessionConnection {
 
 class AgentVoiceApiRepository implements AgentVoiceRepository {
   AgentVoiceApiRepository({
-    required this.multipartTransport,
     required Uri baseUri,
     this.token,
     this.tokenProvider,
@@ -51,7 +44,6 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     this.websocketConnector = const _DefaultAgentVoiceWebSocketConnector(),
   }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri);
 
-  final ApiMultipartTransport multipartTransport;
   final Uri baseUri;
   final String? token;
   final String? Function()? tokenProvider;
@@ -59,30 +51,6 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   final Map<String, String> headers;
   final AgentVoiceBinaryStreamConnector binaryConnector;
   final AgentVoiceWebSocketConnector websocketConnector;
-
-  @override
-  Future<String?> transcribeSpeechChunk({
-    required ApiUploadFile file,
-    String? language,
-  }) async {
-    try {
-      final response = await multipartTransport.uploadMultipart(
-        speechTranscribeChunkEndpoint,
-        fields: {
-          if (language != null && language.trim().isNotEmpty)
-            'language': language.trim(),
-        },
-        headers: _requestHeaders(accept: 'application/json'),
-        file: file,
-      );
-      final text = _string(response['text'] ?? response['transcript'])?.trim();
-      return text == null || text.isEmpty ? null : text;
-    } on ApiRequestCancelledException {
-      rethrow;
-    } on Object {
-      return null;
-    }
-  }
 
   @override
   Stream<List<int>> realtimeVoicePcmStream({required String text}) async* {
@@ -193,30 +161,6 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
       'url': uri,
       'headers': _requestHeaders(accept: accept),
     });
-  }
-}
-
-class AgentVoiceApiInputTranscriber implements AgentVoiceTranscriber {
-  const AgentVoiceApiInputTranscriber({
-    required this.repository,
-    this.language,
-  });
-
-  final AgentVoiceRepository repository;
-  final String? language;
-
-  @override
-  Future<String?> transcribe(AgentVoiceRecording recording) {
-    if (recording.bytes.isEmpty) return Future<String?>.value();
-    return repository.transcribeSpeechChunk(
-      language: language,
-      file: ApiUploadFile(
-        name: recording.name,
-        mimeType: recording.mimeType,
-        sizeBytes: recording.sizeBytes,
-        bytes: recording.bytes,
-      ),
-    );
   }
 }
 
@@ -372,5 +316,3 @@ class _DefaultAgentVoiceWebSocketConnector
     );
   }
 }
-
-String? _string(Object? value) => value is String ? value : null;

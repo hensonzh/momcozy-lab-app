@@ -25,7 +25,6 @@ REQUIRED_OPENAPI_PATHS = {
     "/v1/records/pumping",
     "/v1/records/growth",
     "/v1/plans",
-    "/v1/speech/transcribe-chunk",
     "/v1/realtime-voice-stream",
     "/v1/agent/threads",
     "/v1/agent/runs",
@@ -34,6 +33,9 @@ REQUIRED_OPENAPI_PATHS = {
     "/v1/agent/actions/{action_id}/reject",
     "/v1/agent/runs/{run_id}/events",
     "/v1/agent/runs/{run_id}/stream",
+}
+FORBIDDEN_OPENAPI_PATHS = {
+    "/v1/speech/transcribe-chunk",
 }
 REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS = {
     ("POST", "/v1/agent/runs"),
@@ -85,6 +87,10 @@ def main() -> int:
     for path in sorted(REQUIRED_OPENAPI_PATHS):
         if path not in paths:
             errors.append(f"Missing required OpenAPI path: {path}")
+
+    for path in sorted(FORBIDDEN_OPENAPI_PATHS):
+        if path in paths:
+            errors.append(f"Removed OpenAPI path is still present: {path}")
 
     for method, path in sorted(REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS):
         operation = _operation(paths, path, method)
