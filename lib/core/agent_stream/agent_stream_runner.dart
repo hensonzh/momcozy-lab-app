@@ -9,26 +9,31 @@ class AgentStreamReconnectPolicy {
     this.maxFollowWindowReconnects = 30,
     this.maxTransportReconnects = 3,
     this.maxActiveStatusReconciliations = 1,
+    this.maxCompletedRunReplays = 1,
     this.transportRetryBaseDelay = const Duration(milliseconds: 200),
   }) : assert(maxFollowWindowReconnects >= 0),
        assert(maxTransportReconnects >= 0),
-       assert(maxActiveStatusReconciliations >= 0);
+       assert(maxActiveStatusReconciliations >= 0),
+       assert(maxCompletedRunReplays >= 0);
 
   const AgentStreamReconnectPolicy.disabled()
     : maxFollowWindowReconnects = 0,
       maxTransportReconnects = 0,
       maxActiveStatusReconciliations = 0,
+      maxCompletedRunReplays = 0,
       transportRetryBaseDelay = Duration.zero;
 
   final int maxFollowWindowReconnects;
   final int maxTransportReconnects;
   final int maxActiveStatusReconciliations;
+  final int maxCompletedRunReplays;
   final Duration transportRetryBaseDelay;
 
   bool get enabled =>
       maxFollowWindowReconnects > 0 ||
       maxTransportReconnects > 0 ||
-      maxActiveStatusReconciliations > 0;
+      maxActiveStatusReconciliations > 0 ||
+      maxCompletedRunReplays > 0;
 
   Duration transportRetryDelay(int retryIndex) {
     if (transportRetryBaseDelay == Duration.zero) return Duration.zero;
@@ -69,23 +74,47 @@ class AgentStreamRunner {
 
     Future<void> pump() async {
       var state = initialState ?? const AgentStreamRunState().start();
-      var streamRequest = request;
+      final stableRequest = _withStableIdempotencyKey(request);
+      var streamRequest = stableRequest;
       var followWindowReconnects = 0;
       var transportReconnects = 0;
       var activeStatusReconciliations = 0;
+      var completedRunReplays = 0;
       controller.add(state);
 
       try {
         while (!cancelled && state.isActive) {
           Object? streamError;
           var madeProgress = false;
+          String? completedRunReplayId;
+          String? completedRunReplayThreadId;
           final iterator = StreamIterator(client.stream(streamRequest));
           activeIterator = iterator;
           var iteratorFinished = false;
           try {
             while (!cancelled && await iterator.moveNext()) {
               if (cancelled) return;
-              final nextState = state.applyEvent(iterator.current);
+              final event = iterator.current;
+              if (event.type == 'run.completed' &&
+                  !state.hasCompletedAssistantMessage) {
+                final replayRunId = (event.runId ?? state.runId)?.trim();
+                if (replayRunId != null &&
+                    replayRunId.isNotEmpty &&
+                    completedRunReplays <
+                        reconnectPolicy.maxCompletedRunReplays) {
+                  completedRunReplayId = replayRunId;
+                  completedRunReplayThreadId = event.threadId ?? state.threadId;
+                  break;
+                }
+                state = state.markDisconnected(
+                  const AgentStreamConnectionException(
+                    'The run completed before its final reply was received.',
+                  ),
+                );
+                controller.add(state);
+                return;
+              }
+              final nextState = state.applyEvent(event);
               if (identical(nextState, state)) continue;
               madeProgress = true;
               state = nextState;
@@ -104,6 +133,15 @@ class AgentStreamRunner {
           }
 
           if (cancelled || !state.isActive) return;
+          if (completedRunReplayId != null) {
+            completedRunReplays += 1;
+            streamRequest = stableRequest.resume(
+              runId: completedRunReplayId,
+              threadId: completedRunReplayThreadId,
+              afterSequence: 0,
+            );
+            continue;
+          }
           if (!reconnectPolicy.enabled) {
             state = streamError != null
                 ? state.markDisconnected(streamError)
@@ -118,14 +156,34 @@ class AgentStreamRunner {
 
           final runId = state.runId?.trim();
           if (runId == null || runId.isEmpty) {
-            state = state.markDisconnected(
-              AgentStreamConnectionException(
-                'The stream ended before the run identifier was received.',
-                cause: streamError,
-              ),
+            if (streamError != null && !_isRetryableFailure(streamError)) {
+              state = state.markDisconnected(streamError);
+              controller.add(state);
+              return;
+            }
+            if (transportReconnects >= reconnectPolicy.maxTransportReconnects) {
+              state = state.markDisconnected(
+                AgentStreamConnectionException(
+                  'The stream ended before the run identifier was received.',
+                  cause: streamError,
+                ),
+              );
+              controller.add(state);
+              return;
+            }
+            final delay = reconnectPolicy.transportRetryDelay(
+              transportReconnects,
             );
-            controller.add(state);
-            return;
+            transportReconnects += 1;
+            if (delay > Duration.zero) {
+              await Future.any<void>([
+                Future<void>.delayed(delay),
+                cancellation.future,
+              ]);
+              if (cancelled) return;
+            }
+            streamRequest = stableRequest;
+            continue;
           }
 
           if (streamError != null && !_isRetryableFailure(streamError)) {
@@ -142,6 +200,27 @@ class AgentStreamRunner {
           if (reconnectLimitReached) {
             final snapshot = await _readRunStatus(runId);
             if (cancelled) return;
+            if (snapshot?.status == AgentRunLifecycleStatus.completed &&
+                !state.hasCompletedAssistantMessage) {
+              if (completedRunReplays <
+                  reconnectPolicy.maxCompletedRunReplays) {
+                completedRunReplays += 1;
+                streamRequest = stableRequest.resume(
+                  runId: runId,
+                  threadId: snapshot?.threadId ?? state.threadId,
+                  afterSequence: 0,
+                );
+                continue;
+              }
+              state = state.markDisconnected(
+                AgentStreamConnectionException(
+                  'The completed run did not include its final reply.',
+                  cause: streamError,
+                ),
+              );
+              controller.add(state);
+              return;
+            }
             final terminalEvent = snapshot?.terminalEvent();
             if (terminalEvent != null) {
               state = state.applyEvent(terminalEvent);
@@ -181,7 +260,7 @@ class AgentStreamRunner {
             }
           }
 
-          streamRequest = request.resume(
+          streamRequest = stableRequest.resume(
             runId: runId,
             threadId: state.threadId,
             afterSequence: state.lastSequence ?? 0,
@@ -219,3 +298,21 @@ class AgentStreamRunner {
 
 bool _isRetryableFailure(Object error) =>
     error is AgentStreamRetryableFailure && error.isRetryable;
+
+AgentStreamRequest _withStableIdempotencyKey(AgentStreamRequest request) {
+  if (request.runId?.trim().isNotEmpty == true ||
+      request.idempotencyKey?.trim().isNotEmpty == true) {
+    return request;
+  }
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    runId: request.runId,
+    afterSequence: request.afterSequence,
+    locale: request.locale,
+    images: request.images,
+    files: request.files,
+    metadata: request.metadata,
+    idempotencyKey: 'agent-run-${DateTime.now().microsecondsSinceEpoch}',
+  );
+}
