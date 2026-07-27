@@ -24,13 +24,15 @@ flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 
 `scripts/build-flutter-android-apk.mjs` 在构建 release APK 前会执行 `flutter clean` 和 `flutter pub get`，避免分发包复用上一源码版本的 AOT 快照。debug 构建仍保留增量构建以缩短本地开发反馈时间。
 
-## 内测构建与上传
+## 内测构建与发布
 
 ```bash
 ./scripts/build-flutter-app.sh
 ```
 
-该脚本默认在构建下载页、APK 和二维码后，将 `dist/android-apk/` 上传到 `ubuntu@54.254.112.41:/var/www/momcozy/android-apk/`。上传使用 rsync delay-updates，旧版本 APK 会保留。
+该脚本默认将 APK 和 SHA256 文件上传到公开仓库
+`hensonzh/momcozy-lab-releases` 的 GitHub Release，并更新同仓库的
+GitHub Pages 极简下载页。APK 不进入 Git 历史。
 
 只生成本地产物、不上传：
 
@@ -38,7 +40,8 @@ flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 MOMCOZY_SKIP_UPLOAD=1 ./scripts/build-flutter-app.sh
 ```
 
-可通过 `MOMCOZY_UPLOAD_TARGET` 和 `MOMCOZY_RSYNC_RSH` 覆盖上传目标与 SSH 参数。
+可通过 `MOMCOZY_GITHUB_RELEASE_REPO` 和 `MOMCOZY_DOWNLOAD_BASE_URL`
+覆盖公开仓库与 GitHub Pages 地址。发布前需要安装并登录 GitHub CLI。
 
 ## Android Flavors
 

@@ -22,6 +22,8 @@ if (process.argv.includes("--help")) {
 Environment:
   MOMCOZY_DOWNLOAD_BASE_URL     Public HTTPS URL of the uploaded dist/android-apk directory.
                                 Default: ${defaultBaseUrl}
+  MOMCOZY_GITHUB_RELEASE_REPO   Public GitHub repository used for APK release assets,
+                                e.g. hensonzh/momcozy-lab-releases.
   MOMCOZY_APK_FLAVOR            local | staging | production. Default: staging
   MOMCOZY_APK_MODE              debug | release. Default: release
   MOMCOZY_APK_INPUT             Existing APK path. When set, skips Flutter build.
@@ -43,6 +45,7 @@ const version = parsePubspecVersion(pubspec);
 const flavor = envText("MOMCOZY_APK_FLAVOR", "staging");
 const mode = envText("MOMCOZY_APK_MODE", "release");
 const baseUrl = normalizeBaseUrl(envText("MOMCOZY_DOWNLOAD_BASE_URL", defaultBaseUrl));
+const githubReleaseRepo = envText("MOMCOZY_GITHUB_RELEASE_REPO", "");
 const distDir = path.resolve(envText("MOMCOZY_DOWNLOAD_DIST", defaultDistDir));
 const releaseDir = path.join(distDir, "releases");
 const assetDir = path.join(distDir, "assets");
@@ -53,9 +56,11 @@ const buildApkPath =
   apkInput || path.join(flutterAppDir, "build", "app", "outputs", "flutter-apk", `app-${flavor}-${mode}.apk`);
 const artifactName = `momcozy-android-${flavor}-${version.versionName}-${version.buildNumber}.apk`;
 const artifactPath = path.join(releaseDir, artifactName);
+const githubReleaseTag = `android-v${version.versionName}-${version.buildNumber}`;
 
 assertMode(mode);
 assertFlavor(flavor);
+assertGithubReleaseRepo(githubReleaseRepo);
 checkReleaseSigning({ mode });
 
 if (!apkInput && !skipBuild) {
@@ -80,7 +85,9 @@ const sha256 = crypto.createHash("sha256").update(apkBytes).digest("hex");
 const generatedAt = new Date().toISOString();
 const gitCommit = gitShortHead();
 const apkPath = `releases/${artifactName}`;
-const apkUrl = `${baseUrl}/${apkPath}`;
+const apkUrl = githubReleaseRepo
+  ? `https://github.com/${githubReleaseRepo}/releases/download/${githubReleaseTag}/${artifactName}`
+  : `${baseUrl}/${apkPath}`;
 const qrCodePath = `assets/${qrFileName}`;
 const qrCodeUrl = `${baseUrl}/${qrCodePath}`;
 const manifest = {
@@ -101,6 +108,8 @@ const manifest = {
   sizeBytes: apkInfo.size,
   generatedAt,
   gitCommit,
+  githubReleaseRepo: githubReleaseRepo || null,
+  githubReleaseTag: githubReleaseRepo ? githubReleaseTag : null,
 };
 
 await writeFile(path.join(releaseDir, `${artifactName}.sha256`), `${sha256}  ${artifactName}\n`);
@@ -237,7 +246,14 @@ function renderDownloadPage(manifest) {
     h1 { margin: 0; font-size: clamp(26px, 7vw, 34px); line-height: 1.2; }
     .intro { margin: 12px 0 0; color: var(--muted); line-height: 1.6; }
     .version { margin: 18px 0 22px; font-size: 15px; font-weight: 700; }
-    .qr-link { display: block; border-radius: 18px; }
+    .qr-link {
+      display: block;
+      border-radius: 18px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(142, 66, 99, .16);
+      transition: transform .12s ease, opacity .12s ease;
+    }
+    .qr-link:active { transform: scale(.985); opacity: .86; }
     .qr { display: block; width: 100%; height: auto; border-radius: 18px; }
     @media (max-width: 700px) {
       body { padding: 16px; }
@@ -250,7 +266,7 @@ function renderDownloadPage(manifest) {
     <h1>Momcozy Lab 内测版</h1>
     <p class="intro">使用 Android 手机扫描或点击二维码下载 APK。</p>
     <p class="version">版本 ${escapeHtml(manifest.versionName)} (${escapeHtml(manifest.buildNumber)})</p>
-    <a class="qr-link" href="${escapeHtml(manifest.apkUrl)}" download aria-label="下载 Momcozy Lab Android APK">
+    <a class="qr-link" href="${escapeHtml(manifest.apkUrl)}" aria-label="下载 Momcozy Lab Android APK">
       <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="Momcozy Lab APK 下载二维码" />
     </a>
   </main>
@@ -364,6 +380,12 @@ function assertMode(value) {
 function assertFlavor(value) {
   if (!["local", "staging", "production"].includes(value)) {
     throw new Error(`Unsupported MOMCOZY_APK_FLAVOR: ${value}`);
+  }
+}
+
+function assertGithubReleaseRepo(value) {
+  if (value && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(value)) {
+    throw new Error(`Invalid MOMCOZY_GITHUB_RELEASE_REPO: ${value}`);
   }
 }
 
