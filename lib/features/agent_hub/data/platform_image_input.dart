@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -42,11 +42,13 @@ class AgentHubPlatformImagePicker {
     }
     final name = _imageName(file.name, mimeType);
     return AgentStreamImageInput(
-      dataUrl: 'data:$mimeType;base64,${base64Encode(bytes)}',
+      dataUrl: '',
       mimeType: mimeType,
       name: name,
       size: bytes.length,
       detail: 'auto',
+      localBytes: Uint8List.fromList(bytes),
+      openRead: file.openRead,
     );
   }
 

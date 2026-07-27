@@ -337,6 +337,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
   bool _attachmentUploadPending = false;
+  double? _attachmentUploadProgress;
   Timer? _persistentWriteTimer;
   Timer? _activeRunPersistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
@@ -1426,7 +1427,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       if (image != null &&
           mediaRepository != null &&
           image.fileId.trim().isEmpty) {
-        final bytes = _decodeAgentImageBytes(image.dataUrl);
+        final bytes = image.localBytes ?? _decodeAgentImageBytes(image.dataUrl);
         final uploaded = await mediaRepository.uploadFile(
           temporary: true,
           file: ApiUploadFile(
@@ -1436,6 +1437,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                 : image.mimeType.trim(),
             sizeBytes: bytes.length,
             bytes: bytes,
+            openRead: image.openRead,
+            onProgress: _handleAttachmentUploadProgress,
           ),
         );
         final fileId = uploaded.id.trim();
@@ -1450,6 +1453,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted) return;
     setState(() {
       _attachmentUploadPending = false;
+      _attachmentUploadProgress = null;
       if (image != null && failure == null) {
         _attachedImages.add(image);
       }
@@ -1491,6 +1495,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             mimeType: 'application/pdf',
             sizeBytes: document.size,
             bytes: document.bytes,
+            onProgress: _handleAttachmentUploadProgress,
           ),
         );
         final fileId = uploaded.id.trim();
@@ -1510,6 +1515,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted) return;
     setState(() {
       _attachmentUploadPending = false;
+      _attachmentUploadProgress = null;
       if (file != null && failure == null) {
         _attachedFiles.add(file);
       }
@@ -1535,8 +1541,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (_attachmentUploadPending == value) return;
     setState(() {
       _attachmentUploadPending = value;
+      _attachmentUploadProgress = null;
     });
     _publishAttachmentUploadState();
+  }
+
+  void _handleAttachmentUploadProgress(int sentBytes, int totalBytes) {
+    if (!mounted || !_attachmentUploadPending || totalBytes <= 0) return;
+    final next = (sentBytes / totalBytes).clamp(0.0, 1.0);
+    final current = _attachmentUploadProgress;
+    if (current != null && next < 1 && (next - current).abs() < 0.01) return;
+    setState(() {
+      _attachmentUploadProgress = next;
+    });
   }
 
   void _publishAttachmentUploadState() {
@@ -3008,6 +3025,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                         !isComposerLocked &&
                         !isRestoring,
                     isAttachmentPending: _attachmentUploadPending,
+                    attachmentUploadProgress: _attachmentUploadProgress,
                     canUseVoice:
                         !isRestoring &&
                         widget.voiceInputController != null &&
@@ -5943,6 +5961,7 @@ class AgentComposerBar extends StatefulWidget {
     required this.canAttachImage,
     required this.canAttachFile,
     required this.isAttachmentPending,
+    this.attachmentUploadProgress,
     required this.canUseVoice,
     required this.voicePhase,
     this.voicePlaybackFailed = false,
@@ -5968,6 +5987,7 @@ class AgentComposerBar extends StatefulWidget {
   final bool canAttachImage;
   final bool canAttachFile;
   final bool isAttachmentPending;
+  final double? attachmentUploadProgress;
   final bool canUseVoice;
   final AgentVoicePhase voicePhase;
   final bool voicePlaybackFailed;
@@ -6501,10 +6521,12 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                                       }
                                     : null,
                                 icon: widget.isAttachmentPending
-                                    ? const SizedBox.square(
+                                    ? SizedBox.square(
                                         dimension: 18,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
+                                          value:
+                                              widget.attachmentUploadProgress,
                                         ),
                                       )
                                     : const Icon(Icons.add_rounded, size: 28),

@@ -116,18 +116,25 @@ abstract interface class ApiMultipartTransport {
   });
 }
 
+typedef ApiUploadStreamFactory = Stream<List<int>> Function();
+typedef ApiUploadProgress = void Function(int sentBytes, int totalBytes);
+
 class ApiUploadFile {
   const ApiUploadFile({
     required this.name,
     required this.mimeType,
     required this.sizeBytes,
     this.bytes = const <int>[],
+    this.openRead,
+    this.onProgress,
   });
 
   final String name;
   final String mimeType;
   final int sizeBytes;
   final List<int> bytes;
+  final ApiUploadStreamFactory? openRead;
+  final ApiUploadProgress? onProgress;
 }
 
 class ApiRequestCancelledException implements Exception {
@@ -264,8 +271,11 @@ class IoApiJsonTransport implements ApiJsonTransport, ApiJsonMutationTransport {
     required Uri baseUri,
     this.token,
     this.headers = const <String, String>{},
-    this.connector = const _DefaultApiHttpConnector(),
-  }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri);
+    ApiHttpConnector? connector,
+  }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri),
+       connector =
+           connector ??
+           IoApiHttpConnector(httpClient: _sharedDefaultHttpClient);
 
   final Uri baseUri;
   final String? token;
@@ -399,7 +409,7 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
     this.headers = const <String, String>{},
     HttpClient? httpClient,
   }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri),
-       _httpClient = httpClient ?? HttpClient();
+       _httpClient = httpClient ?? _sharedDefaultHttpClient;
 
   final Uri baseUri;
   final String? token;
@@ -415,14 +425,17 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
     required ApiUploadFile file,
   }) async {
     final boundary = '----momcozy-${DateTime.now().microsecondsSinceEpoch}';
-    final body = _multipartBody(boundary, fields, file);
+    final prefix = _multipartPrefix(boundary, fields, file);
+    final suffix = utf8.encode('\r\n--$boundary--\r\n');
     final request = await _httpClient.postUrl(_resolve(path, query: query));
     _requestHeaders(
       boundary,
       extraHeaders: headers,
     ).forEach(request.headers.set);
-    request.contentLength = body.length;
-    request.add(body);
+    request.contentLength = prefix.length + file.sizeBytes + suffix.length;
+    await request.addStream(
+      _multipartBodyStream(prefix: prefix, suffix: suffix, file: file),
+    );
     final response = await request.close();
     final responseBody = await response.transform(utf8.decoder).join();
     return _decodeResponse(
@@ -483,7 +496,7 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
     return decoded;
   }
 
-  List<int> _multipartBody(
+  List<int> _multipartPrefix(
     String boundary,
     Map<String, Object?> fields,
     ApiUploadFile file,
@@ -505,9 +518,30 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
       'Content-Disposition: form-data; name="file"; filename="${_escape(file.name)}"\r\n',
     );
     write('Content-Type: ${file.mimeType}\r\n\r\n');
-    body.addAll(file.bytes.isEmpty ? utf8.encode(file.name) : file.bytes);
-    write('\r\n--$boundary--\r\n');
     return body;
+  }
+
+  Stream<List<int>> _multipartBodyStream({
+    required List<int> prefix,
+    required List<int> suffix,
+    required ApiUploadFile file,
+  }) async* {
+    yield prefix;
+    var sentBytes = 0;
+    file.onProgress?.call(0, file.sizeBytes);
+    final source = file.openRead?.call() ?? Stream<List<int>>.value(file.bytes);
+    await for (final chunk in source) {
+      sentBytes += chunk.length;
+      if (sentBytes > file.sizeBytes) {
+        throw StateError('Upload stream exceeded declared file size.');
+      }
+      yield chunk;
+      file.onProgress?.call(sentBytes, file.sizeBytes);
+    }
+    if (sentBytes != file.sizeBytes) {
+      throw StateError('Upload stream did not match declared file size.');
+    }
+    yield suffix;
   }
 
   String _escape(String value) => value.replaceAll('"', r'\"');
@@ -535,46 +569,6 @@ String? _requestIdFromErrorBody(Map<String, Object?>? body) {
 
 String _stringOrEmpty(Object? value) => value is String ? value : '';
 
-class _DefaultApiHttpConnector implements ApiHttpConnector {
-  const _DefaultApiHttpConnector();
-
-  @override
-  Future<ApiHttpResponse> get(Uri uri, {required Map<String, String> headers}) {
-    return IoApiHttpConnector().get(uri, headers: headers);
-  }
-
-  @override
-  Future<ApiHttpResponse> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) {
-    return IoApiHttpConnector().post(uri, headers: headers, body: body);
-  }
-
-  @override
-  Future<ApiHttpResponse> put(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) {
-    return IoApiHttpConnector().put(uri, headers: headers, body: body);
-  }
-
-  @override
-  Future<ApiHttpResponse> patch(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) {
-    return IoApiHttpConnector().patch(uri, headers: headers, body: body);
-  }
-
-  @override
-  Future<ApiHttpResponse> delete(
-    Uri uri, {
-    required Map<String, String> headers,
-  }) {
-    return IoApiHttpConnector().delete(uri, headers: headers);
-  }
-}
+final HttpClient _sharedDefaultHttpClient = HttpClient()
+  ..idleTimeout = const Duration(seconds: 90)
+  ..maxConnectionsPerHost = 8;

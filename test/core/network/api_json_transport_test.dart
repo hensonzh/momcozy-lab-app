@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -325,6 +326,97 @@ void main() {
         await receivedUri,
         Uri.parse('/api/v1/files/upload?existing=1&temporary=true'),
       );
+    });
+
+    test(
+      'reuses the default HTTP connection across JSON and multipart requests',
+      () async {
+        final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+        addTearDown(() => server.close(force: true));
+        final remotePorts = <int>[];
+        final handled = Completer<void>();
+        var requestCount = 0;
+        server.listen((request) async {
+          remotePorts.add(request.connectionInfo!.remotePort);
+          await request.drain<void>();
+          request.response
+            ..statusCode = request.method == 'POST'
+                ? HttpStatus.created
+                : HttpStatus.ok
+            ..headers.contentType = ContentType.json
+            ..write(
+              request.method == 'POST'
+                  ? '{"id":"file-001"}'
+                  : '{"status":"ok"}',
+            );
+          await request.response.close();
+          requestCount += 1;
+          if (requestCount == 2 && !handled.isCompleted) handled.complete();
+        });
+        final baseUri = Uri.parse(
+          'http://${server.address.host}:${server.port}',
+        );
+
+        await IoApiJsonTransport(baseUri: baseUri).getJson('/v1/health/live');
+        await IoApiMultipartTransport(baseUri: baseUri).uploadMultipart(
+          '/v1/files/upload',
+          file: const ApiUploadFile(
+            name: 'photo.png',
+            mimeType: 'image/png',
+            sizeBytes: 3,
+            bytes: [1, 2, 3],
+          ),
+        );
+        await handled.future;
+
+        expect(remotePorts, hasLength(2));
+        expect(remotePorts.toSet(), hasLength(1));
+      },
+    );
+
+    test('streams file bytes and reports monotonic upload progress', () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      final received = server.first.then((request) async {
+        final body = await request.fold<int>(
+          0,
+          (total, chunk) => total + chunk.length,
+        );
+        request.response
+          ..statusCode = HttpStatus.created
+          ..headers.contentType = ContentType.json
+          ..write('{"id":"file-progress"}');
+        await request.response.close();
+        return body;
+      });
+      final bytes = List<int>.generate(160 * 1024, (index) => index % 251);
+      final progress = <int>[];
+      final transport = IoApiMultipartTransport(
+        baseUri: Uri.parse('http://${server.address.host}:${server.port}'),
+      );
+
+      await transport.uploadMultipart(
+        '/v1/files/upload',
+        file: ApiUploadFile(
+          name: 'photo.jpg',
+          mimeType: 'image/jpeg',
+          sizeBytes: bytes.length,
+          openRead: () => Stream<List<int>>.fromIterable([
+            bytes.sublist(0, 64 * 1024),
+            bytes.sublist(64 * 1024, 128 * 1024),
+            bytes.sublist(128 * 1024),
+          ]),
+          onProgress: (sent, total) {
+            expect(total, bytes.length);
+            progress.add(sent);
+          },
+        ),
+      );
+
+      expect(await received, greaterThan(bytes.length));
+      expect(progress.first, 0);
+      expect(progress.last, bytes.length);
+      expect(progress, orderedEquals([...progress]..sort()));
     });
   });
 }

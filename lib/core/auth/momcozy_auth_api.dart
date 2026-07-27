@@ -136,14 +136,31 @@ class MomCozySessionRefreshCoordinator {
   final MomCozySessionStore store;
   Future<MomCozySession>? _inFlightRefresh;
 
-  Future<MomCozySession> refresh(MomCozySession current) {
+  Future<MomCozySession> refresh(
+    MomCozySession current, {
+    MomCozySessionChanged? onSessionChanged,
+  }) {
     final existing = _inFlightRefresh;
     if (existing != null) return existing;
-    final next = _refresh(current);
+    final next = _refreshAndPublish(
+      current,
+      onSessionChanged: onSessionChanged,
+    );
     _inFlightRefresh = next.whenComplete(() {
       _inFlightRefresh = null;
     });
     return _inFlightRefresh!;
+  }
+
+  Future<MomCozySession> _refreshAndPublish(
+    MomCozySession current, {
+    MomCozySessionChanged? onSessionChanged,
+  }) async {
+    final refreshed = await _refresh(current);
+    if (onSessionChanged != null) {
+      await onSessionChanged(refreshed);
+    }
+    return refreshed;
   }
 
   Future<MomCozySession> _refresh(MomCozySession current) async {
@@ -263,8 +280,15 @@ class AuthenticatedApiJsonTransport
       return await send(transportFactory(initialSession.accessToken));
     } catch (error) {
       if (!_shouldRefresh(error)) rethrow;
-      final refreshed = await refreshCoordinator.refresh(initialSession);
-      await onSessionChanged(refreshed);
+      final currentSession = sessionProvider();
+      if (!_sameSessionScope(initialSession, currentSession)) rethrow;
+      if (_accessTokenChanged(initialSession, currentSession)) {
+        return send(transportFactory(currentSession.accessToken));
+      }
+      final refreshed = await refreshCoordinator.refresh(
+        currentSession,
+        onSessionChanged: onSessionChanged,
+      );
       if (!refreshed.isAuthenticated) {
         rethrow;
       }
@@ -317,8 +341,21 @@ class AuthenticatedApiMultipartTransport implements ApiMultipartTransport {
       );
     } catch (error) {
       if (!_shouldRefresh(error)) rethrow;
-      final refreshed = await refreshCoordinator.refresh(initialSession);
-      await onSessionChanged(refreshed);
+      final currentSession = sessionProvider();
+      if (!_sameSessionScope(initialSession, currentSession)) rethrow;
+      if (_accessTokenChanged(initialSession, currentSession)) {
+        return transportFactory(currentSession.accessToken).uploadMultipart(
+          path,
+          query: query,
+          fields: fields,
+          headers: headers,
+          file: file,
+        );
+      }
+      final refreshed = await refreshCoordinator.refresh(
+        currentSession,
+        onSessionChanged: onSessionChanged,
+      );
       if (!refreshed.isAuthenticated) {
         rethrow;
       }
@@ -331,6 +368,18 @@ class AuthenticatedApiMultipartTransport implements ApiMultipartTransport {
       );
     }
   }
+}
+
+bool _sameSessionScope(MomCozySession first, MomCozySession second) {
+  return first.userId == second.userId &&
+      first.babyId == second.babyId &&
+      first.locale == second.locale;
+}
+
+bool _accessTokenChanged(MomCozySession first, MomCozySession second) {
+  return second.isAuthenticated &&
+      trimmedSessionValue(first.accessToken) !=
+          trimmedSessionValue(second.accessToken);
 }
 
 bool _shouldRefresh(Object error) {

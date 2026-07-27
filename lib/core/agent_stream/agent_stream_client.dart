@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'agent_stream_event.dart';
 
 class AgentStreamRequest {
@@ -105,6 +107,8 @@ class AgentStreamImageInput {
     this.name = 'image.png',
     this.size = 0,
     this.detail = 'auto',
+    this.localBytes,
+    this.openRead,
   });
 
   final String dataUrl;
@@ -113,6 +117,8 @@ class AgentStreamImageInput {
   final String name;
   final int size;
   final String detail;
+  final Uint8List? localBytes;
+  final Stream<List<int>> Function()? openRead;
 
   Map<String, Object?> toMap() => {
     'dataUrl': dataUrl,
@@ -145,6 +151,8 @@ class AgentStreamImageInput {
     String? name,
     int? size,
     String? detail,
+    Uint8List? localBytes,
+    Stream<List<int>> Function()? openRead,
   }) {
     return AgentStreamImageInput(
       dataUrl: dataUrl ?? this.dataUrl,
@@ -153,6 +161,8 @@ class AgentStreamImageInput {
       name: name ?? this.name,
       size: size ?? this.size,
       detail: detail ?? this.detail,
+      localBytes: localBytes ?? this.localBytes,
+      openRead: openRead ?? this.openRead,
     );
   }
 }

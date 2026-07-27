@@ -551,6 +551,7 @@ void main() {
     controller.enableSessionAutoRefresh(store);
 
     expect(notifyCount, 1);
+    final autoRefreshRuntime = controller.runtime;
     expect(controller.runtime.hospitalBagCartStore, same(cartStore));
     expect(controller.runtime.ibclcConsultStore, same(consultStore));
     expect(
@@ -573,7 +574,8 @@ void main() {
       ),
     );
 
-    expect(notifyCount, 2);
+    expect(notifyCount, 1);
+    expect(controller.runtime, same(autoRefreshRuntime));
     expect(controller.runtime.currentSession.accessToken, 'fresh-access');
     expect(controller.runtime.hospitalBagCartStore, same(cartStore));
     expect(controller.runtime.ibclcConsultStore, same(consultStore));

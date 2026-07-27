@@ -199,7 +199,8 @@ class _AgentFullScreenImageState extends State<_AgentFullScreenImage> {
 
   @override
   Widget build(BuildContext context) {
-    final localBytes = _decodeDataUrl(widget.image.dataUrl);
+    final localBytes =
+        widget.image.localBytes ?? _decodeDataUrl(widget.image.dataUrl);
     if (localBytes != null) {
       return Image.memory(localBytes, fit: BoxFit.contain);
     }
@@ -256,6 +257,7 @@ class _AgentDataUrlImageState extends State<_AgentDataUrlImage> {
   void didUpdateWidget(covariant _AgentDataUrlImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.image.dataUrl != widget.image.dataUrl ||
+        !identical(oldWidget.image.localBytes, widget.image.localBytes) ||
         oldWidget.image.fileId != widget.image.fileId ||
         (oldWidget.loadImageContent == null &&
             widget.loadImageContent != null)) {
@@ -264,7 +266,7 @@ class _AgentDataUrlImageState extends State<_AgentDataUrlImage> {
   }
 
   void _resolveImage() {
-    _bytes = _decodeDataUrl(widget.image.dataUrl);
+    _bytes = widget.image.localBytes ?? _decodeDataUrl(widget.image.dataUrl);
     _remoteBytes = null;
     final fileId = widget.image.fileId.trim();
     final loader = widget.loadImageContent;

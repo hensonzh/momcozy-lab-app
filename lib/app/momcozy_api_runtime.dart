@@ -356,11 +356,11 @@ class MomCozyApiRuntime {
           jsonTransport == null && multipartTransport == null,
       agentStreamUnauthorizedHandler: canAutoRefresh
           ? () async {
-              final initialSession = sessionProvider();
+              final currentSession = sessionProvider();
               final refreshed = await refreshCoordinator!.refresh(
-                initialSession,
+                currentSession,
+                onSessionChanged: onSessionChanged,
               );
-              await onSessionChanged(refreshed);
               return refreshed.isAuthenticated;
             }
           : null,
@@ -729,9 +729,12 @@ class MomCozyRuntimeScope extends InheritedWidget {
 }
 
 class MomCozyRuntimeController extends ChangeNotifier {
-  MomCozyRuntimeController(this._runtime);
+  MomCozyRuntimeController(MomCozyApiRuntime runtime)
+    : _runtime = runtime,
+      _currentSession = runtime.currentSession;
 
   MomCozyApiRuntime _runtime;
+  MomCozySession _currentSession;
   MomCozySessionStore? _autoRefreshStore;
 
   MomCozyApiRuntime get runtime => _runtime;
@@ -755,11 +758,26 @@ class MomCozyRuntimeController extends ChangeNotifier {
       );
     }
     _runtime = runtime;
+    _currentSession = runtime.currentSession;
     notifyListeners();
   }
 
   void replaceSession(MomCozySession session) {
+    if (_canReplaceSessionInPlace(session)) {
+      _currentSession = session;
+      return;
+    }
     replaceRuntime(_runtimeForSession(session));
+  }
+
+  bool _canReplaceSessionInPlace(MomCozySession next) {
+    final current = _currentSession;
+    return _autoRefreshStore != null &&
+        current.isAuthenticated &&
+        next.isAuthenticated &&
+        current.userId == next.userId &&
+        current.babyId == next.babyId &&
+        current.locale == next.locale;
   }
 
   Future<void> logout({required MomCozySessionStore sessionStore}) async {
@@ -794,36 +812,36 @@ class MomCozyRuntimeController extends ChangeNotifier {
   void enableSessionAutoRefresh(MomCozySessionStore store) {
     if (!_runtime.supportsSessionAutoRefresh) return;
     _autoRefreshStore = store;
-    replaceRuntime(_runtimeForSession(_runtime.session));
+    replaceRuntime(_runtimeForSession(_currentSession));
   }
 
   MomCozyApiRuntime _runtimeForSession(MomCozySession session) {
     final store = _autoRefreshStore;
-    final hospitalBagCartStore = session.userId == _runtime.session.userId
+    final currentSession = _currentSession;
+    final hospitalBagCartStore = session.userId == currentSession.userId
         ? _runtime.hospitalBagCartStore
         : null;
-    final ibclcConsultStore = session.userId == _runtime.session.userId
+    final ibclcConsultStore = session.userId == currentSession.userId
         ? _runtime.ibclcConsultStore
         : null;
-    final pregnancyDiaryChangeStore = session.userId == _runtime.session.userId
+    final pregnancyDiaryChangeStore = session.userId == currentSession.userId
         ? _runtime.pregnancyDiaryChangeStore
         : null;
     final sameAuthenticatedPlanAccount =
         session.isAuthenticated &&
-        _runtime.session.isAuthenticated &&
-        session.userId == _runtime.session.userId;
+        currentSession.isAuthenticated &&
+        session.userId == currentSession.userId;
     final pregnancyPlanChangeStore = sameAuthenticatedPlanAccount
         ? _runtime.pregnancyPlanChangeStore
         : null;
     final statusDashboardCache =
-        sameAuthenticatedPlanAccount &&
-            session.babyId == _runtime.session.babyId
+        sameAuthenticatedPlanAccount && session.babyId == currentSession.babyId
         ? _runtime.statusDashboardCache
         : null;
     final milkPlanChangeStore =
         session.status == MomCozySessionStatus.authenticated &&
-            _runtime.session.status == MomCozySessionStatus.authenticated &&
-            session.userId == _runtime.session.userId
+            currentSession.status == MomCozySessionStatus.authenticated &&
+            session.userId == currentSession.userId
         ? _runtime.milkPlanChangeStore
         : null;
     final scheduleReminderGateway = sameAuthenticatedPlanAccount
@@ -875,7 +893,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
       scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       sessionStore: store,
-      sessionProvider: () => _runtime.session,
+      sessionProvider: () => _currentSession,
       onSessionChanged: (next) async {
         replaceSession(next);
       },
