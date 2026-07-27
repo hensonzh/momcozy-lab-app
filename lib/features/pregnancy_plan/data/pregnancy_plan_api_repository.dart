@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/pregnancy_plan/domain/pregnancy_plan.dart';
 
 const pregnancyPlansEndpoint = '/v1/plans';
 

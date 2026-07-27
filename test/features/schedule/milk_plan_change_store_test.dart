@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/milk_plan_change_persistence.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:app/features/agent_hub/agent_hub_page.dart';
+import 'package:app/features/schedule/data/milk_plan_change_persistence.dart';
+import 'package:app/features/schedule/domain/milk_plan_change_store.dart';
 
 void main() {
   test('projects only durable privacy-safe milk plan change fields', () {

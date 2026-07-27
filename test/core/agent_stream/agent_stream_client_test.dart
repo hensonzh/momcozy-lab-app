@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
 
 import '../../support/fixture_reader.dart';
 

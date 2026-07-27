@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:app/core/auth/momcozy_session.dart';
 
 void main() {
   group('MomCozySession', () {

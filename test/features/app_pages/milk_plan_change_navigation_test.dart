@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/features/schedule/domain/milk_plan_change_store.dart';
 
 import '../../support/fixture_api_transport.dart';
 

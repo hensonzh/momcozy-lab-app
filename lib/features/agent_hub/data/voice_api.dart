@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart';
-import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/network/transport_security_policy.dart';
+import 'package:app/core/privacy/log_redactor.dart';
+import 'package:app/features/agent_hub/domain/agent_voice.dart';
 
 const speechTranscribeChunkEndpoint = '/v1/speech/transcribe-chunk';
 const realtimeVoiceStreamEndpoint = '/v1/realtime-voice-stream';

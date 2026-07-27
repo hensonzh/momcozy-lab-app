@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:app/core/auth/momcozy_auth_api.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/core/network/api_envelope.dart';
+import 'package:app/core/network/api_json_transport.dart';
 
 import '../../support/fixture_api_transport.dart';
 

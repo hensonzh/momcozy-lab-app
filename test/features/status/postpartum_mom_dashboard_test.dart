@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/core/preferences/volume_unit_preference.dart';
+import 'package:app/features/records/domain/records.dart';
+import 'package:app/features/status/presentation/postpartum_mom_dashboard.dart';
+import 'package:app/features/status/presentation/status_dashboard_controller.dart';
 
 void main() {
   group('PostpartumMomDashboard', () {

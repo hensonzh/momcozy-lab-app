@@ -1,6 +1,6 @@
-# MomCozy Flutter App
+# App
 
-Production Flutter client for MomCozyApp.
+MomCozy production Flutter client.
 
 The Flutter application now lives directly at the repository root. Supporting
 documentation remains under `docs/`, automation under `scripts/`, and Flutter
@@ -27,7 +27,7 @@ Android NDK: 28.2.13676358
 CMake: 3.22.1
 ```
 
-From the `MomCozyApp/` repository root:
+From the `app/` repository root:
 
 ```bash
 make flutter-check
@@ -64,21 +64,29 @@ make flutter-invite-dev
 ```bash
 MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5554 \
 MOMCOZY_API_BASE_URL=http://10.0.2.2:8000 \
+MOMCOZY_AGENT_API_BASE_URL=http://10.0.2.2:8010 \
 make flutter-invite-dev
 ```
 
-Agent Hub 默认使用 SSE transport，并可通过 dart-define 配置：
+`MOMCOZY_API_BASE_URL` 仅指向 Product API，文件上传等业务请求继续使用它。
+Agent Hub 使用独立 Runtime 的 SSE transport，并只通过
+`MOMCOZY_AGENT_API_BASE_URL` 配置 Runtime 服务根地址：
 
 ```bash
 flutter run \
-  --dart-define=MOMCOZY_API_BASE_URL=http://192.168.x.x:8769 \
-  --dart-define=MOMCOZY_AGENT_RUNS_URL=http://192.168.x.x:8769/v1/agent/runs \
-  --dart-define=MOMCOZY_API_TOKEN=APP_API_TEST \
-  --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user
+  --dart-define=MOMCOZY_API_BASE_URL=http://192.168.x.x:8000 \
+  --dart-define=MOMCOZY_AGENT_API_BASE_URL=http://192.168.x.x:8010
 ```
 
-Android 真机不能使用 `127.0.0.1` 访问电脑上的 Agent 服务，需要改成手机可访问的局域网或公网地址。Android emulator 可使用 `10.0.2.2`。
-如 cancel 服务和统一 API 分开部署，可额外设置 `MOMCOZY_AGENT_CANCEL_URL`。
+真机联调前，Agent Runtime Compose 需设置
+`MOMCOZY_AGENT_API_BIND=0.0.0.0:8010`；默认仅监听
+`127.0.0.1:8010`，不会暴露到局域网。
+
+App 会从 Agent Runtime base 统一派生 `/v1/agent/runs`、
+run cancel、actions 和 client-events 地址。Android 真机不能使用
+`127.0.0.1` 访问电脑上的服务，需要改成手机可访问的局域网或公网地址；
+Android emulator 可使用 `10.0.2.2`。登录后获得的 access token 会作为
+Bearer token 同时用于 Product API 和 Agent Runtime。
 
 Current Android package IDs:
 

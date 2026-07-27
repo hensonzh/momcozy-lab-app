@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
-import 'package:momcozy_flutter_app/native/pump_device_snapshot_binding.dart';
+import 'package:app/core/ble/pump_device_snapshot.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
+import 'package:app/native/pump_device_snapshot_binding.dart';
 
 class PumpAgentUploadSnapshotSync {
   PumpAgentUploadSnapshotSync({

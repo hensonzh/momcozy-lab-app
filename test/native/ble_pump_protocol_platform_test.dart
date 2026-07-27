@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/ble/ble_protocol.dart';
-import 'package:momcozy_flutter_app/native/ble_pump_protocol_platform.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:app/core/ble/ble_protocol.dart';
+import 'package:app/native/ble_pump_protocol_platform.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
 
 void main() {
   test('BLE pump protocol platform writes packet goldens', () async {

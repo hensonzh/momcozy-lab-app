@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/media/domain/media_upload.dart';
 
 const mediaUploadEndpoint = '/v1/files/upload';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/privacy/log_redactor.dart';
 
 class MomCozyTelemetryEvent {
   MomCozyTelemetryEvent({

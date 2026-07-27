@@ -3,12 +3,12 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/card_export.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/artifacts/agent_card_export.dart';
+import 'package:app/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart';
+import 'package:app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
+import 'package:app/features/agent_hub/data/card_export.dart';
 
 class AgentArtifactPanel extends StatelessWidget {
   const AgentArtifactPanel({

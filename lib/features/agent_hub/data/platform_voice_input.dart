@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:app/features/agent_hub/domain/agent_voice.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';

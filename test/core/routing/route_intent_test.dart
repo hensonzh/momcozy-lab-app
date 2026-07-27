@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
+import 'package:app/core/routing/route_intent.dart';
 
 import '../../support/fixture_reader.dart';
 

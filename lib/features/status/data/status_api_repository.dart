@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/status/domain/status_overview.dart';
 
 const statusProfileEndpoint = '/v1/profile/me';
 const statusInfantsEndpoint = '/v1/profile/infants';

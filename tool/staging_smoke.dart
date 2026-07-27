@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:momcozy_flutter_app/core/staging/staging_smoke.dart';
+import 'package:app/core/staging/staging_smoke.dart';
 
 Future<void> main() async {
   final config = StagingSmokeConfig.fromEnvironment(Platform.environment);

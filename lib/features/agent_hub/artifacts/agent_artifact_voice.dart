@@ -1,4 +1,4 @@
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 String? agentArtifactVoiceFallbackText(Iterable<AgentArtifactCardView> cards) {
   final cardList = cards.toList(growable: false);

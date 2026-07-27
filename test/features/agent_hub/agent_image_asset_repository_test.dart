@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/agent_image_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:app/features/agent_hub/data/agent_image_asset_repository.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
 
 import '../../support/fixture_api_transport.dart';
 

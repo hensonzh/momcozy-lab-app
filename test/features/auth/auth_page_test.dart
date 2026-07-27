@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/core/auth/momcozy_auth_api.dart';
+import 'package:app/core/auth/momcozy_auth_device_id.dart';
+import 'package:app/core/auth/momcozy_last_invite_code.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/features/auth/presentation/auth_page.dart';
 
 import '../../support/fixture_api_transport.dart';
 

@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:app/features/agent_hub/agent_hub_interaction_store.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 void main() {
   group('restorable conversation detection', () {

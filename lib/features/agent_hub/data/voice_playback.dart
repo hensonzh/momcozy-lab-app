@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:app/features/agent_hub/data/voice_api.dart';
+import 'package:app/features/agent_hub/domain/agent_voice.dart';
 
 const defaultAgentVoicePcmPlayerChannelName =
     'com.momcozymai.flutter/voice_pcm_player';

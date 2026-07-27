@@ -7,6 +7,8 @@ class AgentStreamRequest {
     this.runId,
     this.afterSequence = 0,
     this.locale = 'en-US',
+    this.timezone,
+    this.messageSentAt,
     this.images = const <AgentStreamImageInput>[],
     this.metadata = const <String, Object?>{},
     this.idempotencyKey,
@@ -17,6 +19,8 @@ class AgentStreamRequest {
   final String? runId;
   final int afterSequence;
   final String locale;
+  final String? timezone;
+  final String? messageSentAt;
   final List<AgentStreamImageInput> images;
   final Map<String, Object?> metadata;
   final String? idempotencyKey;
@@ -25,6 +29,9 @@ class AgentStreamRequest {
     'message': message,
     if (threadId != null) 'threadId': threadId,
     if (locale.trim().isNotEmpty) 'locale': locale,
+    if (timezone?.trim().isNotEmpty ?? false) 'timezone': timezone,
+    if (messageSentAt?.trim().isNotEmpty ?? false)
+      'messageSentAt': messageSentAt,
     if (images.isNotEmpty)
       'images': images.map((image) => image.toMap()).toList(growable: false),
     if (metadata.isNotEmpty) 'metadata': metadata,
@@ -42,11 +49,38 @@ class AgentStreamRequest {
       runId: runId,
       afterSequence: afterSequence < 0 ? 0 : afterSequence,
       locale: locale,
+      timezone: timezone,
+      messageSentAt: messageSentAt,
       images: images,
       metadata: metadata,
       idempotencyKey: idempotencyKey,
     );
   }
+
+  AgentStreamRequest withRunCreateContext(AgentRunCreateContext context) {
+    return AgentStreamRequest(
+      message: message,
+      threadId: threadId,
+      runId: runId,
+      afterSequence: afterSequence,
+      locale: locale,
+      timezone: context.timezone,
+      messageSentAt: context.messageSentAt,
+      images: images,
+      metadata: metadata,
+      idempotencyKey: idempotencyKey,
+    );
+  }
+}
+
+class AgentRunCreateContext {
+  const AgentRunCreateContext({
+    required this.timezone,
+    required this.messageSentAt,
+  });
+
+  final String timezone;
+  final String messageSentAt;
 }
 
 class AgentStreamImageInput {
@@ -117,10 +151,25 @@ Map<String, Object?> buildProductionAgentRunPayload(
   final normalizedIdempotencyKey = (idempotencyKey ?? request.idempotencyKey)
       ?.trim();
   final normalizedLocale = request.locale.trim();
+  final normalizedSource = _productionClientContextString(
+    request.metadata['source'],
+  );
+  final normalizedTimezone = request.timezone?.trim();
+  final normalizedMessageSentAt = request.messageSentAt?.trim();
+  final hospitalBagCart = _productionHospitalBagCart(
+    request.metadata['hospital_bag_cart'],
+  );
   final clientContext = <String, Object?>{
-    ...request.metadata,
     if (normalizedLocale.isNotEmpty) 'locale': normalizedLocale,
-  }..remove('form_submission');
+    if (normalizedTimezone != null && normalizedTimezone.isNotEmpty)
+      'timezone': normalizedTimezone,
+    if (normalizedMessageSentAt != null && normalizedMessageSentAt.isNotEmpty)
+      'message_sent_at': normalizedMessageSentAt,
+  };
+  if (normalizedSource != null) clientContext['source'] = normalizedSource;
+  if (hospitalBagCart != null) {
+    clientContext['hospital_bag_cart'] = hospitalBagCart;
+  }
 
   return {
     if (threadId != null && threadId.isNotEmpty && _looksLikeUuid(threadId))
@@ -132,6 +181,145 @@ Map<String, Object?> buildProductionAgentRunPayload(
     if (normalizedIdempotencyKey != null && normalizedIdempotencyKey.isNotEmpty)
       'idempotency_key': normalizedIdempotencyKey,
   };
+}
+
+String? _productionClientContextString(Object? value) {
+  if (value is! String) return null;
+  final normalized = value.trim();
+  return normalized.isEmpty ? null : normalized;
+}
+
+Map<String, Object?>? _productionHospitalBagCart(Object? value) {
+  if (value == null) return null;
+  final cart = _stringKeyedMap(value);
+  if (cart == null) {
+    throw const AgentStreamPayloadException('Invalid hospital bag cart.');
+  }
+  final rawGroups = cart['groups'];
+  final rawTotals = cart['totals'];
+  if (rawGroups is! List || rawTotals is! Map) {
+    throw const AgentStreamPayloadException('Invalid hospital bag cart.');
+  }
+
+  return {
+    'groups': rawGroups
+        .map(_productionHospitalBagCartGroup)
+        .toList(growable: false),
+    'totals': _productionHospitalBagCartTotals(rawTotals),
+  };
+}
+
+Map<String, Object?> _productionHospitalBagCartGroup(Object? value) {
+  final group = _stringKeyedMap(value);
+  final rawItems = group?['items'];
+  if (group == null || rawItems is! List) {
+    throw const AgentStreamPayloadException('Invalid hospital bag cart group.');
+  }
+  return {
+    ..._allowedFields(group, const {'title', 'tone'}),
+    'items': rawItems
+        .map(_productionHospitalBagCartItem)
+        .toList(growable: false),
+  };
+}
+
+Map<String, Object?> _productionHospitalBagCartItem(Object? value) {
+  final item = _stringKeyedMap(value);
+  if (item == null) {
+    throw const AgentStreamPayloadException('Invalid hospital bag cart item.');
+  }
+  return _allowedFields(item, const {
+    'id',
+    'name',
+    'desc',
+    'qty',
+    'price',
+    'currency',
+    'price_label',
+    'sale_price_label',
+    'official_price_usd',
+    'sale_price_usd',
+    'exchange_rate_usd_cny',
+    'product_url',
+    'image_url',
+    'image_alt',
+    'sku_id',
+    'model',
+    'keywords',
+  });
+}
+
+Map<String, Object?> _productionHospitalBagCartTotals(Object? value) {
+  final totals = _stringKeyedMap(value);
+  if (totals == null) {
+    throw const AgentStreamPayloadException(
+      'Invalid hospital bag cart totals.',
+    );
+  }
+  final result = _allowedFields(totals, const {
+    'currency',
+    'subtotal',
+    'itemCount',
+    'discount',
+    'shipping',
+    'total',
+    'exchange_rate_usd_cny',
+    'converted_usd_subtotal',
+    'mixed_currency',
+  });
+  if (!totals.containsKey('itemCount') && totals.containsKey('item_count')) {
+    result['itemCount'] = totals['item_count'];
+  }
+  final rawCurrencyTotals = totals['currency_totals'];
+  if (rawCurrencyTotals != null) {
+    if (rawCurrencyTotals is! List) {
+      throw const AgentStreamPayloadException(
+        'Invalid hospital bag cart currency totals.',
+      );
+    }
+    result['currency_totals'] = rawCurrencyTotals
+        .map((value) {
+          final currencyTotal = _stringKeyedMap(value);
+          if (currencyTotal == null) {
+            throw const AgentStreamPayloadException(
+              'Invalid hospital bag cart currency total.',
+            );
+          }
+          final result = _allowedFields(currencyTotal, const {
+            'currency',
+            'subtotal',
+            'itemCount',
+            'discount',
+            'shipping',
+            'total',
+          });
+          if (!currencyTotal.containsKey('itemCount') &&
+              currencyTotal.containsKey('item_count')) {
+            result['itemCount'] = currencyTotal['item_count'];
+          }
+          return result;
+        })
+        .toList(growable: false);
+  }
+  return result;
+}
+
+Map<String, Object?> _allowedFields(
+  Map<String, Object?> source,
+  Set<String> allowed,
+) => {
+  for (final entry in source.entries)
+    if (allowed.contains(entry.key)) entry.key: entry.value,
+};
+
+Map<String, Object?>? _stringKeyedMap(Object? value) {
+  if (value is! Map) return null;
+  final result = <String, Object?>{};
+  for (final entry in value.entries) {
+    if (entry.key is! String) return null;
+    result[entry.key as String] = entry.value;
+  }
+  return result;
 }
 
 Map<String, Object?>? _productionFormSubmissionAttachment(
@@ -179,12 +367,17 @@ enum AgentRunLifecycleStatus {
   completed,
   failed,
   cancelled,
+  expired,
   unknown;
 
   bool get isActive => this == queued || this == running;
 
   bool get isTerminal => switch (this) {
-    waitingForConfirmation || completed || failed || cancelled => true,
+    waitingForConfirmation ||
+    completed ||
+    failed ||
+    cancelled ||
+    expired => true,
     _ => false,
   };
 }
@@ -209,6 +402,7 @@ class AgentRunStatusSnapshot {
       AgentRunLifecycleStatus.completed => 'run.completed',
       AgentRunLifecycleStatus.failed => 'run.failed',
       AgentRunLifecycleStatus.cancelled => 'run.cancelled',
+      AgentRunLifecycleStatus.expired => 'run.expired',
       _ => null,
     };
     if (eventType == null) return null;

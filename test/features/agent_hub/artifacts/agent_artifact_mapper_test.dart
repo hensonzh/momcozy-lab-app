@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 
 import '../../../support/fixture_reader.dart';
 

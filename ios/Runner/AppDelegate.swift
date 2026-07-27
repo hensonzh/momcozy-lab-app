@@ -17,5 +17,10 @@ import UIKit
     ) {
       VoicePcmPlayerPlugin.register(with: registrar)
     }
+    if let registrar = engineBridge.pluginRegistry.registrar(
+      forPlugin: "MomcozyAgentRunContextPlugin"
+    ) {
+      AgentRunContextPlugin.register(with: registrar)
+    }
   }
 }

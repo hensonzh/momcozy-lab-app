@@ -1,4 +1,4 @@
-package com.momcozymai.momcozy_flutter_app
+package com.momcozymai.app
 
 internal object PumpNavigationBridge {
     private var pendingPath: String = ""

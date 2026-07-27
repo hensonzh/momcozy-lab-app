@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
 import '../../support/fake_agent_voice.dart';

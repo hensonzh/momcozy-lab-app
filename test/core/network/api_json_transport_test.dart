@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:app/core/network/api_envelope.dart';
+import 'package:app/core/network/api_json_transport.dart';
 
 void main() {
   group('IoApiJsonTransport', () {

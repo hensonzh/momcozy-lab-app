@@ -4,10 +4,10 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 import '../test/support/test_pdf_fixture.dart';

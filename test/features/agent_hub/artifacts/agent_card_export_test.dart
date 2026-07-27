@@ -2,10 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+import 'package:app/features/agent_hub/artifacts/agent_card_export.dart';
 
 void main() {
   test('builds the approved sanitized UTC card filename', () {

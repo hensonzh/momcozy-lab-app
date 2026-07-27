@@ -6,7 +6,7 @@ void main() {
   test('Android PCM playback stays off the platform main thread', () {
     final source = File(
       'android/app/src/main/kotlin/com/momcozymai/'
-      'momcozy_flutter_app/MainActivity.kt',
+      'app/MainActivity.kt',
     ).readAsStringSync();
 
     expect(source, contains('HandlerThread(VOICE_PCM_THREAD_NAME)'));

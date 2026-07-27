@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 
 DEFAULT_API_BASE_URL="https://lute-momcozylab.luteos.cloud:8443"
+DEFAULT_AGENT_API_BASE_URL="${DEFAULT_API_BASE_URL}"
 DEFAULT_DOWNLOAD_BASE_URL="${DEFAULT_API_BASE_URL}/app"
 DEFAULT_UPLOAD_TARGET="ubuntu@54.254.112.41:/var/www/momcozy/android-apk/"
 DEFAULT_RSYNC_RSH="ssh -i ${HOME}/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ConnectTimeout=10"
@@ -19,7 +20,8 @@ Builds the Flutter Android APK, generates its download page and "Momcozy Lab"
 QR code under dist/android-apk/, then uploads that directory with rsync.
 
 Environment overrides:
-  MOMCOZY_API_BASE_URL           API compiled into the Flutter App.
+  MOMCOZY_API_BASE_URL           Product API compiled into the Flutter App.
+  MOMCOZY_AGENT_API_BASE_URL     Agent Runtime API compiled into the Flutter App.
   MOMCOZY_DOWNLOAD_BASE_URL      Public URL that will host dist/android-apk/.
   MOMCOZY_APK_FLAVOR             local | staging | production (default: staging).
   MOMCOZY_APK_MODE               debug | release (default: release).
@@ -55,13 +57,14 @@ esac
 cd "${PROJECT_ROOT}"
 
 api_base_url="${MOMCOZY_API_BASE_URL:-${DEFAULT_API_BASE_URL}}"
+agent_api_base_url="${MOMCOZY_AGENT_API_BASE_URL:-${DEFAULT_AGENT_API_BASE_URL}}"
 download_base_url="${MOMCOZY_DOWNLOAD_BASE_URL:-${DEFAULT_DOWNLOAD_BASE_URL}}"
 apk_flavor="${MOMCOZY_APK_FLAVOR:-staging}"
 apk_mode="${MOMCOZY_APK_MODE:-release}"
 skip_upload="${MOMCOZY_SKIP_UPLOAD:-0}"
 upload_target="${MOMCOZY_UPLOAD_TARGET:-${DEFAULT_UPLOAD_TARGET}}"
 rsync_rsh="${MOMCOZY_RSYNC_RSH:-${DEFAULT_RSYNC_RSH}}"
-dart_defines="MOMCOZY_API_BASE_URL=${api_base_url}"
+dart_defines="MOMCOZY_API_BASE_URL=${api_base_url},MOMCOZY_AGENT_API_BASE_URL=${agent_api_base_url}"
 
 if [[ "${skip_upload}" != "0" && "${skip_upload}" != "1" ]]; then
   printf 'MOMCOZY_SKIP_UPLOAD must be 0 or 1.\n' >&2
@@ -82,7 +85,8 @@ export MOMCOZY_APK_FLAVOR="${apk_flavor}"
 export MOMCOZY_APK_MODE="${apk_mode}"
 
 printf 'Building Momcozy Lab Flutter App\n'
-printf '  API:      %s\n' "${api_base_url}"
+printf '  Product:  %s\n' "${api_base_url}"
+printf '  Agent:    %s\n' "${agent_api_base_url}"
 printf '  Download: %s\n' "${download_base_url}"
 printf '  Variant:  %s %s\n' "${apk_flavor}" "${apk_mode}"
 if [[ "${skip_upload}" == "1" ]]; then

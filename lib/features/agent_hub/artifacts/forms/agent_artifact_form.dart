@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 class AgentArtifactForm extends StatefulWidget {
   const AgentArtifactForm({

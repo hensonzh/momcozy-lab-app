@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/features/agent_hub/citations/agent_citation.dart';
 
 void main() {
   group('AgentCitationMapper', () {

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/features/schedule/domain/schedule_plan.dart';
+import 'package:app/features/schedule/domain/schedule_reminder.dart';
 
 import '../support/fixture_api_transport.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_voice.dart';
 
 void main() {
   test('projects only the latest artifact title and safe body copy', () {

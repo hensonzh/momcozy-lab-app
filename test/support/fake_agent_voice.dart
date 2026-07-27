@@ -1,4 +1,4 @@
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:app/features/agent_hub/domain/agent_voice.dart';
 
 class ImmediateAgentVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   const ImmediateAgentVoicePlaybackPlayer();

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/storage/user_scoped_storage_key.dart';
+import 'package:app/core/storage/user_scoped_storage_key.dart';
 
 void main() {
   test('builds a stable encoded account-scoped storage key', () {

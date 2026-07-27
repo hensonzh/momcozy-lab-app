@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_reminder_preference_store.dart';
+import 'package:app/features/schedule/data/schedule_reminder_preference_store.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

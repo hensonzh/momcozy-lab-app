@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 import 'agent_stream_event.dart';
-import 'agent_workflow_prompt.dart';
 
 const _appendOnlyTextStreamSchemaVersion = 'append-only.v1';
 const _maxPendingTextSegments = 64;
@@ -33,8 +32,6 @@ class AgentStreamRunState {
     this.artifactEvents = const <String, AgentStreamEvent>{},
     this.actionEvents = const <String, AgentStreamEvent>{},
     this.quickReplies = const <String>[],
-    this.workflowReply,
-    this.workflowPrompt,
     this.completedAssistantMessageReceived = false,
     this.textStreamId,
     this.nextTextSegmentIndex = 0,
@@ -58,8 +55,6 @@ class AgentStreamRunState {
   final Map<String, AgentStreamEvent> artifactEvents;
   final Map<String, AgentStreamEvent> actionEvents;
   final List<String> quickReplies;
-  final Map<String, Object?>? workflowReply;
-  final AgentWorkflowPrompt? workflowPrompt;
   final bool completedAssistantMessageReceived;
   final String? textStreamId;
   final int nextTextSegmentIndex;
@@ -151,12 +146,6 @@ class AgentStreamRunState {
       artifactEvents: nextArtifactEvents,
       actionEvents: nextActionEvents,
       quickReplies: nextQuickReplies,
-      workflowReply: completedAssistantMessage
-          ? event.workflowReply
-          : workflowReply,
-      workflowPrompt: completedAssistantMessage
-          ? event.workflowPrompt
-          : workflowPrompt,
       completedAssistantMessageReceived: nextCompletedAssistantMessage,
       seenReplayKeys: nextSeenReplayKeys,
       lastSequence: nextSequence,
@@ -176,7 +165,7 @@ class AgentStreamRunState {
         phase: AgentStreamRunPhase.waitingForConfirmation,
       );
     }
-    if (type == 'run.failed' || type == 'error') {
+    if (type == 'run.failed' || type == 'run.expired' || type == 'error') {
       return nextState.copyWith(
         phase: AgentStreamRunPhase.error,
         errorMessage:
@@ -197,7 +186,8 @@ class AgentStreamRunState {
         event.type == 'message.completed' ||
         event.type == 'run.completed' ||
         event.type == 'run.failed' ||
-        event.type == 'run.cancelled';
+        event.type == 'run.cancelled' ||
+        event.type == 'run.expired';
   }
 
   _TextStreamUpdate _nextTextStream(AgentStreamEvent event) {
@@ -398,8 +388,6 @@ class AgentStreamRunState {
     Map<String, AgentStreamEvent>? artifactEvents,
     Map<String, AgentStreamEvent>? actionEvents,
     List<String>? quickReplies,
-    Object? workflowReply = _unsetCopyValue,
-    Object? workflowPrompt = _unsetCopyValue,
     bool? completedAssistantMessageReceived,
     Set<String>? seenReplayKeys,
     int? lastSequence,
@@ -428,12 +416,6 @@ class AgentStreamRunState {
       artifactEvents: artifactEvents ?? this.artifactEvents,
       actionEvents: actionEvents ?? this.actionEvents,
       quickReplies: quickReplies ?? this.quickReplies,
-      workflowReply: identical(workflowReply, _unsetCopyValue)
-          ? this.workflowReply
-          : workflowReply as Map<String, Object?>?,
-      workflowPrompt: identical(workflowPrompt, _unsetCopyValue)
-          ? this.workflowPrompt
-          : workflowPrompt as AgentWorkflowPrompt?,
       completedAssistantMessageReceived:
           completedAssistantMessageReceived ??
           this.completedAssistantMessageReceived,
@@ -469,8 +451,6 @@ class AgentStreamRunState {
       if (_hasValue(textIntegrityErrorCode))
         'textIntegrityErrorCode': textIntegrityErrorCode,
       if (quickReplies.isNotEmpty) 'quickReplies': quickReplies,
-      if (workflowReply != null) 'workflowReply': workflowReply,
-      if (workflowPrompt != null) 'workflowPrompt': workflowPrompt!.toMap(),
       if (hasCompletedAssistantMessage)
         'completedAssistantMessageReceived': true,
       if (_seenReplayKeys.isNotEmpty)
@@ -520,12 +500,6 @@ class AgentStreamRunState {
       quickReplies: mappedQuickReplies.isNotEmpty
           ? mappedQuickReplies
           : _latestQuickReplies(events),
-      workflowReply: normalizeWorkflowReply(
-        map['workflowReply'] ?? map['workflow_reply'],
-      ),
-      workflowPrompt: AgentWorkflowPrompt.tryParse(
-        map['workflowPrompt'] ?? map['workflow_prompt'],
-      ),
       completedAssistantMessageReceived:
           map['completedAssistantMessageReceived'] == true ||
           map['completed_assistant_message_received'] == true ||

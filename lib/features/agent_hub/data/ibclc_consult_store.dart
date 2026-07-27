@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:app/features/agent_hub/domain/ibclc_consult.dart';
 
 const _maxIbclcConsultCompletions = 50;
 

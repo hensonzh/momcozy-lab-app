@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
+import 'package:app/core/privacy/log_redactor.dart';
 
 void main() {
   group('log redactor', () {

@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_change_persistence.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/features/pregnancy_plan/data/pregnancy_plan_change_persistence.dart';
+import 'package:app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 
 import '../support/fixture_api_transport.dart';
 

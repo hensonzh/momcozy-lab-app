@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:app/app/momcozy_app.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:app/features/agent_hub/agent_hub_page.dart';
 
 import '../../support/fixture_reader.dart';
 import '../../support/momcozy_test_fonts.dart';

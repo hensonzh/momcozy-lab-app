@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
+import 'package:app/features/media/domain/product_asset.dart';
 import 'package:video_player/video_player.dart';
 
 class ProductAssetVideoPlayer extends StatefulWidget {

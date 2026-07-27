@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/network/transport_security_policy.dart';
+import 'package:app/features/media/data/product_asset_repository.dart';
 
 class AgentImageAssetException implements Exception {
   const AgentImageAssetException({required this.code, this.statusCode});

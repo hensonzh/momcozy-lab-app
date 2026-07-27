@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/milk_plan_change_persistence.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:app/app/momcozy_api_runtime.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/features/schedule/data/milk_plan_change_persistence.dart';
+import 'package:app/features/schedule/domain/milk_plan_change_store.dart';
 
 import '../support/fixture_api_transport.dart';
 

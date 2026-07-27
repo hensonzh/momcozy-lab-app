@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:app/features/agent_hub/data/agent_hub_profile_repository.dart';
+import 'package:app/features/agent_hub/domain/agent_hub_greeting.dart';
 
 import '../../support/fixture_api_transport.dart';
 

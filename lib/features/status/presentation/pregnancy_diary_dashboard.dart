@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
-import 'package:momcozy_flutter_app/features/status/domain/pregnancy_diary_projection.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
+import 'package:app/features/status/domain/pregnancy_diary_projection.dart';
+import 'package:app/features/status/presentation/status_dashboard_controller.dart';
 
 const _moodOptions = ['平稳', '开心', '焦虑', '低落', '容易烦躁'];
 const _energyOptions = ['不错', '一般', '很累'];

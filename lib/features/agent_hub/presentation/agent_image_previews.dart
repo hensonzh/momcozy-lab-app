@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/features/agent_hub/domain/agent_image_input.dart';
 
 class AgentSentImages extends StatelessWidget {
   const AgentSentImages({super.key, required this.images, this.loadImageBytes});

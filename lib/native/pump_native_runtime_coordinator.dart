@@ -1,7 +1,7 @@
-import 'package:momcozy_flutter_app/native/ble_pump_protocol_platform.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
-import 'package:momcozy_flutter_app/native/pump_agent_upload_snapshot_sync.dart';
-import 'package:momcozy_flutter_app/native/pump_device_snapshot_binding.dart';
+import 'package:app/native/ble_pump_protocol_platform.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
+import 'package:app/native/pump_agent_upload_snapshot_sync.dart';
+import 'package:app/native/pump_device_snapshot_binding.dart';
 
 class PumpNativeRuntimeCoordinator {
   PumpNativeRuntimeCoordinator({

@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:app/core/auth/momcozy_session.dart';
 
 class FlutterSecureMomCozySessionStore implements MomCozySessionStore {
   const FlutterSecureMomCozySessionStore({

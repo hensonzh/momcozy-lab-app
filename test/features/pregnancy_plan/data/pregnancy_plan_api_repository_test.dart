@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
+import 'package:app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 
 import '../../../support/fixture_api_transport.dart';
 

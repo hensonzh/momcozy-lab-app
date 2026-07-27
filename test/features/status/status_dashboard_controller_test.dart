@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
-import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
-import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_cache.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:app/core/preferences/volume_unit_preference.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
+import 'package:app/features/pregnancy_plan/domain/pregnancy_plan.dart';
+import 'package:app/features/records/domain/records.dart';
+import 'package:app/features/status/data/status_preference_store.dart';
+import 'package:app/features/status/domain/status_overview.dart';
+import 'package:app/features/status/domain/status_selection.dart';
+import 'package:app/features/status/presentation/status_dashboard_cache.dart';
+import 'package:app/features/status/presentation/status_dashboard_controller.dart';
 
 void main() {
   group('StatusDashboardController', () {

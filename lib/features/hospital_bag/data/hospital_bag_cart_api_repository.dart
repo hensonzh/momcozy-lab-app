@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 const hospitalBagCartUpdateEndpoint = '/v1/plans';
 

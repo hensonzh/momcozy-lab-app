@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
-import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:app/core/ble/pump_device_snapshot.dart';
+import 'package:app/native/p0_platform_interfaces.dart';
 
 const defaultPumpNotifyCharacteristicUuid =
     '0000af02-0000-1000-8000-00805f9b34fb';

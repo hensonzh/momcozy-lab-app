@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
-import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:app/features/status/data/status_preference_store.dart';
+import 'package:app/features/status/domain/status_selection.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

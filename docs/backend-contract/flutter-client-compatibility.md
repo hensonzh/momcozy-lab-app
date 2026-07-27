@@ -1,12 +1,13 @@
 # Flutter Generated Client Compatibility
 
-Flutter app code should treat the production backend OpenAPI snapshot as the
-source of truth. The legacy raw response contracts are not compatibility
-targets.
+Flutter app code treats the Product Backend and independent Agent Runtime
+OpenAPI contracts as separate sources of truth. The legacy raw response
+contracts are not compatibility targets.
 
 ## Source Of Truth
 
-- Schema: `docs/openapi.generated.json`
+- Product schema: `product.openapi.generated.json`
+- Agent Runtime schema: `agent-runtime.openapi.generated.json`
 - Handoff: `docs/api-contract-handoff.md`
 - Smoke flows: `docs/flutter-smoke-flows.json`
 
@@ -23,7 +24,7 @@ Regenerate or validate Flutter API clients whenever a PR changes:
 - file upload multipart fields
 - voice/transcription endpoint contracts and `VOICE_PROVIDER` behavior
 
-CI must fail if the OpenAPI snapshot drifts from the current backend schema.
+CI must fail if either OpenAPI snapshot drifts from its owning backend schema.
 
 ## Compatibility Policy
 
@@ -50,6 +51,8 @@ versioning plan.
 ## Mobile Client Requirements
 
 - Send user auth through `Authorization` headers.
+- Use `MOMCOZY_API_BASE_URL` for Product APIs and
+  `MOMCOZY_AGENT_API_BASE_URL` for every `/v1/agent/*` request.
 - Never put access tokens, refresh tokens, or service keys in URLs.
 - Send refresh tokens only to `POST /v1/auth/refresh`.
 - Use `Idempotency-Key` for retryable writes.

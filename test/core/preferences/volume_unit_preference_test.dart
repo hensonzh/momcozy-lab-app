@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
+import 'package:app/core/preferences/volume_unit_preference.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

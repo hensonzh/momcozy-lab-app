@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
-import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:app/features/media/domain/media_upload.dart';
 
 class AgentHubPlatformImagePicker {
   AgentHubPlatformImagePicker({ImagePicker? picker, this.uploadRepository})

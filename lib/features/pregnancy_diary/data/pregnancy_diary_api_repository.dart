@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
 
 const pregnancyDiaryEntriesEndpoint = '/v1/pregnancy-diary/entries';
 

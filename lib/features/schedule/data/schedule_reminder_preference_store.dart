@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/core/storage/user_scoped_storage_key.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
+import 'package:app/core/storage/user_scoped_storage_key.dart';
+import 'package:app/features/schedule/domain/schedule_reminder.dart';
 
 class FlutterSecureScheduleReminderPreferenceStore
     implements ScheduleReminderPreferenceStore {

@@ -3,10 +3,10 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
-import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:app/features/agent_hub/data/platform_image_input.dart';
+import 'package:app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:app/features/media/domain/media_upload.dart';
+import 'package:app/core/network/api_json_transport.dart';
 
 void main() {
   late ImagePickerPlatform originalPlatform;

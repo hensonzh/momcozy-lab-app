@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/network/staging_certificate_trust.dart';
+import 'package:app/core/network/staging_certificate_trust.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

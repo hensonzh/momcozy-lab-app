@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:app/features/media/domain/product_asset.dart';
 
 void main() {
   group('ProductAssetReference', () {

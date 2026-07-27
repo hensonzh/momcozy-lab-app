@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
+import 'package:app/features/agent_hub/artifacts/agent_card_export.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 

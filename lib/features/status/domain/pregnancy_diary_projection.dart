@@ -1,4 +1,4 @@
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
 
 class PregnancyDiaryProjection {
   PregnancyDiaryProjection({

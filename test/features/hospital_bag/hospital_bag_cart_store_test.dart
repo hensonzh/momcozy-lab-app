@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/features/hospital_bag/data/hospital_bag_cart_store.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 void main() {
   group('Hospital bag cart domain', () {

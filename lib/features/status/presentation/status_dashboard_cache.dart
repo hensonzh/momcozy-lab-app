@@ -1,7 +1,7 @@
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
-import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
+import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
+import 'package:app/features/records/domain/records.dart';
+import 'package:app/features/status/domain/birth_journey_plan.dart';
+import 'package:app/features/status/domain/status_overview.dart';
 
 enum StatusDashboardResource {
   overview,

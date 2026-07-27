@@ -1,4 +1,4 @@
-# MomCozyApp 文档目录
+# App 文档目录
 
 本文档目录统一承载 Flutter 工程、后端合同和设备协议资料。后续不要再新增根目录 `doc/`。
 
@@ -19,6 +19,7 @@
 - Flutter staging smoke：`flutter/staging-smoke.md`
 - Flutter 真机与真泵 smoke：`flutter/p0-smoke-checklist.md`
 - BLE 设备协议：`device/设备APP蓝牙通信协议.md`
-- 后端合同快照：`backend-contract/openapi.generated.json`
+- Product 合同快照：`backend-contract/product.openapi.generated.json`
+- Agent Runtime 合同快照：`backend-contract/agent-runtime.openapi.generated.json`
 - 后端合同交接说明：`backend-contract/api-contract-handoff.md`
 - Flutter client compatibility：`backend-contract/flutter-client-compatibility.md`

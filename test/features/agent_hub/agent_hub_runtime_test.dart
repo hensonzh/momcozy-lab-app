@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/core/agent_stream/agent_stream_client.dart';
+import 'package:app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:app/core/auth/momcozy_session.dart';
+import 'package:app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:app/features/hospital_bag/data/hospital_bag_cart_store.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 void main() {
   test('default Agent Hub runner uses production run stream transport', () {
@@ -16,7 +16,7 @@ void main() {
 
     expect(
       transport.runsEndpoint.uri.toString(),
-      'http://127.0.0.1:8769/v1/agent/runs',
+      'http://127.0.0.1:8010/v1/agent/runs',
     );
     expect(transport.runsEndpoint.token, isNull);
     expect(
@@ -39,7 +39,7 @@ void main() {
 
     expect(
       cancelClient.endpoint.uri.toString(),
-      'http://127.0.0.1:8769/v1/agent/runs',
+      'http://127.0.0.1:8010/v1/agent/runs',
     );
     expect(
       cancelClient.endpoint.headers,
@@ -47,7 +47,7 @@ void main() {
     );
     expect(
       actionClient.endpoint.uri.toString(),
-      'http://127.0.0.1:8769/v1/agent/actions',
+      'http://127.0.0.1:8010/v1/agent/actions',
     );
     expect(
       actionClient.endpoint.headers,
@@ -68,6 +68,7 @@ void main() {
     final transport = client.transport as ProductionAgentSseTransport;
     final cancelClient = createSessionAgentHubCancelClient(session);
     final actionClient = createSessionAgentHubActionClient(session);
+    final clientEventClient = createSessionAgentHubClientEventClient(session);
     final request = buildSessionAgentHubRequest(
       '  Help me plan today  ',
       session: session,
@@ -79,7 +80,11 @@ void main() {
     expect(actionClient.endpoint.token, 'secure-access');
     expect(
       actionClient.endpoint.uri.toString(),
-      'http://127.0.0.1:8769/v1/agent/actions',
+      'http://127.0.0.1:8010/v1/agent/actions',
+    );
+    expect(
+      clientEventClient.endpoint?.uri.toString(),
+      'http://127.0.0.1:8010/v1/agent/runs',
     );
     expect(request.threadId, isNull);
     expect(request.locale, 'en-US');
@@ -140,12 +145,16 @@ void main() {
       final withCart = buildSessionAgentHubRequest(
         '删掉个性化用品',
         session: session,
-        clientContext: store.agentClientContext,
+        clientContext: {
+          ...store.agentClientContext!,
+          'private_state': {'must_not_cross_boundary': true},
+        },
       );
       final cart = withCart.metadata['hospital_bag_cart']! as Map;
       final groups = cart['groups']! as List;
 
       expect((groups.single as Map)['title'], '我的清单');
+      expect(withCart.metadata.containsKey('private_state'), isFalse);
     },
   );
 }

@@ -3,9 +3,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/features/status/domain/birth_journey_plan.dart';
+import 'package:app/features/status/presentation/status_dashboard_controller.dart';
 
 typedef BirthJourneyDelete = Future<bool> Function();
 typedef BirthJourneyAgentPrompt = void Function(String prompt, {bool autoSend});

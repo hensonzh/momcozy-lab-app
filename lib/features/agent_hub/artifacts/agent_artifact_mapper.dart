@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_form_normalizer.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_mapper.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/routing/safe_link_target.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_form_normalizer.dart';
+import 'package:app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:app/features/agent_hub/artifacts/agent_specialized_card_mapper.dart';
+import 'package:app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 class AgentArtifactMapper {
   const AgentArtifactMapper._();

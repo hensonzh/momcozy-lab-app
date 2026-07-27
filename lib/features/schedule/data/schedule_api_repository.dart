@@ -1,5 +1,5 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
+import 'package:app/core/network/api_json_transport.dart';
+import 'package:app/features/schedule/domain/schedule_plan.dart';
 
 const schedulePlansEndpoint = '/v1/plans';
 const scheduleTasksEndpoint = '/v1/plans/tasks';

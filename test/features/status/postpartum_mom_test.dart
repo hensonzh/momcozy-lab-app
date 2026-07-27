@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/status/domain/postpartum_mom.dart';
+import 'package:app/features/records/domain/records.dart';
+import 'package:app/features/status/domain/postpartum_mom.dart';
 
 void main() {
   group('PostpartumMilkProjection', () {

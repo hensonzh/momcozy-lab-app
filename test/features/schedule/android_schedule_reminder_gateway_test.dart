@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/android_schedule_reminder_gateway.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
+import 'package:app/features/schedule/data/android_schedule_reminder_gateway.dart';
+import 'package:app/features/schedule/domain/schedule_plan.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

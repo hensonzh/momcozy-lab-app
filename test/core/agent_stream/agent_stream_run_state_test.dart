@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:app/core/agent_stream/agent_stream_event.dart';
+import 'package:app/core/agent_stream/agent_stream_run_state.dart';
 
 import '../../support/fixture_reader.dart';
 
@@ -51,6 +51,22 @@ void main() {
       expect(state.canRetry, isTrue);
       expect(state.textContent, 'I can help ');
       expect(state.errorMessage, contains('socket closed'));
+    });
+
+    test('treats Runtime run.expired reconciliation as terminal error', () {
+      final event = AgentStreamEvent(const {
+        'event_id': 'run-status:run-expired-001:expired',
+        'type': 'run.expired',
+        'thread_id': 'thread-expired-001',
+        'run_id': 'run-expired-001',
+        'payload': {'code': 'run_expired'},
+      });
+
+      final state = const AgentStreamRunState().start().applyEvent(event);
+
+      expect(event.isTerminal, isTrue);
+      expect(state.phase, AgentStreamRunPhase.error);
+      expect(state.errorMessage, 'run_expired');
     });
 
     test(
@@ -360,82 +376,6 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
       expect(state.textContent, '已经整理好了。');
       expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
-
-    test(
-      'persists the latest workflow reply cursor across app restoration',
-      () {
-        final state = const AgentStreamRunState().start().applyEvent(
-          AgentStreamEvent(const {
-            'event_id': 'evt-workflow-reply-001',
-            'type': 'message.completed',
-            'thread_id': 'thread-workflow-reply-001',
-            'run_id': 'run-workflow-reply-001',
-            'payload': {
-              'role': 'assistant',
-              'text': '宝宝最近 24 小时大约有几片湿尿布？',
-              'workflow_reply': {
-                'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-                'workflow_type': 'milk_analysis',
-                'revision': 6,
-                'step_token': 'opaque-step-token',
-              },
-            },
-          }),
-        );
-
-        final restored = AgentStreamRunState.fromMap(state.toMap());
-
-        expect(restored.workflowReply, {
-          'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-          'workflow_type': 'milk_analysis',
-          'revision': 6,
-          'step_token': 'opaque-step-token',
-        });
-      },
-    );
-
-    test(
-      'persists the latest pregnancy workflow prompt across restoration',
-      () {
-        final state = const AgentStreamRunState().start().applyEvent(
-          AgentStreamEvent(const {
-            'event_id': 'evt-workflow-prompt-001',
-            'type': 'message.completed',
-            'thread_id': 'thread-workflow-prompt-001',
-            'run_id': 'run-workflow-prompt-001',
-            'payload': {
-              'role': 'assistant',
-              'text': '你目前做过产检了吗？',
-              'workflow_prompt': {
-                'schema_version': 'pregnancy_plan_workflow_context.v1',
-                'workflow_type': 'pregnancy_plan',
-                'status': 'active',
-                'phase': 'checkup_done_question',
-                'current_step': {
-                  'id': 'checkup_done',
-                  'kind': 'single_choice',
-                  'question': '你目前做过产检了吗？',
-                  'allow_free_text': false,
-                  'options': [
-                    {'id': 'confirm_checkup_done', 'label': '做过产检'},
-                  ],
-                },
-                'editable_steps': <Object?>[],
-                'allowed_commands': ['answer_current', 'pause'],
-              },
-            },
-          }),
-        );
-
-        final restored = AgentStreamRunState.fromMap(state.toMap());
-
-        expect(restored.workflowPrompt?.currentStep.id, 'checkup_done');
-        expect(restored.workflowPrompt?.allowedCommands, {
-          'answer_current',
-          'pause',
-        });
-      },
-    );
 
     test('does not replace indexed streamed text on completed mismatch', () {
       var state = const AgentStreamRunState().start();

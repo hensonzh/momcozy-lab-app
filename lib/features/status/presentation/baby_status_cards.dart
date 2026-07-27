@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/status/domain/baby_status_projection.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:app/app/momcozy_design_system.dart';
+import 'package:app/core/preferences/volume_unit_preference.dart';
+import 'package:app/features/records/domain/records.dart';
+import 'package:app/features/status/domain/baby_status_projection.dart';
+import 'package:app/features/status/presentation/status_dashboard_controller.dart';
 
 typedef BabyGrowthSave =
     Future<bool> Function({

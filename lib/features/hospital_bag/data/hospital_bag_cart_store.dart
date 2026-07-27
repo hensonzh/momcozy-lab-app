@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 const _maxPersistedHospitalBagCarts = 24;
 

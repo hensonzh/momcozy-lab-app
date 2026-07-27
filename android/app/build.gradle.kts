@@ -15,7 +15,7 @@ val hasReleaseSigning =
         !releaseKeyPassword.isNullOrEmpty()
 
 android {
-    namespace = "com.momcozymai.momcozy_flutter_app"
+    namespace = "com.momcozymai.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
