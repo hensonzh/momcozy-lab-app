@@ -5,7 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:app/core/agent_stream/agent_stream_event.dart';
 
-const _pregnancyDiaryChangedEventType = 'pregnancy_diary.changed';
+const _diaryChangedEventType = 'diary.changed';
 const _supportedOperations = <String>{'created', 'updated', 'deleted'};
 const _maxSeenEventIds = 64;
 
@@ -21,7 +21,7 @@ class PregnancyDiaryChange {
   });
 
   static PregnancyDiaryChange? tryFromEvent(AgentStreamEvent event) {
-    if (event.type != _pregnancyDiaryChangedEventType || event.isTransient) {
+    if (event.type != _diaryChangedEventType || event.isTransient) {
       return null;
     }
 

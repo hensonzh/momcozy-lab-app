@@ -102,7 +102,7 @@ PregnancyDiaryChange _change() {
   return PregnancyDiaryChange.tryFromEvent(
     AgentStreamEvent(const {
       'event_id': 'evt-runtime-diary-change',
-      'type': 'pregnancy_diary.changed',
+      'type': 'diary.changed',
       'payload': {
         'operation': 'created',
         'entry_id': 'diary-runtime',

@@ -200,7 +200,7 @@ void main() {
         'type': 'tool.completed',
         'payload': {
           'tool_call_id': 'call-profile',
-          'safe_output': {'preferred_name': 'Mai'},
+          'output_summary': {'status': 'completed'},
         },
       });
 
@@ -218,7 +218,7 @@ void main() {
         'payload': {
           'role': 'assistant',
           'text':
-              '我先帮你看一下。\n{"tool_name":"profile_read","safe_output":{"preferred_name":"Mai"}}',
+              '我先帮你看一下。\n{"tool_name":"profile_read","output_summary":{"status":"completed"}}',
         },
       });
 

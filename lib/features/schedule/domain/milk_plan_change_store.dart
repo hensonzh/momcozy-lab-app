@@ -9,14 +9,14 @@ const _milkPlanChangedEventType = 'milk_plan.changed';
 const _maxSeenEventIds = 64;
 const _maxAffectedDates = 31;
 
-enum MilkPlanChangeOperation { created, updated, rescheduled, deleted }
+enum MilkPlanChangeOperation { updated, rescheduled, deleted }
 
 @immutable
 class MilkPlanChange {
   const MilkPlanChange({
     required this.eventId,
     required this.affectedDateKeys,
-    this.operation = MilkPlanChangeOperation.created,
+    required this.operation,
   });
 
   static MilkPlanChange? tryFromEvent(AgentStreamEvent event) {
@@ -33,7 +33,6 @@ class MilkPlanChange {
     final rawDates =
         event.payload['affected_dates'] ?? event.payload['affectedDates'];
     final parsedOperation = switch (operation) {
-      'created' => MilkPlanChangeOperation.created,
       'updated' => MilkPlanChangeOperation.updated,
       'rescheduled' => MilkPlanChangeOperation.rescheduled,
       'deleted' => MilkPlanChangeOperation.deleted,

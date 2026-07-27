@@ -11,7 +11,7 @@ void main() {
     final change = MilkPlanChange.tryFromEvent(_event());
 
     expect(change?.eventId, 'evt-milk-plan');
-    expect(change?.operation, MilkPlanChangeOperation.created);
+    expect(change?.operation, MilkPlanChangeOperation.updated);
     expect(change?.affectedDateKeys, ['2026-07-03', '2026-07-04']);
     for (final operation in const ['updated', 'rescheduled', 'deleted']) {
       expect(
@@ -21,6 +21,7 @@ void main() {
         operation,
       );
     }
+    expect(MilkPlanChange.tryFromEvent(_event(operation: 'created')), isNull);
     expect(MilkPlanChange.tryFromEvent(_event(operation: 'unknown')), isNull);
     expect(MilkPlanChange.tryFromEvent(_event(source: 'client')), isNull);
     expect(
@@ -51,12 +52,11 @@ void main() {
   });
 
   test(
-    'merges affected dates from created, updated, rescheduled, and deleted events',
+    'merges affected dates from updated, rescheduled, and deleted events',
     () {
       final store = MilkPlanChangeStore();
       final operations = <String, List<String>>{
-        'created': ['2026-07-03'],
-        'updated': ['2026-07-04'],
+        'updated': ['2026-07-03', '2026-07-04'],
         'rescheduled': ['2026-07-05', '2026-07-06'],
         'deleted': ['2026-07-07'],
       };
@@ -76,7 +76,7 @@ void main() {
         );
       }
 
-      expect(store.revision, 4);
+      expect(store.revision, 3);
       expect(store.affectedDateKeys, [
         '2026-07-03',
         '2026-07-04',
@@ -145,9 +145,9 @@ void main() {
 
 AgentStreamEvent _event({
   String eventId = 'evt-milk-plan',
-  String operation = 'created',
+  String operation = 'updated',
   String source = 'agent_action',
-  String reason = 'created',
+  String reason = 'plan_metadata_updated',
   List<String> affectedDates = const [
     '2026-07-04',
     '2026-07-03',

@@ -205,10 +205,8 @@ Widget? _specializedArtifactCard({
     AgentArtifactPresentationKind.unsupported => _AgentUnsupportedArtifactCard(
       card: card,
     ),
-    AgentArtifactPresentationKind.milkAnalysisCard ||
-    AgentArtifactPresentationKind.milkPlanCard => _AgentMilkManagementCard(
+    AgentArtifactPresentationKind.milkAnalysisCard => _AgentMilkManagementCard(
       card: card,
-      cardType: card.artifactType ?? card.cardType ?? 'milk_plan_card',
     ),
     AgentArtifactPresentationKind.birthJourneyPlanCard =>
       _AgentBirthJourneyPlanCard(card: card),
@@ -489,26 +487,26 @@ class _AgentArtifactSpecializedShell extends StatelessWidget {
 }
 
 class _AgentMilkManagementCard extends StatelessWidget {
-  const _AgentMilkManagementCard({required this.card, required this.cardType});
+  const _AgentMilkManagementCard({required this.card});
 
   final AgentArtifactCardView card;
-  final String cardType;
 
   @override
   Widget build(BuildContext context) {
     final cardJson = _effectiveCardJson(card);
-    final isPlan = cardType == 'milk_plan_card';
     final subtitle = _displayString(cardJson['subtitle']);
     final headline = _displayString(cardJson['headline']);
-    final statusLabel = isPlan
-        ? null
-        : _displayStringField(cardJson, 'status_label', 'statusLabel');
+    final statusLabel = _displayStringField(
+      cardJson,
+      'status_label',
+      'statusLabel',
+    );
     final sections = _objectList(cardJson['sections']);
 
     return _AgentArtifactSpecializedShell(
       card: card,
-      icon: isPlan ? Icons.route_rounded : Icons.water_drop_outlined,
-      accentColor: isPlan ? MomCozyColors.care : MomCozyColors.violet,
+      icon: Icons.water_drop_outlined,
+      accentColor: MomCozyColors.violet,
       subtitle: subtitle,
       statusLabel: statusLabel,
       showLogo: false,

@@ -66,7 +66,107 @@ void main() {
       expect(card.formFields[2].isMultiSelect, isTrue);
     });
 
-    test('retains current IBCLC and milk preview artifact payloads', () {
+    test('maps canonical Agent artifact envelopes across App boundaries', () {
+      final cards = AgentArtifactMapper.cardsFromEvents([
+        _artifactEvent(
+          id: 'device-guidance-1',
+          type: 'device_guidance_card',
+          payload: {
+            'title': 'Air1 开箱指导',
+            'content': '先确认包装内的主机、集乳罩和充电线。',
+            'steps': ['打开包装', '核对配件', '首次充电'],
+          },
+        ),
+        _artifactEvent(
+          id: 'hospital-bag-1',
+          type: 'hospital_bag_card',
+          payload: {
+            'title': '待产包清单',
+            'packing_groups': [
+              {
+                'id': 'documents',
+                'title': '证件与资料',
+                'items': [
+                  {'id': 'identity-card', 'label': '身份证'},
+                ],
+              },
+            ],
+          },
+        ),
+        _artifactEvent(
+          id: 'milk-analysis-1',
+          type: 'milk_analysis_card',
+          payload: {
+            'title': '奶量分析',
+            'headline': '近 7 天奶量整体稳定',
+            'sections': [
+              {
+                'id': 'trend',
+                'title': '趋势',
+                'items': ['继续记录奶量和舒适度'],
+              },
+            ],
+          },
+        ),
+        _artifactEvent(
+          id: 'pregnancy-intake-1',
+          type: 'pregnancy_plan_intake',
+          payload: {
+            'form': {
+              'id': 'pregnancy_plan_intake',
+              'title': '孕期计划信息',
+              'submit_label': '生成孕期计划',
+              'fields': [
+                {
+                  'id': 'focus_areas',
+                  'label': '希望重点关注',
+                  'type': 'multi_select',
+                  'options': ['checkups', 'nutrition', 'exercise'],
+                },
+              ],
+            },
+          },
+        ),
+      ]);
+
+      expect(cards, hasLength(4));
+
+      final device = cards[0];
+      expect(device.artifactType, 'device_guidance_card');
+      expect(device.title, 'Air1 开箱指导');
+      expect(device.content, '先确认包装内的主机、集乳罩和充电线。');
+      expect(device.rows, containsAllInOrder(['打开包装', '核对配件', '首次充电']));
+
+      final hospitalBag = cards[1];
+      expect(
+        hospitalBag.presentationKind,
+        AgentArtifactPresentationKind.hospitalBagCard,
+      );
+      final hospitalBagView =
+          hospitalBag.specializedView as AgentHospitalBagCardView;
+      expect(hospitalBagView.groups.single.title, '证件文件包');
+      expect(hospitalBagView.groups.single.items.single.label, '身份证');
+
+      final milkAnalysis = cards[2];
+      expect(
+        milkAnalysis.presentationKind,
+        AgentArtifactPresentationKind.milkAnalysisCard,
+      );
+      expect(milkAnalysis.cardJson['headline'], '近 7 天奶量整体稳定');
+      expect(milkAnalysis.cardJson['sections'], isNotEmpty);
+
+      final pregnancyIntake = cards[3];
+      expect(
+        pregnancyIntake.presentationKind,
+        AgentArtifactPresentationKind.form,
+      );
+      final focusAreas = pregnancyIntake.formFields.single;
+      expect(focusAreas.id, 'focus_areas');
+      expect(focusAreas.isMultiSelect, isTrue);
+      expect(focusAreas.options, ['checkups', 'nutrition', 'exercise']);
+    });
+
+    test('retains current IBCLC and milk analysis artifact payloads', () {
       final cards = AgentArtifactMapper.cardsFromEvents([
         _artifactEvent(
           id: 'ibclc-1',
@@ -87,27 +187,12 @@ void main() {
           },
         ),
         _artifactEvent(
-          id: 'milk-preview-1',
-          type: 'milk_plan_preview',
-          payload: {
-            'title': '三天泵奶计划',
-            'summary': '将晚间泵奶提前。',
-            'direction': 'maintain',
-            'tasks': [
-              {'title': '20:00 泵奶'},
-            ],
-            'reminders': [
-              {'title': '及时补水'},
-            ],
-          },
-        ),
-        _artifactEvent(
           id: 'milk-analysis-1',
           type: 'milk_analysis_card',
           payload: {
             'card_type': 'milk_analysis_card',
             'title': '奶量分析',
-            'headline': '可继续当前节奏或制定稳奶计划',
+            'headline': '近 7 天奶量整体稳定',
             'sections': [
               {
                 'id': 'milk',
@@ -119,16 +204,18 @@ void main() {
               {
                 'id': 'next',
                 'title': '下一步',
-                'items': ['可继续当前节奏或制定稳奶计划'],
+                'items': ['继续记录奶量和舒适度'],
               },
             ],
-            'can_start_plan': true,
-            'recommended_direction': 'maintain',
+            'maternal_red_flags': false,
+            'infant_intake_risk': false,
+            'data_coverage': 'ready',
+            'pumping_trend': 'stable',
           },
         ),
       ]);
 
-      expect(cards, hasLength(3));
+      expect(cards, hasLength(2));
       expect(
         cards[0].presentationKind,
         AgentArtifactPresentationKind.ibclcConsultCard,
@@ -145,17 +232,28 @@ void main() {
       expect(consult.chatNote, '将同步本轮哺乳背景');
       expect(
         cards[1].presentationKind,
-        AgentArtifactPresentationKind.milkPlanPreview,
-      );
-      expect(cards[1].payload['tasks'], isA<List<Object?>>());
-      expect(cards[1].payload['reminders'], isA<List<Object?>>());
-      expect(
-        cards[2].presentationKind,
         AgentArtifactPresentationKind.milkAnalysisCard,
       );
-      expect(cards[2].title, '奶量分析');
-      expect(cards[2].cardJson['headline'], '可继续当前节奏或制定稳奶计划');
-      expect(cards[2].cardJson['sections'], isA<List<Object?>>());
+      expect(cards[1].title, '奶量分析');
+      expect(cards[1].cardJson['headline'], '近 7 天奶量整体稳定');
+      expect(cards[1].cardJson['sections'], isA<List<Object?>>());
+    });
+
+    test('ignores retired milk-plan creation artifacts', () {
+      final cards = AgentArtifactMapper.cardsFromEvents([
+        _artifactEvent(
+          id: 'retired-preview',
+          type: 'milk_plan_preview',
+          payload: {'title': '不应展示的新奶量计划预览'},
+        ),
+        _artifactEvent(
+          id: 'retired-card',
+          type: 'milk_plan_card',
+          payload: {'title': '不应展示的新奶量计划'},
+        ),
+      ]);
+
+      expect(cards, isEmpty);
     });
 
     test('maps the legacy IBCLC card envelope and explicit consult id', () {
@@ -223,22 +321,22 @@ void main() {
     test('merges repeated artifact updates by artifact id', () {
       final cards = AgentArtifactMapper.cardsFromEvents([
         _artifactEvent(
-          id: 'preview-1',
-          type: 'milk_plan_preview',
-          payload: {'title': '第一版'},
+          id: 'analysis-1',
+          type: 'milk_analysis_card',
+          payload: {'title': '第一版分析'},
         ),
         AgentStreamEvent({
           ..._artifactEvent(
-            id: 'preview-1',
-            type: 'milk_plan_preview',
-            payload: {'title': '更新版'},
+            id: 'analysis-1',
+            type: 'milk_analysis_card',
+            payload: {'title': '更新版分析'},
           ).raw,
           'type': 'artifact.updated',
         }),
       ]);
 
       expect(cards, hasLength(1));
-      expect(cards.single.title, '更新版');
+      expect(cards.single.title, '更新版分析');
     });
 
     test('maps a direct legacy support ticket artifact to a form', () {

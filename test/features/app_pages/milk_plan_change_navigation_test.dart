@@ -15,6 +15,7 @@ void main() {
     store.record(
       const MilkPlanChange(
         eventId: 'evt-nav-milk',
+        operation: MilkPlanChangeOperation.updated,
         affectedDateKeys: ['2026-07-13'],
       ),
     );

@@ -78,6 +78,7 @@ MomCozyApiRuntime _runtime({required String userId}) {
 MilkPlanChange _change(String eventId) {
   return MilkPlanChange(
     eventId: eventId,
+    operation: MilkPlanChangeOperation.updated,
     affectedDateKeys: const ['2026-07-13'],
   );
 }

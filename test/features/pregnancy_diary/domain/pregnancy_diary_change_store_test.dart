@@ -6,7 +6,7 @@ import 'package:app/features/pregnancy_diary/domain/pregnancy_diary_change_store
 
 void main() {
   group('PregnancyDiaryChange', () {
-    test('projects the privacy-safe pregnancy_diary.changed payload', () {
+    test('projects the privacy-safe diary.changed payload', () {
       final change = PregnancyDiaryChange.tryFromEvent(
         _changedEvent(eventId: 'evt-diary-created'),
       );
@@ -28,7 +28,7 @@ void main() {
             'type': 'tool.completed',
             'payload': {
               'tool_name': 'pregnancy_diary.entry.read',
-              'safe_output': {'status': 'entries_read'},
+              'output_summary': {'status': 'entries_read'},
             },
           }),
         ),
@@ -41,7 +41,7 @@ void main() {
             'type': 'tool.completed',
             'payload': {
               'tool_name': 'pregnancy_diary.entry.create',
-              'safe_output': {'status': 'entry_already_exists'},
+              'output_summary': {'status': 'entry_already_exists'},
             },
           }),
         ),
@@ -64,7 +64,7 @@ void main() {
         PregnancyDiaryChange.tryFromEvent(
           AgentStreamEvent(const {
             'event_id': 'evt-diary-invalid-operation',
-            'type': 'pregnancy_diary.changed',
+            'type': 'diary.changed',
             'payload': {
               'operation': 'read',
               'entry_id': 'diary-2026-07-12',
@@ -275,7 +275,7 @@ AgentStreamEvent _changedEvent({
   return AgentStreamEvent({
     'event_id': eventId,
     'sequence': 7,
-    'type': 'pregnancy_diary.changed',
+    'type': 'diary.changed',
     'thread_id': 'thread-diary',
     'run_id': 'run-diary',
     'payload': {

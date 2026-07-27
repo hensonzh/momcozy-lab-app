@@ -3,14 +3,14 @@
   "thread_id": "thread-fixture-001",
   "run_id": "run-fixture-artifact-001",
   "message_id": "msg-reply-artifact-001",
-  "artifact_id": "milk-plan-001",
+  "artifact_id": "milk-analysis-001",
   "sequence": 4,
   "type": "artifact.created",
   "payload": {
-    "artifact_type": "milk_plan_card",
-    "title": "Milk supply plan",
-    "status_label": "Draft",
-    "content": "Draft card generated from safe artifact payload.",
+    "artifact_type": "milk_analysis_card",
+    "title": "Milk supply analysis",
+    "status_label": "Ready",
+    "content": "Analysis card generated from a structured artifact payload.",
     "steps": [
       "Review flange comfort",
       "Track two more pumping sessions"
@@ -19,7 +19,7 @@
       {
         "kind": "artifact",
         "artifact_type": "card",
-        "artifact_id": "milk-plan-001",
+        "artifact_id": "milk-analysis-001",
         "label": "打开结果卡片"
       }
     ]

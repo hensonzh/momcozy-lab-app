@@ -7,31 +7,29 @@ import 'package:app/features/agent_hub/domain/agent_media_voice.dart';
 void main() {
   test('normalizes production media voice metadata and URL aliases', () {
     final event = AgentStreamEvent(const {
-      'type': 'tool.completed',
-      'tool_call_id': 'tool-media-1',
+      'type': 'artifact.created',
+      'artifact_id': 'artifact-media-1',
       'payload': {
-        'safe_output': {
-          'media_voice': [
-            {
-              'media_id': '/v1/assets/asset-image?kind=image',
-              'kind': 'image',
-              'visual_label': 'Air1 核心部件',
-              'voice_policy': 'announce',
-              'priority': 'instructional',
-              'spoken_label': '我放了一张当前步骤的对照图。',
-            },
-            {
-              'mediaId': '/v1/assets/asset-image?kind=image',
-              'voicePolicy': 'announce',
-              'spokenLabel': '我放了一张当前步骤的对照图。',
-            },
-            {
-              'media_id': '/v1/assets/decorative?kind=image',
-              'voice_policy': 'silent',
-              'spoken_label': '这句不应该播。',
-            },
-          ],
-        },
+        'media_voice': [
+          {
+            'media_id': '/v1/assets/asset-image?kind=image',
+            'kind': 'image',
+            'visual_label': 'Air1 核心部件',
+            'voice_policy': 'announce',
+            'priority': 'instructional',
+            'spoken_label': '我放了一张当前步骤的对照图。',
+          },
+          {
+            'mediaId': '/v1/assets/asset-image?kind=image',
+            'voicePolicy': 'announce',
+            'spokenLabel': '我放了一张当前步骤的对照图。',
+          },
+          {
+            'media_id': '/v1/assets/decorative?kind=image',
+            'voice_policy': 'silent',
+            'spoken_label': '这句不应该播。',
+          },
+        ],
       },
     });
 

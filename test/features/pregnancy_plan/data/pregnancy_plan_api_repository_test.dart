@@ -19,6 +19,8 @@ void main() {
               'summary': '从现在到生产前后的阶段计划与待办',
               'status': 'active',
               'source': 'agent_action',
+              'starts_on': '2026-07-01',
+              'ends_on': '2026-10-01',
               'payload': {
                 'card': {
                   'card_type': 'birth_journey_plan_card',
@@ -57,6 +59,8 @@ void main() {
         expect(plan.planType, 'pregnancy');
         expect(plan.status, 'active');
         expect(plan.source, 'agent_action');
+        expect(plan.startsOn, DateTime(2026, 7, 1));
+        expect(plan.endsOn, DateTime(2026, 10, 1));
         expect(plan.card['card_type'], 'birth_journey_plan_card');
         expect((plan.card['card_json']! as Map)['title'], '我的孕期计划');
       },
@@ -181,6 +185,27 @@ void main() {
         ).fetchActivePlan(),
         throwsFormatException,
       );
+    });
+
+    test('rejects malformed optional plan lifecycle dates', () async {
+      final repository = PregnancyPlanApiRepository(
+        transport: FixtureApiJsonTransport({
+          'items': [
+            {
+              'id': 'plan-pregnancy-1',
+              'plan_type': 'pregnancy',
+              'title': '孕期计划',
+              'status': 'active',
+              'source': 'agent_action',
+              'starts_on': 'not-a-date',
+              'ends_on': null,
+              'payload': const <String, Object?>{},
+            },
+          ],
+        }),
+      );
+
+      expect(repository.fetchActivePlan, throwsFormatException);
     });
   });
 }
