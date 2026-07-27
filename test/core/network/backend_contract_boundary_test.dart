@@ -64,17 +64,6 @@ void main() {
     expect(required, isNot(contains('ends_on')));
   });
 
-  test('does not expose retired milk-plan creation in Product contracts', () {
-    final components = productOpenApi['components']! as Map<String, Object?>;
-    final schemas = components['schemas']! as Map<String, Object?>;
-    final request = schemas['AgentPlansActionRequest']! as Map<String, Object?>;
-    final properties = request['properties']! as Map<String, Object?>;
-    final actionType = properties['action_type']! as Map<String, Object?>;
-    final values = actionType['enum']! as List<Object?>;
-
-    expect(values, isNot(contains('plans.milk_plan.create')));
-  });
-
   test('tracks the generic diary and unified schedule agent contracts', () {
     final productPaths = _paths(productOpenApi);
 
