@@ -83,6 +83,15 @@ class AgentStreamEvent {
   String? get semanticSurface => stringField(semantic, 'surface');
   String? get semanticLifecycle => stringField(semantic, 'lifecycle');
   String? get semanticMergeKey => stringField(semantic, 'merge_key');
+  int? get semanticPriority => _intField(semantic, 'priority');
+  DateTime? get createdAt {
+    final value =
+        stringField(raw, 'created_at') ??
+        stringField(raw, 'createdAt') ??
+        stringField(payload, 'created_at') ??
+        stringField(payload, 'createdAt');
+    return value == null ? null : DateTime.tryParse(value);
+  }
 
   String? get textDelta {
     if (type != 'message.delta') return null;

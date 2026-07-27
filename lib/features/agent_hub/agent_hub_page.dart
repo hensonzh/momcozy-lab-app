@@ -14,6 +14,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_work_status_projection.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
@@ -6952,13 +6953,16 @@ _AgentLoopDecorState _agentLoopDecorStateFromEvents(
 }
 
 String? _activeAgentStatusTitle(List<AgentStreamEvent> events) {
+  final projection = projectAgentWorkStatus(events);
+  if (projection.isTerminal) return null;
+  final projectedEvent = projection.statusEvent;
+  if (projectedEvent != null) {
+    final projectedTitle = _semanticStatusTitle(projectedEvent);
+    if (projectedTitle != null) return projectedTitle;
+  }
+
   for (final event in events.reversed) {
-    if (event.semantic.isNotEmpty) {
-      final semanticTitle = _semanticStatusTitle(event);
-      if (semanticTitle != null) return semanticTitle;
-      if (_eventStopsAgentLoopDecor(event)) return null;
-      continue;
-    }
+    if (event.semantic.isNotEmpty) continue;
     if (_eventStopsAgentLoopDecor(event)) return null;
 
     switch (event.type) {
@@ -7066,6 +7070,7 @@ bool _semanticClearsAgentThinking(AgentStreamEvent event) {
 String? _semanticStatusTitle(AgentStreamEvent event) {
   final semantic = event.semantic;
   if (semantic.isEmpty) return null;
+  if (event.semanticLifecycle == 'failed') return null;
   final surface = _stringField(semantic, 'surface')?.trim();
   if (surface == 'thinking_note' || surface == 'hidden') return null;
   if (_semanticTargetsAgentStatus(semantic)) {

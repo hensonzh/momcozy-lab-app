@@ -142,12 +142,14 @@ void main() {
     test('exposes backend semantic metadata from payload or raw fields', () {
       final payloadSemantic = AgentStreamEvent(const {
         'type': 'run.progress',
+        'created_at': '2026-07-27T10:00:00Z',
         'payload': {
           'semantic': {
             'label': '我在组织回复～',
             'surface': 'status_bar',
             'lifecycle': 'running',
             'merge_key': 'progress:response_finalizing',
+            'priority': 80,
           },
         },
       });
@@ -160,6 +162,8 @@ void main() {
       expect(payloadSemantic.semanticSurface, 'status_bar');
       expect(payloadSemantic.semanticLifecycle, 'running');
       expect(payloadSemantic.semanticMergeKey, 'progress:response_finalizing');
+      expect(payloadSemantic.semanticPriority, 80);
+      expect(payloadSemantic.createdAt, DateTime.utc(2026, 7, 27, 10));
       expect(rawSemantic.semanticLabel, '我想一下');
       expect(rawSemantic.semanticSurface, 'thinking_note');
     });
