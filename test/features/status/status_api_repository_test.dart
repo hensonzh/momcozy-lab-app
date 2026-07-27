@@ -23,6 +23,9 @@ void main() {
             },
           ],
         },
+        statusLactationProfileEndpoint: const {
+          'actual_delivery_date': '2026-05-18',
+        },
       });
       final repository = StatusApiRepository(
         transport: transport,
@@ -35,7 +38,7 @@ void main() {
       expect(transport.lastPath, statusInfantsEndpoint);
       expect(transport.lastQuery, isEmpty);
       expect(overview.mom?.stage, '哺乳期');
-      expect(overview.mom?.postpartumDay, 42);
+      expect(overview.mom?.postpartumDay, 44);
       expect(overview.mom?.estimatedDueDate, DateTime.parse('2026-05-20'));
       expect(overview.baby?.id, 'infant-001');
       expect(overview.baby?.nickname, 'Baby');
@@ -51,6 +54,7 @@ void main() {
             'age': null,
             'estimated_due_date': null,
           },
+          statusLactationProfileEndpoint: const {'actual_delivery_date': null},
           statusInfantsEndpoint: const {'items': []},
         }),
         now: () => DateTime.utc(2026, 7, 1),
@@ -61,6 +65,39 @@ void main() {
       expect(overview.mom, isNull);
       expect(overview.baby, isNull);
     });
+
+    test(
+      'does not infer maternal postpartum days from an infant birth date',
+      () async {
+        final repository = StatusApiRepository(
+          transport: FixtureApiJsonTransportByPath({
+            statusProfileEndpoint: const {
+              'preferred_name': 'Mom',
+              'age': 30,
+              'estimated_due_date': null,
+            },
+            statusLactationProfileEndpoint: const {
+              'actual_delivery_date': null,
+            },
+            statusInfantsEndpoint: const {
+              'items': [
+                {
+                  'id': 'infant-without-maternal-delivery-date',
+                  'birth_date': '2026-05-20',
+                },
+              ],
+            },
+          }),
+          now: () => DateTime.utc(2026, 7, 1),
+        );
+
+        final overview = await repository.fetchOverview();
+
+        expect(overview.mom?.stage, '哺乳期');
+        expect(overview.mom?.postpartumDay, isNull);
+        expect(overview.baby?.ageDays, 42);
+      },
+    );
 
     test('preserves production HTTP failures', () async {
       final repository = StatusApiRepository(
@@ -104,6 +141,9 @@ void main() {
               'items': [
                 {'id': 'baby-local-day', 'birth_date': '2026-06-30'},
               ],
+            },
+            statusLactationProfileEndpoint: const {
+              'actual_delivery_date': '2026-06-30',
             },
           }),
           now: () => DateTime(2026, 7, 1, 0, 15),

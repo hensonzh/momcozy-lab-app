@@ -1211,6 +1211,9 @@ MomCozyApiRuntime _runtime({
           'user_id': 'demo-user-fixture',
           'estimated_due_date': '2026-06-12',
         },
+        statusLactationProfileEndpoint: const {
+          'actual_delivery_date': '2026-04-06',
+        },
         statusInfantsEndpoint: const {
           'items': [
             {

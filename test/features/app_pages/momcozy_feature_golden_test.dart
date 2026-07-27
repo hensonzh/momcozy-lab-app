@@ -269,6 +269,9 @@ MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
         'user_id': 'demo-user-fixture',
         'estimated_due_date': '2026-06-11',
       },
+      statusLactationProfileEndpoint: const <String, Object?>{
+        'actual_delivery_date': '2026-04-05',
+      },
       statusInfantsEndpoint: const <String, Object?>{
         'items': <Object?>[
           <String, Object?>{
