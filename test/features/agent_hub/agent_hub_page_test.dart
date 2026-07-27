@@ -3223,11 +3223,23 @@ void main() {
       client.emit(
         0,
         AgentStreamEvent(const {
+          'event_id': 'evt-standalone-media-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-standalone-media-voice',
+          'run_id': 'run-standalone-media-voice',
+          'message_id': 'message-standalone-media-voice',
+          'sequence': 2,
+          'payload': {'role': 'assistant', 'text': ''},
+        }),
+      );
+      client.emit(
+        0,
+        AgentStreamEvent(const {
           'event_id': 'evt-standalone-media-voice-completed',
           'type': 'run.completed',
           'thread_id': 'thread-standalone-media-voice',
           'run_id': 'run-standalone-media-voice',
-          'sequence': 2,
+          'sequence': 3,
         }),
       );
       await tester.pump();

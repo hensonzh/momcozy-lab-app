@@ -190,6 +190,101 @@ void main() {
     );
 
     test(
+      'retries an uncertain run creation with the same idempotency key',
+      () async {
+        final client = _SequencedAgentStreamClient(
+          [
+            const <AgentStreamEvent>[],
+            [
+              _event(id: 'evt-run-started', type: 'run.started', sequence: 1),
+              _event(
+                id: 'evt-message-completed',
+                type: 'message.completed',
+                sequence: 2,
+                text: '后端已完成的回复',
+              ),
+              _event(
+                id: 'evt-run-completed',
+                type: 'run.completed',
+                sequence: 3,
+              ),
+            ],
+          ],
+          errors: const [_RetryableTestFailure(), null],
+        );
+        final runner = AgentStreamRunner(
+          client,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            maxTransportReconnects: 1,
+            transportRetryBaseDelay: Duration.zero,
+          ),
+        );
+
+        final states = await runner.run(_request).toList();
+
+        expect(states.last.phase, AgentStreamRunPhase.finished);
+        expect(states.last.textContent, '后端已完成的回复');
+        expect(
+          states.where(
+            (state) => state.phase == AgentStreamRunPhase.disconnected,
+          ),
+          isEmpty,
+        );
+        expect(client.requests, hasLength(2));
+        expect(client.requests.first.runId, isNull);
+        expect(client.requests.last.runId, isNull);
+        expect(client.requests.first.idempotencyKey, isNotEmpty);
+        expect(
+          client.requests.last.idempotencyKey,
+          client.requests.first.idempotencyKey,
+        );
+      },
+    );
+
+    test(
+      'replays a completed run from the start before settling without text',
+      () async {
+        final client = _SequencedAgentStreamClient([
+          [
+            _event(id: 'evt-run-started', type: 'run.started', sequence: 1),
+            _event(id: 'evt-run-completed', type: 'run.completed', sequence: 3),
+          ],
+          [
+            _event(id: 'evt-run-started', type: 'run.started', sequence: 1),
+            _event(
+              id: 'evt-message-completed',
+              type: 'message.completed',
+              sequence: 2,
+              text: '补偿恢复后的完整回复',
+            ),
+            _event(id: 'evt-run-completed', type: 'run.completed', sequence: 3),
+          ],
+        ]);
+        final runner = AgentStreamRunner(
+          client,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            transportRetryBaseDelay: Duration.zero,
+          ),
+        );
+
+        final states = await runner.run(_request).toList();
+
+        expect(states.last.phase, AgentStreamRunPhase.finished);
+        expect(states.last.textContent, '补偿恢复后的完整回复');
+        expect(
+          states.where(
+            (state) => state.phase == AgentStreamRunPhase.disconnected,
+          ),
+          isEmpty,
+        );
+        expect(client.requests, hasLength(2));
+        expect(client.requests.last.runId, 'run-fixture-001');
+        expect(client.requests.last.threadId, 'thread-fixture-001');
+        expect(client.requests.last.afterSequence, 0);
+      },
+    );
+
+    test(
       'does not reconnect after the run subscription is cancelled',
       () async {
         final client = _SequencedAgentStreamClient(
@@ -218,6 +313,55 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 120));
 
         expect(client.requests, hasLength(1));
+      },
+    );
+
+    test(
+      'replays persisted events when status is completed without final text',
+      () async {
+        final client = _SequencedAgentStreamClient([
+          [_event(id: 'evt-run-started', type: 'run.started', sequence: 1)],
+          [
+            _event(id: 'evt-run-started', type: 'run.started', sequence: 1),
+            _event(
+              id: 'evt-message-completed',
+              type: 'message.completed',
+              sequence: 2,
+              text: '状态补偿后的完整回复',
+            ),
+            _event(id: 'evt-run-completed', type: 'run.completed', sequence: 3),
+          ],
+        ]);
+        final statusReader = _FixtureRunStatusReader(
+          const AgentRunStatusSnapshot(
+            runId: 'run-fixture-001',
+            threadId: 'thread-fixture-001',
+            status: AgentRunLifecycleStatus.completed,
+          ),
+        );
+        final runner = AgentStreamRunner(
+          client,
+          runStatusReader: statusReader,
+          reconnectPolicy: const AgentStreamReconnectPolicy(
+            maxFollowWindowReconnects: 0,
+            transportRetryBaseDelay: Duration.zero,
+          ),
+        );
+
+        final states = await runner.run(_request).toList();
+
+        expect(states.last.phase, AgentStreamRunPhase.finished);
+        expect(states.last.textContent, '状态补偿后的完整回复');
+        expect(
+          states.where(
+            (state) => state.phase == AgentStreamRunPhase.disconnected,
+          ),
+          isEmpty,
+        );
+        expect(statusReader.runIds, ['run-fixture-001']);
+        expect(client.requests, hasLength(2));
+        expect(client.requests.last.runId, 'run-fixture-001');
+        expect(client.requests.last.afterSequence, 0);
       },
     );
 
@@ -265,7 +409,15 @@ void main() {
       () async {
         final client = _SequencedAgentStreamClient([
           [_event(id: 'evt-run-started', type: 'run.started', sequence: 1)],
-          [_event(id: 'evt-run-completed', type: 'run.completed', sequence: 2)],
+          [
+            _event(
+              id: 'evt-message-completed',
+              type: 'message.completed',
+              sequence: 2,
+              text: '继续执行后的回复',
+            ),
+            _event(id: 'evt-run-completed', type: 'run.completed', sequence: 3),
+          ],
         ]);
         final statusReader = _FixtureRunStatusReader(
           const AgentRunStatusSnapshot(
@@ -287,6 +439,7 @@ void main() {
         final states = await runner.run(_request).toList();
 
         expect(states.last.phase, AgentStreamRunPhase.finished);
+        expect(states.last.textContent, '继续执行后的回复');
         expect(client.requests, hasLength(2));
         expect(client.requests.last.runId, 'run-fixture-001');
         expect(client.requests.last.afterSequence, 1);
