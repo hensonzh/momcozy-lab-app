@@ -590,6 +590,37 @@ void main() {
     expect(controller.runtime.observability, same(observability));
     controller.dispose();
   });
+
+  test(
+    'runtime controller publishes a login session to auto-refresh transports',
+    () {
+      const anonymous = MomCozySession(
+        status: MomCozySessionStatus.anonymous,
+        userId: 'demo-user',
+        babyId: 'demo-baby',
+        locale: 'zh-CN',
+      );
+      const authenticated = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'invite-user',
+        babyId: 'demo-baby',
+        locale: 'zh-CN',
+        accessToken: 'login-access',
+        refreshToken: 'login-refresh',
+      );
+      final controller = MomCozyRuntimeController(
+        MomCozyApiRuntime.fromSession(anonymous),
+      );
+      controller.enableSessionAutoRefresh(MemoryMomCozySessionStore(anonymous));
+
+      controller.replaceSession(authenticated);
+
+      expect(controller.currentSession, same(authenticated));
+      expect(controller.runtime.session, same(authenticated));
+      expect(controller.runtime.currentSession, same(authenticated));
+      controller.dispose();
+    },
+  );
 }
 
 class _MemoryStatusPreferenceStore implements StatusPreferenceStore {

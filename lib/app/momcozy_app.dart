@@ -459,7 +459,7 @@ String? _authRedirect(
 ) {
   final path = state.uri.path;
   final isLogin = path == '/login';
-  final isAuthenticated = runtimeController.runtime.session.isAuthenticated;
+  final isAuthenticated = runtimeController.currentSession.isAuthenticated;
   if (!isAuthenticated && !isLogin) {
     final from = state.uri.toString();
     return Uri(

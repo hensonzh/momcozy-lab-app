@@ -34,7 +34,6 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
   final FocusNode _inviteCodeFocusNode = FocusNode();
   bool _submitting = false;
   String? _errorText;
-  String? _lastInviteCode;
 
   @override
   void initState() {
@@ -88,7 +87,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                     enableSuggestions: false,
                     decoration: InputDecoration(
                       labelText: '邀请码',
-                      hintText: _lastInviteCode ?? '请输入邀请码',
+                      hintText: '请输入邀请码',
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       prefixIcon: const Icon(Icons.key_rounded),
                     ),
@@ -167,9 +166,12 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     try {
       final inviteCode = await widget.lastInviteCodeStore.readLastInviteCode();
       if (!mounted) return;
-      setState(() {
-        _lastInviteCode = trimmedSessionValue(inviteCode);
-      });
+      final restored = trimmedSessionValue(inviteCode);
+      if (restored == null || _inviteCodeController.text.isNotEmpty) return;
+      _inviteCodeController.value = TextEditingValue(
+        text: restored,
+        selection: TextSelection.collapsed(offset: restored.length),
+      );
     } catch (error, stackTrace) {
       widget.runtimeController.runtime.observability.recordNonFatal(
         error,
