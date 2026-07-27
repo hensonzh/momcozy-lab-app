@@ -177,7 +177,7 @@ Map<String, Object?> buildProductionAgentRunPayload(
     'message': text,
     if (attachments.isNotEmpty) 'attachments': attachments,
     if (clientContext.isNotEmpty) 'client_context': clientContext,
-    'runtime_pattern': 'sdk_only',
+    'runtime_pattern': 'legacy_adapter',
     if (normalizedIdempotencyKey != null && normalizedIdempotencyKey.isNotEmpty)
       'idempotency_key': normalizedIdempotencyKey,
   };
