@@ -8417,6 +8417,52 @@ milk_total: 120ml
     expect(find.text('正在读取奶量状态'), findsNothing);
   });
 
+  testWidgets(
+    'Agent Hub keeps a fast tool completion ahead of immediate generic progress',
+    (tester) async {
+      final now = DateTime.now().toUtc();
+      final state = AgentStreamRunState(
+        phase: AgentStreamRunPhase.streaming,
+        events: [
+          AgentStreamEvent({
+            'type': 'tool.completed',
+            'created_at': now
+                .subtract(const Duration(milliseconds: 100))
+                .toIso8601String(),
+            'payload': {
+              'tool_call_id': 'tool-milk-status',
+              'semantic': {
+                'label': '我看好今天的奶量状态啦',
+                'surface': 'work_item',
+                'lifecycle': 'completed',
+                'merge_key': 'tool:tool-milk-status',
+                'priority': 70,
+              },
+            },
+          }),
+          AgentStreamEvent({
+            'type': 'run.progress',
+            'created_at': now.toIso8601String(),
+            'payload': {
+              'semantic': {
+                'label': '我接着处理下一步',
+                'surface': 'status_bar',
+                'lifecycle': 'running',
+                'merge_key': 'progress:model_followup',
+                'priority': 55,
+              },
+            },
+          }),
+        ],
+      );
+
+      await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+      expect(find.text('我看好今天的奶量状态啦'), findsOneWidget);
+      expect(find.text('我接着处理下一步'), findsNothing);
+    },
+  );
+
   testWidgets('Agent loop status copy is vertically and horizontally aligned', (
     tester,
   ) async {
@@ -8623,7 +8669,9 @@ milk_total: 120ml
     expect(find.text('我需要你确认一下，再继续处理'), findsOneWidget);
   });
 
-  testWidgets('Agent Hub renders failed run semantic status', (tester) async {
+  testWidgets('Agent Hub does not render failed semantic status', (
+    tester,
+  ) async {
     final state = AgentStreamRunState(
       phase: AgentStreamRunPhase.error,
       events: [
@@ -8642,13 +8690,9 @@ milk_total: 120ml
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('这轮暂时没处理好'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.text('这轮暂时没处理好'), findsNothing);
+    expect(find.text('这次处理没有成功，暂时没有生成回复。你可以重试一次。'), findsOneWidget);
   });
 
   testWidgets('Agent Hub treats hidden semantic as authoritative', (
