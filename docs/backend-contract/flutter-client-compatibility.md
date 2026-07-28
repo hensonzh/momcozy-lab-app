@@ -21,6 +21,7 @@ Regenerate or validate Flutter API clients whenever a PR changes:
 - error envelope shape
 - `Idempotency-Key` usage
 - agent event/action schemas
+- Agent Runtime pattern values
 - file upload multipart fields
 - voice/transcription endpoint contracts and `VOICE_PROVIDER` behavior
 
@@ -44,6 +45,7 @@ Breaking changes:
 - moving tokens into URLs
 - changing the error envelope
 - changing agent event names or reducer keys
+- changing the accepted Agent Runtime pattern
 
 Breaking changes need a coordinated app release, compatibility window, or API
 versioning plan.
@@ -53,6 +55,7 @@ versioning plan.
 - Send user auth through `Authorization` headers.
 - Use `MOMCOZY_API_BASE_URL` for Product APIs and
   `MOMCOZY_AGENT_API_BASE_URL` for every `/v1/agent/*` request.
+- Send `runtime_pattern: proprietary_runtime` when creating an Agent Run.
 - Never put access tokens, refresh tokens, or service keys in URLs.
 - Send refresh tokens only to `POST /v1/auth/refresh`.
 - Use `Idempotency-Key` for retryable writes.
