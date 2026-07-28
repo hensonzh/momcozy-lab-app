@@ -51,6 +51,21 @@ void main() {
     );
   });
 
+  test('accepts only the production Agent Runtime pattern', () {
+    final components =
+        agentRuntimeOpenApi['components']! as Map<String, Object?>;
+    final schemas = components['schemas']! as Map<String, Object?>;
+    final runCreate = schemas['AgentRunCreate']! as Map<String, Object?>;
+    final properties = runCreate['properties']! as Map<String, Object?>;
+    final runtimePattern =
+        properties['runtime_pattern']! as Map<String, Object?>;
+    final variants = runtimePattern['anyOf']! as List<Object?>;
+    expect(variants, [
+      {'const': 'proprietary_runtime', 'type': 'string'},
+      {'type': 'null'},
+    ]);
+  });
+
   test('keeps optional plan lifecycle dates in the Product contract', () {
     final components = productOpenApi['components']! as Map<String, Object?>;
     final schemas = components['schemas']! as Map<String, Object?>;

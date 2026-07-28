@@ -17,6 +17,7 @@ SMOKE_FLOWS_PATH = CONTRACT_DIR / "flutter-smoke-flows.json"
 FORBIDDEN_REPOSITORY_PATHS = ("production_backend/", "flutter_app/")
 PRODUCT_SERVICE = "product"
 AGENT_RUNTIME_SERVICE = "agent_runtime"
+REQUIRED_AGENT_RUNTIME_PATTERN = "proprietary_runtime"
 
 REQUIRED_OPENAPI_PATHS = {
     PRODUCT_SERVICE: {
@@ -102,6 +103,11 @@ def main(argv: list[str] | None = None) -> int:
         service_paths[service] = paths
 
     errors.extend(_validate_service_boundaries(service_paths))
+    errors.extend(
+        _validate_agent_runtime_pattern(
+            schemas[AGENT_RUNTIME_SERVICE],
+        )
+    )
 
     for service, required_paths in REQUIRED_OPENAPI_PATHS.items():
         paths = service_paths[service]
@@ -223,6 +229,42 @@ def _validate_service_boundaries(
             f"Agent Runtime OpenAPI contains Product-owned path: {path}"
         )
     return errors
+
+
+def _validate_agent_runtime_pattern(
+    schema: dict[str, object],
+) -> list[str]:
+    components = schema.get("components")
+    schemas = components.get("schemas") if isinstance(components, dict) else None
+    run_create = (
+        schemas.get("AgentRunCreate") if isinstance(schemas, dict) else None
+    )
+    properties = (
+        run_create.get("properties") if isinstance(run_create, dict) else None
+    )
+    runtime_pattern = (
+        properties.get("runtime_pattern")
+        if isinstance(properties, dict)
+        else None
+    )
+    variants = (
+        runtime_pattern.get("anyOf")
+        if isinstance(runtime_pattern, dict)
+        else None
+    )
+    expected_variants = [
+        {
+            "const": REQUIRED_AGENT_RUNTIME_PATTERN,
+            "type": "string",
+        },
+        {"type": "null"},
+    ]
+    if variants == expected_variants:
+        return []
+    return [
+        "AgentRunCreate.runtime_pattern must accept only "
+        f"{REQUIRED_AGENT_RUNTIME_PATTERN!r}; found {variants!r}."
+    ]
 
 
 def _validate_step(

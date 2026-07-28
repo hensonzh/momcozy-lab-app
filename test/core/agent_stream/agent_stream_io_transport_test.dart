@@ -54,7 +54,7 @@ void main() {
         'poll_interval_seconds': '0.01',
       });
       expect(postedBody['message'], 'Review my pumping pattern.');
-      expect(postedBody['runtime_pattern'], 'legacy_adapter');
+      expect(postedBody['runtime_pattern'], 'proprietary_runtime');
       expect(postedBody['client_context'], {
         'source': 'io-transport-test',
         'locale': 'en-US',
@@ -426,14 +426,14 @@ void main() {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'message': '你好',
-          'runtime_pattern': 'legacy_adapter',
+          'runtime_pattern': 'proprietary_runtime',
         }),
       );
 
       expect(response.statusCode, 201);
       expect(jsonDecode(await receivedBody) as Map<String, Object?>, {
         'message': '你好',
-        'runtime_pattern': 'legacy_adapter',
+        'runtime_pattern': 'proprietary_runtime',
       });
     });
 
