@@ -65,20 +65,11 @@ void main() {
       expect(runtime.pregnancyPlanChangeStore.hasUnread, isTrue);
       expect(
         find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(
-          of: find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-          matching: find.byWidgetPredicate(
-            (widget) =>
-                widget is Semantics && widget.properties.label == '孕期计划有更新',
-          ),
-        ),
-        findsOneWidget,
+        findsNothing,
       );
 
-      await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+      runtime.pregnancyPlanChangeStore.transferNavigationNoticeToCard();
+      router.go('/status');
       await _pumpFrames(tester, 30);
       await _scrollToBirthJourney(tester);
 
@@ -153,7 +144,7 @@ void main() {
       await tester.pump();
       expect(
         find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-        findsOneWidget,
+        findsNothing,
       );
 
       initialPlan.complete(const {'items': <Object?>[]});
@@ -243,7 +234,7 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+      router.go('/status');
       await _pumpUntil(
         tester,
         () => transport.planGetCount == 2,
@@ -497,9 +488,12 @@ Future<void> _openStatusAndSettle(
 ) async {
   expect(
     find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-    findsOneWidget,
+    findsNothing,
   );
-  await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+  runtime.pregnancyPlanChangeStore.transferNavigationNoticeToCard();
+  GoRouter.of(
+    tester.element(find.byType(MomCozyBottomNavigation)),
+  ).go('/status');
   await tester.pumpAndSettle();
   await _pumpUntil(
     tester,
@@ -523,7 +517,7 @@ void _expectUnreadPlanBadge(MomCozyApiRuntime runtime) {
   expect(runtime.pregnancyPlanChangeStore.highlightCard, isFalse);
   expect(
     find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-    findsOneWidget,
+    findsNothing,
   );
   expect(
     find.byKey(const ValueKey('status-birth-journey-notice')),
