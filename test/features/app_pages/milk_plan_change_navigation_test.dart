@@ -8,7 +8,7 @@ import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_st
 import '../../support/fixture_api_transport.dart';
 
 void main() {
-  testWidgets('Schedule nav badge transfers one notice to the page route', (
+  testWidgets('disabled Plan tab leaves route and pending notice unchanged', (
     tester,
   ) async {
     final store = MilkPlanChangeStore();
@@ -48,19 +48,16 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.byKey(const ValueKey('bottom-nav-schedule-plan-badge')),
-      findsOneWidget,
-    );
-    await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
-    await tester.pumpAndSettle();
-
-    expect(router.routeInformationProvider.value.uri.path, '/schedule');
-    expect(store.hasUnread, isFalse);
-    expect(store.hasPageNotice, isTrue);
+    expect(find.byKey(const ValueKey('bottom-nav-plan')), findsOneWidget);
     expect(
       find.byKey(const ValueKey('bottom-nav-schedule-plan-badge')),
       findsNothing,
     );
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-plan')));
+    await tester.pumpAndSettle();
+
+    expect(router.routeInformationProvider.value.uri.path, '/');
+    expect(store.hasUnread, isTrue);
+    expect(store.hasPageNotice, isFalse);
   });
 }

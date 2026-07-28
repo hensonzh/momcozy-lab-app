@@ -41,7 +41,11 @@ void main() {
           find.byKey(ValueKey('route-page-${route.path}')),
           findsOneWidget,
         );
-        if (route.path == '/status') {
+        if (route.path == '/me') {
+          expect(find.text('Postpartum Recovery'), findsOneWidget);
+        } else if (route.path == '/baby') {
+          expect(find.text('Infant'), findsOneWidget);
+        } else if (route.path == '/status') {
           expect(find.text('妈妈'), findsWidgets);
         } else if (route.path == '/pump') {
           expect(find.text('沉浸式吸乳'), findsWidgets);
@@ -119,7 +123,7 @@ void main() {
         find.byKey(const ValueKey('status-identity-tab-baby')),
       );
 
-      for (final label in const ['宝宝和我', '计划', '社区', '设备']) {
+      for (final label in const ['Me', 'Baby', 'Cozymate', 'Plan', 'More']) {
         _expectFinderWithinViewport(tester, find.text(label));
       }
       _expectFinderWithinViewport(

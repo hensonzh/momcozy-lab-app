@@ -39,6 +39,8 @@ void main() {
 
 const _documentedRoutePaths = {
   '/',
+  '/me',
+  '/baby',
   '/calibration',
   '/pump',
   '/schedule',

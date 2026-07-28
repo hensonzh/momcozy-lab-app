@@ -9,8 +9,8 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Bottom navigation component parity goldens', () {
-    testWidgets('status tab selected matches compact baseline', (tester) async {
-      await _bottomNavigationComponentApp(tester, location: '/status');
+    testWidgets('Me tab selected matches compact baseline', (tester) async {
+      await _bottomNavigationComponentApp(tester, location: '/me');
 
       final bottomNav = find.byType(MomCozyBottomNavigation);
       expect(bottomNav, findsOneWidget);
