@@ -122,11 +122,11 @@ void main() {
     );
     expect(sendButton.onPressed, isNotNull);
 
-    await tester.tap(find.text('计划').last);
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
-    expect(find.text('计划'), findsWidgets);
+    expect(find.byKey(const ValueKey('route-page-/baby')), findsOneWidget);
+    expect(find.text('Infant'), findsOneWidget);
   });
 
   testWidgets('default Agent Hub reads the profile greeting from runtime', (
@@ -237,15 +237,12 @@ void main() {
       await tester.pump();
       expect(find.textContaining('I am still'), findsOneWidget);
 
-      await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
       // Auto-reply voice keeps the speaking animation active while the Agent
       // tab is offstage, so waiting for every frame to settle would never end.
       await tester.pump();
 
-      expect(
-        find.byKey(const ValueKey('route-page-/schedule')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const ValueKey('route-page-/baby')), findsOneWidget);
       expect(client.cancelCount, 0);
 
       client
@@ -323,10 +320,10 @@ void main() {
     await tester.pump();
     expect(tester.testTextInput.isVisible, isTrue);
 
-    await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
+    expect(find.byKey(const ValueKey('route-page-/baby')), findsOneWidget);
     expect(tester.testTextInput.isVisible, isFalse);
 
     await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
@@ -659,7 +656,7 @@ void main() {
 
     await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('计划').last);
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
     await tester.pumpAndSettle();
 
     final routeEvents = sink.events
@@ -667,7 +664,7 @@ void main() {
         .map((event) => event.attributes['route'])
         .toList(growable: false);
 
-    expect(routeEvents, containsAll(['/', '/schedule']));
+    expect(routeEvents, containsAll(['/', '/baby']));
     expect(sink.events.toString(), isNot(contains('route-user')));
   });
 
