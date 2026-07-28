@@ -20,7 +20,7 @@ import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 void main() {
-  testWidgets('bottom navigation reacts to runtime diary unread state', (
+  testWidgets('fixed postpartum navigation does not surface pregnancy badges', (
     tester,
   ) async {
     final runtime = _runtime(_SequencedDiaryTransport());
@@ -46,9 +46,10 @@ void main() {
     );
     await tester.pump();
 
+    expect(runtime.pregnancyDiaryChangeStore.hasUnread, isTrue);
     expect(
       find.byKey(const ValueKey('bottom-nav-status-diary-badge')),
-      findsOneWidget,
+      findsNothing,
     );
   });
 
@@ -76,10 +77,11 @@ void main() {
 
       expect(
         find.byKey(const ValueKey('bottom-nav-status-diary-badge')),
-        findsOneWidget,
+        findsNothing,
       );
 
-      await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+      runtime.pregnancyDiaryChangeStore.transferNavigationNoticeToCard();
+      router.go('/status');
       await tester.pumpAndSettle();
 
       expect(runtime.pregnancyDiaryChangeStore.hasUnread, isFalse);
@@ -118,7 +120,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+    runtime.pregnancyDiaryChangeStore.transferNavigationNoticeToCard();
+    router.go('/status');
     await tester.pumpAndSettle();
 
     expect(transport.diaryGetCount, 1);
@@ -126,7 +129,7 @@ void main() {
     expect(runtime.pregnancyDiaryChangeStore.highlightCard, isFalse);
     expect(
       find.byKey(const ValueKey('bottom-nav-status-diary-badge')),
-      findsOneWidget,
+      findsNothing,
     );
   });
 
@@ -261,7 +264,7 @@ void main() {
     expect(harness.runtime.pregnancyDiaryChangeStore.hasUnread, isTrue);
     expect(
       find.byKey(const ValueKey('bottom-nav-status-diary-badge')),
-      findsOneWidget,
+      findsNothing,
     );
   });
 

@@ -53,9 +53,10 @@ void main() {
       final routeIntentPlatform = FakeRouteIntentPlatform();
       addTearDown(routeIntentPlatform.dispose);
 
+      final router = createMomCozyRouter(initialLocation: '/status');
       await tester.pumpWidget(
         MomCozyFlutterApp(
-          router: createMomCozyRouter(initialLocation: '/status'),
+          router: router,
           routeIntentPlatform: routeIntentPlatform,
           apiRuntime: _runtime(),
         ),
@@ -120,9 +121,9 @@ void main() {
       expect(find.text('下一步'), findsNothing);
       expect(find.text('补写孕期日记'), findsNothing);
       expect(find.text('今日待办'), findsNothing);
-      expect(find.byKey(const ValueKey('bottom-nav-status')), findsOneWidget);
+      expect(find.byKey(const ValueKey('bottom-nav-me')), findsOneWidget);
       expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
-      for (final label in const ['宝宝和我', '计划', '社区', '设备']) {
+      for (final label in const ['Me', 'Baby', 'Cozymate', 'Plan', 'More']) {
         expect(find.text(label), findsOneWidget);
       }
     });
@@ -245,9 +246,10 @@ void main() {
       final routeIntentPlatform = FakeRouteIntentPlatform();
       addTearDown(routeIntentPlatform.dispose);
 
+      final router = createMomCozyRouter(initialLocation: '/status');
       await tester.pumpWidget(
         MomCozyFlutterApp(
-          router: createMomCozyRouter(initialLocation: '/status'),
+          router: router,
           routeIntentPlatform: routeIntentPlatform,
           apiRuntime: _runtime(
             responsesByPath: {
@@ -454,9 +456,10 @@ void main() {
       final routeIntentPlatform = FakeRouteIntentPlatform();
       addTearDown(routeIntentPlatform.dispose);
 
+      final router = createMomCozyRouter(initialLocation: '/status');
       await tester.pumpWidget(
         MomCozyFlutterApp(
-          router: createMomCozyRouter(initialLocation: '/status'),
+          router: router,
           routeIntentPlatform: routeIntentPlatform,
           apiRuntime: _runtime(),
         ),
@@ -598,13 +601,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('当前查看：身高'), findsOneWidget);
 
-      await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+      router.go('/schedule');
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('route-page-/schedule')),
         findsOneWidget,
       );
-      await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+      router.go('/status');
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
@@ -769,9 +772,10 @@ void main() {
           },
         );
 
+        final router = createMomCozyRouter(initialLocation: '/status');
         await tester.pumpWidget(
           MomCozyFlutterApp(
-            router: createMomCozyRouter(initialLocation: '/status'),
+            router: router,
             routeIntentPlatform: routeIntentPlatform,
             apiRuntime: runtime,
           ),
@@ -785,12 +789,11 @@ void main() {
           ),
         );
         await tester.pump();
-        expect(
-          find.byKey(const ValueKey('bottom-nav-schedule-plan-badge')),
-          findsOneWidget,
-        );
+        expect(find.byKey(const ValueKey('bottom-nav-plan')), findsOneWidget);
+        expect(runtime.milkPlanChangeStore.hasUnread, isTrue);
 
-        await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+        runtime.milkPlanChangeStore.transferNavigationNoticeToPage();
+        router.go('/schedule');
         await tester.pumpAndSettle();
 
         expect(
@@ -809,10 +812,7 @@ void main() {
         );
         expect(runtime.milkPlanChangeStore.hasUnread, isFalse);
         expect(runtime.milkPlanChangeStore.hasPageNotice, isFalse);
-        expect(
-          find.byKey(const ValueKey('bottom-nav-schedule-plan-badge')),
-          findsNothing,
-        );
+        expect(find.byKey(const ValueKey('bottom-nav-plan')), findsOneWidget);
 
         await _scrollToText(tester, '奶量计划已按最新权威数据刷新');
         await _scrollToFinder(
@@ -954,7 +954,7 @@ void main() {
           '第一行\n第二行\n第三行',
         );
         await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
         await tester.pumpAndSettle();
@@ -1017,7 +1017,7 @@ void main() {
         );
         expect(_agentAvatarWakeMedia(), findsNothing);
 
-        await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
         await _pumpUntilFinder(tester, _agentAvatarWakeMedia());

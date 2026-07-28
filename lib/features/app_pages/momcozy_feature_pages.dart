@@ -31,6 +31,7 @@ import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_
 import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_entry_intent.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_v2_page.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
 
@@ -105,6 +106,8 @@ class MomCozyFeaturePage extends StatelessWidget {
         onOpenAgent: () =>
             context.go('/', extra: const {'agentPrefill': '我想调整今天的吸乳排期'}),
       ),
+      '/me' => StatusV2Page(path: path, identity: StatusIdentity.mom),
+      '/baby' => StatusV2Page(path: path, identity: StatusIdentity.baby),
       '/status' => _StatusPage(
         path: path,
         title: title,

@@ -40,9 +40,10 @@ void main() {
       now: () => clock,
     );
 
+    final router = createMomCozyRouter(initialLocation: '/status');
     await tester.pumpWidget(
       MomCozyFlutterApp(
-        router: createMomCozyRouter(initialLocation: '/status'),
+        router: router,
         routeIntentPlatform: routes,
         apiRuntime: runtime,
       ),
@@ -105,15 +106,16 @@ void main() {
       babyId: 'cache-baby',
       now: () => DateTime(2026, 7, 11, 10),
     );
+    final router = createMomCozyRouter(initialLocation: '/status');
     await tester.pumpWidget(
       MomCozyFlutterApp(
-        router: createMomCozyRouter(initialLocation: '/status'),
+        router: router,
         routeIntentPlatform: routes,
         apiRuntime: runtime,
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+    router.go('/schedule');
     await tester.pumpAndSettle();
     final countsBeforeReturn = Map<String, int>.fromEntries(
       [
@@ -126,7 +128,7 @@ void main() {
         pregnancyPlansEndpoint,
       ].map((path) => MapEntry(path, _requestCount(transport, path))),
     );
-    await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+    router.go('/status');
     await tester.pump();
     await tester.pump();
 

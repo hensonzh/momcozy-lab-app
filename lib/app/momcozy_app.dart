@@ -593,41 +593,11 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final runtime = MomCozyRuntimeScope.maybeOf(context);
-    if (runtime == null) {
-      return _buildNavigation(
-        context,
-        showPregnancyDiaryBadge: false,
-        showPregnancyPlanBadge: false,
-        showMilkPlanBadge: false,
-      );
-    }
-    final diaryChangeStore = runtime.pregnancyDiaryChangeStore;
-    final planChangeStore = runtime.pregnancyPlanChangeStore;
-    final milkPlanChangeStore = runtime.milkPlanChangeStore;
-    return ListenableBuilder(
-      listenable: Listenable.merge([
-        diaryChangeStore,
-        planChangeStore,
-        milkPlanChangeStore,
-      ]),
-      builder: (context, child) => _buildNavigation(
-        context,
-        showPregnancyDiaryBadge: diaryChangeStore.hasUnread,
-        showPregnancyPlanBadge: planChangeStore.hasUnread,
-        showMilkPlanBadge: milkPlanChangeStore.hasUnread,
-      ),
-    );
+    return _buildNavigation(context);
   }
 
-  Widget _buildNavigation(
-    BuildContext context, {
-    required bool showPregnancyDiaryBadge,
-    required bool showPregnancyPlanBadge,
-    required bool showMilkPlanBadge,
-  }) {
+  Widget _buildNavigation(BuildContext context) {
     final selectedIndex = _selectedTabIndex(location);
-    final runtime = MomCozyRuntimeScope.maybeOf(context);
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: Color(0xfffcf7f5)),
@@ -674,86 +644,58 @@ class MomCozyBottomNavigation extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _MomCozyNavTab(
-                                  navKey: const ValueKey('bottom-nav-status'),
-                                  label: '宝宝和我',
+                                  navKey: const ValueKey('bottom-nav-me'),
+                                  label: 'Me',
                                   selected: selectedIndex == 0,
-                                  icon: _StatusNavIcon(
-                                    showPregnancyDiaryBadge:
-                                        showPregnancyDiaryBadge,
-                                    showPregnancyPlanBadge:
-                                        showPregnancyPlanBadge,
-                                    child: const _MomBabyNavIcon(),
+                                  icon: const _MomBabyNavIcon(),
+                                  selectedIcon: const _MomBabyNavIcon(
+                                    filled: true,
                                   ),
-                                  selectedIcon: _StatusNavIcon(
-                                    showPregnancyDiaryBadge:
-                                        showPregnancyDiaryBadge,
-                                    showPregnancyPlanBadge:
-                                        showPregnancyPlanBadge,
-                                    child: const _MomBabyNavIcon(filled: true),
-                                  ),
-                                  onTap: () {
-                                    runtime?.pregnancyDiaryChangeStore
-                                        .transferNavigationNoticeToCard();
-                                    runtime?.pregnancyPlanChangeStore
-                                        .transferNavigationNoticeToCard();
-                                    context.go(_tabPaths[0]);
-                                  },
+                                  onTap: () => context.go(_tabPaths[0]),
                                 ),
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
-                                  navKey: const ValueKey('bottom-nav-schedule'),
-                                  label: '计划',
+                                  navKey: const ValueKey('bottom-nav-baby'),
+                                  label: 'Baby',
                                   selected: selectedIndex == 1,
-                                  icon: _ScheduleNavIcon(
-                                    showBadge: showMilkPlanBadge,
-                                    child: const Icon(
-                                      Icons.event_note_outlined,
-                                    ),
+                                  icon: const Icon(Icons.child_care_outlined),
+                                  selectedIcon: const Icon(
+                                    Icons.child_care_rounded,
                                   ),
-                                  selectedIcon: _ScheduleNavIcon(
-                                    showBadge: showMilkPlanBadge,
-                                    child: const Icon(Icons.event_note_rounded),
-                                  ),
-                                  onTap: () {
-                                    runtime?.milkPlanChangeStore
-                                        .transferNavigationNoticeToPage();
-                                    context.go(_tabPaths[1]);
-                                  },
+                                  onTap: () => context.go(_tabPaths[1]),
                                 ),
                               ),
                               Expanded(
-                                child: _MomCozyAgentNavTab(
+                                child: _CozymateNavSlot(
                                   selected: selectedIndex == 2,
                                   onTap: () => context.go(_tabPaths[2]),
                                 ),
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
-                                  navKey: const ValueKey(
-                                    'bottom-nav-community',
+                                  navKey: const ValueKey('bottom-nav-plan'),
+                                  label: 'Plan',
+                                  selected: false,
+                                  icon: const Icon(
+                                    Icons.calendar_today_outlined,
                                   ),
-                                  label: '社区',
-                                  selected: selectedIndex == 3,
-                                  icon: const Icon(Icons.groups_2_outlined),
                                   selectedIcon: const Icon(
-                                    Icons.groups_2_rounded,
+                                    Icons.calendar_today_rounded,
                                   ),
-                                  onTap: () => context.go(_tabPaths[3]),
+                                  onTap: null,
                                 ),
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
-                                  navKey: const ValueKey('bottom-nav-device'),
-                                  label: '设备',
-                                  selected: selectedIndex == 4,
-                                  icon: const Icon(
-                                    Icons.bluetooth_connected_outlined,
-                                  ),
+                                  navKey: const ValueKey('bottom-nav-more'),
+                                  label: 'More',
+                                  selected: false,
+                                  icon: const Icon(Icons.more_horiz_rounded),
                                   selectedIcon: const Icon(
-                                    Icons.bluetooth_connected_rounded,
+                                    Icons.more_horiz_rounded,
                                   ),
-                                  onTap: () => context.go(_tabPaths[4]),
+                                  onTap: null,
                                 ),
                               ),
                             ],
@@ -768,98 +710,6 @@ class MomCozyBottomNavigation extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _StatusNavIcon extends StatelessWidget {
-  const _StatusNavIcon({
-    required this.showPregnancyDiaryBadge,
-    required this.showPregnancyPlanBadge,
-    required this.child,
-  });
-
-  final bool showPregnancyDiaryBadge;
-  final bool showPregnancyPlanBadge;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final showBadge = showPregnancyDiaryBadge || showPregnancyPlanBadge;
-    final semanticsLabel = showPregnancyDiaryBadge && showPregnancyPlanBadge
-        ? '孕期日记和孕期计划有更新'
-        : showPregnancyPlanBadge
-        ? '孕期计划有更新'
-        : '孕期日记有更新';
-    Widget badge = Semantics(
-      label: semanticsLabel,
-      child: const DecoratedBox(
-        decoration: BoxDecoration(
-          color: MomCozyColors.badge,
-          shape: BoxShape.circle,
-        ),
-        child: SizedBox.square(dimension: 8),
-      ),
-    );
-    if (showPregnancyPlanBadge) {
-      badge = KeyedSubtree(
-        key: const ValueKey('bottom-nav-status-plan-badge'),
-        child: badge,
-      );
-    }
-    if (showPregnancyDiaryBadge) {
-      badge = KeyedSubtree(
-        key: const ValueKey('bottom-nav-status-diary-badge'),
-        child: badge,
-      );
-    }
-    return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
-      children: [
-        child,
-        if (showBadge)
-          Positioned(
-            key: const ValueKey('bottom-nav-status-badge'),
-            top: -2,
-            right: -3,
-            child: badge,
-          ),
-      ],
-    );
-  }
-}
-
-class _ScheduleNavIcon extends StatelessWidget {
-  const _ScheduleNavIcon({required this.showBadge, required this.child});
-
-  final bool showBadge;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
-      children: [
-        child,
-        if (showBadge)
-          Positioned(
-            key: const ValueKey('bottom-nav-schedule-plan-badge'),
-            top: -2,
-            right: -3,
-            child: Semantics(
-              label: '稳奶计划有更新',
-              child: const DecoratedBox(
-                decoration: BoxDecoration(
-                  color: MomCozyColors.badge,
-                  shape: BoxShape.circle,
-                ),
-                child: SizedBox.square(dimension: 8),
-              ),
-            ),
-          ),
-      ],
     );
   }
 }
@@ -879,11 +729,13 @@ class _MomCozyNavTab extends StatelessWidget {
   final bool selected;
   final Widget icon;
   final Widget selectedIcon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final foreground = selected
+    final foreground = onTap == null
+        ? MomCozyColors.mutedForeground.withValues(alpha: 0.56)
+        : selected
         ? MomCozyColors.primary
         : MomCozyColors.mutedForeground;
 
@@ -892,6 +744,7 @@ class _MomCozyNavTab extends StatelessWidget {
         key: navKey,
         selected: selected,
         button: true,
+        enabled: onTap != null,
         child: InkWell(
           borderRadius: BorderRadius.circular(MomCozyRadii.control),
           onTap: onTap,
@@ -936,6 +789,48 @@ class _MomCozyNavTab extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _CozymateNavSlot extends StatelessWidget {
+  const _CozymateNavSlot({required this.selected, required this.onTap});
+
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      alignment: Alignment.center,
+      clipBehavior: Clip.none,
+      children: [
+        _MomCozyAgentNavTab(selected: selected, onTap: onTap),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 7,
+          child: IgnorePointer(
+            child: Text(
+              'Cozymate',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: MomCozyTypography.fontFamily,
+                fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                color: selected
+                    ? MomCozyColors.primary
+                    : MomCozyColors.mutedForeground,
+                fontSize: 10,
+                height: 1.05,
+                fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -1580,6 +1475,22 @@ const momCozyRoutes = [
     priority: 'P0',
   ),
   MomCozyRouteConfig(
+    path: '/me',
+    title: 'Me',
+    summary: 'Postpartum recovery and lactation overview.',
+    icon: Icons.person_rounded,
+    accent: Color(0xff862644),
+    priority: 'P0',
+  ),
+  MomCozyRouteConfig(
+    path: '/baby',
+    title: 'Baby',
+    summary: 'Infant care, feeding and growth overview.',
+    icon: Icons.child_care_rounded,
+    accent: Color(0xff862644),
+    priority: 'P0',
+  ),
+  MomCozyRouteConfig(
     path: '/calibration',
     title: '舒适负压调节',
     summary: '每一步确认一个动作，找到你的舒适档位。',
@@ -1685,14 +1596,12 @@ const _routesWithoutBottomNavigation = {
   '/media-viewer',
 };
 
-const _tabPaths = ['/status', '/schedule', '/', '/community', '/device'];
+const _tabPaths = ['/me', '/baby', '/'];
 
 int _selectedTabIndex(String location) {
-  if (location == '/status') return 0;
-  if (location == '/schedule') return 1;
+  if (location == '/me' || location == '/status') return 0;
+  if (location == '/baby') return 1;
   if (location == '/') return 2;
-  if (location == '/community') return 3;
-  if (location.startsWith('/device') || location == '/w1') return 4;
   return -1;
 }
 
