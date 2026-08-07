@@ -795,14 +795,6 @@ class _MomCozyWordmark extends StatelessWidget {
     return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: _MeBabyOverviewColors.wine,
-            shape: BoxShape.circle,
-          ),
-          child: SizedBox.square(dimension: 10),
-        ),
-        SizedBox(width: 7),
         Text(
           'momcozy',
           style: TextStyle(
