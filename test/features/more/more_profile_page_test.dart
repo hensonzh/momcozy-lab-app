@@ -7,11 +7,23 @@ import '../../support/momcozy_test_fonts.dart';
 void main() {
   setUpAll(loadMomCozyTestFonts);
 
-  testWidgets('More links to the recovery profile overview', (tester) async {
+  testWidgets('More primary tab is disabled', (tester) async {
     await _pumpApp(tester, initialLocation: '/me');
 
-    await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
+    final moreTab = find.byKey(const ValueKey('bottom-nav-more'));
+    expect(tester.widget<Semantics>(moreTab).properties.enabled, isFalse);
+
+    await tester.tap(moreTab);
     await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('route-page-/me')), findsOneWidget);
+    expect(find.byKey(const ValueKey('route-page-/more')), findsNothing);
+  });
+
+  testWidgets('More direct route links to the recovery profile overview', (
+    tester,
+  ) async {
+    await _pumpApp(tester, initialLocation: '/more');
 
     expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
     expect(find.text('设备与服务'), findsOneWidget);
