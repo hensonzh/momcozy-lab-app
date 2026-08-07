@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
@@ -428,6 +429,32 @@ void main() {
       expect(find.text('No feeding data recorded today'), findsOneWidget);
     });
 
+    testWidgets('Baby main layout preserves the approved reference anchors', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+
+      final heroBackground = tester.getRect(
+        find.byKey(const ValueKey('baby-profile-hero-background')),
+      );
+      final cameraCard = tester.getRect(
+        find.byKey(const ValueKey('baby-monitor-camera-card')),
+      );
+      final recentCard = tester.getRect(
+        find.byKey(const ValueKey('baby-monitor-recent-card')),
+      );
+      final addRecord = tester.getRect(
+        find.byKey(const ValueKey('me-baby-overview-add-record')),
+      );
+
+      expect(heroBackground, const Rect.fromLTWH(22, 77, 386, 156));
+      expect(cameraCard, const Rect.fromLTWH(16, 311, 398, 241));
+      expect(recentCard.left, 16);
+      expect(recentCard.top, 562);
+      expect(recentCard.width, 398);
+      expect(addRecord, const Rect.fromLTWH(350, 772, 56, 56));
+    });
+
     testWidgets('Baby sleep summary opens the honest detailed report', (
       tester,
     ) async {
@@ -446,6 +473,31 @@ void main() {
       expect(find.text('10.2 hours'), findsNothing);
     });
 
+    testWidgets('Baby sleep landing preserves the approved source geometry', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+      await tester.tap(find.byKey(const ValueKey('baby-section-sleep')));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-sleep-summary-card'))),
+        const Rect.fromLTWH(16, 273, 398, 168),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-sleep-pattern-card'))),
+        const Rect.fromLTWH(16, 451, 398, 116),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-sleep-trend-card'))),
+        const Rect.fromLTWH(16, 577, 398, 143),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-sleep-training-card'))),
+        const Rect.fromLTWH(16, 730, 398, 114),
+      );
+    });
+
     testWidgets('Baby growth detail presents recorded trend and deltas', (
       tester,
     ) async {
@@ -460,6 +512,117 @@ void main() {
       expect(find.text('+0.4 kg'), findsOneWidget);
       expect(find.text('Baseline'), findsOneWidget);
       expect(find.text('P55 (Normal)'), findsNothing);
+    });
+
+    testWidgets('Baby growth layout preserves the approved card geometry', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        viewportSize: const Size(390, 844),
+      );
+      await _openGrowthDetail(tester, 'weight');
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-growth-current-card'))),
+        const Rect.fromLTWH(16, 95, 358, 100),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-growth-trend-card'))),
+        const Rect.fromLTWH(16, 211, 358, 195),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-growth-history-card'))),
+        const Rect.fromLTWH(16, 422, 358, 251),
+      );
+    });
+
+    testWidgets('Baby detail chrome preserves the approved source geometry', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        viewportSize: const Size(390, 1074),
+      );
+      await tester.tap(find.byKey(const ValueKey('baby-section-feeding')));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-detail-back-feeding'))),
+        const Rect.fromLTWH(16, 26, 44, 44),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-detail-more-disabled'))),
+        const Rect.fromLTWH(330, 26, 44, 44),
+      );
+      expect(
+        tester.getRect(
+          find.byKey(const ValueKey('baby-feeding-period-background')),
+        ),
+        const Rect.fromLTWH(16, 78, 358, 38),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-feeding-summary-card'))),
+        const Rect.fromLTWH(16, 139, 358, 76),
+      );
+      expect(find.text('Weekly Intake Trend'), findsOneWidget);
+
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        viewportSize: const Size(390, 875),
+      );
+      await tester.tap(find.byKey(const ValueKey('baby-section-sleep')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('baby-sleep-summary-card')));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(
+          find.byKey(const ValueKey('baby-sleep-last-night-card')),
+        ),
+        const Rect.fromLTWH(16, 95, 358, 125),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-sleep-timeline-card'))),
+        const Rect.fromLTWH(16, 236, 358, 100),
+      );
+
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        viewportSize: const Size(390, 963),
+      );
+      await tester.tap(find.byKey(const ValueKey('baby-section-diaper')));
+      await tester.pumpAndSettle();
+      final diaperSummary = tester.getRect(
+        find.byKey(const ValueKey('baby-diaper-summary-card')),
+      );
+      expect(diaperSummary.left, 16);
+      expect(diaperSummary.top, 95);
+      expect(diaperSummary.width, 358);
+      expect(diaperSummary.height, closeTo(105, 0.01));
+      final wetCard = tester.getRect(
+        find.byKey(const ValueKey('baby-diaper-wet-card')),
+      );
+      expect(wetCard.left, 16);
+      expect(wetCard.top, closeTo(216, 0.01));
+      expect(wetCard.width, 174);
+      expect(wetCard.height, closeTo(90, 0.01));
+      final dirtyCard = tester.getRect(
+        find.byKey(const ValueKey('baby-diaper-dirty-card')),
+      );
+      expect(dirtyCard.left, 200);
+      expect(dirtyCard.top, closeTo(216, 0.01));
+      expect(dirtyCard.width, 174);
+      expect(dirtyCard.height, closeTo(90, 0.01));
+      final diaperTimeline = tester.getRect(
+        find.byKey(const ValueKey('baby-diaper-timeline-card')),
+      );
+      expect(diaperTimeline.left, 16);
+      expect(diaperTimeline.top, closeTo(322, 0.01));
+      expect(diaperTimeline.width, 358);
     });
 
     testWidgets('Baby primary controls expose minimum 44px tap targets', (
@@ -479,6 +642,79 @@ void main() {
         final size = tester.getSize(find.byKey(ValueKey(key)));
         expect(size.width, greaterThanOrEqualTo(44), reason: key);
         expect(size.height, greaterThanOrEqualTo(44), reason: key);
+      }
+    });
+
+    testWidgets('Baby uses the approved typography and vector iconography', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+
+      expect(tester.widget<Text>(find.text('Mia')).style?.fontFamily, 'Rubik');
+      expect(
+        tester.widget<Text>(find.text('12 weeks 4 days')).style?.fontFamily,
+        'Figtree',
+      );
+      for (final key in const [
+        'me-baby-overview-notification-disabled',
+        'baby-section-monitor',
+        'baby-section-sleep',
+        'baby-section-feeding',
+        'baby-section-diaper',
+      ]) {
+        expect(
+          find.descendant(
+            of: find.byKey(ValueKey(key)),
+            matching: find.byType(SvgPicture),
+          ),
+          findsOneWidget,
+          reason: key,
+        );
+      }
+
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-add-record')),
+      );
+      await tester.pumpAndSettle();
+      for (final detail in const [
+        'sleep',
+        'feeding',
+        'diaper',
+        'weight',
+        'height',
+        'head-circumference',
+      ]) {
+        expect(
+          find.descendant(
+            of: find.byKey(ValueKey('baby-add-record-$detail')),
+            matching: find.byType(SvgPicture),
+          ),
+          findsOneWidget,
+          reason: detail,
+        );
+      }
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('baby-add-record-close')),
+          matching: find.byType(SvgPicture),
+        ),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('baby-add-record-feeding')));
+      await tester.pumpAndSettle();
+      for (final key in const [
+        'baby-detail-back-feeding',
+        'baby-detail-more-disabled',
+      ]) {
+        expect(
+          find.descendant(
+            of: find.byKey(ValueKey(key)),
+            matching: find.byType(SvgPicture),
+          ),
+          findsOneWidget,
+          reason: key,
+        );
       }
     });
 
@@ -802,6 +1038,22 @@ void main() {
               ),
         ),
         findsOneWidget,
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-avatar-handle'))),
+        const Rect.fromLTWH(195, 701, 40, 4),
+      );
+      expect(
+        tester.getRect(
+          find.byKey(const ValueKey('baby-avatar-monitor-preview')),
+        ),
+        const Rect.fromLTWH(16, 762, 398, 210),
+      );
+      expect(
+        tester.getRect(
+          find.byKey(const ValueKey('me-baby-overview-add-record')),
+        ),
+        const Rect.fromLTWH(350, 772, 56, 56),
       );
     });
 
@@ -1153,6 +1405,10 @@ Future<void> _pumpApp(
       ),
       precacheImage(
         const AssetImage('assets/images/me_baby_overview/baby_avatar.png'),
+        imageContext,
+      ),
+      precacheImage(
+        const AssetImage('assets/images/me_baby_overview/baby_avatar_full.png'),
         imageContext,
       ),
       precacheImage(

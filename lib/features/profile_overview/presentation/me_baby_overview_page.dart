@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
@@ -488,7 +489,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                   SizedBox(
                                     height:
                                         widget.identity == ProfileIdentity.baby
-                                        ? 11
+                                        ? (_section == 'sleep' ? 7 : 4)
                                         : 14,
                                   ),
                                   _SectionTabs(
@@ -499,7 +500,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                   SizedBox(
                                     height:
                                         widget.identity == ProfileIdentity.baby
-                                        ? (_section == 'sleep' ? 12 : 16)
+                                        ? (_section == 'sleep' ? 7 : 11)
                                         : 14,
                                   ),
                                   if (widget.identity == ProfileIdentity.mom)
@@ -523,14 +524,14 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                           AnimatedPositioned(
                             duration: _settleDuration,
                             curve: Curves.easeOutCubic,
-                            right: 18,
-                            bottom: _avatarExpanded ? 104 : 18,
+                            right: 24,
+                            bottom: 20,
                             child: _CircleAction(
                               actionKey: const ValueKey(
                                 'me-baby-overview-add-record',
                               ),
                               semanticLabel: 'Add baby record',
-                              icon: Icons.add_rounded,
+                              iconAsset: _MeBabyOverviewAssets.plusIcon,
                               onPressed: _showBabyAddRecordSheet,
                             ),
                           ),
@@ -554,7 +555,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
               padding: EdgeInsets.fromLTRB(
                 widget.identity == ProfileIdentity.baby ? 22 : 16,
                 widget.identity == ProfileIdentity.baby ? 14 : 8,
-                widget.identity == ProfileIdentity.baby ? 22 : 16,
+                widget.identity == ProfileIdentity.baby ? 18 : 16,
                 widget.identity == ProfileIdentity.baby ? 2 : 8,
               ),
               child: _MeBabyOverviewHeader(
@@ -792,9 +793,10 @@ class _MeBabyOverviewHeader extends StatelessWidget {
                   label,
                   maxLines: 1,
                   style: const TextStyle(
+                    fontFamily: MomCozyTypography.bodyFontFamily,
                     color: _BabyOverviewColors.wine,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -896,7 +898,8 @@ class _MeBabyOverviewHeader extends StatelessWidget {
           _DisabledCircleAction(
             actionKey: const ValueKey('me-baby-overview-notification-disabled'),
             semanticLabel: 'Notifications are not available yet',
-            icon: Icons.notifications_none_rounded,
+            icon: isBaby ? null : Icons.notifications_none_rounded,
+            iconAsset: isBaby ? _MeBabyOverviewAssets.bellIcon : null,
             compact: true,
             size: isBaby ? 38 : null,
             backgroundColor: isBaby ? _BabyOverviewColors.pill : null,
@@ -1546,13 +1549,16 @@ class _MomCozyWordmark extends StatelessWidget {
       child: Text(
         'momcozy',
         style: TextStyle(
+          fontFamily: useBabyPalette
+              ? MomCozyTypography.displayFontFamily
+              : null,
           color: useBabyPalette
               ? _BabyOverviewColors.ink
               : _MeBabyOverviewColors.ink,
-          fontSize: 25,
+          fontSize: useBabyPalette ? 20 : 25,
           height: 1,
-          fontWeight: FontWeight.w900,
-          letterSpacing: -1,
+          fontWeight: useBabyPalette ? FontWeight.w800 : FontWeight.w900,
+          letterSpacing: useBabyPalette ? 0 : -1,
         ),
       ),
     );
@@ -2308,40 +2314,67 @@ class _SectionTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isBaby = identity == ProfileIdentity.baby;
-    final sections = isBaby
-        ? const [
-            ('monitor', 'Monitor', Icons.monitor_heart_outlined),
-            ('sleep', 'Sleep', Icons.bedtime_outlined),
-            ('feeding', 'Feeding', Icons.child_care_rounded),
-            ('diaper', 'Diaper', Icons.baby_changing_station_outlined),
-          ]
-        : const [
-            ('lactation', 'Lactation', Icons.water_drop_outlined),
-            ('recovery', 'Recovery', Icons.favorite_outline_rounded),
-          ];
     if (isBaby) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        child: Row(
-          children: [
-            for (var index = 0; index < sections.length; index += 1) ...[
-              if (index > 0) SizedBox(width: compact ? 5 : 7),
-              Expanded(
-                child: _SectionTab(
-                  section: sections[index].$1,
-                  label: sections[index].$2,
-                  icon: sections[index].$3,
-                  selected: selected == sections[index].$1,
-                  prefix: 'baby',
-                  onTap: () => onSelected(sections[index].$1),
-                  compact: compact,
-                ),
+      const sections = [
+        ('monitor', 'Monitor', _MeBabyOverviewAssets.activityIcon, 94.0),
+        ('sleep', 'Sleep', _MeBabyOverviewAssets.moonIcon, 81.0),
+        ('feeding', 'Feeding', _MeBabyOverviewAssets.babyIcon, 95.0),
+        ('diaper', 'Diaper', _MeBabyOverviewAssets.circleXIcon, 87.0),
+      ];
+      final tabs = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var index = 0; index < sections.length; index += 1) ...[
+            if (index > 0) const SizedBox(width: 8),
+            SizedBox(
+              width: sections[index].$4,
+              child: _SectionTab(
+                section: sections[index].$1,
+                label: sections[index].$2,
+                iconAsset: sections[index].$3,
+                selected: selected == sections[index].$1,
+                prefix: 'baby',
+                onTap: () => onSelected(sections[index].$1),
+                compact: compact,
               ),
-            ],
+            ),
           ],
-        ),
+        ],
+      );
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 381) {
+            if (compact) return tabs;
+            return Padding(
+              padding: const EdgeInsets.only(left: 6),
+              child: tabs,
+            );
+          }
+          return Row(
+            children: [
+              for (var index = 0; index < sections.length; index += 1) ...[
+                if (index > 0) const SizedBox(width: 4),
+                Expanded(
+                  child: _SectionTab(
+                    section: sections[index].$1,
+                    label: sections[index].$2,
+                    iconAsset: sections[index].$3,
+                    selected: selected == sections[index].$1,
+                    prefix: 'baby',
+                    onTap: () => onSelected(sections[index].$1),
+                    compact: compact,
+                  ),
+                ),
+              ],
+            ],
+          );
+        },
       );
     }
+    const sections = [
+      ('lactation', 'Lactation', Icons.water_drop_outlined),
+      ('recovery', 'Recovery', Icons.favorite_outline_rounded),
+    ];
     return SizedBox(
       height: compact ? 44 : 52,
       child: ListView.separated(
@@ -2370,7 +2403,8 @@ class _SectionTab extends StatelessWidget {
   const _SectionTab({
     required this.section,
     required this.label,
-    required this.icon,
+    this.icon,
+    this.iconAsset,
     required this.selected,
     required this.prefix,
     required this.onTap,
@@ -2379,7 +2413,8 @@ class _SectionTab extends StatelessWidget {
 
   final String section;
   final String label;
-  final IconData icon;
+  final IconData? icon;
+  final String? iconAsset;
   final bool selected;
   final String prefix;
   final VoidCallback onTap;
@@ -2409,8 +2444,8 @@ class _SectionTab extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              icon,
+                            _BabySvgIcon(
+                              asset: iconAsset!,
                               color: selected
                                   ? Colors.white
                                   : _BabyOverviewColors.ink,
@@ -2420,6 +2455,7 @@ class _SectionTab extends StatelessWidget {
                             Text(
                               label,
                               style: TextStyle(
+                                fontFamily: MomCozyTypography.bodyFontFamily,
                                 color: selected
                                     ? Colors.white
                                     : _BabyOverviewColors.ink,
@@ -2456,7 +2492,7 @@ class _SectionTab extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        icon,
+                        icon!,
                         color: selected
                             ? Colors.white
                             : _MeBabyOverviewColors.wine,
@@ -2791,31 +2827,12 @@ class _RoleCard extends StatelessWidget {
   }
 }
 
-class _RoundIcon extends StatelessWidget {
-  const _RoundIcon({required this.icon});
-
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: Color(0xfff2e9e6),
-        shape: BoxShape.circle,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(11),
-        child: Icon(icon, color: Color(0xff862644), size: 22),
-      ),
-    );
-  }
-}
-
 const _babyFeedSupportingStyle = TextStyle(
+  fontFamily: MomCozyTypography.bodyFontFamily,
   color: Color(0xffa28f89),
   fontSize: 14,
   height: 1.35,
-  fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w500,
 );
 
 class _FeedRow extends StatelessWidget {
@@ -2832,8 +2849,10 @@ class _FeedRow extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _RoundIcon(icon: Icons.favorite_border_rounded),
-              const SizedBox(width: 12),
+              const _BabyRoundIcon(
+                iconAsset: _MeBabyOverviewAssets.bottleWineIcon,
+              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2841,9 +2860,10 @@ class _FeedRow extends StatelessWidget {
                     Text(
                       feed.$1,
                       style: const TextStyle(
+                        fontFamily: MomCozyTypography.bodyFontFamily,
                         color: Color(0xff181818),
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(feed.$2, style: _babyFeedSupportingStyle),
@@ -2856,9 +2876,10 @@ class _FeedRow extends StatelessWidget {
           Text(
             feed.$3,
             style: const TextStyle(
+              fontFamily: MomCozyTypography.bodyFontFamily,
               color: Color(0xff181818),
               fontSize: 16,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
             ),
           ),
           Text(feed.$4, style: _babyFeedSupportingStyle),
@@ -2867,8 +2888,8 @@ class _FeedRow extends StatelessWidget {
     }
     return Row(
       children: [
-        const _RoundIcon(icon: Icons.favorite_border_rounded),
-        const SizedBox(width: 12),
+        const _BabyRoundIcon(iconAsset: _MeBabyOverviewAssets.bottleWineIcon),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2876,9 +2897,10 @@ class _FeedRow extends StatelessWidget {
               Text(
                 feed.$1,
                 style: const TextStyle(
+                  fontFamily: MomCozyTypography.bodyFontFamily,
                   color: Color(0xff181818),
                   fontSize: 16,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               Text(feed.$2, style: _babyFeedSupportingStyle),
@@ -2891,9 +2913,10 @@ class _FeedRow extends StatelessWidget {
             Text(
               feed.$3,
               style: const TextStyle(
+                fontFamily: MomCozyTypography.bodyFontFamily,
                 color: Color(0xff181818),
                 fontSize: 16,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
               ),
             ),
             Text(feed.$4, style: _babyFeedSupportingStyle),
@@ -3077,7 +3100,8 @@ class _DisabledCircleAction extends StatelessWidget {
   const _DisabledCircleAction({
     required this.actionKey,
     required this.semanticLabel,
-    required this.icon,
+    this.icon,
+    this.iconAsset,
     this.compact = false,
     this.backgroundColor,
     this.foregroundColor,
@@ -3086,7 +3110,8 @@ class _DisabledCircleAction extends StatelessWidget {
 
   final Key actionKey;
   final String semanticLabel;
-  final IconData icon;
+  final IconData? icon;
+  final String? iconAsset;
   final bool compact;
   final Color? backgroundColor;
   final Color? foregroundColor;
@@ -3129,13 +3154,27 @@ class _DisabledCircleAction extends StatelessWidget {
                           ),
                         ],
                 ),
-                child: Icon(
-                  icon,
-                  color:
-                      foregroundColor ??
-                      (compact ? _MeBabyOverviewColors.wine : Colors.white),
-                  size: compact ? 24 : 32,
-                ),
+                child: iconAsset == null
+                    ? Icon(
+                        icon,
+                        color:
+                            foregroundColor ??
+                            (compact
+                                ? _MeBabyOverviewColors.wine
+                                : Colors.white),
+                        size: compact ? 24 : 32,
+                      )
+                    : Center(
+                        child: _BabySvgIcon(
+                          asset: iconAsset!,
+                          color:
+                              foregroundColor ??
+                              (compact
+                                  ? _MeBabyOverviewColors.wine
+                                  : Colors.white),
+                          size: compact ? 20 : 28,
+                        ),
+                      ),
               ),
             ),
           ),
@@ -3149,13 +3188,13 @@ class _CircleAction extends StatelessWidget {
   const _CircleAction({
     required this.actionKey,
     required this.semanticLabel,
-    required this.icon,
+    required this.iconAsset,
     required this.onPressed,
   });
 
   final Key actionKey;
   final String semanticLabel;
-  final IconData icon;
+  final String iconAsset;
   final VoidCallback onPressed;
 
   @override
@@ -3175,7 +3214,13 @@ class _CircleAction extends StatelessWidget {
           onTap: onPressed,
           child: SizedBox.square(
             dimension: 56,
-            child: Icon(icon, color: Colors.white, size: 30),
+            child: Center(
+              child: _BabySvgIcon(
+                asset: iconAsset,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
           ),
         ),
       ),
@@ -3251,6 +3296,22 @@ abstract final class _MeBabyOverviewAssets {
       'assets/images/me_baby_overview/nursery_camera.png';
   static const sleepTraining =
       'assets/images/me_baby_overview/sleep_training.png';
+  static const _babyIconRoot = 'assets/images/me_baby_overview/icons';
+  static const activityIcon = '$_babyIconRoot/activity.svg';
+  static const backButton = '$_babyIconRoot/back-button.svg';
+  static const babyIcon = '$_babyIconRoot/baby.svg';
+  static const bellIcon = '$_babyIconRoot/bell.svg';
+  static const bottleWineIcon = '$_babyIconRoot/bottle-wine.svg';
+  static const circleXIcon = '$_babyIconRoot/circle-x.svg';
+  static const closeButton = '$_babyIconRoot/close-button.svg';
+  static const clockIcon = '$_babyIconRoot/clock.svg';
+  static const dropletIcon = '$_babyIconRoot/droplet.svg';
+  static const moonIcon = '$_babyIconRoot/moon.svg';
+  static const moonStarIcon = '$_babyIconRoot/moon-star.svg';
+  static const moreButton = '$_babyIconRoot/more-button.svg';
+  static const plusIcon = '$_babyIconRoot/plus.svg';
+  static const rulerIcon = '$_babyIconRoot/ruler.svg';
+  static const weightIcon = '$_babyIconRoot/weight.svg';
 }
 
 abstract final class _MeBabyOverviewColors {
@@ -3302,39 +3363,53 @@ abstract final class _MeBabyOverviewText {
 
 abstract final class _BabyText {
   static const cardTitle = TextStyle(
+    fontFamily: MomCozyTypography.displayFontFamily,
     color: _BabyOverviewColors.ink,
     fontSize: 16,
     height: 1.1,
-    fontWeight: FontWeight.w900,
+    fontWeight: FontWeight.w700,
   );
   static const heroMetric = TextStyle(
+    fontFamily: MomCozyTypography.displayFontFamily,
     color: _BabyOverviewColors.ink,
     fontSize: 42,
     height: 1,
-    fontWeight: FontWeight.w900,
+    fontWeight: FontWeight.w700,
     letterSpacing: -1.2,
   );
+  static const detailMetric = TextStyle(
+    fontFamily: MomCozyTypography.displayFontFamily,
+    color: _BabyOverviewColors.ink,
+    fontSize: 32,
+    height: 1,
+    fontWeight: FontWeight.w700,
+    letterSpacing: -0.8,
+  );
   static const supporting = TextStyle(
+    fontFamily: MomCozyTypography.bodyFontFamily,
     color: _BabyOverviewColors.mutedText,
     fontSize: 14,
     height: 1.3,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
   );
   static const supportingSmall = TextStyle(
+    fontFamily: MomCozyTypography.bodyFontFamily,
     color: _BabyOverviewColors.mutedText,
     fontSize: 11,
     height: 1.2,
     fontWeight: FontWeight.w600,
   );
   static const eyebrow = TextStyle(
+    fontFamily: MomCozyTypography.bodyFontFamily,
     color: _BabyOverviewColors.mutedText,
     fontSize: 13,
     height: 1.2,
-    fontWeight: FontWeight.w900,
+    fontWeight: FontWeight.w700,
   );
   static const accentLabel = TextStyle(
+    fontFamily: MomCozyTypography.bodyFontFamily,
     color: _BabyOverviewColors.wine,
     fontSize: 12,
-    fontWeight: FontWeight.w900,
+    fontWeight: FontWeight.w700,
   );
 }
