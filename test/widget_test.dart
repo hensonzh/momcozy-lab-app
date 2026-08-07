@@ -366,10 +366,10 @@ void main() {
     expect(find.byKey(const ValueKey('agent-hub-stub')), findsOneWidget);
     expect(buildCount, 1);
 
-    router.go('/schedule');
+    router.go('/plan');
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
+    expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-hub-stub')), findsNothing);
     expect(
       find.byKey(const ValueKey('agent-hub-stub'), skipOffstage: false),
@@ -383,7 +383,7 @@ void main() {
   ) async {
     final client = _ControllableAgentStreamClient();
     final router = createMomCozyRouter(
-      initialLocation: '/schedule',
+      initialLocation: '/plan',
       agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) {
         final extraMap = extra is Map ? extra : null;
         final prefill = extraMap?['agentPrefill'];
@@ -617,7 +617,7 @@ void main() {
     await routes.dispose();
   });
 
-  testWidgets('route shell opens schedule from native reminder notification', (
+  testWidgets('route shell opens Plan from a native navigation event', (
     tester,
   ) async {
     final routes = FakeRouteIntentPlatform();
@@ -634,13 +634,13 @@ void main() {
 
     routes.dispatchActiveRoute(
       const PendingNativeRoute(
-        path: '/schedule',
-        notifyJson: {'event': 'schedule_reminder', 'taskId': 'task-001'},
+        path: '/plan',
+        notifyJson: {'event': 'plan_updated'},
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
+    expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
     expect(find.byType(MomCozyBottomNavigation), findsOneWidget);
 
     await routes.dispose();

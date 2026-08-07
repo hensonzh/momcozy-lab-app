@@ -25,8 +25,8 @@ List<RouteIntent> routeIntentsFromNativePayloads(List<Object?> payloads) {
 List<RouteIntent> routeIntentsFromPendingStorage(Map<String, Object?> storage) {
   final milkPlanIntent = _planPendingIntent(
     raw: _string(storage['mmc_milk_plan_nav_pending']),
-    type: 'OpenSchedulePlanBadge',
-    path: '/schedule',
+    type: 'OpenPlanBadge',
+    path: '/plan',
     fallbackPayload: const {'source': 'milkPlanChanged'},
   );
 
@@ -71,32 +71,14 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
 
   final uri = Uri.tryParse(path);
   final cleanPath = uri?.path ?? _stripQuery(path);
-  final query = uri?.queryParameters ?? const <String, String>{};
   final notify = _decodeObject(_string(payload['notifyJson']));
   final event = _string(notify?['event']);
-  final scheduleTaskId =
-      _string(notify?['taskId']) ??
-      _string(notify?['task_id']) ??
-      _string(query['taskId']) ??
-      _string(query['task_id']);
-  final scheduleDate =
-      _string(notify?['date']) ??
-      _string(notify?['task_date']) ??
-      _string(query['date']) ??
-      _string(query['task_date']);
 
-  if (cleanPath == '/schedule' &&
-      (event == 'schedule_reminder' ||
-          query['mmcNotify'] == '1' ||
-          scheduleTaskId != null ||
-          scheduleDate != null)) {
-    final intentPayload = <String, Object?>{'source': 'native-notification'};
-    if (scheduleTaskId != null) intentPayload['taskId'] = scheduleTaskId;
-    if (scheduleDate != null) intentPayload['date'] = scheduleDate;
-    return RouteIntent(
-      type: 'OpenScheduleReminder',
-      path: '/schedule',
-      payload: intentPayload,
+  if (cleanPath == '/plan' || cleanPath == '/schedule') {
+    return const RouteIntent(
+      type: 'OpenPlan',
+      path: '/plan',
+      payload: {'source': 'native-navigation'},
       consume: 'once',
     );
   }
@@ -271,8 +253,8 @@ RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
   final linkAction = _string(link?['action']);
   if (linkAction == 'open-schedule') {
     return const RouteIntent(
-      type: 'OpenScheduleFromAgent',
-      path: '/schedule',
+      type: 'OpenPlanFromAgent',
+      path: '/plan',
       payload: {'source': 'agentBubbleLink', 'action': 'open-schedule'},
     );
   }
@@ -292,10 +274,10 @@ RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
   final customEvent = _record(event['customEvent']);
   final customEventName = _string(customEvent?['name']);
   if (customEventName == 'navigate-to' &&
-      _string(customEvent?['detail']) == '/schedule') {
+      const {'/schedule', '/plan'}.contains(_string(customEvent?['detail']))) {
     return const RouteIntent(
-      type: 'OpenSchedule',
-      path: '/schedule',
+      type: 'OpenPlan',
+      path: '/plan',
       payload: {'source': 'inlineFlow'},
     );
   }

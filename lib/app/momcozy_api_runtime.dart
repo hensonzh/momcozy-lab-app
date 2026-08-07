@@ -27,15 +27,9 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/android_schedule_reminder_gateway.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_image_recognition_gateway.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/milk_plan_change_persistence.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_reminder_preference_store.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_image_recognition.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
+import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/plan/data/plan_change_persistence.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
@@ -84,9 +78,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
-    MilkPlanChangeStore? milkPlanChangeStore,
-    ScheduleReminderPreferenceStore? scheduleReminderPreferenceStore,
-    ScheduleReminderGateway? scheduleReminderGateway,
+    PlanChangeStore? planChangeStore,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
     DateTime Function()? now,
@@ -145,24 +137,22 @@ class MomCozyApiRuntime {
             ownerUserId: this.session.userId,
             babyId: this.session.babyId,
           );
-    this.milkPlanChangeStore =
-        milkPlanChangeStore ??
-        MilkPlanChangeStore(
-          persistence: FlutterSecureMilkPlanChangePersistence(
+    this.planChangeStore =
+        planChangeStore ??
+        PlanChangeStore(
+          persistence: FlutterSecurePlanChangePersistence(
             userId: this.session.status == MomCozySessionStatus.authenticated
                 ? this.session.userId
                 : '',
           ),
         );
-    unawaited(this.milkPlanChangeStore.restore());
+    unawaited(this.planChangeStore.restore());
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
     _hasInjectedAgentVoicePlaybackPlayer = agentVoicePlaybackPlayer != null;
     _productAssetRepository = productAssetRepository;
     _hasInjectedProductAssetRepository = productAssetRepository != null;
-    _scheduleReminderPreferenceStore = scheduleReminderPreferenceStore;
-    _scheduleReminderGateway = scheduleReminderGateway;
     _volumeUnitPreferenceStore = volumeUnitPreferenceStore;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
@@ -181,7 +171,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
-    MilkPlanChangeStore? milkPlanChangeStore,
+    PlanChangeStore? planChangeStore,
     String? userId,
     String? babyId,
     String? locale,
@@ -206,7 +196,7 @@ class MomCozyApiRuntime {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
-      milkPlanChangeStore: milkPlanChangeStore,
+      planChangeStore: planChangeStore,
     );
   }
 
@@ -223,9 +213,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
-    MilkPlanChangeStore? milkPlanChangeStore,
-    ScheduleReminderPreferenceStore? scheduleReminderPreferenceStore,
-    ScheduleReminderGateway? scheduleReminderGateway,
+    PlanChangeStore? planChangeStore,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
@@ -311,9 +299,7 @@ class MomCozyApiRuntime {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
-      milkPlanChangeStore: milkPlanChangeStore,
-      scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
-      scheduleReminderGateway: scheduleReminderGateway,
+      planChangeStore: planChangeStore,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
@@ -386,7 +372,7 @@ class MomCozyApiRuntime {
   final HospitalBagCartStore hospitalBagCartStore;
   late final IbclcConsultStore ibclcConsultStore;
   late final ProfileOverviewCache profileOverviewCache;
-  late final MilkPlanChangeStore milkPlanChangeStore;
+  late final PlanChangeStore planChangeStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
@@ -404,9 +390,6 @@ class MomCozyApiRuntime {
   AgentHubPlatformDocumentPicker? _agentHubPlatformDocumentPicker;
   ProductAssetRepository? _productAssetRepository;
   MediaContentRepository? _mediaContentRepository;
-  ScheduleReminderPreferenceStore? _scheduleReminderPreferenceStore;
-  ScheduleReminderGateway? _scheduleReminderGateway;
-  ScheduleImageRecognitionGateway? _scheduleImageRecognitionGateway;
   VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
   late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
@@ -473,11 +456,6 @@ class MomCozyApiRuntime {
     return ProfileOverviewApiRepository(transport: jsonTransport, now: now);
   }
 
-  Future<DateTime?> loadSchedulePostpartumAnchorDate() async {
-    final overview = await profileOverviewRepository.fetchOverview();
-    return overview.mom?.deliveryDate ?? overview.baby?.birthDate;
-  }
-
   AgentHubProfileRepository get agentHubProfileRepository {
     return AgentHubProfileRepository(transport: jsonTransport);
   }
@@ -490,31 +468,12 @@ class MomCozyApiRuntime {
     return SupportTicketApiRepository(transport: jsonTransport);
   }
 
-  ScheduleApiRepository get scheduleRepository {
-    return ScheduleApiRepository(transport: jsonTransport);
+  PlanApiRepository get planRepository {
+    return PlanApiRepository(transport: jsonTransport);
   }
 
   RecordsApiRepository get recordsRepository {
     return RecordsApiRepository(transport: jsonTransport);
-  }
-
-  ScheduleReminderPreferenceStore get scheduleReminderPreferenceStore {
-    return _scheduleReminderPreferenceStore ??=
-        FlutterSecureScheduleReminderPreferenceStore(
-          userId: currentSession.userId,
-        );
-  }
-
-  ScheduleReminderGateway get scheduleReminderGateway {
-    final configured = _scheduleReminderGateway;
-    if (configured != null) return configured;
-    if (!currentSession.isAuthenticated) {
-      return const UnsupportedScheduleReminderGateway();
-    }
-    return _scheduleReminderGateway = AndroidScheduleReminderGateway(
-      ownerScope: currentSession.userId,
-      now: now,
-    );
   }
 
   VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
@@ -554,18 +513,6 @@ class MomCozyApiRuntime {
       tokenProvider: () => currentSession.accessToken,
       onUnauthorized: agentStreamUnauthorizedHandler,
     );
-  }
-
-  ScheduleImageRecognitionGateway? get scheduleImageRecognitionGateway {
-    if (!currentSession.isAuthenticated) return null;
-    return _scheduleImageRecognitionGateway ??=
-        ApiScheduleImageRecognitionGateway(
-          imagePicker: agentHubImagePicker,
-          mediaRepository: mediaRepository,
-          baseUri: Uri.parse(_defaultApiBaseUrl),
-          tokenProvider: () => currentSession.accessToken,
-          onUnauthorized: agentStreamUnauthorizedHandler,
-        );
   }
 
   ProductAssetRepository get productAssetRepository {
@@ -666,22 +613,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
 
   void replaceRuntime(MomCozyApiRuntime runtime) {
     if (identical(_runtime, runtime)) return;
-    final previous = _runtime;
-    final sameAuthenticatedAccount =
-        previous.session.isAuthenticated &&
-        runtime.session.isAuthenticated &&
-        previous.session.userId == runtime.session.userId;
-    final previousReminderGateway = previous._scheduleReminderGateway;
-    if (previous.session.isAuthenticated &&
-        !sameAuthenticatedAccount &&
-        previousReminderGateway != null) {
-      unawaited(
-        previousReminderGateway.setEnabled(
-          enabled: false,
-          tasks: const <ScheduleTask>[],
-        ),
-      );
-    }
     _runtime = runtime;
     _currentSession = runtime.session;
     notifyListeners();
@@ -757,17 +688,11 @@ class MomCozyRuntimeController extends ChangeNotifier {
         sameAuthenticatedAccount && session.babyId == currentSession.babyId
         ? _runtime.profileOverviewCache
         : null;
-    final milkPlanChangeStore =
+    final planChangeStore =
         session.status == MomCozySessionStatus.authenticated &&
             currentSession.status == MomCozySessionStatus.authenticated &&
             session.userId == currentSession.userId
-        ? _runtime.milkPlanChangeStore
-        : null;
-    final scheduleReminderGateway = sameAuthenticatedAccount
-        ? _runtime.scheduleReminderGateway
-        : null;
-    final scheduleReminderPreferenceStore = sameAuthenticatedAccount
-        ? _runtime.scheduleReminderPreferenceStore
+        ? _runtime.planChangeStore
         : null;
     final volumeUnitPreferenceStore = sameAuthenticatedAccount
         ? _runtime.volumeUnitPreferenceStore
@@ -785,9 +710,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
         hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
         profileOverviewCache: profileOverviewCache,
-        milkPlanChangeStore: milkPlanChangeStore,
-        scheduleReminderGateway: scheduleReminderGateway,
-        scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
+        planChangeStore: planChangeStore,
         volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       );
     }
@@ -803,9 +726,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
-      milkPlanChangeStore: milkPlanChangeStore,
-      scheduleReminderGateway: scheduleReminderGateway,
-      scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
+      planChangeStore: planChangeStore,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       sessionStore: store,
       sessionProvider: () => _currentSession,

@@ -14,9 +14,9 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
@@ -58,8 +58,8 @@ void main() {
           expect(find.text('IBCLC 在线咨询'), findsWidgets);
         } else if (route.path == '/media-viewer') {
           expect(find.text('媒体'), findsWidgets);
-        } else if (route.path == '/schedule') {
-          expect(find.text('计划待同步'), findsWidgets);
+        } else if (route.path == '/plan') {
+          expect(find.text('No Plans Yet'), findsWidgets);
         } else if (route.path == '/more/body-profile/edit') {
           expect(find.text('Postpartum Recovery Tracker'), findsWidgets);
         } else {
@@ -1997,40 +1997,7 @@ MomCozyApiRuntime _appRuntime({
               },
             ],
           },
-          scheduleDayPlanEndpoint: const <String, Object?>{
-            'items': <Object?>[
-              <String, Object?>{
-                'id': 'pump',
-                'owner_user_id': 'demo-user-fixture',
-                'task_date': '2026-07-01',
-                'task_time': '10:30',
-                'title': '泵奶',
-                'description': '',
-                'status': 'completed',
-                'payload': <String, Object?>{},
-              },
-              <String, Object?>{
-                'id': 'feeding',
-                'owner_user_id': 'demo-user-fixture',
-                'task_date': '2026-07-01',
-                'task_time': '14:00',
-                'title': '喂养',
-                'description': '',
-                'status': 'pending',
-                'payload': <String, Object?>{},
-              },
-              <String, Object?>{
-                'id': 'summary',
-                'owner_user_id': 'demo-user-fixture',
-                'task_date': '2026-07-01',
-                'task_time': '20:30',
-                'title': '晚间复盘',
-                'description': '',
-                'status': 'pending',
-                'payload': <String, Object?>{},
-              },
-            ],
-          },
+          planListEndpoint: const <String, Object?>{'items': <Object?>[]},
           pumpMilkRecordsEndpoint: const <String, Object?>{
             'status': 200,
             'data': <String, Object?>{
