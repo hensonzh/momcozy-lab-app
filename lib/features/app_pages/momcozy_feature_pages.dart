@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
+import 'package:momcozy_flutter_app/features/more/presentation/more_profile_page.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
@@ -123,6 +124,15 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+      ),
+      '/more' => MoreProfileOverviewPage(
+        path: path,
+        onOpenEditor: () => context.go('/more/body-profile'),
+      ),
+      '/more/body-profile' => MoreBodyProfileEditorPage(
+        path: path,
+        onBack: () => context.go('/more'),
+        onSave: () => context.go('/more'),
       ),
       '/device' => _DevicePage(
         path: path,
