@@ -487,16 +487,34 @@ class MomCozyApiRuntime {
 
   ProfileOverviewController createProfileOverviewController({
     ProfileIdentity initialIdentity = ProfileIdentity.mom,
+    String? babyId,
   }) {
+    final requestedBabyId = babyId?.trim();
+    final selectedBabyId = requestedBabyId?.isNotEmpty == true
+        ? requestedBabyId!
+        : currentSession.babyId;
     final records = recordsRepository;
     return ProfileOverviewController(
-      profileOverviewRepository: profileOverviewRepository,
+      profileOverviewRepository: ProfileOverviewApiRepository(
+        transport: jsonTransport,
+        babyId: selectedBabyId,
+        now: now,
+      ),
       feedingRepository: records,
       pumpMilkRepository: records,
       milkTrendRepository: records,
       growthRepository: records,
-      cache: profileOverviewCache,
-      babyId: currentSession.babyId,
+      cache:
+          profileOverviewCache.matches(
+            ownerUserId: currentSession.userId,
+            babyId: selectedBabyId,
+          )
+          ? profileOverviewCache
+          : ProfileOverviewCache(
+              ownerUserId: currentSession.userId,
+              babyId: selectedBabyId,
+            ),
+      babyId: selectedBabyId,
       identity: initialIdentity,
       now: now,
     );

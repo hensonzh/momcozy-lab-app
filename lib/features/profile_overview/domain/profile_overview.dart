@@ -7,18 +7,28 @@ abstract interface class ProfileOverviewRepository {
 }
 
 class ProfileOverview {
-  const ProfileOverview({this.mom, this.baby});
+  const ProfileOverview({
+    this.mom,
+    this.baby,
+    this.infants = const <BabyProfileOverview>[],
+  });
 
   final MomProfileOverview? mom;
   final BabyProfileOverview? baby;
+  final List<BabyProfileOverview> infants;
 
-  bool get isEmpty => mom == null && baby == null;
+  bool get isEmpty => mom == null && baby == null && infants.isEmpty;
 
   ProfileOverview copyWith({
     MomProfileOverview? mom,
     BabyProfileOverview? baby,
+    List<BabyProfileOverview>? infants,
   }) {
-    return ProfileOverview(mom: mom ?? this.mom, baby: baby ?? this.baby);
+    return ProfileOverview(
+      mom: mom ?? this.mom,
+      baby: baby ?? this.baby,
+      infants: infants ?? this.infants,
+    );
   }
 }
 

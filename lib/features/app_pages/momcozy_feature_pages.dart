@@ -98,6 +98,10 @@ class MomCozyFeaturePage extends StatelessWidget {
       ),
       '/me' => MeBabyOverviewPage(path: path, identity: ProfileIdentity.mom),
       '/baby' => MeBabyOverviewPage(path: path, identity: ProfileIdentity.baby),
+      '/baby/development' => MeBabyOverviewPage(
+        path: path,
+        identity: ProfileIdentity.baby,
+      ),
       '/community' => _CommunityPage(
         path: path,
         title: title,

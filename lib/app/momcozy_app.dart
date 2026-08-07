@@ -1292,6 +1292,14 @@ const momCozyRoutes = [
     priority: 'P0',
   ),
   MomCozyRouteConfig(
+    path: '/baby/development',
+    title: 'Baby Development',
+    summary: 'Confirmed pregnancy week and prenatal education.',
+    icon: Icons.pregnant_woman_rounded,
+    accent: Color(0xff862644),
+    priority: 'P0',
+  ),
+  MomCozyRouteConfig(
     path: '/calibration',
     title: '舒适负压调节',
     summary: '每一步确认一个动作，找到你的舒适档位。',
@@ -1419,7 +1427,7 @@ const _tabPaths = ['/me', '/baby', '/', '/plan', '/more'];
 
 int _selectedTabIndex(String location) {
   if (location == '/me') return 0;
-  if (location == '/baby') return 1;
+  if (location == '/baby' || location.startsWith('/baby/')) return 1;
   if (location == '/') return 2;
   if (location == '/plan') return 3;
   if (location == '/more' ||

@@ -32,15 +32,20 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
               .whereType<Map<String, Object?>>()
               .toList(growable: false)
         : const <Map<String, Object?>>[];
-    final matchingInfant = mappedInfants
-        .where((infant) => _infantId(infant) == babyId.trim())
+    final infantOverviews = mappedInfants
+        .map((infant) => _babyProfileOverview(infant, now: now))
+        .whereType<BabyProfileOverview>()
+        .toList(growable: false);
+    final matchingInfant = infantOverviews
+        .where((infant) => infant.id == babyId.trim())
         .firstOrNull;
     final selectedInfant =
         matchingInfant ??
-        (mappedInfants.length == 1 ? mappedInfants.single : null);
+        (infantOverviews.length == 1 ? infantOverviews.single : null);
     return ProfileOverview(
       mom: _momProfileOverview(profile, now: now),
-      baby: _babyProfileOverview(selectedInfant, now: now),
+      baby: selectedInfant,
+      infants: infantOverviews,
     );
   }
 
