@@ -1,0 +1,28 @@
+{
+  "id": "route-milk-plan-pending-intent",
+  "description": "A pending lactation plan update becomes a typed Plan navigation intent.",
+  "input": {
+    "localStorage": {
+      "mmc_milk_plan_nav_pending": "{\"kind\":\"milk_plan\",\"target\":\"schedule\",\"reason\":\"rescheduled\",\"label\":\"追奶计划已调整\",\"planType\":\"chase\",\"dates\":[\"2026-06-29\"]}"
+    }
+  },
+  "expectedIntents": [
+    {
+      "type": "OpenPlanBadge",
+      "path": "/plan",
+      "payload": {
+        "kind": "milk_plan",
+        "reason": "rescheduled",
+        "label": "追奶计划已调整",
+        "planType": "chase",
+        "dates": [
+          "2026-06-29"
+        ]
+      },
+      "consume": "once"
+    }
+  ],
+  "assertions": [
+    "structured plan payload preserves dates, label, reason, and planType"
+  ]
+}

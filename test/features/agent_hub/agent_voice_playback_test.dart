@@ -70,8 +70,8 @@ void main() {
         '已生成',
       );
       expect(
-        sanitizeAgentVoicePlaybackText('请看 [日程页面](/schedule?tab=ready)。'),
-        '请看 日程页面 。',
+        sanitizeAgentVoicePlaybackText('请看 [Plan 页面](/plan?tab=ready)。'),
+        '请看 Plan 页面 。',
       );
       expect(
         sanitizeAgentVoicePlaybackText('请打开 /hospital-bag-cart?tab=ready 查看。'),

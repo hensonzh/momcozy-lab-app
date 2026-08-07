@@ -18,7 +18,7 @@ import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_ca
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_image_recognition_gateway.dart';
+import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -40,7 +40,6 @@ void main() {
     expect(transport.token, isNull);
     expect(transport.headers, containsPair('X-Momcozy-Client', 'flutter'));
     expect(runtime.observability, same(observed.observability));
-    expect(runtime.scheduleImageRecognitionGateway, isNull);
   });
 
   test('runtime can be bootstrapped from secure session store', () async {
@@ -78,10 +77,6 @@ void main() {
     expect(eventResult.sent, isTrue);
     expect(eventResult.body?['event_type'], 'runtime_bootstrap_test');
     expect(runtime.observability, same(observed.observability));
-    expect(
-      runtime.scheduleImageRecognitionGateway,
-      isA<ApiScheduleImageRecognitionGateway>(),
-    );
   });
 
   test('runtime bootstrap waits for the active hospital bag cart', () async {
@@ -177,7 +172,8 @@ void main() {
     );
     expect(runtime.agentHubProfileRepository, isA<AgentHubProfileRepository>());
     expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
-    expect(runtime.scheduleRepository.transport, same(transport));
+    expect(runtime.planRepository, isA<PlanApiRepository>());
+    expect(runtime.planRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.volumeUnitPreferenceStore, same(volumePreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
@@ -202,43 +198,6 @@ void main() {
     expect(overviewController.identity, ProfileIdentity.mom);
     overviewController.dispose();
   });
-
-  test(
-    'schedule postpartum anchor prefers delivery date then birth date',
-    () async {
-      final withDeliveryDate = MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransportByPath({
-          profileMeEndpoint: const {'delivery_date': '2026-06-11'},
-          profileInfantsEndpoint: const {
-            'items': [
-              {'birth_date': '2026-04-05'},
-            ],
-          },
-        }),
-        userId: 'mom',
-      );
-      final withBirthDateOnly = MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransportByPath({
-          profileMeEndpoint: const {'user_id': 'mom'},
-          profileInfantsEndpoint: const {
-            'items': [
-              {'birth_date': '2026-04-05'},
-            ],
-          },
-        }),
-        userId: 'mom',
-      );
-
-      expect(
-        await withDeliveryDate.loadSchedulePostpartumAnchorDate(),
-        DateTime(2026, 6, 11),
-      );
-      expect(
-        await withBirthDateOnly.loadSchedulePostpartumAnchorDate(),
-        DateTime(2026, 4, 5),
-      );
-    },
-  );
 
   test('runtime exposes an injected multipart transport lazily', () async {
     final multipart = FixtureApiMultipartTransport({

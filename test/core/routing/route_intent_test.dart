@@ -59,18 +59,12 @@ void main() {
       },
     );
 
-    test('preserves Android schedule reminder date and task query context', () {
-      final intent = routeIntentFromNativeNotification({
-        'path': '/schedule?date=2026-07-04&task_id=feeding-afternoon',
-      });
+    test('maps native Plan navigation to the canonical Plan route', () {
+      final intent = routeIntentFromNativeNotification({'path': '/plan'});
 
-      expect(intent?.type, 'OpenScheduleReminder');
-      expect(intent?.path, '/schedule');
-      expect(intent?.payload, const {
-        'source': 'native-notification',
-        'taskId': 'feeding-afternoon',
-        'date': '2026-07-04',
-      });
+      expect(intent?.type, 'OpenPlan');
+      expect(intent?.path, '/plan');
+      expect(intent?.payload, const {'source': 'native-navigation'});
       expect(intent?.consume, 'once');
     });
 
@@ -124,10 +118,8 @@ void main() {
       _expectIntentsMatchExpected(actual, expected);
     });
 
-    test('maps milk plan pending storage to the schedule intent', () {
-      final fixture = readFixtureMap(
-        'route_intents/milk_plan_pending_intent.json',
-      );
+    test('maps a pending plan update to the Plan intent', () {
+      final fixture = readFixtureMap('route_intents/plan_pending_intent.json');
       final input = Map<String, Object?>.from(fixture['input']! as Map);
       final storage = Map<String, Object?>.from(input['localStorage']! as Map);
       final expected = List<Object?>.from(fixture['expectedIntents']! as List)
