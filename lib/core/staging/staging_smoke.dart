@@ -11,7 +11,7 @@ import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dar
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 
 class StagingSmokeConfig {
@@ -200,7 +200,7 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
       config,
       ProfileOverviewApiRepository(transport: jsonTransport),
     ),
-    _ScheduleProbe(config, ScheduleApiRepository(transport: jsonTransport)),
+    _PlanProbe(config, PlanApiRepository(transport: jsonTransport)),
     _RecordsProbe(config, RecordsApiRepository(transport: jsonTransport)),
     _PumpWorkstateProbe(PumpWorkstateApiRepository(transport: jsonTransport)),
     _HospitalBagProbe(
@@ -236,14 +236,14 @@ class _ProfileOverviewProbe implements StagingSmokeProbe {
   }
 }
 
-class _ScheduleProbe implements StagingSmokeProbe {
-  const _ScheduleProbe(this.config, this.repository);
+class _PlanProbe implements StagingSmokeProbe {
+  const _PlanProbe(this.config, this.repository);
 
   final StagingSmokeConfig config;
-  final ScheduleApiRepository repository;
+  final PlanApiRepository repository;
 
   @override
-  String get name => 'schedule /v1/plans/tasks/list';
+  String get name => 'plan /v1/plans + /v1/plans/tasks/list';
 
   @override
   bool get requiresMutation => false;
@@ -253,7 +253,7 @@ class _ScheduleProbe implements StagingSmokeProbe {
 
   @override
   Future<void> run() async {
-    await repository.fetchDayPlan(day: DateTime.now());
+    await repository.fetchDashboard(weekOf: DateTime.now());
   }
 }
 

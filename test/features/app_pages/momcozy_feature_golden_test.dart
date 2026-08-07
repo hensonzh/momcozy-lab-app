@@ -5,9 +5,9 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
-import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -82,10 +82,10 @@ final _routeGoldens = [
     pageKey: ValueKey('agent-hub-page'),
   ),
   _RouteGolden(
-    label: 'schedule page',
-    path: '/schedule',
-    fileName: 'schedule_page_mobile.png',
-    pageKey: ValueKey('route-page-/schedule'),
+    label: 'plan page',
+    path: '/plan',
+    fileName: 'plan_page_mobile.png',
+    pageKey: ValueKey('route-page-/plan'),
   ),
   _RouteGolden(
     label: 'pump page',
@@ -230,6 +230,7 @@ Future<void> _pumpGoldenApp(
 
 const _goldenImageAssets = [
   MomCozyAssets.agentAvatar,
+  MomCozyAssets.planCozymateAvatar,
   MomCozyAssets.momcozyLogo,
   MomCozyAssets.pumpM9,
   MomCozyAssets.ibclcConsultantAvatar,
@@ -328,25 +329,7 @@ MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
         'occurred_at': '2026-07-01T10:00:00Z',
         'payload': <String, Object?>{},
       },
-      scheduleDayPlanEndpoint: const <String, Object?>{
-        'items': <Object?>[
-          <String, Object?>{
-            'id': 'schedule-golden-task',
-            'task_date': '2026-07-03',
-            'task_time': '14:00',
-            'title': '喂养',
-            'description': '记录本次奶量',
-            'status': 'pending',
-            'payload': <String, Object?>{'task_type': 'feeding'},
-          },
-        ],
-      },
-      scheduleFeedingRecordsEndpoint: const <String, Object?>{
-        'items': <Object?>[],
-      },
-      schedulePumpingRecordsEndpoint: const <String, Object?>{
-        'items': <Object?>[],
-      },
+      planListEndpoint: const <String, Object?>{'items': <Object?>[]},
     }),
     agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{

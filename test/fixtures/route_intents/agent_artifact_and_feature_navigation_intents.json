@@ -6,7 +6,7 @@
       {
         "source": "AgentHub bubble link",
         "link": {
-          "label": "查看日程→",
+          "label": "View Plan →",
           "action": "open-schedule"
         }
       },
@@ -15,7 +15,7 @@
         "route": "/calibration"
       },
       {
-        "source": "Schedule adjust button",
+        "source": "Plan adjust button",
         "navigate": {
           "path": "/",
           "state": {
@@ -39,7 +39,7 @@
         "source": "Inline maternity flow",
         "customEvent": {
           "name": "navigate-to",
-          "detail": "/schedule"
+          "detail": "/plan"
         }
       },
       {
@@ -52,8 +52,8 @@
   },
   "expectedIntents": [
     {
-      "type": "OpenScheduleFromAgent",
-      "path": "/schedule",
+      "type": "OpenPlanFromAgent",
+      "path": "/plan",
       "payload": {
         "source": "agentBubbleLink",
         "action": "open-schedule"
@@ -97,8 +97,8 @@
       }
     },
     {
-      "type": "OpenSchedule",
-      "path": "/schedule",
+      "type": "OpenPlan",
+      "path": "/plan",
       "payload": {
         "source": "inlineFlow"
       }

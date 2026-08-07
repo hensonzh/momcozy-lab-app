@@ -292,8 +292,8 @@ void main() {
               channel.name,
               channel.codec.encodeMethodCall(
                 const MethodCall('activeRoute', {
-                  'path': '/schedule',
-                  'notifyJson': {'event': 'schedule_reminder'},
+                  'path': '/plan',
+                  'notifyJson': {'event': 'plan_updated'},
                   'autoEndTeardown': false,
                 }),
               ),
@@ -315,8 +315,8 @@ void main() {
           'notifyJson': {'event': 'pump'},
         });
         expect(routes.single.toMap(), {
-          'path': '/schedule',
-          'notifyJson': {'event': 'schedule_reminder'},
+          'path': '/plan',
+          'notifyJson': {'event': 'plan_updated'},
         });
 
         await sub.cancel();
