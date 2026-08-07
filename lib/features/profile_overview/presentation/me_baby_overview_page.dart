@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
@@ -40,6 +41,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   bool _trackingSheetDrag = false;
   bool _showAvatarLayer = false;
   bool _avatarExpanded = false;
+  MomLifeStage _displayedStage = MomLifeStage.postpartum;
   MomCozyApiRuntime? _runtime;
   ProfileOverviewController? _overviewController;
 
@@ -61,6 +63,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     _detailsPosition.value = 0;
     _showAvatarLayer = false;
     _avatarExpanded = false;
+    _displayedStage = MomLifeStage.postpartum;
     if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
     final runtime = _runtime;
     if (runtime != null) _attachOverviewController(runtime);
@@ -80,6 +83,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       initialIdentity: widget.identity,
     );
     _overviewController = controller;
+    _displayedStage = controller.careStage.value.stage;
     for (final resource in _overviewResources(controller)) {
       resource.addListener(_handleProfileOverviewResourceChanged);
     }
@@ -114,14 +118,31 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       controller.milkTrends,
       controller.feedingRecords,
       controller.growthRecords,
+      controller.careStage,
     ];
   }
 
   void _handleProfileOverviewResourceChanged() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    final nextStage = _overviewController?.careStage.value.stage;
+    if (widget.identity == ProfileIdentity.mom &&
+        nextStage != null &&
+        nextStage != _displayedStage) {
+      _displayedStage = nextStage;
+      _section = _initialSection(widget.identity);
+      _detailsPosition.value = 0;
+      _showAvatarLayer = false;
+      _avatarExpanded = false;
+      if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
+    }
+    setState(() {});
   }
 
   void _handlePointerDown(PointerDownEvent event) {
+    if (widget.identity == ProfileIdentity.mom &&
+        _displayedStage != MomLifeStage.postpartum) {
+      return;
+    }
     final position = _detailsPosition.value;
     final detailsAtTop =
         !_detailsScroll.hasClients || _detailsScroll.position.pixels <= 0.5;
@@ -173,9 +194,31 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     if (revealDetails) _settleDetails(0);
   }
 
+  Future<void> _openCareStageSelector() async {
+    final controller = _overviewController;
+    if (controller == null || !controller.careStage.value.isResolved) return;
+    controller.clearCareStageError();
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      useSafeArea: true,
+      barrierLabel: 'Dismiss current stage selector',
+      backgroundColor: _MeBabyOverviewColors.background,
+      builder: (sheetContext) =>
+          _CareStageSelectorSheet(controller: controller),
+    );
+    controller.clearCareStageError();
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = _MeBabyOverviewData.fromController(_overviewController);
+    final stageState =
+        _overviewController?.careStage.value ?? const CareStageSelectionState();
+    final usesPostpartumWorkspace =
+        widget.identity != ProfileIdentity.mom ||
+        stageState.stage == MomLifeStage.postpartum;
     return Stack(
       children: [
         Column(
@@ -194,7 +237,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                     onPointerCancel: (_) => _handlePointerEnd(),
                     child: Stack(
                       children: [
-                        if (_showAvatarLayer)
+                        if (_showAvatarLayer && usesPostpartumWorkspace)
                           Positioned.fill(
                             child: _AvatarStage(
                               identity: widget.identity,
@@ -232,22 +275,32 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                 112,
                               ),
                               children: [
-                                _ProfileHero(
-                                  identity: widget.identity,
-                                  data: data,
-                                  onOpenAvatar: () => _settleDetails(1),
-                                ),
-                                const SizedBox(height: 14),
-                                _SectionTabs(
-                                  identity: widget.identity,
-                                  selected: _section,
-                                  onSelected: _selectSection,
-                                ),
-                                const SizedBox(height: 14),
-                                if (widget.identity == ProfileIdentity.mom)
-                                  _MeContent(section: _section, data: data)
-                                else
-                                  _BabyContent(section: _section, data: data),
+                                if (widget.identity == ProfileIdentity.mom &&
+                                    !usesPostpartumWorkspace) ...[
+                                  _LifeStageHero(
+                                    stage: stageState.stage,
+                                    data: data,
+                                  ),
+                                  const SizedBox(height: 14),
+                                  _LifeStageWorkspace(stage: stageState.stage),
+                                ] else ...[
+                                  _ProfileHero(
+                                    identity: widget.identity,
+                                    data: data,
+                                    onOpenAvatar: () => _settleDetails(1),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  _SectionTabs(
+                                    identity: widget.identity,
+                                    selected: _section,
+                                    onSelected: _selectSection,
+                                  ),
+                                  const SizedBox(height: 14),
+                                  if (widget.identity == ProfileIdentity.mom)
+                                    _MeContent(section: _section, data: data)
+                                  else
+                                    _BabyContent(section: _section, data: data),
+                                ],
                               ],
                             ),
                           ),
@@ -272,7 +325,11 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
             color: _MeBabyOverviewColors.background,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-              child: _MeBabyOverviewHeader(identity: widget.identity),
+              child: _MeBabyOverviewHeader(
+                identity: widget.identity,
+                careStage: stageState,
+                onStagePressed: _openCareStageSelector,
+              ),
             ),
           ),
         ),
@@ -291,17 +348,19 @@ class _MeBabyOverviewData {
     required this.milkTrends,
     required this.feedingRecords,
     required this.growthRecords,
+    required this.now,
   });
 
   factory _MeBabyOverviewData.fromController(
     ProfileOverviewController? controller,
   ) {
     if (controller == null) {
-      return const _MeBabyOverviewData(
-        overview: ProfileOverviewResource.initial(),
-        milkTrends: ProfileOverviewResource.initial(),
-        feedingRecords: ProfileOverviewResource.initial(),
-        growthRecords: ProfileOverviewResource.initial(),
+      return _MeBabyOverviewData(
+        overview: const ProfileOverviewResource.initial(),
+        milkTrends: const ProfileOverviewResource.initial(),
+        feedingRecords: const ProfileOverviewResource.initial(),
+        growthRecords: const ProfileOverviewResource.initial(),
+        now: DateTime.now(),
       );
     }
     return _MeBabyOverviewData(
@@ -309,6 +368,7 @@ class _MeBabyOverviewData {
       milkTrends: controller.milkTrends.value,
       feedingRecords: controller.feedingRecords.value,
       growthRecords: controller.growthRecords.value,
+      now: controller.now(),
     );
   }
 
@@ -316,6 +376,7 @@ class _MeBabyOverviewData {
   final ProfileOverviewResource<List<MilkTrendDay>> milkTrends;
   final ProfileOverviewResource<List<FeedingRecord>> feedingRecords;
   final ProfileOverviewResource<List<GrowthRecord>> growthRecords;
+  final DateTime now;
 
   String get momName => 'Me';
 
@@ -400,14 +461,21 @@ String _formatNumber(num? value) {
 }
 
 class _MeBabyOverviewHeader extends StatelessWidget {
-  const _MeBabyOverviewHeader({required this.identity});
+  const _MeBabyOverviewHeader({
+    required this.identity,
+    required this.careStage,
+    required this.onStagePressed,
+  });
 
   final ProfileIdentity identity;
+  final CareStageSelectionState careStage;
+  final VoidCallback onStagePressed;
 
   @override
   Widget build(BuildContext context) {
-    final label = identity == ProfileIdentity.mom
-        ? 'Postpartum Recovery'
+    final isMom = identity == ProfileIdentity.mom;
+    final label = isMom
+        ? (careStage.isResolved ? careStage.stage.label : 'My Stage')
         : 'Infant';
     return SizedBox(
       height: 54,
@@ -417,47 +485,70 @@ class _MeBabyOverviewHeader extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Semantics(
-              label: '$label, fixed profile',
-              enabled: false,
-              child: Container(
-                height: 44,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: _MeBabyOverviewColors.pill,
+              label: isMom
+                  ? 'Current stage: $label. Change current stage.'
+                  : '$label, fixed profile',
+              button: isMom,
+              enabled: isMom && careStage.isResolved && !careStage.isSaving,
+              child: Material(
+                key: isMom ? const ValueKey('me-current-stage-selector') : null,
+                color: _MeBabyOverviewColors.pill,
+                borderRadius: BorderRadius.circular(24),
+                child: InkWell(
                   borderRadius: BorderRadius.circular(24),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: _MeBabyOverviewColors.wine,
-                        shape: BoxShape.circle,
-                      ),
-                      child: SizedBox.square(dimension: 8),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          style: const TextStyle(
-                            color: _MeBabyOverviewColors.wine,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
+                  onTap: isMom && careStage.isResolved && !careStage.isSaving
+                      ? onStagePressed
+                      : null,
+                  child: SizedBox(
+                    height: 44,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: _MeBabyOverviewColors.wine,
+                              shape: BoxShape.circle,
+                            ),
+                            child: SizedBox.square(dimension: 8),
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                label,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  color: _MeBabyOverviewColors.wine,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (isMom) ...[
+                            const SizedBox(width: 5),
+                            if (!careStage.isResolved || careStage.isSaving)
+                              const SizedBox.square(
+                                dimension: 15,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: _MeBabyOverviewColors.wine,
+                                ),
+                              )
+                            else
+                              const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: _MeBabyOverviewColors.wine,
+                                size: 19,
+                              ),
+                          ],
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 5),
-                    const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: _MeBabyOverviewColors.wine,
-                      size: 19,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -473,6 +564,235 @@ class _MeBabyOverviewHeader extends StatelessWidget {
       ),
     );
   }
+}
+
+class _CareStageSelectorSheet extends StatelessWidget {
+  const _CareStageSelectorSheet({required this.controller});
+
+  final ProfileOverviewController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<CareStageSelectionState>(
+      valueListenable: controller.careStage,
+      builder: (context, state, _) {
+        return PopScope(
+          canPop: !state.isSaving,
+          child: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Select Current Stage',
+                          style: TextStyle(
+                            color: _MeBabyOverviewColors.wine,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        key: const ValueKey('me-stage-selector-close'),
+                        tooltip: 'Close',
+                        onPressed: state.isSaving
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                        color: _MeBabyOverviewColors.wine,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  for (final stage in MomLifeStage.values) ...[
+                    _CareStageOption(
+                      stage: stage,
+                      selected: state.stage == stage,
+                      saving: state.pendingStage == stage,
+                      enabled: !state.isSaving,
+                      onTap: () async {
+                        if (stage == state.stage) {
+                          Navigator.of(context).pop();
+                          return;
+                        }
+                        final changed = await controller.updateCareStage(stage);
+                        if (context.mounted && changed) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                    if (stage != MomLifeStage.values.last)
+                      const Divider(
+                        color: _MeBabyOverviewColors.line,
+                        height: 1,
+                      ),
+                  ],
+                  if (state.error != null) ...[
+                    const SizedBox(height: 14),
+                    Semantics(
+                      liveRegion: true,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xfffff0f2),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline_rounded,
+                              color: _MeBabyOverviewColors.wine,
+                              size: 20,
+                            ),
+                            SizedBox(width: 9),
+                            Expanded(
+                              child: Text(
+                                'Couldn’t change stage. Try again.',
+                                style: TextStyle(
+                                  color: _MeBabyOverviewColors.wine,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CareStageOption extends StatelessWidget {
+  const _CareStageOption({
+    required this.stage,
+    required this.selected,
+    required this.saving,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final MomLifeStage stage;
+  final bool selected;
+  final bool saving;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      selected: selected,
+      button: true,
+      inMutuallyExclusiveGroup: true,
+      label: '${stage.label}. ${stage.subtitle}',
+      child: Material(
+        key: ValueKey('me-stage-option-${stage.wireValue}'),
+        color: selected ? const Color(0xfffff8f8) : Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: enabled ? onTap : null,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 86),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              child: Row(
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: _stageColor(stage),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const SizedBox.square(dimension: 12),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          stage.label,
+                          style: TextStyle(
+                            color: selected
+                                ? _MeBabyOverviewColors.wine
+                                : _MeBabyOverviewColors.ink,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          stage.subtitle,
+                          style: _MeBabyOverviewText.supporting,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  SizedBox.square(
+                    dimension: 28,
+                    child: saving
+                        ? const Padding(
+                            padding: EdgeInsets.all(4),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: _MeBabyOverviewColors.wine,
+                            ),
+                          )
+                        : DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: selected
+                                  ? _MeBabyOverviewColors.wine
+                                  : Colors.transparent,
+                              shape: BoxShape.circle,
+                              border: selected
+                                  ? null
+                                  : Border.all(
+                                      color: _MeBabyOverviewColors.line,
+                                      width: 2,
+                                    ),
+                            ),
+                            child: selected
+                                ? const Icon(
+                                    Icons.check_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  )
+                                : null,
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Color _stageColor(MomLifeStage stage) {
+  return switch (stage) {
+    MomLifeStage.fertility => const Color(0xffdf6a91),
+    MomLifeStage.pregnancy => _MeBabyOverviewColors.wine,
+    MomLifeStage.postpartum => const Color(0xffaa928a),
+  };
 }
 
 class _MomCozyWordmark extends StatelessWidget {
@@ -661,6 +981,228 @@ class _CelebrationText extends StatelessWidget {
           size: 17,
         ),
       ],
+    );
+  }
+}
+
+class _LifeStageHero extends StatelessWidget {
+  const _LifeStageHero({required this.stage, required this.data});
+
+  final MomLifeStage stage;
+  final _MeBabyOverviewData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: ValueKey('me-stage-hero-${stage.wireValue}'),
+      width: double.infinity,
+      constraints: const BoxConstraints(minHeight: 210),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: _MeBabyOverviewColors.hero,
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(11),
+              child: Icon(
+                stage == MomLifeStage.pregnancy
+                    ? Icons.pregnant_woman_rounded
+                    : Icons.favorite_outline_rounded,
+                color: _MeBabyOverviewColors.wine,
+                size: 28,
+              ),
+            ),
+          ),
+          const SizedBox(height: 22),
+          Text(
+            stage.label,
+            style: const TextStyle(
+              color: _MeBabyOverviewColors.ink,
+              fontSize: 34,
+              height: 1,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -1,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            stage.subtitle,
+            style: const TextStyle(
+              color: _MeBabyOverviewColors.wine,
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _lifeStageProfileSummary(context, stage, data),
+            style: _MeBabyOverviewText.supporting,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _lifeStageProfileSummary(
+  BuildContext context,
+  MomLifeStage stage,
+  _MeBabyOverviewData data,
+) {
+  if (stage == MomLifeStage.fertility) {
+    return 'Cycle insights will use only records you confirm.';
+  }
+  final mom = data.overview.data?.mom;
+  final dueDate = mom?.deliveryDate;
+  final now = data.now;
+  final today = DateTime(now.year, now.month, now.day);
+  if (dueDate != null && dueDate.isAfter(today)) {
+    final formatted = MaterialLocalizations.of(
+      context,
+    ).formatMediumDate(dueDate);
+    return 'Due date: $formatted';
+  }
+  final dueDateOrWeek = mom?.dueDateOrWeek?.trim();
+  if (dueDateOrWeek?.isNotEmpty == true) return dueDateOrWeek!;
+  return 'Add confirmed pregnancy details to personalize this workspace.';
+}
+
+class _LifeStageWorkspace extends StatelessWidget {
+  const _LifeStageWorkspace({required this.stage});
+
+  final MomLifeStage stage;
+
+  @override
+  Widget build(BuildContext context) {
+    final isPregnancy = stage == MomLifeStage.pregnancy;
+    return Column(
+      key: ValueKey('me-stage-workspace-${stage.wireValue}'),
+      children: [
+        _OverviewStateCard(
+          title: isPregnancy
+              ? 'Pregnancy milestones are ready to connect'
+              : 'Cycle data not connected',
+          description: isPregnancy
+              ? 'Confirmed appointments and pregnancy-plan tasks will appear here when their data source is connected.'
+              : 'Cycle dates and predictions will appear only after you add or connect confirmed records.',
+          icon: isPregnancy
+              ? Icons.calendar_month_outlined
+              : Icons.track_changes_rounded,
+        ),
+        const SizedBox(height: 14),
+        _LifeStageActionCard(
+          actionKey: ValueKey('me-stage-${stage.wireValue}-plan'),
+          icon: Icons.event_note_rounded,
+          title: isPregnancy ? 'Pregnancy Plan' : 'Planning',
+          subtitle: isPregnancy
+              ? 'Review confirmed tasks and appointments'
+              : 'Organize preparation and wellness tasks',
+          actionLabel: 'Open Plan',
+          onTap: () => context.go('/schedule'),
+        ),
+        const SizedBox(height: 14),
+        _LifeStageActionCard(
+          actionKey: ValueKey('me-stage-${stage.wireValue}-cozymate'),
+          icon: Icons.auto_awesome_rounded,
+          title: 'Cozymate',
+          subtitle: isPregnancy
+              ? 'Ask about prenatal care with cited guidance'
+              : 'Ask about fertility and preconception care',
+          actionLabel: 'Ask Cozymate',
+          onTap: () => context.go('/'),
+        ),
+      ],
+    );
+  }
+}
+
+class _LifeStageActionCard extends StatelessWidget {
+  const _LifeStageActionCard({
+    required this.actionKey,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.actionLabel,
+    required this.onTap,
+  });
+
+  final Key actionKey;
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String actionLabel;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: '$title. $subtitle. $actionLabel',
+      child: Material(
+        key: actionKey,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(26),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 112),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: _MeBabyOverviewColors.pill,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(13),
+                      child: Icon(
+                        icon,
+                        color: _MeBabyOverviewColors.wine,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title, style: _MeBabyOverviewText.cardTitle),
+                        const SizedBox(height: 5),
+                        Text(subtitle, style: _MeBabyOverviewText.supporting),
+                        const SizedBox(height: 8),
+                        Text(
+                          actionLabel,
+                          style: const TextStyle(
+                            color: _MeBabyOverviewColors.wine,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    color: _MeBabyOverviewColors.wine,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

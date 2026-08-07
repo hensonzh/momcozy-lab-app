@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 
 import '../../support/fixture_api_transport.dart';
 
@@ -13,6 +14,7 @@ void main() {
         profileMeEndpoint: {
           'user_id': 'user-001',
           'display_name': 'Mom',
+          'current_care_stage': 'postpartum',
           'delivery_date': '2026-05-20',
           'birth_prep_due_date_or_week': '孕 32 周',
         },
@@ -39,7 +41,7 @@ void main() {
       expect(transport.postedBodies, isEmpty);
       expect(transport.lastPath, profileInfantsEndpoint);
       expect(transport.lastQuery, isEmpty);
-      expect(overview.mom?.stage, '哺乳期');
+      expect(overview.mom?.stage, MomLifeStage.postpartum);
       expect(overview.mom?.postpartumDay, 42);
       expect(overview.mom?.deliveryDate, DateTime.parse('2026-05-20'));
       expect(overview.mom?.dueDateOrWeek, '孕 32 周');
@@ -48,6 +50,50 @@ void main() {
       expect(overview.baby?.ageDays, 42);
       expect(overview.baby?.birthDate, DateTime.parse('2026-05-20'));
     });
+
+    test(
+      'maps an explicit stage before using the delivery-date fallback',
+      () async {
+        final repository = ProfileOverviewApiRepository(
+          transport: FixtureApiJsonTransportByPath({
+            profileMeEndpoint: const {
+              'user_id': 'user-001',
+              'current_care_stage': 'fertility',
+              'delivery_date': '2026-09-20',
+            },
+            profileInfantsEndpoint: const {'items': []},
+          }),
+          now: () => DateTime.utc(2026, 7, 1),
+        );
+
+        final overview = await repository.fetchOverview();
+
+        expect(overview.mom?.stage, MomLifeStage.fertility);
+      },
+    );
+
+    test(
+      'updates the current stage through the authenticated profile',
+      () async {
+        final transport = FixtureApiJsonTransportByPath(
+          const {},
+          writeResponsesByPath: const {
+            profileMeEndpoint: {
+              'user_id': 'user-001',
+              'current_care_stage': 'pregnancy',
+            },
+          },
+        );
+        final repository = ProfileOverviewApiRepository(transport: transport);
+
+        final stage = await repository.updateCareStage(MomLifeStage.pregnancy);
+
+        expect(stage, MomLifeStage.pregnancy);
+        expect(transport.lastMethod, 'PUT');
+        expect(transport.lastPath, profileMeEndpoint);
+        expect(transport.lastBody, {'current_care_stage': 'pregnancy'});
+      },
+    );
 
     test('maps empty profile and infants list', () async {
       final repository = ProfileOverviewApiRepository(
