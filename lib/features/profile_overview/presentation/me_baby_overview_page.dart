@@ -1,14 +1,24 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
+
+part 'baby_overview_components.dart';
+
+enum _BabyDetail { feeding, diaper, sleep, weight, height, headCircumference }
+
+typedef _GrowthSave =
+    Future<bool> Function({double? weightKg, double? heightCm, double? headCm});
 
 class MeBabyOverviewPage extends StatefulWidget {
   const MeBabyOverviewPage({
@@ -42,6 +52,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   bool _showAvatarLayer = false;
   bool _avatarExpanded = false;
   MomLifeStage _displayedStage = MomLifeStage.postpartum;
+  _BabyDetail? _babyDetail;
   MomCozyApiRuntime? _runtime;
   ProfileOverviewController? _overviewController;
 
@@ -64,6 +75,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     _showAvatarLayer = false;
     _avatarExpanded = false;
     _displayedStage = MomLifeStage.postpartum;
+    _babyDetail = null;
     if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
     final runtime = _runtime;
     if (runtime != null) _attachOverviewController(runtime);
@@ -119,6 +131,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       controller.feedingRecords,
       controller.growthRecords,
       controller.careStage,
+      controller.growthMutation,
     ];
   }
 
@@ -190,6 +203,16 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   }
 
   void _selectSection(String section, {bool revealDetails = false}) {
+    if (widget.identity == ProfileIdentity.baby) {
+      switch (section) {
+        case 'feeding':
+          _openBabyDetail(_BabyDetail.feeding);
+          return;
+        case 'diaper':
+          _openBabyDetail(_BabyDetail.diaper);
+          return;
+      }
+    }
     setState(() => _section = section);
     if (revealDetails) _settleDetails(0);
   }
@@ -211,6 +234,98 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     controller.clearCareStageError();
   }
 
+  void _openBabyDetail(_BabyDetail detail) {
+    _detailsPosition.stop();
+    _detailsPosition.value = 0;
+    if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
+    setState(() {
+      _babyDetail = detail;
+      _showAvatarLayer = false;
+      _avatarExpanded = false;
+    });
+  }
+
+  void _closeBabyDetail() {
+    setState(() => _babyDetail = null);
+  }
+
+  Future<void> _showBabyAddRecordSheet() async {
+    final detail = await showGeneralDialog<_BabyDetail>(
+      context: context,
+      useRootNavigator: true,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black.withValues(alpha: 0.24),
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (dialogContext, _, _) {
+        return Material(
+          type: MaterialType.transparency,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Semantics(
+                  label: 'Dismiss add record sheet',
+                  button: true,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Navigator.of(dialogContext).pop(),
+                    child: BackdropFilter(
+                      filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                      child: const SizedBox.expand(),
+                    ),
+                  ),
+                ),
+              ),
+              const Align(
+                alignment: Alignment.bottomCenter,
+                child: _BabyAddRecordSheet(),
+              ),
+            ],
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, _, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          ),
+          child: child,
+        );
+      },
+    );
+    if (!mounted || detail == null) return;
+    _openBabyDetail(detail);
+    if (detail.isGrowth) {
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+      final controller = _overviewController;
+      if (controller == null) return;
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        useRootNavigator: true,
+        backgroundColor: Colors.transparent,
+        barrierColor: Colors.black.withValues(alpha: 0.38),
+        builder: (context) => _GrowthRecordSheet(
+          detail: detail,
+          data: _MeBabyOverviewData.fromController(controller),
+          onSave: controller.saveGrowth,
+          mutation: controller.growthMutation,
+        ),
+      );
+      return;
+    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Recording is not available until this service is connected.',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = _MeBabyOverviewData.fromController(_overviewController);
@@ -219,6 +334,14 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     final usesPostpartumWorkspace =
         widget.identity != ProfileIdentity.mom ||
         stageState.stage == MomLifeStage.postpartum;
+    final babyDetail = _babyDetail;
+    if (widget.identity == ProfileIdentity.baby && babyDetail != null) {
+      return _BabyDetailPage(
+        detail: babyDetail,
+        data: data,
+        onBack: _closeBabyDetail,
+      );
+    }
     return Stack(
       children: [
         Column(
@@ -263,15 +386,21 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                             );
                           },
                           child: ColoredBox(
-                            color: _MeBabyOverviewColors.background,
+                            color: widget.identity == ProfileIdentity.baby
+                                ? _BabyOverviewColors.background
+                                : _MeBabyOverviewColors.background,
                             child: ListView(
                               key: ValueKey('route-page-${widget.path}'),
                               controller: _detailsScroll,
                               physics: const ClampingScrollPhysics(),
-                              padding: const EdgeInsets.fromLTRB(
-                                12,
-                                4,
-                                12,
+                              padding: EdgeInsets.fromLTRB(
+                                widget.identity == ProfileIdentity.baby
+                                    ? 16
+                                    : 12,
+                                widget.identity == ProfileIdentity.baby ? 7 : 4,
+                                widget.identity == ProfileIdentity.baby
+                                    ? 16
+                                    : 12,
                                 112,
                               ),
                               children: [
@@ -287,19 +416,34 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                   _ProfileHero(
                                     identity: widget.identity,
                                     data: data,
+                                    babySection: _section,
                                     onOpenAvatar: () => _settleDetails(1),
                                   ),
-                                  const SizedBox(height: 14),
+                                  SizedBox(
+                                    height:
+                                        widget.identity == ProfileIdentity.baby
+                                        ? 11
+                                        : 14,
+                                  ),
                                   _SectionTabs(
                                     identity: widget.identity,
                                     selected: _section,
                                     onSelected: _selectSection,
                                   ),
-                                  const SizedBox(height: 14),
+                                  SizedBox(
+                                    height:
+                                        widget.identity == ProfileIdentity.baby
+                                        ? (_section == 'sleep' ? 12 : 16)
+                                        : 14,
+                                  ),
                                   if (widget.identity == ProfileIdentity.mom)
                                     _MeContent(section: _section, data: data)
                                   else
-                                    _BabyContent(section: _section, data: data),
+                                    _BabyContent(
+                                      section: _section,
+                                      data: data,
+                                      onOpenDetail: _openBabyDetail,
+                                    ),
                                 ],
                               ],
                             ),
@@ -308,6 +452,21 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                         if (_avatarExpanded)
                           const SizedBox(
                             key: ValueKey('me-baby-overview-avatar-expanded'),
+                          ),
+                        if (widget.identity == ProfileIdentity.baby)
+                          AnimatedPositioned(
+                            duration: _settleDuration,
+                            curve: Curves.easeOutCubic,
+                            right: 18,
+                            bottom: _avatarExpanded ? 104 : 18,
+                            child: _CircleAction(
+                              actionKey: const ValueKey(
+                                'me-baby-overview-add-record',
+                              ),
+                              semanticLabel: 'Add baby record',
+                              icon: Icons.add_rounded,
+                              onPressed: _showBabyAddRecordSheet,
+                            ),
                           ),
                       ],
                     ),
@@ -322,9 +481,16 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
           right: 0,
           top: 0,
           child: ColoredBox(
-            color: _MeBabyOverviewColors.background,
+            color: widget.identity == ProfileIdentity.baby
+                ? _BabyOverviewColors.background
+                : _MeBabyOverviewColors.background,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              padding: EdgeInsets.fromLTRB(
+                widget.identity == ProfileIdentity.baby ? 22 : 12,
+                widget.identity == ProfileIdentity.baby ? 14 : 8,
+                widget.identity == ProfileIdentity.baby ? 22 : 12,
+                widget.identity == ProfileIdentity.baby ? 2 : 8,
+              ),
               child: _MeBabyOverviewHeader(
                 identity: widget.identity,
                 careStage: stageState,
@@ -419,15 +585,24 @@ class _MeBabyOverviewData {
       feeds.fold<int>(0, (total, record) => total + (record.amountMl ?? 0));
 
   GrowthRecord? get latestGrowth {
-    final values = growthRecords.data ?? const <GrowthRecord>[];
+    final values = orderedGrowthRecords;
     if (values.isEmpty) return null;
-    return values.reduce((left, right) {
+    return values.first;
+  }
+
+  List<GrowthRecord> get orderedGrowthRecords {
+    final values = List<GrowthRecord>.of(
+      growthRecords.data ?? const <GrowthRecord>[],
+    );
+    values.sort((left, right) {
       final leftTime = left.measuredAt;
       final rightTime = right.measuredAt;
-      if (leftTime == null) return right;
-      if (rightTime == null) return left;
-      return leftTime.isAfter(rightTime) ? left : right;
+      if (leftTime == null && rightTime == null) return 0;
+      if (leftTime == null) return 1;
+      if (rightTime == null) return -1;
+      return rightTime.compareTo(leftTime);
     });
+    return values;
   }
 
   String get momAvatarSummary {
@@ -474,53 +649,105 @@ class _MeBabyOverviewHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMom = identity == ProfileIdentity.mom;
+    final isBaby = identity == ProfileIdentity.baby;
     final label = isMom
         ? (careStage.isResolved ? careStage.stage.label : 'My Stage')
         : 'Infant';
+    final pill = Semantics(
+      label: '$label, fixed profile',
+      enabled: false,
+      child: Container(
+        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: isBaby ? _BabyOverviewColors.pill : _MeBabyOverviewColors.pill,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: isBaby
+                        ? _BabyOverviewColors.wine
+                        : _MeBabyOverviewColors.wine,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 5),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: isBaby
+                  ? _BabyOverviewColors.wine
+                  : _MeBabyOverviewColors.wine,
+              size: 19,
+            ),
+          ],
+        ),
+      ),
+    );
     return SizedBox(
       height: 54,
       child: Row(
         children: [
-          const _MomCozyWordmark(),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Semantics(
-              label: isMom
-                  ? 'Current stage: $label. Change current stage.'
-                  : '$label, fixed profile',
-              button: isMom,
-              enabled: isMom && careStage.isResolved && !careStage.isSaving,
-              child: Material(
-                key: isMom ? const ValueKey('me-current-stage-selector') : null,
-                color: _MeBabyOverviewColors.pill,
-                borderRadius: BorderRadius.circular(24),
-                child: InkWell(
+          if (isBaby)
+            const Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: _MomCozyWordmark(useBabyPalette: true),
+              ),
+            )
+          else ...[
+            const _MomCozyWordmark(),
+            const SizedBox(width: 10),
+          ],
+          if (isBaby)
+            SizedBox(width: 110, child: pill)
+          else
+            Expanded(
+              child: Semantics(
+                label: 'Current stage: $label. Change current stage.',
+                button: true,
+                enabled: careStage.isResolved && !careStage.isSaving,
+                child: Material(
+                  key: const ValueKey('me-current-stage-selector'),
+                  color: _MeBabyOverviewColors.pill,
                   borderRadius: BorderRadius.circular(24),
-                  onTap: isMom && careStage.isResolved && !careStage.isSaving
-                      ? onStagePressed
-                      : null,
-                  child: SizedBox(
-                    height: 44,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                label,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  color: _MeBabyOverviewColors.wine,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(24),
+                    onTap: careStage.isResolved && !careStage.isSaving
+                        ? onStagePressed
+                        : null,
+                    child: SizedBox(
+                      height: 44,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  label,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    color: _MeBabyOverviewColors.wine,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          if (isMom) ...[
                             const SizedBox(width: 5),
                             if (!careStage.isResolved || careStage.isSaving)
                               const SizedBox.square(
@@ -537,20 +764,22 @@ class _MeBabyOverviewHeader extends StatelessWidget {
                                 size: 19,
                               ),
                           ],
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
           const SizedBox(width: 8),
-          const _DisabledCircleAction(
+          _DisabledCircleAction(
             actionKey: ValueKey('me-baby-overview-notification-disabled'),
             semanticLabel: 'Notifications are not available yet',
             icon: Icons.notifications_none_rounded,
             compact: true,
+            size: isBaby ? 38 : null,
+            backgroundColor: isBaby ? _BabyOverviewColors.pill : null,
+            foregroundColor: isBaby ? _BabyOverviewColors.wine : null,
           ),
         ],
       ),
@@ -788,14 +1017,18 @@ Color _stageColor(MomLifeStage stage) {
 }
 
 class _MomCozyWordmark extends StatelessWidget {
-  const _MomCozyWordmark();
+  const _MomCozyWordmark({this.useBabyPalette = false});
+
+  final bool useBabyPalette;
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return Text(
       'momcozy',
       style: TextStyle(
-        color: _MeBabyOverviewColors.ink,
+        color: useBabyPalette
+            ? _BabyOverviewColors.ink
+            : _MeBabyOverviewColors.ink,
         fontSize: 25,
         height: 1,
         fontWeight: FontWeight.w900,
@@ -809,16 +1042,25 @@ class _ProfileHero extends StatelessWidget {
   const _ProfileHero({
     required this.identity,
     required this.data,
+    required this.babySection,
     required this.onOpenAvatar,
   });
 
   final ProfileIdentity identity;
   final _MeBabyOverviewData data;
+  final String babySection;
   final VoidCallback onOpenAvatar;
 
   @override
   Widget build(BuildContext context) {
     final isMom = identity == ProfileIdentity.mom;
+    if (!isMom) {
+      return _BabyProfileHero(
+        data: data,
+        compactForSleep: babySection == 'sleep',
+        onOpenAvatar: onOpenAvatar,
+      );
+    }
     final avatar = Positioned(
       key: ValueKey(
         isMom
@@ -1216,6 +1458,14 @@ class _AvatarStage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMom = identity == ProfileIdentity.mom;
+    if (!isMom) {
+      return _BabyAvatarStage(
+        data: data,
+        selectedSection: selectedSection,
+        onClose: onClose,
+        onSelected: onSelected,
+      );
+    }
     return ColoredBox(
       color: _MeBabyOverviewColors.background,
       child: LayoutBuilder(
@@ -1402,24 +1652,28 @@ class _SectionTabs extends StatelessWidget {
             ('sleep', 'Sleep'),
             ('feeding', 'Feeding'),
             ('diaper', 'Diaper'),
-            ('growth', 'Growth'),
           ];
-    return Row(
-      children: [
-        for (var index = 0; index < sections.length; index += 1) ...[
-          if (index > 0) SizedBox(width: compact ? 5 : 7),
-          Expanded(
-            child: _SectionTab(
-              section: sections[index].$1,
-              label: sections[index].$2,
-              selected: selected == sections[index].$1,
-              prefix: identity == ProfileIdentity.mom ? 'me' : 'baby',
-              onTap: () => onSelected(sections[index].$1),
-              compact: compact,
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: identity == ProfileIdentity.baby ? 6 : 0,
+      ),
+      child: Row(
+        children: [
+          for (var index = 0; index < sections.length; index += 1) ...[
+            if (index > 0) SizedBox(width: compact ? 5 : 7),
+            Expanded(
+              child: _SectionTab(
+                section: sections[index].$1,
+                label: sections[index].$2,
+                selected: selected == sections[index].$1,
+                prefix: identity == ProfileIdentity.mom ? 'me' : 'baby',
+                onTap: () => onSelected(sections[index].$1),
+                compact: compact,
+              ),
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -1443,30 +1697,64 @@ class _SectionTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBaby = prefix == 'baby';
+    final icon = switch (section) {
+      'monitor' => Icons.monitor_heart_outlined,
+      'sleep' => Icons.bedtime_outlined,
+      'feeding' => Icons.child_care_rounded,
+      'diaper' => Icons.baby_changing_station_outlined,
+      _ => null,
+    };
     return Semantics(
+      key: ValueKey('$prefix-section-$section'),
       selected: selected,
       button: true,
       inMutuallyExclusiveGroup: true,
-      child: Material(
-        key: ValueKey('$prefix-section-$section'),
-        color: selected
-            ? _MeBabyOverviewColors.ink
-            : _MeBabyOverviewColors.pill,
-        borderRadius: BorderRadius.circular(24),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: onTap,
-          child: SizedBox(
-            height: compact ? 40 : 48,
-            child: Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: selected ? Colors.white : _MeBabyOverviewColors.ink,
-                    fontSize: compact ? 13 : 15,
-                    fontWeight: FontWeight.w800,
+      child: SizedBox(
+        height: isBaby ? MomCozyTapTargets.minimum : (compact ? 40 : 48),
+        child: Center(
+          child: Material(
+            color: selected
+                ? (isBaby ? _BabyOverviewColors.ink : _MeBabyOverviewColors.ink)
+                : (isBaby
+                      ? _BabyOverviewColors.pill
+                      : _MeBabyOverviewColors.pill),
+            borderRadius: BorderRadius.circular(24),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(24),
+              onTap: onTap,
+              child: SizedBox(
+                height: isBaby ? 32 : (compact ? 40 : 48),
+                child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isBaby && icon != null) ...[
+                          Icon(
+                            icon,
+                            color: selected
+                                ? Colors.white
+                                : _BabyOverviewColors.ink,
+                            size: 17,
+                          ),
+                          const SizedBox(width: 5),
+                        ],
+                        Text(
+                          label,
+                          style: TextStyle(
+                            color: selected
+                                ? Colors.white
+                                : (isBaby
+                                      ? _BabyOverviewColors.ink
+                                      : _MeBabyOverviewColors.ink),
+                            fontSize: isBaby ? 13 : (compact ? 13 : 15),
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1660,217 +1948,6 @@ String _weekdayLabel(int weekday) {
   return const ['M', 'T', 'W', 'T', 'F', 'S', 'S'][weekday - 1];
 }
 
-class _BabyContent extends StatelessWidget {
-  const _BabyContent({required this.section, required this.data});
-
-  final String section;
-  final _MeBabyOverviewData data;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (section) {
-      'sleep' => const _BabySleepContent(),
-      'feeding' => _BabyFeedingContent(data: data),
-      'diaper' => const _BabyDiaperContent(),
-      'growth' => _BabyGrowthContent(data: data),
-      _ => const _BabyMonitorContent(),
-    };
-  }
-}
-
-class _BabyMonitorContent extends StatelessWidget {
-  const _BabyMonitorContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return const _OverviewStateCard(
-      title: 'Camera not connected',
-      description:
-          'Connect a supported nursery device to view live video and environmental readings.',
-      icon: Icons.videocam_off_outlined,
-    );
-  }
-}
-
-class _BabySleepContent extends StatelessWidget {
-  const _BabySleepContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return const _OverviewStateCard(
-      title: 'No sleep data yet',
-      description:
-          'Sleep totals and predictions will appear only after a supported device or confirmed record provides data.',
-      icon: Icons.bedtime_outlined,
-    );
-  }
-}
-
-class _BabyFeedingContent extends StatelessWidget {
-  const _BabyFeedingContent({required this.data});
-
-  final _MeBabyOverviewData data;
-
-  @override
-  Widget build(BuildContext context) {
-    final feeds = data.feeds;
-    final isLoading =
-        data.feedingRecords.phase == OverviewResourcePhase.initial ||
-        data.feedingRecords.phase == OverviewResourcePhase.loading;
-    if (feeds.isEmpty) {
-      return _OverviewStateCard(
-        title: isLoading ? 'Loading feeding data…' : 'No feeding data yet',
-        description: data.feedingRecords.hasError
-            ? 'Feeding records could not be refreshed. Try again later.'
-            : 'Confirmed feeding records will appear here.',
-        icon: isLoading ? Icons.sync_rounded : Icons.restaurant_outlined,
-        loading: isLoading,
-      );
-    }
-    return Column(
-      children: [
-        _V2Card(
-          child: Row(
-            children: [
-              const _RoundIcon(icon: Icons.restaurant_outlined),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${feeds.length} ${feeds.length == 1 ? 'feed' : 'feeds'} recorded',
-                      style: _MeBabyOverviewText.cardTitle,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '${data.measuredFeedTotalMl} mL measured',
-                      style: _MeBabyOverviewText.supporting,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 14),
-        _V2Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Today’s Feeds', style: _MeBabyOverviewText.cardTitle),
-              const SizedBox(height: 10),
-              for (var index = 0; index < feeds.length; index += 1) ...[
-                _FeedRow(feed: _feedRowData(context, feeds[index])),
-                if (index < feeds.length - 1)
-                  const Divider(color: _MeBabyOverviewColors.line, height: 16),
-              ],
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-(String, String, String, String) _feedRowData(
-  BuildContext context,
-  FeedingRecord record,
-) {
-  final occurredAt = record.occurredAt?.toLocal();
-  final time = occurredAt == null
-      ? 'Time not recorded'
-      : MaterialLocalizations.of(
-          context,
-        ).formatTimeOfDay(TimeOfDay.fromDateTime(occurredAt));
-  final type = switch (record.type.toLowerCase()) {
-    'breast' || 'breastfeeding' => 'Breastfeeding',
-    'formula' => 'Formula',
-    'bottle' => 'Bottle feeding',
-    _ => 'Feeding',
-  };
-  final amount = record.amountMl == null
-      ? 'Not measured'
-      : '${record.amountMl} mL';
-  return (time, type, amount, 'Confirmed record');
-}
-
-class _BabyDiaperContent extends StatelessWidget {
-  const _BabyDiaperContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return const _OverviewStateCard(
-      title: 'No diaper data yet',
-      description:
-          'Confirmed diaper records will appear here after the recording flow is connected.',
-      icon: Icons.baby_changing_station_outlined,
-    );
-  }
-}
-
-class _BabyGrowthContent extends StatelessWidget {
-  const _BabyGrowthContent({required this.data});
-
-  final _MeBabyOverviewData data;
-
-  @override
-  Widget build(BuildContext context) {
-    final growth = data.latestGrowth;
-    final isLoading =
-        data.growthRecords.phase == OverviewResourcePhase.initial ||
-        data.growthRecords.phase == OverviewResourcePhase.loading;
-    if (growth == null) {
-      return _OverviewStateCard(
-        title: isLoading ? 'Loading growth data…' : 'No growth data yet',
-        description: data.growthRecords.hasError
-            ? 'Growth records could not be refreshed. Try again later.'
-            : 'Add a confirmed measurement to start the growth history.',
-        icon: isLoading ? Icons.sync_rounded : Icons.monitor_weight_outlined,
-        loading: isLoading,
-      );
-    }
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _GrowthMetric(
-                label: 'Weight',
-                value: '${_formatNumber(growth.weightKg)} kg',
-                percentile: 'Recorded data',
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _GrowthMetric(
-                label: 'Height',
-                value: '${_formatNumber(growth.heightCm)} cm',
-                percentile: 'Recorded data',
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _GrowthMetric(
-                label: 'Head',
-                value: '${_formatNumber(growth.headCm)} cm',
-                percentile: 'Recorded data',
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 14),
-        const _OverviewStateCard(
-          title: 'Reference curves are not available yet',
-          description:
-              'Percentiles will appear only after the reference standard and calculation contract are verified.',
-          icon: Icons.show_chart_rounded,
-        ),
-      ],
-    );
-  }
-}
-
 class _RoleCard extends StatelessWidget {
   const _RoleCard({
     required this.title,
@@ -2016,65 +2093,6 @@ class _FeedRow extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class _GrowthMetric extends StatelessWidget {
-  const _GrowthMetric({
-    required this.label,
-    required this.value,
-    required this.percentile,
-  });
-
-  final String label;
-  final String value;
-  final String percentile;
-
-  @override
-  Widget build(BuildContext context) {
-    return _V2Card(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: _MeBabyOverviewText.supporting),
-          const SizedBox(height: 7),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: _MeBabyOverviewColors.ink,
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: _MeBabyOverviewColors.pill,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  percentile,
-                  style: const TextStyle(
-                    color: _MeBabyOverviewColors.wine,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -2254,50 +2272,103 @@ class _DisabledCircleAction extends StatelessWidget {
     required this.semanticLabel,
     required this.icon,
     this.compact = false,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.size,
   });
 
   final Key actionKey;
   final String semanticLabel;
   final IconData icon;
   final bool compact;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
-    final size = compact ? 44.0 : 62.0;
+    final resolvedSize = size ?? (compact ? 44.0 : 62.0);
     return Semantics(
       key: actionKey,
       label: semanticLabel,
       button: false,
       enabled: false,
+      child: SizedBox.square(
+        dimension: math.max(resolvedSize, MomCozyTapTargets.minimum),
+        child: Center(
+          child: Material(
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: null,
+              child: Container(
+                width: resolvedSize,
+                height: resolvedSize,
+                decoration: BoxDecoration(
+                  color:
+                      backgroundColor ??
+                      (compact
+                          ? _MeBabyOverviewColors.pill
+                          : _MeBabyOverviewColors.ink),
+                  shape: BoxShape.circle,
+                  boxShadow: compact
+                      ? null
+                      : const [
+                          BoxShadow(
+                            color: Color(0x29000000),
+                            blurRadius: 22,
+                            offset: Offset(0, 10),
+                          ),
+                        ],
+                ),
+                child: Icon(
+                  icon,
+                  color:
+                      foregroundColor ??
+                      (compact ? _MeBabyOverviewColors.wine : Colors.white),
+                  size: compact ? 24 : 32,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CircleAction extends StatelessWidget {
+  const _CircleAction({
+    required this.actionKey,
+    required this.semanticLabel,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final Key actionKey;
+  final String semanticLabel;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      key: actionKey,
+      label: semanticLabel,
+      button: true,
+      enabled: true,
       child: Material(
-        color: Colors.transparent,
+        color: _BabyOverviewColors.ink,
         shape: const CircleBorder(),
+        elevation: 8,
+        shadowColor: const Color(0x52000000),
         child: InkWell(
           customBorder: const CircleBorder(),
-          onTap: null,
-          child: Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              color: compact
-                  ? _MeBabyOverviewColors.pill
-                  : _MeBabyOverviewColors.ink,
-              shape: BoxShape.circle,
-              boxShadow: compact
-                  ? null
-                  : const [
-                      BoxShadow(
-                        color: Color(0x29000000),
-                        blurRadius: 22,
-                        offset: Offset(0, 10),
-                      ),
-                    ],
-            ),
-            child: Icon(
-              icon,
-              color: compact ? _MeBabyOverviewColors.wine : Colors.white,
-              size: compact ? 24 : 32,
-            ),
+          onTap: onPressed,
+          child: SizedBox.square(
+            dimension: 56,
+            child: Icon(icon, color: Colors.white, size: 30),
           ),
         ),
       ),
@@ -2369,6 +2440,10 @@ abstract final class _MeBabyOverviewAssets {
   static const bodyAssessment =
       'assets/images/me_baby_overview/body_assessment.png';
   static const yoga = 'assets/images/me_baby_overview/yoga.png';
+  static const nurseryCamera =
+      'assets/images/me_baby_overview/nursery_camera.png';
+  static const sleepTraining =
+      'assets/images/me_baby_overview/sleep_training.png';
 }
 
 abstract final class _MeBabyOverviewColors {
@@ -2379,6 +2454,15 @@ abstract final class _MeBabyOverviewColors {
   static const ink = Color(0xff181818);
   static const mutedText = Color(0xffa28f89);
   static const line = Color(0xffeadfdb);
+}
+
+abstract final class _BabyOverviewColors {
+  static const background = MomCozyV3Colors.background;
+  static const pill = MomCozyV3Colors.surfaceTint;
+  static const wine = MomCozyV3Colors.brand;
+  static const ink = MomCozyV3Colors.ink;
+  static const mutedText = MomCozyV3Colors.mutedText;
+  static const line = MomCozyV3Colors.divider;
 }
 
 abstract final class _MeBabyOverviewText {
@@ -2406,5 +2490,44 @@ abstract final class _MeBabyOverviewText {
     fontSize: 14,
     height: 1.35,
     fontWeight: FontWeight.w600,
+  );
+}
+
+abstract final class _BabyText {
+  static const cardTitle = TextStyle(
+    color: _BabyOverviewColors.ink,
+    fontSize: 16,
+    height: 1.1,
+    fontWeight: FontWeight.w900,
+  );
+  static const heroMetric = TextStyle(
+    color: _BabyOverviewColors.ink,
+    fontSize: 42,
+    height: 1,
+    fontWeight: FontWeight.w900,
+    letterSpacing: -1.2,
+  );
+  static const supporting = TextStyle(
+    color: _BabyOverviewColors.mutedText,
+    fontSize: 14,
+    height: 1.3,
+    fontWeight: FontWeight.w600,
+  );
+  static const supportingSmall = TextStyle(
+    color: _BabyOverviewColors.mutedText,
+    fontSize: 11,
+    height: 1.2,
+    fontWeight: FontWeight.w600,
+  );
+  static const eyebrow = TextStyle(
+    color: _BabyOverviewColors.mutedText,
+    fontSize: 13,
+    height: 1.2,
+    fontWeight: FontWeight.w900,
+  );
+  static const accentLabel = TextStyle(
+    color: _BabyOverviewColors.wine,
+    fontSize: 12,
+    fontWeight: FontWeight.w900,
   );
 }

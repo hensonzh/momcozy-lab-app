@@ -122,6 +122,30 @@ void main() {
       },
     );
 
+    test(
+      'Baby saves a valid growth measurement and refreshes local state',
+      () async {
+        final records = _FakeRecordsRepository();
+        final controller = _controller(
+          records: records,
+          identity: ProfileIdentity.baby,
+        );
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final saved = await controller.saveGrowth(weightKg: 6.4);
+
+        expect(saved, isTrue);
+        expect(records.growthCreateCount, 1);
+        expect(records.savedWeightKg, 6.4);
+        expect(controller.growthRecords.value.data?.first.weightKg, 6.4);
+        expect(
+          controller.growthMutation.value.phase,
+          ProfileOverviewMutationPhase.success,
+        );
+      },
+    );
+
     test('selecting the current stage does not write again', () async {
       final overviewRepository = _FakeProfileOverviewRepository();
       final controller = _controller(overviewRepository: overviewRepository);
@@ -152,6 +176,55 @@ void main() {
         expect(controller.careStage.value.stage, MomLifeStage.postpartum);
         expect(controller.careStage.value.isSaving, isFalse);
         expect(controller.careStage.value.error, isNotNull);
+      },
+    );
+
+    test(
+      'Baby rejects an invalid growth measurement before the API call',
+      () async {
+        final records = _FakeRecordsRepository();
+        final controller = _controller(
+          records: records,
+          identity: ProfileIdentity.baby,
+        );
+        addTearDown(controller.dispose);
+
+        final saved = await controller.saveGrowth(weightKg: 0);
+
+        expect(saved, isFalse);
+        expect(records.growthCreateCount, 0);
+        expect(
+          controller.growthMutation.value.phase,
+          ProfileOverviewMutationPhase.error,
+        );
+      },
+    );
+
+    test(
+      'Baby updates today’s growth record instead of duplicating it',
+      () async {
+        final records = _FakeRecordsRepository(
+          growth: [
+            GrowthRecord(
+              id: 'growth-today',
+              weightGram: 6400,
+              measuredAt: DateTime(2026, 7, 11, 8),
+            ),
+          ],
+        );
+        final controller = _controller(
+          records: records,
+          identity: ProfileIdentity.baby,
+        );
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final saved = await controller.saveGrowth(heightCm: 65);
+
+        expect(saved, isTrue);
+        expect(records.growthCreateCount, 0);
+        expect(records.growthUpdateCount, 1);
+        expect(records.savedHeightCm, 65);
       },
     );
   });
@@ -212,15 +285,22 @@ class _FakeRecordsRepository
         GrowthRecordsRepository {
   _FakeRecordsRepository({
     this.feeding = const <FeedingRecord>[],
+    this.growth = const <GrowthRecord>[],
     this.growthError,
   });
 
   final List<FeedingRecord> feeding;
+  final List<GrowthRecord> growth;
   final Object? growthError;
   DateTime? milkTrendStart;
   var feedingFetchCount = 0;
   var milkTrendFetchCount = 0;
   var growthFetchCount = 0;
+  var growthCreateCount = 0;
+  var growthUpdateCount = 0;
+  double? savedWeightKg;
+  double? savedHeightCm;
+  double? savedHeadCm;
 
   @override
   Future<List<FeedingRecord>> fetchFeedingRecords({
@@ -253,7 +333,7 @@ class _FakeRecordsRepository
   }) async {
     growthFetchCount += 1;
     if (growthError != null) throw growthError!;
-    return const <GrowthRecord>[];
+    return growth;
   }
 
   @override
@@ -264,8 +344,18 @@ class _FakeRecordsRepository
     double? heightCm,
     double? headCm,
     String? idempotencyKey,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    growthCreateCount += 1;
+    savedWeightKg = weightKg;
+    savedHeightCm = heightCm;
+    savedHeadCm = headCm;
+    return GrowthRecord(
+      id: 'growth-created',
+      weightGram: weightKg == null ? null : (weightKg * 1000).round(),
+      heightCm: heightCm,
+      headCm: headCm,
+      measuredAt: measuredAt,
+    );
   }
 
   @override
@@ -274,7 +364,17 @@ class _FakeRecordsRepository
     double? weightKg,
     double? heightCm,
     double? headCm,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    growthUpdateCount += 1;
+    savedWeightKg = weightKg;
+    savedHeightCm = heightCm;
+    savedHeadCm = headCm;
+    return GrowthRecord(
+      id: recordId,
+      weightGram: weightKg == null ? null : (weightKg * 1000).round(),
+      heightCm: heightCm,
+      headCm: headCm,
+      measuredAt: DateTime(2026, 7, 11, 10),
+    );
   }
 }
