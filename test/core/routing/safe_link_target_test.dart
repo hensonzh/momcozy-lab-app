@@ -4,11 +4,11 @@ import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 void main() {
   group('SafeLinkTarget', () {
     test('accepts app paths and preserves query parameters', () {
-      final target = SafeLinkTarget.tryParse('/status?day=2026-07-11');
+      final target = SafeLinkTarget.tryParse('/me?day=2026-07-11');
 
       expect(target, isNotNull);
-      expect(target!.internalPath, '/status');
-      expect(target.internalLocation, '/status?day=2026-07-11');
+      expect(target!.internalPath, '/me');
+      expect(target.internalLocation, '/me?day=2026-07-11');
       expect(target.externalUri, isNull);
     });
 
@@ -32,8 +32,8 @@ void main() {
         'intent://scan',
         '//example.com/path',
         'example.com/path',
-        '/../../status',
-        '/status\\settings',
+        '/../../me',
+        '/me\\settings',
         'https://user:password@example.com/private',
         'https://exa mple.com',
       ]) {

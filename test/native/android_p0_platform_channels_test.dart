@@ -281,7 +281,7 @@ void main() {
 
         await platform.enqueuePendingRoute(
           const PendingNativeRoute(
-            path: '/status',
+            path: '/me',
             notifyJson: {'event': 'grown'},
             autoEndTeardown: true,
           ),
@@ -306,7 +306,7 @@ void main() {
           'consumePendingNavigate',
         ]);
         expect(calls.first.arguments, {
-          'path': '/status',
+          'path': '/me',
           'notifyJson': {'event': 'grown'},
           'autoEndTeardown': true,
         });

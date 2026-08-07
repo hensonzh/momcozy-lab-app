@@ -9,6 +9,7 @@ void main() {
       final routePaths = momCozyRoutes.map((route) => route.path).toSet();
 
       expect(routePaths, containsAll(_documentedRoutePaths));
+      expect(routePaths, isNot(contains('/status')));
     });
 
     test(
@@ -44,10 +45,10 @@ const _documentedRoutePaths = {
   '/calibration',
   '/pump',
   '/schedule',
-  '/status',
-  '/community',
   '/more',
+  '/community',
   '/more/body-profile',
+  '/more/body-profile/edit',
   '/device',
   '/device/manage',
   '/device/user',
@@ -62,6 +63,6 @@ const _routeIntentFixtures = [
   'malformed_and_unknown_route_fallbacks.json',
   'media_viewer_and_ibclc_return_intents.json',
   'native_notification_analysis_intents.json',
-  'plan_and_diary_pending_intents.json',
+  'milk_plan_pending_intent.json',
   'pump_notification_intents.json',
 ];

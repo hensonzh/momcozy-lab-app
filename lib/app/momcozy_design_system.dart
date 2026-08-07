@@ -1,5 +1,37 @@
 import 'package:flutter/material.dart';
 
+/// V3 semantic colors from the approved 0806 brand specification.
+///
+/// Legacy colors remain available while feature slices migrate. New V3 UI
+/// should use these semantic names instead of page-local color literals.
+class MomCozyV3Colors {
+  const MomCozyV3Colors._();
+
+  static const brand = Color(0xff7a2840);
+  static const ink = Color(0xff1a1a1a);
+  static const background = Color(0xfffbf5f3);
+  static const surface = Color(0xffffffff);
+  static const roseTint = Color(0xfff5e6eb);
+  static const success = Color(0xff4caf50);
+  static const warning = Color(0xffa65a00);
+  static const danger = Color(0xffb42318);
+}
+
+class MomCozySpacing {
+  const MomCozySpacing._();
+
+  static const compact = 8.0;
+  static const content = 12.0;
+  static const page = 16.0;
+  static const section = 24.0;
+}
+
+class MomCozyTapTargets {
+  const MomCozyTapTargets._();
+
+  static const minimum = 44.0;
+}
+
 class MomCozyColors {
   const MomCozyColors._();
 
@@ -49,13 +81,9 @@ class MomCozyAssets {
   static const agentAwakenAvatar = 'assets/images/momcozy-agent-awaken.gif';
   static const agentThinkingAvatar = 'assets/images/momcozy-agent-thinking.mp4';
   static const agentSpeakingAvatar = 'assets/images/momcozy-agent-speaking.mp4';
-  static const momAvatar = 'assets/images/mom-avatar-felt.png';
-  static const babyAvatar = 'assets/images/baby-avatar-felt.png';
   static const pumpM9 = 'assets/images/M9.png';
   static const ibclcConsultantAvatar =
       'assets/images/ibclc-consultant-avatar.jpg';
-  static const postpartumRecoveryIcon =
-      'assets/images/postpartum-recovery-icon.png';
   static const momcozyLogo = 'assets/images/momcozy_logo.png';
 }
 

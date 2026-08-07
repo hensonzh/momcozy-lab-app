@@ -22,7 +22,7 @@
       },
       {
         "source": "ibclc-return",
-        "returnTo": "https://evil.example.com/status"
+        "returnTo": "https://evil.example.com/me"
       },
       {
         "source": "agent-artifact",

@@ -18,12 +18,9 @@ import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_ca
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_image_recognition_gateway.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
-import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
 
@@ -161,7 +158,6 @@ void main() {
       'user_id': 'user-fixture',
       'delivery_date': '2026-06-11',
     });
-    final statusPreferences = _MemoryStatusPreferenceStore();
     final volumePreferences = _MemoryVolumeUnitPreferenceStore();
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
@@ -172,18 +168,17 @@ void main() {
       userId: 'user-fixture',
       babyId: 'baby-fixture',
       locale: 'zh-CN',
-      statusPreferenceStore: statusPreferences,
       volumeUnitPreferenceStore: volumePreferences,
     );
 
-    expect(runtime.statusRepository, isA<StatusApiRepository>());
+    expect(
+      runtime.profileOverviewRepository,
+      isA<ProfileOverviewApiRepository>(),
+    );
     expect(runtime.agentHubProfileRepository, isA<AgentHubProfileRepository>());
     expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
     expect(runtime.scheduleRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
-    expect(runtime.pregnancyDiaryRepository.transport, same(transport));
-    expect(runtime.pregnancyPlanRepository.transport, same(transport));
-    expect(runtime.statusPreferenceStore, same(statusPreferences));
     expect(runtime.volumeUnitPreferenceStore, same(volumePreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
@@ -202,19 +197,10 @@ void main() {
       runtime.hospitalBagCartRepository,
       isA<HospitalBagCartApiRepository>(),
     );
-    final statusController = runtime.createStatusDashboardController();
-    expect(statusController.babyId, 'baby-fixture');
-    expect(statusController.preferenceStore, same(statusPreferences));
-    expect(statusController.volumeUnitPreferenceStore, same(volumePreferences));
-    expect(
-      statusController.pregnancyDiaryRepository,
-      isA<PregnancyDiaryApiRepository>(),
-    );
-    expect(
-      statusController.pregnancyPlanRepository,
-      isA<PregnancyPlanApiRepository>(),
-    );
-    statusController.dispose();
+    final overviewController = runtime.createProfileOverviewController();
+    expect(overviewController.babyId, 'baby-fixture');
+    expect(overviewController.identity, ProfileIdentity.mom);
+    overviewController.dispose();
   });
 
   test(
@@ -222,8 +208,8 @@ void main() {
     () async {
       final withDeliveryDate = MomCozyApiRuntime(
         jsonTransport: FixtureApiJsonTransportByPath({
-          statusProfileEndpoint: const {'delivery_date': '2026-06-11'},
-          statusInfantsEndpoint: const {
+          profileMeEndpoint: const {'delivery_date': '2026-06-11'},
+          profileInfantsEndpoint: const {
             'items': [
               {'birth_date': '2026-04-05'},
             ],
@@ -233,8 +219,8 @@ void main() {
       );
       final withBirthDateOnly = MomCozyApiRuntime(
         jsonTransport: FixtureApiJsonTransportByPath({
-          statusProfileEndpoint: const {'user_id': 'mom'},
-          statusInfantsEndpoint: const {
+          profileMeEndpoint: const {'user_id': 'mom'},
+          profileInfantsEndpoint: const {
             'items': [
               {'birth_date': '2026-04-05'},
             ],
@@ -582,18 +568,6 @@ void main() {
       controller.dispose();
     },
   );
-}
-
-class _MemoryStatusPreferenceStore implements StatusPreferenceStore {
-  StatusCareStage? value;
-
-  @override
-  Future<StatusCareStage?> readCareStage() async => value;
-
-  @override
-  Future<void> writeCareStage(StatusCareStage stage) async {
-    value = stage;
-  }
 }
 
 class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {

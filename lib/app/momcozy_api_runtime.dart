@@ -26,12 +26,6 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_change_persistence.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_change_persistence.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/android_schedule_reminder_gateway.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_image_recognition_gateway.dart';
@@ -42,11 +36,10 @@ import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_st
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_image_recognition.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
-import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
-import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_cache.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -90,11 +83,8 @@ class MomCozyApiRuntime {
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
-    PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
-    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
-    StatusDashboardCache? statusDashboardCache,
+    ProfileOverviewCache? profileOverviewCache,
     MilkPlanChangeStore? milkPlanChangeStore,
-    StatusPreferenceStore? statusPreferenceStore,
     ScheduleReminderPreferenceStore? scheduleReminderPreferenceStore,
     ScheduleReminderGateway? scheduleReminderGateway,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
@@ -144,32 +134,14 @@ class MomCozyApiRuntime {
           now: this.now,
         );
     unawaited(this.ibclcConsultStore.restore());
-    this.pregnancyDiaryChangeStore =
-        pregnancyDiaryChangeStore ??
-        PregnancyDiaryChangeStore(
-          persistence: FlutterSecurePregnancyDiaryChangePersistence(
-            userId: this.session.userId,
-          ),
-        );
-    unawaited(this.pregnancyDiaryChangeStore.restore());
-    this.pregnancyPlanChangeStore =
-        pregnancyPlanChangeStore ??
-        PregnancyPlanChangeStore(
-          persistence: FlutterSecurePregnancyPlanChangePersistence(
-            userId: this.session.status == MomCozySessionStatus.authenticated
-                ? this.session.userId
-                : '',
-          ),
-        );
-    unawaited(this.pregnancyPlanChangeStore.restore());
-    this.statusDashboardCache =
-        statusDashboardCache?.matches(
+    this.profileOverviewCache =
+        profileOverviewCache?.matches(
               ownerUserId: this.session.userId,
               babyId: this.session.babyId,
             ) ==
             true
-        ? statusDashboardCache!
-        : StatusDashboardCache(
+        ? profileOverviewCache!
+        : ProfileOverviewCache(
             ownerUserId: this.session.userId,
             babyId: this.session.babyId,
           );
@@ -189,7 +161,6 @@ class MomCozyApiRuntime {
     _hasInjectedAgentVoicePlaybackPlayer = agentVoicePlaybackPlayer != null;
     _productAssetRepository = productAssetRepository;
     _hasInjectedProductAssetRepository = productAssetRepository != null;
-    _statusPreferenceStore = statusPreferenceStore;
     _scheduleReminderPreferenceStore = scheduleReminderPreferenceStore;
     _scheduleReminderGateway = scheduleReminderGateway;
     _volumeUnitPreferenceStore = volumeUnitPreferenceStore;
@@ -209,8 +180,7 @@ class MomCozyApiRuntime {
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
-    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
-    StatusDashboardCache? statusDashboardCache,
+    ProfileOverviewCache? profileOverviewCache,
     MilkPlanChangeStore? milkPlanChangeStore,
     String? userId,
     String? babyId,
@@ -235,8 +205,7 @@ class MomCozyApiRuntime {
       productAssetRepository: productAssetRepository,
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
-      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
-      statusDashboardCache: statusDashboardCache,
+      profileOverviewCache: profileOverviewCache,
       milkPlanChangeStore: milkPlanChangeStore,
     );
   }
@@ -253,9 +222,7 @@ class MomCozyApiRuntime {
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
-    PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
-    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
-    StatusDashboardCache? statusDashboardCache,
+    ProfileOverviewCache? profileOverviewCache,
     MilkPlanChangeStore? milkPlanChangeStore,
     ScheduleReminderPreferenceStore? scheduleReminderPreferenceStore,
     ScheduleReminderGateway? scheduleReminderGateway,
@@ -343,9 +310,7 @@ class MomCozyApiRuntime {
       productAssetRepository: productAssetRepository,
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
-      pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
-      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
-      statusDashboardCache: statusDashboardCache,
+      profileOverviewCache: profileOverviewCache,
       milkPlanChangeStore: milkPlanChangeStore,
       scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
       scheduleReminderGateway: scheduleReminderGateway,
@@ -420,9 +385,7 @@ class MomCozyApiRuntime {
   final MomCozyObservability observability;
   final HospitalBagCartStore hospitalBagCartStore;
   late final IbclcConsultStore ibclcConsultStore;
-  late final PregnancyDiaryChangeStore pregnancyDiaryChangeStore;
-  late final PregnancyPlanChangeStore pregnancyPlanChangeStore;
-  late final StatusDashboardCache statusDashboardCache;
+  late final ProfileOverviewCache profileOverviewCache;
   late final MilkPlanChangeStore milkPlanChangeStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
@@ -441,7 +404,6 @@ class MomCozyApiRuntime {
   AgentHubPlatformDocumentPicker? _agentHubPlatformDocumentPicker;
   ProductAssetRepository? _productAssetRepository;
   MediaContentRepository? _mediaContentRepository;
-  StatusPreferenceStore? _statusPreferenceStore;
   ScheduleReminderPreferenceStore? _scheduleReminderPreferenceStore;
   ScheduleReminderGateway? _scheduleReminderGateway;
   ScheduleImageRecognitionGateway? _scheduleImageRecognitionGateway;
@@ -507,12 +469,12 @@ class MomCozyApiRuntime {
     );
   }
 
-  StatusApiRepository get statusRepository {
-    return StatusApiRepository(transport: jsonTransport, now: now);
+  ProfileOverviewApiRepository get profileOverviewRepository {
+    return ProfileOverviewApiRepository(transport: jsonTransport, now: now);
   }
 
   Future<DateTime?> loadSchedulePostpartumAnchorDate() async {
-    final overview = await statusRepository.fetchOverview();
+    final overview = await profileOverviewRepository.fetchOverview();
     return overview.mom?.deliveryDate ?? overview.baby?.birthDate;
   }
 
@@ -534,20 +496,6 @@ class MomCozyApiRuntime {
 
   RecordsApiRepository get recordsRepository {
     return RecordsApiRepository(transport: jsonTransport);
-  }
-
-  PregnancyDiaryApiRepository get pregnancyDiaryRepository {
-    return PregnancyDiaryApiRepository(transport: jsonTransport);
-  }
-
-  PregnancyPlanApiRepository get pregnancyPlanRepository {
-    return PregnancyPlanApiRepository(transport: jsonTransport);
-  }
-
-  StatusPreferenceStore get statusPreferenceStore {
-    return _statusPreferenceStore ??= FlutterSecureStatusPreferenceStore(
-      userId: currentSession.userId,
-    );
   }
 
   ScheduleReminderPreferenceStore get scheduleReminderPreferenceStore {
@@ -574,32 +522,20 @@ class MomCozyApiRuntime {
         FlutterSecureVolumeUnitPreferenceStore(userId: currentSession.userId);
   }
 
-  StatusDashboardController createStatusDashboardController({
-    StatusCareStage initialCareStage = StatusCareStage.postpartum,
-    StatusIdentity initialIdentity = StatusIdentity.mom,
+  ProfileOverviewController createProfileOverviewController({
+    ProfileIdentity initialIdentity = ProfileIdentity.mom,
   }) {
     final records = recordsRepository;
-    return StatusDashboardController(
-      statusRepository: statusRepository,
+    return ProfileOverviewController(
+      profileOverviewRepository: profileOverviewRepository,
       feedingRepository: records,
       milkTrendRepository: records,
       growthRepository: records,
-      pregnancyDiaryRepository: pregnancyDiaryRepository,
-      pregnancyPlanRepository: pregnancyPlanRepository,
-      preferenceStore: statusPreferenceStore,
-      volumeUnitPreferenceStore: volumeUnitPreferenceStore,
-      cache: statusDashboardCache,
+      cache: profileOverviewCache,
       babyId: currentSession.babyId,
-      initialCareStage: initialCareStage,
-      initialIdentity: initialIdentity,
+      identity: initialIdentity,
       now: now,
     );
-  }
-
-  bool recordPregnancyDiaryChange(PregnancyDiaryChange change) {
-    final recorded = pregnancyDiaryChangeStore.record(change);
-    if (recorded) statusDashboardCache.invalidatePregnancyDiary();
-    return recorded;
   }
 
   MediaApiRepository get mediaRepository {
@@ -813,19 +749,13 @@ class MomCozyRuntimeController extends ChangeNotifier {
     final ibclcConsultStore = session.userId == currentSession.userId
         ? _runtime.ibclcConsultStore
         : null;
-    final pregnancyDiaryChangeStore = session.userId == currentSession.userId
-        ? _runtime.pregnancyDiaryChangeStore
-        : null;
-    final sameAuthenticatedPlanAccount =
+    final sameAuthenticatedAccount =
         session.isAuthenticated &&
         currentSession.isAuthenticated &&
         session.userId == currentSession.userId;
-    final pregnancyPlanChangeStore = sameAuthenticatedPlanAccount
-        ? _runtime.pregnancyPlanChangeStore
-        : null;
-    final statusDashboardCache =
-        sameAuthenticatedPlanAccount && session.babyId == currentSession.babyId
-        ? _runtime.statusDashboardCache
+    final profileOverviewCache =
+        sameAuthenticatedAccount && session.babyId == currentSession.babyId
+        ? _runtime.profileOverviewCache
         : null;
     final milkPlanChangeStore =
         session.status == MomCozySessionStatus.authenticated &&
@@ -833,13 +763,13 @@ class MomCozyRuntimeController extends ChangeNotifier {
             session.userId == currentSession.userId
         ? _runtime.milkPlanChangeStore
         : null;
-    final scheduleReminderGateway = sameAuthenticatedPlanAccount
+    final scheduleReminderGateway = sameAuthenticatedAccount
         ? _runtime.scheduleReminderGateway
         : null;
-    final scheduleReminderPreferenceStore = sameAuthenticatedPlanAccount
+    final scheduleReminderPreferenceStore = sameAuthenticatedAccount
         ? _runtime.scheduleReminderPreferenceStore
         : null;
-    final volumeUnitPreferenceStore = sameAuthenticatedPlanAccount
+    final volumeUnitPreferenceStore = sameAuthenticatedAccount
         ? _runtime.volumeUnitPreferenceStore
         : null;
     if (store == null) {
@@ -854,9 +784,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
             : null,
         hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
-        pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
-        pregnancyPlanChangeStore: pregnancyPlanChangeStore,
-        statusDashboardCache: statusDashboardCache,
+        profileOverviewCache: profileOverviewCache,
         milkPlanChangeStore: milkPlanChangeStore,
         scheduleReminderGateway: scheduleReminderGateway,
         scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
@@ -874,9 +802,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
           : null,
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
-      pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
-      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
-      statusDashboardCache: statusDashboardCache,
+      profileOverviewCache: profileOverviewCache,
       milkPlanChangeStore: milkPlanChangeStore,
       scheduleReminderGateway: scheduleReminderGateway,
       scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,

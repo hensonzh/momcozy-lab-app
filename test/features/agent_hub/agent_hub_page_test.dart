@@ -29,8 +29,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_p
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_reader.dart';
@@ -64,7 +62,7 @@ void main() {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     expect(find.textContaining('你希望我怎么称呼你？'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('agent-auto-voice-button')),
@@ -110,6 +108,160 @@ void main() {
     _expectComposerControlsVerticallyCentered(tester);
     _expectComposerInputVerticallyCentered(tester);
     _expectComposerSendButtonBreathesVertically(tester);
+  });
+
+  testWidgets('Cozymate exposes only the three supported service entries', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(const AgentHubPage()));
+
+    expect(find.text('Cozymate'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-v3-service-health')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-v3-service-schedule')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-v3-service-lactation-plan')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('健康建议不替代专业诊断'), findsOneWidget);
+    expect(find.textContaining('写操作会先预览'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-v3-service-lactation-plan')),
+    );
+    await tester.pump();
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '请打开泌乳计划入口，并帮我管理计划状态',
+    );
+  });
+
+  testWidgets('schedule actions expose authoritative preview details', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.waitingForConfirmation,
+            textContent: '请确认是否删除任务。',
+            events: [
+              AgentStreamEvent(const {
+                'type': 'action.confirmation_required',
+                'action_id': 'schedule-delete-1',
+                'payload': {
+                  'action_type': 'schedule_task_delete',
+                  'summary': '删除匹配到的吸奶任务',
+                  'preview_payload': {
+                    'title': '删除下午 2 点吸奶任务',
+                    'target': '吸奶任务',
+                    'before': '2026-08-07 14:00',
+                    'after': '删除',
+                    'date': '2026-08-07',
+                    'timezone': 'Asia/Shanghai',
+                    'impact_scope': '仅此任务',
+                  },
+                },
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('日程删除'), findsOneWidget);
+    expect(find.text('对象：吸奶任务'), findsOneWidget);
+    expect(find.text('原值：2026-08-07 14:00'), findsOneWidget);
+    expect(find.text('变更后：删除'), findsOneWidget);
+    expect(find.text('日期：2026-08-07'), findsOneWidget);
+    expect(find.text('时区：Asia/Shanghai'), findsOneWidget);
+    expect(find.text('影响范围：仅此任务'), findsOneWidget);
+  });
+
+  testWidgets('lactation plan status changes expose before and after states', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.waitingForConfirmation,
+            textContent: '请确认计划状态变更。',
+            events: [
+              AgentStreamEvent(const {
+                'type': 'action.confirmation_required',
+                'action_id': 'milk-plan-status-1',
+                'payload': {
+                  'action_type': 'milk_plan_status_update',
+                  'preview_payload': {
+                    'title': '暂停泌乳计划',
+                    'target': '稳奶计划',
+                    'current_status': 'active',
+                    'next_status': 'paused',
+                    'timezone': 'Asia/Shanghai',
+                  },
+                },
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('泌乳计划状态变更'), findsOneWidget);
+    expect(find.text('对象：稳奶计划'), findsOneWidget);
+    expect(find.text('原值：active'), findsOneWidget);
+    expect(find.text('变更后：paused'), findsOneWidget);
+    expect(find.text('时区：Asia/Shanghai'), findsOneWidget);
+  });
+
+  testWidgets('lactation plan cards suppress content-editing actions', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        AgentArtifactPanel(
+          cards: const [
+            AgentArtifactCardView(
+              id: 'bounded-milk-plan',
+              title: '稳奶计划',
+              artifactType: 'milk_plan_card',
+              presentationKind: AgentArtifactPresentationKind.milkPlanCard,
+              statusLabel: '执行中',
+              rows: ['不应展示的计划内容'],
+              actions: [
+                AgentArtifactActionView(
+                  label: '管理计划状态',
+                  icon: Icons.settings_outlined,
+                  kind: 'route',
+                  routePath: '/schedule',
+                ),
+                AgentArtifactActionView(
+                  label: '编辑计划内容',
+                  icon: Icons.edit_outlined,
+                  kind: 'route',
+                  routePath: '/schedule',
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+
+    expect(find.text('管理计划状态'), findsOneWidget);
+    expect(find.text('编辑计划内容'), findsNothing);
+    expect(find.text('不应展示的计划内容'), findsNothing);
+    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
   });
 
   testWidgets('Agent Hub shows loop light rail while preparing a reply', (
@@ -187,7 +339,7 @@ void main() {
     final chatRect = tester.getRect(
       find.byKey(const ValueKey('agent-chat-scroll-view')),
     );
-    final greetingRect = tester.getRect(find.textContaining('嗨，我是 CozyMate'));
+    final greetingRect = tester.getRect(find.textContaining('嗨，我是 Cozymate'));
 
     expect(greetingRect.top - chatRect.top, lessThan(120));
   });
@@ -787,7 +939,7 @@ void main() {
 
     expect(newSessionStarted, isTrue);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
-    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-attachment-menu')), findsNothing);
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
@@ -1008,7 +1160,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.textContaining('嗨，我是 CozyMate'), findsNothing);
+      expect(find.textContaining('嗨，我是 Cozymate'), findsNothing);
       expect(player.playedTexts, isEmpty);
 
       store.completeRead(
@@ -1027,84 +1179,8 @@ void main() {
 
       expect(find.text('上一次的问题'), findsOneWidget);
       expect(find.text('这是上一次的回复。', findRichText: true), findsOneWidget);
-      expect(find.textContaining('嗨，我是 CozyMate'), findsNothing);
+      expect(find.textContaining('嗨，我是 Cozymate'), findsNothing);
       expect(player.playedTexts, isEmpty);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub reapplies domain changes after restoring a durable snapshot',
-    (tester) async {
-      final store = _DeferredAgentHubInteractionStateStore();
-      final diaryChanges = <PregnancyDiaryChange>[];
-      final planChanges = <PregnancyPlanChange>[];
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            interactionStateStore: store,
-            onPregnancyDiaryChange: diaryChanges.add,
-            onPregnancyPlanChange: planChanges.add,
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(diaryChanges, isEmpty);
-      expect(planChanges, isEmpty);
-
-      store.completeRead(
-        AgentHubInteractionSnapshot(
-          runState: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            threadId: 'thread-domain-restore',
-            runId: 'run-domain-restore',
-            textContent: '已经保存好了。',
-            events: [
-              AgentStreamEvent(const {
-                'event_id': 'evt-diary-restored',
-                'sequence': 7,
-                'type': 'pregnancy_diary.changed',
-                'thread_id': 'thread-domain-restore',
-                'run_id': 'run-domain-restore',
-                'payload': {
-                  'operation': 'updated',
-                  'entry_id': 'diary-2026-07-12',
-                  'entry_date': '2026-07-12',
-                  'updated_at': '2026-07-12T08:30:00Z',
-                  'source': 'agent',
-                },
-              }),
-              AgentStreamEvent(const {
-                'event_id': 'evt-plan-restored',
-                'sequence': 8,
-                'type': 'pregnancy_plan.changed',
-                'thread_id': 'thread-domain-restore',
-                'run_id': 'run-domain-restore',
-                'payload': {
-                  'operation': 'created',
-                  'plan_id': 'plan-pregnancy-1',
-                  'plan_type': 'pregnancy',
-                  'source': 'agent_action',
-                },
-              }),
-            ],
-          ),
-          historyMessages: const [
-            AgentHubHistorySnapshot(role: 'user', content: '请更新我的孕期记录'),
-          ],
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(milliseconds: 300));
-
-      expect(diaryChanges.map((change) => change.eventId), [
-        'evt-diary-restored',
-      ]);
-      expect(planChanges.map((change) => change.eventId), [
-        'evt-plan-restored',
-      ]);
-      expect(store.writeCount, 1);
     },
   );
 
@@ -1135,9 +1211,9 @@ void main() {
         find.byKey(const ValueKey('agent-composer-input')),
       );
       expect(composer.controller?.text, isEmpty);
-      expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+      expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
       expect(player.playedTexts, hasLength(1));
-      expect(player.playedTexts.single, contains('嗨，我是 CozyMate'));
+      expect(player.playedTexts.single, contains('嗨，我是 Cozymate'));
     },
   );
 
@@ -1231,7 +1307,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     expect(player.playedTexts, hasLength(1));
   });
 
@@ -1355,7 +1431,7 @@ void main() {
 
     expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
     expect(coordinator.activeId, 'agent-default-greeting');
-    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsOneWidget,
@@ -1406,7 +1482,7 @@ void main() {
       expect(store.clearCount, 1);
       expect(store.writeCount, 0);
       expect(store.snapshot, isNull);
-      expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+      expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     },
   );
 
@@ -1497,7 +1573,7 @@ void main() {
     await tester.pump();
 
     expect(coordinator.activeId, isNull);
-    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-static')),
       findsOneWidget,
@@ -1533,7 +1609,7 @@ void main() {
     await tester.pump();
 
     expect(coordinator.activeId, isNull);
-    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsNothing,
@@ -1949,14 +2025,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('nihao'), findsOneWidget);
-      expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+      expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
       expect(find.textContaining('这次没有拿到回复'), findsOneWidget);
       expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
 
       final chatRect = tester.getRect(
         find.byKey(const ValueKey('agent-chat-scroll-view')),
       );
-      final greetingRect = tester.getRect(find.textContaining('嗨，我是 CozyMate'));
+      final greetingRect = tester.getRect(find.textContaining('嗨，我是 Cozymate'));
       final userRect = tester.getRect(find.text('nihao'));
       final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
       final retryRect = tester.getRect(
@@ -4835,7 +4911,8 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('20:00 泵奶'), findsOneWidget);
+    expect(find.text('20:00 泵奶'), findsNothing);
+    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
   });
 
   testWidgets('Agent Hub does not archive an unpublished failed artifact', (
@@ -5639,10 +5716,11 @@ void main() {
     expect(find.text('Draft'), findsOneWidget);
     expect(
       find.text('Draft card generated from safe artifact payload.'),
-      findsOneWidget,
+      findsNothing,
     );
-    expect(find.text('Review flange comfort'), findsWidgets);
-    expect(find.text('Track two more pumping sessions'), findsWidgets);
+    expect(find.text('Review flange comfort'), findsNothing);
+    expect(find.text('Track two more pumping sessions'), findsNothing);
+    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
     expect(find.text('打开结果卡片'), findsOneWidget);
     expect(find.textContaining('milk_plan_preview_create'), findsNothing);
     expect(find.textContaining('{"'), findsNothing);
@@ -5816,10 +5894,11 @@ void main() {
       find.byKey(const ValueKey('agent-artifact-milk-plan-card')),
       findsOneWidget,
     );
-    expect(find.text('目标'), findsOneWidget);
-    expect(find.text('周期'), findsOneWidget);
-    expect(find.text('3 天'), findsOneWidget);
-    expect(find.text('新增 1 个吸奶任务。'), findsOneWidget);
+    expect(find.text('目标'), findsNothing);
+    expect(find.text('周期'), findsNothing);
+    expect(find.text('3 天'), findsNothing);
+    expect(find.text('新增 1 个吸奶任务。'), findsNothing);
+    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
 
     expect(
       find.byKey(const ValueKey('agent-artifact-birth-journey-card')),
@@ -6111,10 +6190,11 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('将晚间泵奶提前，先观察三天。'), findsOneWidget);
-    expect(find.text('维持当前节奏'), findsOneWidget);
-    expect(find.textContaining('20:00 泵奶'), findsOneWidget);
-    expect(find.text('及时补水'), findsOneWidget);
+    expect(find.text('将晚间泵奶提前，先观察三天。'), findsNothing);
+    expect(find.text('维持当前节奏'), findsNothing);
+    expect(find.textContaining('20:00 泵奶'), findsNothing);
+    expect(find.text('及时补水'), findsNothing);
+    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
 
     expect(
       find.byKey(const ValueKey('agent-artifact-cart-cart-current')),
@@ -7544,7 +7624,7 @@ void main() {
     const markdown = '''
 [查看护理资料](https://example.com/care)
 
-[打开状态页](/status?day=today)
+[打开 Me](/me?day=today)
 
 [危险链接](javascript:alert(1))
 ''';
@@ -7566,10 +7646,10 @@ void main() {
     expect(actions.single.externalUri, Uri.parse('https://example.com/care'));
     expect(actions.single.routePath, isNull);
 
-    await tester.tap(find.text('打开状态页', findRichText: true));
+    await tester.tap(find.text('打开 Me', findRichText: true));
     await tester.pump();
-    expect(actions.last.routePath, '/status');
-    expect(actions.last.value, '/status?day=today');
+    expect(actions.last.routePath, '/me');
+    expect(actions.last.value, '/me?day=today');
     expect(actions.last.externalUri, isNull);
 
     await tester.tap(find.text('危险链接', findRichText: true));
