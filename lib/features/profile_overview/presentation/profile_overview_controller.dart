@@ -34,14 +34,14 @@ class ProfileOverviewResource<T> {
 
 class CareStageSelectionState {
   const CareStageSelectionState({
-    this.stage = MomLifeStage.postpartum,
+    this.stage,
     this.isResolved = false,
     this.isSaving = false,
     this.pendingStage,
     this.error,
   });
 
-  final MomLifeStage stage;
+  final MomLifeStage? stage;
   final bool isResolved;
   final bool isSaving;
   final MomLifeStage? pendingStage;
@@ -71,10 +71,18 @@ class ProfileOverviewMutationState {
   bool get isSaving => phase == ProfileOverviewMutationPhase.saving;
 }
 
+class RecordMutationState {
+  const RecordMutationState({this.isSaving = false, this.error});
+
+  final bool isSaving;
+  final Object? error;
+}
+
 class ProfileOverviewController {
   ProfileOverviewController({
     required this.profileOverviewRepository,
     required this.feedingRepository,
+    required this.pumpMilkRepository,
     required this.milkTrendRepository,
     required this.growthRepository,
     required this.babyId,
@@ -108,17 +116,25 @@ class ProfileOverviewController {
     final cachedStage = this.cache.overview?.value.mom?.stage;
     careStage = ValueNotifier<CareStageSelectionState>(
       CareStageSelectionState(
-        stage: cachedStage ?? MomLifeStage.postpartum,
+        stage: cachedStage,
         isResolved: this.cache.overview != null,
       ),
     );
     growthMutation = ValueNotifier<ProfileOverviewMutationState>(
       const ProfileOverviewMutationState.idle(),
     );
+    recordMutation = ValueNotifier<RecordMutationState>(
+      const RecordMutationState(),
+    );
+    final cachedBabyId = this.cache.overview?.value.baby?.id?.trim();
+    _recordsBabyId = cachedBabyId?.isNotEmpty == true
+        ? cachedBabyId!
+        : babyId.trim();
   }
 
   final ProfileOverviewRepository profileOverviewRepository;
   final FeedingRecordsRepository feedingRepository;
+  final PumpMilkRecordsRepository pumpMilkRepository;
   final MilkTrendRepository milkTrendRepository;
   final GrowthRecordsRepository growthRepository;
   final String babyId;
@@ -136,21 +152,46 @@ class ProfileOverviewController {
   growthRecords;
   late final ValueNotifier<CareStageSelectionState> careStage;
   late final ValueNotifier<ProfileOverviewMutationState> growthMutation;
+  late final ValueNotifier<RecordMutationState> recordMutation;
 
   final Map<ProfileOverviewResourceKey, Future<void>> _activeResourceLoads = {};
   final Map<ProfileOverviewResourceKey, int> _resourceRequests = {};
   final Map<ProfileOverviewResourceKey, int> _resourceServiced = {};
   var _disposed = false;
+  late String _recordsBabyId;
 
   Future<void> initialize() {
-    return _requestResources(_visibleResources(), showLoading: true);
+    return _requestVisibleResources(showLoading: true);
   }
 
   Future<void> refresh() {
-    return _requestResources(
-      _visibleResources(),
-      showLoading: false,
-      force: true,
+    return _requestVisibleResources(showLoading: false, force: true);
+  }
+
+  Future<void> _requestVisibleResources({
+    required bool showLoading,
+    bool force = false,
+  }) async {
+    final resources = _visibleResources();
+    if (identity != ProfileIdentity.baby) {
+      await _requestResources(
+        resources,
+        showLoading: showLoading,
+        force: force,
+      );
+      return;
+    }
+    await _requestResource(
+      ProfileOverviewResourceKey.overview,
+      showLoading: showLoading,
+      force: force,
+    );
+    await _requestResources(
+      resources.where(
+        (resource) => resource != ProfileOverviewResourceKey.overview,
+      ),
+      showLoading: showLoading,
+      force: force,
     );
   }
 
@@ -217,18 +258,23 @@ class ProfileOverviewController {
           profileOverviewRepository.fetchOverview(),
           onData: (value) {
             cache.overview = OverviewCacheEntry(value: value, fetchedAt: now());
+            final resolvedBabyId = value.baby?.id?.trim();
+            if (resolvedBabyId?.isNotEmpty == true) {
+              _recordsBabyId = resolvedBabyId!;
+            }
             if (identity == ProfileIdentity.mom) {
               careStage.value = CareStageSelectionState(
-                stage: value.mom?.stage ?? MomLifeStage.postpartum,
+                stage: value.mom?.stage,
                 isResolved: true,
               );
             }
           },
-          onError: (_) {
+          onError: (error) {
             if (identity == ProfileIdentity.mom) {
               careStage.value = CareStageSelectionState(
                 stage: careStage.value.stage,
-                isResolved: true,
+                isResolved: careStage.value.isResolved,
+                error: error,
               );
             }
           },
@@ -239,6 +285,7 @@ class ProfileOverviewController {
           feedingRecords,
           feedingRepository.fetchFeedingRecords(
             date: DateTime(today.year, today.month, today.day),
+            babyId: _recordsBabyId,
           ),
           onData: (value) => cache.feedingRecords = OverviewCacheEntry(
             value: value,
@@ -265,7 +312,7 @@ class ProfileOverviewController {
       case ProfileOverviewResourceKey.growth:
         await _load(
           growthRecords,
-          growthRepository.fetchGrowthRecords(babyId: babyId),
+          growthRepository.fetchGrowthRecords(babyId: _recordsBabyId),
           onData: (value) => cache.growthRecords = OverviewCacheEntry(
             value: value,
             fetchedAt: now(),
@@ -323,6 +370,87 @@ class ProfileOverviewController {
       );
       return false;
     }
+  }
+
+  Future<bool> savePumpingRecord({required double amountMl}) {
+    return _saveRecord(() async {
+      await pumpMilkRepository.createPumpMilkRecord(
+        occurredAt: now(),
+        amountMl: amountMl,
+        idempotencyKey: _recordIdempotencyKey('pumping'),
+      );
+      await _requestResource(
+        ProfileOverviewResourceKey.milkTrends,
+        showLoading: false,
+        force: true,
+      );
+    });
+  }
+
+  Future<bool> saveFeedingRecord({
+    required String type,
+    required double amountMl,
+  }) {
+    return _saveRecord(() async {
+      await feedingRepository.createFeedingRecord(
+        babyId: _recordsBabyId,
+        occurredAt: now(),
+        type: type,
+        amountMl: amountMl,
+        idempotencyKey: _recordIdempotencyKey('feeding'),
+      );
+      await _requestResource(
+        ProfileOverviewResourceKey.feeding,
+        showLoading: false,
+        force: true,
+      );
+    });
+  }
+
+  Future<bool> saveGrowthRecord({
+    double? weightKg,
+    double? heightCm,
+    double? headCm,
+  }) {
+    return _saveRecord(() async {
+      await growthRepository.createGrowthRecord(
+        babyId: _recordsBabyId,
+        measuredAt: now(),
+        weightKg: weightKg,
+        heightCm: heightCm,
+        headCm: headCm,
+        idempotencyKey: _recordIdempotencyKey('growth'),
+      );
+      await _requestResource(
+        ProfileOverviewResourceKey.growth,
+        showLoading: false,
+        force: true,
+      );
+    });
+  }
+
+  Future<bool> _saveRecord(Future<void> Function() operation) async {
+    if (_disposed || recordMutation.value.isSaving) return false;
+    recordMutation.value = const RecordMutationState(isSaving: true);
+    try {
+      await operation();
+      if (_disposed) return false;
+      recordMutation.value = const RecordMutationState();
+      return true;
+    } catch (error) {
+      if (_disposed) return false;
+      recordMutation.value = RecordMutationState(error: error);
+      return false;
+    }
+  }
+
+  String _recordIdempotencyKey(String kind) {
+    return 'profile-overview-$kind-${now().microsecondsSinceEpoch}';
+  }
+
+  void clearRecordMutationError() {
+    if (_disposed || recordMutation.value.error == null) return;
+    recordMutation.value = const RecordMutationState();
   }
 
   void clearCareStageError() {
@@ -450,6 +578,7 @@ class ProfileOverviewController {
     growthRecords.dispose();
     careStage.dispose();
     growthMutation.dispose();
+    recordMutation.dispose();
   }
 }
 

@@ -1,5 +1,17 @@
 abstract interface class FeedingRecordsRepository {
-  Future<List<FeedingRecord>> fetchFeedingRecords({required DateTime date});
+  Future<List<FeedingRecord>> fetchFeedingRecords({
+    required DateTime date,
+    required String babyId,
+  });
+
+  Future<FeedingRecord> createFeedingRecord({
+    required String babyId,
+    required DateTime occurredAt,
+    required String type,
+    double? amountMl,
+    int? durationSeconds,
+    String? idempotencyKey,
+  });
 }
 
 abstract interface class PumpMilkRecordsRepository {
@@ -8,6 +20,13 @@ abstract interface class PumpMilkRecordsRepository {
   Future<List<PumpMilkRecord>> fetchPumpMilkRecordsRange({
     required DateTime start,
     required DateTime end,
+  });
+
+  Future<PumpMilkRecord> createPumpMilkRecord({
+    required DateTime occurredAt,
+    double? amountMl,
+    int? durationSeconds,
+    String? idempotencyKey,
   });
 }
 

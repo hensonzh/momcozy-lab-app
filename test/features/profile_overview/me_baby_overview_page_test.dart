@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -39,12 +40,9 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
         expect(find.text('Body Profile'), findsOneWidget);
-        expect(find.text('Your recovery profile'), findsOneWidget);
-        expect(find.text('设备与服务'), findsNothing);
-        expect(find.byKey(const ValueKey('bottom-nav-more')), findsNothing);
-
-        await tester.tap(find.byKey(const ValueKey('more-profile-back')));
-        await tester.pumpAndSettle();
+        expect(find.text('设备与服务'), findsOneWidget);
+        expect(find.text('账户与偏好'), findsOneWidget);
+        expect(find.byKey(const ValueKey('bottom-nav-more')), findsOneWidget);
 
         await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
         await tester.pumpAndSettle();
@@ -75,12 +73,14 @@ void main() {
         greaterThanOrEqualTo(0),
       );
       expect(find.text('Good morning,'), findsOneWidget);
+      expect(find.text('Avery'), findsOneWidget);
       expect(find.text('Me'), findsWidgets);
       expect(find.text('Lactation'), findsWidgets);
       expect(find.text('Recovery'), findsWidgets);
       expect(find.text('210'), findsOneWidget);
       expect(find.text('mL measured today'), findsOneWidget);
       expect(find.text('3 pumping sessions'), findsOneWidget);
+      expect(find.text('Add another day to see a trend'), findsOneWidget);
       expect(find.text('473'), findsNothing);
 
       await tester.tap(find.byKey(const ValueKey('me-section-recovery')));
@@ -90,6 +90,73 @@ void main() {
       expect(find.text('78'), findsNothing);
       expect(find.text('Body Assessment'), findsOneWidget);
       expect(find.text('Yoga'), findsOneWidget);
+    });
+
+    testWidgets('Me never labels an earlier milk trend as today', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            milkTrendItems: const [
+              {
+                'date': '2026-07-02',
+                'pumped_milk_volume_ml': 190,
+                'pumping_count': 2,
+                'measured_only': true,
+              },
+            ],
+          ),
+        ),
+      );
+
+      expect(find.text('No milk recorded today'), findsOneWidget);
+      expect(find.text('190'), findsNothing);
+      expect(find.text('mL measured today'), findsNothing);
+    });
+
+    testWidgets('Me exposes an explicit refresh action', (tester) async {
+      final transport = _profileOverviewTransport();
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(transport: transport),
+      );
+      expect(
+        transport.getPaths.where((path) => path == profileMeEndpoint).length,
+        1,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('me-baby-overview-refresh')));
+      await tester.pumpAndSettle();
+
+      expect(
+        transport.getPaths.where((path) => path == profileMeEndpoint).length,
+        2,
+      );
+    });
+
+    testWidgets('Me keeps saved data visible when refresh fails', (
+      tester,
+    ) async {
+      final transport = _FailingRefreshTransport(_profileOverviewTransport());
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(transport: transport),
+      );
+      transport.failMilkReads = true;
+
+      await tester.tap(find.byKey(const ValueKey('me-baby-overview-refresh')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Couldn’t refresh. Showing saved data.'),
+        findsOneWidget,
+      );
+      expect(find.text('210'), findsOneWidget);
     });
 
     testWidgets('Me saves a stage before switching to its workspace', (
@@ -141,6 +208,31 @@ void main() {
       );
     });
 
+    testWidgets('Me asks for a stage when the profile has no stage evidence', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            profileResponse: const {
+              'user_id': 'profile-overview-user',
+              'display_name': 'Avery',
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('Select Stage'), findsOneWidget);
+      expect(find.text('Choose your current stage'), findsOneWidget);
+      expect(find.text('Postpartum Recovery'), findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('me-stage-choose')));
+      await tester.pumpAndSettle();
+      expect(find.text('Select Current Stage'), findsOneWidget);
+    });
+
     testWidgets('Me keeps the old workspace when a stage save fails', (
       tester,
     ) async {
@@ -187,9 +279,14 @@ void main() {
     ) async {
       await _pumpApp(tester, initialLocation: '/baby');
 
+      expect(find.text('momcozy'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('me-current-stage-selector')),
         findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('me-baby-overview-notification-disabled')),
+        findsOneWidget,
       );
       expect(find.text('Infant'), findsOneWidget);
     });
@@ -559,35 +656,83 @@ void main() {
       },
     );
 
-    testWidgets(
-      'avatar actions work without exposing the retired record entry',
-      (tester) async {
-        await _pumpApp(tester, initialLocation: '/me');
+    testWidgets('avatar and record actions expose genuine capabilities', (
+      tester,
+    ) async {
+      final transport = _profileOverviewTransport();
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(transport: transport),
+      );
 
-        await tester.tap(
-          find.byKey(const ValueKey('me-baby-overview-open-avatar')),
-        );
-        await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
-          findsOneWidget,
-        );
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-open-avatar')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
+        findsOneWidget,
+      );
 
-        await tester.tap(
-          find.byKey(const ValueKey('me-baby-overview-close-avatar')),
-        );
-        await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
-          findsNothing,
-        );
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-close-avatar')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
+        findsNothing,
+      );
 
-        expect(
-          find.byKey(const ValueKey('me-baby-overview-add-record')),
-          findsNothing,
-        );
-      },
-    );
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-add-record')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Add pumping record'), findsOneWidget);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('record-pumping-amount')),
+        '95',
+      );
+      await tester.tap(find.byKey(const ValueKey('record-save')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Record saved'), findsOneWidget);
+      expect(transport.postedBodies.last, containsPair('milk_volume_ml', 95.0));
+    });
+
+    testWidgets('Baby saves feeding records in the current infant scope', (
+      tester,
+    ) async {
+      final transport = _profileOverviewTransport();
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        runtime: _runtime(transport: transport),
+      );
+
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-add-record')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('baby-add-record-feeding')));
+      await tester.pumpAndSettle();
+      expect(find.text('Add baby record'), findsOneWidget);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('record-feeding-amount')),
+        '75',
+      );
+      await tester.tap(find.byKey(const ValueKey('record-save')));
+      await tester.pumpAndSettle();
+
+      expect(transport.postedBodies.last, {
+        'infant_id': 'profile-overview-baby',
+        'feed_time': '2026-07-03T00:00:00.000Z',
+        'feed_type': 'bottle',
+        'volume_ml': 75.0,
+      });
+    });
 
     testWidgets('Me device entry opens the real device flow', (tester) async {
       await _pumpApp(tester, initialLocation: '/me');
@@ -598,6 +743,32 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('route-page-/device')), findsOneWidget);
+    });
+
+    testWidgets('Baby monitor opens the real device flow', (tester) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-connect-camera')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('route-page-/device')), findsOneWidget);
+    });
+
+    testWidgets('Recovery opens the honest Body Profile state', (tester) async {
+      await _pumpApp(tester, initialLocation: '/me');
+      await tester.tap(find.byKey(const ValueKey('me-section-recovery')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Profile'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('route-page-/more/body-profile')),
+        findsOneWidget,
+      );
+      expect(find.text('No body profile data yet'), findsOneWidget);
     });
 
     testWidgets('Baby avatar state uses recorded feeding summary', (
@@ -617,6 +788,17 @@ void main() {
       );
       expect(find.text('Mia'), findsWidgets);
       expect(find.text('2 feeds recorded today'), findsWidgets);
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName.endsWith(
+                'baby_avatar_full.png',
+              ),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Baby avatar mode has explicit enter and exit controls', (
@@ -676,6 +858,67 @@ void main() {
         expect(tester.takeException(), isNull);
       }
     });
+
+    testWidgets('Me and Baby remain stable at 360, 390, and 430 widths', (
+      tester,
+    ) async {
+      for (final width in const [360.0, 390.0, 430.0]) {
+        for (final route in const ['/me', '/baby']) {
+          await _pumpApp(
+            tester,
+            initialLocation: route,
+            viewportSize: Size(width, 860),
+          );
+          expect(
+            find.byKey(const ValueKey('me-baby-overview-add-record')),
+            findsOneWidget,
+          );
+          expect(tester.takeException(), isNull);
+        }
+      }
+    });
+
+    testWidgets(
+      'profile controls preserve 200 percent text without scaling it down',
+      (tester) async {
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await _pumpApp(
+          tester,
+          initialLocation: '/me',
+          viewportSize: const Size(360, 860),
+        );
+
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('me-current-stage-selector')),
+            matching: find.byType(FittedBox),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('me-section-lactation')),
+            matching: find.byType(FittedBox),
+          ),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+
+        await _pumpApp(
+          tester,
+          initialLocation: '/baby',
+          viewportSize: const Size(360, 860),
+        );
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('baby-section-feeding')),
+        );
+        await tester.tap(find.byKey(const ValueKey('baby-section-feeding')));
+        await tester.pumpAndSettle();
+        expect(find.text('Today’s Feeds'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('Me matches the approved first-screen visual baseline', (
       tester,
@@ -909,10 +1152,6 @@ Future<void> _pumpApp(
         imageContext,
       ),
       precacheImage(
-        const AssetImage('assets/images/me_baby_overview/baby_avatar_full.png'),
-        imageContext,
-      ),
-      precacheImage(
         const AssetImage('assets/images/me_baby_overview/nursery_camera.png'),
         imageContext,
       ),
@@ -929,7 +1168,7 @@ Future<void> _pumpApp(
   await tester.pumpAndSettle();
 }
 
-MomCozyApiRuntime _runtime({FixtureApiJsonTransportByPath? transport}) {
+MomCozyApiRuntime _runtime({ApiJsonTransport? transport}) {
   return MomCozyApiRuntime(
     jsonTransport: transport ?? _profileOverviewTransport(),
     userId: 'profile-overview-user',
@@ -939,15 +1178,66 @@ MomCozyApiRuntime _runtime({FixtureApiJsonTransportByPath? transport}) {
   );
 }
 
+class _FailingRefreshTransport
+    implements ApiJsonTransport, ApiJsonMutationTransport {
+  _FailingRefreshTransport(this.delegate);
+
+  final FixtureApiJsonTransportByPath delegate;
+  bool failMilkReads = false;
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) {
+    if (failMilkReads && path == milkTrendsEndpoint) {
+      throw const ApiRequestTimeoutException();
+    }
+    return delegate.getJson(path, query: query);
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) => delegate.postJson(path, body: body, headers: headers);
+
+  @override
+  Future<Map<String, Object?>> putJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) => delegate.putJson(path, body: body, headers: headers);
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) => delegate.patchJson(path, body: body, headers: headers);
+
+  @override
+  Future<Map<String, Object?>> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) => delegate.deleteJson(path, headers: headers);
+}
+
 FixtureApiJsonTransportByPath _profileOverviewTransport({
   Map<String, Object?>? writeResponse,
+  Map<String, Object?>? profileResponse,
+  List<Map<String, Object?>>? milkTrendItems,
 }) {
   return FixtureApiJsonTransportByPath(
     {
-      profileMeEndpoint: const {
-        'user_id': 'profile-overview-user',
-        'delivery_date': '2026-06-12',
-      },
+      profileMeEndpoint:
+          profileResponse ??
+          const {
+            'user_id': 'profile-overview-user',
+            'display_name': 'Avery',
+            'delivery_date': '2026-06-12',
+          },
       profileInfantsEndpoint: const {
         'items': [
           {
@@ -957,15 +1247,17 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
           },
         ],
       },
-      milkTrendsEndpoint: const {
-        'items': [
-          {
-            'date': '2026-07-03',
-            'pumped_milk_volume_ml': 210,
-            'pumping_count': 3,
-            'measured_only': true,
-          },
-        ],
+      milkTrendsEndpoint: {
+        'items':
+            milkTrendItems ??
+            const [
+              {
+                'date': '2026-07-03',
+                'pumped_milk_volume_ml': 210,
+                'pumping_count': 3,
+                'measured_only': true,
+              },
+            ],
       },
       feedingRecordsEndpoint: const {
         'items': [

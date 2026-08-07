@@ -21,12 +21,14 @@ void main() {
 
       final records = await repository.fetchFeedingRecords(
         date: DateTime.utc(2026, 6, 29),
+        babyId: 'infant-fixture',
       );
 
       expect(transport.lastPath, feedingRecordsEndpoint);
       expect(transport.lastQuery, {
         'start_at': '2026-06-29T00:00:00.000Z',
         'end_at': '2026-06-30T00:00:00.000Z',
+        'infant_id': 'infant-fixture',
         'limit': 50,
       });
       expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
@@ -41,11 +43,15 @@ void main() {
       final repository = RecordsApiRepository(transport: transport);
       final localDay = DateTime(2026, 7, 11);
 
-      await repository.fetchFeedingRecords(date: localDay);
+      await repository.fetchFeedingRecords(
+        date: localDay,
+        babyId: 'infant-fixture',
+      );
 
       expect(transport.lastQuery, {
         'start_at': DateTime(2026, 7, 11).toUtc().toIso8601String(),
         'end_at': DateTime(2026, 7, 12).toUtc().toIso8601String(),
+        'infant_id': 'infant-fixture',
         'limit': 50,
       });
     });
@@ -82,6 +88,69 @@ void main() {
       expect(records.single.pumpSource, isNull);
       expect(records.single.amountMl, 120);
       expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:40:00Z'));
+    });
+
+    test('creates scoped feeding and pumping records', () async {
+      final feedingTransport = FixtureApiJsonTransport({
+        'id': 'feeding-new',
+        'infant_id': 'infant-fixture',
+        'feed_type': 'bottle',
+        'volume_ml': 95.0,
+        'feed_time': '2026-07-11T08:00:00Z',
+      });
+      final feedingRepository = RecordsApiRepository(
+        transport: feedingTransport,
+      );
+
+      final feeding = await feedingRepository.createFeedingRecord(
+        babyId: 'infant-fixture',
+        occurredAt: DateTime.parse('2026-07-11T08:00:00Z'),
+        type: 'bottle',
+        amountMl: 95,
+        idempotencyKey: 'feeding-create-001',
+      );
+
+      expect(feedingTransport.lastPath, feedingRecordsEndpoint);
+      expect(feedingTransport.lastHeaders, {
+        'Idempotency-Key': 'feeding-create-001',
+      });
+      expect(feedingTransport.lastBody, {
+        'infant_id': 'infant-fixture',
+        'feed_time': '2026-07-11T08:00:00.000Z',
+        'feed_type': 'bottle',
+        'volume_ml': 95.0,
+      });
+      expect(feeding.amountMl, 95);
+
+      final pumpingTransport = FixtureApiJsonTransport({
+        'id': 'pumping-new',
+        'pump_start_time': '2026-07-11T09:00:00Z',
+        'milk_volume_ml': 110.0,
+        'pump_type': 'manual',
+        'source': 'manual',
+        'title': '',
+      });
+      final pumpingRepository = RecordsApiRepository(
+        transport: pumpingTransport,
+      );
+
+      final pumping = await pumpingRepository.createPumpMilkRecord(
+        occurredAt: DateTime.parse('2026-07-11T09:00:00Z'),
+        amountMl: 110,
+        idempotencyKey: 'pumping-create-001',
+      );
+
+      expect(pumpingTransport.lastPath, pumpMilkRecordsEndpoint);
+      expect(pumpingTransport.lastHeaders, {
+        'Idempotency-Key': 'pumping-create-001',
+      });
+      expect(pumpingTransport.lastBody, {
+        'pump_start_time': '2026-07-11T09:00:00.000Z',
+        'milk_volume_ml': 110.0,
+        'pump_type': 'manual',
+        'source': 'manual',
+      });
+      expect(pumping.amountMl, 110);
     });
 
     test('queries pumping records across a bounded trend range', () async {
@@ -229,6 +298,7 @@ void main() {
 
       final feeding = await repository.fetchFeedingRecords(
         date: DateTime.utc(2026, 6, 29),
+        babyId: 'infant-fixture',
       );
       final pumping = await repository.fetchPumpMilkRecords(
         date: DateTime.utc(2026, 6, 29),
@@ -258,7 +328,10 @@ void main() {
       );
 
       await expectLater(
-        repository.fetchFeedingRecords(date: DateTime.utc(2026, 6, 29)),
+        repository.fetchFeedingRecords(
+          date: DateTime.utc(2026, 6, 29),
+          babyId: 'infant-fixture',
+        ),
         throwsA(
           isA<ApiHttpException>().having(
             (error) => error.errorCode,

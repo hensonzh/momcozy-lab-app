@@ -453,7 +453,11 @@ class MomCozyApiRuntime {
   }
 
   ProfileOverviewApiRepository get profileOverviewRepository {
-    return ProfileOverviewApiRepository(transport: jsonTransport, now: now);
+    return ProfileOverviewApiRepository(
+      transport: jsonTransport,
+      babyId: currentSession.babyId,
+      now: now,
+    );
   }
 
   AgentHubProfileRepository get agentHubProfileRepository {
@@ -488,6 +492,7 @@ class MomCozyApiRuntime {
     return ProfileOverviewController(
       profileOverviewRepository: profileOverviewRepository,
       feedingRepository: records,
+      pumpMilkRepository: records,
       milkTrendRepository: records,
       growthRepository: records,
       cache: profileOverviewCache,
