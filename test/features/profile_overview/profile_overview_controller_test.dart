@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
@@ -97,6 +98,62 @@ void main() {
         expect(records.milkTrendFetchCount, 2);
       },
     );
+
+    test(
+      'stage changes publish saving and success without refetching',
+      () async {
+        final overviewRepository = _FakeProfileOverviewRepository();
+        final controller = _controller(overviewRepository: overviewRepository);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final request = controller.updateCareStage(MomLifeStage.pregnancy);
+
+        expect(controller.careStage.value.isSaving, isTrue);
+        await request;
+        expect(controller.careStage.value.stage, MomLifeStage.pregnancy);
+        expect(controller.careStage.value.isSaving, isFalse);
+        expect(controller.careStage.value.error, isNull);
+        expect(overviewRepository.updatedStages, [MomLifeStage.pregnancy]);
+        expect(
+          controller.overview.value.data?.mom?.stage,
+          MomLifeStage.pregnancy,
+        );
+      },
+    );
+
+    test('selecting the current stage does not write again', () async {
+      final overviewRepository = _FakeProfileOverviewRepository();
+      final controller = _controller(overviewRepository: overviewRepository);
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      final changed = await controller.updateCareStage(MomLifeStage.postpartum);
+
+      expect(changed, isTrue);
+      expect(overviewRepository.updatedStages, isEmpty);
+    });
+
+    test(
+      'failed stage changes keep the previous workspace and expose retry state',
+      () async {
+        final overviewRepository = _FakeProfileOverviewRepository(
+          updateError: StateError('offline'),
+        );
+        final controller = _controller(overviewRepository: overviewRepository);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final changed = await controller.updateCareStage(
+          MomLifeStage.fertility,
+        );
+
+        expect(changed, isFalse);
+        expect(controller.careStage.value.stage, MomLifeStage.postpartum);
+        expect(controller.careStage.value.isSaving, isFalse);
+        expect(controller.careStage.value.error, isNotNull);
+      },
+    );
   });
 }
 
@@ -122,15 +179,29 @@ ProfileOverviewController _controller({
 }
 
 class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
+  _FakeProfileOverviewRepository({this.updateError});
+
+  final Object? updateError;
   var fetchCount = 0;
+  final List<MomLifeStage> updatedStages = [];
 
   @override
   Future<ProfileOverview> fetchOverview() async {
     fetchCount += 1;
     return const ProfileOverview(
-      mom: MomProfileOverview(stage: 'postpartum', postpartumDay: 42),
+      mom: MomProfileOverview(
+        stage: MomLifeStage.postpartum,
+        postpartumDay: 42,
+      ),
       baby: BabyProfileOverview(id: 'baby-001', nickname: 'Mia', ageDays: 42),
     );
+  }
+
+  @override
+  Future<MomLifeStage> updateCareStage(MomLifeStage stage) async {
+    updatedStages.add(stage);
+    if (updateError != null) throw updateError!;
+    return stage;
   }
 }
 

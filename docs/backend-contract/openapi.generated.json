@@ -4057,6 +4057,22 @@
             ],
             "title": "Age"
           },
+          "current_care_stage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "fertility",
+                  "pregnancy",
+                  "postpartum"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Care Stage"
+          },
           "delivery_date": {
             "anyOf": [
               {
@@ -4120,6 +4136,22 @@
               }
             ],
             "title": "Age"
+          },
+          "current_care_stage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "fertility",
+                  "pregnancy",
+                  "postpartum"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Care Stage"
           },
           "delivery_date": {
             "anyOf": [
