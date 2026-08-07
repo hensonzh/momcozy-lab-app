@@ -12,6 +12,9 @@ class MomCozyV3Colors {
   static const background = Color(0xfffbf5f3);
   static const surface = Color(0xffffffff);
   static const roseTint = Color(0xfff5e6eb);
+  static const surfaceTint = Color(0xfff5ecea);
+  static const mutedText = Color(0xff9e8880);
+  static const divider = Color(0xffeadfdb);
   static const success = Color(0xff4caf50);
   static const warning = Color(0xffa65a00);
   static const danger = Color(0xffb42318);
