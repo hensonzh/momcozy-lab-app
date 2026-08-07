@@ -4,10 +4,12 @@ class MoreProfileOverviewPage extends StatelessWidget {
   const MoreProfileOverviewPage({
     super.key,
     required this.path,
+    required this.onBack,
     required this.onOpenEditor,
   });
 
   final String path;
+  final VoidCallback onBack;
   final VoidCallback onOpenEditor;
 
   @override
@@ -19,10 +21,16 @@ class MoreProfileOverviewPage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
         physics: const ClampingScrollPhysics(),
         children: [
-          const _ProfileHeader(
-            title: 'Body Profile',
-            subtitle: 'Postpartum day 42 · Updated today',
-            trailingIcon: Icons.more_horiz_rounded,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: _ProfileHeader(
+              title: 'Body Profile',
+              subtitle: 'Postpartum day 42 · Updated today',
+              leadingIcon: Icons.arrow_back_rounded,
+              leadingKey: const ValueKey('more-profile-back'),
+              onLeading: onBack,
+              trailingIcon: Icons.more_horiz_rounded,
+            ),
           ),
           const SizedBox(height: 16),
           const _RecoveryHero(),
@@ -109,20 +117,23 @@ class MoreProfileOverviewPage extends StatelessWidget {
           const SizedBox(height: 16),
           const _TrackingCallout(),
           const SizedBox(height: 18),
-          SizedBox(
-            height: 56,
-            child: FilledButton(
-              key: const ValueKey('more-add-health-record'),
-              onPressed: onOpenEditor,
-              style: FilledButton.styleFrom(
-                backgroundColor: _MoreColors.wine,
-                shape: const StadiumBorder(),
-                elevation: 7,
-                shadowColor: _MoreColors.wineShadow,
-              ),
-              child: const Text(
-                '+ Add a health record',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: SizedBox(
+              height: 56,
+              child: FilledButton(
+                key: const ValueKey('more-add-health-record'),
+                onPressed: onOpenEditor,
+                style: FilledButton.styleFrom(
+                  backgroundColor: _MoreColors.wine,
+                  shape: const StadiumBorder(),
+                  elevation: 7,
+                  shadowColor: _MoreColors.wineShadow,
+                ),
+                child: const Text(
+                  '+ Add a health record',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                ),
               ),
             ),
           ),
@@ -357,6 +368,7 @@ class _ProfileHeader extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.leadingIcon,
+    this.leadingKey,
     this.onLeading,
     this.trailingIcon,
   });
@@ -364,6 +376,7 @@ class _ProfileHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
   final IconData? leadingIcon;
+  final Key? leadingKey;
   final VoidCallback? onLeading;
   final IconData? trailingIcon;
 
@@ -378,7 +391,11 @@ class _ProfileHeader extends StatelessWidget {
             left: 0,
             child: leadingIcon == null
                 ? const SizedBox.square(dimension: 42)
-                : _CircleIconButton(icon: leadingIcon!, onPressed: onLeading),
+                : _CircleIconButton(
+                    key: leadingKey,
+                    icon: leadingIcon!,
+                    onPressed: onLeading,
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 52),
@@ -417,7 +434,7 @@ class _ProfileHeader extends StatelessWidget {
 }
 
 class _CircleIconButton extends StatelessWidget {
-  const _CircleIconButton({required this.icon, this.onPressed});
+  const _CircleIconButton({super.key, required this.icon, this.onPressed});
 
   final IconData icon;
   final VoidCallback? onPressed;
@@ -676,11 +693,17 @@ class _ProfileValueRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(flex: 4, child: Text(label, style: _MoreText.supporting)),
+          Expanded(
+            flex: 4,
+            child: Text(
+              label,
+              style: _MoreText.supporting.copyWith(fontSize: 12),
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             flex: 6,
@@ -689,9 +712,9 @@ class _ProfileValueRow extends StatelessWidget {
               textAlign: TextAlign.end,
               style: const TextStyle(
                 color: _MoreColors.ink,
-                fontSize: 13,
+                fontSize: 12,
                 height: 1.25,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
@@ -718,7 +741,7 @@ class _PainSummaryCard extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _PainPreview(),
+            Padding(padding: EdgeInsets.only(left: 4), child: _PainPreview()),
             SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -747,61 +770,13 @@ class _PainPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 108,
-      height: 102,
-      decoration: BoxDecoration(
-        color: _MoreColors.roseSurface,
-        borderRadius: BorderRadius.circular(19),
-      ),
-      child: const CustomPaint(painter: _PainPreviewPainter()),
+    return Image.asset(
+      'assets/images/more/pain_map_preview.png',
+      width: 120,
+      height: 89,
+      filterQuality: FilterQuality.high,
     );
   }
-}
-
-class _PainPreviewPainter extends CustomPainter {
-  const _PainPreviewPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final outline = Paint()
-      ..color = const Color(0xffe6cdd3)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-    final path = Path()
-      ..moveTo(size.width * 0.24, size.height * 0.48)
-      ..cubicTo(
-        size.width * 0.28,
-        size.height * 0.08,
-        size.width * 0.84,
-        size.height * 0.08,
-        size.width * 0.81,
-        size.height * 0.45,
-      )
-      ..cubicTo(
-        size.width * 0.78,
-        size.height * 0.65,
-        size.width * 0.42,
-        size.height * 0.62,
-        size.width * 0.24,
-        size.height * 0.48,
-      );
-    canvas.drawPath(path, outline);
-    _drawHotspot(canvas, Offset(size.width * 0.35, size.height * 0.44), 8);
-    _drawHotspot(canvas, Offset(size.width * 0.58, size.height * 0.73), 10);
-  }
-
-  void _drawHotspot(Canvas canvas, Offset center, double radius) {
-    canvas.drawCircle(
-      center,
-      radius * 2.1,
-      Paint()..color = _MoreColors.wine.withValues(alpha: 0.12),
-    );
-    canvas.drawCircle(center, radius, Paint()..color = _MoreColors.wine);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _PainValue extends StatelessWidget {
@@ -865,7 +840,7 @@ class _TrackingCallout extends StatelessWidget {
           SizedBox(height: 9),
           Text(
             'Leakage and lower-abdominal discomfort have been recorded more than once. Consider a guided re-check or share this profile with a pelvic-health PT.',
-            style: _MoreText.supportingDark,
+            style: _MoreText.supporting,
           ),
         ],
       ),
@@ -1035,6 +1010,11 @@ class _PainMapEditor extends StatelessWidget {
     'Lower Body',
   ];
 
+  static const _selectedZoneForQuick = {
+    'Head & Neck': 'Shoulders & Neck',
+    'Pelvis & Hips': 'Lower Abdomen',
+  };
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -1064,8 +1044,11 @@ class _PainMapEditor extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 7),
                     child: _ZoneButton(
                       label: zone,
-                      selected: selectedZones.contains(zone),
-                      onTap: () => onToggle(zone),
+                      selected: selectedZones.contains(
+                        _selectedZoneForQuick[zone] ?? zone,
+                      ),
+                      onTap: () =>
+                          onToggle(_selectedZoneForQuick[zone] ?? zone),
                     ),
                   ),
               ],
@@ -1082,9 +1065,9 @@ class _PainMapEditor extends StatelessWidget {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 5, child: body),
-                const SizedBox(width: 14),
-                Expanded(flex: 6, child: selector),
+                Expanded(flex: 6, child: body),
+                const SizedBox(width: 18),
+                Expanded(flex: 5, child: selector),
               ],
             );
           },
@@ -1309,8 +1292,5 @@ abstract final class _MoreDecorations {
     color: Colors.white,
     borderRadius: BorderRadius.circular(24),
     border: Border.all(color: _MoreColors.line),
-    boxShadow: const [
-      BoxShadow(color: Color(0x0f5a2938), blurRadius: 22, offset: Offset(0, 8)),
-    ],
   );
 }

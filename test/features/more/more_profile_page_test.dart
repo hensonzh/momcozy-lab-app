@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 
+import '../../support/fixture_api_transport.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -16,6 +19,7 @@ void main() {
     expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
     expect(find.text('设备与服务'), findsOneWidget);
     expect(find.text('账户与偏好'), findsOneWidget);
+    expect(find.text('退出登录'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('more-body-profile')));
     await tester.pumpAndSettle();
@@ -45,6 +49,19 @@ void main() {
     expect(find.text('Postpartum recovery'), findsOneWidget);
 
     expect(find.byKey(const ValueKey('bottom-nav-more')), findsNothing);
+  });
+
+  testWidgets('profile overview back returns to the More hub', (tester) async {
+    await _pumpApp(tester, initialLocation: '/more/body-profile');
+
+    final backButton = find.byKey(const ValueKey('more-profile-back'));
+    expect(backButton, findsOneWidget);
+
+    await tester.tap(backButton);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
+    expect(find.text('设备与服务'), findsOneWidget);
   });
 
   testWidgets('profile actions open the editor and save returns to More', (
@@ -82,6 +99,25 @@ void main() {
     expect(find.text('Your recovery profile'), findsOneWidget);
   });
 
+  testWidgets('pain quick selector updates the selected pain zones', (
+    tester,
+  ) async {
+    await _pumpApp(tester, initialLocation: '/more/body-profile/edit');
+
+    final upperBack = find.text('Upper Back');
+    await tester.scrollUntilVisible(
+      upperBack,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(upperBack, findsOneWidget);
+
+    await tester.tap(upperBack);
+    await tester.pump();
+
+    expect(find.text('Upper Back'), findsNWidgets(2));
+  });
+
   testWidgets('More remains usable on a narrow phone', (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(360, 800);
@@ -108,7 +144,11 @@ void main() {
   testWidgets('More matches the approved overview visual baseline', (
     tester,
   ) async {
-    await _pumpApp(tester, initialLocation: '/more/body-profile');
+    await _pumpApp(
+      tester,
+      initialLocation: '/more/body-profile',
+      viewport: const Size(430, 1636),
+    );
 
     await expectLater(
       find.byType(Scaffold).first,
@@ -119,11 +159,28 @@ void main() {
   testWidgets('More editor matches the approved visual baseline', (
     tester,
   ) async {
-    await _pumpApp(tester, initialLocation: '/more/body-profile/edit');
+    await _pumpApp(
+      tester,
+      initialLocation: '/more/body-profile/edit',
+      viewport: const Size(438, 1498),
+    );
 
     await expectLater(
       find.byType(Scaffold).first,
       matchesGoldenFile('../../goldens/more/profile_editor.png'),
+    );
+  });
+
+  testWidgets('More hub matches the supplied visual baseline', (tester) async {
+    await _pumpApp(
+      tester,
+      initialLocation: '/more',
+      viewport: const Size(430, 859),
+    );
+
+    await expectLater(
+      find.byType(Scaffold).first,
+      matchesGoldenFile('../../goldens/more/more_hub.png'),
     );
   });
 }
@@ -131,9 +188,10 @@ void main() {
 Future<void> _pumpApp(
   WidgetTester tester, {
   required String initialLocation,
+  Size viewport = const Size(430, 932),
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(430, 932);
+  tester.view.physicalSize = viewport;
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
 
@@ -142,16 +200,42 @@ Future<void> _pumpApp(
       home: SizedBox(key: ValueKey('more-asset-precache-host')),
     ),
   );
+  final assetContext = tester.element(
+    find.byKey(const ValueKey('more-asset-precache-host')),
+  );
   await tester.runAsync(
-    () => precacheImage(
-      const AssetImage('assets/images/more/recovery_score.png'),
-      tester.element(find.byKey(const ValueKey('more-asset-precache-host'))),
+    () => Future.wait([
+      precacheImage(
+        const AssetImage('assets/images/more/recovery_score.png'),
+        assetContext,
+      ),
+      precacheImage(
+        const AssetImage('assets/images/more/pain_map_preview.png'),
+        assetContext,
+      ),
+    ]),
+  );
+  final runtimeController = MomCozyRuntimeController(
+    MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport(const {'status': 200, 'data': {}}),
+      session: const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'more-golden-user',
+        babyId: 'more-golden-baby',
+        locale: 'zh-CN',
+        accessToken: 'more-golden-access-token',
+      ),
     ),
   );
+  final router = createMomCozyRouter(
+    initialLocation: initialLocation,
+    runtimeController: runtimeController,
+  );
+  addTearDown(runtimeController.dispose);
+  addTearDown(router.dispose);
+
   await tester.pumpWidget(
-    MomCozyFlutterApp(
-      router: createMomCozyRouter(initialLocation: initialLocation),
-    ),
+    MomCozyFlutterApp(router: router, runtimeController: runtimeController),
   );
   await tester.pumpAndSettle();
 }

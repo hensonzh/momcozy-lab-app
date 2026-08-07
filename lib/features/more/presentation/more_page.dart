@@ -116,7 +116,7 @@ class _MoreSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 10),
+          padding: const EdgeInsets.only(left: 4, bottom: 14),
           child: Text(
             title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -165,7 +165,7 @@ class _MoreTile extends StatelessWidget {
         : MomCozyV3Colors.ink;
     return ListTile(
       key: tileKey,
-      minTileHeight: 68,
+      minTileHeight: 72,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: SizedBox.square(
         dimension: MomCozyTapTargets.minimum,
