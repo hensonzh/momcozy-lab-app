@@ -26,6 +26,8 @@ void main() {
                 'url': 'https://www.bfmed.org/protocols',
                 'title': 'Academy of Breastfeeding Medicine Protocols',
                 'display_text': '临床指南：bfmed.org/protocols',
+                'source': 'ABM',
+                'updated_at': '2026-06-30',
               },
               {
                 'url': 'https://www.ncbi.nlm.nih.gov/books/NBK501922/',
@@ -57,6 +59,8 @@ void main() {
       expect(citations, hasLength(4));
       expect(citations.map((citation) => citation.index), [1, 2, 3, 4]);
       expect(citations[0].displayText, '临床指南：bfmed.org/protocols');
+      expect(citations[0].source, 'ABM');
+      expect(citations[0].updatedAt, '2026-06-30');
       expect(citations[1].displayText, 'NCBI 医学资料：ncbi.nlm.nih.gov/books/...');
       expect(citations[2].displayText, contains('母乳喂养专业资料'));
       expect(citations[3].displayText, contains('CDC 健康指南'));

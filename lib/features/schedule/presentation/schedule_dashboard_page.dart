@@ -11,6 +11,8 @@ import 'package:momcozy_flutter_app/features/schedule/domain/schedule_postpartum
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
 import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_controller.dart';
 
+enum _ScheduleDashboardView { schedule, lactationPlan }
+
 class ScheduleDashboardPage extends StatefulWidget {
   const ScheduleDashboardPage({
     super.key,
@@ -21,6 +23,7 @@ class ScheduleDashboardPage extends StatefulWidget {
     this.routeUri,
     this.routeExtra,
     this.onOpenAgent,
+    this.onOpenLactationPlan,
     this.deliveryDateLoader,
     this.imageRecognitionGateway,
     this.reminderGateway = const UnsupportedScheduleReminderGateway(),
@@ -37,6 +40,7 @@ class ScheduleDashboardPage extends StatefulWidget {
   final Uri? routeUri;
   final Object? routeExtra;
   final VoidCallback? onOpenAgent;
+  final VoidCallback? onOpenLactationPlan;
   final Future<DateTime?> Function()? deliveryDateLoader;
   final ScheduleImageRecognitionGateway? imageRecognitionGateway;
   final ScheduleReminderGateway reminderGateway;
@@ -81,6 +85,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   bool _savingTaskEdit = false;
   final Set<String> _changedDayKeys = <String>{};
   final Map<String, String> _idempotencyKeysByIntent = <String, String>{};
+  _ScheduleDashboardView _view = _ScheduleDashboardView.schedule;
 
   @override
   void initState() {
@@ -180,6 +185,11 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
                   changedDayKeys: _changedDayKeys,
                   onSelected: _selectDay,
                   onBrowseWeek: _controller.browseWeek,
+                  view: _view,
+                  onViewChanged: (view) {
+                    if (view == _view) return;
+                    setState(() => _view = view);
+                  },
                 ),
                 Expanded(
                   child: RefreshIndicator(
@@ -235,6 +245,9 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
 
   List<Widget> _content(ScheduleDashboardState state) {
     final snapshot = state.snapshot;
+    if (_view == _ScheduleDashboardView.lactationPlan) {
+      return _lactationPlanContent(state);
+    }
     final isToday = _sameDay(state.selectedDay, _controller.today);
     final canMutate = isToday && !state.isMutating;
     final children = <Widget>[];
@@ -288,23 +301,29 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
             onOpenAgent: _openAgent,
           )
         : null;
-    final heroCard = _ScheduleHeroCard(
-      selectedDay: state.selectedDay,
-      today: _controller.today,
-      snapshot: resolved,
-      now: _clock,
-      volumeUnit: _volumeUnit,
-      onComplete: canMutate && state.nextPendingTask != null
-          ? () => unawaited(_showTaskCompletion(state.nextPendingTask!))
-          : null,
-      onDelay: canMutate && state.nextPendingTask != null
-          ? () => unawaited(_delayTask(state.nextPendingTask!))
-          : null,
-      onSkip: canMutate && state.nextPendingTask != null
-          ? () => unawaited(
-              _setTaskState(state.nextPendingTask!, ScheduleTaskState.skipped),
-            )
-          : null,
+    final heroCard = KeyedSubtree(
+      key: const ValueKey('schedule-hero-card'),
+      child: _ScheduleHeroCard(
+        selectedDay: state.selectedDay,
+        today: _controller.today,
+        snapshot: resolved,
+        now: _clock,
+        volumeUnit: _volumeUnit,
+        onComplete: canMutate && state.nextPendingTask != null
+            ? () => unawaited(_showTaskCompletion(state.nextPendingTask!))
+            : null,
+        onDelay: canMutate && state.nextPendingTask != null
+            ? () => unawaited(_delayTask(state.nextPendingTask!))
+            : null,
+        onSkip: canMutate && state.nextPendingTask != null
+            ? () => unawaited(
+                _setTaskState(
+                  state.nextPendingTask!,
+                  ScheduleTaskState.skipped,
+                ),
+              )
+            : null,
+      ),
     );
     if (compactLayout) {
       children.add(planSummary);
@@ -456,6 +475,32 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     }
     _scheduleRouteFocus(state, resolved);
     return children;
+  }
+
+  List<Widget> _lactationPlanContent(ScheduleDashboardState state) {
+    final snapshot = state.snapshot;
+    if (state.phase == ScheduleLoadPhase.loading && snapshot == null) {
+      return const [_ScheduleLoadingCard()];
+    }
+    if (state.phase == ScheduleLoadPhase.error && snapshot == null) {
+      return [
+        _LactationPlanUnavailableCard(
+          onRetry: () => unawaited(_controller.load()),
+        ),
+      ];
+    }
+
+    final plan = snapshot?.context;
+    if (plan == null) {
+      return [_LactationPlanEmptyCard(onOpenAgent: _openLactationPlan)];
+    }
+    return [
+      _LactationPlanCard(
+        plan: plan,
+        stageLabel: _stageLabel(plan, state.selectedDay),
+        onOpenAgent: _openLactationPlan,
+      ),
+    ];
   }
 
   void _selectDay(DateTime day) {
@@ -810,6 +855,15 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       return;
     }
     context.go('/', extra: const {'agentPrefill': '我想调整今天的吸乳排期'});
+  }
+
+  void _openLactationPlan() {
+    final callback = widget.onOpenLactationPlan;
+    if (callback != null) {
+      callback();
+      return;
+    }
+    context.go('/', extra: const {'agentPrefill': '请打开泌乳计划入口，并帮我管理计划状态'});
   }
 
   bool get _reminderControlsBusy =>
@@ -1278,6 +1332,8 @@ class _ScheduleFixedDateArea extends StatelessWidget {
     required this.changedDayKeys,
     required this.onSelected,
     required this.onBrowseWeek,
+    required this.view,
+    required this.onViewChanged,
   });
 
   final DateTime today;
@@ -1287,6 +1343,8 @@ class _ScheduleFixedDateArea extends StatelessWidget {
   final Set<String> changedDayKeys;
   final ValueChanged<DateTime> onSelected;
   final ValueChanged<int> onBrowseWeek;
+  final _ScheduleDashboardView view;
+  final ValueChanged<_ScheduleDashboardView> onViewChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1336,20 +1394,7 @@ class _ScheduleFixedDateArea extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 14),
-                const Row(
-                  children: [
-                    Expanded(
-                      child: _PlanCategoryChip(
-                        label: 'Lactation',
-                        selected: true,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(child: _PlanCategoryChip(label: 'Yoga')),
-                    SizedBox(width: 8),
-                    Expanded(child: _PlanCategoryChip(label: 'Pelvic Floor')),
-                  ],
-                ),
+                _ScheduleViewSelector(selected: view, onChanged: onViewChanged),
                 const SizedBox(height: 14),
                 const _PlanPeriodSelector(),
                 const SizedBox(height: 10),
@@ -1449,6 +1494,12 @@ class _ScheduleFixedDateArea extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _ScheduleViewSelector(
+                  selected: view,
+                  onChanged: onViewChanged,
+                  compact: true,
+                ),
+                const SizedBox(height: 2),
                 Text(
                   '${displayAnchor.year}年${displayAnchor.month}月',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -1526,6 +1577,333 @@ class _ScheduleFixedDateArea extends StatelessWidget {
   }
 }
 
+class _ScheduleViewSelector extends StatelessWidget {
+  const _ScheduleViewSelector({
+    required this.selected,
+    required this.onChanged,
+    this.compact = false,
+  });
+
+  final _ScheduleDashboardView selected;
+  final ValueChanged<_ScheduleDashboardView> onChanged;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: SegmentedButton<_ScheduleDashboardView>(
+        key: const ValueKey('schedule-view-selector'),
+        segments: const [
+          ButtonSegment(
+            value: _ScheduleDashboardView.schedule,
+            label: Text('日程', key: ValueKey('schedule-view-schedule')),
+            icon: Icon(Icons.calendar_today_outlined, size: 17),
+          ),
+          ButtonSegment(
+            value: _ScheduleDashboardView.lactationPlan,
+            label: Text('泌乳计划', key: ValueKey('schedule-view-lactation-plan')),
+            icon: Icon(Icons.water_drop_outlined, size: 17),
+          ),
+        ],
+        selected: {selected},
+        onSelectionChanged: (selection) => onChanged(selection.single),
+        showSelectedIcon: false,
+        style: ButtonStyle(
+          minimumSize: WidgetStatePropertyAll(
+            Size(0, compact ? 36 : MomCozyTapTargets.minimum),
+          ),
+          visualDensity: compact
+              ? VisualDensity.compact
+              : VisualDensity.standard,
+          tapTargetSize: compact
+              ? MaterialTapTargetSize.shrinkWrap
+              : MaterialTapTargetSize.padded,
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? MomCozyV3Colors.brand
+                : MomCozyV3Colors.surface,
+          ),
+          foregroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? Colors.white
+                : MomCozyV3Colors.ink,
+          ),
+          side: const WidgetStatePropertyAll(
+            BorderSide(color: MomCozyColors.border),
+          ),
+          textStyle: const WidgetStatePropertyAll(
+            TextStyle(
+              fontFamily: MomCozyTypography.fontFamily,
+              fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LactationPlanCard extends StatelessWidget {
+  const _LactationPlanCard({
+    required this.plan,
+    required this.stageLabel,
+    required this.onOpenAgent,
+  });
+
+  final SchedulePlanContext plan;
+  final String stageLabel;
+  final VoidCallback onOpenAgent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('schedule-lactation-plan-card'),
+      padding: const EdgeInsets.all(MomCozySpacing.page),
+      decoration: MomCozyDecorations.card(
+        color: MomCozyV3Colors.surface,
+        borderColor: MomCozyV3Colors.roseTint,
+        radius: 24,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: const BoxDecoration(
+                  color: MomCozyV3Colors.roseTint,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.water_drop_outlined,
+                  color: MomCozyV3Colors.brand,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      plan.title.trim().isEmpty ? '泌乳计划' : plan.title.trim(),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: MomCozyV3Colors.ink,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      stageLabel,
+                      style: const TextStyle(
+                        color: MomCozyColors.mutedForeground,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _LactationPlanStatusBadge(status: plan.status),
+            ],
+          ),
+          if (plan.summary.trim().isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              plan.summary.trim(),
+              style: const TextStyle(
+                color: MomCozyV3Colors.ink,
+                fontSize: 14,
+                height: 1.5,
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              color: MomCozyV3Colors.background,
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 18,
+                    color: MomCozyV3Colors.brand,
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Cozymate 仅协助打开计划流程和管理状态，不修改计划内容。',
+                      style: TextStyle(fontSize: 12, height: 1.45),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              key: const ValueKey('schedule-manage-lactation-plan'),
+              onPressed: onOpenAgent,
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(MomCozyTapTargets.minimum),
+                backgroundColor: MomCozyV3Colors.brand,
+                foregroundColor: Colors.white,
+              ),
+              icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+              label: const Text('让 Cozymate 管理状态'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LactationPlanStatusBadge extends StatelessWidget {
+  const _LactationPlanStatusBadge({required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    final normalized = status.trim().toLowerCase();
+    final color = switch (normalized) {
+      'active' => MomCozyV3Colors.success,
+      'paused' => MomCozyV3Colors.warning,
+      'completed' || 'complete' => MomCozyColors.mutedForeground,
+      _ => MomCozyV3Colors.brand,
+    };
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        child: Text(
+          _lactationPlanStatusLabel(normalized),
+          style: TextStyle(
+            color: color,
+            fontSize: 12,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LactationPlanEmptyCard extends StatelessWidget {
+  const _LactationPlanEmptyCard({required this.onOpenAgent});
+
+  final VoidCallback onOpenAgent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('schedule-lactation-plan-empty'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: MomCozyDecorations.card(
+        color: MomCozyV3Colors.surface,
+        borderColor: MomCozyV3Colors.roseTint,
+        radius: 24,
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.water_drop_outlined,
+            size: 40,
+            color: MomCozyV3Colors.brand,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '尚未创建泌乳计划',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: MomCozyV3Colors.ink,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Cozymate 可以为你打开创建入口；计划内容将在专属流程中完成。',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: MomCozyColors.mutedForeground,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 18),
+          FilledButton.icon(
+            key: const ValueKey('schedule-create-lactation-plan'),
+            onPressed: onOpenAgent,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(0, MomCozyTapTargets.minimum),
+              backgroundColor: MomCozyV3Colors.brand,
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+            label: const Text('通过 Cozymate 打开创建入口'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LactationPlanUnavailableCard extends StatelessWidget {
+  const _LactationPlanUnavailableCard({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      liveRegion: true,
+      child: Container(
+        key: const ValueKey('schedule-lactation-plan-error'),
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: MomCozyDecorations.card(
+          color: MomCozyV3Colors.surface,
+          borderColor: MomCozyV3Colors.danger,
+          radius: 20,
+          shadows: const [],
+        ),
+        child: Column(
+          children: [
+            const Text(
+              '泌乳计划暂时无法读取',
+              style: TextStyle(fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton(onPressed: onRetry, child: const Text('重试')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+String _lactationPlanStatusLabel(String status) => switch (status) {
+  'active' => '执行中',
+  'paused' => '已暂停',
+  'completed' || 'complete' => '已完成',
+  'draft' => '草稿',
+  'cancelled' || 'canceled' => '已取消',
+  _ => '状态待同步',
+};
+
 class _PlanHeaderButton extends StatelessWidget {
   const _PlanHeaderButton({
     super.key,
@@ -1556,39 +1934,6 @@ class _PlanHeaderButton extends StatelessWidget {
             icon,
             color: selected ? const Color(0xff171416) : MomCozyColors.primary,
             size: 25,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PlanCategoryChip extends StatelessWidget {
-  const _PlanCategoryChip({required this.label, this.selected = false});
-
-  final String label;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 42,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: selected ? MomCozyColors.primaryDark : Colors.white,
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        border: Border.all(
-          color: selected ? MomCozyColors.primaryDark : MomCozyColors.border,
-        ),
-      ),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.white : const Color(0xffa18f88),
-            fontSize: 15,
-            fontWeight: FontWeight.w800,
           ),
         ),
       ),
@@ -1715,45 +2060,49 @@ class _ScheduleDatePill extends StatelessWidget {
                 child: Stack(
                   children: [
                     Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _weekdayEnglish(date),
-                            style: TextStyle(
-                              color: selected
-                                  ? Colors.white70
-                                  : const Color(0xffa18f88),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
-                              height: 1,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _weekdayEnglish(date),
+                              style: TextStyle(
+                                color: selected
+                                    ? Colors.white70
+                                    : const Color(0xffa18f88),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                height: 1,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            '${date.day}',
-                            style: TextStyle(
-                              color: selected
-                                  ? Colors.white
-                                  : highlighted
-                                  ? MomCozyColors.care
-                                  : MomCozyColors.foreground,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                              height: 1.1,
+                            const SizedBox(height: 6),
+                            Text(
+                              '${date.day}',
+                              style: TextStyle(
+                                color: selected
+                                    ? Colors.white
+                                    : highlighted
+                                    ? MomCozyColors.care
+                                    : MomCozyColors.foreground,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                height: 1.1,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: selected
-                                  ? Colors.white
-                                  : _planDayColor(date),
-                              shape: BoxShape.circle,
+                            const SizedBox(height: 4),
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: selected
+                                    ? Colors.white
+                                    : _planDayColor(date),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const SizedBox.square(dimension: 6),
                             ),
-                            child: const SizedBox.square(dimension: 6),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     if (highlighted && !selected)

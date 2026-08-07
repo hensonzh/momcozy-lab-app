@@ -9,12 +9,16 @@ class AgentCitationView {
     required this.title,
     required this.displayText,
     required this.url,
+    this.source,
+    this.updatedAt,
   });
 
   final int index;
   final String title;
   final String displayText;
   final Uri url;
+  final String? source;
+  final String? updatedAt;
 }
 
 class AgentCitationMapper {
@@ -71,6 +75,14 @@ class AgentCitationMapper {
           title: title,
           displayText: displayText,
           url: url,
+          source: _firstNonEmpty([
+            _stringField(citation, 'source'),
+            _stringField(citation, 'publisher'),
+          ]),
+          updatedAt: _firstNonEmpty([
+            _stringField(citation, 'updated_at', 'updatedAt'),
+            _stringField(citation, 'published_at', 'publishedAt'),
+          ]),
         ),
       );
       if (citations.length == 4) break;

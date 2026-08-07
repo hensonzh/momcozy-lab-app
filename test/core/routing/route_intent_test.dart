@@ -31,45 +31,33 @@ void main() {
       },
     );
 
-    test('keeps retired events generic and maps growth to status', () {
-      const retiredEvents = ['summary', 'mom_baby', 'health_issue'];
+    test(
+      'keeps retired events generic and migrates old status links to Me',
+      () {
+        const retiredEvents = ['summary', 'mom_baby', 'health_issue'];
 
-      for (final event in retiredEvents) {
-        final actual = routeIntentFromNativeNotification({
-          'path': '/',
-          'notifyJson': '{"event":"$event","body":"retired"}',
+        for (final event in retiredEvents) {
+          final actual = routeIntentFromNativeNotification({
+            'path': '/',
+            'notifyJson': '{"event":"$event","body":"retired"}',
+          });
+
+          expect(actual?.type, 'OpenAgentHub', reason: event);
+          expect(actual?.path, '/', reason: event);
+          expect(actual?.payload, isEmpty, reason: event);
+        }
+
+        final legacyStatus = routeIntentFromNativeNotification({
+          'path': '/status?mmcNotify=growth',
+          'notifyJson': '{"event":"grown"}',
         });
 
-        expect(actual?.type, 'OpenAgentHub', reason: event);
-        expect(actual?.path, '/', reason: event);
-        expect(actual?.payload, isEmpty, reason: event);
-      }
-
-      final growth = routeIntentFromNativeNotification({
-        'path': '/status?mmcNotify=growth',
-        'notifyJson': '{"event":"grown"}',
-      });
-
-      expect(growth?.type, 'OpenStatusGrowthHighlight');
-      expect(growth?.path, '/status');
-      expect(growth?.payload, const {
-        'statusIntent': 'growth',
-        'source': 'native-notification',
-      });
-      expect(growth?.consume, 'once');
-
-      final diary = routeIntentFromNativeNotification({
-        'path': '/status?statusIntent=pregnancy-diary',
-      });
-      expect(diary?.type, 'OpenStatusPregnancyDiaryBadge');
-      expect(diary?.payload['statusIntent'], 'pregnancy-diary');
-
-      final plan = routeIntentFromNativeNotification({
-        'path': '/status?statusIntent=birth-journey',
-      });
-      expect(plan?.type, 'OpenStatusBirthJourneyBadge');
-      expect(plan?.payload['statusIntent'], 'birth-journey');
-    });
+        expect(legacyStatus?.type, 'OpenMe');
+        expect(legacyStatus?.path, '/me');
+        expect(legacyStatus?.payload, const {'source': 'legacy-status-route'});
+        expect(legacyStatus?.consume, 'once');
+      },
+    );
 
     test('preserves Android schedule reminder date and task query context', () {
       final intent = routeIntentFromNativeNotification({
@@ -136,9 +124,9 @@ void main() {
       _expectIntentsMatchExpected(actual, expected);
     });
 
-    test('map plan and pregnancy diary pending storage to badge intents', () {
+    test('maps milk plan pending storage to the schedule intent', () {
       final fixture = readFixtureMap(
-        'route_intents/plan_and_diary_pending_intents.json',
+        'route_intents/milk_plan_pending_intent.json',
       );
       final input = Map<String, Object?>.from(fixture['input']! as Map);
       final storage = Map<String, Object?>.from(input['localStorage']! as Map);

@@ -54,7 +54,7 @@ void main() {
 
       final composer = find.byKey(const ValueKey('agent-composer-bar'));
       expect(composer, findsOneWidget);
-      expect(find.text('和 CozyMate 聊聊...'), findsOneWidget);
+      expect(find.text('和 Cozymate 聊聊...'), findsOneWidget);
 
       await expectLater(
         composer,

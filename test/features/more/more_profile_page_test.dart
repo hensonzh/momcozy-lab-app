@@ -1,5 +1,3 @@
-import 'dart:ui' show Tristate;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
@@ -9,13 +7,23 @@ import '../../support/momcozy_test_fonts.dart';
 void main() {
   setUpAll(loadMomCozyTestFonts);
 
-  testWidgets('More opens the recovery profile overview', (tester) async {
+  testWidgets('More links to the recovery profile overview', (tester) async {
     await _pumpApp(tester, initialLocation: '/me');
 
     await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
+    expect(find.text('设备与服务'), findsOneWidget);
+    expect(find.text('账户与偏好'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('more-body-profile')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('route-page-/more/body-profile')),
+      findsOneWidget,
+    );
     expect(find.text('Body Profile'), findsOneWidget);
     expect(find.text('Your recovery profile'), findsOneWidget);
     expect(find.text('Confirmed profile'), findsOneWidget);
@@ -36,23 +44,19 @@ void main() {
     );
     expect(find.text('Postpartum recovery'), findsOneWidget);
 
-    final semantics = tester.getSemantics(
-      find.byKey(const ValueKey('bottom-nav-more')),
-    );
-    expect(semantics.flagsCollection.isSelected, Tristate.isTrue);
-    expect(semantics.flagsCollection.isEnabled, Tristate.isTrue);
+    expect(find.byKey(const ValueKey('bottom-nav-more')), findsNothing);
   });
 
   testWidgets('profile actions open the editor and save returns to More', (
     tester,
   ) async {
-    await _pumpApp(tester, initialLocation: '/more');
+    await _pumpApp(tester, initialLocation: '/more/body-profile');
 
     await tester.tap(find.byKey(const ValueKey('more-edit-pelvic-floor')));
     await tester.pumpAndSettle();
 
     expect(
-      find.byKey(const ValueKey('route-page-/more/body-profile')),
+      find.byKey(const ValueKey('route-page-/more/body-profile/edit')),
       findsOneWidget,
     );
     expect(find.text('Postpartum Recovery Tracker'), findsOneWidget);
@@ -71,7 +75,10 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('more-save-profile')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('route-page-/more/body-profile')),
+      findsOneWidget,
+    );
     expect(find.text('Your recovery profile'), findsOneWidget);
   });
 
@@ -81,7 +88,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
 
-    await _pumpApp(tester, initialLocation: '/more');
+    await _pumpApp(tester, initialLocation: '/more/body-profile');
 
     expect(find.text('Your recovery profile'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -101,7 +108,7 @@ void main() {
   testWidgets('More matches the approved overview visual baseline', (
     tester,
   ) async {
-    await _pumpApp(tester, initialLocation: '/more');
+    await _pumpApp(tester, initialLocation: '/more/body-profile');
 
     await expectLater(
       find.byType(Scaffold).first,
@@ -112,7 +119,7 @@ void main() {
   testWidgets('More editor matches the approved visual baseline', (
     tester,
   ) async {
-    await _pumpApp(tester, initialLocation: '/more/body-profile');
+    await _pumpApp(tester, initialLocation: '/more/body-profile/edit');
 
     await expectLater(
       find.byType(Scaffold).first,
@@ -130,6 +137,17 @@ Future<void> _pumpApp(
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
 
+  await tester.pumpWidget(
+    const MaterialApp(
+      home: SizedBox(key: ValueKey('more-asset-precache-host')),
+    ),
+  );
+  await tester.runAsync(
+    () => precacheImage(
+      const AssetImage('assets/images/more/recovery_score.png'),
+      tester.element(find.byKey(const ValueKey('more-asset-precache-host'))),
+    ),
+  );
   await tester.pumpWidget(
     MomCozyFlutterApp(
       router: createMomCozyRouter(initialLocation: initialLocation),

@@ -73,7 +73,7 @@ flutter:
     - assets/certificates/
     - assets/images/
     - assets/images/more/
-    - assets/images/status_v2/
+    - assets/images/me_baby_overview/
 
   fonts:
     - family: Quicksand
