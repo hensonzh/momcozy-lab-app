@@ -115,7 +115,8 @@ void main() {
   ) async {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
-    expect(find.text('Cozymate'), findsOneWidget);
+    expect(find.text('Cozymate'), findsNothing);
+    expect(find.text('母婴健康 · 日程 · 泌乳计划'), findsNothing);
     expect(find.byKey(const ValueKey('agent-v3-service-health')), findsNothing);
     expect(
       find.byKey(const ValueKey('agent-v3-service-schedule')),

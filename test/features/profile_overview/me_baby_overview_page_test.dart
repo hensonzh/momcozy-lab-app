@@ -22,13 +22,20 @@ void main() {
         for (final entry in const [
           ('bottom-nav-me', 'Me'),
           ('bottom-nav-baby', 'Baby'),
-          ('bottom-nav-agent', 'Cozymate'),
           ('bottom-nav-plan', 'Plan'),
           ('bottom-nav-more', 'More'),
         ]) {
           expect(find.byKey(ValueKey(entry.$1)), findsOneWidget);
           expect(find.text(entry.$2), findsWidgets);
         }
+        expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(MomCozyBottomNavigation),
+            matching: find.text('Cozymate'),
+          ),
+          findsNothing,
+        );
         expect(find.text('社区'), findsNothing);
         expect(find.text('设备'), findsNothing);
 

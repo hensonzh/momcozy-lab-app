@@ -15,6 +15,10 @@ void main() {
       final bottomNav = find.byType(MomCozyBottomNavigation);
       expect(bottomNav, findsOneWidget);
       expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
+      expect(
+        find.descendant(of: bottomNav, matching: find.text('Cozymate')),
+        findsNothing,
+      );
 
       await expectLater(
         bottomNav,
@@ -30,6 +34,10 @@ void main() {
       final bottomNav = find.byType(MomCozyBottomNavigation);
       expect(bottomNav, findsOneWidget);
       expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
+      expect(
+        find.descendant(of: bottomNav, matching: find.text('Cozymate')),
+        findsNothing,
+      );
 
       await expectLater(
         bottomNav,
