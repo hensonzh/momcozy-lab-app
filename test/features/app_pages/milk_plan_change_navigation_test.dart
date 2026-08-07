@@ -8,7 +8,7 @@ import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_st
 import '../../support/fixture_api_transport.dart';
 
 void main() {
-  testWidgets('disabled Plan tab leaves route and pending notice unchanged', (
+  testWidgets('Plan tab opens schedule and transfers the pending notice', (
     tester,
   ) async {
     final store = MilkPlanChangeStore();
@@ -56,8 +56,8 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('bottom-nav-plan')));
     await tester.pumpAndSettle();
 
-    expect(router.routeInformationProvider.value.uri.path, '/');
-    expect(store.hasUnread, isTrue);
-    expect(store.hasPageNotice, isFalse);
+    expect(router.routeInformationProvider.value.uri.path, '/schedule');
+    expect(store.hasUnread, isFalse);
+    expect(store.hasPageNotice, isTrue);
   });
 }

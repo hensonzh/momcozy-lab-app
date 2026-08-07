@@ -24,11 +24,11 @@
         "baseUrl": "/ibclc-chat.html",
         "consultId": "consult-001",
         "threadId": "thread-ibclc-001",
-        "returnTo": "/status",
+        "returnTo": "/me",
         "userId": "demo-user-001"
       },
       "storedReturnViewport": {
-        "return_to": "/status",
+        "return_to": "/me",
         "consult_id": "consult-001",
         "scroll_top": 420,
         "scroll_height": 1600,
@@ -74,13 +74,13 @@
       "payload": {
         "consultId": "consult-001",
         "threadId": "thread-ibclc-001",
-        "returnTo": "/status",
+        "returnTo": "/me",
         "userId": "demo-user-001"
       }
     },
     {
       "type": "ReturnFromIbclc",
-      "path": "/status",
+      "path": "/me",
       "payload": {
         "consultId": "consult-001",
         "scrollTop": 420,

@@ -85,7 +85,6 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       widget.routeIntentPlatform ?? AndroidRouteIntentPlatform();
   late final bool _ownsRouteIntentPlatform = widget.routeIntentPlatform == null;
   StreamSubscription<PendingNativeRoute>? _activeRouteSub;
-  var _nativeRouteSequence = 0;
 
   @override
   void initState() {
@@ -125,12 +124,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
     if (intent == null || intent.type == 'RejectUnsafeRoute') return;
     final path = intent.path;
     if (path == null || path.isEmpty) return;
-    _nativeRouteSequence += 1;
-    final location = _nativeIntentLocation(
-      intent,
-      sequence: _nativeRouteSequence,
-    );
-    _router.go(location, extra: intent.payload.isEmpty ? null : intent.payload);
+    _router.go(path, extra: intent.payload.isEmpty ? null : intent.payload);
   }
 
   @override
@@ -151,21 +145,6 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       ),
     );
   }
-}
-
-String _nativeIntentLocation(RouteIntent intent, {required int sequence}) {
-  final path = intent.path!;
-  final statusIntent = intent.payload['statusIntent']?.toString().trim();
-  if (path != '/status' || statusIntent == null || statusIntent.isEmpty) {
-    return path;
-  }
-  return Uri(
-    path: path,
-    queryParameters: {
-      'statusIntent': statusIntent,
-      'statusIntentId': sequence.toString(),
-    },
-  ).toString();
 }
 
 Map<String, Object?> _nativeRoutePayload(PendingNativeRoute route) {
@@ -397,9 +376,11 @@ GoRouter createMomCozyRouter({
   return GoRouter(
     initialLocation: initialLocation,
     refreshListenable: runtimeController,
-    redirect: runtimeController == null
-        ? null
-        : (context, state) => _authRedirect(runtimeController, state),
+    redirect: (context, state) {
+      if (state.uri.path == '/status') return '/me';
+      if (runtimeController == null) return null;
+      return _authRedirect(runtimeController, state);
+    },
     routes: [
       if (runtimeController != null)
         GoRoute(
@@ -676,26 +657,31 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 child: _MomCozyNavTab(
                                   navKey: const ValueKey('bottom-nav-plan'),
                                   label: 'Plan',
-                                  selected: false,
+                                  selected: selectedIndex == 3,
                                   icon: const Icon(
                                     Icons.calendar_today_outlined,
                                   ),
                                   selectedIcon: const Icon(
                                     Icons.calendar_today_rounded,
                                   ),
-                                  onTap: null,
+                                  onTap: () {
+                                    MomCozyRuntimeScope.read(context)
+                                        ?.milkPlanChangeStore
+                                        .transferNavigationNoticeToPage();
+                                    context.go(_tabPaths[3]);
+                                  },
                                 ),
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
                                   navKey: const ValueKey('bottom-nav-more'),
                                   label: 'More',
-                                  selected: false,
+                                  selected: selectedIndex == 4,
                                   icon: const Icon(Icons.more_horiz_rounded),
                                   selectedIcon: const Icon(
                                     Icons.more_horiz_rounded,
                                   ),
-                                  onTap: null,
+                                  onTap: () => context.go(_tabPaths[4]),
                                 ),
                               ),
                             ],
@@ -938,7 +924,7 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
   Widget build(BuildContext context) {
     return Center(
       child: Semantics(
-        label: '智能体',
+        label: 'Cozymate',
         selected: widget.selected,
         button: true,
         child: Transform.translate(
@@ -1394,12 +1380,6 @@ Widget _buildDefaultAgentHubPage(
       final store = runtime.hospitalBagCartStore;
       store.activate(store.activeCartId);
     },
-    onPregnancyDiaryChange: (change) {
-      runtime.recordPregnancyDiaryChange(change);
-    },
-    onPregnancyPlanChange: (change) {
-      runtime.pregnancyPlanChangeStore.record(change);
-    },
     onMilkPlanChange: (change) {
       runtime.milkPlanChangeStore.record(change);
     },
@@ -1468,8 +1448,8 @@ const notFoundRoute = MomCozyRouteConfig(
 const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/',
-    title: '智能体',
-    summary: 'Momcozy Agent 主入口，承载对话、分析卡片、资料和跨功能跳转。',
+    title: 'Cozymate',
+    summary: '母婴健康咨询、日程管理与泌乳计划状态服务入口。',
     icon: Icons.auto_awesome_rounded,
     accent: Color(0xff9f6378),
     priority: 'P0',
@@ -1515,11 +1495,11 @@ const momCozyRoutes = [
     priority: 'P1',
   ),
   MomCozyRouteConfig(
-    path: '/status',
-    title: '宝宝和我',
-    summary: '妈妈、宝宝、孕期和哺乳状态的总览入口。',
-    icon: Icons.favorite_rounded,
-    accent: Color(0xff9f6378),
+    path: '/more',
+    title: 'More',
+    summary: '设备、服务、账户和偏好设置入口。',
+    icon: Icons.more_horiz_rounded,
+    accent: Color(0xff7a2840),
     priority: 'P1',
   ),
   MomCozyRouteConfig(
@@ -1596,12 +1576,21 @@ const _routesWithoutBottomNavigation = {
   '/media-viewer',
 };
 
-const _tabPaths = ['/me', '/baby', '/'];
+const _tabPaths = ['/me', '/baby', '/', '/schedule', '/more'];
 
 int _selectedTabIndex(String location) {
-  if (location == '/me' || location == '/status') return 0;
+  if (location == '/me') return 0;
   if (location == '/baby') return 1;
   if (location == '/') return 2;
+  if (location == '/schedule') return 3;
+  if (location == '/more' ||
+      location == '/community' ||
+      location == '/device' ||
+      location == '/device/manage' ||
+      location == '/device/user' ||
+      location == '/w1') {
+    return 4;
+  }
   return -1;
 }
 

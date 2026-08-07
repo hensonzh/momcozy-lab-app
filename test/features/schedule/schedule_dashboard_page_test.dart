@@ -15,6 +15,72 @@ import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dash
 import '../../support/fixture_api_transport.dart';
 
 void main() {
+  testWidgets('separates schedule execution from lactation plan status', (
+    tester,
+  ) async {
+    var openedPlanManagement = false;
+    await _pumpPage(
+      tester,
+      _transport(),
+      onOpenLactationPlan: () => openedPlanManagement = true,
+    );
+
+    expect(
+      find.byKey(const ValueKey('schedule-view-schedule')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-view-lactation-plan')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('schedule-hero-card')), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const ValueKey('schedule-view-lactation-plan')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('schedule-lactation-plan-card')),
+      findsOneWidget,
+    );
+    expect(find.text('稳奶计划'), findsOneWidget);
+    expect(find.text('执行中'), findsOneWidget);
+    expect(find.text('按当前阶段稳步执行'), findsOneWidget);
+    expect(find.byKey(const ValueKey('schedule-hero-card')), findsNothing);
+
+    await tester.tap(
+      find.byKey(const ValueKey('schedule-manage-lactation-plan')),
+    );
+    expect(openedPlanManagement, isTrue);
+  });
+
+  testWidgets('offers the lactation plan creation entry when no plan exists', (
+    tester,
+  ) async {
+    var openedPlanCreation = false;
+    await _pumpPage(
+      tester,
+      _transport(plans: const []),
+      onOpenLactationPlan: () => openedPlanCreation = true,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('schedule-view-lactation-plan')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('尚未创建泌乳计划'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('schedule-create-lactation-plan')),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.byKey(const ValueKey('schedule-create-lactation-plan')),
+    );
+    expect(openedPlanCreation, isTrue);
+  });
+
   testWidgets('renders dynamic context and a deduplicated mixed timeline', (
     tester,
   ) async {
@@ -217,6 +283,8 @@ void main() {
         200,
         scrollable: _scheduleScrollable(),
       );
+      await tester.drag(_scheduleScrollable(), const Offset(0, -80));
+      await tester.pumpAndSettle();
       await tester.tap(
         find.descendant(
           of: find.byKey(const ValueKey('schedule-quick-actions')),
@@ -914,6 +982,8 @@ void main() {
         200,
         scrollable: _scheduleScrollable(),
       );
+      await tester.drag(_scheduleScrollable(), const Offset(0, -80));
+      await tester.pumpAndSettle();
       await tester.tap(
         find.descendant(
           of: find.byKey(const ValueKey('schedule-quick-actions')),
@@ -1919,6 +1989,11 @@ void main() {
     );
     expect(dateHitbox.width, greaterThanOrEqualTo(44));
     expect(dateHitbox.height, greaterThanOrEqualTo(48));
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('schedule-task-help-button')),
+      200,
+      scrollable: _scheduleScrollable(),
+    );
     final helpHitbox = tester.getSize(
       find.byKey(const ValueKey('schedule-task-help-button')),
     );
@@ -2469,6 +2544,7 @@ Future<void> _pumpPage(
   DateTime? now,
   Future<DateTime?> Function()? deliveryDateLoader,
   bool settle = true,
+  VoidCallback? onOpenLactationPlan,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -2487,6 +2563,7 @@ Future<void> _pumpPage(
           routeUri: routeUri,
           routeExtra: routeExtra,
           onOpenAgent: () {},
+          onOpenLactationPlan: onOpenLactationPlan,
           reminderGateway: reminderGateway,
           reminderPreferenceStore: reminderPreferenceStore,
           milkPlanChangeStore: milkPlanChangeStore,

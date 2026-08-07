@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
@@ -18,7 +17,7 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
@@ -45,8 +44,6 @@ void main() {
           expect(find.text('Postpartum Recovery'), findsOneWidget);
         } else if (route.path == '/baby') {
           expect(find.text('Infant'), findsOneWidget);
-        } else if (route.path == '/status') {
-          expect(find.text('妈妈'), findsWidgets);
         } else if (route.path == '/pump') {
           expect(find.text('沉浸式吸乳'), findsWidgets);
         } else if (route.path == '/device') {
@@ -90,53 +87,6 @@ void main() {
         await tester.drag(page, const Offset(0, -360));
         await tester.pump();
       }
-    });
-
-    testWidgets('status page and bottom tabs fit compact mobile width', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
-      final router = createMomCozyRouter(initialLocation: '/status');
-      await tester.pumpWidget(
-        MomCozyFlutterApp(router: router, apiRuntime: _appRuntime()),
-      );
-      await tester.pumpAndSettle();
-
-      _expectFinderWithinViewport(
-        tester,
-        find.byKey(const ValueKey('status-care-stage-pregnancy')),
-      );
-      _expectFinderWithinViewport(
-        tester,
-        find.byKey(const ValueKey('status-care-stage-postpartum')),
-      );
-      _expectFinderWithinViewport(
-        tester,
-        find.byKey(const ValueKey('status-identity-tab-mom')),
-      );
-      _expectFinderWithinViewport(
-        tester,
-        find.byKey(const ValueKey('status-identity-tab-baby')),
-      );
-
-      for (final label in const ['Me', 'Baby', 'Cozymate', 'Plan', 'More']) {
-        _expectFinderWithinViewport(tester, find.text(label));
-      }
-      _expectFinderWithinViewport(
-        tester,
-        find.byKey(const ValueKey('bottom-nav-agent')),
-      );
-
-      router.go('/');
-      await tester.pumpAndSettle();
-      _expectFinderWithinViewport(
-        tester,
-        find.byKey(const ValueKey('agent-composer-input')),
-      );
     });
 
     testWidgets('device and community content fit compact mobile width', (
@@ -225,37 +175,6 @@ void main() {
         tester,
         find.byKey(const ValueKey('pump-calibration-prompt-card')),
       );
-    });
-
-    testWidgets('renders core status, schedule, device, and pump sections', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
-      await tester.pumpAndSettle();
-      expect(find.text('母乳产出'), findsOneWidget);
-      expect(find.text('下一步'), findsNothing);
-      expect(find.text('补写孕期日记'), findsNothing);
-      expect(find.text('今日待办'), findsNothing);
-
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
-      await tester.pump();
-      expect(find.text('计划待同步'), findsOneWidget);
-      expect(find.text('泵奶提醒'), findsNothing);
-      expect(find.text('每日摘要'), findsNothing);
-
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/device')));
-      await tester.pump();
-      expect(find.text('Momcozy W1 · 全新上市'), findsOneWidget);
-      expect(find.text('Air One'), findsOneWidget);
-      expect(find.text('RIGHT'), findsOneWidget);
-
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
-      await tester.pump();
-      expect(find.text('设备控制'), findsOneWidget);
-      expect(find.text('个性化舒适档位'), findsOneWidget);
-      await _dismissPumpCalibrationPrompt(tester);
-      await _scrollToText(tester, '上传状态');
-      expect(find.text('上传状态'), findsOneWidget);
     });
 
     testWidgets('renders focused flow pages without generic placeholders', (
@@ -356,238 +275,6 @@ void main() {
             .onPressed,
         isNotNull,
       );
-    });
-
-    testWidgets('status page loads overview from runtime repository', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
-      expect(find.text('正在加载妈妈信息…'), findsOneWidget);
-      expect(find.text('正在加载宝宝信息…'), findsOneWidget);
-      await tester.pumpAndSettle();
-
-      expect(find.text('哺乳期'), findsWidgets);
-      expect(find.text('产后第 3 周'), findsOneWidget);
-      expect(find.text('宝宝已出生 20 天'), findsOneWidget);
-      expect(find.text('母乳产出'), findsOneWidget);
-      expect(find.text('120mL'), findsOneWidget);
-      expect(find.text('1次'), findsOneWidget);
-
-      await tester.tap(find.text('宝宝'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('成长发育'), findsOneWidget);
-      expect(find.text('宝宝已出生 20 天'), findsOneWidget);
-      expect(find.text('6.2kg'), findsOneWidget);
-      expect(find.text('64.5cm'), findsOneWidget);
-      expect(find.text('42cm'), findsOneWidget);
-    });
-
-    testWidgets('status profile selector stays pinned while content scrolls', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
-      await tester.pumpAndSettle();
-
-      final header = find.byKey(const ValueKey('status-pinned-header'));
-      expect(header, findsOneWidget);
-      final initialTop = tester.getTopLeft(header).dy;
-
-      await tester.drag(
-        find.byKey(const ValueKey('route-page-/status')),
-        const Offset(0, -520),
-      );
-      await tester.pumpAndSettle();
-
-      expect(tester.getTopLeft(header).dy, closeTo(initialTop, 0.5));
-      expect(find.text('妈妈'), findsWidgets);
-      expect(find.text('宝宝'), findsOneWidget);
-    });
-
-    testWidgets('status page restores the account volume unit', (tester) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/status'),
-          volumeUnitPreferenceStore: _TestVolumeUnitPreferenceStore(
-            MomCozyVolumeUnit.ounces,
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('4.1oz'), findsOneWidget);
-      expect(find.text('120mL'), findsNothing);
-    });
-
-    testWidgets(
-      'status pregnancy header matches legacy subtitle and disables baby',
-      (tester) async {
-        await tester.pumpWidget(
-          _FeaturePageHost(
-            route: _route('/status'),
-            jsonTransport: FixtureApiJsonTransportByPath({
-              statusProfileEndpoint: const {
-                'user_id': 'demo-user-fixture',
-                'delivery_date': '2026-10-01',
-                'birth_prep_due_date_or_week': '孕周 28 周',
-              },
-              statusInfantsEndpoint: const {'items': <Object?>[]},
-            }),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.tap(
-          find.byKey(const ValueKey('status-care-stage-pregnancy')),
-        );
-        await tester.pumpAndSettle();
-
-        expect(find.text('孕期 28 周'), findsOneWidget);
-        expect(find.text('宝宝孕育中'), findsOneWidget);
-        final babyTab = tester.widget<InkWell>(
-          find.byKey(const ValueKey('status-identity-tab-baby')),
-        );
-        expect(babyTab.onTap, isNull);
-        expect(find.text('孕期日记'), findsOneWidget);
-      },
-    );
-
-    testWidgets('status page records growth locally', (tester) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('母乳产出'), findsOneWidget);
-
-      await tester.tap(find.text('宝宝'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('6.2kg'), findsOneWidget);
-      expect(find.text('64.5cm'), findsOneWidget);
-      expect(find.text('42cm'), findsOneWidget);
-
-      await _scrollToText(tester, '修改指标');
-      await tester.tap(find.text('修改指标').first);
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('status-growth-editor-dialog')),
-        findsOneWidget,
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('status-growth-weight-input')),
-        '6.2',
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('status-growth-height-input')),
-        '64.5',
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('status-growth-head-input')),
-        '42',
-      );
-      tester.testTextInput.hide();
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('status-growth-save-button')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('6.2kg'), findsOneWidget);
-      expect(find.text('64.5cm'), findsOneWidget);
-      expect(find.text('42cm'), findsOneWidget);
-      expect(find.text('成长记录已添加'), findsNothing);
-    });
-
-    testWidgets('status page renders long text and runtime context', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(360, 640);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/status'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            statusProfileEndpoint: const {
-              'user_id': 'demo-user-fixture',
-              'delivery_date': '2026-02-24',
-            },
-            statusInfantsEndpoint: const {
-              'items': [
-                {
-                  'id': 'demo-baby-fixture',
-                  'owner_user_id': 'demo-user-fixture',
-                  'infant_name': 'Mia Sophia Long Profile Name',
-                  'birth_date': '2025-12-26',
-                  'sex': 'female',
-                  'status': 'active',
-                },
-              ],
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('哺乳期'), findsWidgets);
-      expect(find.text('母乳产出'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-
-      await tester.tap(find.text('宝宝'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('产后第 19 周'), findsOneWidget);
-      expect(find.text('宝宝已出生 127 天'), findsOneWidget);
-      expect(find.text('Mia Sophia Long Profile Name'), findsNothing);
-      expect(find.text('成长发育'), findsOneWidget);
-      expect(find.text('待记录'), findsWidgets);
-      expect(tester.takeException(), isNull);
-
-      expect(find.text('下一步'), findsNothing);
-      expect(find.text('今日待办'), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('status page renders empty and failed states', (tester) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/status'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            statusProfileEndpoint: const {'user_id': 'demo-user-fixture'},
-            statusInfantsEndpoint: const {'items': []},
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('暂无有效分娩日期'), findsNWidgets(2));
-      await _scrollToText(tester, '母乳产出');
-      expect(find.text('母乳产出'), findsOneWidget);
-      await _scrollToText(tester, '母乳趋势');
-      expect(find.text('母乳趋势'), findsOneWidget);
-      expect(find.text('暂无状态数据'), findsNothing);
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/status'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            statusProfileEndpoint: const {
-              'http_status': 500,
-              'status_text': 'Server Error',
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('妈妈档案待绑定'), findsOneWidget);
-      expect(find.text('宝宝档案待绑定'), findsOneWidget);
-      await _scrollToText(tester, '母乳产出');
-      expect(find.text('母乳产出'), findsOneWidget);
-      await _scrollToText(tester, '母乳趋势');
-      expect(find.text('母乳趋势'), findsOneWidget);
-      expect(find.text('状态同步失败'), findsNothing);
-      expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
-      expect(find.byTooltip('重试'), findsNothing);
     });
 
     testWidgets('pump page uploads workstate through runtime repository', (
@@ -1288,7 +975,7 @@ void main() {
     testWidgets('media page returns to the previous route when pushed', (
       tester,
     ) async {
-      final router = createMomCozyRouter(initialLocation: '/status');
+      final router = createMomCozyRouter(initialLocation: '/me');
 
       await tester.pumpWidget(MomCozyFlutterApp(router: router));
       await tester.pumpAndSettle();
@@ -1305,7 +992,7 @@ void main() {
       await tester.tap(find.byKey(returnButton));
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
+      expect(find.byKey(const ValueKey('route-page-/me')), findsOneWidget);
     });
 
     testWidgets('media viewer loads an authenticated product image with zoom', (
@@ -2181,7 +1868,6 @@ class _FeaturePageHost extends StatelessWidget {
     this.routeExtra,
     this.hospitalBagCartStore,
     this.ibclcConsultStore,
-    this.volumeUnitPreferenceStore,
     this.onLogout,
   });
 
@@ -2193,7 +1879,6 @@ class _FeaturePageHost extends StatelessWidget {
   final Object? routeExtra;
   final HospitalBagCartStore? hospitalBagCartStore;
   final IbclcConsultStore? ibclcConsultStore;
-  final VolumeUnitPreferenceStore? volumeUnitPreferenceStore;
   final Future<void> Function()? onLogout;
 
   @override
@@ -2206,7 +1891,6 @@ class _FeaturePageHost extends StatelessWidget {
         pumpProtocolPlatform: pumpProtocolPlatform,
         hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
-        volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       ),
       child: MaterialApp(
         theme: momCozyTheme(),
@@ -2289,18 +1973,17 @@ MomCozyApiRuntime _appRuntime({
   ProductAssetRepository? productAssetRepository,
   HospitalBagCartStore? hospitalBagCartStore,
   IbclcConsultStore? ibclcConsultStore,
-  VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
   String userId = 'demo-user-fixture',
 }) {
   return MomCozyApiRuntime(
     jsonTransport:
         jsonTransport ??
         FixtureApiJsonTransportByPath({
-          statusProfileEndpoint: const <String, Object?>{
+          profileMeEndpoint: const <String, Object?>{
             'user_id': 'demo-user-fixture',
             'delivery_date': '2026-06-11',
           },
-          statusInfantsEndpoint: const <String, Object?>{
+          profileInfantsEndpoint: const <String, Object?>{
             'items': <Object?>[
               <String, Object?>{
                 'id': 'demo-baby-fixture',
@@ -2427,7 +2110,6 @@ MomCozyApiRuntime _appRuntime({
     productAssetRepository: productAssetRepository,
     hospitalBagCartStore: hospitalBagCartStore,
     ibclcConsultStore: ibclcConsultStore,
-    volumeUnitPreferenceStore: volumeUnitPreferenceStore,
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,
       'data': <String, Object?>{
@@ -2454,20 +2136,6 @@ MomCozyApiRuntime _appRuntime({
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7),
   );
-}
-
-class _TestVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
-  _TestVolumeUnitPreferenceStore(this.value);
-
-  MomCozyVolumeUnit value;
-
-  @override
-  Future<MomCozyVolumeUnit?> read() async => value;
-
-  @override
-  Future<void> write(MomCozyVolumeUnit unit) async {
-    value = unit;
-  }
 }
 
 final _onePixelPng = base64Decode(

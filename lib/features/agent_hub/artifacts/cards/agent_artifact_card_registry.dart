@@ -24,6 +24,7 @@ class AgentArtifactCardRegistry {
             : null,
       AgentArtifactPresentationKind.milkPlanPreview => _MilkPlanPreviewCard(
         card: card,
+        onAction: onAction,
       ),
       AgentArtifactPresentationKind.hospitalBagCart => _HospitalBagCartCard(
         card: card,
@@ -439,68 +440,64 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
 }
 
 class _MilkPlanPreviewCard extends StatelessWidget {
-  const _MilkPlanPreviewCard({required this.card});
+  const _MilkPlanPreviewCard({required this.card, this.onAction});
 
   final AgentArtifactCardView card;
+  final ValueChanged<AgentArtifactActionView>? onAction;
 
   @override
   Widget build(BuildContext context) {
-    final payload = card.payload;
-    final tasks = _objectList(payload['tasks']);
-    final reminders = _objectList(payload['reminders']);
-    final days = _text(payload['days']);
-    final startDate = _text(payload['start_date'] ?? payload['startDate']);
-    final direction = _directionLabel(_text(payload['direction']));
+    final actions = card.actions
+        .where(_isAllowedLactationPlanAction)
+        .toList(growable: false);
 
     return KeyedSubtree(
       key: ValueKey('agent-artifact-milk-preview-${card.id}'),
       child: _ArtifactCardSurface(
         card: card,
-        icon: Icons.route_rounded,
-        accent: const Color(0xff207d83),
-        subtitle: _text(payload['summary']) ?? card.content,
-        trailing: _ArtifactTag(
-          label: direction,
-          color: const Color(0xff2d5f51),
-          background: const Color(0xfff0f8f4),
+        icon: Icons.water_drop_outlined,
+        accent: MomCozyV3Colors.brand,
+        trailing: const _ArtifactTag(
+          label: '专属流程',
+          color: MomCozyV3Colors.brand,
+          background: MomCozyV3Colors.roseTint,
         ),
         children: [
-          if (days != null || startDate != null)
+          const Text(
+            '计划内容请在专属泌乳计划流程中查看。Cozymate 不生成或编辑计划内容，只负责打开流程和管理状态。',
+            style: TextStyle(
+              color: MomCozyColors.mutedForeground,
+              height: 1.45,
+            ),
+          ),
+          if (actions.isNotEmpty) ...[
+            const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                if (days != null)
-                  _ArtifactMetric(label: '周期', value: '$days 天'),
-                if (startDate != null)
-                  _ArtifactMetric(label: '开始日期', value: startDate),
+                for (var index = 0; index < actions.length; index++)
+                  OutlinedButton.icon(
+                    key: ValueKey('agent-artifact-action-${card.id}-$index'),
+                    onPressed: onAction == null
+                        ? null
+                        : () => onAction!(actions[index]),
+                    icon: Icon(actions[index].icon, size: 18),
+                    label: Text(actions[index].label),
+                  ),
               ],
-            ),
-          if (tasks.isNotEmpty) ...[
-            if (days != null || startDate != null) const SizedBox(height: 12),
-            _ArtifactListSection(
-              title: '计划任务',
-              icon: Icons.checklist_rounded,
-              items: tasks.map(_taskText).whereType<String>().toList(),
-              tone: const Color(0xfff7fbf8),
-              border: const Color(0xffd8e7dd),
-            ),
-          ],
-          if (reminders.isNotEmpty) ...[
-            if (tasks.isNotEmpty || days != null || startDate != null)
-              const SizedBox(height: 10),
-            _ArtifactListSection(
-              title: '温馨提醒',
-              icon: Icons.notifications_none_rounded,
-              items: reminders.map(_taskText).whereType<String>().toList(),
-              tone: const Color(0xfffff8fa),
-              border: const Color(0xffead6df),
             ),
           ],
         ],
       ),
     );
   }
+}
+
+bool _isAllowedLactationPlanAction(AgentArtifactActionView action) {
+  final label = action.label.trim();
+  if (RegExp(r'调整|编辑|生成|改写|目标|内容').hasMatch(label)) return false;
+  return RegExp(r'打开|查看|继续|状态|暂停|恢复|完成|取消').hasMatch(label);
 }
 
 class _HospitalBagCartCard extends StatelessWidget {
@@ -686,120 +683,6 @@ class _CartGroupState extends State<_CartGroup> {
   }
 }
 
-class _ArtifactListSection extends StatelessWidget {
-  const _ArtifactListSection({
-    required this.title,
-    required this.icon,
-    required this.items,
-    required this.tone,
-    required this.border,
-  });
-
-  final String title;
-  final IconData icon;
-  final List<String> items;
-  final Color tone;
-  final Color border;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: tone,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 18, color: const Color(0xff207d83)),
-                const SizedBox(width: 6),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: const Color(0xff3a2530),
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ],
-            ),
-            for (final item in items) ...[
-              const SizedBox(height: 8),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 6),
-                    child: Icon(
-                      Icons.circle,
-                      size: 6,
-                      color: Color(0xffb98ca1),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      item,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xff5c4852),
-                        height: 1.45,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ArtifactMetric extends StatelessWidget {
-  const _ArtifactMetric({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: const Color(0xfff7fcfd),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xffd7e6ea)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(color: const Color(0xff917c87)),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xff33212b),
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _ArtifactTag extends StatelessWidget {
   const _ArtifactTag({
     required this.label,
@@ -865,22 +748,6 @@ class _IbclcConsultantTag extends StatelessWidget {
       ),
     );
   }
-}
-
-String _directionLabel(String? direction) {
-  return switch (direction?.trim().toLowerCase()) {
-    'increase' || 'up' => '逐步增加',
-    'decrease' || 'down' => '适当减少',
-    'maintain' || 'stable' => '维持当前节奏',
-    _ => '个性化计划',
-  };
-}
-
-String? _taskText(Map<String, Object?> item) {
-  final title = _text(item['title'] ?? item['label']);
-  final detail = _text(item['detail'] ?? item['description']);
-  if (title == null) return detail;
-  return detail == null ? title : '$title：$detail';
 }
 
 String? _text(Object? value) {

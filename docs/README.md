@@ -18,6 +18,7 @@
 - Flutter 安全隐私 gate：`flutter/security-privacy-gates.md`
 - Flutter staging smoke：`flutter/staging-smoke.md`
 - Flutter 真机与真泵 smoke：`flutter/p0-smoke-checklist.md`
+- App UI/UX V3 更新方案：`flutter/ui-ux-v3-update-plan.md`
 - BLE 设备协议：`device/设备APP蓝牙通信协议.md`
 - 后端合同快照：`backend-contract/openapi.generated.json`
 - 后端合同交接说明：[MomCozyAgent API contract handoff](https://github.com/hensonzh/MomCozyAgent/blob/main/docs/api-contract-handoff.md)

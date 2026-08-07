@@ -246,10 +246,7 @@ AgentArtifactPresentationKind _presentationKind({
         when cardJson.containsKey('sections') ||
             cardJson.containsKey('headline') =>
       AgentArtifactPresentationKind.milkAnalysisCard,
-    'milk_plan_card'
-        when cardJson.containsKey('sections') ||
-            cardJson.containsKey('headline') =>
-      AgentArtifactPresentationKind.milkPlanCard,
+    'milk_plan_card' => AgentArtifactPresentationKind.milkPlanCard,
     'milk_plan_preview' => AgentArtifactPresentationKind.milkPlanPreview,
     'birth_journey_plan_card'
         when cardJson.containsKey('todo_plan') ||
