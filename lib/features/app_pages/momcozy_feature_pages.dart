@@ -102,6 +102,7 @@ class MomCozyFeaturePage extends StatelessWidget {
       '/more' => MorePage(path: path, onLogout: onLogout),
       '/more/body-profile' => MoreProfileOverviewPage(
         path: path,
+        onBack: () => context.go('/more'),
         onOpenEditor: () => context.go('/more/body-profile/edit'),
       ),
       '/more/body-profile/edit' => MoreBodyProfileEditorPage(
