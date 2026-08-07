@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
@@ -34,6 +35,32 @@ void main() {
       expect(records.feedingFetchCount, 0);
       expect(records.growthFetchCount, 0);
       expect(records.milkTrendStart, DateTime(2026, 6, 11));
+    });
+
+    test('Me exposes confirmed active plans to the stage workspace', () async {
+      final plans = _FakePlanRepository(
+        PlanDashboard(
+          weekOf: DateTime(2026, 7, 11),
+          plans: const [
+            CarePlan(
+              id: 'prenatal-yoga',
+              category: PlanCategory.yoga,
+              title: 'Prenatal Yoga Program',
+              summary: 'Confirmed plan',
+            ),
+          ],
+        ),
+      );
+      final controller = _controller(planRepository: plans);
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(plans.requestedDay, DateTime(2026, 7, 11));
+      expect(
+        controller.plans.value.data?.plans.single.title,
+        'Prenatal Yoga Program',
+      );
     });
 
     test(
@@ -365,6 +392,7 @@ ProfileOverviewController _controller({
   ProfileOverviewCache? cache,
   ProfileIdentity identity = ProfileIdentity.mom,
   DateTime Function()? now,
+  PlanRepository? planRepository,
 }) {
   final effectiveRecords = records ?? _FakeRecordsRepository();
   return ProfileOverviewController(
@@ -374,11 +402,25 @@ ProfileOverviewController _controller({
     pumpMilkRepository: effectiveRecords,
     milkTrendRepository: effectiveRecords,
     growthRepository: effectiveRecords,
+    planRepository: planRepository,
     babyId: 'baby-001',
     identity: identity,
     cache: cache,
     now: now ?? () => DateTime(2026, 7, 11, 10),
   );
+}
+
+class _FakePlanRepository implements PlanRepository {
+  _FakePlanRepository(this.dashboard);
+
+  final PlanDashboard dashboard;
+  DateTime? requestedDay;
+
+  @override
+  Future<PlanDashboard> fetchDashboard({required DateTime weekOf}) async {
+    requestedDay = weekOf;
+    return dashboard;
+  }
 }
 
 class _FakeProfileOverviewRepository implements ProfileOverviewRepository {

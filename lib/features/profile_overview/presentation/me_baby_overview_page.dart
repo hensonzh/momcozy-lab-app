@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
@@ -14,6 +15,7 @@ import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_ide
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
 
 part 'baby_overview_components.dart';
+part 'me_stage_components.dart';
 
 enum _BabyDetail { feeding, diaper, sleep, weight, height, headCircumference }
 
@@ -97,6 +99,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     );
     _overviewController = controller;
     _displayedStage = controller.careStage.value.stage;
+    _section = _initialSection(widget.identity, _displayedStage);
     for (final resource in _overviewResources(controller)) {
       resource.addListener(_handleProfileOverviewResourceChanged);
     }
@@ -131,6 +134,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       controller.milkTrends,
       controller.feedingRecords,
       controller.growthRecords,
+      controller.plans,
       controller.careStage,
       controller.growthMutation,
       controller.recordMutation,
@@ -143,7 +147,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     if (widget.identity == ProfileIdentity.mom &&
         nextStage != _displayedStage) {
       _displayedStage = nextStage;
-      _section = _initialSection(widget.identity);
+      _section = _initialSection(widget.identity, nextStage);
       _detailsPosition.value = 0;
       _showAvatarLayer = false;
       _avatarExpanded = false;
@@ -153,8 +157,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    if (widget.identity == ProfileIdentity.mom &&
-        _displayedStage != MomLifeStage.postpartum) {
+    if (widget.identity == ProfileIdentity.mom && _displayedStage == null) {
       return;
     }
     final position = _detailsPosition.value;
@@ -225,11 +228,12 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      showDragHandle: true,
+      showDragHandle: false,
       useSafeArea: true,
       useRootNavigator: true,
       barrierLabel: 'Dismiss current stage selector',
-      backgroundColor: _MeBabyOverviewColors.background,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.46),
       builder: (sheetContext) =>
           _CareStageSelectorSheet(controller: controller),
     );
@@ -371,8 +375,10 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     final stageState =
         _overviewController?.careStage.value ?? const CareStageSelectionState();
     final usesPostpartumWorkspace =
-        widget.identity != ProfileIdentity.mom ||
+        widget.identity == ProfileIdentity.mom &&
         stageState.stage == MomLifeStage.postpartum;
+    final hasAvatarWorkspace =
+        widget.identity == ProfileIdentity.baby || stageState.stage != null;
     final babyDetail = _babyDetail;
     if (widget.identity == ProfileIdentity.baby && babyDetail != null) {
       return _BabyDetailPage(
@@ -400,10 +406,11 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                     onPointerCancel: (_) => _handlePointerEnd(),
                     child: Stack(
                       children: [
-                        if (_showAvatarLayer && usesPostpartumWorkspace)
+                        if (_showAvatarLayer && hasAvatarWorkspace)
                           Positioned.fill(
                             child: _AvatarStage(
                               identity: widget.identity,
+                              stage: selectedStage,
                               data: data,
                               selectedSection: _section,
                               onClose: () => _settleDetails(0),
@@ -419,9 +426,11 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                 0,
                                 _detailsPosition.value * constraints.maxHeight,
                               ),
-                              child: IgnorePointer(
-                                ignoring: _detailsPosition.value > 0.98,
-                                child: child,
+                              child: ClipRect(
+                                child: IgnorePointer(
+                                  ignoring: _detailsPosition.value > 0.98,
+                                  child: child,
+                                ),
                               ),
                             );
                           },
@@ -466,24 +475,20 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                     },
                                   ),
                                 ] else if (widget.identity ==
-                                        ProfileIdentity.mom &&
-                                    !usesPostpartumWorkspace) ...[
-                                  _LifeStageHero(
+                                    ProfileIdentity.mom) ...[
+                                  _MomStageWorkspace(
                                     stage: selectedStage!,
                                     data: data,
-                                    refreshing: _refreshing,
-                                    onRefresh: _refreshOverview,
+                                    selectedSection: _section,
+                                    onSelected: _selectSection,
+                                    onOpenAvatar: () => _settleDetails(1),
                                   ),
-                                  const SizedBox(height: 14),
-                                  _LifeStageWorkspace(stage: selectedStage),
                                 ] else ...[
                                   _ProfileHero(
                                     identity: widget.identity,
                                     data: data,
                                     babySection: _section,
                                     onOpenAvatar: () => _settleDetails(1),
-                                    refreshing: _refreshing,
-                                    onRefresh: _refreshOverview,
                                   ),
                                   SizedBox(
                                     height:
@@ -502,14 +507,11 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                         ? (_section == 'sleep' ? 12 : 16)
                                         : 14,
                                   ),
-                                  if (widget.identity == ProfileIdentity.mom)
-                                    _MeContent(section: _section, data: data)
-                                  else
-                                    _BabyContent(
-                                      section: _section,
-                                      data: data,
-                                      onOpenDetail: _openBabyDetail,
-                                    ),
+                                  _BabyContent(
+                                    section: _section,
+                                    data: data,
+                                    onOpenDetail: _openBabyDetail,
+                                  ),
                                 ],
                               ],
                             ),
@@ -560,6 +562,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
               child: _MeBabyOverviewHeader(
                 identity: widget.identity,
                 careStage: stageState,
+                avatarExpanded: _avatarExpanded,
                 onStagePressed: _openCareStageSelector,
               ),
             ),
@@ -583,8 +586,13 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   }
 }
 
-String _initialSection(ProfileIdentity identity) {
-  return identity == ProfileIdentity.mom ? 'lactation' : 'monitor';
+String _initialSection(ProfileIdentity identity, [MomLifeStage? stage]) {
+  if (identity == ProfileIdentity.baby) return 'monitor';
+  return switch (stage) {
+    MomLifeStage.fertility => 'cycle',
+    MomLifeStage.pregnancy => 'prenatal',
+    MomLifeStage.postpartum || null => 'lactation',
+  };
 }
 
 class _MeBabyOverviewData {
@@ -593,6 +601,7 @@ class _MeBabyOverviewData {
     required this.milkTrends,
     required this.feedingRecords,
     required this.growthRecords,
+    required this.plans,
     required this.now,
   });
 
@@ -605,6 +614,7 @@ class _MeBabyOverviewData {
         milkTrends: const ProfileOverviewResource.initial(),
         feedingRecords: const ProfileOverviewResource.initial(),
         growthRecords: const ProfileOverviewResource.initial(),
+        plans: const ProfileOverviewResource.initial(),
         now: DateTime.now(),
       );
     }
@@ -613,6 +623,7 @@ class _MeBabyOverviewData {
       milkTrends: controller.milkTrends.value,
       feedingRecords: controller.feedingRecords.value,
       growthRecords: controller.growthRecords.value,
+      plans: controller.plans.value,
       now: controller.now(),
     );
   }
@@ -621,6 +632,7 @@ class _MeBabyOverviewData {
   final ProfileOverviewResource<List<MilkTrendDay>> milkTrends;
   final ProfileOverviewResource<List<FeedingRecord>> feedingRecords;
   final ProfileOverviewResource<List<GrowthRecord>> growthRecords;
+  final ProfileOverviewResource<PlanDashboard> plans;
   final DateTime now;
 
   bool get hasStaleRefreshFailure => [
@@ -628,6 +640,7 @@ class _MeBabyOverviewData {
     milkTrends,
     feedingRecords,
     growthRecords,
+    plans,
   ].any((resource) => resource.hasError && resource.data != null);
 
   String get momName {
@@ -751,17 +764,20 @@ class _MeBabyOverviewHeader extends StatelessWidget {
   const _MeBabyOverviewHeader({
     required this.identity,
     required this.careStage,
+    required this.avatarExpanded,
     required this.onStagePressed,
   });
 
   final ProfileIdentity identity;
   final CareStageSelectionState careStage;
+  final bool avatarExpanded;
   final VoidCallback onStagePressed;
 
   @override
   Widget build(BuildContext context) {
     final isMom = identity == ProfileIdentity.mom;
     final isBaby = identity == ProfileIdentity.baby;
+    final highlighted = isMom && avatarExpanded;
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final label = !isMom
         ? 'Infant'
@@ -835,7 +851,9 @@ class _MeBabyOverviewHeader extends StatelessWidget {
                 enabled: careStage.isResolved && !careStage.isSaving,
                 child: Material(
                   key: const ValueKey('me-current-stage-selector'),
-                  color: _MeBabyOverviewColors.pill,
+                  color: highlighted
+                      ? _MeBabyOverviewColors.wine
+                      : _MeBabyOverviewColors.pill,
                   borderRadius: BorderRadius.circular(24),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(24),
@@ -854,8 +872,10 @@ class _MeBabyOverviewHeader extends StatelessWidget {
                                 label,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: _MeBabyOverviewColors.wine,
+                                style: TextStyle(
+                                  color: highlighted
+                                      ? Colors.white
+                                      : _MeBabyOverviewColors.wine,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -865,23 +885,29 @@ class _MeBabyOverviewHeader extends StatelessWidget {
                             if (careStage.isSaving ||
                                 (!careStage.isResolved &&
                                     careStage.error == null))
-                              const SizedBox.square(
+                              SizedBox.square(
                                 dimension: 15,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: _MeBabyOverviewColors.wine,
+                                  color: highlighted
+                                      ? Colors.white
+                                      : _MeBabyOverviewColors.wine,
                                 ),
                               )
                             else if (!careStage.isResolved)
-                              const Icon(
+                              Icon(
                                 Icons.error_outline_rounded,
-                                color: _MeBabyOverviewColors.wine,
+                                color: highlighted
+                                    ? Colors.white
+                                    : _MeBabyOverviewColors.wine,
                                 size: 19,
                               )
                             else
-                              const Icon(
+                              Icon(
                                 Icons.keyboard_arrow_down_rounded,
-                                color: _MeBabyOverviewColors.wine,
+                                color: highlighted
+                                    ? Colors.white
+                                    : _MeBabyOverviewColors.wine,
                                 size: 19,
                               ),
                           ],
@@ -899,8 +925,16 @@ class _MeBabyOverviewHeader extends StatelessWidget {
             icon: Icons.notifications_none_rounded,
             compact: true,
             size: isBaby ? 38 : null,
-            backgroundColor: isBaby ? _BabyOverviewColors.pill : null,
-            foregroundColor: isBaby ? _BabyOverviewColors.wine : null,
+            backgroundColor: isBaby
+                ? _BabyOverviewColors.pill
+                : highlighted
+                ? _MeBabyOverviewColors.wine
+                : null,
+            foregroundColor: isBaby
+                ? _BabyOverviewColors.wine
+                : highlighted
+                ? Colors.white
+                : null,
           ),
         ],
       ),
@@ -958,100 +992,126 @@ class _CareStageSelectorSheet extends StatelessWidget {
     return ValueListenableBuilder<CareStageSelectionState>(
       valueListenable: controller.careStage,
       builder: (context, state, _) {
+        final maxHeight = math.min(
+          MediaQuery.sizeOf(context).height * 0.76,
+          520.0,
+        );
         return PopScope(
           canPop: !state.isSaving,
           child: SafeArea(
             top: false,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          'Select Current Stage',
-                          style: TextStyle(
-                            color: _MeBabyOverviewColors.wine,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        key: const ValueKey('me-stage-selector-close'),
-                        tooltip: 'Close',
-                        onPressed: state.isSaving
-                            ? null
-                            : () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close_rounded),
-                        color: _MeBabyOverviewColors.wine,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  for (final stage in MomLifeStage.values) ...[
-                    _CareStageOption(
-                      stage: stage,
-                      selected: state.stage == stage,
-                      saving: state.pendingStage == stage,
-                      enabled: !state.isSaving,
-                      onTap: () async {
-                        if (stage == state.stage) {
-                          Navigator.of(context).pop();
-                          return;
-                        }
-                        final changed = await controller.updateCareStage(stage);
-                        if (context.mounted && changed) {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                    ),
-                    if (stage != MomLifeStage.values.last)
-                      const Divider(
-                        color: _MeBabyOverviewColors.line,
-                        height: 1,
-                      ),
-                  ],
-                  if (state.error != null) ...[
-                    const SizedBox(height: 14),
-                    Semantics(
-                      liveRegion: true,
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xfffff0f2),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(
-                              Icons.error_outline_rounded,
-                              color: _MeBabyOverviewColors.wine,
-                              size: 20,
-                            ),
-                            SizedBox(width: 9),
-                            Expanded(
-                              child: Text(
-                                'Couldn’t change stage. Try again.',
-                                style: TextStyle(
-                                  color: _MeBabyOverviewColors.wine,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxHeight),
+                child: Material(
+                  key: const ValueKey('me-stage-selector-card'),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  clipBehavior: Clip.antiAlias,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          color: _MeBabyOverviewColors.hero,
+                          padding: const EdgeInsets.fromLTRB(24, 12, 14, 12),
+                          child: Row(
+                            children: [
+                              const Expanded(
+                                child: Text(
+                                  'Select Current Stage',
+                                  style: TextStyle(
+                                    color: _MeBabyOverviewColors.wine,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                              IconButton(
+                                key: const ValueKey('me-stage-selector-close'),
+                                tooltip: 'Close',
+                                onPressed: state.isSaving
+                                    ? null
+                                    : () => Navigator.of(context).pop(),
+                                icon: const Icon(Icons.close_rounded),
+                                color: _MeBabyOverviewColors.wine,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
+                          child: Column(
+                            children: [
+                              for (final stage in MomLifeStage.values) ...[
+                                _CareStageOption(
+                                  stage: stage,
+                                  selected: state.stage == stage,
+                                  saving: state.pendingStage == stage,
+                                  enabled: !state.isSaving,
+                                  onTap: () async {
+                                    if (stage == state.stage) {
+                                      Navigator.of(context).pop();
+                                      return;
+                                    }
+                                    final changed = await controller
+                                        .updateCareStage(stage);
+                                    if (context.mounted && changed) {
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                ),
+                                if (stage != MomLifeStage.values.last)
+                                  const Divider(
+                                    color: _MeBabyOverviewColors.line,
+                                    height: 1,
+                                  ),
+                              ],
+                              if (state.error != null) ...[
+                                const SizedBox(height: 14),
+                                Semantics(
+                                  liveRegion: true,
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xfffff0f2),
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline_rounded,
+                                          color: _MeBabyOverviewColors.wine,
+                                          size: 20,
+                                        ),
+                                        SizedBox(width: 9),
+                                        Expanded(
+                                          child: Text(
+                                            'Couldn’t change stage. Try again.',
+                                            style: TextStyle(
+                                              color: _MeBabyOverviewColors.wine,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -1565,16 +1625,12 @@ class _ProfileHero extends StatelessWidget {
     required this.data,
     required this.babySection,
     required this.onOpenAvatar,
-    required this.refreshing,
-    required this.onRefresh,
   });
 
   final ProfileIdentity identity;
   final _MeBabyOverviewData data;
   final String babySection;
   final VoidCallback onOpenAvatar;
-  final bool refreshing;
-  final VoidCallback onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -1616,36 +1672,6 @@ class _ProfileHero extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            top: 10,
-            right: 58,
-            child: IconButton.filledTonal(
-              key: const ValueKey('me-baby-overview-refresh'),
-              tooltip: 'Refresh profile data',
-              onPressed: refreshing ? null : onRefresh,
-              icon: refreshing
-                  ? const SizedBox.square(
-                      dimension: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.2,
-                        color: _MeBabyOverviewColors.wine,
-                      ),
-                    )
-                  : const Icon(Icons.refresh_rounded),
-              color: _MeBabyOverviewColors.wine,
-            ),
-          ),
-          Positioned(
-            top: 10,
-            right: 10,
-            child: IconButton.filledTonal(
-              key: const ValueKey('me-baby-overview-open-avatar'),
-              tooltip: 'View avatar',
-              onPressed: onOpenAvatar,
-              icon: const Icon(Icons.fullscreen_rounded),
-              color: _MeBabyOverviewColors.wine,
-            ),
-          ),
           if (isMom) avatar,
           Positioned(
             key: ValueKey(
@@ -1722,6 +1748,18 @@ class _ProfileHero extends StatelessWidget {
             ),
           ),
           if (!isMom) avatar,
+          Positioned.fill(
+            child: Semantics(
+              key: const ValueKey('me-baby-overview-open-avatar'),
+              label: 'View avatar',
+              button: true,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onOpenAvatar,
+                child: const SizedBox.expand(),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -1853,258 +1891,10 @@ class _UnselectedStageWorkspace extends StatelessWidget {
   }
 }
 
-class _LifeStageHero extends StatelessWidget {
-  const _LifeStageHero({
-    required this.stage,
-    required this.data,
-    required this.refreshing,
-    required this.onRefresh,
-  });
-
-  final MomLifeStage stage;
-  final _MeBabyOverviewData data;
-  final bool refreshing;
-  final VoidCallback onRefresh;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      key: ValueKey('me-stage-hero-${stage.wireValue}'),
-      width: double.infinity,
-      constraints: const BoxConstraints(minHeight: 210),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: _MeBabyOverviewColors.hero,
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(11),
-                  child: Icon(
-                    stage == MomLifeStage.pregnancy
-                        ? Icons.pregnant_woman_rounded
-                        : Icons.favorite_outline_rounded,
-                    color: _MeBabyOverviewColors.wine,
-                    size: 28,
-                  ),
-                ),
-              ),
-              const Spacer(),
-              IconButton.filledTonal(
-                key: const ValueKey('me-baby-overview-refresh'),
-                tooltip: 'Refresh profile data',
-                onPressed: refreshing ? null : onRefresh,
-                icon: refreshing
-                    ? const SizedBox.square(
-                        dimension: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.2,
-                          color: _MeBabyOverviewColors.wine,
-                        ),
-                      )
-                    : const Icon(Icons.refresh_rounded),
-                color: _MeBabyOverviewColors.wine,
-              ),
-            ],
-          ),
-          const SizedBox(height: 22),
-          Text(
-            stage.label,
-            style: const TextStyle(
-              color: _MeBabyOverviewColors.ink,
-              fontSize: 34,
-              height: 1,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            stage.subtitle,
-            style: const TextStyle(
-              color: _MeBabyOverviewColors.wine,
-              fontSize: 17,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            _lifeStageProfileSummary(context, stage, data),
-            style: _MeBabyOverviewText.supporting,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-String _lifeStageProfileSummary(
-  BuildContext context,
-  MomLifeStage stage,
-  _MeBabyOverviewData data,
-) {
-  if (stage == MomLifeStage.fertility) {
-    return 'Cycle insights will use only records you confirm.';
-  }
-  final mom = data.overview.data?.mom;
-  final dueDate = mom?.deliveryDate;
-  final now = data.now;
-  final today = DateTime(now.year, now.month, now.day);
-  if (dueDate != null && dueDate.isAfter(today)) {
-    final formatted = MaterialLocalizations.of(
-      context,
-    ).formatMediumDate(dueDate);
-    return 'Due date: $formatted';
-  }
-  final dueDateOrWeek = mom?.dueDateOrWeek?.trim();
-  if (dueDateOrWeek?.isNotEmpty == true) return dueDateOrWeek!;
-  return 'Add confirmed pregnancy details to personalize this workspace.';
-}
-
-class _LifeStageWorkspace extends StatelessWidget {
-  const _LifeStageWorkspace({required this.stage});
-
-  final MomLifeStage stage;
-
-  @override
-  Widget build(BuildContext context) {
-    final isPregnancy = stage == MomLifeStage.pregnancy;
-    return Column(
-      key: ValueKey('me-stage-workspace-${stage.wireValue}'),
-      children: [
-        _OverviewStateCard(
-          title: isPregnancy
-              ? 'Pregnancy milestones are ready to connect'
-              : 'Cycle data not connected',
-          description: isPregnancy
-              ? 'Confirmed appointments and pregnancy-plan tasks will appear here when their data source is connected.'
-              : 'Cycle dates and predictions will appear only after you add or connect confirmed records.',
-          icon: isPregnancy
-              ? Icons.calendar_month_outlined
-              : Icons.track_changes_rounded,
-        ),
-        const SizedBox(height: 14),
-        _LifeStageActionCard(
-          actionKey: ValueKey('me-stage-${stage.wireValue}-plan'),
-          icon: Icons.event_note_rounded,
-          title: isPregnancy ? 'Pregnancy Plan' : 'Planning',
-          subtitle: isPregnancy
-              ? 'Review confirmed tasks and appointments'
-              : 'Organize preparation and wellness tasks',
-          actionLabel: 'Open Plan',
-          onTap: () => context.go('/schedule'),
-        ),
-        const SizedBox(height: 14),
-        _LifeStageActionCard(
-          actionKey: ValueKey('me-stage-${stage.wireValue}-cozymate'),
-          icon: Icons.auto_awesome_rounded,
-          title: 'Cozymate',
-          subtitle: isPregnancy
-              ? 'Ask about prenatal care with cited guidance'
-              : 'Ask about fertility and preconception care',
-          actionLabel: 'Ask Cozymate',
-          onTap: () => context.go('/'),
-        ),
-      ],
-    );
-  }
-}
-
-class _LifeStageActionCard extends StatelessWidget {
-  const _LifeStageActionCard({
-    required this.actionKey,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.actionLabel,
-    required this.onTap,
-  });
-
-  final Key actionKey;
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String actionLabel;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: '$title. $subtitle. $actionLabel',
-      child: Material(
-        key: actionKey,
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(26),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(26),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 112),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  DecoratedBox(
-                    decoration: const BoxDecoration(
-                      color: _MeBabyOverviewColors.pill,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(13),
-                      child: Icon(
-                        icon,
-                        color: _MeBabyOverviewColors.wine,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(title, style: _MeBabyOverviewText.cardTitle),
-                        const SizedBox(height: 5),
-                        Text(subtitle, style: _MeBabyOverviewText.supporting),
-                        const SizedBox(height: 8),
-                        Text(
-                          actionLabel,
-                          style: const TextStyle(
-                            color: _MeBabyOverviewColors.wine,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    color: _MeBabyOverviewColors.wine,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _AvatarStage extends StatelessWidget {
   const _AvatarStage({
     required this.identity,
+    required this.stage,
     required this.data,
     required this.selectedSection,
     required this.onClose,
@@ -2112,6 +1902,7 @@ class _AvatarStage extends StatelessWidget {
   });
 
   final ProfileIdentity identity;
+  final MomLifeStage? stage;
   final _MeBabyOverviewData data;
   final String selectedSection;
   final VoidCallback onClose;
@@ -2119,175 +1910,20 @@ class _AvatarStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMom = identity == ProfileIdentity.mom;
-    if (!isMom) {
-      return _BabyAvatarStage(
+    if (identity == ProfileIdentity.mom) {
+      return _MomAvatarStage(
+        stage: stage ?? MomLifeStage.postpartum,
         data: data,
         selectedSection: selectedSection,
         onClose: onClose,
         onSelected: onSelected,
       );
     }
-    return ColoredBox(
-      color: _MeBabyOverviewColors.background,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final compact = constraints.maxHeight < 620;
-          return Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                top: 10,
-                right: 10,
-                child: IconButton.filledTonal(
-                  key: const ValueKey('me-baby-overview-close-avatar'),
-                  tooltip: 'Show data',
-                  onPressed: onClose,
-                  icon: const Icon(Icons.keyboard_arrow_up_rounded),
-                  color: _MeBabyOverviewColors.wine,
-                ),
-              ),
-              Positioned(
-                left: isMom ? 18 : 24,
-                top: compact ? 24 : 54,
-                right: 18,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      isMom ? 'Good morning,\n${data.momName}' : data.babyName,
-                      style: TextStyle(
-                        color: _MeBabyOverviewColors.ink,
-                        fontSize: compact ? 30 : 36,
-                        height: 1.02,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    if (isMom)
-                      const Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              'Your avatar is looking strong today!',
-                              style: TextStyle(
-                                color: _MeBabyOverviewColors.mutedText,
-                                fontSize: 17,
-                                height: 1.25,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Icon(
-                            Icons.auto_awesome_rounded,
-                            color: _MeBabyOverviewColors.wine,
-                            size: 18,
-                          ),
-                        ],
-                      )
-                    else
-                      Text(
-                        data.babyAge,
-                        style: TextStyle(
-                          color: _MeBabyOverviewColors.mutedText,
-                          fontSize: compact ? 15 : 17,
-                          height: 1.25,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Positioned(
-                right: isMom ? -18 : -32,
-                top: isMom ? (compact ? 60 : 90) : (compact ? 24 : 42),
-                width: isMom
-                    ? math.min(constraints.maxWidth * 0.85, 360)
-                    : math.min(constraints.maxWidth * 0.83, 315),
-                height: compact
-                    ? constraints.maxHeight * 0.67
-                    : constraints.maxHeight * 0.74,
-                child: Image.asset(
-                  isMom
-                      ? _MeBabyOverviewAssets.momAvatar
-                      : _MeBabyOverviewAssets.babyAvatar,
-                  alignment: Alignment.bottomCenter,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              Positioned(
-                left: 18,
-                bottom: compact ? 126 : 151,
-                child: Container(
-                  constraints: BoxConstraints(
-                    maxWidth: constraints.maxWidth * 0.62,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x12000000),
-                        blurRadius: 20,
-                        offset: Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: isMom
-                      ? _CelebrationText(label: data.momAvatarSummary)
-                      : Text(
-                          data.babyAvatarSummary,
-                          style: TextStyle(
-                            color: _MeBabyOverviewColors.ink,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                ),
-              ),
-              Positioned(
-                left: 12,
-                right: 12,
-                bottom: 18,
-                child: Column(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: const Color(0xffd8d8d8),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
-                    const SizedBox(height: 7),
-                    const Text(
-                      'Swipe up to see detailed stats',
-                      style: TextStyle(
-                        color: _MeBabyOverviewColors.mutedText,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 9),
-                    _SectionTabs(
-                      identity: identity,
-                      selected: selectedSection,
-                      onSelected: onSelected,
-                      compact: true,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+    return _BabyAvatarStage(
+      data: data,
+      selectedSection: selectedSection,
+      onClose: onClose,
+      onSelected: onSelected,
     );
   }
 }
@@ -2662,12 +2298,7 @@ class _MeRecoveryContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const _OverviewStateCard(
-          title: 'Recovery data unavailable',
-          description:
-              'Only confirmed recovery records will appear here. A health score is not estimated from missing data.',
-          icon: Icons.health_and_safety_outlined,
-        ),
+        const _RecoveryStatusCard(),
         const SizedBox(height: 14),
         _RoleCard(
           title: 'Body Assessment',
@@ -3238,6 +2869,8 @@ class _LineChartPainter extends CustomPainter {
 
 abstract final class _MeBabyOverviewAssets {
   static const momAvatar = 'assets/images/me_baby_overview/mom_avatar.png';
+  static const pregnancyAvatar =
+      'assets/images/me_baby_overview/pregnancy_avatar.png';
   static const babyAvatar = 'assets/images/me_baby_overview/baby_avatar.png';
   static const babyAvatarFull =
       'assets/images/me_baby_overview/baby_avatar_full.png';

@@ -41,7 +41,7 @@ void main() {
           findsOneWidget,
         );
         if (route.path == '/me') {
-          expect(find.text('Postpartum Recovery'), findsOneWidget);
+          expect(find.text('Postpartum Recovery'), findsWidgets);
         } else if (route.path == '/baby') {
           expect(find.text('Infant'), findsOneWidget);
         } else if (route.path == '/pump') {

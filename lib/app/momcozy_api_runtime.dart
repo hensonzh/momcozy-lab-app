@@ -495,6 +495,7 @@ class MomCozyApiRuntime {
       pumpMilkRepository: records,
       milkTrendRepository: records,
       growthRepository: records,
+      planRepository: planRepository,
       cache: profileOverviewCache,
       babyId: currentSession.babyId,
       identity: initialIdentity,
