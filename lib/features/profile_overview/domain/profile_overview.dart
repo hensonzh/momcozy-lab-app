@@ -24,12 +24,14 @@ class ProfileOverview {
 
 class MomProfileOverview {
   const MomProfileOverview({
+    this.displayName,
     this.stage,
     this.postpartumDay,
     this.deliveryDate,
     this.dueDateOrWeek,
   });
 
+  final String? displayName;
   final MomLifeStage? stage;
   final int? postpartumDay;
   final DateTime? deliveryDate;
@@ -37,6 +39,7 @@ class MomProfileOverview {
 
   MomProfileOverview copyWith({MomLifeStage? stage}) {
     return MomProfileOverview(
+      displayName: displayName,
       stage: stage ?? this.stage,
       postpartumDay: postpartumDay,
       deliveryDate: deliveryDate,

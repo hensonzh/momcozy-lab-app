@@ -7,9 +7,14 @@ const profileInfantsEndpoint = '/v1/profile/infants';
 const profileOverviewEndpoint = profileMeEndpoint;
 
 class ProfileOverviewApiRepository implements ProfileOverviewRepository {
-  const ProfileOverviewApiRepository({required this.transport, this.now});
+  const ProfileOverviewApiRepository({
+    required this.transport,
+    required this.babyId,
+    this.now,
+  });
 
   final ApiJsonTransport transport;
+  final String babyId;
   final DateTime Function()? now;
 
   @override
@@ -21,12 +26,21 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
     final profile = responses[0];
     final infants = responses[1];
     final infantItems = infants['items'];
-    final firstInfant = infantItems is List && infantItems.isNotEmpty
-        ? _mapOrNull(infantItems.first)
-        : null;
+    final mappedInfants = infantItems is List
+        ? infantItems
+              .map(_mapOrNull)
+              .whereType<Map<String, Object?>>()
+              .toList(growable: false)
+        : const <Map<String, Object?>>[];
+    final matchingInfant = mappedInfants
+        .where((infant) => _infantId(infant) == babyId.trim())
+        .firstOrNull;
+    final selectedInfant =
+        matchingInfant ??
+        (mappedInfants.length == 1 ? mappedInfants.single : null);
     return ProfileOverview(
       mom: _momProfileOverview(profile, now: now),
-      baby: _babyProfileOverview(firstInfant, now: now),
+      baby: _babyProfileOverview(selectedInfant, now: now),
     );
   }
 
@@ -50,6 +64,10 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
   }
 }
 
+String? _infantId(Map<String, Object?> data) {
+  return _string(data['id'] ?? data['infant_id'] ?? data['infantId'])?.trim();
+}
+
 MomProfileOverview? _momProfileOverview(
   Map<String, Object?>? data, {
   DateTime Function()? now,
@@ -59,22 +77,29 @@ MomProfileOverview? _momProfileOverview(
   final dueDateOrWeek = _string(
     data['birth_prep_due_date_or_week'] ?? data['birthPrepDueDateOrWeek'],
   );
+  final displayName = _string(data['display_name'] ?? data['displayName']);
   final explicitStage = MomLifeStage.tryParse(
     data['current_care_stage'] ?? data['currentCareStage'],
   );
   if (deliveryDate == null &&
       dueDateOrWeek?.trim().isNotEmpty != true &&
+      displayName?.trim().isNotEmpty != true &&
       explicitStage == null) {
     return null;
   }
+  final hasStageEvidence =
+      deliveryDate != null || dueDateOrWeek?.trim().isNotEmpty == true;
   final stage =
       explicitStage ??
-      MomLifeStage.resolve(
-        deliveryDate: deliveryDate,
-        hasPregnancyDetails: dueDateOrWeek?.trim().isNotEmpty == true,
-        now: now,
-      );
+      (hasStageEvidence
+          ? MomLifeStage.resolve(
+              deliveryDate: deliveryDate,
+              hasPregnancyDetails: dueDateOrWeek?.trim().isNotEmpty == true,
+              now: now,
+            )
+          : null);
   return MomProfileOverview(
+    displayName: displayName,
     stage: stage,
     postpartumDay: stage == MomLifeStage.postpartum
         ? _ageDays(deliveryDate, now: now)
@@ -91,7 +116,7 @@ BabyProfileOverview? _babyProfileOverview(
   if (data == null || data.isEmpty) return null;
   final birthDate = _date(data['birth_date']);
   return BabyProfileOverview(
-    id: _string(data['id'] ?? data['infant_id'] ?? data['infantId']),
+    id: _infantId(data),
     nickname: _string(
       data['infant_name'] ?? data['nickname'] ?? data['nickName'],
     ),

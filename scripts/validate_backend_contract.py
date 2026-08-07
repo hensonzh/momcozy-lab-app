@@ -47,6 +47,7 @@ REQUIRED_OPENAPI_OPERATIONS = {
     ("DELETE", "/v1/pregnancy-diary/entries/{entry_date}"),
 }
 REQUIRED_QUERY_KEYS = {
+    "/v1/records/feeding": {"infant_id"},
     "/v1/plans": {"plan_type", "status"},
     "/v1/agent/runs/{run_id}/stream": {"after_sequence", "follow"},
 }

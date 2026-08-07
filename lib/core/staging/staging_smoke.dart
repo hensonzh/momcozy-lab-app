@@ -198,7 +198,10 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
   return [
     _ProfileOverviewProbe(
       config,
-      ProfileOverviewApiRepository(transport: jsonTransport),
+      ProfileOverviewApiRepository(
+        transport: jsonTransport,
+        babyId: config.session.babyId,
+      ),
     ),
     _PlanProbe(config, PlanApiRepository(transport: jsonTransport)),
     _RecordsProbe(config, RecordsApiRepository(transport: jsonTransport)),
@@ -275,7 +278,10 @@ class _RecordsProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     final today = DateTime.now();
-    await repository.fetchFeedingRecords(date: today);
+    await repository.fetchFeedingRecords(
+      date: today,
+      babyId: config.session.babyId,
+    );
     await repository.fetchPumpMilkRecords(date: today);
     await repository.fetchGrowthRecords(babyId: config.session.babyId);
   }
