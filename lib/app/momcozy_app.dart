@@ -674,7 +674,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 selected: selectedIndex == 4,
                                 asset: MomCozyAssets.bottomNavMore,
                                 iconSize: const Size.square(16),
-                                onTap: () => context.go(_tabPaths[4]),
+                                onTap: null,
                               ),
                             ),
                           ],

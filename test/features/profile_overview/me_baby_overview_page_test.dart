@@ -14,49 +14,46 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Me and Baby profile overview pages', () {
-    testWidgets(
-      'navigation exposes all five destinations with active Plan and More',
-      (tester) async {
-        await _pumpApp(tester, initialLocation: '/me');
+    testWidgets('navigation exposes all five destinations with disabled More', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/me');
 
-        for (final entry in const [
-          ('bottom-nav-me', 'Me'),
-          ('bottom-nav-baby', 'Baby'),
-          ('bottom-nav-plan', 'Plan'),
-          ('bottom-nav-more', 'More'),
-        ]) {
-          expect(find.byKey(ValueKey(entry.$1)), findsOneWidget);
-          expect(find.text(entry.$2), findsWidgets);
-        }
-        expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
-        expect(
-          find.descendant(
-            of: find.byType(MomCozyBottomNavigation),
-            matching: find.text('Cozymate'),
-          ),
-          findsNothing,
-        );
-        expect(find.text('社区'), findsNothing);
-        expect(find.text('设备'), findsNothing);
+      for (final entry in const [
+        ('bottom-nav-me', 'Me'),
+        ('bottom-nav-baby', 'Baby'),
+        ('bottom-nav-plan', 'Plan'),
+        ('bottom-nav-more', 'More'),
+      ]) {
+        expect(find.byKey(ValueKey(entry.$1)), findsOneWidget);
+        expect(find.text(entry.$2), findsWidgets);
+      }
+      expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(MomCozyBottomNavigation),
+          matching: find.text('Cozymate'),
+        ),
+        findsNothing,
+      );
+      expect(find.text('社区'), findsNothing);
+      expect(find.text('设备'), findsNothing);
 
-        await tester.tap(find.byKey(const ValueKey('bottom-nav-plan')));
-        await tester.pumpAndSettle();
-        expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-plan')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
 
-        await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
-        await tester.pumpAndSettle();
-        expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
-        expect(find.text('Body Profile'), findsOneWidget);
-        expect(find.text('设备与服务'), findsOneWidget);
-        expect(find.text('账户与偏好'), findsOneWidget);
-        expect(find.byKey(const ValueKey('bottom-nav-more')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
+      expect(find.byKey(const ValueKey('route-page-/more')), findsNothing);
+      expect(find.byKey(const ValueKey('bottom-nav-more')), findsOneWidget);
 
-        await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
-        await tester.pumpAndSettle();
-        expect(find.byKey(const ValueKey('route-page-/baby')), findsOneWidget);
-        expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
-      },
-    );
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('route-page-/baby')), findsOneWidget);
+      expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
+    });
 
     testWidgets('Me uses authoritative milk data and avoids a fake score', (
       tester,
