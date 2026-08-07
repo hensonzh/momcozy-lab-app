@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/plan/presentation/plan_page.dart';
 
@@ -14,11 +15,19 @@ void main() {
     tester,
   ) async {
     var createCount = 0;
+    var calendarCount = 0;
+    var allPlansCount = 0;
+    var pumpCount = 0;
+    var chatCount = 0;
     await _pumpPlanPage(
       tester,
       dashboard: PlanDashboard.empty(weekOf: now),
       now: now,
       onCreatePlan: () => createCount += 1,
+      onOpenCalendar: () => calendarCount += 1,
+      onOpenAllPlans: () => allPlansCount += 1,
+      onStartSession: () => pumpCount += 1,
+      onChat: () => chatCount += 1,
     );
 
     await expectLater(
@@ -36,11 +45,23 @@ void main() {
     await tester.tap(find.text('+ Create Your First Plan'));
     expect(createCount, 1);
 
+    await tester.tap(find.byKey(const ValueKey('plan-header-calendar')));
+    await tester.tap(find.byKey(const ValueKey('plan-header-all-plans')));
+    expect(calendarCount, 1);
+    expect(allPlansCount, 1);
+
     await tester.drag(find.byType(ListView), const Offset(0, -700));
     await tester.pumpAndSettle();
     expect(find.text('Postpartum Recovery'), findsOneWidget);
     expect(find.text('momcozy Smart Pump'), findsOneWidget);
     expect(find.text('Breast Health Check'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('plan-service-recovery')));
+    await tester.tap(find.byKey(const ValueKey('plan-service-pump')));
+    await tester.tap(find.byKey(const ValueKey('plan-service-health')));
+    expect(createCount, 2);
+    expect(pumpCount, 1);
+    expect(chatCount, 1);
 
     expect(find.text('日程'), findsNothing);
     expect(find.text('泌乳计划'), findsNothing);
@@ -51,10 +72,12 @@ void main() {
   testWidgets('renders the supplied multi-category weekly plan structure', (
     tester,
   ) async {
+    var startCount = 0;
     await _pumpPlanPage(
       tester,
       dashboard: _multiCategoryDashboard(now),
       now: now,
+      onStartSession: () => startCount += 1,
     );
 
     await expectLater(
@@ -79,6 +102,25 @@ void main() {
     expect(find.text('Completed'), findsOneWidget);
     expect(find.text('11:00 AM'), findsOneWidget);
     expect(find.text('Start'), findsOneWidget);
+    await tester.tap(find.text('Start'));
+    expect(startCount, 1);
+
+    expect(
+      find.byKey(const ValueKey('plan-period-week-selected')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('plan-period-day')));
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('plan-period-day-selected')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('plan-period-month')));
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('plan-period-month-selected')),
+      findsOneWidget,
+    );
     await tester.drag(find.byType(ListView), const Offset(0, -520));
     await tester.pumpAndSettle();
     expect(find.text('Upcoming'), findsOneWidget);
@@ -97,7 +139,19 @@ void main() {
   testWidgets('renders the supplied single-plan detail structure', (
     tester,
   ) async {
-    await _pumpPlanPage(tester, dashboard: _singlePlanDashboard(now), now: now);
+    var backCount = 0;
+    var editCount = 0;
+    var allPlansCount = 0;
+    var startCount = 0;
+    await _pumpPlanPage(
+      tester,
+      dashboard: _singlePlanDashboard(now),
+      now: now,
+      onBackToPlans: () => backCount += 1,
+      onOpenAllPlans: () => allPlansCount += 1,
+      onStartSession: () => startCount += 1,
+      onManualEdit: () => editCount += 1,
+    );
 
     await expectLater(
       find.byKey(const ValueKey('route-page-/plan')),
@@ -116,6 +170,19 @@ void main() {
     expect(find.text('Session 1'), findsOneWidget);
     expect(find.text('Session 2'), findsOneWidget);
 
+    expect(
+      tester.getSize(find.byKey(const ValueKey('plan-milestone-ring'))),
+      const Size.square(80),
+    );
+    await tester.tap(find.byKey(const ValueKey('plan-single-back')));
+    await tester.tap(find.byKey(const ValueKey('plan-single-edit')));
+    await tester.tap(find.byKey(const ValueKey('plan-single-all-plans')));
+    await tester.tap(find.text('Start'));
+    expect(backCount, 1);
+    expect(editCount, 1);
+    expect(allPlansCount, 1);
+    expect(startCount, 1);
+
     await tester.drag(find.byType(ListView), const Offset(0, -650));
     await tester.pumpAndSettle();
     expect(find.text('Volume Progress'), findsOneWidget);
@@ -132,6 +199,27 @@ void main() {
     expect(find.text('日程'), findsNothing);
     expect(find.text('今天还没有计划任务'), findsNothing);
   });
+
+  for (final viewport in const [Size(360, 800), Size(430, 932)]) {
+    testWidgets(
+      'all supplied plan states fit ${viewport.width.toInt()}x${viewport.height.toInt()}',
+      (tester) async {
+        for (final dashboard in [
+          PlanDashboard.empty(weekOf: now),
+          _multiCategoryDashboard(now),
+          _singlePlanDashboard(now),
+        ]) {
+          await _pumpPlanPage(
+            tester,
+            dashboard: dashboard,
+            now: now,
+            viewportSize: viewport,
+          );
+          expect(tester.takeException(), isNull);
+        }
+      },
+    );
+  }
 }
 
 Future<void> _pumpPlanPage(
@@ -139,8 +227,15 @@ Future<void> _pumpPlanPage(
   required PlanDashboard dashboard,
   required DateTime now,
   VoidCallback? onCreatePlan,
+  VoidCallback? onOpenCalendar,
+  VoidCallback? onOpenAllPlans,
+  VoidCallback? onBackToPlans,
+  VoidCallback? onChat,
+  VoidCallback? onStartSession,
+  VoidCallback? onManualEdit,
+  Size viewportSize = const Size(390, 844),
 }) async {
-  tester.view.physicalSize = const Size(390, 844);
+  tester.view.physicalSize = viewportSize;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -151,9 +246,12 @@ Future<void> _pumpPlanPage(
         repository: _FakePlanRepository(dashboard),
         now: () => now,
         onCreatePlan: onCreatePlan,
-        onChat: () {},
-        onStartSession: () {},
-        onManualEdit: () {},
+        onOpenCalendar: onOpenCalendar,
+        onOpenAllPlans: onOpenAllPlans,
+        onBackToPlans: onBackToPlans,
+        onChat: onChat ?? () {},
+        onStartSession: onStartSession ?? () {},
+        onManualEdit: onManualEdit ?? () {},
       ),
     ),
   );
@@ -162,7 +260,7 @@ Future<void> _pumpPlanPage(
   );
   await tester.runAsync(
     () => precacheImage(
-      const AssetImage('assets/images/plan-cozymate-avatar.jpg'),
+      const AssetImage(MomCozyAssets.planCozymateAvatar),
       context,
     ),
   );

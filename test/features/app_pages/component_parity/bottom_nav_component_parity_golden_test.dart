@@ -38,6 +38,21 @@ void main() {
         ),
       );
     });
+
+    testWidgets('Plan tab selected matches 0806 baseline', (tester) async {
+      await _bottomNavigationComponentApp(tester, location: '/plan');
+
+      final bottomNav = find.byType(MomCozyBottomNavigation);
+      expect(bottomNav, findsOneWidget);
+      expect(find.byKey(const ValueKey('bottom-nav-plan')), findsOneWidget);
+
+      await expectLater(
+        bottomNav,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/bottom_nav_plan_selected.png',
+        ),
+      );
+    });
   });
 }
 
