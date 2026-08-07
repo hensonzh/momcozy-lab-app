@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
@@ -599,6 +600,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                 height: MomCozyLayout.bottomNavChromeHeight,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
+                    color: Colors.white,
                     border: Border(
                       top: BorderSide(
                         color: MomCozyColors.border.withValues(alpha: 0.52),
@@ -620,75 +622,62 @@ class MomCozyBottomNavigation extends StatelessWidget {
                       constraints: const BoxConstraints(
                         maxWidth: MomCozyLayout.maxAppWidth,
                       ),
-                      child: Transform.translate(
-                        offset: const Offset(0, -2),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: _MomCozyNavTab(
-                                  navKey: const ValueKey('bottom-nav-me'),
-                                  label: 'Me',
-                                  selected: selectedIndex == 0,
-                                  icon: const _MomBabyNavIcon(),
-                                  selectedIcon: const _MomBabyNavIcon(
-                                    filled: true,
-                                  ),
-                                  onTap: () => context.go(_tabPaths[0]),
-                                ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _MomCozyNavTab(
+                                navKey: const ValueKey('bottom-nav-me'),
+                                label: 'Me',
+                                selected: selectedIndex == 0,
+                                asset: MomCozyAssets.bottomNavMe,
+                                iconSize: const Size.square(20),
+                                onTap: () => context.go(_tabPaths[0]),
                               ),
-                              Expanded(
-                                child: _MomCozyNavTab(
-                                  navKey: const ValueKey('bottom-nav-baby'),
-                                  label: 'Baby',
-                                  selected: selectedIndex == 1,
-                                  icon: const Icon(Icons.child_care_outlined),
-                                  selectedIcon: const Icon(
-                                    Icons.child_care_rounded,
-                                  ),
-                                  onTap: () => context.go(_tabPaths[1]),
-                                ),
+                            ),
+                            Expanded(
+                              child: _MomCozyNavTab(
+                                navKey: const ValueKey('bottom-nav-baby'),
+                                label: 'Baby',
+                                selected: selectedIndex == 1,
+                                asset: MomCozyAssets.bottomNavBaby,
+                                iconSize: const Size.square(22),
+                                onTap: () => context.go(_tabPaths[1]),
                               ),
-                              Expanded(
-                                child: _CozymateNavSlot(
-                                  selected: selectedIndex == 2,
-                                  onTap: () => context.go(_tabPaths[2]),
-                                ),
+                            ),
+                            Expanded(
+                              child: _CozymateNavSlot(
+                                selected: selectedIndex == 2,
+                                onTap: () => context.go(_tabPaths[2]),
                               ),
-                              Expanded(
-                                child: _MomCozyNavTab(
-                                  navKey: const ValueKey('bottom-nav-plan'),
-                                  label: 'Plan',
-                                  selected: selectedIndex == 3,
-                                  icon: const Icon(
-                                    Icons.calendar_today_outlined,
-                                  ),
-                                  selectedIcon: const Icon(
-                                    Icons.calendar_today_rounded,
-                                  ),
-                                  onTap: () {
-                                    MomCozyRuntimeScope.read(
-                                      context,
-                                    )?.planChangeStore.markViewed();
-                                    context.go(_tabPaths[3]);
-                                  },
-                                ),
+                            ),
+                            Expanded(
+                              child: _MomCozyNavTab(
+                                navKey: const ValueKey('bottom-nav-plan'),
+                                label: 'Plan',
+                                selected: selectedIndex == 3,
+                                asset: MomCozyAssets.bottomNavPlan,
+                                iconSize: const Size.square(22),
+                                onTap: () {
+                                  MomCozyRuntimeScope.read(
+                                    context,
+                                  )?.planChangeStore.markViewed();
+                                  context.go(_tabPaths[3]);
+                                },
                               ),
-                              Expanded(
-                                child: _MomCozyNavTab(
-                                  navKey: const ValueKey('bottom-nav-more'),
-                                  label: 'More',
-                                  selected: selectedIndex == 4,
-                                  icon: const Icon(Icons.more_horiz_rounded),
-                                  selectedIcon: const Icon(
-                                    Icons.more_horiz_rounded,
-                                  ),
-                                  onTap: () => context.go(_tabPaths[4]),
-                                ),
+                            ),
+                            Expanded(
+                              child: _MomCozyNavTab(
+                                navKey: const ValueKey('bottom-nav-more'),
+                                label: 'More',
+                                selected: selectedIndex == 4,
+                                asset: MomCozyAssets.bottomNavMore,
+                                iconSize: const Size.square(16),
+                                onTap: () => context.go(_tabPaths[4]),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -708,70 +697,77 @@ class _MomCozyNavTab extends StatelessWidget {
     required this.navKey,
     required this.label,
     required this.selected,
-    required this.icon,
-    required this.selectedIcon,
+    required this.asset,
+    required this.iconSize,
     required this.onTap,
   });
 
   final Key navKey;
   final String label;
   final bool selected;
-  final Widget icon;
-  final Widget selectedIcon;
+  final String asset;
+  final Size iconSize;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final foreground = onTap == null
-        ? MomCozyColors.mutedForeground.withValues(alpha: 0.56)
+        ? const Color(0xff9e8880).withValues(alpha: 0.56)
         : selected
-        ? MomCozyColors.primary
-        : MomCozyColors.mutedForeground;
+        ? MomCozyV3Colors.brand
+        : const Color(0xff9e8880);
 
-    return Center(
+    return SizedBox.expand(
       child: Semantics(
         key: navKey,
         selected: selected,
         button: true,
         enabled: onTap != null,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(MomCozyRadii.control),
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-            decoration: BoxDecoration(
-              color: selected
-                  ? MomCozyColors.primary.withValues(alpha: 0.08)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(MomCozyRadii.control),
-            ),
-            child: IconTheme(
-              data: IconThemeData(color: foreground, size: 21),
-              child: DefaultTextStyle(
-                style: TextStyle(
-                  fontFamily: MomCozyTypography.fontFamily,
-                  fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-                  color: foreground,
-                  fontSize: 10,
-                  height: 1.05,
-                  fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox.square(
-                      dimension: 22,
-                      child: Center(child: selected ? selectedIcon : icon),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(MomCozyRadii.control),
+            onTap: onTap,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: DefaultTextStyle(
+                  style: TextStyle(
+                    fontFamily: MomCozyTypography.fontFamily,
+                    fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                    color: foreground,
+                    fontSize: 11,
+                    height: 1.05,
+                    fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            asset,
+                            width: iconSize.width,
+                            height: iconSize.height,
+                            colorFilter: ColorFilter.mode(
+                              foreground,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -799,7 +795,7 @@ class _CozymateNavSlot extends StatelessWidget {
         Positioned(
           left: 0,
           right: 0,
-          bottom: 7,
+          bottom: 3,
           child: IgnorePointer(
             child: Text(
               'Cozymate',
@@ -810,9 +806,9 @@ class _CozymateNavSlot extends StatelessWidget {
                 fontFamily: MomCozyTypography.fontFamily,
                 fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
                 color: selected
-                    ? MomCozyColors.primary
-                    : MomCozyColors.mutedForeground,
-                fontSize: 10,
+                    ? MomCozyV3Colors.brand
+                    : const Color(0xff9e8880),
+                fontSize: 11,
                 height: 1.05,
                 fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
               ),
@@ -931,7 +927,7 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
         selected: widget.selected,
         button: true,
         child: Transform.translate(
-          offset: const Offset(0, -10),
+          offset: const Offset(0, -7),
           child: Material(
             key: const ValueKey('bottom-nav-agent'),
             color: Colors.transparent,
@@ -946,24 +942,15 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: widget.selected ? MomCozyGradients.primary : null,
-                  color: widget.selected ? null : MomCozyColors.card,
-                  border: Border.all(color: MomCozyColors.background, width: 5),
-                  boxShadow: widget.selected
-                      ? const [
-                          BoxShadow(
-                            color: Color(0x42754b5e),
-                            blurRadius: 30,
-                            offset: Offset(0, 12),
-                          ),
-                        ]
-                      : const [
-                          BoxShadow(
-                            color: Color(0x1a3a2731),
-                            blurRadius: 22,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
+                  color: Colors.white,
+                  border: Border.all(color: MomCozyV3Colors.ink, width: 3),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x263a2731),
+                      blurRadius: 16,
+                      offset: Offset(0, 7),
+                    ),
+                  ],
                 ),
                 child: Stack(
                   clipBehavior: Clip.none,
@@ -1082,8 +1069,8 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
                                         key: const ValueKey(
                                           'bottom-nav-agent-avatar',
                                         ),
-                                        width: 48,
-                                        height: 48,
+                                        width: 50,
+                                        height: 50,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
@@ -1142,145 +1129,6 @@ Future<Uint8List> _loadAgentWakeGifSourceBytes() async {
 }
 
 double _degreesToRadians(double degrees) => degrees * 3.141592653589793 / 180;
-
-class _MomBabyNavIcon extends StatelessWidget {
-  const _MomBabyNavIcon({this.filled = false});
-
-  final bool filled;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(22, 22),
-      painter: _MomBabyNavIconPainter(
-        color: IconTheme.of(context).color ?? MomCozyColors.primary,
-        strokeWidth: filled ? 2.5 : 1.8,
-        fill: filled,
-      ),
-    );
-  }
-}
-
-class _MomBabyNavIconPainter extends CustomPainter {
-  const _MomBabyNavIconPainter({
-    required this.color,
-    required this.strokeWidth,
-    required this.fill,
-  });
-
-  final Color color;
-  final double strokeWidth;
-  final bool fill;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final scaleX = size.width / 24;
-    final scaleY = size.height / 24;
-    final stroke = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-    final wash = Paint()
-      ..color = color.withValues(alpha: fill ? 0.18 : 0)
-      ..style = PaintingStyle.fill;
-
-    Offset p(double x, double y) => Offset(x * scaleX, y * scaleY);
-    if (fill) canvas.drawCircle(p(8.2, 7.1), 2.8 * scaleX, wash);
-    canvas.drawCircle(p(8.2, 7.1), 2.8 * scaleX, stroke);
-    final momPath = Path()
-      ..moveTo(3.8 * scaleX, 19.2 * scaleY)
-      ..lineTo(3.8 * scaleX, 17.8 * scaleY)
-      ..cubicTo(
-        3.8 * scaleX,
-        14.7 * scaleY,
-        5.7 * scaleX,
-        12.4 * scaleY,
-        8.2 * scaleX,
-        12.4 * scaleY,
-      )
-      ..cubicTo(
-        10.7 * scaleX,
-        12.4 * scaleY,
-        12.6 * scaleX,
-        14.7 * scaleY,
-        12.6 * scaleX,
-        17.8 * scaleY,
-      )
-      ..lineTo(12.6 * scaleX, 19.2 * scaleY);
-    canvas.drawPath(momPath, stroke);
-    final momSmile = Path()
-      ..moveTo(5.7 * scaleX, 18.8 * scaleY)
-      ..cubicTo(
-        6.4 * scaleX,
-        19.2 * scaleY,
-        7.2 * scaleX,
-        19.4 * scaleY,
-        8.2 * scaleX,
-        19.4 * scaleY,
-      )
-      ..cubicTo(
-        9.2 * scaleX,
-        19.4 * scaleY,
-        10 * scaleX,
-        19.2 * scaleY,
-        10.7 * scaleX,
-        18.8 * scaleY,
-      );
-    canvas.drawPath(momSmile, stroke);
-
-    if (fill) canvas.drawCircle(p(16.4, 9.7), 2.1 * scaleX, wash);
-    canvas.drawCircle(p(16.4, 9.7), 2.1 * scaleX, stroke);
-    final babyPath = Path()
-      ..moveTo(12.9 * scaleX, 19.2 * scaleY)
-      ..lineTo(12.9 * scaleX, 18.3 * scaleY)
-      ..cubicTo(
-        12.9 * scaleX,
-        15.9 * scaleY,
-        14.3 * scaleX,
-        14.2 * scaleY,
-        16.4 * scaleX,
-        14.2 * scaleY,
-      )
-      ..cubicTo(
-        18.5 * scaleX,
-        14.2 * scaleY,
-        19.9 * scaleX,
-        15.9 * scaleY,
-        19.9 * scaleX,
-        18.3 * scaleY,
-      )
-      ..lineTo(19.9 * scaleX, 19.2 * scaleY);
-    canvas.drawPath(babyPath, stroke);
-    final babySmile = Path()
-      ..moveTo(14.5 * scaleX, 18.7 * scaleY)
-      ..cubicTo(
-        15 * scaleX,
-        19 * scaleY,
-        15.6 * scaleX,
-        19.1 * scaleY,
-        16.4 * scaleX,
-        19.1 * scaleY,
-      )
-      ..cubicTo(
-        17.2 * scaleX,
-        19.1 * scaleY,
-        17.8 * scaleX,
-        19 * scaleY,
-        18.3 * scaleX,
-        18.7 * scaleY,
-      );
-    canvas.drawPath(babySmile, stroke);
-  }
-
-  @override
-  bool shouldRepaint(covariant _MomBabyNavIconPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.strokeWidth != strokeWidth ||
-        oldDelegate.fill != fill;
-  }
-}
 
 class MomCozyRoutePage extends StatelessWidget {
   const MomCozyRoutePage({
