@@ -69,15 +69,33 @@ class MomCozyLayout {
 
   static const maxAppWidth = 430.0;
   static const bottomNavHeight = 84.0;
-  static const bottomNavChromeHeight = 72.0;
-  static const bottomNavCenterSize = 68.0;
+  static const bottomNavChromeHeight = 66.0;
+  static const bottomNavCenterSize = 60.0;
 }
 
 class MomCozyAssets {
   const MomCozyAssets._();
 
   static const agentAvatar = 'assets/images/momcozy-agent.png';
-  static const planCozymateAvatar = 'assets/images/plan-cozymate-avatar.jpg';
+  static const planCozymateAvatar = 'assets/images/plan/cozymate_avatar.png';
+  static const planEmptyAction = 'assets/images/plan/empty_action.svg';
+  static const planCalendar = 'assets/images/plan/calendar.svg';
+  static const planAllPlans = 'assets/images/plan/all_plans.svg';
+  static const planBack = 'assets/images/plan/back.svg';
+  static const planEdit = 'assets/images/plan/edit.svg';
+  static const planSparkles = 'assets/images/plan/sparkles.svg';
+  static const planRecovery = 'assets/images/plan/recovery.svg';
+  static const planPump = 'assets/images/plan/pump.svg';
+  static const planHealth = 'assets/images/plan/health.svg';
+  static const planDroplet = 'assets/images/plan/droplet.svg';
+  static const planPlay = 'assets/images/plan/play.svg';
+  static const planClock = 'assets/images/plan/clock.svg';
+  static const planCheckCircle = 'assets/images/plan/check_circle.svg';
+  static const planChevronRight = 'assets/images/plan/chevron_right.svg';
+  static const bottomNavMe = 'assets/images/nav_me.svg';
+  static const bottomNavBaby = 'assets/images/nav_baby.svg';
+  static const bottomNavPlan = 'assets/images/nav_plan.svg';
+  static const bottomNavMore = 'assets/images/nav_more.svg';
   static const agentAwakenAvatar = 'assets/images/momcozy-agent-awaken.gif';
   static const agentThinkingAvatar = 'assets/images/momcozy-agent-thinking.mp4';
   static const agentSpeakingAvatar = 'assets/images/momcozy-agent-speaking.mp4';
