@@ -483,28 +483,15 @@ class _MomCozyWordmark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: _MeBabyOverviewColors.wine,
-            shape: BoxShape.circle,
-          ),
-          child: SizedBox.square(dimension: 10),
-        ),
-        SizedBox(width: 7),
-        Text(
-          'momcozy',
-          style: TextStyle(
-            color: _MeBabyOverviewColors.ink,
-            fontSize: 25,
-            height: 1,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -1,
-          ),
-        ),
-      ],
+    return const Text(
+      'momcozy',
+      style: TextStyle(
+        color: _MeBabyOverviewColors.ink,
+        fontSize: 25,
+        height: 1,
+        fontWeight: FontWeight.w900,
+        letterSpacing: -1,
+      ),
     );
   }
 }
