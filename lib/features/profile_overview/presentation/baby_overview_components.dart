@@ -1,5 +1,27 @@
 part of 'me_baby_overview_page.dart';
 
+class _BabySvgIcon extends StatelessWidget {
+  const _BabySvgIcon({
+    required this.asset,
+    required this.color,
+    required this.size,
+  });
+
+  final String asset;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      asset,
+      width: size,
+      height: size,
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+    );
+  }
+}
+
 class _BabyProfileHero extends StatelessWidget {
   const _BabyProfileHero({
     required this.data,
@@ -24,14 +46,15 @@ class _BabyProfileHero extends StatelessWidget {
           key: const ValueKey('baby-profile-hero'),
           height: compactForSleep ? 138 : 175,
           child: Stack(
-            clipBehavior: Clip.hardEdge,
+            clipBehavior: compactForSleep ? Clip.none : Clip.hardEdge,
             children: [
               Positioned(
-                left: 0,
-                right: 0,
+                left: 6,
+                right: 6,
                 top: 0,
                 height: compactForSleep ? 125 : 156,
                 child: DecoratedBox(
+                  key: const ValueKey('baby-profile-hero-background'),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       begin: Alignment.centerLeft,
@@ -58,11 +81,12 @@ class _BabyProfileHero extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
+                        fontFamily: MomCozyTypography.displayFontFamily,
                         color: _BabyOverviewColors.ink,
-                        fontSize: 31,
+                        fontSize: 24,
                         height: 1,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1.2,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.7,
                       ),
                     ),
                     const SizedBox(height: 7),
@@ -71,10 +95,11 @@ class _BabyProfileHero extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
+                        fontFamily: MomCozyTypography.bodyFontFamily,
                         color: _BabyOverviewColors.mutedText,
-                        fontSize: 17,
+                        fontSize: 14,
                         height: 1,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -101,10 +126,11 @@ class _BabyProfileHero extends StatelessWidget {
                           data.babyAvatarSummary,
                           maxLines: 1,
                           style: const TextStyle(
+                            fontFamily: MomCozyTypography.bodyFontFamily,
                             color: _BabyOverviewColors.ink,
                             fontSize: 13,
                             height: 1,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
@@ -197,7 +223,7 @@ class _BabyAvatarStage extends StatelessWidget {
               ),
               Positioned(
                 right: compact ? -8 : 3,
-                top: compact ? -34 : -24,
+                top: compact ? -37 : -27,
                 width: math.min(constraints.maxWidth * 0.88, 378),
                 height: math.min(cardHeight * 1.05, 560),
                 child: Image.asset(
@@ -209,7 +235,7 @@ class _BabyAvatarStage extends StatelessWidget {
               ),
               Positioned(
                 left: 38,
-                top: cardHeight * 0.43,
+                top: cardHeight * 0.43 + 3,
                 right: constraints.maxWidth * 0.49,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,10 +245,11 @@ class _BabyAvatarStage extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
+                        fontFamily: MomCozyTypography.displayFontFamily,
                         color: _BabyOverviewColors.ink,
                         fontSize: 24,
                         height: 1,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w800,
                         letterSpacing: -0.8,
                       ),
                     ),
@@ -232,6 +259,7 @@ class _BabyAvatarStage extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
+                        fontFamily: MomCozyTypography.bodyFontFamily,
                         color: _BabyOverviewColors.mutedText,
                         fontSize: 14,
                         height: 1.1,
@@ -262,9 +290,10 @@ class _BabyAvatarStage extends StatelessWidget {
                           data.babyAvatarSummary,
                           maxLines: 1,
                           style: const TextStyle(
+                            fontFamily: MomCozyTypography.bodyFontFamily,
                             color: _BabyOverviewColors.ink,
                             fontSize: 13,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
@@ -275,7 +304,7 @@ class _BabyAvatarStage extends StatelessWidget {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 112,
+                bottom: 143,
                 height: MomCozyTapTargets.minimum,
                 child: Semantics(
                   key: const ValueKey('me-baby-overview-close-avatar'),
@@ -288,6 +317,7 @@ class _BabyAvatarStage extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
+                          key: const ValueKey('baby-avatar-handle'),
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
@@ -303,7 +333,7 @@ class _BabyAvatarStage extends StatelessWidget {
               Positioned(
                 left: 22,
                 right: 22,
-                bottom: 72,
+                bottom: 97,
                 child: _SectionTabs(
                   identity: ProfileIdentity.baby,
                   selected: selectedSection,
@@ -314,7 +344,7 @@ class _BabyAvatarStage extends StatelessWidget {
               Positioned(
                 left: 16,
                 right: 16,
-                top: constraints.maxHeight - 60,
+                top: constraints.maxHeight - 86,
                 height: 210,
                 child: const _AvatarMonitorPreview(),
               ),
@@ -332,6 +362,7 @@ class _AvatarMonitorPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _V2Card(
+      cardKey: const ValueKey('baby-avatar-monitor-preview'),
       padding: const EdgeInsets.all(14),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(18),
@@ -375,10 +406,12 @@ class _BabyMonitorContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final useEdgeAlignedOfflineBadge = MediaQuery.sizeOf(context).width < 410;
     return Column(
       children: [
         _V2Card(
-          padding: const EdgeInsets.all(14),
+          cardKey: const ValueKey('baby-monitor-camera-card'),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 19),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -401,7 +434,7 @@ class _BabyMonitorContent extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    left: 10,
+                    left: useEdgeAlignedOfflineBadge ? 0 : 10,
                     top: 10,
                     child: _StatusPill(
                       label: 'OFFLINE',
@@ -443,25 +476,27 @@ class _BabyMonitorContent extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 7),
               const Row(
                 children: [
                   Expanded(
                     child: Text(
                       'Nursery Camera',
                       style: TextStyle(
+                        fontFamily: MomCozyTypography.displayFontFamily,
                         color: _BabyOverviewColors.ink,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w900,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
                   Text(
                     '—°C',
                     style: TextStyle(
+                      fontFamily: MomCozyTypography.displayFontFamily,
                       color: _BabyOverviewColors.ink,
                       fontSize: 13,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   SizedBox(width: 4),
@@ -470,9 +505,10 @@ class _BabyMonitorContent extends StatelessWidget {
                   Text(
                     '—%',
                     style: TextStyle(
+                      fontFamily: MomCozyTypography.displayFontFamily,
                       color: _BabyOverviewColors.ink,
                       fontSize: 13,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   SizedBox(width: 4),
@@ -482,16 +518,25 @@ class _BabyMonitorContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
         const _V2Card(
+          cardKey: ValueKey('baby-monitor-recent-card'),
           padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Recent Activity', style: _BabyText.cardTitle),
+              Text(
+                'Recent Activity',
+                style: TextStyle(
+                  fontFamily: MomCozyTypography.displayFontFamily,
+                  color: _BabyOverviewColors.mutedText,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               SizedBox(height: 10),
               _EmptyInlineState(
-                icon: Icons.history_rounded,
+                iconAsset: _MeBabyOverviewAssets.clockIcon,
                 title: 'No confirmed activity yet',
                 description: 'Connect a supported monitor to receive events.',
               ),
@@ -518,70 +563,83 @@ class _BabySleepContent extends StatelessWidget {
             key: const ValueKey('baby-sleep-summary-card'),
             borderRadius: BorderRadius.circular(26),
             onTap: onOpenDetail,
-            child: const _V2Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      _BabyRoundIcon(icon: Icons.bedtime_outlined),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Total Sleep Today',
-                          style: _BabyText.cardTitle,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 168),
+              child: const _V2Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        _BabyRoundIcon(
+                          iconAsset: _MeBabyOverviewAssets.moonStarIcon,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12),
-                  Text('— h', style: _BabyText.heroMetric),
-                  SizedBox(height: 7),
-                  Text(
-                    'No sleep data recorded today',
-                    style: _BabyText.supporting,
-                  ),
-                ],
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Total Sleep Today',
+                            style: _BabyText.cardTitle,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Text('— h', style: _BabyText.heroMetric),
+                    SizedBox(height: 7),
+                    Text(
+                      'No sleep data recorded today',
+                      style: _BabyText.supporting,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
         const SizedBox(height: 10),
-        const _V2Card(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Sleep Pattern Today',
-                      style: _BabyText.cardTitle,
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 116),
+          child: const _V2Card(
+            cardKey: ValueKey('baby-sleep-pattern-card'),
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Sleep Pattern Today',
+                        style: _BabyText.cardTitle,
+                      ),
                     ),
-                  ),
-                  Text('0 naps', style: _BabyText.accentLabel),
-                ],
-              ),
-              SizedBox(height: 16),
-              _EmptyTimeline(),
-            ],
+                    Text('0 naps', style: _BabyText.accentLabel),
+                  ],
+                ),
+                SizedBox(height: 16),
+                _EmptyTimeline(),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 10),
-        const _V2Card(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Sleep Trend & Prediction', style: _BabyText.cardTitle),
-              SizedBox(height: 12),
-              _EmptyInlineState(
-                icon: Icons.schedule_rounded,
-                title: 'Prediction unavailable',
-                description: 'A confirmed sleep history is required.',
-              ),
-            ],
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 143),
+          child: const _V2Card(
+            cardKey: ValueKey('baby-sleep-trend-card'),
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Sleep Trend & Prediction', style: _BabyText.cardTitle),
+                SizedBox(height: 12),
+                _EmptyInlineState(
+                  iconAsset: _MeBabyOverviewAssets.clockIcon,
+                  title: 'Prediction unavailable',
+                  description: 'A confirmed sleep history is required.',
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 10),
@@ -615,27 +673,31 @@ class _BabyFeedingContent extends StatelessWidget {
     return Column(
       children: [
         _V2Card(
+          cardKey: const ValueKey('baby-feeding-summary-card'),
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               SizedBox(
-                width: 52,
-                height: 52,
+                width: 44,
+                height: 44,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    const CircularProgressIndicator(
-                      value: 1,
-                      strokeWidth: 5,
-                      backgroundColor: _BabyOverviewColors.line,
-                      color: _BabyOverviewColors.wine,
+                    const Positioned.fill(
+                      child: CircularProgressIndicator(
+                        value: 1,
+                        strokeWidth: 4,
+                        backgroundColor: _BabyOverviewColors.line,
+                        color: _BabyOverviewColors.wine,
+                      ),
                     ),
                     Text(
                       '${feeds.length}',
                       style: const TextStyle(
+                        fontFamily: MomCozyTypography.displayFontFamily,
                         color: _BabyOverviewColors.ink,
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -662,7 +724,7 @@ class _BabyFeedingContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         _V2Card(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Column(
@@ -687,7 +749,7 @@ class _BabyFeedingContent extends StatelessWidget {
               Text('Diaper Tracker', style: _BabyText.cardTitle),
               SizedBox(height: 10),
               _EmptyInlineState(
-                icon: Icons.baby_changing_station_outlined,
+                iconAsset: _MeBabyOverviewAssets.babyIcon,
                 title: 'No linked diaper data',
                 description: 'Diaper records are not available yet.',
               ),
@@ -703,7 +765,7 @@ class _BabyFeedingContent extends StatelessWidget {
               Text('Weekly Intake Trend', style: _BabyText.cardTitle),
               SizedBox(height: 10),
               _EmptyInlineState(
-                icon: Icons.bar_chart_rounded,
+                iconAsset: _MeBabyOverviewAssets.activityIcon,
                 title: 'Weekly trend unavailable',
                 description: 'The current API provides today’s records only.',
               ),
@@ -745,6 +807,8 @@ class _BabyDiaperContent extends StatelessWidget {
     return const Column(
       children: [
         _V2Card(
+          cardKey: ValueKey('baby-diaper-summary-card'),
+          padding: EdgeInsets.fromLTRB(20, 20, 20, 19.2),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -778,36 +842,39 @@ class _BabyDiaperContent extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 14),
+        SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               child: _DiaperMetric(
-                icon: Icons.water_drop_outlined,
+                metricKey: ValueKey('baby-diaper-wet-card'),
+                iconAsset: _MeBabyOverviewAssets.dropletIcon,
                 iconColor: Color(0xff2d9cdb),
                 value: '0 Wet',
                 subtitle: 'No records',
               ),
             ),
-            SizedBox(width: 12),
+            SizedBox(width: 10),
             Expanded(
               child: _DiaperMetric(
-                icon: Icons.baby_changing_station_outlined,
+                metricKey: ValueKey('baby-diaper-dirty-card'),
+                iconAsset: _MeBabyOverviewAssets.babyIcon,
                 value: '0 Dirty',
                 subtitle: 'No records',
               ),
             ),
           ],
         ),
-        SizedBox(height: 14),
+        SizedBox(height: 16),
         _V2Card(
+          cardKey: ValueKey('baby-diaper-timeline-card'),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Diaper Timeline', style: _BabyText.cardTitle),
               SizedBox(height: 12),
               _EmptyInlineState(
-                icon: Icons.history_rounded,
+                iconAsset: _MeBabyOverviewAssets.clockIcon,
                 title: 'No confirmed changes',
                 description:
                     'Recorded diaper changes will appear here when the service is connected.',
@@ -863,7 +930,7 @@ class _BabyDetailPage extends StatelessWidget {
       child: ListView(
         key: ValueKey('baby-detail-${detail.id}'),
         physics: const ClampingScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 22, 16, 28),
+        padding: const EdgeInsets.fromLTRB(16, 26, 16, 28),
         children: [
           _BabyDetailHeader(
             detail: detail,
@@ -871,7 +938,7 @@ class _BabyDetailPage extends StatelessWidget {
             subtitle: subtitle,
             onBack: onBack,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: detail == _BabyDetail.feeding ? 8 : 25),
           if (detail == _BabyDetail.feeding)
             _BabyFeedingDetailContent(data: data)
           else if (detail == _BabyDetail.diaper)
@@ -927,21 +994,18 @@ class _BabyDetailHeader extends StatelessWidget {
           button: true,
           child: SizedBox.square(
             dimension: MomCozyTapTargets.minimum,
-            child: Center(
-              child: Material(
-                color: Colors.white,
-                shape: const CircleBorder(
-                  side: BorderSide(color: _BabyOverviewColors.line),
-                ),
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: onBack,
-                  child: const SizedBox.square(
-                    dimension: 40,
-                    child: Icon(
-                      Icons.chevron_left_rounded,
-                      color: _BabyOverviewColors.ink,
-                      size: 27,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: onBack,
+                child: Center(
+                  child: Transform.translate(
+                    offset: const Offset(0, -1.5),
+                    child: SvgPicture.asset(
+                      _MeBabyOverviewAssets.backButton,
+                      width: 36,
+                      height: 32,
                     ),
                   ),
                 ),
@@ -949,7 +1013,7 @@ class _BabyDetailHeader extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -960,10 +1024,11 @@ class _BabyDetailHeader extends StatelessWidget {
                 child: Text(
                   title,
                   style: const TextStyle(
+                    fontFamily: MomCozyTypography.displayFontFamily,
                     color: _BabyOverviewColors.ink,
-                    fontSize: 26,
+                    fontSize: 21,
                     height: 1,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.8,
                   ),
                 ),
@@ -974,14 +1039,24 @@ class _BabyDetailHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-        const _DisabledCircleAction(
-          actionKey: ValueKey('baby-detail-more-disabled'),
-          semanticLabel: 'More actions are not available yet',
-          icon: Icons.more_horiz_rounded,
-          compact: true,
-          size: 40,
-          backgroundColor: Colors.white,
-          foregroundColor: _BabyOverviewColors.ink,
+        Semantics(
+          key: const ValueKey('baby-detail-more-disabled'),
+          label: 'More actions are not available yet',
+          button: false,
+          enabled: false,
+          child: SizedBox.square(
+            dimension: MomCozyTapTargets.minimum,
+            child: Center(
+              child: Transform.translate(
+                offset: const Offset(0, -1.5),
+                child: SvgPicture.asset(
+                  _MeBabyOverviewAssets.moreButton,
+                  width: 40,
+                  height: 40,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -1009,7 +1084,7 @@ class _BabyFeedingDetailContentState extends State<_BabyFeedingDetailContent> {
           selected: _period,
           onSelected: (period) => setState(() => _period = period),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 17),
         if (_period == 'day')
           _BabyFeedingContent(data: widget.data)
         else
@@ -1032,49 +1107,71 @@ class _DetailPeriodTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: MomCozyTapTargets.minimum,
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _BabyOverviewColors.line),
-      ),
-      child: Row(
+      child: Stack(
         children: [
-          for (final period in const [('day', 'Day'), ('week', 'Week')])
-            Expanded(
-              child: Semantics(
-                key: ValueKey('baby-feeding-period-${period.$1}'),
-                selected: selected == period.$1,
-                button: true,
-                inMutuallyExclusiveGroup: true,
-                child: Material(
-                  color: selected == period.$1
-                      ? _BabyOverviewColors.pill
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(15),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(15),
-                    onTap: () => onSelected(period.$1),
-                    child: Center(
-                      child: Text(
-                        period.$2,
-                        style: TextStyle(
-                          color: selected == period.$1
-                              ? _BabyOverviewColors.wine
-                              : _BabyOverviewColors.mutedText,
-                          fontSize: 16,
-                          fontWeight: selected == period.$1
-                              ? FontWeight.w900
-                              : FontWeight.w800,
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              key: const ValueKey('baby-feeding-period-background'),
+              height: 38,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: _BabyOverviewColors.line),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: Row(
+              children: [
+                for (final period in const [('day', 'Day'), ('week', 'Week')])
+                  Expanded(
+                    child: Semantics(
+                      key: ValueKey('baby-feeding-period-${period.$1}'),
+                      selected: selected == period.$1,
+                      button: true,
+                      inMutuallyExclusiveGroup: true,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(18),
+                          onTap: () => onSelected(period.$1),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: selected == period.$1
+                                    ? _BabyOverviewColors.pill
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  period.$2,
+                                  style: TextStyle(
+                                    fontFamily:
+                                        MomCozyTypography.bodyFontFamily,
+                                    color: selected == period.$1
+                                        ? _BabyOverviewColors.wine
+                                        : _BabyOverviewColors.mutedText,
+                                    fontSize: 16,
+                                    fontWeight: selected == period.$1
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
+              ],
             ),
+          ),
         ],
       ),
     );
@@ -1091,18 +1188,22 @@ class _BabySleepReportContent extends StatelessWidget {
     return Column(
       children: [
         _V2Card(
+          cardKey: const ValueKey('baby-sleep-last-night-card'),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text("LAST NIGHT'S SLEEP", style: _BabyText.eyebrow),
-              const SizedBox(height: 10),
+              const SizedBox(height: 7),
               const Row(
                 children: [
-                  Expanded(child: Text('— hours', style: _BabyText.heroMetric)),
+                  Expanded(
+                    child: Text('— hours', style: _BabyText.detailMetric),
+                  ),
                   _WineBadge(label: 'No data'),
                 ],
               ),
-              const Divider(color: _BabyOverviewColors.line, height: 28),
+              const Divider(color: _BabyOverviewColors.line, height: 12),
               Text(
                 'No confirmed sleep record is available for $babyName.',
                 style: _BabyText.supporting,
@@ -1110,18 +1211,20 @@ class _BabySleepReportContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         const _V2Card(
+          cardKey: ValueKey('baby-sleep-timeline-card'),
+          padding: EdgeInsets.fromLTRB(18, 20, 18, 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Sleep Timeline', style: _BabyText.cardTitle),
-              SizedBox(height: 16),
+              SizedBox(height: 8),
               _EmptyTimeline(),
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         const _V2Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1129,14 +1232,14 @@ class _BabySleepReportContent extends StatelessWidget {
               Text("Today's Naps", style: _BabyText.cardTitle),
               SizedBox(height: 12),
               _EmptyInlineState(
-                icon: Icons.bedtime_outlined,
+                iconAsset: _MeBabyOverviewAssets.moonStarIcon,
                 title: 'No naps recorded',
                 description: 'Confirmed nap records will appear here.',
               ),
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         const _V2Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1187,6 +1290,8 @@ class _BabyGrowthDetailContent extends StatelessWidget {
     return Column(
       children: [
         _V2Card(
+          cardKey: const ValueKey('baby-growth-current-card'),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1197,7 +1302,7 @@ class _BabyGrowthDetailContent extends StatelessWidget {
                   Expanded(
                     child: Text(
                       _formatMeasurement(_measurement(latest)),
-                      style: _BabyText.heroMetric,
+                      style: _BabyText.detailMetric,
                     ),
                   ),
                   const _WineBadge(label: 'Recorded'),
@@ -1206,8 +1311,10 @@ class _BabyGrowthDetailContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         _V2Card(
+          cardKey: const ValueKey('baby-growth-trend-card'),
+          padding: const EdgeInsets.fromLTRB(20, 16.5, 20, 16.5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1236,13 +1343,15 @@ class _BabyGrowthDetailContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         _V2Card(
+          cardKey: const ValueKey('baby-growth-history-card'),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 21),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Recent History', style: _BabyText.cardTitle),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               for (var index = 0; index < records.length; index += 1) ...[
                 _GrowthHistoryRow(
                   value: _formatMeasurement(_measurement(records[index])),
@@ -1250,7 +1359,7 @@ class _BabyGrowthDetailContent extends StatelessWidget {
                   change: _formatChange(records, index),
                 ),
                 if (index < records.length - 1)
-                  const Divider(color: _BabyOverviewColors.line, height: 18),
+                  const Divider(color: _BabyOverviewColors.line, height: 12),
               ],
             ],
           ),
@@ -1476,9 +1585,10 @@ class _GrowthHistoryRow extends StatelessWidget {
               Text(
                 value,
                 style: const TextStyle(
+                  fontFamily: MomCozyTypography.displayFontFamily,
                   color: _BabyOverviewColors.ink,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               Text(date, style: _BabyText.supporting),
@@ -1488,9 +1598,10 @@ class _GrowthHistoryRow extends StatelessWidget {
         Text(
           change,
           style: TextStyle(
+            fontFamily: MomCozyTypography.bodyFontFamily,
             color: _BabyOverviewColors.wine,
             fontSize: 14,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ],
@@ -1504,12 +1615,16 @@ class _BabyAddRecordSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = const [
-      (_BabyDetail.sleep, 'Sleep', Icons.bedtime_outlined),
-      (_BabyDetail.feeding, 'Feeding', Icons.child_care_rounded),
-      (_BabyDetail.diaper, 'Diaper', Icons.baby_changing_station_outlined),
-      (_BabyDetail.weight, 'Weight', Icons.monitor_weight_outlined),
-      (_BabyDetail.height, 'Height', Icons.straighten_rounded),
-      (_BabyDetail.headCircumference, 'Head Circ.', Icons.straighten_rounded),
+      (_BabyDetail.sleep, 'Sleep', _MeBabyOverviewAssets.moonStarIcon),
+      (_BabyDetail.feeding, 'Feeding', _MeBabyOverviewAssets.babyIcon),
+      (_BabyDetail.diaper, 'Diaper', _MeBabyOverviewAssets.babyIcon),
+      (_BabyDetail.weight, 'Weight', _MeBabyOverviewAssets.weightIcon),
+      (_BabyDetail.height, 'Height', _MeBabyOverviewAssets.rulerIcon),
+      (
+        _BabyDetail.headCircumference,
+        'Head Circ.',
+        _MeBabyOverviewAssets.rulerIcon,
+      ),
     ];
     final scaledLabelHeight = MediaQuery.textScalerOf(context).scale(16);
     final childAspectRatio = scaledLabelHeight > 22 ? 1.25 : 1.58;
@@ -1545,9 +1660,10 @@ class _BabyAddRecordSheet extends StatelessWidget {
                     child: Text(
                       'Add Record',
                       style: TextStyle(
+                        fontFamily: MomCozyTypography.displayFontFamily,
                         color: _BabyOverviewColors.ink,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -1556,11 +1672,15 @@ class _BabyAddRecordSheet extends StatelessWidget {
                     tooltip: 'Close add record',
                     onPressed: () => Navigator.of(context).pop(),
                     style: IconButton.styleFrom(
-                      backgroundColor: _BabyOverviewColors.pill,
-                      foregroundColor: _BabyOverviewColors.wine,
+                      backgroundColor: Colors.transparent,
                       minimumSize: const Size.square(MomCozyTapTargets.minimum),
+                      padding: const EdgeInsets.all(7),
                     ),
-                    icon: const Icon(Icons.close_rounded),
+                    icon: SvgPicture.asset(
+                      _MeBabyOverviewAssets.closeButton,
+                      width: 30,
+                      height: 30,
+                    ),
                   ),
                 ],
               ),
@@ -1597,11 +1717,11 @@ class _BabyAddRecordSheet extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(13),
-                                child: Icon(
-                                  option.$3,
+                                padding: const EdgeInsets.all(12),
+                                child: _BabySvgIcon(
+                                  asset: option.$3,
                                   color: _BabyOverviewColors.wine,
-                                  size: 26,
+                                  size: 24,
                                 ),
                               ),
                             ),
@@ -1611,9 +1731,10 @@ class _BabyAddRecordSheet extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
+                                fontFamily: MomCozyTypography.bodyFontFamily,
                                 color: _BabyOverviewColors.ink,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -1744,9 +1865,10 @@ class _GrowthRecordSheetState extends State<_GrowthRecordSheet> {
                       child: Text(
                         'Add $_label',
                         style: const TextStyle(
+                          fontFamily: MomCozyTypography.displayFontFamily,
                           color: _BabyOverviewColors.ink,
                           fontSize: 24,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -1816,8 +1938,9 @@ class _GrowthRecordSheetState extends State<_GrowthRecordSheet> {
                         child: Text(
                           mutation.isSaving ? 'Saving…' : 'Save record',
                           style: const TextStyle(
+                            fontFamily: MomCozyTypography.bodyFontFamily,
                             fontSize: 16,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
@@ -1861,9 +1984,10 @@ class _StatusPill extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
+                fontFamily: MomCozyTypography.bodyFontFamily,
                 color: Colors.white,
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
@@ -1874,9 +1998,9 @@ class _StatusPill extends StatelessWidget {
 }
 
 class _BabyRoundIcon extends StatelessWidget {
-  const _BabyRoundIcon({required this.icon});
+  const _BabyRoundIcon({required this.iconAsset});
 
-  final IconData icon;
+  final String iconAsset;
 
   @override
   Widget build(BuildContext context) {
@@ -1886,8 +2010,12 @@ class _BabyRoundIcon extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(7),
-        child: Icon(icon, color: _BabyOverviewColors.wine, size: 20),
+        padding: const EdgeInsets.all(6),
+        child: _BabySvgIcon(
+          asset: iconAsset,
+          color: _BabyOverviewColors.wine,
+          size: 18,
+        ),
       ),
     );
   }
@@ -1895,12 +2023,12 @@ class _BabyRoundIcon extends StatelessWidget {
 
 class _EmptyInlineState extends StatelessWidget {
   const _EmptyInlineState({
-    required this.icon,
+    required this.iconAsset,
     required this.title,
     required this.description,
   });
 
-  final IconData icon;
+  final String iconAsset;
   final String title;
   final String description;
 
@@ -1908,7 +2036,7 @@ class _EmptyInlineState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _BabyRoundIcon(icon: icon),
+        _BabyRoundIcon(iconAsset: iconAsset),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -1917,9 +2045,10 @@ class _EmptyInlineState extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
+                  fontFamily: MomCozyTypography.bodyFontFamily,
                   color: _BabyOverviewColors.ink,
                   fontSize: 14,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 2),
@@ -1968,37 +2097,41 @@ class _SleepTrainingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _V2Card(
-      padding: const EdgeInsets.all(14),
-      child: Row(
-        children: [
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: _BabyOverviewColors.pill,
-              borderRadius: BorderRadius.circular(18),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 104),
+      child: _V2Card(
+        cardKey: const ValueKey('baby-sleep-training-card'),
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: _BabyOverviewColors.pill,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Image.asset(
+                _MeBabyOverviewAssets.sleepTraining,
+                fit: BoxFit.contain,
+                semanticLabel: 'Sleep training illustration',
+              ),
             ),
-            child: Image.asset(
-              _MeBabyOverviewAssets.sleepTraining,
-              fit: BoxFit.contain,
-              semanticLabel: 'Sleep training illustration',
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Sleep Training', style: _BabyText.cardTitle),
+                  SizedBox(height: 4),
+                  Text('AI sleep coaching', style: _BabyText.supporting),
+                  SizedBox(height: 8),
+                  _WineBadge(label: 'Coming soon', compact: false),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 14),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Sleep Training', style: _BabyText.cardTitle),
-                SizedBox(height: 4),
-                Text('AI sleep coaching', style: _BabyText.supporting),
-                SizedBox(height: 8),
-                _WineBadge(label: 'Coming soon'),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -2006,13 +2139,15 @@ class _SleepTrainingCard extends StatelessWidget {
 
 class _DiaperMetric extends StatelessWidget {
   const _DiaperMetric({
-    required this.icon,
+    required this.metricKey,
+    required this.iconAsset,
     required this.value,
     required this.subtitle,
     this.iconColor = _BabyOverviewColors.wine,
   });
 
-  final IconData icon;
+  final Key metricKey;
+  final String iconAsset;
   final String value;
   final String subtitle;
   final Color iconColor;
@@ -2020,22 +2155,34 @@ class _DiaperMetric extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _V2Card(
-      padding: const EdgeInsets.all(14),
+      cardKey: metricKey,
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: iconColor, size: 24),
+          _BabySvgIcon(asset: iconAsset, color: iconColor, size: 24),
           const SizedBox(height: 4),
           Text(
             value,
             style: const TextStyle(
+              fontFamily: MomCozyTypography.displayFontFamily,
               color: _BabyOverviewColors.ink,
               fontSize: 21,
-              fontWeight: FontWeight.w900,
+              height: 1,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 3),
-          Text(subtitle, style: _BabyText.supporting),
+          Text(
+            subtitle,
+            style: const TextStyle(
+              fontFamily: MomCozyTypography.bodyFontFamily,
+              color: _BabyOverviewColors.mutedText,
+              fontSize: 14,
+              height: 1,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -2043,9 +2190,10 @@ class _DiaperMetric extends StatelessWidget {
 }
 
 class _WineBadge extends StatelessWidget {
-  const _WineBadge({required this.label});
+  const _WineBadge({required this.label, this.compact = true});
 
   final String label;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -2055,13 +2203,17 @@ class _WineBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 10 : 12,
+          vertical: compact ? 3 : 7,
+        ),
         child: Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
+            fontFamily: MomCozyTypography.bodyFontFamily,
             color: _BabyOverviewColors.wine,
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
+            fontSize: compact ? 12 : 14,
+            fontWeight: compact ? FontWeight.w600 : FontWeight.w700,
           ),
         ),
       ),

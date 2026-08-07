@@ -76,8 +76,15 @@ flutter:
     - assets/images/plan/
     - assets/images/more/
     - assets/images/me_baby_overview/
+    - assets/images/me_baby_overview/icons/
 
   fonts:
+    - family: Figtree
+      fonts:
+        - asset: assets/fonts/Figtree-VF.ttf
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/Rubik-VF.ttf
     - family: Quicksand
       fonts:
         - asset: assets/fonts/Quicksand-VF.ttf

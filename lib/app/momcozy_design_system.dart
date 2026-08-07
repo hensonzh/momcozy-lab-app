@@ -111,6 +111,8 @@ class MomCozyAssets {
 class MomCozyTypography {
   const MomCozyTypography._();
 
+  static const displayFontFamily = 'Rubik';
+  static const bodyFontFamily = 'Figtree';
   static const fontFamily = 'Quicksand';
   static const fontFamilyFallback = ['NotoSansSC', 'PingFang SC', 'Arial'];
 }
