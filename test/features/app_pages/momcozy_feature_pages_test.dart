@@ -61,7 +61,7 @@ void main() {
         } else if (route.path == '/schedule') {
           expect(find.text('计划待同步'), findsWidgets);
         } else if (route.path == '/more/body-profile/edit') {
-          expect(find.text('Postpartum Recovery Tracker'), findsWidgets);
+          expect(find.text('Body profile editing unavailable'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }

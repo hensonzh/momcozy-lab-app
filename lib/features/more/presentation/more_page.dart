@@ -72,7 +72,7 @@ class MorePage extends StatelessWidget {
                 tileKey: const ValueKey('more-body-profile'),
                 icon: Icons.health_and_safety_outlined,
                 title: 'Body Profile',
-                subtitle: '查看产后恢复与健康档案',
+                subtitle: '查看健康档案连接状态',
                 onTap: () => context.go('/more/body-profile'),
               ),
               const _MoreTile(
