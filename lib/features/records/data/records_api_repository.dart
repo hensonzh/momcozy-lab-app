@@ -19,6 +19,7 @@ class RecordsApiRepository
   @override
   Future<List<FeedingRecord>> fetchFeedingRecords({
     required DateTime date,
+    required String babyId,
   }) async {
     final range = _dayRange(date);
     final response = await transport.getJson(
@@ -26,6 +27,7 @@ class RecordsApiRepository
       query: {
         'start_at': range.start.toIso8601String(),
         'end_at': range.end.toIso8601String(),
+        if (babyId.trim().isNotEmpty) 'infant_id': babyId.trim(),
         'limit': 50,
       },
     );
@@ -38,6 +40,33 @@ class RecordsApiRepository
               )
               .toList(growable: false)
         : const <FeedingRecord>[];
+  }
+
+  @override
+  Future<FeedingRecord> createFeedingRecord({
+    required String babyId,
+    required DateTime occurredAt,
+    required String type,
+    double? amountMl,
+    int? durationSeconds,
+    String? idempotencyKey,
+  }) async {
+    final body = <String, Object?>{
+      if (babyId.trim().isNotEmpty) 'infant_id': babyId.trim(),
+      'feed_time': occurredAt.toUtc().toIso8601String(),
+      'feed_type': type.trim(),
+      'volume_ml': amountMl,
+      'duration_seconds': durationSeconds,
+    }..removeWhere((_, value) => value == null);
+    final response = await transport.postJson(
+      feedingRecordsEndpoint,
+      body: body,
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _feedingRecord(response);
   }
 
   @override
@@ -56,6 +85,31 @@ class RecordsApiRepository
     required DateTime end,
   }) {
     return _fetchPumpMilkRecordsRange(start: start, end: end, limit: 100);
+  }
+
+  @override
+  Future<PumpMilkRecord> createPumpMilkRecord({
+    required DateTime occurredAt,
+    double? amountMl,
+    int? durationSeconds,
+    String? idempotencyKey,
+  }) async {
+    final body = <String, Object?>{
+      'pump_start_time': occurredAt.toUtc().toIso8601String(),
+      'milk_volume_ml': amountMl,
+      'duration_seconds': durationSeconds,
+      'pump_type': 'manual',
+      'source': 'manual',
+    }..removeWhere((_, value) => value == null);
+    final response = await transport.postJson(
+      pumpMilkRecordsEndpoint,
+      body: body,
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _pumpMilkRecord(response);
   }
 
   Future<List<PumpMilkRecord>> _fetchPumpMilkRecordsRange({

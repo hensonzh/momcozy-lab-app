@@ -99,6 +99,20 @@ void main() {
       },
     );
 
+    test('a refresh failure preserves previously loaded data', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(records: records);
+      addTearDown(controller.dispose);
+      await controller.initialize();
+      final previous = controller.milkTrends.value.data;
+      records.milkTrendError = StateError('offline');
+
+      await controller.refresh();
+
+      expect(controller.milkTrends.value.hasError, isTrue);
+      expect(controller.milkTrends.value.data, same(previous));
+    });
+
     test(
       'stage changes publish saving and success without refetching',
       () async {
@@ -154,6 +168,122 @@ void main() {
         expect(controller.careStage.value.error, isNotNull);
       },
     );
+
+    test('a successful profile without a stage stays unselected', () async {
+      final controller = _controller(
+        overviewRepository: _FakeProfileOverviewRepository(
+          overview: const ProfileOverview(),
+        ),
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(controller.careStage.value.isResolved, isTrue);
+      expect(controller.careStage.value.stage, isNull);
+    });
+
+    test('a failed profile read never invents a postpartum stage', () async {
+      final controller = _controller(
+        overviewRepository: _FakeProfileOverviewRepository(
+          fetchError: StateError('offline'),
+        ),
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(controller.overview.value.hasError, isTrue);
+      expect(controller.careStage.value.isResolved, isFalse);
+      expect(controller.careStage.value.stage, isNull);
+      expect(controller.careStage.value.error, isNotNull);
+    });
+
+    test('Baby scopes feeding reads to the current session infant', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(
+        records: records,
+        identity: ProfileIdentity.baby,
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(records.feedingBabyId, 'baby-001');
+    });
+
+    test(
+      'Baby uses the resolved infant when the session id is stale',
+      () async {
+        final records = _FakeRecordsRepository();
+        final controller = _controller(
+          overviewRepository: _FakeProfileOverviewRepository(
+            overview: const ProfileOverview(
+              baby: BabyProfileOverview(id: 'baby-resolved'),
+            ),
+          ),
+          records: records,
+          identity: ProfileIdentity.baby,
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        expect(records.feedingBabyId, 'baby-resolved');
+      },
+    );
+
+    test('saving a pumping record refreshes measured milk trends', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(records: records);
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      final saved = await controller.savePumpingRecord(amountMl: 95);
+
+      expect(saved, isTrue);
+      expect(records.createdPumpingAmountMl, 95);
+      expect(records.milkTrendFetchCount, 2);
+      expect(controller.recordMutation.value.isSaving, isFalse);
+      expect(controller.recordMutation.value.error, isNull);
+    });
+
+    test('saving a feeding record keeps the current infant scope', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(
+        records: records,
+        identity: ProfileIdentity.baby,
+      );
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      final saved = await controller.saveFeedingRecord(
+        type: 'bottle',
+        amountMl: 80,
+      );
+
+      expect(saved, isTrue);
+      expect(records.createdFeedingBabyId, 'baby-001');
+      expect(records.createdFeedingAmountMl, 80);
+      expect(records.feedingFetchCount, 2);
+    });
+
+    test('saving a growth record refreshes growth data', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(
+        records: records,
+        identity: ProfileIdentity.baby,
+      );
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      final saved = await controller.saveGrowthRecord(weightKg: 6.3);
+
+      expect(saved, isTrue);
+      expect(records.createdGrowthBabyId, 'baby-001');
+      expect(records.createdGrowthWeightKg, 6.3);
+      expect(records.growthFetchCount, 2);
+    });
   });
 }
 
@@ -169,6 +299,7 @@ ProfileOverviewController _controller({
     profileOverviewRepository:
         overviewRepository ?? _FakeProfileOverviewRepository(),
     feedingRepository: effectiveRecords,
+    pumpMilkRepository: effectiveRecords,
     milkTrendRepository: effectiveRecords,
     growthRepository: effectiveRecords,
     babyId: 'baby-001',
@@ -179,22 +310,29 @@ ProfileOverviewController _controller({
 }
 
 class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
-  _FakeProfileOverviewRepository({this.updateError});
+  _FakeProfileOverviewRepository({
+    this.updateError,
+    this.fetchError,
+    this.overview = const ProfileOverview(
+      mom: MomProfileOverview(
+        stage: MomLifeStage.postpartum,
+        postpartumDay: 42,
+      ),
+      baby: BabyProfileOverview(id: 'baby-001', nickname: 'Mia', ageDays: 42),
+    ),
+  });
 
   final Object? updateError;
+  final Object? fetchError;
+  final ProfileOverview overview;
   var fetchCount = 0;
   final List<MomLifeStage> updatedStages = [];
 
   @override
   Future<ProfileOverview> fetchOverview() async {
     fetchCount += 1;
-    return const ProfileOverview(
-      mom: MomProfileOverview(
-        stage: MomLifeStage.postpartum,
-        postpartumDay: 42,
-      ),
-      baby: BabyProfileOverview(id: 'baby-001', nickname: 'Mia', ageDays: 42),
-    );
+    if (fetchError != null) throw fetchError!;
+    return overview;
   }
 
   @override
@@ -208,6 +346,7 @@ class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
 class _FakeRecordsRepository
     implements
         FeedingRecordsRepository,
+        PumpMilkRecordsRepository,
         MilkTrendRepository,
         GrowthRecordsRepository {
   _FakeRecordsRepository({
@@ -217,17 +356,72 @@ class _FakeRecordsRepository
 
   final List<FeedingRecord> feeding;
   final Object? growthError;
+  Object? milkTrendError;
   DateTime? milkTrendStart;
   var feedingFetchCount = 0;
   var milkTrendFetchCount = 0;
   var growthFetchCount = 0;
+  String? feedingBabyId;
+  String? createdFeedingBabyId;
+  double? createdFeedingAmountMl;
+  double? createdPumpingAmountMl;
+  String? createdGrowthBabyId;
+  double? createdGrowthWeightKg;
 
   @override
   Future<List<FeedingRecord>> fetchFeedingRecords({
     required DateTime date,
+    required String babyId,
   }) async {
     feedingFetchCount += 1;
+    feedingBabyId = babyId;
     return feeding;
+  }
+
+  @override
+  Future<FeedingRecord> createFeedingRecord({
+    required String babyId,
+    required DateTime occurredAt,
+    required String type,
+    double? amountMl,
+    int? durationSeconds,
+    String? idempotencyKey,
+  }) async {
+    createdFeedingBabyId = babyId;
+    createdFeedingAmountMl = amountMl;
+    return FeedingRecord(
+      id: 'feeding-created',
+      type: type,
+      amountMl: amountMl?.round(),
+      occurredAt: occurredAt,
+    );
+  }
+
+  @override
+  Future<List<PumpMilkRecord>> fetchPumpMilkRecords({
+    required DateTime date,
+  }) async => const [];
+
+  @override
+  Future<List<PumpMilkRecord>> fetchPumpMilkRecordsRange({
+    required DateTime start,
+    required DateTime end,
+  }) async => const [];
+
+  @override
+  Future<PumpMilkRecord> createPumpMilkRecord({
+    required DateTime occurredAt,
+    double? amountMl,
+    int? durationSeconds,
+    String? idempotencyKey,
+  }) async {
+    createdPumpingAmountMl = amountMl;
+    return PumpMilkRecord(
+      id: 'pumping-created',
+      title: '',
+      amountMl: amountMl?.round(),
+      occurredAt: occurredAt,
+    );
   }
 
   @override
@@ -238,6 +432,7 @@ class _FakeRecordsRepository
   }) async {
     milkTrendFetchCount += 1;
     milkTrendStart = startDate;
+    if (milkTrendError != null) throw milkTrendError!;
     return [
       MilkTrendDay(
         date: DateTime(2026, 7, 11),
@@ -264,8 +459,16 @@ class _FakeRecordsRepository
     double? heightCm,
     double? headCm,
     String? idempotencyKey,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    createdGrowthBabyId = babyId;
+    createdGrowthWeightKg = weightKg;
+    return GrowthRecord(
+      id: 'growth-created',
+      weightGram: weightKg == null ? null : (weightKg * 1000).round(),
+      heightCm: heightCm,
+      headCm: headCm,
+      measuredAt: measuredAt,
+    );
   }
 
   @override

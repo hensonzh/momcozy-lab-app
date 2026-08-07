@@ -100,14 +100,10 @@ class MomCozyFeaturePage extends StatelessWidget {
         ),
       ),
       '/more' => MorePage(path: path, onLogout: onLogout),
-      '/more/body-profile' => MoreProfileOverviewPage(
-        path: path,
-        onOpenEditor: () => context.go('/more/body-profile/edit'),
-      ),
+      '/more/body-profile' => MoreProfileOverviewPage(path: path),
       '/more/body-profile/edit' => MoreBodyProfileEditorPage(
         path: path,
         onBack: () => context.go('/more/body-profile'),
-        onSave: () => context.go('/more/body-profile'),
       ),
       '/me' => MeBabyOverviewPage(path: path, identity: ProfileIdentity.mom),
       '/baby' => MeBabyOverviewPage(path: path, identity: ProfileIdentity.baby),

@@ -33,6 +33,7 @@ void main() {
       });
       final repository = ProfileOverviewApiRepository(
         transport: transport,
+        babyId: 'infant-001',
         now: () => DateTime.utc(2026, 7, 1),
       );
 
@@ -42,6 +43,7 @@ void main() {
       expect(transport.lastPath, profileInfantsEndpoint);
       expect(transport.lastQuery, isEmpty);
       expect(overview.mom?.stage, MomLifeStage.postpartum);
+      expect(overview.mom?.displayName, 'Mom');
       expect(overview.mom?.postpartumDay, 42);
       expect(overview.mom?.deliveryDate, DateTime.parse('2026-05-20'));
       expect(overview.mom?.dueDateOrWeek, '孕 32 周');
@@ -63,6 +65,7 @@ void main() {
             },
             profileInfantsEndpoint: const {'items': []},
           }),
+          babyId: 'infant-001',
           now: () => DateTime.utc(2026, 7, 1),
         );
 
@@ -84,7 +87,10 @@ void main() {
             },
           },
         );
-        final repository = ProfileOverviewApiRepository(transport: transport);
+        final repository = ProfileOverviewApiRepository(
+          transport: transport,
+          babyId: 'infant-001',
+        );
 
         final stage = await repository.updateCareStage(MomLifeStage.pregnancy);
 
@@ -101,6 +107,7 @@ void main() {
           profileMeEndpoint: const {'user_id': 'user-001'},
           profileInfantsEndpoint: const {'items': []},
         }),
+        babyId: 'infant-001',
         now: () => DateTime.utc(2026, 7, 1),
       );
 
@@ -125,6 +132,7 @@ void main() {
             },
           },
         }),
+        babyId: 'infant-001',
       );
 
       await expectLater(
@@ -154,6 +162,7 @@ void main() {
               ],
             },
           }),
+          babyId: 'baby-local-day',
           now: () => DateTime(2026, 7, 1, 0, 15),
         );
 
@@ -166,7 +175,10 @@ void main() {
 
     test('starts profile and infant reads in parallel', () async {
       final transport = _DeferredProfileOverviewTransport();
-      final repository = ProfileOverviewApiRepository(transport: transport);
+      final repository = ProfileOverviewApiRepository(
+        transport: transport,
+        babyId: 'infant-001',
+      );
 
       final overview = repository.fetchOverview();
       await Future<void>.delayed(Duration.zero);
@@ -178,6 +190,66 @@ void main() {
       transport.complete(profileMeEndpoint, const {'user_id': 'user-001'});
       transport.complete(profileInfantsEndpoint, const {'items': []});
       await overview;
+    });
+
+    test('selects the session infant instead of the first infant', () async {
+      final repository = ProfileOverviewApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          profileMeEndpoint: const {'user_id': 'user-001'},
+          profileInfantsEndpoint: const {
+            'items': [
+              {'id': 'infant-other', 'infant_name': 'Other baby'},
+              {'id': 'infant-current', 'infant_name': 'Current baby'},
+            ],
+          },
+        }),
+        babyId: 'infant-current',
+      );
+
+      final overview = await repository.fetchOverview();
+
+      expect(overview.baby?.id, 'infant-current');
+      expect(overview.baby?.nickname, 'Current baby');
+    });
+
+    test(
+      'does not expose another infant when the session infant is absent',
+      () async {
+        final repository = ProfileOverviewApiRepository(
+          transport: FixtureApiJsonTransportByPath({
+            profileMeEndpoint: const {'user_id': 'user-001'},
+            profileInfantsEndpoint: const {
+              'items': [
+                {'id': 'infant-other', 'infant_name': 'Other baby'},
+                {'id': 'infant-another', 'infant_name': 'Another baby'},
+              ],
+            },
+          }),
+          babyId: 'infant-current',
+        );
+
+        final overview = await repository.fetchOverview();
+
+        expect(overview.baby, isNull);
+      },
+    );
+
+    test('uses the only owned infant when the session id is stale', () async {
+      final repository = ProfileOverviewApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          profileMeEndpoint: const {'user_id': 'user-001'},
+          profileInfantsEndpoint: const {
+            'items': [
+              {'id': 'infant-only', 'infant_name': 'Only baby'},
+            ],
+          },
+        }),
+        babyId: 'stale-session-id',
+      );
+
+      final overview = await repository.fetchOverview();
+
+      expect(overview.baby?.id, 'infant-only');
     });
   });
 }

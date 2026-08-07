@@ -1505,7 +1505,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/more/body-profile',
     title: 'Body Profile',
-    summary: 'Postpartum recovery profile and confirmed health records.',
+    summary: 'Private recovery profile availability and data state.',
     icon: Icons.health_and_safety_outlined,
     accent: Color(0xffa21849),
     priority: 'P1',
@@ -1513,7 +1513,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/more/body-profile/edit',
     title: 'Edit Body Profile',
-    summary: 'Edit postpartum recovery and pain profile.',
+    summary: 'Body profile editor availability.',
     icon: Icons.edit_note_rounded,
     accent: Color(0xffa21849),
     priority: 'P1',

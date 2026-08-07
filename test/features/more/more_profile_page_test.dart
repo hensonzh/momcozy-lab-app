@@ -25,61 +25,38 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Body Profile'), findsOneWidget);
-    expect(find.text('Your recovery profile'), findsOneWidget);
-    expect(find.text('Confirmed profile'), findsOneWidget);
-    expect(find.text('Pelvic floor & bladder'), findsOneWidget);
-    expect(find.text('Core & abdomen'), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.text('Pain map'),
-      260,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(find.text('Pain map'), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.text('Postpartum recovery'),
-      260,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(find.text('Postpartum recovery'), findsOneWidget);
+    expect(find.text('No body profile data yet'), findsOneWidget);
+    expect(find.text('Nothing is inferred'), findsOneWidget);
+    expect(find.text('Pelvic floor & bladder'), findsNothing);
+    expect(find.text('Core & abdomen'), findsNothing);
+    expect(find.text('74'), findsNothing);
+    expect(find.byKey(const ValueKey('more-add-health-record')), findsNothing);
 
     expect(find.byKey(const ValueKey('bottom-nav-more')), findsNothing);
   });
 
-  testWidgets('profile actions open the editor and save returns to More', (
+  testWidgets('direct editor route is guarded until persistence exists', (
     tester,
   ) async {
-    await _pumpApp(tester, initialLocation: '/more/body-profile');
-
-    await tester.tap(find.byKey(const ValueKey('more-edit-pelvic-floor')));
-    await tester.pumpAndSettle();
+    await _pumpApp(tester, initialLocation: '/more/body-profile/edit');
 
     expect(
       find.byKey(const ValueKey('route-page-/more/body-profile/edit')),
       findsOneWidget,
     );
-    expect(find.text('Postpartum Recovery Tracker'), findsOneWidget);
-    expect(find.text('Pelvic Floor Health'), findsOneWidget);
-    expect(find.text('Diastasis Recti'), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.text('Pain Map'),
-      260,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(find.text('Pain Map'), findsOneWidget);
-    expect(find.text('Save Profile'), findsOneWidget);
+    expect(find.text('Body profile editing unavailable'), findsOneWidget);
+    expect(find.text('Save Profile'), findsNothing);
+    expect(find.text('Sometimes'), findsNothing);
     expect(find.byKey(const ValueKey('bottom-nav-more')), findsNothing);
 
-    await tester.tap(find.byKey(const ValueKey('more-save-profile')));
+    await tester.tap(find.byKey(const ValueKey('more-body-profile-back')));
     await tester.pumpAndSettle();
 
     expect(
       find.byKey(const ValueKey('route-page-/more/body-profile')),
       findsOneWidget,
     );
-    expect(find.text('Your recovery profile'), findsOneWidget);
+    expect(find.text('No body profile data yet'), findsOneWidget);
   });
 
   testWidgets('More remains usable on a narrow phone', (tester) async {
@@ -90,18 +67,23 @@ void main() {
 
     await _pumpApp(tester, initialLocation: '/more/body-profile');
 
-    expect(find.text('Your recovery profile'), findsOneWidget);
+    expect(find.text('No body profile data yet'), findsOneWidget);
     expect(tester.takeException(), isNull);
+    expect(find.byKey(const ValueKey('more-add-health-record')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('more-add-health-record')),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(
-      find.byKey(const ValueKey('more-add-health-record')),
-      findsOneWidget,
-    );
+  testWidgets('Body Profile supports 200 percent text', (tester) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await _pumpApp(tester, initialLocation: '/more/body-profile');
+
+    expect(find.text('No body profile data yet'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -137,17 +119,6 @@ Future<void> _pumpApp(
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
 
-  await tester.pumpWidget(
-    const MaterialApp(
-      home: SizedBox(key: ValueKey('more-asset-precache-host')),
-    ),
-  );
-  await tester.runAsync(
-    () => precacheImage(
-      const AssetImage('assets/images/more/recovery_score.png'),
-      tester.element(find.byKey(const ValueKey('more-asset-precache-host'))),
-    ),
-  );
   await tester.pumpWidget(
     MomCozyFlutterApp(
       router: createMomCozyRouter(initialLocation: initialLocation),
