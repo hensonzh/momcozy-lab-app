@@ -23,12 +23,6 @@ List<RouteIntent> routeIntentsFromNativePayloads(List<Object?> payloads) {
 }
 
 List<RouteIntent> routeIntentsFromPendingStorage(Map<String, Object?> storage) {
-  final birthJourneyIntent = _planPendingIntent(
-    raw: _string(storage['mmc_birth_journey_plan_nav_pending']),
-    type: 'OpenStatusBirthJourneyBadge',
-    path: '/status',
-    fallbackPayload: const {'source': 'birthJourneyPlanChanged'},
-  );
   final milkPlanIntent = _planPendingIntent(
     raw: _string(storage['mmc_milk_plan_nav_pending']),
     type: 'OpenSchedulePlanBadge',
@@ -36,17 +30,7 @@ List<RouteIntent> routeIntentsFromPendingStorage(Map<String, Object?> storage) {
     fallbackPayload: const {'source': 'milkPlanChanged'},
   );
 
-  return [
-    ?birthJourneyIntent,
-    ?milkPlanIntent,
-    if (_string(storage['mmc_pregnancy_diary_nav_pending']) == '1')
-      const RouteIntent(
-        type: 'OpenStatusPregnancyDiaryBadge',
-        path: '/status',
-        payload: {'source': 'pregnancyDiaryChanged'},
-        consume: 'once',
-      ),
-  ];
+  return [?milkPlanIntent];
 }
 
 List<RouteIntent> routeIntentsFromAgentNavigationEvents(List<Object?> events) {
@@ -140,32 +124,13 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
     );
   }
 
-  final statusIntent = event == 'grown'
-      ? 'growth'
-      : query['statusIntent'] ?? query['mmcNotify'];
   if (cleanPath == '/status') {
-    final normalizedStatusIntent = switch (statusIntent) {
-      'growth' || 'growth-highlight' => 'growth',
-      'pregnancy-diary' => 'pregnancy-diary',
-      'birth-journey' => 'birth-journey',
-      _ => null,
-    };
-    if (normalizedStatusIntent != null) {
-      final type = switch (normalizedStatusIntent) {
-        'growth' => 'OpenStatusGrowthHighlight',
-        'pregnancy-diary' => 'OpenStatusPregnancyDiaryBadge',
-        _ => 'OpenStatusBirthJourneyBadge',
-      };
-      return RouteIntent(
-        type: type,
-        path: '/status',
-        payload: {
-          'statusIntent': normalizedStatusIntent,
-          'source': 'native-notification',
-        },
-        consume: 'once',
-      );
-    }
+    return const RouteIntent(
+      type: 'OpenMe',
+      path: '/me',
+      payload: {'source': 'legacy-status-route'},
+      consume: 'once',
+    );
   }
 
   if (cleanPath != '/') {

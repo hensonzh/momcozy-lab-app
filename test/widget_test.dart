@@ -103,7 +103,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     expect(
       tester
           .widget<AgentHubPage>(find.byType(AgentHubPage))
@@ -607,7 +607,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
+    expect(find.byKey(const ValueKey('route-page-/me')), findsOneWidget);
 
     routes.dispatchActiveRoute(const PendingNativeRoute(path: '/pump'));
     await tester.pumpAndSettle();

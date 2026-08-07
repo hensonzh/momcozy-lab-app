@@ -12,7 +12,7 @@ import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_ap
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 
 class StagingSmokeConfig {
   const StagingSmokeConfig({
@@ -196,7 +196,10 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
   );
 
   return [
-    _StatusProbe(config, StatusApiRepository(transport: jsonTransport)),
+    _ProfileOverviewProbe(
+      config,
+      ProfileOverviewApiRepository(transport: jsonTransport),
+    ),
     _ScheduleProbe(config, ScheduleApiRepository(transport: jsonTransport)),
     _RecordsProbe(config, RecordsApiRepository(transport: jsonTransport)),
     _PumpWorkstateProbe(PumpWorkstateApiRepository(transport: jsonTransport)),
@@ -212,14 +215,14 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
   ];
 }
 
-class _StatusProbe implements StagingSmokeProbe {
-  const _StatusProbe(this.config, this.repository);
+class _ProfileOverviewProbe implements StagingSmokeProbe {
+  const _ProfileOverviewProbe(this.config, this.repository);
 
   final StagingSmokeConfig config;
-  final StatusApiRepository repository;
+  final ProfileOverviewApiRepository repository;
 
   @override
-  String get name => 'status /v1/profile/me + /v1/profile/infants';
+  String get name => 'profile overview /v1/profile/me + /v1/profile/infants';
 
   @override
   bool get requiresMutation => false;

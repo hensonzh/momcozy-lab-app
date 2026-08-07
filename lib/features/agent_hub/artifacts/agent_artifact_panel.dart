@@ -205,11 +205,12 @@ Widget? _specializedArtifactCard({
     AgentArtifactPresentationKind.unsupported => _AgentUnsupportedArtifactCard(
       card: card,
     ),
-    AgentArtifactPresentationKind.milkAnalysisCard ||
-    AgentArtifactPresentationKind.milkPlanCard => _AgentMilkManagementCard(
+    AgentArtifactPresentationKind.milkAnalysisCard => _AgentMilkManagementCard(
       card: card,
-      cardType: card.artifactType ?? card.cardType ?? 'milk_plan_card',
+      cardType: card.artifactType ?? card.cardType ?? 'milk_analysis_card',
     ),
+    AgentArtifactPresentationKind.milkPlanCard =>
+      _AgentLactationPlanBoundaryCard(card: card, onAction: onAction),
     AgentArtifactPresentationKind.birthJourneyPlanCard =>
       _AgentBirthJourneyPlanCard(card: card),
     AgentArtifactPresentationKind.birthPlanCard =>
@@ -530,6 +531,66 @@ class _AgentMilkManagementCard extends StatelessWidget {
       ],
     );
   }
+}
+
+class _AgentLactationPlanBoundaryCard extends StatelessWidget {
+  const _AgentLactationPlanBoundaryCard({required this.card, this.onAction});
+
+  final AgentArtifactCardView card;
+  final ValueChanged<AgentArtifactActionView>? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final cardJson = _effectiveCardJson(card);
+    final statusLabel =
+        card.statusLabel ??
+        _displayString(cardJson['status']) ??
+        _displayString(card.payload['status']) ??
+        '状态待同步';
+    final actions = card.actions
+        .where(_isAllowedLactationPlanAction)
+        .toList(growable: false);
+
+    return KeyedSubtree(
+      key: ValueKey('agent-artifact-card-${card.id}'),
+      child: _AgentArtifactSpecializedShell(
+        card: card,
+        icon: Icons.water_drop_outlined,
+        accentColor: MomCozyV3Colors.brand,
+        statusLabel: statusLabel,
+        showLogo: false,
+        children: [
+          const _AgentArtifactBodyText(
+            '计划内容请在专属泌乳计划流程中查看。Cozymate 不生成或编辑计划内容，只负责打开流程和管理状态。',
+          ),
+          if (actions.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (var index = 0; index < actions.length; index++)
+                  OutlinedButton.icon(
+                    key: ValueKey('agent-artifact-action-${card.id}-$index'),
+                    onPressed: onAction == null
+                        ? null
+                        : () => onAction!(actions[index]),
+                    icon: Icon(actions[index].icon, size: 18),
+                    label: Text(actions[index].label),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+bool _isAllowedLactationPlanAction(AgentArtifactActionView action) {
+  final label = action.label.trim();
+  if (RegExp(r'调整|编辑|生成|改写|目标|内容').hasMatch(label)) return false;
+  return RegExp(r'打开|查看|继续|状态|暂停|恢复|完成|取消').hasMatch(label);
 }
 
 class _AgentMilkSection extends StatelessWidget {

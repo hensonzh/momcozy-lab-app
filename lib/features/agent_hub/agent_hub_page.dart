@@ -44,8 +44,6 @@ import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
 import 'package:video_player/video_player.dart';
 
@@ -229,8 +227,6 @@ class AgentHubPage extends StatefulWidget {
     this.onArtifactAction,
     this.onHospitalBagCartUpdate,
     this.onHospitalBagCartContextRequired,
-    this.onPregnancyDiaryChange,
-    this.onPregnancyPlanChange,
     this.onMilkPlanChange,
     this.onNewSession,
     this.initialComposerText,
@@ -261,8 +257,6 @@ class AgentHubPage extends StatefulWidget {
   final AgentArtifactActionHandler? onArtifactAction;
   final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
   final VoidCallback? onHospitalBagCartContextRequired;
-  final ValueChanged<PregnancyDiaryChange>? onPregnancyDiaryChange;
-  final ValueChanged<PregnancyPlanChange>? onPregnancyPlanChange;
   final ValueChanged<MilkPlanChange>? onMilkPlanChange;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
@@ -298,8 +292,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
   final Set<String> _appliedHospitalBagCartUpdates = <String>{};
-  final Set<String> _appliedPregnancyDiaryChangeEventIds = <String>{};
-  final Set<String> _appliedPregnancyPlanChangeEventIds = <String>{};
   final Set<String> _appliedMilkPlanChangeEventIds = <String>{};
   bool _hospitalBagCartLinkContextApplied = false;
   final ScrollController _chatScrollController = ScrollController();
@@ -369,8 +361,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _restoreCachedInteractionState();
     _seedExistingFormPresentations();
     _applyHospitalBagCartUpdates(_state);
-    _applyPregnancyDiaryChanges(_state);
-    _applyPregnancyPlanChanges(_state);
     _applyMilkPlanChanges(_state);
     _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
@@ -413,12 +403,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
         oldWidget.ibclcConsultStore,
         widget.ibclcConsultStore,
       );
-    }
-    if (oldWidget.onPregnancyDiaryChange != widget.onPregnancyDiaryChange) {
-      _applyPregnancyDiaryChanges(_state);
-    }
-    if (oldWidget.onPregnancyPlanChange != widget.onPregnancyPlanChange) {
-      _applyPregnancyPlanChanges(_state);
     }
     if (oldWidget.onMilkPlanChange != widget.onMilkPlanChange) {
       _applyMilkPlanChanges(_state);
@@ -642,8 +626,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
     if (shouldRestore) {
       _applyHospitalBagCartUpdates(_state);
-      _applyPregnancyDiaryChanges(_state);
-      _applyPregnancyPlanChanges(_state);
       _applyMilkPlanChanges(_state);
       _applyHospitalBagCartLinkContext(_state);
     }
@@ -1939,8 +1921,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (hospitalBagCartProjectionChanged) {
       _applyHospitalBagCartUpdates(nextState);
     }
-    _applyPregnancyDiaryChanges(nextState);
-    _applyPregnancyPlanChanges(nextState);
     _applyMilkPlanChanges(nextState);
     _applyHospitalBagCartLinkContext(
       nextState,
@@ -2038,32 +2018,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
         '${seed.artifactId}:${jsonEncode(seed.snapshot.toAgentContext())}';
     if (!_appliedHospitalBagCartUpdates.add(signature)) return;
     onUpdate(seed);
-  }
-
-  void _applyPregnancyDiaryChanges(AgentStreamRunState state) {
-    final onChange = widget.onPregnancyDiaryChange;
-    if (onChange == null) return;
-    for (final event in state.events) {
-      final change = PregnancyDiaryChange.tryFromEvent(event);
-      if (change == null ||
-          !_appliedPregnancyDiaryChangeEventIds.add(change.eventId)) {
-        continue;
-      }
-      onChange(change);
-    }
-  }
-
-  void _applyPregnancyPlanChanges(AgentStreamRunState state) {
-    final onChange = widget.onPregnancyPlanChange;
-    if (onChange == null) return;
-    for (final event in state.events) {
-      final change = PregnancyPlanChange.tryFromEvent(event);
-      if (change == null ||
-          !_appliedPregnancyPlanChangeEventIds.add(change.eventId)) {
-        continue;
-      }
-      onChange(change);
-    }
   }
 
   void _applyMilkPlanChanges(AgentStreamRunState state) {
@@ -2679,10 +2633,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
     for (final event in events) {
       nextState = nextState.applyEvent(event);
     }
-    _applyPregnancyDiaryChanges(nextState);
-    _applyPregnancyPlanChanges(nextState);
     _applyMilkPlanChanges(nextState);
     _setRunState(nextState);
+  }
+
+  void _selectV3ServicePrompt(String prompt) {
+    if (_isComposerLocked || !_interactionRestoreResolved) return;
+    _composerController.value = TextEditingValue(
+      text: prompt,
+      selection: TextSelection.collapsed(offset: prompt.length),
+    );
+    _composerFocusNode.requestFocus();
   }
 
   @override
@@ -2822,6 +2783,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       // Generated quick replies are temporarily hidden
                                       // while the follow-up interaction is redesigned.
                                       onQuickReplySelected: null,
+                                      onServiceSelected: _selectV3ServicePrompt,
                                       pendingActionIds: _pendingActionIds,
                                       localActionStatuses: _localActionStatuses,
                                       productAssetRepository:
@@ -2963,61 +2925,111 @@ class AgentHubTopBar extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
         child: Row(
           children: [
-            if (showControls && onOpenConversations != null)
-              IconButton(
-                key: const ValueKey('agent-conversation-history-button'),
-                onPressed: onOpenConversations,
-                icon: const Icon(Icons.menu_rounded, size: 20),
-                tooltip: '打开会话历史',
-                color: const Color(0xff3b2f36),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  fixedSize: const Size.square(36),
-                  minimumSize: const Size.square(36),
-                  padding: EdgeInsets.zero,
-                ),
-              )
-            else
-              const SizedBox.square(dimension: 36),
-            const Spacer(),
-            if (showControls) ...[
-              IconButton(
-                key: const ValueKey('agent-auto-voice-button'),
-                onPressed: onToggleAutoVoice,
-                icon: Icon(
-                  autoVoiceEnabled
-                      ? Icons.volume_up_outlined
-                      : Icons.volume_off_outlined,
-                  size: 16,
-                ),
-                tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
-                color: autoVoiceEnabled
-                    ? Colors.black
-                    : MomCozyColors.background,
-                style: IconButton.styleFrom(
-                  backgroundColor: autoVoiceEnabled
-                      ? Colors.transparent
-                      : const Color(0xff7a6670),
-                  fixedSize: const Size.square(36),
-                  minimumSize: const Size.square(36),
-                  padding: EdgeInsets.zero,
-                ),
+            SizedBox(
+              width: 96,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: showControls && onOpenConversations != null
+                    ? IconButton(
+                        key: const ValueKey(
+                          'agent-conversation-history-button',
+                        ),
+                        onPressed: onOpenConversations,
+                        icon: const Icon(Icons.menu_rounded, size: 20),
+                        tooltip: '打开会话历史',
+                        color: MomCozyV3Colors.ink,
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          fixedSize: const Size.square(
+                            MomCozyTapTargets.minimum,
+                          ),
+                          minimumSize: const Size.square(
+                            MomCozyTapTargets.minimum,
+                          ),
+                          padding: EdgeInsets.zero,
+                        ),
+                      )
+                    : const SizedBox.square(
+                        dimension: MomCozyTapTargets.minimum,
+                      ),
               ),
-              const SizedBox(width: 4),
-              IconButton(
-                key: const ValueKey('agent-new-session-button'),
-                onPressed: isRunning ? null : onNewSession,
-                icon: const Icon(Icons.add_rounded, size: 16),
-                tooltip: '新建会话',
-                color: const Color(0xff3b2f36),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  fixedSize: const Size.square(36),
-                  minimumSize: const Size.square(36),
-                  padding: EdgeInsets.zero,
-                ),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Cozymate',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: MomCozyV3Colors.ink,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const Text(
+                    '母婴健康 · 日程 · 泌乳计划',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: MomCozyColors.mutedForeground,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
+            SizedBox(
+              width: 96,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (showControls) ...[
+                    IconButton(
+                      key: const ValueKey('agent-auto-voice-button'),
+                      onPressed: onToggleAutoVoice,
+                      icon: Icon(
+                        autoVoiceEnabled
+                            ? Icons.volume_up_outlined
+                            : Icons.volume_off_outlined,
+                        size: 16,
+                      ),
+                      tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
+                      color: autoVoiceEnabled
+                          ? Colors.black
+                          : MomCozyColors.background,
+                      style: IconButton.styleFrom(
+                        backgroundColor: autoVoiceEnabled
+                            ? Colors.transparent
+                            : const Color(0xff7a6670),
+                        fixedSize: const Size.square(MomCozyTapTargets.minimum),
+                        minimumSize: const Size.square(
+                          MomCozyTapTargets.minimum,
+                        ),
+                        padding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    IconButton(
+                      key: const ValueKey('agent-new-session-button'),
+                      onPressed: isRunning ? null : onNewSession,
+                      icon: const Icon(Icons.add_rounded, size: 16),
+                      tooltip: '新建会话',
+                      color: const Color(0xff3b2f36),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        fixedSize: const Size.square(MomCozyTapTargets.minimum),
+                        minimumSize: const Size.square(
+                          MomCozyTapTargets.minimum,
+                        ),
+                        padding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -3838,6 +3850,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     required this.formSubmissionsListenable,
     required this.formPresentationSession,
     this.onQuickReplySelected,
+    this.onServiceSelected,
     required this.pendingActionIds,
     required this.localActionStatuses,
     this.productAssetRepository,
@@ -3859,6 +3872,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   formSubmissionsListenable;
   final AgentArtifactFormPresentationSession formPresentationSession;
   final ValueChanged<String>? onQuickReplySelected;
+  final ValueChanged<String>? onServiceSelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
@@ -3907,6 +3921,7 @@ class _AgentRunTranscriptListenableState
           allowFormAutoPresentation: true,
           artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
+          onServiceSelected: widget.onServiceSelected,
           pendingActionIds: widget.pendingActionIds,
           productAssetRepository: widget.productAssetRepository,
           profileDefaults: widget.profileDefaults,
@@ -3990,6 +4005,7 @@ class AgentRunTranscript extends StatelessWidget {
     this.allowFormAutoPresentation = false,
     this.artifactPanelKey,
     this.onQuickReplySelected,
+    this.onServiceSelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
     this.productAssetRepository,
@@ -4014,6 +4030,7 @@ class AgentRunTranscript extends StatelessWidget {
   final bool allowFormAutoPresentation;
   final Key? artifactPanelKey;
   final ValueChanged<String>? onQuickReplySelected;
+  final ValueChanged<String>? onServiceSelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
@@ -4167,6 +4184,10 @@ class AgentRunTranscript extends StatelessWidget {
                     ),
                   ],
                 ),
+              ],
+              if (isDefaultGreeting && onServiceSelected != null) ...[
+                const SizedBox(height: 20),
+                _AgentV3ServiceMenu(onSelected: onServiceSelected!),
               ],
               if (allowsSupplementaryContent && canRetry) ...[
                 const SizedBox(height: 12),
@@ -4497,6 +4518,155 @@ class AgentCitationList extends StatelessWidget {
   }
 }
 
+class _AgentV3ServiceMenu extends StatelessWidget {
+  const _AgentV3ServiceMenu({required this.onSelected});
+
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: const ValueKey('agent-v3-service-menu'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          '我可以帮你',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: MomCozyV3Colors.ink,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 10),
+        _AgentV3ServiceTile(
+          tileKey: const ValueKey('agent-v3-service-health'),
+          icon: Icons.health_and_safety_outlined,
+          title: '母婴健康咨询',
+          description: '基于知识库回答，并展示可核验来源',
+          onTap: () => onSelected('我有一个母婴健康问题，请基于知识库回答并提供来源'),
+        ),
+        const SizedBox(height: 8),
+        _AgentV3ServiceTile(
+          tileKey: const ValueKey('agent-v3-service-schedule'),
+          icon: Icons.event_note_outlined,
+          title: '日程管理',
+          description: '查询、新增、修改或删除日程；写操作先确认',
+          onTap: () => onSelected('请帮我查看并管理今天的日程'),
+        ),
+        const SizedBox(height: 8),
+        _AgentV3ServiceTile(
+          tileKey: const ValueKey('agent-v3-service-lactation-plan'),
+          icon: Icons.water_drop_outlined,
+          title: '泌乳计划',
+          description: '打开创建流程，或管理已有计划状态',
+          onTap: () => onSelected('请打开泌乳计划入口，并帮我管理计划状态'),
+        ),
+        const SizedBox(height: 12),
+        const DecoratedBox(
+          decoration: BoxDecoration(
+            color: MomCozyV3Colors.background,
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Text(
+              '健康建议不替代专业诊断；出现紧急症状请立即就医。日程和计划状态的写操作会先预览，确认后执行。',
+              style: TextStyle(
+                color: MomCozyColors.mutedForeground,
+                fontSize: 11,
+                height: 1.45,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AgentV3ServiceTile extends StatelessWidget {
+  const _AgentV3ServiceTile({
+    required this.tileKey,
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.onTap,
+  });
+
+  final Key tileKey;
+  final IconData icon;
+  final String title;
+  final String description;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: '$title，$description',
+      child: Material(
+        color: MomCozyV3Colors.surface,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          key: tileKey,
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            constraints: const BoxConstraints(
+              minHeight: MomCozyTapTargets.minimum,
+            ),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              border: Border.all(color: MomCozyV3Colors.roseTint),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: MomCozyV3Colors.roseTint,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: 20, color: MomCozyV3Colors.brand),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: MomCozyV3Colors.ink,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        description,
+                        style: const TextStyle(
+                          color: MomCozyColors.mutedForeground,
+                          fontSize: 11,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: MomCozyColors.mutedForeground,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _AgentCitationLink extends StatelessWidget {
   const _AgentCitationLink({required this.citation, this.onTap});
 
@@ -4527,16 +4697,32 @@ class _AgentCitationLink extends StatelessWidget {
             onTap: onTap,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(
-                citation.displayText,
-                overflow: TextOverflow.visible,
-                style: textTheme.labelSmall?.copyWith(
-                  color: const Color(0xff3d7d85),
-                  fontSize: 11,
-                  height: 1.35,
-                  decoration: TextDecoration.underline,
-                  decorationColor: const Color(0xffb8d7d4),
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    citation.displayText,
+                    overflow: TextOverflow.visible,
+                    style: textTheme.labelSmall?.copyWith(
+                      color: const Color(0xff3d7d85),
+                      fontSize: 11,
+                      height: 1.35,
+                      decoration: TextDecoration.underline,
+                      decorationColor: const Color(0xffb8d7d4),
+                    ),
+                  ),
+                  if (_citationMetadata(citation) case final metadata?) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      metadata,
+                      style: textTheme.labelSmall?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        fontSize: 10,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ),
@@ -4544,6 +4730,16 @@ class _AgentCitationLink extends StatelessWidget {
       ],
     );
   }
+}
+
+String? _citationMetadata(AgentCitationView citation) {
+  final source = citation.source?.trim();
+  final updatedAt = citation.updatedAt?.trim();
+  final parts = <String>[
+    if (source != null && source.isNotEmpty) source,
+    if (updatedAt != null && updatedAt.isNotEmpty) '更新 $updatedAt',
+  ];
+  return parts.isEmpty ? null : parts.join(' · ');
 }
 
 class AgentMarkdownText extends StatelessWidget {
@@ -5717,6 +5913,34 @@ class AgentActionPanel extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (action.actionTypeLabel != null) ...[
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: MomCozyV3Colors.roseTint,
+                          borderRadius: BorderRadius.circular(
+                            MomCozyRadii.pill,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: Text(
+                            action.actionTypeLabel!,
+                            style: const TextStyle(
+                              color: MomCozyV3Colors.brand,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                   if (action.subtitle != null) ...[
                     const SizedBox(height: 8),
                     Text(
@@ -5724,6 +5948,38 @@ class AgentActionPanel extends StatelessWidget {
                       style: textTheme.bodySmall?.copyWith(
                         height: 1.35,
                         color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  if (action.previewRows.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: MomCozyV3Colors.surface,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: MomCozyV3Colors.roseTint),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (
+                            var index = 0;
+                            index < action.previewRows.length;
+                            index++
+                          ) ...[
+                            Text(
+                              action.previewRows[index],
+                              style: textTheme.bodySmall?.copyWith(
+                                color: MomCozyV3Colors.ink,
+                                height: 1.4,
+                              ),
+                            ),
+                            if (index < action.previewRows.length - 1)
+                              const SizedBox(height: 4),
+                          ],
+                        ],
                       ),
                     ),
                   ],
@@ -5773,12 +6029,18 @@ class AgentActionCardView {
     required this.title,
     required this.status,
     this.subtitle,
+    this.actionType,
+    this.previewRows = const <String>[],
   });
 
   final String id;
   final String title;
   final String status;
   final String? subtitle;
+  final String? actionType;
+  final List<String> previewRows;
+
+  String? get actionTypeLabel => _agentActionTypeLabel(actionType);
 
   bool get canConfirm {
     return status == 'proposed' || status == 'confirmation_required';
@@ -6149,7 +6411,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   onChanged: onChanged,
                   scrollPadding: const EdgeInsets.only(bottom: 96),
                   decoration: InputDecoration(
-                    hintText: '和 CozyMate 聊聊...',
+                    hintText: '和 Cozymate 聊聊...',
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -6521,6 +6783,8 @@ List<AgentActionCardView> _actionCardsFromEvents(
       title: existing.title,
       status: entry.value,
       subtitle: existing.subtitle,
+      actionType: existing.actionType,
+      previewRows: existing.previewRows,
     );
   }
 
@@ -6542,14 +6806,17 @@ AgentActionCardView? _actionCardFromEvent(AgentStreamEvent event) {
   if (actionId == null || actionId.trim().isEmpty) return null;
 
   final preview = _mapField(event.payload, 'preview_payload', 'previewPayload');
+  final actionType = _firstNonEmpty([
+    _stringField(event.payload, 'action_type', 'actionType'),
+    stringField(event.raw, 'action_type') ??
+        stringField(event.raw, 'actionType'),
+  ]);
   final title =
       _firstNonEmpty([
         _stringField(event.payload, 'title'),
         _stringField(preview, 'title'),
         _stringField(preview, 'summary'),
-        _stringField(event.payload, 'action_type', 'actionType'),
-        stringField(event.raw, 'action_type') ??
-            stringField(event.raw, 'actionType'),
+        actionType,
         '需要确认后继续',
       ]) ??
       '需要确认后继续';
@@ -6565,7 +6832,74 @@ AgentActionCardView? _actionCardFromEvent(AgentStreamEvent event) {
     title: title,
     status: _actionStatus(event),
     subtitle: subtitle,
+    actionType: actionType,
+    previewRows: _agentActionPreviewRows(preview),
   );
+}
+
+String? _agentActionTypeLabel(String? actionType) {
+  final normalized = actionType?.trim().toLowerCase();
+  if (normalized == null || normalized.isEmpty) return null;
+  if (normalized.contains('schedule') || normalized.contains('task')) {
+    if (normalized.contains('delete') || normalized.contains('remove')) {
+      return '日程删除';
+    }
+    if (normalized.contains('create') || normalized.contains('add')) {
+      return '日程新增';
+    }
+    if (normalized.contains('update') || normalized.contains('edit')) {
+      return '日程修改';
+    }
+    return '日程操作';
+  }
+  if (normalized.contains('milk_plan') ||
+      normalized.contains('lactation_plan')) {
+    if (normalized.contains('status')) return '泌乳计划状态变更';
+    if (normalized.contains('open') || normalized.contains('create')) {
+      return '泌乳计划入口';
+    }
+    return '泌乳计划操作';
+  }
+  return null;
+}
+
+List<String> _agentActionPreviewRows(Map<String, Object?> preview) {
+  if (preview.isEmpty) return const <String>[];
+  final specs = <({String label, List<String> keys})>[
+    (label: '对象', keys: const ['target', 'object', 'task_title']),
+    (
+      label: '原值',
+      keys: const ['before', 'old_value', 'from', 'current_status'],
+    ),
+    (label: '变更后', keys: const ['after', 'new_value', 'to', 'next_status']),
+    (label: '日期', keys: const ['date', 'task_date']),
+    (label: '时间', keys: const ['time', 'task_time']),
+    (label: '时区', keys: const ['timezone', 'time_zone']),
+    (label: '影响范围', keys: const ['impact_scope', 'scope', 'impact_range']),
+  ];
+  final rows = <String>[];
+  for (final spec in specs) {
+    Object? value;
+    for (final key in spec.keys) {
+      final candidate = preview[key];
+      if (candidate != null) {
+        value = candidate;
+        break;
+      }
+    }
+    final displayValue = _agentActionPreviewValue(value);
+    if (displayValue != null) rows.add('${spec.label}：$displayValue');
+  }
+  return List<String>.unmodifiable(rows);
+}
+
+String? _agentActionPreviewValue(Object? value) {
+  if (value is String) {
+    final normalized = value.trim();
+    return normalized.isEmpty ? null : normalized;
+  }
+  if (value is num || value is bool) return value.toString();
+  return null;
 }
 
 String _actionStatus(AgentStreamEvent event) {
@@ -6820,10 +7154,10 @@ String? _visibleAgentStatusTitle(String? value) {
   };
   if (hidden.contains(normalized)) return null;
   return switch (normalized) {
-    'CozyMate 正在进入对话' => '我已经收到你的消息啦～',
+    'Cozymate 正在进入对话' => '我已经收到你的消息啦～',
     '正在整理对话上下文' => '我已经收到你的消息啦～',
     '已整理好相关信息' => '我先理解一下你的需求～',
-    'CozyMate 正在思考怎么帮你' => '我想一下',
+    'Cozymate 正在思考怎么帮你' => '我想一下',
     '正在整理回复' => '我在组织回复～',
     _ => normalized,
   };

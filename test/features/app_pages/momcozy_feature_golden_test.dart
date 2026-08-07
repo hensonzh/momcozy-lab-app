@@ -8,7 +8,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
-import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -80,12 +80,6 @@ final _routeGoldens = [
     path: '/',
     fileName: 'agent_hub_mobile.png',
     pageKey: ValueKey('agent-hub-page'),
-  ),
-  _RouteGolden(
-    label: 'status page',
-    path: '/status',
-    fileName: 'status_page_mobile.png',
-    pageKey: ValueKey('route-page-/status'),
   ),
   _RouteGolden(
     label: 'schedule page',
@@ -237,11 +231,8 @@ Future<void> _pumpGoldenApp(
 const _goldenImageAssets = [
   MomCozyAssets.agentAvatar,
   MomCozyAssets.momcozyLogo,
-  MomCozyAssets.momAvatar,
-  MomCozyAssets.babyAvatar,
   MomCozyAssets.pumpM9,
   MomCozyAssets.ibclcConsultantAvatar,
-  MomCozyAssets.postpartumRecoveryIcon,
   'assets/images/hospital_bag_mom_pad.jpg',
   'assets/images/hospital_bag_mom_sanitary.jpg',
   'assets/images/hospital_bag_mom_underwear.png',
@@ -265,11 +256,11 @@ const _goldenImageAssets = [
 MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
   return MomCozyApiRuntime(
     jsonTransport: FixtureApiJsonTransportByPath({
-      statusProfileEndpoint: const <String, Object?>{
+      profileMeEndpoint: const <String, Object?>{
         'user_id': 'demo-user-fixture',
         'delivery_date': '2026-06-11',
       },
-      statusInfantsEndpoint: const <String, Object?>{
+      profileInfantsEndpoint: const <String, Object?>{
         'items': <Object?>[
           <String, Object?>{
             'id': 'demo-baby-fixture',

@@ -19,7 +19,7 @@ void main() {
       await expectLater(
         bottomNav,
         matchesGoldenFile(
-          '../../../goldens/component_parity/bottom_nav_status_selected.png',
+          '../../../goldens/component_parity/bottom_nav_me_selected.png',
         ),
       );
     });
