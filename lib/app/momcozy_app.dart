@@ -690,12 +690,13 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 child: _MomCozyNavTab(
                                   navKey: const ValueKey('bottom-nav-more'),
                                   label: 'More',
-                                  selected: false,
+                                  selected: selectedIndex == 4,
                                   icon: const Icon(Icons.more_horiz_rounded),
                                   selectedIcon: const Icon(
                                     Icons.more_horiz_rounded,
                                   ),
-                                  onTap: null,
+                                  mutedWhenUnselected: true,
+                                  onTap: () => context.go('/more'),
                                 ),
                               ),
                             ],
@@ -722,6 +723,7 @@ class _MomCozyNavTab extends StatelessWidget {
     required this.icon,
     required this.selectedIcon,
     required this.onTap,
+    this.mutedWhenUnselected = false,
   });
 
   final Key navKey;
@@ -730,10 +732,11 @@ class _MomCozyNavTab extends StatelessWidget {
   final Widget icon;
   final Widget selectedIcon;
   final VoidCallback? onTap;
+  final bool mutedWhenUnselected;
 
   @override
   Widget build(BuildContext context) {
-    final foreground = onTap == null
+    final foreground = onTap == null || (mutedWhenUnselected && !selected)
         ? MomCozyColors.mutedForeground.withValues(alpha: 0.56)
         : selected
         ? MomCozyColors.primary
@@ -1531,6 +1534,22 @@ const momCozyRoutes = [
     priority: 'TBD',
   ),
   MomCozyRouteConfig(
+    path: '/more',
+    title: 'Body Profile',
+    summary: 'Postpartum recovery profile and confirmed health records.',
+    icon: Icons.more_horiz_rounded,
+    accent: Color(0xffa21849),
+    priority: 'P0',
+  ),
+  MomCozyRouteConfig(
+    path: '/more/body-profile',
+    title: 'Body Profile',
+    summary: 'Edit postpartum recovery and pain profile.',
+    icon: Icons.health_and_safety_outlined,
+    accent: Color(0xffa21849),
+    priority: 'P0',
+  ),
+  MomCozyRouteConfig(
     path: '/device',
     title: '设备',
     summary: 'BLE 设备连接、左右侧状态和设备管理入口。',
@@ -1594,6 +1613,7 @@ const _routesWithoutBottomNavigation = {
   '/hospital-bag-cart',
   '/ibclc-chat.html',
   '/media-viewer',
+  '/more/body-profile',
 };
 
 const _tabPaths = ['/me', '/baby', '/'];
@@ -1602,6 +1622,7 @@ int _selectedTabIndex(String location) {
   if (location == '/me' || location == '/status') return 0;
   if (location == '/baby') return 1;
   if (location == '/') return 2;
+  if (location == '/more') return 4;
   return -1;
 }
 

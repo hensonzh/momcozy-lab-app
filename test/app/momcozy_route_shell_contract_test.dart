@@ -46,6 +46,8 @@ const _documentedRoutePaths = {
   '/schedule',
   '/status',
   '/community',
+  '/more',
+  '/more/body-profile',
   '/device',
   '/device/manage',
   '/device/user',
