@@ -520,6 +520,26 @@ class _ProfileHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMom = identity == ProfileIdentity.mom;
+    final avatar = Positioned(
+      key: ValueKey(
+        isMom
+            ? 'me-baby-overview-mom-hero-avatar'
+            : 'me-baby-overview-baby-hero-avatar',
+      ),
+      right: isMom ? -18 : -8,
+      top: isMom ? 4 : 16,
+      bottom: isMom ? -38 : -30,
+      width: isMom ? 205 : 190,
+      child: IgnorePointer(
+        child: Image.asset(
+          isMom
+              ? _MeBabyOverviewAssets.momAvatar
+              : _MeBabyOverviewAssets.babyAvatar,
+          alignment: Alignment.bottomCenter,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
     return Container(
       key: ValueKey(isMom ? 'me-profile-hero' : 'baby-profile-hero'),
       height: 246,
@@ -541,22 +561,13 @@ class _ProfileHero extends StatelessWidget {
               color: _MeBabyOverviewColors.wine,
             ),
           ),
+          if (isMom) avatar,
           Positioned(
-            right: isMom ? -18 : -8,
-            top: isMom ? 4 : 16,
-            bottom: isMom ? -38 : -30,
-            width: isMom ? 205 : 190,
-            child: IgnorePointer(
-              child: Image.asset(
-                isMom
-                    ? _MeBabyOverviewAssets.momAvatar
-                    : _MeBabyOverviewAssets.babyAvatar,
-                alignment: Alignment.bottomCenter,
-                fit: BoxFit.contain,
-              ),
+            key: ValueKey(
+              isMom
+                  ? 'me-baby-overview-mom-hero-copy'
+                  : 'me-baby-overview-baby-hero-copy',
             ),
-          ),
-          Positioned(
             left: 24,
             top: isMom ? 68 : 72,
             width: isMom ? 238 : 250,
@@ -625,6 +636,7 @@ class _ProfileHero extends StatelessWidget {
               ],
             ),
           ),
+          if (!isMom) avatar,
         ],
       ),
     );
