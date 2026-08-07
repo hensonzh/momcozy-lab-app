@@ -38,8 +38,13 @@ void main() {
         await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
         await tester.pumpAndSettle();
         expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
-        expect(find.text('设备与服务'), findsOneWidget);
-        expect(find.text('账户与偏好'), findsOneWidget);
+        expect(find.text('Body Profile'), findsOneWidget);
+        expect(find.text('Your recovery profile'), findsOneWidget);
+        expect(find.text('设备与服务'), findsNothing);
+        expect(find.byKey(const ValueKey('bottom-nav-more')), findsNothing);
+
+        await tester.tap(find.byKey(const ValueKey('more-profile-back')));
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
         await tester.pumpAndSettle();
