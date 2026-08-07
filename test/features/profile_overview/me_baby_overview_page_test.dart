@@ -57,6 +57,10 @@ void main() {
       await _pumpApp(tester, initialLocation: '/me');
 
       expect(find.text('Postpartum Recovery'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('me-baby-overview-stage-dot')),
+        findsNothing,
+      );
       expect(tester.getRect(find.text('momcozy')).top, greaterThanOrEqualTo(0));
       expect(
         tester
@@ -229,6 +233,10 @@ void main() {
         await _pumpApp(tester, initialLocation: '/baby');
 
         expect(find.text('Infant'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('me-baby-overview-stage-dot')),
+          findsNothing,
+        );
         expect(find.text('Mia'), findsOneWidget);
         expect(find.text('Camera not connected'), findsOneWidget);
         expect(find.text('24°C'), findsNothing);
