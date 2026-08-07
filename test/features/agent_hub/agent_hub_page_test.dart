@@ -110,38 +110,29 @@ void main() {
     _expectComposerSendButtonBreathesVertically(tester);
   });
 
-  testWidgets('Cozymate exposes only the three supported service entries', (
+  testWidgets('Cozymate keeps the idle conversation free of service menus', (
     tester,
   ) async {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
     expect(find.text('Cozymate'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-v3-service-health')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('agent-v3-service-health')), findsNothing);
     expect(
       find.byKey(const ValueKey('agent-v3-service-schedule')),
-      findsOneWidget,
+      findsNothing,
     );
     expect(
       find.byKey(const ValueKey('agent-v3-service-lactation-plan')),
-      findsOneWidget,
+      findsNothing,
     );
-    expect(find.textContaining('健康建议不替代专业诊断'), findsOneWidget);
-    expect(find.textContaining('写操作会先预览'), findsOneWidget);
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-v3-service-lactation-plan')),
-    );
-    await tester.pump();
-
+    expect(find.text('我可以帮你'), findsNothing);
+    expect(find.textContaining('健康建议不替代专业诊断'), findsNothing);
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
           .controller
           ?.text,
-      '请打开泌乳计划入口，并帮我管理计划状态',
+      isEmpty,
     );
   });
 
