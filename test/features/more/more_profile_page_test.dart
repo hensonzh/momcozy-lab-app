@@ -10,29 +10,22 @@ import '../../support/momcozy_test_fonts.dart';
 void main() {
   setUpAll(loadMomCozyTestFonts);
 
-  testWidgets('More links to the recovery profile overview', (tester) async {
+  testWidgets('More opens the recovery profile overview directly', (
+    tester,
+  ) async {
     await _pumpApp(tester, initialLocation: '/me');
 
     await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
-    expect(find.text('设备与服务'), findsOneWidget);
-    expect(find.text('账户与偏好'), findsOneWidget);
-    expect(find.text('退出登录'), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('more-body-profile')));
-    await tester.pumpAndSettle();
-
-    expect(
-      find.byKey(const ValueKey('route-page-/more/body-profile')),
-      findsOneWidget,
-    );
     expect(find.text('Body Profile'), findsOneWidget);
     expect(find.text('Your recovery profile'), findsOneWidget);
     expect(find.text('Confirmed profile'), findsOneWidget);
     expect(find.text('Pelvic floor & bladder'), findsOneWidget);
     expect(find.text('Core & abdomen'), findsOneWidget);
+    expect(find.text('设备与服务'), findsNothing);
+    expect(find.text('账户与偏好'), findsNothing);
 
     await tester.scrollUntilVisible(
       find.text('Pain map'),
@@ -51,8 +44,8 @@ void main() {
     expect(find.byKey(const ValueKey('bottom-nav-more')), findsNothing);
   });
 
-  testWidgets('profile overview back returns to the More hub', (tester) async {
-    await _pumpApp(tester, initialLocation: '/more/body-profile');
+  testWidgets('profile overview back returns to Me', (tester) async {
+    await _pumpApp(tester, initialLocation: '/more');
 
     final backButton = find.byKey(const ValueKey('more-profile-back'));
     expect(backButton, findsOneWidget);
@@ -60,14 +53,14 @@ void main() {
     await tester.tap(backButton);
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
-    expect(find.text('设备与服务'), findsOneWidget);
+    expect(find.byKey(const ValueKey('route-page-/me')), findsOneWidget);
+    expect(find.byKey(const ValueKey('bottom-nav-more')), findsOneWidget);
   });
 
   testWidgets('profile actions open the editor and save returns to More', (
     tester,
   ) async {
-    await _pumpApp(tester, initialLocation: '/more/body-profile');
+    await _pumpApp(tester, initialLocation: '/more');
 
     await tester.tap(find.byKey(const ValueKey('more-edit-pelvic-floor')));
     await tester.pumpAndSettle();
@@ -92,10 +85,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('more-save-profile')));
     await tester.pumpAndSettle();
 
-    expect(
-      find.byKey(const ValueKey('route-page-/more/body-profile')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
     expect(find.text('Your recovery profile'), findsOneWidget);
   });
 
@@ -124,7 +114,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
 
-    await _pumpApp(tester, initialLocation: '/more/body-profile');
+    await _pumpApp(tester, initialLocation: '/more');
 
     expect(find.text('Your recovery profile'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -146,7 +136,7 @@ void main() {
   ) async {
     await _pumpApp(
       tester,
-      initialLocation: '/more/body-profile',
+      initialLocation: '/more',
       viewport: const Size(430, 1636),
     );
 
@@ -168,19 +158,6 @@ void main() {
     await expectLater(
       find.byType(Scaffold).first,
       matchesGoldenFile('../../goldens/more/profile_editor.png'),
-    );
-  });
-
-  testWidgets('More hub matches the supplied visual baseline', (tester) async {
-    await _pumpApp(
-      tester,
-      initialLocation: '/more',
-      viewport: const Size(430, 859),
-    );
-
-    await expectLater(
-      find.byType(Scaffold).first,
-      matchesGoldenFile('../../goldens/more/more_hub.png'),
     );
   });
 }

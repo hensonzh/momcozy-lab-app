@@ -1499,10 +1499,10 @@ const momCozyRoutes = [
   ),
   MomCozyRouteConfig(
     path: '/more',
-    title: 'More',
-    summary: '设备、服务、账户和偏好设置入口。',
-    icon: Icons.more_horiz_rounded,
-    accent: Color(0xff7a2840),
+    title: 'Body Profile',
+    summary: 'Postpartum recovery profile and confirmed health records.',
+    icon: Icons.health_and_safety_outlined,
+    accent: Color(0xffa21849),
     priority: 'P1',
   ),
   MomCozyRouteConfig(
@@ -1588,6 +1588,7 @@ const momCozyRoutes = [
 ];
 
 const _routesWithoutBottomNavigation = {
+  '/more',
   '/calibration',
   '/pump',
   '/hospital-bag-cart',
