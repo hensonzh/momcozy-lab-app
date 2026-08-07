@@ -77,7 +77,7 @@ void main() {
     });
 
     testWidgets(
-      'Baby uses fixed design data for every section without empty states',
+      'Baby landing follows the four-section design without empty states',
       (tester) async {
         await _pumpApp(tester, initialLocation: '/baby');
 
@@ -90,6 +90,7 @@ void main() {
         expect(find.text('58%'), findsOneWidget);
         expect(find.text('Rolled over'), findsOneWidget);
         expect(find.textContaining('No camera'), findsNothing);
+        expect(find.byKey(const ValueKey('baby-section-growth')), findsNothing);
 
         await tester.tap(find.byKey(const ValueKey('baby-section-sleep')));
         await tester.pumpAndSettle();
@@ -98,36 +99,90 @@ void main() {
         expect(find.text('3 naps'), findsOneWidget);
         expect(find.text('Optimal'), findsOneWidget);
         expect(find.textContaining('No sleep'), findsNothing);
-
-        await tester.tap(find.byKey(const ValueKey('baby-section-feeding')));
-        await tester.pumpAndSettle();
-        expect(find.text('90%'), findsOneWidget);
-        expect(
-          find.text('6 feeds completed · 730 ml out of 800 ml'),
-          findsOneWidget,
-        );
-        expect(find.text('Today’s Feeds'), findsOneWidget);
-        expect(find.text('6:30 AM'), findsOneWidget);
-        expect(find.text('9:30 PM'), findsOneWidget);
-
-        await tester.tap(find.byKey(const ValueKey('baby-section-diaper')));
-        await tester.pumpAndSettle();
-        expect(find.text('7 changes'), findsOneWidget);
-        expect(find.text('5 Wet'), findsOneWidget);
-        expect(find.text('2 Dirty'), findsOneWidget);
-        expect(find.text('Diaper Timeline'), findsOneWidget);
-        expect(find.textContaining('No diaper'), findsNothing);
-
-        await tester.tap(find.byKey(const ValueKey('baby-section-growth')));
-        await tester.pumpAndSettle();
-        expect(find.text('6.2 kg'), findsOneWidget);
-        expect(find.text('62 cm'), findsOneWidget);
-        expect(find.text('40.5 cm'), findsOneWidget);
-        expect(find.text('P55 (Normal)'), findsOneWidget);
-        expect(find.text('P60 (Normal)'), findsOneWidget);
-        expect(find.text('P50 (Normal)'), findsOneWidget);
       },
     );
+
+    testWidgets('Baby feeding and diaper tabs open designed detail pages', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+
+      await tester.tap(find.byKey(const ValueKey('baby-section-feeding')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('baby-detail-feeding')), findsOneWidget);
+      expect(find.text('Feeding & Care'), findsOneWidget);
+      expect(find.text('Logs & Summaries'), findsOneWidget);
+      expect(find.text('90%'), findsOneWidget);
+      expect(
+        find.text('6 feeds completed · 730 ml out of 800 ml'),
+        findsOneWidget,
+      );
+      expect(find.text('Today’s Feeds'), findsOneWidget);
+      expect(find.text('6:30 AM'), findsOneWidget);
+      expect(find.text('9:30 PM'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('baby-detail-back-feeding')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('baby-profile-hero')), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('baby-section-diaper')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('baby-detail-diaper')), findsOneWidget);
+      expect(find.text('Diaper Tracker'), findsOneWidget);
+      expect(find.text('Logs & Summaries'), findsOneWidget);
+      expect(find.text('7 changes'), findsOneWidget);
+      expect(find.text('5 Wet'), findsOneWidget);
+      expect(find.text('2 Dirty'), findsOneWidget);
+      expect(find.text('Diaper Timeline'), findsOneWidget);
+      expect(find.textContaining('No diaper'), findsNothing);
+    });
+
+    testWidgets('Baby sleep summary opens the deeper sleep report', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+      await tester.tap(find.byKey(const ValueKey('baby-section-sleep')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('baby-sleep-summary-card')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('baby-detail-sleep')), findsOneWidget);
+      expect(find.text('Baby Sleep'), findsOneWidget);
+      expect(find.text('Rest & Recovery'), findsOneWidget);
+      expect(find.text('10.2 hours'), findsOneWidget);
+      expect(find.text('Weekly Pattern'), findsOneWidget);
+    });
+
+    testWidgets('Baby add action shows records and opens growth details', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+      await tester.tap(find.byKey(const ValueKey('status-v2-add')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('baby-add-record-sheet')),
+        findsOneWidget,
+      );
+      for (final label in const [
+        'Sleep',
+        'Feeding',
+        'Diaper',
+        'Weight',
+        'Height',
+        'Head Circ.',
+      ]) {
+        expect(find.text(label), findsWidgets);
+      }
+
+      await tester.tap(find.byKey(const ValueKey('baby-add-record-weight')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('baby-detail-weight')), findsOneWidget);
+      expect(find.text('Baby Weight'), findsOneWidget);
+      expect(find.text('6.2 kg'), findsWidgets);
+      expect(find.text('P55 (Normal)'), findsOneWidget);
+      expect(find.text('Recent History'), findsOneWidget);
+    });
 
     testWidgets(
       'Me pulls down into the avatar state and swipes up to details',
@@ -253,6 +308,57 @@ void main() {
       await expectLater(
         find.byType(Scaffold).first,
         matchesGoldenFile('../../goldens/status_v2/baby_first_screen.png'),
+      );
+    });
+
+    testWidgets('Baby sleep landing matches the supplied visual', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+      await tester.tap(find.byKey(const ValueKey('baby-section-sleep')));
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byType(Scaffold).first,
+        matchesGoldenFile('../../goldens/status_v2/baby_sleep_screen.png'),
+      );
+    });
+
+    testWidgets('Baby feeding detail matches the supplied visual', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        viewportSize: const Size(390, 1074),
+      );
+      await tester.tap(find.byKey(const ValueKey('baby-section-feeding')));
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byType(Scaffold).first,
+        matchesGoldenFile(
+          '../../goldens/status_v2/baby_feeding_detail_390x1074.png',
+        ),
+      );
+    });
+
+    testWidgets('Baby add record sheet matches the supplied visual', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        viewportSize: const Size(390, 844),
+      );
+      await tester.tap(find.byKey(const ValueKey('status-v2-add')));
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byType(Overlay).first,
+        matchesGoldenFile(
+          '../../goldens/status_v2/baby_add_record_sheet_390x844.png',
+        ),
       );
     });
 
