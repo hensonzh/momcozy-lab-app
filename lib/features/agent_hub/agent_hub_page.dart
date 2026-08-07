@@ -2943,30 +2943,7 @@ class AgentHubTopBar extends StatelessWidget {
                       ),
               ),
             ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Cozymate',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: MomCozyV3Colors.ink,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const Text(
-                    '母婴健康 · 日程 · 泌乳计划',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: MomCozyColors.mutedForeground,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const Spacer(),
             SizedBox(
               width: 96,
               child: Row(

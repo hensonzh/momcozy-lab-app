@@ -58,6 +58,15 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+        final topBar = find.byType(AgentHubTopBar);
+        expect(
+          find.descendant(of: topBar, matching: find.text('Cozymate')),
+          findsNothing,
+        );
+        expect(
+          find.descendant(of: topBar, matching: find.text('母婴健康 · 日程 · 泌乳计划')),
+          findsNothing,
+        );
         expect(
           find.byKey(const ValueKey('agent-auto-voice-button')),
           findsOneWidget,
@@ -91,6 +100,11 @@ void main() {
         expect(find.byKey(const ValueKey('agent-voice-button')), findsNothing);
         expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
         expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
+        final bottomNav = find.byType(MomCozyBottomNavigation);
+        expect(
+          find.descendant(of: bottomNav, matching: find.text('Cozymate')),
+          findsNothing,
+        );
         final agentAvatar = tester.widget<Container>(
           find.byKey(const ValueKey('bottom-nav-agent-avatar')),
         );

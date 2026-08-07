@@ -786,37 +786,7 @@ class _CozymateNavSlot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      alignment: Alignment.center,
-      clipBehavior: Clip.none,
-      children: [
-        _MomCozyAgentNavTab(selected: selected, onTap: onTap),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 3,
-          child: IgnorePointer(
-            child: Text(
-              'Cozymate',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: MomCozyTypography.fontFamily,
-                fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-                color: selected
-                    ? MomCozyV3Colors.brand
-                    : const Color(0xff9e8880),
-                fontSize: 11,
-                height: 1.05,
-                fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+    return _MomCozyAgentNavTab(selected: selected, onTap: onTap);
   }
 }
 
