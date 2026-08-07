@@ -31,6 +31,29 @@ class ProfileOverviewResource<T> {
   bool get hasError => phase == OverviewResourcePhase.error;
 }
 
+enum ProfileOverviewMutationPhase { idle, saving, success, error }
+
+class ProfileOverviewMutationState {
+  const ProfileOverviewMutationState._({required this.phase, this.message});
+
+  const ProfileOverviewMutationState.idle()
+    : this._(phase: ProfileOverviewMutationPhase.idle);
+
+  const ProfileOverviewMutationState.saving()
+    : this._(phase: ProfileOverviewMutationPhase.saving);
+
+  const ProfileOverviewMutationState.success(String value)
+    : this._(phase: ProfileOverviewMutationPhase.success, message: value);
+
+  const ProfileOverviewMutationState.error(String value)
+    : this._(phase: ProfileOverviewMutationPhase.error, message: value);
+
+  final ProfileOverviewMutationPhase phase;
+  final String? message;
+
+  bool get isSaving => phase == ProfileOverviewMutationPhase.saving;
+}
+
 class ProfileOverviewController {
   ProfileOverviewController({
     required this.profileOverviewRepository,
@@ -65,6 +88,9 @@ class ProfileOverviewController {
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.growthRecords!.value),
     );
+    growthMutation = ValueNotifier<ProfileOverviewMutationState>(
+      const ProfileOverviewMutationState.idle(),
+    );
   }
 
   final ProfileOverviewRepository profileOverviewRepository;
@@ -84,6 +110,7 @@ class ProfileOverviewController {
   milkTrends;
   late final ValueNotifier<ProfileOverviewResource<List<GrowthRecord>>>
   growthRecords;
+  late final ValueNotifier<ProfileOverviewMutationState> growthMutation;
 
   final Map<ProfileOverviewResourceKey, Future<void>> _activeResourceLoads = {};
   final Map<ProfileOverviewResourceKey, int> _resourceRequests = {};
@@ -226,6 +253,63 @@ class ProfileOverviewController {
     }
   }
 
+  Future<bool> saveGrowth({
+    double? weightKg,
+    double? heightCm,
+    double? headCm,
+  }) async {
+    if (_disposed || growthMutation.value.isSaving) return false;
+    final values = [weightKg, heightCm, headCm].whereType<double>().toList();
+    if (values.isEmpty || values.any((value) => value <= 0)) {
+      growthMutation.value = const ProfileOverviewMutationState.error(
+        'Enter a valid measurement.',
+      );
+      return false;
+    }
+
+    growthMutation.value = const ProfileOverviewMutationState.saving();
+    try {
+      final current = growthRecords.value.data ?? const <GrowthRecord>[];
+      final measuredAt = now();
+      final latest = _latestGrowthRecord(current);
+      final saved =
+          latest?.measuredAt != null &&
+              _sameLocalDay(latest!.measuredAt!, measuredAt)
+          ? await growthRepository.updateGrowthRecord(
+              recordId: latest.id,
+              weightKg: weightKg,
+              heightCm: heightCm,
+              headCm: headCm,
+            )
+          : await growthRepository.createGrowthRecord(
+              babyId: babyId,
+              measuredAt: measuredAt,
+              weightKg: weightKg,
+              heightCm: heightCm,
+              headCm: headCm,
+              idempotencyKey:
+                  'profile-growth-${measuredAt.microsecondsSinceEpoch}',
+            );
+      if (_disposed) return false;
+      final next = _sortGrowthRecords([
+        saved,
+        ...current.where((record) => record.id != saved.id),
+      ]);
+      growthRecords.value = ProfileOverviewResource.data(next);
+      cache.growthRecords = OverviewCacheEntry(value: next, fetchedAt: now());
+      growthMutation.value = const ProfileOverviewMutationState.success(
+        'Growth measurement saved.',
+      );
+      return true;
+    } catch (_) {
+      if (_disposed) return false;
+      growthMutation.value = const ProfileOverviewMutationState.error(
+        'The measurement could not be saved. Try again.',
+      );
+      return false;
+    }
+  }
+
   void _setLoading(ProfileOverviewResourceKey resource) {
     switch (resource) {
       case ProfileOverviewResourceKey.overview:
@@ -274,5 +358,32 @@ class ProfileOverviewController {
     feedingRecords.dispose();
     milkTrends.dispose();
     growthRecords.dispose();
+    growthMutation.dispose();
   }
+}
+
+GrowthRecord? _latestGrowthRecord(List<GrowthRecord> records) {
+  if (records.isEmpty) return null;
+  return _sortGrowthRecords(records).first;
+}
+
+List<GrowthRecord> _sortGrowthRecords(Iterable<GrowthRecord> records) {
+  final values = List<GrowthRecord>.of(records);
+  values.sort((left, right) {
+    final leftTime = left.measuredAt;
+    final rightTime = right.measuredAt;
+    if (leftTime == null && rightTime == null) return 0;
+    if (leftTime == null) return 1;
+    if (rightTime == null) return -1;
+    return rightTime.compareTo(leftTime);
+  });
+  return values;
+}
+
+bool _sameLocalDay(DateTime left, DateTime right) {
+  final localLeft = left.toLocal();
+  final localRight = right.toLocal();
+  return localLeft.year == localRight.year &&
+      localLeft.month == localRight.month &&
+      localLeft.day == localRight.day;
 }
