@@ -429,14 +429,17 @@ class _MeBabyOverviewHeader extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: _MeBabyOverviewColors.wine,
-                        shape: BoxShape.circle,
+                    if (identity == ProfileIdentity.mom) ...[
+                      const DecoratedBox(
+                        key: ValueKey('me-baby-overview-stage-dot'),
+                        decoration: BoxDecoration(
+                          color: _MeBabyOverviewColors.wine,
+                          shape: BoxShape.circle,
+                        ),
+                        child: SizedBox.square(dimension: 8),
                       ),
-                      child: SizedBox.square(dimension: 8),
-                    ),
-                    const SizedBox(width: 8),
+                      const SizedBox(width: 8),
+                    ],
                     Flexible(
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
