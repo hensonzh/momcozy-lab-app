@@ -3,8 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -60,7 +63,7 @@ void main() {
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
 
-      expect(find.text('Postpartum Recovery'), findsOneWidget);
+      expect(find.text('Postpartum Recovery'), findsWidgets);
       expect(
         find.byKey(const ValueKey('me-baby-overview-stage-dot')),
         findsNothing,
@@ -76,8 +79,9 @@ void main() {
             .top,
         greaterThanOrEqualTo(0),
       );
-      expect(find.text('Good morning,'), findsOneWidget);
-      expect(find.text('Avery'), findsOneWidget);
+      expect(find.text('Postpartum Recovery'), findsWidgets);
+      expect(find.text('No active program yet'), findsOneWidget);
+      expect(find.text('Body Profile'), findsOneWidget);
       expect(find.text('Me'), findsWidgets);
       expect(find.text('Lactation'), findsWidgets);
       expect(find.text('Recovery'), findsWidgets);
@@ -121,46 +125,72 @@ void main() {
       expect(find.text('mL measured today'), findsNothing);
     });
 
-    testWidgets('Me exposes an explicit refresh action', (tester) async {
-      final transport = _profileOverviewTransport();
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(transport: transport),
+    testWidgets('Me removes hero chrome while preserving avatar entry', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/me');
+
+      final hero = find.byKey(const ValueKey('me-profile-hero'));
+      expect(
+        find.descendant(of: hero, matching: find.byIcon(Icons.refresh_rounded)),
+        findsNothing,
       );
       expect(
-        transport.getPaths.where((path) => path == profileMeEndpoint).length,
-        1,
+        find.descendant(
+          of: hero,
+          matching: find.byIcon(Icons.fullscreen_rounded),
+        ),
+        findsNothing,
       );
 
-      await tester.tap(find.byKey(const ValueKey('me-baby-overview-refresh')));
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-open-avatar')),
+      );
       await tester.pumpAndSettle();
 
       expect(
-        transport.getPaths.where((path) => path == profileMeEndpoint).length,
-        2,
+        find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
+        findsOneWidget,
       );
+      expect(find.byIcon(Icons.keyboard_arrow_up_rounded), findsNothing);
     });
 
     testWidgets('Me keeps saved data visible when refresh fails', (
       tester,
     ) async {
       final transport = _FailingRefreshTransport(_profileOverviewTransport());
+      transport.failMilkReads = true;
+      final cache = ProfileOverviewCache(
+        ownerUserId: 'profile-overview-user',
+        babyId: 'profile-overview-baby',
+      );
+      cache.milkTrends = OverviewCacheEntry(
+        value: [
+          MilkTrendDay(
+            date: DateTime.utc(2026, 7, 3),
+            pumpedMilkVolumeMl: 210,
+            pumpingCount: 3,
+          ),
+        ],
+        fetchedAt: DateTime.utc(2026, 7, 1),
+      );
       await _pumpApp(
         tester,
         initialLocation: '/me',
-        runtime: _runtime(transport: transport),
+        runtime: _runtime(transport: transport, profileOverviewCache: cache),
       );
-      transport.failMilkReads = true;
-
-      await tester.tap(find.byKey(const ValueKey('me-baby-overview-refresh')));
-      await tester.pumpAndSettle();
 
       expect(
         find.text('Couldn’t refresh. Showing saved data.'),
         findsOneWidget,
       );
       expect(find.text('210'), findsOneWidget);
+
+      transport.failMilkReads = false;
+      await tester.tap(find.text('Retry'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Couldn’t refresh. Showing saved data.'), findsNothing);
     });
 
     testWidgets('Me saves a stage before switching to its workspace', (
@@ -200,16 +230,162 @@ void main() {
         find.byKey(const ValueKey('me-stage-workspace-pregnancy')),
         findsOneWidget,
       );
-      expect(find.text('Prenatal care & milestones'), findsOneWidget);
+      expect(find.text('Prenatal'), findsWidgets);
+      expect(find.text('Today’s Milestones'), findsOneWidget);
       expect(find.text('78'), findsNothing);
       expect(transport.lastMethod, 'PUT');
       expect(transport.lastBody, {'current_care_stage': 'pregnancy'});
+    });
+
+    testWidgets('Fertility matches the cycle design without invented data', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            profileResponse: const {
+              'user_id': 'profile-overview-user',
+              'display_name': 'Avery',
+              'current_care_stage': 'fertility',
+            },
+          ),
+        ),
+      );
+
+      expect(
+        find.byKey(const ValueKey('me-stage-hero-fertility')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('me-stage-tabs-fertility')),
+        findsOneWidget,
+      );
+      expect(find.text('Cycle Tracking'), findsOneWidget);
+      expect(find.text('Cycle'), findsWidgets);
+      expect(find.text('Wellness'), findsWidgets);
+      expect(find.text('Ovulation Prediction'), findsOneWidget);
+      expect(find.text('Cycle records needed'), findsOneWidget);
+      expect(find.textContaining('98%'), findsNothing);
+      expect(find.textContaining('fertile window is open'), findsNothing);
+
       await expectLater(
-        find.byType(Scaffold).first,
+        find.byType(Overlay).first,
+        matchesGoldenFile(
+          '../../goldens/me_baby_overview/fertility_first_screen.png',
+        ),
+      );
+    });
+
+    testWidgets('Pregnancy uses confirmed week and plan sessions', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            profileResponse: const {
+              'user_id': 'profile-overview-user',
+              'display_name': 'Avery',
+              'current_care_stage': 'pregnancy',
+              'delivery_date': '2026-10-09',
+            },
+            planItems: const [
+              {
+                'id': 'prenatal-yoga',
+                'plan_type': 'yoga',
+                'title': 'Prenatal Yoga Program',
+                'summary': 'A confirmed prenatal movement plan',
+                'status': 'active',
+                'payload': <String, Object?>{},
+              },
+            ],
+            planSessionItems: const [
+              {
+                'id': 'session-1',
+                'plan_id': 'prenatal-yoga',
+                'task_date': '2026-07-03',
+                'task_time': '08:00',
+                'title': 'Prenatal breathing',
+                'status': 'completed',
+                'payload': <String, Object?>{},
+              },
+              {
+                'id': 'session-2',
+                'plan_id': 'prenatal-yoga',
+                'task_date': '2026-07-03',
+                'task_time': '17:00',
+                'title': 'Gentle mobility',
+                'status': 'pending',
+                'payload': <String, Object?>{},
+              },
+            ],
+          ),
+        ),
+      );
+
+      expect(
+        find.byKey(const ValueKey('me-stage-hero-pregnancy')),
+        findsOneWidget,
+      );
+      expect(find.text('Prenatal Yoga Program'), findsOneWidget);
+      expect(find.text('1 of 2 sessions completed'), findsOneWidget);
+      expect(find.text('Prenatal'), findsWidgets);
+      expect(find.text('Wellness'), findsWidgets);
+      expect(find.text("Today’s Milestones"), findsOneWidget);
+      expect(find.text('Week 26 of 40'), findsOneWidget);
+      expect(find.text('98 days to go'), findsOneWidget);
+      expect(find.text('Prenatal breathing'), findsOneWidget);
+      expect(find.text('Gentle mobility'), findsOneWidget);
+      expect(find.textContaining('Eggplant'), findsNothing);
+      expect(find.textContaining('14.8'), findsNothing);
+
+      await expectLater(
+        find.byType(Overlay).first,
         matchesGoldenFile(
           '../../goldens/me_baby_overview/pregnancy_first_screen.png',
         ),
       );
+
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-open-avatar')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
+        findsOneWidget,
+      );
+      expect(find.text('Week 26 · Second Trimester'), findsOneWidget);
+      await expectLater(
+        find.byType(Overlay).first,
+        matchesGoldenFile(
+          '../../goldens/me_baby_overview/pregnancy_avatar_state.png',
+        ),
+      );
+    });
+
+    testWidgets('Pregnancy accepts a confirmed gestational week fallback', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            profileResponse: const {
+              'user_id': 'profile-overview-user',
+              'display_name': 'Avery',
+              'current_care_stage': 'pregnancy',
+              'birth_prep_due_date_or_week': 'Week 32',
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('Week 32 of 40'), findsOneWidget);
+      expect(find.text('About 56 days to go'), findsOneWidget);
     });
 
     testWidgets('Me asks for a stage when the profile has no stage evidence', (
@@ -640,10 +816,8 @@ void main() {
               .top,
           greaterThanOrEqualTo(0),
         );
-        expect(
-          find.text('Your avatar is looking strong today!'),
-          findsOneWidget,
-        );
+        expect(find.text('No active program yet'), findsWidgets);
+        expect(find.text('Body Profile'), findsWidgets);
         expect(find.text('Swipe up to see detailed stats'), findsOneWidget);
 
         await tester.drag(
@@ -773,6 +947,24 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('No body profile data yet'), findsOneWidget);
+    });
+
+    testWidgets('Stage hero Body Profile does not trigger avatar mode', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/me');
+
+      await tester.tap(find.byKey(const ValueKey('me-stage-body-profile')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('route-page-/more/body-profile')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
+        findsNothing,
+      );
     });
 
     testWidgets('Baby avatar state uses recorded feeding summary', (
@@ -930,8 +1122,27 @@ void main() {
       await _pumpApp(tester, initialLocation: '/me');
 
       await expectLater(
-        find.byType(Scaffold).first,
+        find.byType(Overlay).first,
         matchesGoldenFile('../../goldens/me_baby_overview/me_first_screen.png'),
+      );
+    });
+
+    testWidgets('Me recovery matches the honest visual baseline', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/me');
+      await tester.tap(find.byKey(const ValueKey('me-section-recovery')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Recovery Score'), findsOneWidget);
+      expect(find.text('Not scored'), findsOneWidget);
+      expect(find.text('Recovery data unavailable'), findsOneWidget);
+      expect(find.text('78'), findsNothing);
+      await expectLater(
+        find.byType(Overlay).first,
+        matchesGoldenFile(
+          '../../goldens/me_baby_overview/me_recovery_screen.png',
+        ),
       );
     });
 
@@ -1093,7 +1304,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await expectLater(
-        find.byType(Scaffold).first,
+        find.byType(Overlay).first,
         matchesGoldenFile('../../goldens/me_baby_overview/me_avatar_state.png'),
       );
     });
@@ -1152,9 +1363,21 @@ Future<void> _pumpApp(
         imageContext,
       ),
       precacheImage(
+        const AssetImage('assets/images/me_baby_overview/pregnancy_avatar.png'),
+        imageContext,
+      ),
+      precacheImage(
         const AssetImage('assets/images/me_baby_overview/baby_avatar.png'),
         imageContext,
       ),
+      for (final asset in const [
+        'assets/images/me_baby_overview/milk_bottle.png',
+        'assets/images/me_baby_overview/breast.png',
+        'assets/images/me_baby_overview/lactation.png',
+        'assets/images/me_baby_overview/body_assessment.png',
+        'assets/images/me_baby_overview/yoga.png',
+      ])
+        precacheImage(AssetImage(asset), imageContext),
       precacheImage(
         const AssetImage('assets/images/me_baby_overview/nursery_camera.png'),
         imageContext,
@@ -1172,13 +1395,17 @@ Future<void> _pumpApp(
   await tester.pumpAndSettle();
 }
 
-MomCozyApiRuntime _runtime({ApiJsonTransport? transport}) {
+MomCozyApiRuntime _runtime({
+  ApiJsonTransport? transport,
+  ProfileOverviewCache? profileOverviewCache,
+}) {
   return MomCozyApiRuntime(
     jsonTransport: transport ?? _profileOverviewTransport(),
     userId: 'profile-overview-user',
     babyId: 'profile-overview-baby',
     locale: 'en-US',
     now: () => DateTime.utc(2026, 7, 3),
+    profileOverviewCache: profileOverviewCache,
   );
 }
 
@@ -1232,6 +1459,8 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
   Map<String, Object?>? writeResponse,
   Map<String, Object?>? profileResponse,
   List<Map<String, Object?>>? milkTrendItems,
+  List<Map<String, Object?>>? planItems,
+  List<Map<String, Object?>>? planSessionItems,
 }) {
   return FixtureApiJsonTransportByPath(
     {
@@ -1311,6 +1540,8 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
           },
         ],
       },
+      planListEndpoint: {'items': planItems ?? const <Object?>[]},
+      planSessionListEndpoint: {'items': planSessionItems ?? const <Object?>[]},
     },
     writeResponsesByPath: {
       profileMeEndpoint: ?writeResponse,
@@ -1343,6 +1574,8 @@ MomCozyApiRuntime _emptyRuntime() {
       milkTrendsEndpoint: const {'items': <Object>[]},
       feedingRecordsEndpoint: const {'items': <Object>[]},
       growthRecordsEndpoint: const {'items': <Object>[]},
+      planListEndpoint: const {'items': <Object>[]},
+      planSessionListEndpoint: const {'items': <Object>[]},
     }),
     userId: 'profile-overview-user',
     babyId: 'profile-overview-baby',

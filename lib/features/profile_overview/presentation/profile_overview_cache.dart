@@ -1,7 +1,8 @@
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 
-enum ProfileOverviewResourceKey { overview, feeding, milkTrends, growth }
+enum ProfileOverviewResourceKey { overview, feeding, milkTrends, growth, plans }
 
 class OverviewCacheEntry<T> {
   const OverviewCacheEntry({required this.value, required this.fetchedAt});
@@ -20,12 +21,14 @@ class ProfileOverviewCachePolicy {
     this.feedingTtl = const Duration(seconds: 30),
     this.milkTrendsTtl = const Duration(minutes: 2),
     this.growthTtl = const Duration(minutes: 2),
+    this.plansTtl = const Duration(minutes: 2),
   });
 
   final Duration overviewTtl;
   final Duration feedingTtl;
   final Duration milkTrendsTtl;
   final Duration growthTtl;
+  final Duration plansTtl;
 
   Duration ttlFor(ProfileOverviewResourceKey resource) {
     return switch (resource) {
@@ -33,6 +36,7 @@ class ProfileOverviewCachePolicy {
       ProfileOverviewResourceKey.feeding => feedingTtl,
       ProfileOverviewResourceKey.milkTrends => milkTrendsTtl,
       ProfileOverviewResourceKey.growth => growthTtl,
+      ProfileOverviewResourceKey.plans => plansTtl,
     };
   }
 }
@@ -47,6 +51,7 @@ class ProfileOverviewCache {
   OverviewCacheEntry<List<FeedingRecord>>? feedingRecords;
   OverviewCacheEntry<List<MilkTrendDay>>? milkTrends;
   OverviewCacheEntry<List<GrowthRecord>>? growthRecords;
+  OverviewCacheEntry<PlanDashboard>? planDashboard;
 
   bool matches({required String ownerUserId, required String babyId}) {
     return this.ownerUserId == ownerUserId && this.babyId == babyId;
@@ -57,5 +62,6 @@ class ProfileOverviewCache {
     feedingRecords = null;
     milkTrends = null;
     growthRecords = null;
+    planDashboard = null;
   }
 }

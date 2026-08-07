@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
@@ -85,6 +86,7 @@ class ProfileOverviewController {
     required this.pumpMilkRepository,
     required this.milkTrendRepository,
     required this.growthRepository,
+    this.planRepository,
     required this.babyId,
     required this.identity,
     ProfileOverviewCache? cache,
@@ -113,6 +115,11 @@ class ProfileOverviewController {
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.growthRecords!.value),
     );
+    plans = ValueNotifier<ProfileOverviewResource<PlanDashboard>>(
+      this.cache.planDashboard == null
+          ? const ProfileOverviewResource.initial()
+          : ProfileOverviewResource.data(this.cache.planDashboard!.value),
+    );
     final cachedStage = this.cache.overview?.value.mom?.stage;
     careStage = ValueNotifier<CareStageSelectionState>(
       CareStageSelectionState(
@@ -137,6 +144,7 @@ class ProfileOverviewController {
   final PumpMilkRecordsRepository pumpMilkRepository;
   final MilkTrendRepository milkTrendRepository;
   final GrowthRecordsRepository growthRepository;
+  final PlanRepository? planRepository;
   final String babyId;
   final ProfileIdentity identity;
   final DateTime Function() now;
@@ -150,6 +158,7 @@ class ProfileOverviewController {
   milkTrends;
   late final ValueNotifier<ProfileOverviewResource<List<GrowthRecord>>>
   growthRecords;
+  late final ValueNotifier<ProfileOverviewResource<PlanDashboard>> plans;
   late final ValueNotifier<CareStageSelectionState> careStage;
   late final ValueNotifier<ProfileOverviewMutationState> growthMutation;
   late final ValueNotifier<RecordMutationState> recordMutation;
@@ -203,6 +212,8 @@ class ProfileOverviewController {
         ProfileOverviewResourceKey.feeding,
         ProfileOverviewResourceKey.growth,
       },
+      if (identity == ProfileIdentity.mom && planRepository != null)
+        ProfileOverviewResourceKey.plans,
     };
   }
 
@@ -314,6 +325,20 @@ class ProfileOverviewController {
           growthRecords,
           growthRepository.fetchGrowthRecords(babyId: _recordsBabyId),
           onData: (value) => cache.growthRecords = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.plans:
+        final repository = planRepository;
+        if (repository == null) return;
+        final today = now();
+        await _load(
+          plans,
+          repository.fetchDashboard(
+            weekOf: DateTime(today.year, today.month, today.day),
+          ),
+          onData: (value) => cache.planDashboard = OverviewCacheEntry(
             value: value,
             fetchedAt: now(),
           ),
@@ -546,6 +571,10 @@ class ProfileOverviewController {
         growthRecords.value = ProfileOverviewResource.loading(
           previous: growthRecords.value.data,
         );
+      case ProfileOverviewResourceKey.plans:
+        plans.value = ProfileOverviewResource.loading(
+          previous: plans.value.data,
+        );
     }
   }
 
@@ -555,6 +584,7 @@ class ProfileOverviewController {
       ProfileOverviewResourceKey.feeding => cache.feedingRecords?.fetchedAt,
       ProfileOverviewResourceKey.milkTrends => cache.milkTrends?.fetchedAt,
       ProfileOverviewResourceKey.growth => cache.growthRecords?.fetchedAt,
+      ProfileOverviewResourceKey.plans => cache.planDashboard?.fetchedAt,
     };
     return fetchedAt != null &&
         now().difference(fetchedAt) <= cachePolicy.ttlFor(resource);
@@ -566,6 +596,7 @@ class ProfileOverviewController {
       ProfileOverviewResourceKey.feeding => cache.feedingRecords != null,
       ProfileOverviewResourceKey.milkTrends => cache.milkTrends != null,
       ProfileOverviewResourceKey.growth => cache.growthRecords != null,
+      ProfileOverviewResourceKey.plans => cache.planDashboard != null,
     };
   }
 
@@ -576,6 +607,7 @@ class ProfileOverviewController {
     feedingRecords.dispose();
     milkTrends.dispose();
     growthRecords.dispose();
+    plans.dispose();
     careStage.dispose();
     growthMutation.dispose();
     recordMutation.dispose();
