@@ -210,6 +210,14 @@ void main() {
 
       expect(overview.baby?.id, 'infant-current');
       expect(overview.baby?.nickname, 'Current baby');
+      expect(overview.infants.map((infant) => infant.id), [
+        'infant-other',
+        'infant-current',
+      ]);
+      expect(overview.infants.map((infant) => infant.nickname), [
+        'Other baby',
+        'Current baby',
+      ]);
     });
 
     test(

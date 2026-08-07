@@ -22,6 +22,360 @@ class _BabySvgIcon extends StatelessWidget {
   }
 }
 
+class _BabyDevelopmentPage extends StatelessWidget {
+  const _BabyDevelopmentPage({
+    required this.data,
+    required this.onBack,
+    required this.onStartEducation,
+  });
+
+  final _MeBabyOverviewData data;
+  final VoidCallback onBack;
+  final VoidCallback onStartEducation;
+
+  @override
+  Widget build(BuildContext context) {
+    final overview = data.overview;
+    final week = _confirmedGestationalWeek(overview.data?.mom?.dueDateOrWeek);
+    final isLoading =
+        overview.data == null &&
+        (overview.phase == OverviewResourcePhase.initial ||
+            overview.phase == OverviewResourcePhase.loading);
+    final visualizationLabel = isLoading
+        ? 'Loading confirmed week'
+        : week == null
+        ? 'Week not confirmed'
+        : 'Week $week Visualization';
+    final milestoneTitle = week == null
+        ? 'Pregnancy milestones'
+        : 'Week $week Milestones';
+
+    return KeyedSubtree(
+      key: const ValueKey('route-page-/baby/development'),
+      child: ColoredBox(
+        color: _BabyOverviewColors.background,
+        child: ListView(
+          key: const ValueKey('baby-development-page'),
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox.square(
+                  dimension: MomCozyTapTargets.minimum,
+                  child: IconButton(
+                    key: const ValueKey('baby-development-back'),
+                    tooltip: 'Back to Baby',
+                    onPressed: onBack,
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      color: _BabyOverviewColors.wine,
+                      size: 34,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 2),
+                const Expanded(
+                  child: Text(
+                    'Baby Development',
+                    maxLines: 2,
+                    style: TextStyle(
+                      fontFamily: MomCozyTypography.displayFontFamily,
+                      color: _BabyOverviewColors.ink,
+                      fontSize: 25,
+                      height: 1.05,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: MomCozyTapTargets.minimum),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Semantics(
+              image: true,
+              label: visualizationLabel,
+              child: AspectRatio(
+                aspectRatio: 716 / 440,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(28),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        _MeBabyOverviewAssets.babyDevelopment,
+                        fit: BoxFit.cover,
+                        excludeFromSemantics: true,
+                      ),
+                      Positioned(
+                        left: 16,
+                        bottom: 16,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.sizeOf(context).width - 96,
+                          ),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: const Color(0xcc8f796f),
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 9,
+                              ),
+                              child: Text(
+                                visualizationLabel,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                  fontFamily:
+                                      MomCozyTypography.displayFontFamily,
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  height: 1.1,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            _V2Card(
+              cardKey: const ValueKey('baby-development-milestones'),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 22),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 174),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(milestoneTitle, style: _BabyText.cardTitle),
+                    const SizedBox(height: 7),
+                    const Text(
+                      'Milestone guidance unavailable',
+                      style: TextStyle(
+                        fontFamily: MomCozyTypography.bodyFontFamily,
+                        color: _BabyOverviewColors.mutedText,
+                        fontSize: 16,
+                        height: 1.25,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 34),
+                    const _BabyDevelopmentUnavailableRow(
+                      icon: Icons.fact_check_outlined,
+                      text:
+                          'Clinically reviewed milestones are not connected yet.',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            _V2Card(
+              cardKey: const ValueKey('baby-development-prenatal-education'),
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(22),
+                    child: Image.asset(
+                      _MeBabyOverviewAssets.prenatalEducation,
+                      width: 78,
+                      height: 78,
+                      fit: BoxFit.cover,
+                      semanticLabel: 'Prenatal education illustration',
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'AI Prenatal Ed',
+                          style: _BabyText.cardTitle,
+                        ),
+                        const SizedBox(height: 5),
+                        const Text(
+                          'Personalized education grounded in confirmed details and cited guidance.',
+                          style: _BabyText.supporting,
+                        ),
+                        const SizedBox(height: 12),
+                        FilledButton.icon(
+                          key: const ValueKey(
+                            'baby-development-start-education',
+                          ),
+                          onPressed: onStartEducation,
+                          iconAlignment: IconAlignment.end,
+                          icon: const Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 18,
+                          ),
+                          label: const Text('Start session'),
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(0, 48),
+                            backgroundColor: _BabyOverviewColors.ink,
+                            foregroundColor: Colors.white,
+                            textStyle: const TextStyle(
+                              fontFamily: MomCozyTypography.bodyFontFamily,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            _V2Card(
+              cardKey: const ValueKey('baby-development-size-weight'),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Size & Weight', style: _BabyText.cardTitle),
+                  const SizedBox(height: 18),
+                  const Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _BabyDevelopmentMetric(
+                          label: 'Estimated Length',
+                        ),
+                      ),
+                      SizedBox(width: 18),
+                      Expanded(
+                        child: _BabyDevelopmentMetric(
+                          label: 'Estimated Weight',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  Container(
+                    height: 48,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: _BabyOverviewColors.pill,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.straighten_rounded,
+                      color: _BabyOverviewColors.wine,
+                      size: 28,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: _BabyOverviewColors.pill,
+                borderRadius: BorderRadius.circular(26),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(18),
+                child: _BabyDevelopmentUnavailableRow(
+                  icon: Icons.show_chart_rounded,
+                  text:
+                      'Growth percentile guidance requires a clinically reviewed reference source.',
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BabyDevelopmentMetric extends StatelessWidget {
+  const _BabyDevelopmentMetric({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: _BabyText.supporting),
+        const SizedBox(height: 6),
+        const Text(
+          'Not available',
+          style: TextStyle(
+            fontFamily: MomCozyTypography.displayFontFamily,
+            color: _BabyOverviewColors.ink,
+            fontSize: 19,
+            height: 1.05,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BabyDevelopmentUnavailableRow extends StatelessWidget {
+  const _BabyDevelopmentUnavailableRow({
+    required this.icon,
+    required this.text,
+  });
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        DecoratedBox(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Icon(icon, color: _BabyOverviewColors.wine, size: 20),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(child: Text(text, style: _BabyText.supporting)),
+      ],
+    );
+  }
+}
+
+int? _confirmedGestationalWeek(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  final patterns = [
+    RegExp(r'\b(?:week|wk)\s*[:\-]?\s*(\d{1,2})\b', caseSensitive: false),
+    RegExp(r'\b(\d{1,2})\s*(?:weeks?|wks?)\b', caseSensitive: false),
+    RegExp(r'孕\s*(\d{1,2})\s*周'),
+  ];
+  for (final pattern in patterns) {
+    final match = pattern.firstMatch(normalized);
+    final week = int.tryParse(match?.group(1) ?? '');
+    if (week != null && week >= 1 && week <= 42) return week;
+  }
+  return null;
+}
+
 class _BabyProfileHero extends StatelessWidget {
   const _BabyProfileHero({
     required this.data,
@@ -226,11 +580,33 @@ class _BabyAvatarStage extends StatelessWidget {
                 top: compact ? -37 : -27,
                 width: math.min(constraints.maxWidth * 0.88, 378),
                 height: math.min(cardHeight * 1.05, 560),
-                child: Image.asset(
-                  _MeBabyOverviewAssets.babyAvatarFull,
-                  alignment: Alignment.bottomRight,
-                  fit: BoxFit.contain,
-                  semanticLabel: 'Baby avatar',
+                child: LayoutBuilder(
+                  builder: (context, avatarConstraints) {
+                    final fullHeight = avatarConstraints.maxHeight;
+                    return Align(
+                      alignment: Alignment.topCenter,
+                      child: SizedBox(
+                        width: avatarConstraints.maxWidth,
+                        height: fullHeight * 0.82,
+                        child: ClipRect(
+                          key: const ValueKey('baby-avatar-name-free-clip'),
+                          child: OverflowBox(
+                            alignment: Alignment.topCenter,
+                            minWidth: avatarConstraints.maxWidth,
+                            maxWidth: avatarConstraints.maxWidth,
+                            minHeight: fullHeight,
+                            maxHeight: fullHeight,
+                            child: Image.asset(
+                              _MeBabyOverviewAssets.babyAvatarFull,
+                              alignment: Alignment.bottomRight,
+                              fit: BoxFit.contain,
+                              semanticLabel: 'Baby avatar',
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
               Positioned(
@@ -406,7 +782,6 @@ class _BabyMonitorContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final useEdgeAlignedOfflineBadge = MediaQuery.sizeOf(context).width < 410;
     return Column(
       children: [
         _V2Card(
@@ -434,7 +809,7 @@ class _BabyMonitorContent extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    left: useEdgeAlignedOfflineBadge ? 0 : 10,
+                    left: 10,
                     top: 10,
                     child: _StatusPill(
                       label: 'OFFLINE',
@@ -1615,19 +1990,20 @@ class _BabyAddRecordSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = const [
-      (_BabyDetail.sleep, 'Sleep', _MeBabyOverviewAssets.moonStarIcon),
-      (_BabyDetail.feeding, 'Feeding', _MeBabyOverviewAssets.babyIcon),
-      (_BabyDetail.diaper, 'Diaper', _MeBabyOverviewAssets.babyIcon),
-      (_BabyDetail.weight, 'Weight', _MeBabyOverviewAssets.weightIcon),
-      (_BabyDetail.height, 'Height', _MeBabyOverviewAssets.rulerIcon),
+      (_BabyDetail.sleep, 'Sleep', _MeBabyOverviewAssets.moonStarIcon, false),
+      (_BabyDetail.feeding, 'Feeding', _MeBabyOverviewAssets.babyIcon, true),
+      (_BabyDetail.diaper, 'Diaper', _MeBabyOverviewAssets.babyIcon, false),
+      (_BabyDetail.weight, 'Weight', _MeBabyOverviewAssets.weightIcon, true),
+      (_BabyDetail.height, 'Height', _MeBabyOverviewAssets.rulerIcon, true),
       (
         _BabyDetail.headCircumference,
         'Head Circ.',
         _MeBabyOverviewAssets.rulerIcon,
+        true,
       ),
     ];
     final scaledLabelHeight = MediaQuery.textScalerOf(context).scale(16);
-    final childAspectRatio = scaledLabelHeight > 22 ? 1.25 : 1.58;
+    final childAspectRatio = scaledLabelHeight > 22 ? 1.1 : 1.58;
     return SafeArea(
       top: false,
       child: ConstrainedBox(
@@ -1698,46 +2074,77 @@ class _BabyAddRecordSheet extends StatelessWidget {
                   itemCount: options.length,
                   itemBuilder: (context, index) {
                     final option = options[index];
-                    return Material(
-                      key: ValueKey('baby-add-record-${option.$1.id}'),
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: const BorderSide(color: _BabyOverviewColors.line),
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () => Navigator.of(context).pop(option.$1),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            DecoratedBox(
-                              decoration: const BoxDecoration(
-                                color: _BabyOverviewColors.pill,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: _BabySvgIcon(
-                                  asset: option.$3,
-                                  color: _BabyOverviewColors.wine,
-                                  size: 24,
+                    final enabled = option.$4;
+                    return Semantics(
+                      label: enabled
+                          ? 'Add ${option.$2} record'
+                          : '${option.$2} recording, coming soon',
+                      button: true,
+                      enabled: enabled,
+                      child: Material(
+                        key: ValueKey('baby-add-record-${option.$1.id}'),
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(
+                            color: _BabyOverviewColors.line,
+                          ),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: enabled
+                              ? () => Navigator.of(context).pop(option.$1)
+                              : null,
+                          child: Opacity(
+                            opacity: enabled ? 1 : 0.58,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                DecoratedBox(
+                                  decoration: const BoxDecoration(
+                                    color: _BabyOverviewColors.pill,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: _BabySvgIcon(
+                                      asset: option.$3,
+                                      color: _BabyOverviewColors.wine,
+                                      size: 24,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(height: 7),
+                                Text(
+                                  option.$2,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontFamily:
+                                        MomCozyTypography.bodyFontFamily,
+                                    color: _BabyOverviewColors.ink,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                if (!enabled) ...[
+                                  const SizedBox(height: 2),
+                                  const Text(
+                                    'Coming soon',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily:
+                                          MomCozyTypography.bodyFontFamily,
+                                      color: _BabyOverviewColors.wine,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
-                            const SizedBox(height: 9),
-                            Text(
-                              option.$2,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: MomCozyTypography.bodyFontFamily,
-                                color: _BabyOverviewColors.ink,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     );
