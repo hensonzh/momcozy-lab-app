@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 
+enum _BabyDetail { feeding, diaper, sleep, weight, height, headCircumference }
+
 class StatusV2Page extends StatefulWidget {
   const StatusV2Page({super.key, required this.path, required this.identity});
 
@@ -30,6 +32,7 @@ class _StatusV2PageState extends State<StatusV2Page>
   bool _trackingSheetDrag = false;
   bool _showAvatarLayer = false;
   bool _avatarExpanded = false;
+  _BabyDetail? _babyDetail;
 
   @override
   void didUpdateWidget(covariant StatusV2Page oldWidget) {
@@ -39,6 +42,7 @@ class _StatusV2PageState extends State<StatusV2Page>
     _detailsPosition.value = 0;
     _showAvatarLayer = false;
     _avatarExpanded = false;
+    _babyDetail = null;
     if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
   }
 
@@ -97,12 +101,54 @@ class _StatusV2PageState extends State<StatusV2Page>
   }
 
   void _selectSection(String section, {bool revealDetails = false}) {
+    if (widget.identity == StatusIdentity.baby) {
+      switch (section) {
+        case 'feeding':
+          _openBabyDetail(_BabyDetail.feeding);
+          return;
+        case 'diaper':
+          _openBabyDetail(_BabyDetail.diaper);
+          return;
+      }
+    }
     setState(() => _section = section);
     if (revealDetails) _settleDetails(0);
   }
 
+  void _openBabyDetail(_BabyDetail detail) {
+    _detailsPosition.stop();
+    _detailsPosition.value = 0;
+    if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
+    setState(() {
+      _babyDetail = detail;
+      _showAvatarLayer = false;
+      _avatarExpanded = false;
+    });
+  }
+
+  void _closeBabyDetail() {
+    setState(() => _babyDetail = null);
+  }
+
+  Future<void> _showBabyAddRecordSheet() async {
+    final detail = await showModalBottomSheet<_BabyDetail>(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.38),
+      builder: (context) => const _BabyAddRecordSheet(),
+    );
+    if (!mounted || detail == null) return;
+    _openBabyDetail(detail);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final babyDetail = _babyDetail;
+    if (widget.identity == StatusIdentity.baby && babyDetail != null) {
+      return _BabyDetailPage(detail: babyDetail, onBack: _closeBabyDetail);
+    }
     return Stack(
       children: [
         Column(
@@ -145,30 +191,50 @@ class _StatusV2PageState extends State<StatusV2Page>
                             );
                           },
                           child: ColoredBox(
-                            color: _StatusV2Colors.background,
+                            color: widget.identity == StatusIdentity.baby
+                                ? _BabyV2Colors.background
+                                : _StatusV2Colors.background,
                             child: ListView(
                               key: ValueKey('route-page-${widget.path}'),
                               controller: _detailsScroll,
                               physics: const ClampingScrollPhysics(),
-                              padding: const EdgeInsets.fromLTRB(
-                                12,
-                                4,
-                                12,
+                              padding: EdgeInsets.fromLTRB(
+                                widget.identity == StatusIdentity.baby
+                                    ? 16
+                                    : 12,
+                                widget.identity == StatusIdentity.baby ? 7 : 4,
+                                widget.identity == StatusIdentity.baby
+                                    ? 16
+                                    : 12,
                                 112,
                               ),
                               children: [
-                                _ProfileHero(identity: widget.identity),
-                                const SizedBox(height: 14),
+                                _ProfileHero(
+                                  identity: widget.identity,
+                                  babySection: _section,
+                                ),
+                                SizedBox(
+                                  height: widget.identity == StatusIdentity.baby
+                                      ? 11
+                                      : 14,
+                                ),
                                 _SectionTabs(
                                   identity: widget.identity,
                                   selected: _section,
                                   onSelected: _selectSection,
                                 ),
-                                const SizedBox(height: 14),
+                                SizedBox(
+                                  height: widget.identity == StatusIdentity.baby
+                                      ? (_section == 'sleep' ? 12 : 16)
+                                      : 14,
+                                ),
                                 if (widget.identity == StatusIdentity.mom)
                                   _MeContent(section: _section)
                                 else
-                                  _BabyContent(section: _section),
+                                  _BabyContent(
+                                    section: _section,
+                                    onOpenDetail: _openBabyDetail,
+                                  ),
                               ],
                             ),
                           ),
@@ -182,10 +248,24 @@ class _StatusV2PageState extends State<StatusV2Page>
                           curve: Curves.easeOutCubic,
                           right: 18,
                           bottom: _avatarExpanded ? 104 : 18,
-                          child: const _DisabledCircleAction(
-                            actionKey: ValueKey('status-v2-add-disabled'),
-                            semanticLabel: 'Add is not available yet',
+                          child: _DisabledCircleAction(
+                            actionKey: ValueKey(
+                              widget.identity == StatusIdentity.baby
+                                  ? 'status-v2-add'
+                                  : 'status-v2-add-disabled',
+                            ),
+                            semanticLabel:
+                                widget.identity == StatusIdentity.baby
+                                ? 'Add baby record'
+                                : 'Add is not available yet',
                             icon: Icons.add_rounded,
+                            onPressed: widget.identity == StatusIdentity.baby
+                                ? _showBabyAddRecordSheet
+                                : null,
+                            backgroundColor:
+                                widget.identity == StatusIdentity.baby
+                                ? _BabyV2Colors.ink
+                                : null,
                           ),
                         ),
                       ],
@@ -201,9 +281,16 @@ class _StatusV2PageState extends State<StatusV2Page>
           right: 0,
           top: 0,
           child: ColoredBox(
-            color: _StatusV2Colors.background,
+            color: widget.identity == StatusIdentity.baby
+                ? _BabyV2Colors.background
+                : _StatusV2Colors.background,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              padding: EdgeInsets.fromLTRB(
+                widget.identity == StatusIdentity.baby ? 22 : 12,
+                widget.identity == StatusIdentity.baby ? 14 : 8,
+                widget.identity == StatusIdentity.baby ? 22 : 12,
+                widget.identity == StatusIdentity.baby ? 2 : 8,
+              ),
               child: _StatusV2Header(identity: widget.identity),
             ),
           ),
@@ -224,68 +311,92 @@ class _StatusV2Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBaby = identity == StatusIdentity.baby;
     final label = identity == StatusIdentity.mom
         ? 'Postpartum Recovery'
         : 'Infant';
+    final profilePill = Semantics(
+      label: '$label, fixed profile',
+      enabled: false,
+      child: Container(
+        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: isBaby ? _BabyV2Colors.pill : _StatusV2Colors.pill,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: isBaby ? _BabyV2Colors.wine : _StatusV2Colors.wine,
+                shape: BoxShape.circle,
+              ),
+              child: const SizedBox.square(dimension: 8),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: isBaby ? _BabyV2Colors.wine : _StatusV2Colors.wine,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+            if (isBaby) ...[
+              const SizedBox(width: 3),
+              const Icon(
+                Icons.arrow_drop_down_rounded,
+                color: _BabyV2Colors.wine,
+                size: 18,
+              ),
+            ],
+            SizedBox(width: isBaby ? 2 : 5),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: isBaby ? _BabyV2Colors.wine : _StatusV2Colors.wine,
+              size: 19,
+            ),
+          ],
+        ),
+      ),
+    );
     return SizedBox(
       height: 54,
       child: Row(
         children: [
-          const _MomCozyWordmark(),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Semantics(
-              label: '$label, fixed profile',
-              enabled: false,
-              child: Container(
-                height: 44,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: _StatusV2Colors.pill,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: _StatusV2Colors.wine,
-                        shape: BoxShape.circle,
-                      ),
-                      child: SizedBox.square(dimension: 8),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          style: const TextStyle(
-                            color: _StatusV2Colors.wine,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: _StatusV2Colors.wine,
-                      size: 19,
-                    ),
-                  ],
-                ),
+          if (isBaby)
+            const Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: _MomCozyWordmark(useBabyPalette: true),
               ),
-            ),
-          ),
+            )
+          else ...[
+            const _MomCozyWordmark(),
+            const SizedBox(width: 10),
+          ],
+          if (isBaby)
+            SizedBox(width: 110, child: profilePill)
+          else
+            Expanded(child: profilePill),
           const SizedBox(width: 8),
-          const _DisabledCircleAction(
-            actionKey: ValueKey('status-v2-notification-disabled'),
+          _DisabledCircleAction(
+            actionKey: const ValueKey('status-v2-notification-disabled'),
             semanticLabel: 'Notifications are not available yet',
             icon: Icons.notifications_none_rounded,
             compact: true,
+            size: isBaby ? 38 : null,
+            backgroundColor: isBaby ? _BabyV2Colors.pill : null,
+            foregroundColor: isBaby ? _BabyV2Colors.wine : null,
           ),
         ],
       ),
@@ -294,25 +405,26 @@ class _StatusV2Header extends StatelessWidget {
 }
 
 class _MomCozyWordmark extends StatelessWidget {
-  const _MomCozyWordmark();
+  const _MomCozyWordmark({this.useBabyPalette = false});
+
+  final bool useBabyPalette;
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    final wine = useBabyPalette ? _BabyV2Colors.wine : _StatusV2Colors.wine;
+    final ink = useBabyPalette ? _BabyV2Colors.ink : _StatusV2Colors.ink;
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         DecoratedBox(
-          decoration: BoxDecoration(
-            color: _StatusV2Colors.wine,
-            shape: BoxShape.circle,
-          ),
-          child: SizedBox.square(dimension: 10),
+          decoration: BoxDecoration(color: wine, shape: BoxShape.circle),
+          child: const SizedBox.square(dimension: 10),
         ),
-        SizedBox(width: 7),
+        const SizedBox(width: 7),
         Text(
           'momcozy',
           style: TextStyle(
-            color: _StatusV2Colors.ink,
+            color: ink,
             fontSize: 25,
             height: 1,
             fontWeight: FontWeight.w900,
@@ -325,13 +437,17 @@ class _MomCozyWordmark extends StatelessWidget {
 }
 
 class _ProfileHero extends StatelessWidget {
-  const _ProfileHero({required this.identity});
+  const _ProfileHero({required this.identity, required this.babySection});
 
   final StatusIdentity identity;
+  final String babySection;
 
   @override
   Widget build(BuildContext context) {
     final isMom = identity == StatusIdentity.mom;
+    if (!isMom) {
+      return _BabyProfileHero(compactForSleep: babySection == 'sleep');
+    }
     return Container(
       key: ValueKey(isMom ? 'me-profile-hero' : 'baby-profile-hero'),
       height: 246,
@@ -432,6 +548,109 @@ class _ProfileHero extends StatelessWidget {
   }
 }
 
+class _BabyProfileHero extends StatelessWidget {
+  const _BabyProfileHero({required this.compactForSleep});
+
+  final bool compactForSleep;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      key: const ValueKey('baby-profile-hero'),
+      height: compactForSleep ? 138 : 175,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            height: compactForSleep ? 125 : 156,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Color(0xfffbf5f3), Color(0xfff5ecea)],
+                ),
+                borderRadius: BorderRadius.circular(28),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 22,
+            top: compactForSleep ? 24 : 35,
+            child: const Text(
+              'Baby Emma',
+              style: TextStyle(
+                color: _BabyV2Colors.ink,
+                fontSize: 31,
+                height: 1,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1.2,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 22,
+            top: compactForSleep ? 58 : 69,
+            child: const Text(
+              '3 months 2 weeks',
+              style: TextStyle(
+                color: _BabyV2Colors.mutedText,
+                fontSize: 17,
+                height: 1,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 22,
+            top: compactForSleep ? 80 : 94,
+            child: Container(
+              height: 31,
+              padding: const EdgeInsets.symmetric(horizontal: 11),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0d000000),
+                    blurRadius: 16,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: const Text(
+                'I had enough milk today ✓',
+                style: TextStyle(
+                  color: _BabyV2Colors.ink,
+                  fontSize: 13,
+                  height: 1,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            right: -10,
+            top: compactForSleep ? -141 : -105,
+            width: compactForSleep ? 198 : 194,
+            height: compactForSleep ? 330 : 324,
+            child: const IgnorePointer(
+              child: Image(
+                image: AssetImage(_StatusV2Assets.babyAvatar),
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _CelebrationText extends StatelessWidget {
   const _CelebrationText({required this.label});
 
@@ -481,7 +700,7 @@ class _AvatarStage extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMom = identity == StatusIdentity.mom;
     return ColoredBox(
-      color: _StatusV2Colors.background,
+      color: isMom ? _StatusV2Colors.background : _BabyV2Colors.background,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxHeight < 620;
@@ -657,24 +876,28 @@ class _SectionTabs extends StatelessWidget {
             ('sleep', 'Sleep'),
             ('feeding', 'Feeding'),
             ('diaper', 'Diaper'),
-            ('growth', 'Growth'),
           ];
-    return Row(
-      children: [
-        for (var index = 0; index < sections.length; index += 1) ...[
-          if (index > 0) SizedBox(width: compact ? 5 : 7),
-          Expanded(
-            child: _SectionTab(
-              section: sections[index].$1,
-              label: sections[index].$2,
-              selected: selected == sections[index].$1,
-              prefix: identity == StatusIdentity.mom ? 'me' : 'baby',
-              onTap: () => onSelected(sections[index].$1),
-              compact: compact,
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: identity == StatusIdentity.baby ? 6 : 0,
+      ),
+      child: Row(
+        children: [
+          for (var index = 0; index < sections.length; index += 1) ...[
+            if (index > 0) SizedBox(width: compact ? 5 : 7),
+            Expanded(
+              child: _SectionTab(
+                section: sections[index].$1,
+                label: sections[index].$2,
+                selected: selected == sections[index].$1,
+                prefix: identity == StatusIdentity.mom ? 'me' : 'baby',
+                onTap: () => onSelected(sections[index].$1),
+                compact: compact,
+              ),
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -698,29 +921,60 @@ class _SectionTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBaby = prefix == 'baby';
+    final icon = switch (section) {
+      'monitor' => Icons.monitor_heart_outlined,
+      'sleep' => Icons.bedtime_outlined,
+      'feeding' => Icons.child_care_rounded,
+      'diaper' => Icons.baby_changing_station_outlined,
+      _ => null,
+    };
     return Semantics(
       selected: selected,
       button: true,
       inMutuallyExclusiveGroup: true,
       child: Material(
         key: ValueKey('$prefix-section-$section'),
-        color: selected ? _StatusV2Colors.ink : _StatusV2Colors.pill,
+        color: selected
+            ? (isBaby ? _BabyV2Colors.ink : _StatusV2Colors.ink)
+            : (isBaby ? _BabyV2Colors.pill : _StatusV2Colors.pill),
         borderRadius: BorderRadius.circular(24),
         child: InkWell(
           borderRadius: BorderRadius.circular(24),
           onTap: onTap,
           child: SizedBox(
-            height: compact ? 40 : 48,
+            height: isBaby ? 32 : (compact ? 40 : 48),
             child: Center(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: selected ? Colors.white : _StatusV2Colors.ink,
-                    fontSize: compact ? 13 : 15,
-                    fontWeight: FontWeight.w800,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isBaby && icon != null) ...[
+                      Icon(
+                        icon,
+                        color: selected
+                            ? Colors.white
+                            : (isBaby
+                                  ? _BabyV2Colors.ink
+                                  : _StatusV2Colors.ink),
+                        size: 17,
+                      ),
+                      const SizedBox(width: 5),
+                    ],
+                    Text(
+                      label,
+                      style: TextStyle(
+                        color: selected
+                            ? Colors.white
+                            : (isBaby
+                                  ? _BabyV2Colors.ink
+                                  : _StatusV2Colors.ink),
+                        fontSize: isBaby ? 13 : (compact ? 13 : 15),
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -947,17 +1201,17 @@ class _MeRecoveryContent extends StatelessWidget {
 }
 
 class _BabyContent extends StatelessWidget {
-  const _BabyContent({required this.section});
+  const _BabyContent({required this.section, required this.onOpenDetail});
 
   final String section;
+  final ValueChanged<_BabyDetail> onOpenDetail;
 
   @override
   Widget build(BuildContext context) {
     return switch (section) {
-      'sleep' => const _BabySleepContent(),
-      'feeding' => const _BabyFeedingContent(),
-      'diaper' => const _BabyDiaperContent(),
-      'growth' => const _BabyGrowthContent(),
+      'sleep' => _BabySleepContent(
+        onOpenDetail: () => onOpenDetail(_BabyDetail.sleep),
+      ),
       _ => const _BabyMonitorContent(),
     };
   }
@@ -971,6 +1225,7 @@ class _BabyMonitorContent extends StatelessWidget {
     return const Column(
       children: [
         _V2Card(
+          padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -982,47 +1237,70 @@ class _BabyMonitorContent extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(height: 14),
+              SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Nursery Camera',
-                      style: _StatusV2Text.cardTitle,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Nursery Camera',
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: _StatusV2Colors.ink,
+                          fontSize: 14,
+                          height: 1,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(width: 8),
-                  Expanded(
-                    flex: 3,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        children: [
-                          Text(
-                            '24°C',
-                            style: TextStyle(
-                              color: _StatusV2Colors.ink,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                            ),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      children: [
+                        Text(
+                          '24°C',
+                          style: TextStyle(
+                            color: _StatusV2Colors.ink,
+                            fontSize: 14,
+                            height: 1,
+                            fontWeight: FontWeight.w900,
                           ),
-                          SizedBox(width: 5),
-                          Text('Temp', style: _StatusV2Text.supporting),
-                          SizedBox(width: 12),
-                          Text(
-                            '58%',
-                            style: TextStyle(
-                              color: _StatusV2Colors.ink,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                            ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Temp',
+                          style: TextStyle(
+                            color: _StatusV2Colors.mutedText,
+                            fontSize: 11,
+                            height: 1,
+                            fontWeight: FontWeight.w600,
                           ),
-                          SizedBox(width: 5),
-                          Text('Humidity', style: _StatusV2Text.supporting),
-                        ],
-                      ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          '58%',
+                          style: TextStyle(
+                            color: _StatusV2Colors.ink,
+                            fontSize: 14,
+                            height: 1,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Humidity',
+                          style: TextStyle(
+                            color: _StatusV2Colors.mutedText,
+                            fontSize: 11,
+                            height: 1,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -1030,29 +1308,41 @@ class _BabyMonitorContent extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 14),
+        SizedBox(height: 12),
         _V2Card(
+          padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Recent Activity', style: _StatusV2Text.cardTitle),
-              SizedBox(height: 14),
+              Text(
+                'Recent Activity',
+                style: TextStyle(
+                  color: _StatusV2Colors.ink,
+                  fontSize: 14,
+                  height: 1,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              SizedBox(height: 8),
               _ActivityRow(
                 icon: Icons.rotate_left_rounded,
                 label: 'Rolled over',
                 time: '5 min ago',
+                compact: true,
               ),
-              SizedBox(height: 12),
+              SizedBox(height: 4),
               _ActivityRow(
                 icon: Icons.visibility_outlined,
                 label: 'Brief awakening',
                 time: '12 min ago',
+                compact: true,
               ),
-              SizedBox(height: 12),
+              SizedBox(height: 4),
               _ActivityRow(
                 icon: Icons.bedtime_outlined,
                 label: 'Fell back asleep',
                 time: '10 min ago',
+                compact: true,
               ),
             ],
           ),
@@ -1063,47 +1353,65 @@ class _BabyMonitorContent extends StatelessWidget {
 }
 
 class _BabySleepContent extends StatelessWidget {
-  const _BabySleepContent();
+  const _BabySleepContent({required this.onOpenDetail});
+
+  final VoidCallback onOpenDetail;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        _V2Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  _RoundIcon(icon: Icons.bedtime_outlined),
-                  SizedBox(width: 12),
-                  Text('Total Sleep Today', style: _StatusV2Text.cardTitle),
-                ],
-              ),
-              SizedBox(height: 16),
-              Text('14.2 h', style: _StatusV2Text.heroMetric),
-              SizedBox(height: 8),
-              Row(
-                children: [
-                  Text(
-                    '79% of daily goal · Keep going!',
-                    style: _StatusV2Text.supporting,
+        GestureDetector(
+          key: const ValueKey('baby-sleep-summary-card'),
+          behavior: HitTestBehavior.opaque,
+          onTap: onOpenDetail,
+          child: const _V2Card(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    _RoundIcon(icon: Icons.bedtime_outlined, compact: true),
+                    SizedBox(width: 10),
+                    Text('Total Sleep Today', style: _StatusV2Text.cardTitle),
+                  ],
+                ),
+                SizedBox(height: 6),
+                Text(
+                  '14.2 h',
+                  style: TextStyle(
+                    color: _StatusV2Colors.ink,
+                    fontSize: 50,
+                    height: 0.8,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -1.5,
                   ),
-                  SizedBox(width: 5),
-                  Icon(
-                    Icons.celebration_rounded,
-                    color: _StatusV2Colors.wine,
-                    size: 16,
-                  ),
-                ],
-              ),
-              SizedBox(height: 12),
-              _StatusBadge(label: 'Currently Sleeping'),
-            ],
+                ),
+                SizedBox(height: 2),
+                Row(
+                  children: [
+                    Text(
+                      '79% of daily goal · Keep going!',
+                      style: _StatusV2Text.supporting,
+                    ),
+                    SizedBox(width: 5),
+                    Icon(
+                      Icons.celebration_rounded,
+                      color: _StatusV2Colors.wine,
+                      size: 16,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6),
+                _StatusBadge(label: 'Currently Sleeping', compact: true),
+              ],
+            ),
           ),
         ),
-        SizedBox(height: 14),
-        _V2Card(
+        const SizedBox(height: 14),
+        const _V2Card(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1125,9 +1433,9 @@ class _BabySleepContent extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 6),
               _SleepTimeline(),
-              SizedBox(height: 12),
+              SizedBox(height: 6),
               Text(
                 '●  Deep     ●  Light     ●  Awake',
                 style: _StatusV2Text.supporting,
@@ -1135,23 +1443,24 @@ class _BabySleepContent extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 14),
-        _V2Card(
+        const SizedBox(height: 8),
+        const _V2Card(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Sleep Trend & Prediction', style: _StatusV2Text.cardTitle),
-              SizedBox(height: 16),
+              SizedBox(height: 6),
               _PredictionRow(label: 'Next wake window: ~4:00 - 5:30 PM'),
-              SizedBox(height: 14),
+              SizedBox(height: 6),
               _PredictionRow(label: 'Predicted wake: ~2:30 PM'),
-              SizedBox(height: 14),
-              _StatusBadge(label: 'Optimal'),
+              SizedBox(height: 6),
+              _StatusBadge(label: 'Optimal', compact: true),
             ],
           ),
         ),
-        SizedBox(height: 14),
-        _RoleCard(
+        const SizedBox(height: 14),
+        const _RoleCard(
           title: 'Sleep Training',
           subtitle: 'AI sleep coaching',
           actionLabel: 'Start',
@@ -1180,17 +1489,18 @@ class _BabyFeedingContent extends StatelessWidget {
     return Column(
       children: [
         const _V2Card(
+          padding: EdgeInsets.all(16),
           child: Row(
             children: [
               SizedBox(
-                width: 72,
-                height: 72,
+                width: 48,
+                height: 48,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     CircularProgressIndicator(
                       value: 0.9,
-                      strokeWidth: 8,
+                      strokeWidth: 5,
                       backgroundColor: _StatusV2Colors.line,
                       color: _StatusV2Colors.wine,
                     ),
@@ -1198,26 +1508,37 @@ class _BabyFeedingContent extends StatelessWidget {
                       '90%',
                       style: TextStyle(
                         color: _StatusV2Colors.ink,
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(width: 16),
+              SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Today’s Target Achieved',
-                      style: _StatusV2Text.cardTitle,
+                      style: TextStyle(
+                        color: _StatusV2Colors.ink,
+                        fontSize: 16,
+                        height: 1,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                     SizedBox(height: 5),
                     Text(
                       '6 feeds completed · 730 ml out of 800 ml',
-                      style: _StatusV2Text.supporting,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: _StatusV2Colors.mutedText,
+                        fontSize: 12,
+                        height: 1,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -1227,6 +1548,7 @@ class _BabyFeedingContent extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         _V2Card(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1235,11 +1557,13 @@ class _BabyFeedingContent extends StatelessWidget {
               for (var index = 0; index < _feeds.length; index += 1) ...[
                 _FeedRow(feed: _feeds[index]),
                 if (index < _feeds.length - 1)
-                  const Divider(color: _StatusV2Colors.line, height: 16),
+                  const Divider(color: _StatusV2Colors.line, height: 6),
               ],
             ],
           ),
         ),
+        const SizedBox(height: 14),
+        const _FeedingDiaperTrackerCard(),
         const SizedBox(height: 14),
         const _V2Card(
           child: Column(
@@ -1255,6 +1579,74 @@ class _BabyFeedingContent extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _FeedingDiaperTrackerCard extends StatelessWidget {
+  const _FeedingDiaperTrackerCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return const _V2Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text('Diaper Tracker', style: _StatusV2Text.cardTitle),
+              ),
+              Text(
+                '5 wet / 2 dirty today',
+                style: TextStyle(
+                  color: _StatusV2Colors.wine,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.water_drop_rounded,
+                      color: Color(0xff2d9cdb),
+                      size: 20,
+                    ),
+                    SizedBox(width: 7),
+                    Flexible(
+                      child: Text(
+                        '5 Wet Diapers',
+                        style: TextStyle(
+                          color: _StatusV2Colors.ink,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  '2 Dirty Diapers',
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    color: _StatusV2Colors.ink,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1382,47 +1774,696 @@ class _BabyDiaperContent extends StatelessWidget {
   }
 }
 
-class _BabyGrowthContent extends StatelessWidget {
-  const _BabyGrowthContent();
+class _BabyDetailPage extends StatelessWidget {
+  const _BabyDetailPage({required this.detail, required this.onBack});
+
+  final _BabyDetail detail;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    final (title, subtitle) = switch (detail) {
+      _BabyDetail.feeding => ('Feeding & Care', 'Logs & Summaries'),
+      _BabyDetail.diaper => ('Diaper Tracker', 'Logs & Summaries'),
+      _BabyDetail.sleep => ('Baby Sleep', 'Rest & Recovery'),
+      _BabyDetail.weight => ('Baby Weight', 'Growth Tracking'),
+      _BabyDetail.height => ('Baby Height', 'Growth Tracking'),
+      _BabyDetail.headCircumference => (
+        'Head Circumference',
+        'Growth Tracking',
+      ),
+    };
+    return ColoredBox(
+      color: _BabyV2Colors.background,
+      child: ListView(
+        key: ValueKey('baby-detail-${detail.id}'),
+        physics: const ClampingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 22, 16, 28),
+        children: [
+          _BabyDetailHeader(
+            detail: detail,
+            title: title,
+            subtitle: subtitle,
+            onBack: onBack,
+          ),
+          const SizedBox(height: 7),
+          if (detail == _BabyDetail.feeding) ...[
+            const _DetailPeriodTabs(),
+            const SizedBox(height: 16),
+            const _BabyFeedingContent(),
+          ] else if (detail == _BabyDetail.diaper)
+            const _BabyDiaperContent()
+          else if (detail == _BabyDetail.sleep)
+            const _BabySleepReportContent()
+          else
+            _BabyGrowthDetailContent(detail: detail),
+        ],
+      ),
+    );
+  }
+}
+
+extension on _BabyDetail {
+  String get id => switch (this) {
+    _BabyDetail.feeding => 'feeding',
+    _BabyDetail.diaper => 'diaper',
+    _BabyDetail.sleep => 'sleep',
+    _BabyDetail.weight => 'weight',
+    _BabyDetail.height => 'height',
+    _BabyDetail.headCircumference => 'head-circumference',
+  };
+}
+
+class _BabyDetailHeader extends StatelessWidget {
+  const _BabyDetailHeader({
+    required this.detail,
+    required this.title,
+    required this.subtitle,
+    required this.onBack,
+  });
+
+  final _BabyDetail detail;
+  final String title;
+  final String subtitle;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Material(
+          key: ValueKey('baby-detail-back-${detail.id}'),
+          color: Colors.white,
+          shape: const CircleBorder(
+            side: BorderSide(color: _StatusV2Colors.line),
+          ),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onBack,
+            child: const SizedBox.square(
+              dimension: 36,
+              child: Icon(
+                Icons.chevron_left_rounded,
+                color: _StatusV2Colors.ink,
+                size: 25,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: _StatusV2Colors.ink,
+                    fontSize: 26,
+                    height: 1,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.8,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(subtitle, style: _StatusV2Text.supporting),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        const _DisabledCircleAction(
+          actionKey: ValueKey('baby-detail-more-disabled'),
+          semanticLabel: 'More actions are not available yet',
+          icon: Icons.more_horiz_rounded,
+          compact: true,
+          size: 36,
+        ),
+      ],
+    );
+  }
+}
+
+class _DetailPeriodTabs extends StatelessWidget {
+  const _DetailPeriodTabs();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 40,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: _StatusV2Colors.line),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: _StatusV2Colors.pill,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: const Text(
+                'Day',
+                style: TextStyle(
+                  color: _StatusV2Colors.wine,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+          const Expanded(
+            child: Center(
+              child: Text(
+                'Week',
+                style: TextStyle(
+                  color: _StatusV2Colors.mutedText,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BabySleepReportContent extends StatelessWidget {
+  const _BabySleepReportContent();
 
   @override
   Widget build(BuildContext context) {
     return const Column(
       children: [
-        Row(
+        _V2Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("LAST NIGHT'S SLEEP", style: _StatusV2Text.eyebrow),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text('10.2 hours', style: _StatusV2Text.heroMetric),
+                  ),
+                  _WineBadge(label: 'Excellent'),
+                ],
+              ),
+              Divider(color: _StatusV2Colors.line, height: 28),
+              Text(
+                'Baby Emma slept soundly with only 1 brief wake-up at 2:15 AM.',
+                style: _StatusV2Text.supporting,
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 14),
+        _V2Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Sleep Timeline', style: _StatusV2Text.cardTitle),
+              SizedBox(height: 16),
+              _NightSleepTimeline(),
+            ],
+          ),
+        ),
+        SizedBox(height: 14),
+        _V2Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Today's Naps", style: _StatusV2Text.cardTitle),
+              SizedBox(height: 10),
+              _NapRow(
+                title: 'Morning Nap',
+                time: '9:00 AM - 9:45 AM',
+                duration: '45 min',
+              ),
+              Divider(color: _StatusV2Colors.line, height: 18),
+              _NapRow(
+                title: 'Afternoon Nap',
+                time: '1:15 PM - 2:30 PM',
+                duration: '1h 15m',
+              ),
+              Divider(color: _StatusV2Colors.line, height: 18),
+              _NapRow(
+                title: 'Evening Nap',
+                time: '4:30 PM - 5:15 PM',
+                duration: '45 min',
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 14),
+        _V2Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Weekly Pattern', style: _StatusV2Text.cardTitle),
+              SizedBox(height: 16),
+              _WeeklySleepBars(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _NightSleepTimeline extends StatelessWidget {
+  const _NightSleepTimeline();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: const SizedBox(
+            height: 34,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(flex: 3, child: ColoredBox(color: Color(0xff862644))),
+                Expanded(child: ColoredBox(color: Color(0xfff4ece9))),
+                Expanded(flex: 4, child: ColoredBox(color: Color(0xffbb5d70))),
+                Expanded(child: ColoredBox(color: Color(0xfff4ece9))),
+                Expanded(flex: 2, child: ColoredBox(color: Color(0xff862644))),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            Text('8:00 PM', style: _StatusV2Text.supporting),
+            Text('2:15 AM', style: _StatusV2Text.supporting),
+            Text('6:00 AM', style: _StatusV2Text.supporting),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _NapRow extends StatelessWidget {
+  const _NapRow({
+    required this.title,
+    required this.time,
+    required this.duration,
+  });
+
+  final String title;
+  final String time;
+  final String duration;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const DecoratedBox(
+          decoration: BoxDecoration(
+            color: Color(0xffbb5d70),
+            shape: BoxShape.circle,
+          ),
+          child: SizedBox.square(
+            dimension: 48,
+            child: Center(child: Text('💤', style: TextStyle(fontSize: 18))),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: _StatusV2Colors.ink,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(time, style: _StatusV2Text.supporting),
+            ],
+          ),
+        ),
+        Text(
+          duration,
+          style: const TextStyle(
+            color: _StatusV2Colors.wine,
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _WeeklySleepBars extends StatelessWidget {
+  const _WeeklySleepBars();
+
+  @override
+  Widget build(BuildContext context) {
+    const values = [9.5, 10.2, 8.8, 10.5, 11.0, 9.2, 10.0];
+    const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return SizedBox(
+      height: 130,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (var index = 0; index < values.length; index += 1)
             Expanded(
-              child: _GrowthMetric(
-                label: 'Weight',
-                value: '6.2 kg',
-                percentile: 'P55 (Normal)',
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('${values[index]}h', style: _StatusV2Text.supporting),
+                  const SizedBox(height: 4),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(5),
+                    ),
+                    child: SizedBox(
+                      width: 22,
+                      height: values[index] * 6,
+                      child: const Column(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: ColoredBox(color: _StatusV2Colors.pill),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: ColoredBox(color: Color(0xffbb5d70)),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: ColoredBox(color: _StatusV2Colors.wine),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(labels[index], style: _StatusV2Text.supporting),
+                ],
               ),
             ),
-            SizedBox(width: 8),
-            Expanded(
-              child: _GrowthMetric(
-                label: 'Height',
-                value: '62 cm',
-                percentile: 'P60 (Normal)',
+        ],
+      ),
+    );
+  }
+}
+
+class _BabyGrowthDetailContent extends StatelessWidget {
+  const _BabyGrowthDetailContent({required this.detail});
+
+  final _BabyDetail detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final data = switch (detail) {
+      _BabyDetail.weight => const _GrowthDetailData(
+        value: '6.2 kg',
+        percentile: 'P55 (Normal)',
+        curveTitle: 'WHO Weight Curve',
+        history: [
+          ('6.2 kg', 'Jan 12 (3.5 Months)', '+0.4 kg'),
+          ('5.8 kg', 'Dec 15 (2.5 Months)', '+0.6 kg'),
+          ('5.2 kg', 'Nov 12 (1.5 Months)', '+0.8 kg'),
+          ('4.4 kg', 'Oct 10 (Birth Weight)', 'Baseline'),
+        ],
+      ),
+      _BabyDetail.height => const _GrowthDetailData(
+        value: '62 cm',
+        percentile: 'P60 (Normal)',
+        curveTitle: 'WHO Height Curve',
+        history: [
+          ('62 cm', 'Jan 12 (3.5 Months)', '+2.0 cm'),
+          ('60 cm', 'Dec 15 (2.5 Months)', '+3.0 cm'),
+          ('57 cm', 'Nov 12 (1.5 Months)', '+4.0 cm'),
+          ('53 cm', 'Oct 10 (Birth Length)', 'Baseline'),
+        ],
+      ),
+      _ => const _GrowthDetailData(
+        value: '40.5 cm',
+        percentile: 'P50 (Normal)',
+        curveTitle: 'WHO Head Circ. Curve',
+        history: [
+          ('40.5 cm', 'Jan 12 (3.5 Months)', '+1.0 cm'),
+          ('39.5 cm', 'Dec 15 (2.5 Months)', '+1.5 cm'),
+          ('38.0 cm', 'Nov 12 (1.5 Months)', '+2.0 cm'),
+          ('36.0 cm', 'Oct 10 (Birth Head)', 'Baseline'),
+        ],
+      ),
+    };
+    return Column(
+      children: [
+        _V2Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('CURRENT MEASUREMENT', style: _StatusV2Text.eyebrow),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(data.value, style: _StatusV2Text.heroMetric),
+                  ),
+                  _WineBadge(label: data.percentile),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        _GrowthCurveCard(title: data.curveTitle),
+        const SizedBox(height: 14),
+        _V2Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Recent History', style: _StatusV2Text.cardTitle),
+              const SizedBox(height: 12),
+              for (var index = 0; index < data.history.length; index += 1) ...[
+                _GrowthHistoryRow(entry: data.history[index]),
+                if (index < data.history.length - 1)
+                  const Divider(color: _StatusV2Colors.line, height: 18),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _GrowthDetailData {
+  const _GrowthDetailData({
+    required this.value,
+    required this.percentile,
+    required this.curveTitle,
+    required this.history,
+  });
+
+  final String value;
+  final String percentile;
+  final String curveTitle;
+  final List<(String, String, String)> history;
+}
+
+class _GrowthHistoryRow extends StatelessWidget {
+  const _GrowthHistoryRow({required this.entry});
+
+  final (String, String, String) entry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                entry.$1,
+                style: const TextStyle(
+                  color: _StatusV2Colors.ink,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(entry.$2, style: _StatusV2Text.supporting),
+            ],
+          ),
+        ),
+        Text(
+          entry.$3,
+          style: const TextStyle(
+            color: _StatusV2Colors.wine,
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _WineBadge extends StatelessWidget {
+  const _WineBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: _StatusV2Colors.pill,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: _StatusV2Colors.wine,
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BabyAddRecordSheet extends StatelessWidget {
+  const _BabyAddRecordSheet();
+
+  @override
+  Widget build(BuildContext context) {
+    final options = const [
+      (_BabyDetail.sleep, 'Sleep', Icons.bedtime_outlined),
+      (_BabyDetail.feeding, 'Feeding', Icons.child_care_rounded),
+      (_BabyDetail.diaper, 'Diaper', Icons.baby_changing_station_outlined),
+      (_BabyDetail.weight, 'Weight', Icons.monitor_weight_outlined),
+      (_BabyDetail.height, 'Height', Icons.straighten_rounded),
+      (_BabyDetail.headCircumference, 'Head Circ.', Icons.straighten_rounded),
+    ];
+    return SafeArea(
+      top: false,
+      child: Container(
+        key: const ValueKey('baby-add-record-sheet'),
+        padding: const EdgeInsets.fromLTRB(24, 12, 24, 96),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 5,
+              decoration: BoxDecoration(
+                color: _StatusV2Colors.line,
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
-            SizedBox(width: 8),
-            Expanded(
-              child: _GrowthMetric(
-                label: 'Head',
-                value: '40.5 cm',
-                percentile: 'P50 (Normal)',
+            const SizedBox(height: 13),
+            Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Add Record',
+                    style: TextStyle(
+                      color: _StatusV2Colors.ink,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                IconButton.filledTonal(
+                  key: const ValueKey('baby-add-record-close'),
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: IconButton.styleFrom(
+                    backgroundColor: _StatusV2Colors.pill,
+                    foregroundColor: _StatusV2Colors.wine,
+                  ),
+                  icon: const Icon(Icons.close_rounded),
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.58,
               ),
+              itemCount: options.length,
+              itemBuilder: (context, index) {
+                final option = options[index];
+                return Material(
+                  key: ValueKey('baby-add-record-${option.$1.id}'),
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: const BorderSide(color: _StatusV2Colors.line),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20),
+                    onTap: () => Navigator.of(context).pop(option.$1),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DecoratedBox(
+                          decoration: const BoxDecoration(
+                            color: _StatusV2Colors.pill,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(13),
+                            child: Icon(
+                              option.$3,
+                              color: _StatusV2Colors.wine,
+                              size: 26,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 9),
+                        Text(
+                          option.$2,
+                          style: const TextStyle(
+                            color: _StatusV2Colors.ink,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
-        SizedBox(height: 14),
-        _GrowthCurveCard(title: 'WHO Weight Curve'),
-        SizedBox(height: 14),
-        _GrowthCurveCard(title: 'WHO Height Curve'),
-        SizedBox(height: 14),
-        _GrowthCurveCard(title: 'WHO Head Circ. Curve'),
-      ],
+      ),
     );
   }
 }
@@ -1511,38 +2552,55 @@ class _ActivityRow extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.time,
+    this.compact = false,
   });
 
   final IconData icon;
   final String label;
   final String time;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        DecoratedBox(
-          decoration: const BoxDecoration(
-            color: _StatusV2Colors.pill,
-            shape: BoxShape.circle,
+        if (compact)
+          SizedBox(
+            width: 22,
+            child: Icon(icon, color: _StatusV2Colors.wine, size: 14),
+          )
+        else
+          DecoratedBox(
+            decoration: const BoxDecoration(
+              color: _StatusV2Colors.pill,
+              shape: BoxShape.circle,
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(compact ? 3 : 6),
+              child: Icon(
+                icon,
+                color: _StatusV2Colors.wine,
+                size: compact ? 14 : 16,
+              ),
+            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(6),
-            child: Icon(icon, color: _StatusV2Colors.wine, size: 16),
-          ),
-        ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: _StatusV2Colors.ink,
-              fontSize: 16,
+              fontSize: compact ? 13 : 16,
               fontWeight: FontWeight.w800,
             ),
           ),
         ),
-        Text(time, style: _StatusV2Text.supporting),
+        Text(
+          time,
+          style: compact
+              ? _StatusV2Text.supporting.copyWith(fontSize: 11, height: 1)
+              : _StatusV2Text.supporting,
+        ),
       ],
     );
   }
@@ -1557,14 +2615,14 @@ class _PredictionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const _RoundIcon(icon: Icons.schedule_rounded),
-        const SizedBox(width: 12),
+        const _RoundIcon(icon: Icons.schedule_rounded, compact: true),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             label,
             style: const TextStyle(
               color: _StatusV2Colors.ink,
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -1575,9 +2633,10 @@ class _PredictionRow extends StatelessWidget {
 }
 
 class _RoundIcon extends StatelessWidget {
-  const _RoundIcon({required this.icon});
+  const _RoundIcon({required this.icon, this.compact = false});
 
   final IconData icon;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -1587,17 +2646,18 @@ class _RoundIcon extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(11),
-        child: Icon(icon, color: _StatusV2Colors.wine, size: 22),
+        padding: EdgeInsets.all(compact ? 6 : 11),
+        child: Icon(icon, color: _StatusV2Colors.wine, size: compact ? 20 : 22),
       ),
     );
   }
 }
 
 class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.label});
+  const _StatusBadge({required this.label, this.compact = false});
 
   final String label;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -1607,12 +2667,15 @@ class _StatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 12 : 14,
+          vertical: compact ? 5 : 8,
+        ),
         child: Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: Color(0xff00694d),
-            fontSize: 15,
+            fontSize: compact ? 14 : 15,
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -1631,8 +2694,9 @@ class _SleepTimeline extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: const SizedBox(
-            height: 42,
+            height: 24,
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(flex: 2, child: ColoredBox(color: Color(0xff862644))),
                 Expanded(flex: 2, child: ColoredBox(color: Color(0xffe8d9d6))),
@@ -1643,7 +2707,7 @@ class _SleepTimeline extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 9),
+        const SizedBox(height: 6),
         const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -1677,8 +2741,8 @@ class _FeedRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const _RoundIcon(icon: Icons.favorite_border_rounded),
-        const SizedBox(width: 12),
+        const _RoundIcon(icon: Icons.favorite_border_rounded, compact: true),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1791,65 +2855,6 @@ class _DiaperEntry extends StatelessWidget {
         const SizedBox(width: 8),
         Text(entry.$4, style: _StatusV2Text.supporting),
       ],
-    );
-  }
-}
-
-class _GrowthMetric extends StatelessWidget {
-  const _GrowthMetric({
-    required this.label,
-    required this.value,
-    required this.percentile,
-  });
-
-  final String label;
-  final String value;
-  final String percentile;
-
-  @override
-  Widget build(BuildContext context) {
-    return _V2Card(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: _StatusV2Text.supporting),
-          const SizedBox(height: 7),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: _StatusV2Colors.ink,
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: _StatusV2Colors.pill,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  percentile,
-                  style: const TextStyle(
-                    color: _StatusV2Colors.wine,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -2049,40 +3054,57 @@ class _DisabledCircleAction extends StatelessWidget {
     required this.semanticLabel,
     required this.icon,
     this.compact = false,
+    this.onPressed,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.size,
   });
 
   final Key actionKey;
   final String semanticLabel;
   final IconData icon;
   final bool compact;
+  final VoidCallback? onPressed;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
-    final size = compact ? 44.0 : 62.0;
+    final resolvedSize = size ?? (compact ? 44.0 : 62.0);
     return Semantics(
       key: actionKey,
       label: semanticLabel,
-      enabled: false,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: compact ? _StatusV2Colors.pill : _StatusV2Colors.ink,
-          shape: BoxShape.circle,
-          boxShadow: compact
-              ? null
-              : const [
-                  BoxShadow(
-                    color: Color(0x29000000),
-                    blurRadius: 22,
-                    offset: Offset(0, 10),
-                  ),
-                ],
-        ),
-        child: Icon(
-          icon,
-          color: compact ? _StatusV2Colors.wine : Colors.white,
-          size: compact ? 24 : 32,
+      button: onPressed != null,
+      enabled: onPressed != null,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onPressed,
+        child: Container(
+          width: resolvedSize,
+          height: resolvedSize,
+          decoration: BoxDecoration(
+            color:
+                backgroundColor ??
+                (compact ? _StatusV2Colors.pill : _StatusV2Colors.ink),
+            shape: BoxShape.circle,
+            boxShadow: compact
+                ? null
+                : const [
+                    BoxShadow(
+                      color: Color(0x29000000),
+                      blurRadius: 22,
+                      offset: Offset(0, 10),
+                    ),
+                  ],
+          ),
+          child: Icon(
+            icon,
+            color:
+                foregroundColor ??
+                (compact ? _StatusV2Colors.wine : Colors.white),
+            size: compact ? 24 : 32,
+          ),
         ),
       ),
     );
@@ -2224,6 +3246,14 @@ abstract final class _StatusV2Colors {
   static const ink = Color(0xff181818);
   static const mutedText = Color(0xffa28f89);
   static const line = Color(0xffeadfdb);
+}
+
+abstract final class _BabyV2Colors {
+  static const background = Color(0xfffbf5f3);
+  static const pill = Color(0xfff5ecea);
+  static const wine = Color(0xff7a2840);
+  static const ink = Color(0xff1a1a1a);
+  static const mutedText = Color(0xff9e8880);
 }
 
 abstract final class _StatusV2Text {
