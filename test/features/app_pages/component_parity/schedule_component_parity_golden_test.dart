@@ -13,13 +13,16 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Schedule feature-first component parity goldens', () {
-    testWidgets('date strip matches compact baseline', (tester) async {
+    testWidgets('plan week header matches the supplied mobile baseline', (
+      tester,
+    ) async {
       await _pumpScheduleComponentApp(tester);
 
       final dateStrip = find.byKey(const ValueKey('schedule-date-strip'));
       expect(dateStrip, findsOneWidget);
-      expect(find.text('2026年7月'), findsOneWidget);
-      expect(find.text('今'), findsOneWidget);
+      expect(find.text('My Plans'), findsOneWidget);
+      expect(find.text('This Week'), findsAtLeastNWidgets(1));
+      expect(find.text('Week'), findsOneWidget);
       await expectLater(
         dateStrip,
         matchesGoldenFile(
@@ -28,12 +31,14 @@ void main() {
       );
     });
 
-    testWidgets('agent card matches the legacy guidance hierarchy', (
+    testWidgets('agent card keeps guidance actions in the new plan style', (
       tester,
     ) async {
       await _pumpScheduleComponentApp(tester);
 
       final card = find.byKey(const ValueKey('schedule-agent-card'));
+      await tester.scrollUntilVisible(card, 200);
+      await tester.pumpAndSettle();
       expect(card, findsOneWidget);
       expect(
         find.text('已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我'),
@@ -65,16 +70,16 @@ void main() {
       );
     });
 
-    testWidgets('task toolbar matches compact baseline', (tester) async {
+    testWidgets('task toolbar matches the supplied plan style', (tester) async {
       await _pumpScheduleComponentApp(tester);
 
       final toolbar = find.byKey(const ValueKey('schedule-list-toolbar'));
       await tester.ensureVisible(toolbar);
       await tester.pumpAndSettle();
       expect(toolbar, findsOneWidget);
-      expect(find.text('今日任务'), findsWidgets);
-      expect(find.text('调整日程'), findsOneWidget);
-      expect(find.text('添加任务'), findsOneWidget);
+      expect(find.text('Today'), findsOneWidget);
+      expect(find.byTooltip('调整日程'), findsOneWidget);
+      expect(find.byTooltip('添加任务'), findsOneWidget);
       await expectLater(
         toolbar,
         matchesGoldenFile(
@@ -83,7 +88,7 @@ void main() {
       );
     });
 
-    testWidgets('task row matches the compact legacy timeline baseline', (
+    testWidgets('task row matches the supplied plan card baseline', (
       tester,
     ) async {
       await _pumpScheduleComponentApp(
