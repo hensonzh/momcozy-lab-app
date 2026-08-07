@@ -2636,15 +2636,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _setRunState(nextState);
   }
 
-  void _selectV3ServicePrompt(String prompt) {
-    if (_isComposerLocked || !_interactionRestoreResolved) return;
-    _composerController.value = TextEditingValue(
-      text: prompt,
-      selection: TextSelection.collapsed(offset: prompt.length),
-    );
-    _composerFocusNode.requestFocus();
-  }
-
   @override
   Widget build(BuildContext context) {
     final profileDefaults =
@@ -2782,7 +2773,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       // Generated quick replies are temporarily hidden
                                       // while the follow-up interaction is redesigned.
                                       onQuickReplySelected: null,
-                                      onServiceSelected: _selectV3ServicePrompt,
                                       pendingActionIds: _pendingActionIds,
                                       localActionStatuses: _localActionStatuses,
                                       productAssetRepository:
@@ -3849,7 +3839,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     required this.formSubmissionsListenable,
     required this.formPresentationSession,
     this.onQuickReplySelected,
-    this.onServiceSelected,
     required this.pendingActionIds,
     required this.localActionStatuses,
     this.productAssetRepository,
@@ -3871,7 +3860,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   formSubmissionsListenable;
   final AgentArtifactFormPresentationSession formPresentationSession;
   final ValueChanged<String>? onQuickReplySelected;
-  final ValueChanged<String>? onServiceSelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
@@ -3920,7 +3908,6 @@ class _AgentRunTranscriptListenableState
           allowFormAutoPresentation: true,
           artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
-          onServiceSelected: widget.onServiceSelected,
           pendingActionIds: widget.pendingActionIds,
           productAssetRepository: widget.productAssetRepository,
           profileDefaults: widget.profileDefaults,
@@ -4004,7 +3991,6 @@ class AgentRunTranscript extends StatelessWidget {
     this.allowFormAutoPresentation = false,
     this.artifactPanelKey,
     this.onQuickReplySelected,
-    this.onServiceSelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
     this.productAssetRepository,
@@ -4029,7 +4015,6 @@ class AgentRunTranscript extends StatelessWidget {
   final bool allowFormAutoPresentation;
   final Key? artifactPanelKey;
   final ValueChanged<String>? onQuickReplySelected;
-  final ValueChanged<String>? onServiceSelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
@@ -4183,10 +4168,6 @@ class AgentRunTranscript extends StatelessWidget {
                     ),
                   ],
                 ),
-              ],
-              if (isDefaultGreeting && onServiceSelected != null) ...[
-                const SizedBox(height: 20),
-                _AgentV3ServiceMenu(onSelected: onServiceSelected!),
               ],
               if (allowsSupplementaryContent && canRetry) ...[
                 const SizedBox(height: 12),
@@ -4513,155 +4494,6 @@ class AgentCitationList extends StatelessWidget {
           if (index < citations.length - 1) const SizedBox(height: 4),
         ],
       ],
-    );
-  }
-}
-
-class _AgentV3ServiceMenu extends StatelessWidget {
-  const _AgentV3ServiceMenu({required this.onSelected});
-
-  final ValueChanged<String> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      key: const ValueKey('agent-v3-service-menu'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          '我可以帮你',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: MomCozyV3Colors.ink,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(height: 10),
-        _AgentV3ServiceTile(
-          tileKey: const ValueKey('agent-v3-service-health'),
-          icon: Icons.health_and_safety_outlined,
-          title: '母婴健康咨询',
-          description: '基于知识库回答，并展示可核验来源',
-          onTap: () => onSelected('我有一个母婴健康问题，请基于知识库回答并提供来源'),
-        ),
-        const SizedBox(height: 8),
-        _AgentV3ServiceTile(
-          tileKey: const ValueKey('agent-v3-service-schedule'),
-          icon: Icons.event_note_outlined,
-          title: '日程管理',
-          description: '查询、新增、修改或删除日程；写操作先确认',
-          onTap: () => onSelected('请帮我查看并管理今天的日程'),
-        ),
-        const SizedBox(height: 8),
-        _AgentV3ServiceTile(
-          tileKey: const ValueKey('agent-v3-service-lactation-plan'),
-          icon: Icons.water_drop_outlined,
-          title: '泌乳计划',
-          description: '打开创建流程，或管理已有计划状态',
-          onTap: () => onSelected('请打开泌乳计划入口，并帮我管理计划状态'),
-        ),
-        const SizedBox(height: 12),
-        const DecoratedBox(
-          decoration: BoxDecoration(
-            color: MomCozyV3Colors.background,
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(12),
-            child: Text(
-              '健康建议不替代专业诊断；出现紧急症状请立即就医。日程和计划状态的写操作会先预览，确认后执行。',
-              style: TextStyle(
-                color: MomCozyColors.mutedForeground,
-                fontSize: 11,
-                height: 1.45,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _AgentV3ServiceTile extends StatelessWidget {
-  const _AgentV3ServiceTile({
-    required this.tileKey,
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.onTap,
-  });
-
-  final Key tileKey;
-  final IconData icon;
-  final String title;
-  final String description;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: '$title，$description',
-      child: Material(
-        color: MomCozyV3Colors.surface,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          key: tileKey,
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            constraints: const BoxConstraints(
-              minHeight: MomCozyTapTargets.minimum,
-            ),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              border: Border.all(color: MomCozyV3Colors.roseTint),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: MomCozyV3Colors.roseTint,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, size: 20, color: MomCozyV3Colors.brand),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          color: MomCozyV3Colors.ink,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        description,
-                        style: const TextStyle(
-                          color: MomCozyColors.mutedForeground,
-                          fontSize: 11,
-                          height: 1.35,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: MomCozyColors.mutedForeground,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
