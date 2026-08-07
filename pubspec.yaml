@@ -72,6 +72,7 @@ flutter:
   assets:
     - assets/certificates/
     - assets/images/
+    - assets/images/more/
     - assets/images/status_v2/
 
   fonts:

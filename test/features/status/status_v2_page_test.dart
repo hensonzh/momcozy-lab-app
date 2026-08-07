@@ -14,7 +14,7 @@ void main() {
 
   group('redesigned first-level status pages', () {
     testWidgets(
-      'navigation exposes Me and Baby while Plan and More stay inert',
+      'navigation exposes Me, Baby, and More while Plan stays inert',
       (tester) async {
         await _pumpApp(tester, initialLocation: '/me');
 
@@ -31,7 +31,7 @@ void main() {
 
         await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
         await tester.pumpAndSettle();
-        expect(find.byKey(const ValueKey('route-page-/me')), findsOneWidget);
+        expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
 
         await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
         await tester.pumpAndSettle();
