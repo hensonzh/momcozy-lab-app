@@ -122,6 +122,40 @@ void main() {
       },
     );
 
+    testWidgets('Baby hero paints the avatar above the feeding summary', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        apiRuntime: _emptyRuntime(),
+      );
+
+      expect(find.text('Baby'), findsWidgets);
+      expect(find.text('Age not recorded'), findsOneWidget);
+      expect(find.text('No feeding data recorded today'), findsOneWidget);
+
+      const copyKey = ValueKey('me-baby-overview-baby-hero-copy');
+      const avatarKey = ValueKey('me-baby-overview-baby-hero-avatar');
+      final hero = find.byKey(const ValueKey('baby-profile-hero'));
+      final stack = tester.widget<Stack>(
+        find.descendant(of: hero, matching: find.byType(Stack)).first,
+      );
+      final copyIndex = stack.children.indexWhere(
+        (child) => child.key == copyKey,
+      );
+      final avatarIndex = stack.children.indexWhere(
+        (child) => child.key == avatarKey,
+      );
+
+      expect(copyIndex, greaterThanOrEqualTo(0));
+      expect(avatarIndex, greaterThan(copyIndex));
+      await expectLater(
+        hero,
+        matchesGoldenFile('../../goldens/me_baby_overview/baby_empty_hero.png'),
+      );
+    });
+
     testWidgets(
       'Me pulls down into the avatar state and swipes up to details',
       (tester) async {
@@ -334,6 +368,7 @@ Future<void> _pumpApp(
   WidgetTester tester, {
   required String initialLocation,
   Size viewportSize = const Size(430, 932),
+  MomCozyApiRuntime? apiRuntime,
 }) async {
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pump();
@@ -348,7 +383,7 @@ Future<void> _pumpApp(
     MomCozyFlutterApp(
       router: createMomCozyRouter(initialLocation: initialLocation),
       routeIntentPlatform: routes,
-      apiRuntime: _runtime(),
+      apiRuntime: apiRuntime ?? _runtime(),
     ),
   );
   await tester.pumpAndSettle();
@@ -433,6 +468,22 @@ MomCozyApiRuntime _runtime() {
           },
         ],
       },
+    }),
+    userId: 'profile-overview-user',
+    babyId: 'profile-overview-baby',
+    locale: 'en-US',
+    now: () => DateTime.utc(2026, 7, 3),
+  );
+}
+
+MomCozyApiRuntime _emptyRuntime() {
+  return MomCozyApiRuntime(
+    jsonTransport: FixtureApiJsonTransportByPath({
+      profileMeEndpoint: const {'user_id': 'profile-overview-user'},
+      profileInfantsEndpoint: const {'items': <Object>[]},
+      milkTrendsEndpoint: const {'items': <Object>[]},
+      feedingRecordsEndpoint: const {'items': <Object>[]},
+      growthRecordsEndpoint: const {'items': <Object>[]},
     }),
     userId: 'profile-overview-user',
     babyId: 'profile-overview-baby',
