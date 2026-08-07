@@ -506,14 +506,6 @@ class _MeBabyOverviewHeader extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: _MeBabyOverviewColors.wine,
-                              shape: BoxShape.circle,
-                            ),
-                            child: SizedBox.square(dimension: 8),
-                          ),
-                          const SizedBox(width: 8),
                           Flexible(
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
