@@ -1,4 +1,5 @@
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 
 const profileMeEndpoint = '/v1/profile/me';
@@ -28,6 +29,25 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
       baby: _babyProfileOverview(firstInfant, now: now),
     );
   }
+
+  @override
+  Future<MomLifeStage> updateCareStage(MomLifeStage stage) async {
+    final mutations = transport;
+    if (mutations is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Profile updates require JSON mutation support.');
+    }
+    final response = await (mutations as ApiJsonMutationTransport).putJson(
+      profileMeEndpoint,
+      body: {'current_care_stage': stage.wireValue},
+    );
+    final saved = MomLifeStage.tryParse(response['current_care_stage']);
+    if (saved == null) {
+      throw const FormatException(
+        'Profile update response is missing current_care_stage.',
+      );
+    }
+    return saved;
+  }
 }
 
 MomProfileOverview? _momProfileOverview(
@@ -39,12 +59,26 @@ MomProfileOverview? _momProfileOverview(
   final dueDateOrWeek = _string(
     data['birth_prep_due_date_or_week'] ?? data['birthPrepDueDateOrWeek'],
   );
-  if (deliveryDate == null && dueDateOrWeek?.trim().isNotEmpty != true) {
+  final explicitStage = MomLifeStage.tryParse(
+    data['current_care_stage'] ?? data['currentCareStage'],
+  );
+  if (deliveryDate == null &&
+      dueDateOrWeek?.trim().isNotEmpty != true &&
+      explicitStage == null) {
     return null;
   }
+  final stage =
+      explicitStage ??
+      MomLifeStage.resolve(
+        deliveryDate: deliveryDate,
+        hasPregnancyDetails: dueDateOrWeek?.trim().isNotEmpty == true,
+        now: now,
+      );
   return MomProfileOverview(
-    stage: _stageFromDeliveryDate(deliveryDate, now: now),
-    postpartumDay: _ageDays(deliveryDate, now: now),
+    stage: stage,
+    postpartumDay: stage == MomLifeStage.postpartum
+        ? _ageDays(deliveryDate, now: now)
+        : null,
     deliveryDate: deliveryDate,
     dueDateOrWeek: dueDateOrWeek,
   );
@@ -80,14 +114,6 @@ DateTime? _date(Object? value) {
 DateTime _today(DateTime Function()? now) {
   final value = (now ?? DateTime.now)();
   return DateTime(value.year, value.month, value.day);
-}
-
-String? _stageFromDeliveryDate(
-  DateTime? deliveryDate, {
-  DateTime Function()? now,
-}) {
-  if (deliveryDate == null) return null;
-  return deliveryDate.isAfter(_today(now)) ? '孕期' : '哺乳期';
 }
 
 int? _ageDays(DateTime? date, {DateTime Function()? now}) {

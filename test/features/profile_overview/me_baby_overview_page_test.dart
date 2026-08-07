@@ -86,6 +86,143 @@ void main() {
       expect(find.text('Yoga'), findsOneWidget);
     });
 
+    testWidgets('Me saves a stage before switching to its workspace', (
+      tester,
+    ) async {
+      final transport = _profileOverviewTransport(
+        writeResponse: const {
+          'user_id': 'profile-overview-user',
+          'current_care_stage': 'pregnancy',
+        },
+      );
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(transport: transport),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('me-current-stage-selector')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Select Current Stage'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('me-stage-option-postpartum')),
+        findsOneWidget,
+      );
+      await expectLater(
+        find.byType(Overlay).first,
+        matchesGoldenFile('../../goldens/me_baby_overview/stage_selector.png'),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('me-stage-option-pregnancy')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Select Current Stage'), findsNothing);
+      expect(find.text('Pregnancy'), findsWidgets);
+      expect(
+        find.byKey(const ValueKey('me-stage-workspace-pregnancy')),
+        findsOneWidget,
+      );
+      expect(find.text('Prenatal care & milestones'), findsOneWidget);
+      expect(find.text('78'), findsNothing);
+      expect(transport.lastMethod, 'PUT');
+      expect(transport.lastBody, {'current_care_stage': 'pregnancy'});
+      await expectLater(
+        find.byType(Scaffold).first,
+        matchesGoldenFile(
+          '../../goldens/me_baby_overview/pregnancy_first_screen.png',
+        ),
+      );
+    });
+
+    testWidgets('Me keeps the old workspace when a stage save fails', (
+      tester,
+    ) async {
+      final transport = _profileOverviewTransport(
+        writeResponse: const {
+          'http_status': 503,
+          'status_text': 'Unavailable',
+          'body': {
+            'error': {
+              'code': 'dependency_failed',
+              'message': 'Profile unavailable',
+            },
+          },
+        },
+      );
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(transport: transport),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('me-current-stage-selector')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('me-stage-option-fertility')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Select Current Stage'), findsOneWidget);
+      expect(find.text('Couldn’t change stage. Try again.'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('me-current-stage-selector')),
+          matching: find.text('Postpartum Recovery'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('me-stage-workspace-fertility')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('Baby header does not expose the maternal stage selector', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+
+      expect(
+        find.byKey(const ValueKey('me-current-stage-selector')),
+        findsNothing,
+      );
+      expect(find.text('Infant'), findsOneWidget);
+    });
+
+    testWidgets(
+      'stage selector fits a compact screen and closes without saving',
+      (tester) async {
+        final transport = _profileOverviewTransport();
+        await _pumpApp(
+          tester,
+          initialLocation: '/me',
+          viewportSize: const Size(360, 640),
+          runtime: _runtime(transport: transport),
+        );
+
+        await tester.tap(
+          find.byKey(const ValueKey('me-current-stage-selector')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Select Current Stage'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('me-stage-option-fertility')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('me-stage-option-postpartum')),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+
+        await tester.tap(find.byKey(const ValueKey('me-stage-selector-close')));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Select Current Stage'), findsNothing);
+        expect(transport.postedBodies, isEmpty);
+      },
+    );
+
     testWidgets(
       'Baby uses authoritative feeding and growth data with honest empty states',
       (tester) async {
@@ -334,6 +471,7 @@ Future<void> _pumpApp(
   WidgetTester tester, {
   required String initialLocation,
   Size viewportSize = const Size(430, 932),
+  MomCozyApiRuntime? runtime,
 }) async {
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pump();
@@ -348,7 +486,7 @@ Future<void> _pumpApp(
     MomCozyFlutterApp(
       router: createMomCozyRouter(initialLocation: initialLocation),
       routeIntentPlatform: routes,
-      apiRuntime: _runtime(),
+      apiRuntime: runtime ?? _runtime(),
     ),
   );
   await tester.pumpAndSettle();
@@ -380,9 +518,21 @@ Future<void> _pumpApp(
   await tester.pumpAndSettle();
 }
 
-MomCozyApiRuntime _runtime() {
+MomCozyApiRuntime _runtime({FixtureApiJsonTransportByPath? transport}) {
   return MomCozyApiRuntime(
-    jsonTransport: FixtureApiJsonTransportByPath({
+    jsonTransport: transport ?? _profileOverviewTransport(),
+    userId: 'profile-overview-user',
+    babyId: 'profile-overview-baby',
+    locale: 'en-US',
+    now: () => DateTime.utc(2026, 7, 3),
+  );
+}
+
+FixtureApiJsonTransportByPath _profileOverviewTransport({
+  Map<String, Object?>? writeResponse,
+}) {
+  return FixtureApiJsonTransportByPath(
+    {
       profileMeEndpoint: const {
         'user_id': 'profile-overview-user',
         'delivery_date': '2026-06-12',
@@ -433,10 +583,7 @@ MomCozyApiRuntime _runtime() {
           },
         ],
       },
-    }),
-    userId: 'profile-overview-user',
-    babyId: 'profile-overview-baby',
-    locale: 'en-US',
-    now: () => DateTime.utc(2026, 7, 3),
+    },
+    writeResponsesByPath: {profileMeEndpoint: ?writeResponse},
   );
 }
