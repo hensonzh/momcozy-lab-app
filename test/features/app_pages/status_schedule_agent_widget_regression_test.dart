@@ -800,11 +800,6 @@ void main() {
           find.byKey(const ValueKey('route-page-/schedule')),
           findsOneWidget,
         );
-        expect(find.text('稳奶计划执行中'), findsOneWidget);
-        expect(
-          find.text('已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我'),
-          findsOneWidget,
-        );
         expect(find.text('待执行任务'), findsOneWidget);
         expect(
           find.byKey(const ValueKey('schedule-highlighted-date-2026-07-05')),
@@ -828,6 +823,12 @@ void main() {
         );
         expect(
           find.descendant(of: quickActions, matching: find.text('喂养记录')),
+          findsOneWidget,
+        );
+        await _scrollToText(tester, '稳奶计划执行中');
+        expect(find.text('稳奶计划执行中'), findsOneWidget);
+        expect(
+          find.text('已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我'),
           findsOneWidget,
         );
       },
