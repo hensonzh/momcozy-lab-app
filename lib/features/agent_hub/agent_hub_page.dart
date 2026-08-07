@@ -44,7 +44,7 @@ import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
-import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_change_store.dart';
 import 'package:video_player/video_player.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -227,7 +227,7 @@ class AgentHubPage extends StatefulWidget {
     this.onArtifactAction,
     this.onHospitalBagCartUpdate,
     this.onHospitalBagCartContextRequired,
-    this.onMilkPlanChange,
+    this.onPlanChange,
     this.onNewSession,
     this.initialComposerText,
     this.initialAutoSend = false,
@@ -257,7 +257,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentArtifactActionHandler? onArtifactAction;
   final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
   final VoidCallback? onHospitalBagCartContextRequired;
-  final ValueChanged<MilkPlanChange>? onMilkPlanChange;
+  final ValueChanged<PlanChange>? onPlanChange;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
   final bool initialAutoSend;
@@ -292,7 +292,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
   final Set<String> _appliedHospitalBagCartUpdates = <String>{};
-  final Set<String> _appliedMilkPlanChangeEventIds = <String>{};
+  final Set<String> _appliedPlanChangeEventIds = <String>{};
   bool _hospitalBagCartLinkContextApplied = false;
   final ScrollController _chatScrollController = ScrollController();
   final GlobalKey _activeArtifactPanelKey = GlobalKey();
@@ -361,7 +361,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _restoreCachedInteractionState();
     _seedExistingFormPresentations();
     _applyHospitalBagCartUpdates(_state);
-    _applyMilkPlanChanges(_state);
+    _applyPlanChanges(_state);
     _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
     _composerController.addListener(_persistInteractionState);
@@ -404,8 +404,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
         widget.ibclcConsultStore,
       );
     }
-    if (oldWidget.onMilkPlanChange != widget.onMilkPlanChange) {
-      _applyMilkPlanChanges(_state);
+    if (oldWidget.onPlanChange != widget.onPlanChange) {
+      _applyPlanChanges(_state);
     }
   }
 
@@ -626,7 +626,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
     if (shouldRestore) {
       _applyHospitalBagCartUpdates(_state);
-      _applyMilkPlanChanges(_state);
+      _applyPlanChanges(_state);
       _applyHospitalBagCartLinkContext(_state);
     }
     _applyInitialComposerText();
@@ -1921,7 +1921,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (hospitalBagCartProjectionChanged) {
       _applyHospitalBagCartUpdates(nextState);
     }
-    _applyMilkPlanChanges(nextState);
+    _applyPlanChanges(nextState);
     _applyHospitalBagCartLinkContext(
       nextState,
       checkArtifacts: artifactProjectionChanged,
@@ -2020,13 +2020,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     onUpdate(seed);
   }
 
-  void _applyMilkPlanChanges(AgentStreamRunState state) {
-    final onChange = widget.onMilkPlanChange;
+  void _applyPlanChanges(AgentStreamRunState state) {
+    final onChange = widget.onPlanChange;
     if (onChange == null) return;
     for (final event in state.events) {
-      final change = MilkPlanChange.tryFromEvent(event);
-      if (change == null ||
-          !_appliedMilkPlanChangeEventIds.add(change.eventId)) {
+      final change = PlanChange.tryFromEvent(event);
+      if (change == null || !_appliedPlanChangeEventIds.add(change.eventId)) {
         continue;
       }
       onChange(change);
@@ -2633,7 +2632,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     for (final event in events) {
       nextState = nextState.applyEvent(event);
     }
-    _applyMilkPlanChanges(nextState);
+    _applyPlanChanges(nextState);
     _setRunState(nextState);
   }
 

@@ -18,7 +18,7 @@ import 'package:momcozy_flutter_app/features/media/presentation/product_asset_vi
 import 'package:momcozy_flutter_app/features/more/presentation/more_page.dart';
 import 'package:momcozy_flutter_app/features/more/presentation/more_profile_page.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
-import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_page.dart';
+import 'package:momcozy_flutter_app/features/plan/presentation/plan_page.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/me_baby_overview_page.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -65,38 +65,29 @@ class MomCozyFeaturePage extends StatelessWidget {
         icon: icon,
         accent: accent,
       ),
-      '/schedule' => ScheduleDashboardPage(
+      '/plan' => PlanPage(
         key: ValueKey(
-          'schedule-dashboard-${MomCozyRuntimeScope.of(context).currentSession.userId}',
+          'plan-page-${MomCozyRuntimeScope.of(context).currentSession.userId}',
         ),
-        path: path,
-        repository: MomCozyRuntimeScope.of(context).scheduleRepository,
+        repository: MomCozyRuntimeScope.of(context).planRepository,
         now: MomCozyRuntimeScope.of(context).now,
-        reminderGateway: MomCozyRuntimeScope.of(
-          context,
-        ).scheduleReminderGateway,
-        reminderPreferenceStore: MomCozyRuntimeScope.of(
-          context,
-        ).scheduleReminderPreferenceStore,
-        volumeUnitPreferenceStore: MomCozyRuntimeScope.of(
-          context,
-        ).volumeUnitPreferenceStore,
-        milkPlanChangeStore: MomCozyRuntimeScope.of(
-          context,
-        ).milkPlanChangeStore,
-        deliveryDateLoader: MomCozyRuntimeScope.of(
-          context,
-        ).loadSchedulePostpartumAnchorDate,
-        imageRecognitionGateway: MomCozyRuntimeScope.of(
-          context,
-        ).scheduleImageRecognitionGateway,
-        routeUri: routeUri,
-        routeExtra: routeExtra,
-        onOpenAgent: () =>
-            context.go('/', extra: const {'agentPrefill': '我想调整今天的吸乳排期'}),
-        onOpenLactationPlan: () => context.go(
+        changeStore: MomCozyRuntimeScope.of(context).planChangeStore,
+        onCreatePlan: () => context.go(
           '/',
-          extra: const {'agentPrefill': '请打开泌乳计划入口，并帮我管理计划状态'},
+          extra: const {
+            'agentPrefill': 'Help me create a personalized postpartum plan',
+          },
+        ),
+        onChat: () => context.go(
+          '/',
+          extra: const {'agentPrefill': 'Help me review and adjust my plan'},
+        ),
+        onStartSession: () => context.go('/pump'),
+        onManualEdit: () => context.go(
+          '/',
+          extra: const {
+            'agentPrefill': 'Help me manually edit my pumping plan',
+          },
         ),
       ),
       '/more' => MorePage(path: path, onLogout: onLogout),

@@ -378,6 +378,9 @@ GoRouter createMomCozyRouter({
     refreshListenable: runtimeController,
     redirect: (context, state) {
       if (state.uri.path == '/status') return '/me';
+      if (state.uri.path == '/schedule') {
+        return state.uri.replace(path: '/plan').toString();
+      }
       if (runtimeController == null) return null;
       return _authRedirect(runtimeController, state);
     },
@@ -665,9 +668,9 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                     Icons.calendar_today_rounded,
                                   ),
                                   onTap: () {
-                                    MomCozyRuntimeScope.read(context)
-                                        ?.milkPlanChangeStore
-                                        .transferNavigationNoticeToPage();
+                                    MomCozyRuntimeScope.read(
+                                      context,
+                                    )?.planChangeStore.markViewed();
                                     context.go(_tabPaths[3]);
                                   },
                                 ),
@@ -1380,8 +1383,8 @@ Widget _buildDefaultAgentHubPage(
       final store = runtime.hospitalBagCartStore;
       store.activate(store.activeCartId);
     },
-    onMilkPlanChange: (change) {
-      runtime.milkPlanChangeStore.record(change);
+    onPlanChange: (change) {
+      runtime.planChangeStore.record(change);
     },
     onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
     onArtifactAction: (action) => unawaited(
@@ -1487,9 +1490,9 @@ const momCozyRoutes = [
     priority: 'P0',
   ),
   MomCozyRouteConfig(
-    path: '/schedule',
-    title: '计划',
-    summary: '日程、任务、提醒和计划状态的管理入口。',
+    path: '/plan',
+    title: 'Plan',
+    summary: 'Personalized recovery plans and guided sessions.',
     icon: Icons.event_note_rounded,
     accent: Color(0xffb2773b),
     priority: 'P1',
@@ -1594,13 +1597,13 @@ const _routesWithoutBottomNavigation = {
   '/more/body-profile/edit',
 };
 
-const _tabPaths = ['/me', '/baby', '/', '/schedule', '/more'];
+const _tabPaths = ['/me', '/baby', '/', '/plan', '/more'];
 
 int _selectedTabIndex(String location) {
   if (location == '/me') return 0;
   if (location == '/baby') return 1;
   if (location == '/') return 2;
-  if (location == '/schedule') return 3;
+  if (location == '/plan') return 3;
   if (location == '/more' ||
       location == '/community' ||
       location == '/device' ||

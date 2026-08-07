@@ -33,10 +33,7 @@ void main() {
 
         await tester.tap(find.byKey(const ValueKey('bottom-nav-plan')));
         await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey('route-page-/schedule')),
-          findsOneWidget,
-        );
+        expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
 
         await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
         await tester.pumpAndSettle();
