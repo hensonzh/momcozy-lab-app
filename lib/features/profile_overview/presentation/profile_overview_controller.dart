@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
@@ -29,6 +30,22 @@ class ProfileOverviewResource<T> {
 
   bool get isLoading => phase == OverviewResourcePhase.loading;
   bool get hasError => phase == OverviewResourcePhase.error;
+}
+
+class CareStageSelectionState {
+  const CareStageSelectionState({
+    this.stage = MomLifeStage.postpartum,
+    this.isResolved = false,
+    this.isSaving = false,
+    this.pendingStage,
+    this.error,
+  });
+
+  final MomLifeStage stage;
+  final bool isResolved;
+  final bool isSaving;
+  final MomLifeStage? pendingStage;
+  final Object? error;
 }
 
 class ProfileOverviewController {
@@ -65,6 +82,13 @@ class ProfileOverviewController {
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.growthRecords!.value),
     );
+    final cachedStage = this.cache.overview?.value.mom?.stage;
+    careStage = ValueNotifier<CareStageSelectionState>(
+      CareStageSelectionState(
+        stage: cachedStage ?? MomLifeStage.postpartum,
+        isResolved: this.cache.overview != null,
+      ),
+    );
   }
 
   final ProfileOverviewRepository profileOverviewRepository;
@@ -84,6 +108,7 @@ class ProfileOverviewController {
   milkTrends;
   late final ValueNotifier<ProfileOverviewResource<List<GrowthRecord>>>
   growthRecords;
+  late final ValueNotifier<CareStageSelectionState> careStage;
 
   final Map<ProfileOverviewResourceKey, Future<void>> _activeResourceLoads = {};
   final Map<ProfileOverviewResourceKey, int> _resourceRequests = {};
@@ -163,10 +188,23 @@ class ProfileOverviewController {
         await _load(
           overview,
           profileOverviewRepository.fetchOverview(),
-          onData: (value) => cache.overview = OverviewCacheEntry(
-            value: value,
-            fetchedAt: now(),
-          ),
+          onData: (value) {
+            cache.overview = OverviewCacheEntry(value: value, fetchedAt: now());
+            if (identity == ProfileIdentity.mom) {
+              careStage.value = CareStageSelectionState(
+                stage: value.mom?.stage ?? MomLifeStage.postpartum,
+                isResolved: true,
+              );
+            }
+          },
+          onError: (_) {
+            if (identity == ProfileIdentity.mom) {
+              careStage.value = CareStageSelectionState(
+                stage: careStage.value.stage,
+                isResolved: true,
+              );
+            }
+          },
         );
       case ProfileOverviewResourceKey.feeding:
         final today = now();
@@ -213,6 +251,7 @@ class ProfileOverviewController {
     ValueNotifier<ProfileOverviewResource<T>> notifier,
     Future<T> request, {
     required ValueChanged<T> onData,
+    ValueChanged<Object>? onError,
   }) async {
     final previous = notifier.value.data;
     try {
@@ -222,8 +261,59 @@ class ProfileOverviewController {
       notifier.value = ProfileOverviewResource.data(value);
     } catch (error) {
       if (_disposed) return;
+      onError?.call(error);
       notifier.value = ProfileOverviewResource.error(error, previous: previous);
     }
+  }
+
+  Future<bool> updateCareStage(MomLifeStage stage) async {
+    if (_disposed || identity != ProfileIdentity.mom) return false;
+    final current = careStage.value;
+    if (current.isSaving) return false;
+    if (stage == current.stage) {
+      clearCareStageError();
+      return true;
+    }
+
+    careStage.value = CareStageSelectionState(
+      stage: current.stage,
+      isResolved: true,
+      isSaving: true,
+      pendingStage: stage,
+    );
+    try {
+      final saved = await profileOverviewRepository.updateCareStage(stage);
+      if (_disposed) return false;
+      _replaceOverviewStage(saved);
+      careStage.value = CareStageSelectionState(stage: saved, isResolved: true);
+      return true;
+    } catch (error) {
+      if (_disposed) return false;
+      careStage.value = CareStageSelectionState(
+        stage: current.stage,
+        isResolved: true,
+        error: error,
+      );
+      return false;
+    }
+  }
+
+  void clearCareStageError() {
+    if (_disposed || careStage.value.error == null) return;
+    careStage.value = CareStageSelectionState(
+      stage: careStage.value.stage,
+      isResolved: careStage.value.isResolved,
+    );
+  }
+
+  void _replaceOverviewStage(MomLifeStage stage) {
+    final current = overview.value.data ?? const ProfileOverview();
+    final mom = (current.mom ?? const MomProfileOverview()).copyWith(
+      stage: stage,
+    );
+    final updated = current.copyWith(mom: mom);
+    overview.value = ProfileOverviewResource.data(updated);
+    cache.overview = OverviewCacheEntry(value: updated, fetchedAt: now());
   }
 
   void _setLoading(ProfileOverviewResourceKey resource) {
@@ -274,5 +364,6 @@ class ProfileOverviewController {
     feedingRecords.dispose();
     milkTrends.dispose();
     growthRecords.dispose();
+    careStage.dispose();
   }
 }
