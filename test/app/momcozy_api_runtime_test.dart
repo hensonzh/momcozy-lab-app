@@ -498,6 +498,32 @@ void main() {
   });
 
   test(
+    'runtime controller persists and publishes the selected infant',
+    () async {
+      const session = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'session-user',
+        babyId: 'baby-one',
+        locale: 'en-US',
+        accessToken: 'session-access',
+        refreshToken: 'session-refresh',
+      );
+      final store = MemoryMomCozySessionStore(session);
+      final controller = MomCozyRuntimeController(
+        MomCozyApiRuntime.fromSession(session),
+      );
+      controller.enableSessionAutoRefresh(store);
+
+      await controller.selectBaby(' baby-two ');
+
+      expect(controller.currentSession.babyId, 'baby-two');
+      expect(controller.runtime.currentSession.babyId, 'baby-two');
+      expect((await store.readSession())?.babyId, 'baby-two');
+      controller.dispose();
+    },
+  );
+
+  test(
     'runtime controller publishes a login session to auto-refresh transports',
     () {
       const anonymous = MomCozySession(

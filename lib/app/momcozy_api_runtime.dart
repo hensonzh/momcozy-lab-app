@@ -25,6 +25,7 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_file_cache
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
+import 'package:momcozy_flutter_app/features/notifications/data/notifications_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
@@ -480,6 +481,10 @@ class MomCozyApiRuntime {
     return RecordsApiRepository(transport: jsonTransport);
   }
 
+  NotificationsApiRepository get notificationsRepository {
+    return NotificationsApiRepository(transport: jsonTransport);
+  }
+
   VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
     return _volumeUnitPreferenceStore ??=
         FlutterSecureVolumeUnitPreferenceStore(userId: currentSession.userId);
@@ -487,16 +492,35 @@ class MomCozyApiRuntime {
 
   ProfileOverviewController createProfileOverviewController({
     ProfileIdentity initialIdentity = ProfileIdentity.mom,
+    String? babyId,
   }) {
+    final requestedBabyId = babyId?.trim();
+    final selectedBabyId = requestedBabyId?.isNotEmpty == true
+        ? requestedBabyId!
+        : currentSession.babyId;
     final records = recordsRepository;
     return ProfileOverviewController(
-      profileOverviewRepository: profileOverviewRepository,
+      profileOverviewRepository: ProfileOverviewApiRepository(
+        transport: jsonTransport,
+        babyId: selectedBabyId,
+        now: now,
+      ),
       feedingRepository: records,
+      babyCareRepository: records,
       pumpMilkRepository: records,
       milkTrendRepository: records,
       growthRepository: records,
-      cache: profileOverviewCache,
-      babyId: currentSession.babyId,
+      cache:
+          profileOverviewCache.matches(
+            ownerUserId: currentSession.userId,
+            babyId: selectedBabyId,
+          )
+          ? profileOverviewCache
+          : ProfileOverviewCache(
+              ownerUserId: currentSession.userId,
+              babyId: selectedBabyId,
+            ),
+      babyId: selectedBabyId,
       identity: initialIdentity,
       now: now,
     );
@@ -674,6 +698,21 @@ class MomCozyRuntimeController extends ChangeNotifier {
     if (!_runtime.supportsSessionAutoRefresh) return;
     _autoRefreshStore = store;
     replaceRuntime(_runtimeForSession(_currentSession));
+  }
+
+  Future<void> selectBaby(String babyId) async {
+    final selectedBabyId = babyId.trim();
+    if (selectedBabyId.isEmpty) {
+      throw ArgumentError.value(babyId, 'babyId', 'Baby ID is required.');
+    }
+    if (selectedBabyId == _currentSession.babyId) return;
+    final store = _autoRefreshStore;
+    if (store == null) {
+      throw StateError('Session persistence is not available.');
+    }
+    final next = _currentSession.copyWith(babyId: selectedBabyId);
+    await store.writeSession(next);
+    replaceSession(next);
   }
 
   MomCozyApiRuntime _runtimeForSession(MomCozySession session) {

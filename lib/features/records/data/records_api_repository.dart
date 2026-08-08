@@ -5,10 +5,13 @@ const feedingRecordsEndpoint = '/v1/records/feeding';
 const pumpMilkRecordsEndpoint = '/v1/records/pumping';
 const milkTrendsEndpoint = '/v1/records/milk-trends';
 const growthRecordsEndpoint = '/v1/records/growth';
+const sleepRecordsEndpoint = '/v1/records/sleep';
+const diaperRecordsEndpoint = '/v1/records/diaper';
 
 class RecordsApiRepository
     implements
         FeedingRecordsRepository,
+        BabyCareRecordsRepository,
         PumpMilkRecordsRepository,
         MilkTrendRepository,
         GrowthRecordsRepository {
@@ -20,23 +23,56 @@ class RecordsApiRepository
   Future<List<FeedingRecord>> fetchFeedingRecords({
     required DateTime date,
     required String babyId,
-  }) async {
+  }) {
     final range = _dayRange(date);
+    return _fetchFeedingRecordsRange(
+      start: range.start,
+      end: range.end,
+      babyId: babyId,
+      limit: 50,
+    );
+  }
+
+  @override
+  Future<List<FeedingRecord>> fetchFeedingRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  }) {
+    return _fetchFeedingRecordsRange(
+      start: start,
+      end: end,
+      babyId: babyId,
+      limit: 100,
+    );
+  }
+
+  Future<List<FeedingRecord>> _fetchFeedingRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+    required int limit,
+  }) async {
     final response = await transport.getJson(
       feedingRecordsEndpoint,
       query: {
-        'start_at': range.start.toIso8601String(),
-        'end_at': range.end.toIso8601String(),
+        'start_at': start.toUtc().toIso8601String(),
+        'end_at': end.toUtc().toIso8601String(),
         if (babyId.trim().isNotEmpty) 'infant_id': babyId.trim(),
-        'limit': 50,
+        'limit': limit,
       },
     );
     final records = response['items'];
+    final selectedBabyId = babyId.trim();
     return records is List
         ? records
               .whereType<Map>()
               .map(
                 (record) => _feedingRecord(Map<String, Object?>.from(record)),
+              )
+              .where(
+                (record) =>
+                    selectedBabyId.isEmpty || record.infantId == selectedBabyId,
               )
               .toList(growable: false)
         : const <FeedingRecord>[];
@@ -67,6 +103,110 @@ class RecordsApiRepository
       },
     );
     return _feedingRecord(response);
+  }
+
+  @override
+  Future<List<SleepRecord>> fetchSleepRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  }) async {
+    final selectedBabyId = _requiredBabyId(babyId);
+    final response = await transport.getJson(
+      sleepRecordsEndpoint,
+      query: {
+        'start_at': start.toUtc().toIso8601String(),
+        'end_at': end.toUtc().toIso8601String(),
+        'infant_id': selectedBabyId,
+        'limit': 100,
+      },
+    );
+    final records = response['items'];
+    return records is List
+        ? records
+              .whereType<Map>()
+              .map((record) => _sleepRecord(Map<String, Object?>.from(record)))
+              .where((record) => record.infantId == selectedBabyId)
+              .toList(growable: false)
+        : const <SleepRecord>[];
+  }
+
+  @override
+  Future<SleepRecord> createSleepRecord({
+    required String babyId,
+    required DateTime startedAt,
+    required DateTime endedAt,
+    required String type,
+    String notes = '',
+    String? idempotencyKey,
+  }) async {
+    final body = <String, Object?>{
+      'infant_id': _requiredBabyId(babyId),
+      'started_at': startedAt.toUtc().toIso8601String(),
+      'ended_at': endedAt.toUtc().toIso8601String(),
+      'sleep_type': type.trim(),
+      if (notes.trim().isNotEmpty) 'notes': notes.trim(),
+    };
+    final response = await transport.postJson(
+      sleepRecordsEndpoint,
+      body: body,
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _sleepRecord(response);
+  }
+
+  @override
+  Future<List<DiaperRecord>> fetchDiaperRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  }) async {
+    final selectedBabyId = _requiredBabyId(babyId);
+    final response = await transport.getJson(
+      diaperRecordsEndpoint,
+      query: {
+        'start_at': start.toUtc().toIso8601String(),
+        'end_at': end.toUtc().toIso8601String(),
+        'infant_id': selectedBabyId,
+        'limit': 100,
+      },
+    );
+    final records = response['items'];
+    return records is List
+        ? records
+              .whereType<Map>()
+              .map((record) => _diaperRecord(Map<String, Object?>.from(record)))
+              .where((record) => record.infantId == selectedBabyId)
+              .toList(growable: false)
+        : const <DiaperRecord>[];
+  }
+
+  @override
+  Future<DiaperRecord> createDiaperRecord({
+    required String babyId,
+    required DateTime changedAt,
+    required String type,
+    String notes = '',
+    String? idempotencyKey,
+  }) async {
+    final body = <String, Object?>{
+      'infant_id': _requiredBabyId(babyId),
+      'changed_at': changedAt.toUtc().toIso8601String(),
+      'diaper_type': type.trim(),
+      if (notes.trim().isNotEmpty) 'notes': notes.trim(),
+    };
+    final response = await transport.postJson(
+      diaperRecordsEndpoint,
+      body: body,
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _diaperRecord(response);
   }
 
   @override
@@ -233,6 +373,7 @@ class RecordsApiRepository
 FeedingRecord _feedingRecord(Map<String, Object?> data) {
   return FeedingRecord(
     id: _string(data['id'] ?? data['recordId']) ?? '',
+    infantId: _string(data['infant_id'] ?? data['infantId'])?.trim(),
     type:
         _string(data['feed_type'] ?? data['type'] ?? data['feedingType']) ?? '',
     amountMl: _int(data['volume_ml'] ?? data['amount_ml'] ?? data['amountMl']),
@@ -304,6 +445,34 @@ GrowthRecord _growthRecord(Map<String, Object?> data) {
     headCm: _double(data['head_cm'] ?? data['headCm']),
     measuredAt: _dateTime(data['measured_at'] ?? data['measuredAt']),
   );
+}
+
+SleepRecord _sleepRecord(Map<String, Object?> data) {
+  return SleepRecord(
+    id: _string(data['id']) ?? '',
+    infantId: _string(data['infant_id'] ?? data['infantId']) ?? '',
+    type: _string(data['sleep_type'] ?? data['type']) ?? '',
+    durationSeconds: _int(data['duration_seconds']) ?? 0,
+    startedAt: _dateTime(data['started_at'] ?? data['startedAt']),
+    endedAt: _dateTime(data['ended_at'] ?? data['endedAt']),
+    notes: _string(data['notes']) ?? '',
+  );
+}
+
+DiaperRecord _diaperRecord(Map<String, Object?> data) {
+  return DiaperRecord(
+    id: _string(data['id']) ?? '',
+    infantId: _string(data['infant_id'] ?? data['infantId']) ?? '',
+    type: _string(data['diaper_type'] ?? data['type']) ?? '',
+    changedAt: _dateTime(data['changed_at'] ?? data['changedAt']),
+    notes: _string(data['notes']) ?? '',
+  );
+}
+
+String _requiredBabyId(String value) {
+  final babyId = value.trim();
+  if (babyId.isEmpty) throw ArgumentError.value(value, 'babyId');
+  return babyId;
 }
 
 ({DateTime start, DateTime end}) _dayRange(DateTime date) {

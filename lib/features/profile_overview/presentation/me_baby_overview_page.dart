@@ -26,10 +26,12 @@ class MeBabyOverviewPage extends StatefulWidget {
     super.key,
     required this.path,
     required this.identity,
+    this.onBabySelected,
   });
 
   final String path;
   final ProfileIdentity identity;
+  final Future<void> Function(String babyId)? onBabySelected;
 
   @override
   State<MeBabyOverviewPage> createState() => _MeBabyOverviewPageState();
@@ -40,10 +42,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   static const _settleDuration = Duration(milliseconds: 320);
   static const _dragThreshold = 0.12;
 
-  late final AnimationController _detailsPosition = AnimationController(
-    vsync: this,
-    duration: _settleDuration,
-  );
+  late final AnimationController _detailsPosition;
   late final ScrollController _detailsScroll = ScrollController();
   late String _section = _initialSection(widget.identity);
   double _bodyHeight = 1;
@@ -55,8 +54,18 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   bool _refreshing = false;
   MomLifeStage? _displayedStage;
   _BabyDetail? _babyDetail;
+  String? _selectedBabyId;
   MomCozyApiRuntime? _runtime;
   ProfileOverviewController? _overviewController;
+
+  @override
+  void initState() {
+    super.initState();
+    _detailsPosition = AnimationController(
+      vsync: this,
+      duration: _settleDuration,
+    );
+  }
 
   @override
   void didChangeDependencies() {
@@ -64,6 +73,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
       _runtime = runtime;
+      _selectedBabyId = null;
       _attachOverviewController(runtime);
     }
   }
@@ -78,6 +88,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     _avatarExpanded = false;
     _displayedStage = null;
     _babyDetail = null;
+    _selectedBabyId = null;
     if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
     final runtime = _runtime;
     if (runtime != null) _attachOverviewController(runtime);
@@ -91,10 +102,11 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     super.dispose();
   }
 
-  void _attachOverviewController(MomCozyApiRuntime runtime) {
+  void _attachOverviewController(MomCozyApiRuntime runtime, {String? babyId}) {
     _detachOverviewController();
     final controller = runtime.createProfileOverviewController(
       initialIdentity: widget.identity,
+      babyId: babyId ?? _selectedBabyId,
     );
     _overviewController = controller;
     _displayedStage = controller.careStage.value.stage;
@@ -131,6 +143,8 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       controller.overview,
       controller.milkTrends,
       controller.feedingRecords,
+      controller.sleepRecords,
+      controller.diaperRecords,
       controller.growthRecords,
       controller.careStage,
       controller.growthMutation,
@@ -237,6 +251,65 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     controller.clearCareStageError();
   }
 
+  Future<void> _openBabyProfileSelector() async {
+    final controller = _overviewController;
+    final overview = controller?.overview.value.data;
+    final infants = (overview?.infants ?? const <BabyProfileOverview>[])
+        .where((infant) => infant.id?.trim().isNotEmpty == true)
+        .toList(growable: false);
+    if (controller == null || infants.isEmpty) return;
+    final selected = await showModalBottomSheet<BabyProfileOverview>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      useSafeArea: true,
+      useRootNavigator: true,
+      barrierLabel: 'Dismiss infant selector',
+      backgroundColor: _BabyOverviewColors.background,
+      builder: (sheetContext) => _BabyProfileSelectorSheet(
+        infants: infants,
+        selectedBabyId: overview?.baby?.id ?? controller.babyId,
+      ),
+    );
+    if (!mounted ||
+        selected == null ||
+        !identical(controller, _overviewController)) {
+      return;
+    }
+    final nextBabyId = selected.id?.trim();
+    if (nextBabyId == null ||
+        nextBabyId.isEmpty ||
+        nextBabyId == controller.babyId) {
+      return;
+    }
+    final onBabySelected = widget.onBabySelected;
+    if (onBabySelected != null) {
+      try {
+        await onBabySelected(nextBabyId);
+      } catch (_) {
+        if (!mounted) return;
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(
+            content: Text("Couldn't save the selected infant. Try again."),
+          ),
+        );
+      }
+      return;
+    }
+    final runtime = _runtime;
+    if (runtime == null) return;
+    _selectedBabyId = nextBabyId;
+    _attachOverviewController(runtime, babyId: nextBabyId);
+    setState(() {
+      _section = _initialSection(widget.identity);
+      _detailsPosition.value = 0;
+      _showAvatarLayer = false;
+      _avatarExpanded = false;
+      _babyDetail = null;
+    });
+    if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
+  }
+
   void _openBabyDetail(_BabyDetail detail) {
     _detailsPosition.stop();
     _detailsPosition.value = 0;
@@ -298,42 +371,35 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       },
     );
     if (!mounted || detail == null) return;
+    if (detail == _BabyDetail.feeding ||
+        detail == _BabyDetail.sleep ||
+        detail == _BabyDetail.diaper) {
+      _openBabyDetail(detail);
+      await _openRecordComposer(initialDetail: detail);
+      return;
+    }
+    if (!detail.isGrowth) return;
     _openBabyDetail(detail);
-    if (detail == _BabyDetail.feeding) {
-      await _openRecordComposer();
-      return;
-    }
-    if (detail.isGrowth) {
-      await WidgetsBinding.instance.endOfFrame;
-      if (!mounted) return;
-      final controller = _overviewController;
-      if (controller == null) return;
-      await showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        useRootNavigator: true,
-        backgroundColor: Colors.transparent,
-        barrierColor: Colors.black.withValues(alpha: 0.38),
-        builder: (context) => _GrowthRecordSheet(
-          detail: detail,
-          data: _MeBabyOverviewData.fromController(controller),
-          onSave: controller.saveGrowth,
-          mutation: controller.growthMutation,
-        ),
-      );
-      return;
-    }
+    await WidgetsBinding.instance.endOfFrame;
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Recording is not available until this service is connected.',
-        ),
+    final controller = _overviewController;
+    if (controller == null) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.38),
+      builder: (context) => _GrowthRecordSheet(
+        detail: detail,
+        data: _MeBabyOverviewData.fromController(controller),
+        onSave: controller.saveGrowth,
+        mutation: controller.growthMutation,
       ),
     );
   }
 
-  Future<void> _openRecordComposer() async {
+  Future<void> _openRecordComposer({_BabyDetail? initialDetail}) async {
     final controller = _overviewController;
     if (controller == null || controller.recordMutation.value.isSaving) return;
     controller.clearRecordMutationError();
@@ -348,6 +414,12 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       builder: (sheetContext) => _RecordComposerSheet(
         identity: widget.identity,
         controller: controller,
+        initialKind: switch (initialDetail) {
+          _BabyDetail.sleep => _RecordKind.sleep,
+          _BabyDetail.diaper => _RecordKind.diaper,
+          _BabyDetail.feeding => _RecordKind.feeding,
+          _ => null,
+        },
       ),
     );
     controller.clearRecordMutationError();
@@ -369,6 +441,26 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   @override
   Widget build(BuildContext context) {
     final data = _MeBabyOverviewData.fromController(_overviewController);
+    if (widget.identity == ProfileIdentity.baby &&
+        widget.path == '/baby/development') {
+      return _BabyDevelopmentPage(
+        data: data,
+        onBack: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/baby');
+          }
+        },
+        onStartEducation: () => context.go(
+          '/',
+          extra: const {
+            'agentPrefill':
+                'Start a prenatal education session using only confirmed profile details and cited guidance',
+          },
+        ),
+      );
+    }
     final stageState =
         _overviewController?.careStage.value ?? const CareStageSelectionState();
     final usesPostpartumWorkspace =
@@ -561,7 +653,9 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
               child: _MeBabyOverviewHeader(
                 identity: widget.identity,
                 careStage: stageState,
+                overview: data.overview,
                 onStagePressed: _openCareStageSelector,
+                onBabyPressed: _openBabyProfileSelector,
               ),
             ),
           ),
@@ -593,6 +687,8 @@ class _MeBabyOverviewData {
     required this.overview,
     required this.milkTrends,
     required this.feedingRecords,
+    required this.sleepRecords,
+    required this.diaperRecords,
     required this.growthRecords,
     required this.now,
   });
@@ -605,6 +701,8 @@ class _MeBabyOverviewData {
         overview: const ProfileOverviewResource.initial(),
         milkTrends: const ProfileOverviewResource.initial(),
         feedingRecords: const ProfileOverviewResource.initial(),
+        sleepRecords: const ProfileOverviewResource.initial(),
+        diaperRecords: const ProfileOverviewResource.initial(),
         growthRecords: const ProfileOverviewResource.initial(),
         now: DateTime.now(),
       );
@@ -613,6 +711,8 @@ class _MeBabyOverviewData {
       overview: controller.overview.value,
       milkTrends: controller.milkTrends.value,
       feedingRecords: controller.feedingRecords.value,
+      sleepRecords: controller.sleepRecords.value,
+      diaperRecords: controller.diaperRecords.value,
       growthRecords: controller.growthRecords.value,
       now: controller.now(),
     );
@@ -621,6 +721,8 @@ class _MeBabyOverviewData {
   final ProfileOverviewResource<ProfileOverview> overview;
   final ProfileOverviewResource<List<MilkTrendDay>> milkTrends;
   final ProfileOverviewResource<List<FeedingRecord>> feedingRecords;
+  final ProfileOverviewResource<List<SleepRecord>> sleepRecords;
+  final ProfileOverviewResource<List<DiaperRecord>> diaperRecords;
   final ProfileOverviewResource<List<GrowthRecord>> growthRecords;
   final DateTime now;
 
@@ -628,6 +730,8 @@ class _MeBabyOverviewData {
     overview,
     milkTrends,
     feedingRecords,
+    sleepRecords,
+    diaperRecords,
     growthRecords,
   ].any((resource) => resource.hasError && resource.data != null);
 
@@ -679,7 +783,7 @@ class _MeBabyOverviewData {
     return null;
   }
 
-  List<FeedingRecord> get feeds {
+  List<FeedingRecord> get _orderedFeeds {
     final values = List<FeedingRecord>.of(
       feedingRecords.data ?? const <FeedingRecord>[],
     );
@@ -694,8 +798,185 @@ class _MeBabyOverviewData {
     return values;
   }
 
+  List<FeedingRecord> get feeds {
+    final today = now.toLocal();
+    return _orderedFeeds
+        .where((record) {
+          final occurredAt = record.occurredAt?.toLocal();
+          return occurredAt != null && _sameCalendarDay(occurredAt, today);
+        })
+        .toList(growable: false);
+  }
+
+  List<FeedingRecord> get weeklyFeeds {
+    final today = now.toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - DateTime.monday));
+    final end = start.add(const Duration(days: 7));
+    return _orderedFeeds
+        .where((record) {
+          final occurredAt = record.occurredAt?.toLocal();
+          return occurredAt != null &&
+              !occurredAt.isBefore(start) &&
+              occurredAt.isBefore(end);
+        })
+        .toList(growable: false);
+  }
+
+  List<({DateTime date, int count, int measuredMl})> get weeklyFeedingDays {
+    final today = now.toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - DateTime.monday));
+    final weekly = weeklyFeeds;
+    return List.generate(7, (index) {
+      final date = start.add(Duration(days: index));
+      final records = weekly.where((record) {
+        final occurredAt = record.occurredAt?.toLocal();
+        return occurredAt != null && _sameCalendarDay(occurredAt, date);
+      });
+      return (
+        date: date,
+        count: records.length,
+        measuredMl: records.fold<int>(
+          0,
+          (total, record) => total + (record.amountMl ?? 0),
+        ),
+      );
+    }, growable: false);
+  }
+
   int get measuredFeedTotalMl =>
       feeds.fold<int>(0, (total, record) => total + (record.amountMl ?? 0));
+
+  int get weeklyMeasuredFeedTotalMl => weeklyFeeds.fold<int>(
+    0,
+    (total, record) => total + (record.amountMl ?? 0),
+  );
+
+  List<SleepRecord> get weeklySleeps {
+    final values = List<SleepRecord>.of(
+      sleepRecords.data ?? const <SleepRecord>[],
+    );
+    values.sort((left, right) {
+      final leftTime = left.startedAt;
+      final rightTime = right.startedAt;
+      if (leftTime == null && rightTime == null) return 0;
+      if (leftTime == null) return 1;
+      if (rightTime == null) return -1;
+      return rightTime.compareTo(leftTime);
+    });
+    return values;
+  }
+
+  List<SleepRecord> get todaySleeps {
+    final today = now.toLocal();
+    return weeklySleeps
+        .where((record) {
+          final startedAt = record.startedAt?.toLocal();
+          return startedAt != null && _sameCalendarDay(startedAt, today);
+        })
+        .toList(growable: false);
+  }
+
+  int get todaySleepSeconds => todaySleeps.fold<int>(
+    0,
+    (total, record) => total + record.durationSeconds,
+  );
+
+  List<SleepRecord> get todayNaps => todaySleeps
+      .where((record) => record.type.toLowerCase() == 'nap')
+      .toList(growable: false);
+
+  SleepRecord? get latestNightSleep {
+    for (final record in weeklySleeps) {
+      if (record.type.toLowerCase() == 'night') return record;
+    }
+    return null;
+  }
+
+  List<({DateTime date, int seconds})> get weeklySleepDays {
+    final today = now.toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - DateTime.monday));
+    return List.generate(7, (index) {
+      final date = start.add(Duration(days: index));
+      return (
+        date: date,
+        seconds: weeklySleeps
+            .where((record) {
+              final startedAt = record.startedAt?.toLocal();
+              return startedAt != null && _sameCalendarDay(startedAt, date);
+            })
+            .fold<int>(0, (total, record) => total + record.durationSeconds),
+      );
+    }, growable: false);
+  }
+
+  List<DiaperRecord> get weeklyDiapers {
+    final values = List<DiaperRecord>.of(
+      diaperRecords.data ?? const <DiaperRecord>[],
+    );
+    values.sort((left, right) {
+      final leftTime = left.changedAt;
+      final rightTime = right.changedAt;
+      if (leftTime == null && rightTime == null) return 0;
+      if (leftTime == null) return 1;
+      if (rightTime == null) return -1;
+      return rightTime.compareTo(leftTime);
+    });
+    return values;
+  }
+
+  List<DiaperRecord> get todayDiapers {
+    final today = now.toLocal();
+    return weeklyDiapers
+        .where((record) {
+          final changedAt = record.changedAt?.toLocal();
+          return changedAt != null && _sameCalendarDay(changedAt, today);
+        })
+        .toList(growable: false);
+  }
+
+  int get todayWetDiapers => todayDiapers
+      .where(
+        (record) => const {'wet', 'mixed'}.contains(record.type.toLowerCase()),
+      )
+      .length;
+
+  int get todayDirtyDiapers => todayDiapers
+      .where(
+        (record) =>
+            const {'dirty', 'mixed'}.contains(record.type.toLowerCase()),
+      )
+      .length;
+
+  List<({DateTime date, int count})> get weeklyDiaperDays {
+    final today = now.toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - DateTime.monday));
+    return List.generate(7, (index) {
+      final date = start.add(Duration(days: index));
+      return (
+        date: date,
+        count: weeklyDiapers.where((record) {
+          final changedAt = record.changedAt?.toLocal();
+          return changedAt != null && _sameCalendarDay(changedAt, date);
+        }).length,
+      );
+    }, growable: false);
+  }
 
   GrowthRecord? get latestGrowth {
     final values = orderedGrowthRecords;
@@ -732,6 +1013,12 @@ class _MeBabyOverviewData {
   }
 }
 
+bool _sameCalendarDay(DateTime left, DateTime right) {
+  return left.year == right.year &&
+      left.month == right.month &&
+      left.day == right.day;
+}
+
 String _formatBabyAge(int? ageDays) {
   if (ageDays == null || ageDays < 0) return 'Age not recorded';
   final weeks = ageDays ~/ 7;
@@ -748,16 +1035,153 @@ String _formatNumber(num? value) {
       : number.toStringAsFixed(1);
 }
 
+class _BabyProfileSelectorSheet extends StatelessWidget {
+  const _BabyProfileSelectorSheet({
+    required this.infants,
+    required this.selectedBabyId,
+  });
+
+  final List<BabyProfileOverview> infants;
+  final String selectedBabyId;
+
+  @override
+  Widget build(BuildContext context) {
+    final listHeight = math.min(infants.length * 72.0, 360.0);
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Select Infant',
+              style: TextStyle(
+                fontFamily: MomCozyTypography.displayFontFamily,
+                color: _BabyOverviewColors.ink,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: listHeight,
+              child: ListView.separated(
+                padding: EdgeInsets.zero,
+                itemCount: infants.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final infant = infants[index];
+                  final infantId = infant.id!.trim();
+                  final nickname = infant.nickname?.trim();
+                  final label = nickname?.isNotEmpty == true
+                      ? nickname!
+                      : 'Infant ${index + 1}';
+                  final isSelected = infantId == selectedBabyId.trim();
+                  return Semantics(
+                    selected: isSelected,
+                    button: true,
+                    label: '$label, ${_formatBabyAge(infant.ageDays)}',
+                    child: Material(
+                      key: ValueKey('baby-profile-option-$infantId'),
+                      color: isSelected
+                          ? _BabyOverviewColors.pill
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(18),
+                        onTap: () => Navigator.of(context).pop(infant),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minHeight: MomCozyTapTargets.minimum,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                DecoratedBox(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(9),
+                                    child: _BabySvgIcon(
+                                      asset: _MeBabyOverviewAssets.babyIcon,
+                                      color: _BabyOverviewColors.wine,
+                                      size: 22,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        label,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontFamily: MomCozyTypography
+                                              .displayFontFamily,
+                                          color: _BabyOverviewColors.ink,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text(
+                                        _formatBabyAge(infant.ageDays),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: _BabyText.supporting,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (isSelected)
+                                  const Icon(
+                                    Icons.check_circle_rounded,
+                                    color: _BabyOverviewColors.wine,
+                                    size: 22,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _MeBabyOverviewHeader extends StatelessWidget {
   const _MeBabyOverviewHeader({
     required this.identity,
     required this.careStage,
+    required this.overview,
     required this.onStagePressed,
+    required this.onBabyPressed,
   });
 
   final ProfileIdentity identity;
   final CareStageSelectionState careStage;
+  final ProfileOverviewResource<ProfileOverview> overview;
   final VoidCallback onStagePressed;
+  final VoidCallback onBabyPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -773,41 +1197,71 @@ class _MeBabyOverviewHeader extends StatelessWidget {
         : careStage.error != null
         ? 'Stage unavailable'
         : 'My Stage';
+    final infantOptions = overview.data?.infants
+        .where((infant) => infant.id?.trim().isNotEmpty == true)
+        .toList(growable: false);
+    final babySelectorEnabled = infantOptions?.isNotEmpty == true;
+    final selectedInfantName = overview.data?.baby?.nickname?.trim();
     final babyPill = Semantics(
-      label: '$label, fixed profile',
-      enabled: false,
-      child: Container(
-        height: 44,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: _BabyOverviewColors.pill,
+      label: selectedInfantName?.isNotEmpty == true
+          ? '$label profile, $selectedInfantName. Select infant.'
+          : '$label profile. Select infant.',
+      button: true,
+      enabled: babySelectorEnabled,
+      child: Material(
+        key: const ValueKey('baby-profile-selector'),
+        color: _BabyOverviewColors.pill,
+        borderRadius: BorderRadius.circular(24),
+        child: InkWell(
           borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  style: const TextStyle(
-                    fontFamily: MomCozyTypography.bodyFontFamily,
-                    color: _BabyOverviewColors.wine,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+          onTap: babySelectorEnabled ? onBabyPressed : null,
+          child: SizedBox(
+            height: 44,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontFamily: MomCozyTypography.bodyFontFamily,
+                          color: _BabyOverviewColors.wine,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 5),
+                  if (overview.isLoading && overview.data == null)
+                    const SizedBox.square(
+                      dimension: 15,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: _BabyOverviewColors.wine,
+                      ),
+                    )
+                  else if (overview.hasError && overview.data == null)
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      color: _BabyOverviewColors.wine,
+                      size: 19,
+                    )
+                  else if (babySelectorEnabled)
+                    const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: _BabyOverviewColors.wine,
+                      size: 19,
+                    ),
+                ],
               ),
             ),
-            const SizedBox(width: 5),
-            const Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: _BabyOverviewColors.wine,
-              size: 19,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -895,15 +1349,21 @@ class _MeBabyOverviewHeader extends StatelessWidget {
               ),
             ),
           const SizedBox(width: 8),
-          _DisabledCircleAction(
-            actionKey: const ValueKey('me-baby-overview-notification-disabled'),
-            semanticLabel: 'Notifications are not available yet',
+          _HeaderCircleAction(
+            actionKey: const ValueKey('me-baby-overview-notification'),
+            semanticLabel: 'Open notifications',
             icon: isBaby ? null : Icons.notifications_none_rounded,
             iconAsset: isBaby ? _MeBabyOverviewAssets.bellIcon : null,
             compact: true,
             size: isBaby ? 38 : null,
             backgroundColor: isBaby ? _BabyOverviewColors.pill : null,
             foregroundColor: isBaby ? _BabyOverviewColors.wine : null,
+            onPressed: () => context.go(
+              Uri(
+                path: '/notifications',
+                queryParameters: {'from': isBaby ? '/baby' : '/me'},
+              ).toString(),
+            ),
           ),
         ],
       ),
@@ -1064,35 +1524,43 @@ class _CareStageSelectorSheet extends StatelessWidget {
   }
 }
 
-enum _RecordKind { pumping, feeding, growth }
+enum _RecordKind { pumping, feeding, sleep, diaper, growth }
 
 class _RecordComposerSheet extends StatefulWidget {
   const _RecordComposerSheet({
     required this.identity,
     required this.controller,
+    this.initialKind,
   });
 
   final ProfileIdentity identity;
   final ProfileOverviewController controller;
+  final _RecordKind? initialKind;
 
   @override
   State<_RecordComposerSheet> createState() => _RecordComposerSheetState();
 }
 
 class _RecordComposerSheetState extends State<_RecordComposerSheet> {
-  late _RecordKind _kind = widget.identity == ProfileIdentity.mom
-      ? _RecordKind.pumping
-      : _RecordKind.feeding;
+  late _RecordKind _kind =
+      widget.initialKind ??
+      (widget.identity == ProfileIdentity.mom
+          ? _RecordKind.pumping
+          : _RecordKind.feeding);
   final _amountController = TextEditingController();
+  final _durationController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
   final _headController = TextEditingController();
   String _feedingType = 'bottle';
+  String _sleepType = 'nap';
+  String _diaperType = 'wet';
   String? _validationError;
 
   @override
   void dispose() {
     _amountController.dispose();
+    _durationController.dispose();
     _weightController.dispose();
     _heightController.dispose();
     _headController.dispose();
@@ -1129,6 +1597,27 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
           type: _feedingType,
           amountMl: amount,
         );
+      case _RecordKind.sleep:
+        final durationMinutes = _positiveNumber(_durationController);
+        if (durationMinutes == null || durationMinutes > 1440) {
+          setState(
+            () => _validationError =
+                'Enter a sleep duration between 1 and 1440 minutes.',
+          );
+          return;
+        }
+        setState(() => _validationError = null);
+        final endedAt = widget.controller.now();
+        saved = await widget.controller.saveSleepRecord(
+          startedAt: endedAt.subtract(
+            Duration(seconds: (durationMinutes * 60).round()),
+          ),
+          endedAt: endedAt,
+          type: _sleepType,
+        );
+      case _RecordKind.diaper:
+        setState(() => _validationError = null);
+        saved = await widget.controller.saveDiaperRecord(type: _diaperType);
       case _RecordKind.growth:
         final weight = _positiveNumber(_weightController);
         final height = _positiveNumber(_heightController);
@@ -1194,29 +1683,42 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                   ),
                   const SizedBox(height: 14),
                   if (!isMom) ...[
-                    SegmentedButton<_RecordKind>(
-                      segments: const [
-                        ButtonSegment(
-                          value: _RecordKind.feeding,
-                          icon: Icon(Icons.restaurant_outlined),
-                          label: Text('Feeding'),
-                        ),
-                        ButtonSegment(
-                          value: _RecordKind.growth,
-                          icon: Icon(Icons.monitor_weight_outlined),
-                          label: Text('Growth'),
-                        ),
-                      ],
-                      selected: {_kind},
-                      onSelectionChanged: mutation.isSaving
-                          ? null
-                          : (selection) {
-                              setState(() {
-                                _kind = selection.single;
-                                _validationError = null;
-                              });
-                              widget.controller.clearRecordMutationError();
-                            },
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SegmentedButton<_RecordKind>(
+                        segments: const [
+                          ButtonSegment(
+                            value: _RecordKind.feeding,
+                            icon: Icon(Icons.restaurant_outlined),
+                            label: Text('Feeding'),
+                          ),
+                          ButtonSegment(
+                            value: _RecordKind.growth,
+                            icon: Icon(Icons.monitor_weight_outlined),
+                            label: Text('Growth'),
+                          ),
+                          ButtonSegment(
+                            value: _RecordKind.sleep,
+                            icon: Icon(Icons.bedtime_outlined),
+                            label: Text('Sleep'),
+                          ),
+                          ButtonSegment(
+                            value: _RecordKind.diaper,
+                            icon: Icon(Icons.baby_changing_station_outlined),
+                            label: Text('Diaper'),
+                          ),
+                        ],
+                        selected: {_kind},
+                        onSelectionChanged: mutation.isSaving
+                            ? null
+                            : (selection) {
+                                setState(() {
+                                  _kind = selection.single;
+                                  _validationError = null;
+                                });
+                                widget.controller.clearRecordMutationError();
+                              },
+                      ),
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -1227,7 +1729,50 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                       headController: _headController,
                       enabled: !mutation.isSaving,
                     )
-                  else ...[
+                  else if (_kind == _RecordKind.sleep) ...[
+                    const Text(
+                      'Sleep type',
+                      style: _MeBabyOverviewText.supporting,
+                    ),
+                    const SizedBox(height: 8),
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'nap', label: Text('Nap')),
+                        ButtonSegment(value: 'night', label: Text('Night')),
+                      ],
+                      selected: {_sleepType},
+                      onSelectionChanged: mutation.isSaving
+                          ? null
+                          : (selection) =>
+                                setState(() => _sleepType = selection.single),
+                    ),
+                    const SizedBox(height: 18),
+                    _RecordNumberField(
+                      fieldKey: const ValueKey('record-sleep-duration'),
+                      controller: _durationController,
+                      label: 'Duration',
+                      suffix: 'min',
+                      enabled: !mutation.isSaving,
+                    ),
+                  ] else if (_kind == _RecordKind.diaper) ...[
+                    const Text(
+                      'Diaper type',
+                      style: _MeBabyOverviewText.supporting,
+                    ),
+                    const SizedBox(height: 8),
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'wet', label: Text('Wet')),
+                        ButtonSegment(value: 'dirty', label: Text('Dirty')),
+                        ButtonSegment(value: 'mixed', label: Text('Both')),
+                      ],
+                      selected: {_diaperType},
+                      onSelectionChanged: mutation.isSaving
+                          ? null
+                          : (selection) =>
+                                setState(() => _diaperType = selection.single),
+                    ),
+                  ] else ...[
                     if (_kind == _RecordKind.feeding) ...[
                       const Text(
                         'Feeding type',
@@ -1999,6 +2544,17 @@ class _LifeStageWorkspace extends StatelessWidget {
               : Icons.track_changes_rounded,
         ),
         const SizedBox(height: 14),
+        if (isPregnancy) ...[
+          _LifeStageActionCard(
+            actionKey: const ValueKey('me-stage-pregnancy-development'),
+            icon: Icons.child_care_rounded,
+            title: 'Baby Development',
+            subtitle: 'View your confirmed pregnancy week',
+            actionLabel: 'Open',
+            onTap: () => context.push('/baby/development'),
+          ),
+          const SizedBox(height: 14),
+        ],
         _LifeStageActionCard(
           actionKey: ValueKey('me-stage-${stage.wireValue}-plan'),
           icon: Icons.event_note_rounded,
@@ -3096,8 +3652,8 @@ class _OverviewStateCard extends StatelessWidget {
   }
 }
 
-class _DisabledCircleAction extends StatelessWidget {
-  const _DisabledCircleAction({
+class _HeaderCircleAction extends StatelessWidget {
+  const _HeaderCircleAction({
     required this.actionKey,
     required this.semanticLabel,
     this.icon,
@@ -3106,6 +3662,7 @@ class _DisabledCircleAction extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.size,
+    this.onPressed,
   });
 
   final Key actionKey;
@@ -3116,6 +3673,7 @@ class _DisabledCircleAction extends StatelessWidget {
   final Color? backgroundColor;
   final Color? foregroundColor;
   final double? size;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -3123,8 +3681,8 @@ class _DisabledCircleAction extends StatelessWidget {
     return Semantics(
       key: actionKey,
       label: semanticLabel,
-      button: false,
-      enabled: false,
+      button: onPressed != null,
+      enabled: onPressed != null,
       child: SizedBox.square(
         dimension: math.max(resolvedSize, MomCozyTapTargets.minimum),
         child: Center(
@@ -3133,7 +3691,7 @@ class _DisabledCircleAction extends StatelessWidget {
             shape: const CircleBorder(),
             child: InkWell(
               customBorder: const CircleBorder(),
-              onTap: null,
+              onTap: onPressed,
               child: Container(
                 width: resolvedSize,
                 height: resolvedSize,
@@ -3293,7 +3851,11 @@ abstract final class _MeBabyOverviewAssets {
       'assets/images/me_baby_overview/body_assessment.png';
   static const yoga = 'assets/images/me_baby_overview/yoga.png';
   static const nurseryCamera =
-      'assets/images/me_baby_overview/nursery_camera.png';
+      'assets/images/me_baby_overview/nursery_camera_clean.png';
+  static const babyDevelopment =
+      'assets/images/me_baby_overview/baby_development.png';
+  static const prenatalEducation =
+      'assets/images/me_baby_overview/prenatal_education.png';
   static const sleepTraining =
       'assets/images/me_baby_overview/sleep_training.png';
   static const _babyIconRoot = 'assets/images/me_baby_overview/icons';
