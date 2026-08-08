@@ -4,6 +4,18 @@ abstract interface class PlanRepository {
   Future<PlanDashboard> fetchDashboard({required DateTime weekOf});
 }
 
+abstract interface class PlanDashboardSnapshotProvider {
+  PlanDashboard? snapshotFor({required DateTime weekOf});
+}
+
+abstract interface class PlanSessionMutationRepository {
+  Future<void> updateSession({
+    required String sessionId,
+    required String title,
+    required DateTime scheduledAt,
+  });
+}
+
 enum PlanCategory { lactation, yoga, pelvicFloor, other }
 
 extension PlanCategoryLabel on PlanCategory {

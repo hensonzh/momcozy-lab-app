@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,6 +14,49 @@ void main() {
   final emptyNow = DateTime(2025, 10, 14, 9, 41);
 
   setUpAll(loadMomCozyPlanTestFonts);
+
+  testWidgets('shows the Plan chrome on the first frame while data loads', (
+    tester,
+  ) async {
+    final repository = _DeferredPlanRepository();
+    addTearDown(repository.completeIfPending);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PlanPage(repository: repository, now: () => emptyNow),
+      ),
+    );
+
+    expect(repository.fetchCount, 1);
+    expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
+    expect(find.byKey(const ValueKey('plan-loading-view')), findsOneWidget);
+    expect(find.text('My Plans'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    repository.complete(PlanDashboard.empty(weekOf: emptyNow));
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('plan-loading-view')), findsNothing);
+    expect(find.text('No Plans Yet'), findsOneWidget);
+  });
+
+  testWidgets('shows cached Plan content while it refreshes in background', (
+    tester,
+  ) async {
+    final cached = PlanDashboard.empty(weekOf: emptyNow);
+    final repository = _CachedDeferredPlanRepository(cached);
+    addTearDown(repository.completeIfPending);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PlanPage(repository: repository, now: () => emptyNow),
+      ),
+    );
+
+    expect(repository.fetchCount, 1);
+    expect(find.byKey(const ValueKey('plan-loading-view')), findsNothing);
+    expect(find.text('No Plans Yet'), findsOneWidget);
+  });
 
   testWidgets('renders the supplied empty-plan structure without legacy UI', (
     tester,
@@ -283,16 +328,185 @@ void main() {
     await tester.drag(find.byType(ListView), const Offset(0, -520));
     await tester.pumpAndSettle();
     expect(find.text('Upcoming'), findsOneWidget);
-    expect(find.text('3 of 5 sessions completed'), findsOneWidget);
+    expect(find.text('3 of 5 sessions completed'), findsNothing);
+    expect(find.byKey(const ValueKey('plan-monthly-calendar')), findsOneWidget);
 
-    await tester.drag(find.byType(ListView), const Offset(0, -420));
+    await tester.drag(find.byType(ListView), const Offset(0, 1000));
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('plan-period-week')));
+    await tester.pump();
+    await tester.drag(find.byType(ListView), const Offset(0, -520));
+    await tester.pumpAndSettle();
+    expect(find.text('3 of 5 sessions completed'), findsOneWidget);
     expect(find.text('Monthly Calendar'), findsOneWidget);
 
     expect(find.text('日程'), findsNothing);
     expect(find.text('泌乳计划'), findsNothing);
     expect(find.text('吸奶补录'), findsNothing);
     expect(find.text('喂养记录'), findsNothing);
+  });
+
+  testWidgets('multi-category period and plan details change real content', (
+    tester,
+  ) async {
+    await _pumpPlanPage(
+      tester,
+      dashboard: _multiCategoryDashboard(now),
+      now: now,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('plan-period-day')));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('plan-day-content')), findsOneWidget);
+    expect(find.byKey(const ValueKey('plan-week-summary')), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('plan-period-month')));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('plan-month-content')), findsOneWidget);
+    expect(find.byKey(const ValueKey('plan-monthly-calendar')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('plan-period-week')));
+    await tester.pump();
+    await tester.tap(find.text('Yoga'));
+    await tester.pump();
+    await tester.tap(find.text('View week details'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('plan-week-details-sheet')),
+      findsOneWidget,
+    );
+    expect(find.text('Yoga Week Details'), findsOneWidget);
+  });
+
+  testWidgets('Plan header opens the default calendar and all-plans flows', (
+    tester,
+  ) async {
+    await _pumpPlanPage(
+      tester,
+      dashboard: _multiCategoryDashboard(now),
+      now: now,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('plan-header-calendar')));
+    await tester.pumpAndSettle();
+    expect(find.byType(DatePickerDialog), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('plan-header-all-plans')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('plan-all-plans-sheet')), findsOneWidget);
+    expect(find.text('All Plans'), findsOneWidget);
+    expect(find.text('Recovery yoga'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('plan-all-plans-yoga')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('plan-all-plans-sheet')), findsNothing);
+    await tester.tap(find.text('View week details'));
+    await tester.pumpAndSettle();
+    expect(find.text('Yoga Week Details'), findsOneWidget);
+  });
+
+  testWidgets('week and month date cells reload the selected Plan day', (
+    tester,
+  ) async {
+    final repository = _RecordingPlanRepository(_multiCategoryDashboard(now));
+    await _pumpPlanPage(
+      tester,
+      dashboard: repository.dashboard,
+      repository: repository,
+      now: now,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('plan-week-day-2024-10-23')));
+    await tester.pumpAndSettle();
+    expect(repository.requestedDays.last, DateTime(2024, 10, 23));
+    expect(
+      find.byKey(const ValueKey('plan-no-sessions-selected-day')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('plan-period-month')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('plan-month-day-2024-10-25')));
+    await tester.pumpAndSettle();
+    expect(repository.requestedDays.last, DateTime(2024, 10, 25));
+    expect(repository.requestedDays, hasLength(3));
+    expect(
+      find.byKey(const ValueKey('plan-period-month-selected')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('calendar selection reloads the chosen Plan day', (tester) async {
+    final repository = _RecordingPlanRepository(_multiCategoryDashboard(now));
+    await _pumpPlanPage(
+      tester,
+      dashboard: repository.dashboard,
+      repository: repository,
+      now: now,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('plan-header-calendar')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: find.byType(DatePickerDialog),
+        matching: find.text('23'),
+      ),
+    );
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    expect(repository.requestedDays.last, DateTime(2024, 10, 23));
+  });
+
+  testWidgets('single-category back opens the default all-plans flow', (
+    tester,
+  ) async {
+    await _pumpPlanPage(tester, dashboard: _singlePlanDashboard(now), now: now);
+
+    await tester.tap(find.byKey(const ValueKey('plan-single-back')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('plan-all-plans-sheet')), findsOneWidget);
+    expect(find.text('Breast Pumping Plan'), findsWidgets);
+  });
+
+  testWidgets('manual edit persists a session title and time', (tester) async {
+    final repository = _EditablePlanRepository(_singlePlanDashboard(now));
+    await _pumpPlanPage(
+      tester,
+      dashboard: repository.dashboard,
+      repository: repository,
+      now: now,
+    );
+
+    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Manual Edit'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('plan-manual-edit-sheet')),
+      findsOneWidget,
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('plan-manual-edit-title')),
+      'Updated Session 2',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('plan-manual-edit-time')),
+      '09:15',
+    );
+    await tester.tap(find.byKey(const ValueKey('plan-manual-edit-save')));
+    await tester.pumpAndSettle();
+
+    expect(repository.updatedSessionId, 'two');
+    expect(repository.updatedTitle, 'Updated Session 2');
+    expect(repository.updatedAt, DateTime(2024, 10, 22, 9, 15));
+    expect(find.byKey(const ValueKey('plan-manual-edit-sheet')), findsNothing);
   });
 
   testWidgets('renders the supplied single-plan detail structure', (
@@ -507,6 +721,7 @@ Future<void> _pumpPlanPage(
   WidgetTester tester, {
   required PlanDashboard dashboard,
   required DateTime now,
+  PlanRepository? repository,
   VoidCallback? onCreatePlan,
   VoidCallback? onOpenCalendar,
   VoidCallback? onOpenAllPlans,
@@ -528,7 +743,7 @@ Future<void> _pumpPlanPage(
     MaterialApp(
       theme: ThemeData(fontFamily: 'Quicksand'),
       home: PlanPage(
-        repository: _FakePlanRepository(dashboard),
+        repository: repository ?? _FakePlanRepository(dashboard),
         now: () => now,
         onCreatePlan: onCreatePlan,
         onOpenCalendar: onOpenCalendar,
@@ -536,7 +751,7 @@ Future<void> _pumpPlanPage(
         onBackToPlans: onBackToPlans,
         onChat: onChat ?? () {},
         onStartSession: onStartSession ?? () {},
-        onManualEdit: onManualEdit ?? () {},
+        onManualEdit: onManualEdit,
       ),
     ),
   );
@@ -671,4 +886,98 @@ class _FakePlanRepository implements PlanRepository {
   Future<PlanDashboard> fetchDashboard({required DateTime weekOf}) async {
     return dashboard;
   }
+}
+
+class _EditablePlanRepository
+    implements PlanRepository, PlanSessionMutationRepository {
+  _EditablePlanRepository(this.dashboard);
+
+  PlanDashboard dashboard;
+  String? updatedSessionId;
+  String? updatedTitle;
+  DateTime? updatedAt;
+
+  @override
+  Future<PlanDashboard> fetchDashboard({required DateTime weekOf}) async {
+    return dashboard;
+  }
+
+  @override
+  Future<void> updateSession({
+    required String sessionId,
+    required String title,
+    required DateTime scheduledAt,
+  }) async {
+    updatedSessionId = sessionId;
+    updatedTitle = title;
+    updatedAt = scheduledAt;
+    dashboard = PlanDashboard(
+      weekOf: dashboard.weekOf,
+      plans: dashboard.plans,
+      weeklyCompletedSessions: dashboard.weeklyCompletedSessions,
+      weeklyTotalSessions: dashboard.weeklyTotalSessions,
+      sessions: [
+        for (final session in dashboard.sessions)
+          if (session.id == sessionId)
+            PlanSession(
+              id: session.id,
+              planId: session.planId,
+              title: title,
+              scheduledAt: scheduledAt,
+              status: session.status,
+              valueLabel: session.valueLabel,
+            )
+          else
+            session,
+      ],
+    );
+  }
+}
+
+class _RecordingPlanRepository implements PlanRepository {
+  _RecordingPlanRepository(this.dashboard);
+
+  final PlanDashboard dashboard;
+  final List<DateTime> requestedDays = [];
+
+  @override
+  Future<PlanDashboard> fetchDashboard({required DateTime weekOf}) async {
+    requestedDays.add(weekOf);
+    return PlanDashboard(
+      weekOf: weekOf,
+      plans: dashboard.plans,
+      sessions: dashboard.sessions,
+      weeklyCompletedSessions: dashboard.weeklyCompletedSessions,
+      weeklyTotalSessions: dashboard.weeklyTotalSessions,
+    );
+  }
+}
+
+class _DeferredPlanRepository implements PlanRepository {
+  final Completer<PlanDashboard> _completer = Completer<PlanDashboard>();
+  int fetchCount = 0;
+
+  @override
+  Future<PlanDashboard> fetchDashboard({required DateTime weekOf}) {
+    fetchCount += 1;
+    return _completer.future;
+  }
+
+  void complete(PlanDashboard dashboard) => _completer.complete(dashboard);
+
+  void completeIfPending() {
+    if (!_completer.isCompleted) {
+      _completer.complete(PlanDashboard.empty(weekOf: DateTime(2025, 10, 14)));
+    }
+  }
+}
+
+class _CachedDeferredPlanRepository extends _DeferredPlanRepository
+    implements PlanDashboardSnapshotProvider {
+  _CachedDeferredPlanRepository(this.cached);
+
+  final PlanDashboard cached;
+
+  @override
+  PlanDashboard? snapshotFor({required DateTime weekOf}) => cached;
 }

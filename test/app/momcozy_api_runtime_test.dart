@@ -172,8 +172,10 @@ void main() {
     );
     expect(runtime.agentHubProfileRepository, isA<AgentHubProfileRepository>());
     expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
-    expect(runtime.planRepository, isA<PlanApiRepository>());
-    expect(runtime.planRepository.transport, same(transport));
+    final planRepository = runtime.planRepository;
+    expect(planRepository, isA<PlanApiRepository>());
+    expect(planRepository.transport, same(transport));
+    expect(runtime.planRepository, same(planRepository));
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.volumeUnitPreferenceStore, same(volumePreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
