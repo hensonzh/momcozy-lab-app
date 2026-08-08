@@ -114,10 +114,9 @@ class MomCozyTypography {
 
   static const displayFontFamily = 'Rubik';
   static const bodyFontFamily = 'Figtree';
+  static const interfaceFontFamily = bodyFontFamily;
   static const fontFamily = 'Quicksand';
   static const fontFamilyFallback = ['NotoSansSC', 'PingFang SC', 'Arial'];
-  static const displayFontFamily = 'Rubik';
-  static const interfaceFontFamily = 'Figtree';
 }
 
 class MomCozyShadows {
