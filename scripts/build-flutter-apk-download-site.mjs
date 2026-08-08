@@ -209,6 +209,10 @@ function parseDartDefines(value) {
 }
 
 function renderDownloadPage(manifest) {
+  const displayVersion = formatDisplayVersion(
+    manifest.versionName,
+    manifest.buildNumber,
+  );
   return `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -265,7 +269,7 @@ function renderDownloadPage(manifest) {
   <main>
     <h1>Momcozy Lab 内测版</h1>
     <p class="intro">使用 Android 手机扫描或点击二维码下载 APK。</p>
-    <p class="version">版本 ${escapeHtml(manifest.versionName)} (${escapeHtml(manifest.buildNumber)})</p>
+    <p class="version">版本 ${escapeHtml(displayVersion)}</p>
     <a class="qr-link" href="${escapeHtml(manifest.apkUrl)}" aria-label="下载 Momcozy Lab Android APK">
       <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="Momcozy Lab APK 下载二维码" />
     </a>
@@ -273,6 +277,18 @@ function renderDownloadPage(manifest) {
 </body>
 </html>
 `;
+}
+
+function formatDisplayVersion(versionName, buildNumber) {
+  const normalizedVersion = String(versionName ?? "");
+  const normalizedBuild = String(buildNumber ?? "");
+  const zeroPatchVersion = /^(\d+)\.(\d+)\.0$/.exec(normalizedVersion);
+
+  if (zeroPatchVersion && /^\d+$/.test(normalizedBuild)) {
+    return `${zeroPatchVersion[1]}.${zeroPatchVersion[2]}.${normalizedBuild}`;
+  }
+
+  return normalizedVersion;
 }
 
 function renderQrCodeSvg(value, label) {
