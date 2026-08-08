@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/update/app_release_lifecycle.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
 
@@ -12,6 +13,7 @@ class OnboardingController extends ChangeNotifier {
   OnboardingController({
     required this.runtimeController,
     this.onPrimaryInfantSelected,
+    this.releasePolicy = const NoopOnboardingReleasePolicy(),
   }) {
     runtimeController.addListener(_handleRuntimeChanged);
     _handleRuntimeChanged();
@@ -19,6 +21,7 @@ class OnboardingController extends ChangeNotifier {
 
   final MomCozyRuntimeController runtimeController;
   final Future<void> Function(String infantId)? onPrimaryInfantSelected;
+  final OnboardingReleasePolicy releasePolicy;
   OnboardingGatePhase _phase = OnboardingGatePhase.idle;
   OnboardingState? _state;
   String? _loadedUserId;
@@ -26,6 +29,10 @@ class OnboardingController extends ChangeNotifier {
   bool _busy = false;
   Timer? _pollTimer;
   bool _disposed = false;
+  String? _resetUserId;
+  String? _resetReleaseId;
+  Future<void>? _resetInFlight;
+  String? _resetInFlightUserId;
 
   OnboardingGatePhase get phase => _phase;
   OnboardingState? get state => _state;
@@ -51,11 +58,15 @@ class OnboardingController extends ChangeNotifier {
     final session = runtimeController.currentSession;
     if (!session.isAuthenticated) {
       _pollTimer?.cancel();
+      _clearResetTracking();
       _loadedUserId = null;
       _state = null;
       _phase = OnboardingGatePhase.idle;
       _notify();
       return;
+    }
+    if (_loadedUserId != null && _loadedUserId != session.userId) {
+      _clearResetTracking();
     }
     if (_loadedUserId == session.userId && _phase != OnboardingGatePhase.idle) {
       return;
@@ -74,8 +85,14 @@ class OnboardingController extends ChangeNotifier {
       _notify();
     }
     try {
-      final next = await _repository.fetchState();
+      final repository = _repository;
+      await _ensureReleaseReset(userId, repository);
       if (runtimeController.currentSession.userId != userId) return;
+      final next = await repository.fetchState();
+      if (runtimeController.currentSession.userId != userId) return;
+      if (next.isCompleted && await releasePolicy.requiresResetFor(userId)) {
+        await releasePolicy.markCompletedFor(userId);
+      }
       _state = next;
       _phase = OnboardingGatePhase.ready;
       _errorMessage = '';
@@ -114,8 +131,11 @@ class OnboardingController extends ChangeNotifier {
   }
 
   Future<bool> _complete(Future<OnboardingState> Function() action) async {
+    final userId = runtimeController.currentSession.userId;
     final succeeded = await _run(() async {
-      _state = await action();
+      final next = await action();
+      if (next.isCompleted) await releasePolicy.markCompletedFor(userId);
+      _state = next;
       _phase = OnboardingGatePhase.ready;
     });
     if (!succeeded) return false;
@@ -130,6 +150,46 @@ class OnboardingController extends ChangeNotifier {
     }
     _notify();
     return true;
+  }
+
+  Future<void> _ensureReleaseReset(
+    String userId,
+    OnboardingApiRepository repository,
+  ) async {
+    if (_resetUserId == userId && _resetReleaseId == releasePolicy.releaseId) {
+      return;
+    }
+    if (!await releasePolicy.requiresResetFor(userId)) return;
+
+    final pending = _resetInFlight;
+    if (pending != null && _resetInFlightUserId == userId) {
+      await pending;
+      return;
+    }
+    final reset = repository
+        .resetForRelease(releasePolicy.releaseId)
+        .then<void>((_) {});
+    _resetInFlight = reset;
+    _resetInFlightUserId = userId;
+    try {
+      await reset;
+      if (runtimeController.currentSession.userId == userId) {
+        _resetUserId = userId;
+        _resetReleaseId = releasePolicy.releaseId;
+      }
+    } finally {
+      if (identical(_resetInFlight, reset)) {
+        _resetInFlight = null;
+        _resetInFlightUserId = null;
+      }
+    }
+  }
+
+  void _clearResetTracking() {
+    _resetUserId = null;
+    _resetReleaseId = null;
+    _resetInFlight = null;
+    _resetInFlightUserId = null;
   }
 
   Future<bool> _run(Future<void> Function() action) async {

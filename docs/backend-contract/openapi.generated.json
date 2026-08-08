@@ -1130,13 +1130,94 @@
         "title": "AgentThreadRead",
         "type": "object"
       },
-      "BodyPainAreaRead": {
+      "AvatarGenerationCreate": {
+        "additionalProperties": false,
         "properties": {
+          "portrait_file_id": {
+            "format": "uuid",
+            "title": "Portrait File Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "portrait_file_id"
+        ],
+        "title": "AvatarGenerationCreate",
+        "type": "object"
+      },
+      "AvatarGenerationRead": {
+        "additionalProperties": false,
+        "properties": {
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error_code": {
+            "default": "",
+            "title": "Error Code",
+            "type": "string"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
             "type": "string"
           },
+          "output_file_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output File Id"
+          },
+          "stage": {
+            "enum": [
+              "fertility",
+              "pregnancy",
+              "postpartum"
+            ],
+            "title": "Stage",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "generating",
+              "succeeded",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "stage",
+          "status",
+          "created_at"
+        ],
+        "title": "AvatarGenerationRead",
+        "type": "object"
+      },
+      "BodyPainAreaRead": {
+        "properties": {
           "intensity": {
             "anyOf": [
               {
@@ -1175,7 +1256,6 @@
           }
         },
         "required": [
-          "id",
           "zone"
         ],
         "title": "BodyPainAreaRead",
@@ -1261,23 +1341,6 @@
             "title": "Daily Impact Description",
             "type": "string"
           },
-          "delivery_type": {
-            "anyOf": [
-              {
-                "enum": [
-                  "vaginal",
-                  "cesarean",
-                  "assisted",
-                  "other"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Delivery Type"
-          },
           "diastasis_severity": {
             "anyOf": [
               {
@@ -1319,11 +1382,6 @@
             ],
             "title": "Lower Abdominal Pain"
           },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
           "pain_areas": {
             "items": {
               "$ref": "#/components/schemas/BodyPainAreaRead"
@@ -1341,10 +1399,6 @@
               }
             ],
             "title": "Pelvic Floor Strength"
-          },
-          "recovery_score": {
-            "title": "Recovery Score",
-            "type": "null"
           },
           "updated_at": {
             "anyOf": [
@@ -1382,13 +1436,11 @@
             "type": "string"
           }
         },
-        "required": [
-          "owner_user_id"
-        ],
         "title": "BodyProfileRead",
         "type": "object"
       },
       "BodyProfileUpdate": {
+        "additionalProperties": false,
         "properties": {
           "bleeding_status": {
             "anyOf": [
@@ -1428,23 +1480,6 @@
             ],
             "default": "",
             "title": "Daily Impact Description"
-          },
-          "delivery_type": {
-            "anyOf": [
-              {
-                "enum": [
-                  "vaginal",
-                  "cesarean",
-                  "assisted",
-                  "other"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Delivery Type"
           },
           "diastasis_severity": {
             "anyOf": [
@@ -1552,64 +1587,41 @@
         "title": "Body_upload_file_v1_files_upload_post",
         "type": "object"
       },
-      "CareOverviewCapabilitiesRead": {
+      "Body_upload_my_onboarding_portrait_v1_onboarding_me_portrait_post": {
         "properties": {
-          "body_profile": {
-            "default": "available",
-            "enum": [
-              "available",
-              "unavailable"
-            ],
-            "title": "Body Profile",
-            "type": "string"
-          },
-          "cycle_tracking": {
-            "default": "unavailable",
-            "enum": [
-              "available",
-              "unavailable"
-            ],
-            "title": "Cycle Tracking",
-            "type": "string"
-          },
-          "pregnancy_progress": {
-            "default": "available",
-            "enum": [
-              "available",
-              "unavailable"
-            ],
-            "title": "Pregnancy Progress",
-            "type": "string"
-          },
-          "program_progress": {
-            "default": "available",
-            "enum": [
-              "available",
-              "unavailable"
-            ],
-            "title": "Program Progress",
-            "type": "string"
-          },
-          "vital_records": {
-            "default": "available",
-            "enum": [
-              "available",
-              "unavailable"
-            ],
-            "title": "Vital Records",
-            "type": "string"
-          },
-          "water_records": {
-            "default": "available",
-            "enum": [
-              "available",
-              "unavailable"
-            ],
-            "title": "Water Records",
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
             "type": "string"
           }
         },
-        "title": "CareOverviewCapabilitiesRead",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_my_onboarding_portrait_v1_onboarding_me_portrait_post",
+        "type": "object"
+      },
+      "DeliveryGestationalAge": {
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "default": 0,
+            "maximum": 6.0,
+            "minimum": 0.0,
+            "title": "Days",
+            "type": "integer"
+          },
+          "weeks": {
+            "maximum": 45.0,
+            "minimum": 0.0,
+            "title": "Weeks",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "weeks"
+        ],
+        "title": "DeliveryGestationalAge",
         "type": "object"
       },
       "DiaperRecordCreate": {
@@ -1754,19 +1766,6 @@
             "title": "Notes",
             "type": "string"
           },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
-          "source": {
-            "title": "Source",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
           "stool_color": {
             "anyOf": [
               {
@@ -1808,13 +1807,10 @@
         },
         "required": [
           "id",
-          "owner_user_id",
           "infant_id",
           "changed_at",
           "diaper_kind",
-          "notes",
-          "source",
-          "status"
+          "notes"
         ],
         "title": "DiaperRecordRead",
         "type": "object"
@@ -1971,31 +1967,6 @@
             ],
             "title": "Infant Id"
           },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
-          "plan_task_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Plan Task Id"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
-          "title": {
-            "title": "Title",
-            "type": "string"
-          },
           "volume_ml": {
             "anyOf": [
               {
@@ -2010,14 +1981,40 @@
         },
         "required": [
           "id",
-          "owner_user_id",
           "feed_time",
           "feed_type",
-          "feed_action",
-          "title",
-          "status"
+          "feed_action"
         ],
         "title": "FeedingRecordRead",
+        "type": "object"
+      },
+      "FertilityOnboardingProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "age": {
+            "maximum": 70.0,
+            "minimum": 12.0,
+            "title": "Age",
+            "type": "integer"
+          },
+          "display_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "stage": {
+            "const": "fertility",
+            "title": "Stage",
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name",
+          "age",
+          "stage"
+        ],
+        "title": "FertilityOnboardingProfile",
         "type": "object"
       },
       "FileListResponse": {
@@ -2077,6 +2074,11 @@
           "owner_user_id": {
             "format": "uuid",
             "title": "Owner User Id",
+            "type": "string"
+          },
+          "purpose": {
+            "default": "general",
+            "title": "Purpose",
             "type": "string"
           },
           "size_bytes": {
@@ -2223,15 +2225,6 @@
             "title": "Measured At",
             "type": "string"
           },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
           "weight_kg": {
             "anyOf": [
               {
@@ -2246,9 +2239,7 @@
         },
         "required": [
           "id",
-          "owner_user_id",
-          "measured_at",
-          "status"
+          "measured_at"
         ],
         "title": "GrowthRecordRead",
         "type": "object"
@@ -2332,7 +2323,38 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "InfantOnboardingInput": {
+        "additionalProperties": false,
+        "properties": {
+          "nickname": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Nickname",
+            "type": "string"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "enum": [
+                  "female",
+                  "male",
+                  "intersex",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          }
+        },
+        "title": "InfantOnboardingInput",
+        "type": "object"
+      },
       "InfantProfileCreate": {
+        "additionalProperties": false,
         "properties": {
           "birth_date": {
             "anyOf": [
@@ -2345,6 +2367,14 @@
               }
             ],
             "title": "Birth Date"
+          },
+          "birth_source": {
+            "enum": [
+              "current_delivery",
+              "independent"
+            ],
+            "title": "Birth Source",
+            "type": "string"
           },
           "infant_name": {
             "maxLength": 120,
@@ -2366,7 +2396,8 @@
           }
         },
         "required": [
-          "infant_name"
+          "infant_name",
+          "birth_source"
         ],
         "title": "InfantProfileCreate",
         "type": "object"
@@ -2410,26 +2441,15 @@
             "title": "Infant Name",
             "type": "string"
           },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
           "sex": {
+            "default": "",
             "title": "Sex",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
             "type": "string"
           }
         },
         "required": [
           "id",
-          "owner_user_id",
-          "infant_name",
-          "sex",
-          "status"
+          "infant_name"
         ],
         "title": "InfantProfileRead",
         "type": "object"
@@ -2687,14 +2707,6 @@
       },
       "MeCareOverviewRead": {
         "properties": {
-          "capabilities": {
-            "$ref": "#/components/schemas/CareOverviewCapabilitiesRead"
-          },
-          "generated_at": {
-            "format": "date-time",
-            "title": "Generated At",
-            "type": "string"
-          },
           "pregnancy": {
             "anyOf": [
               {
@@ -2742,11 +2754,6 @@
             "title": "Date",
             "type": "string"
           },
-          "measured_only": {
-            "default": true,
-            "title": "Measured Only",
-            "type": "boolean"
-          },
           "pumped_milk_volume_ml": {
             "title": "Pumped Milk Volume Ml",
             "type": "number"
@@ -2780,6 +2787,11 @@
             },
             "title": "Items",
             "type": "array"
+          },
+          "timezone": {
+            "default": "UTC+00:00",
+            "title": "Timezone",
+            "type": "string"
           }
         },
         "required": [
@@ -2971,6 +2983,179 @@
           "notification_type"
         ],
         "title": "NotificationServiceCreate",
+        "type": "object"
+      },
+      "OnboardingComplete": {
+        "additionalProperties": false,
+        "properties": {
+          "avatar_generation_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Generation Id"
+          },
+          "use_default_avatar": {
+            "default": false,
+            "title": "Use Default Avatar",
+            "type": "boolean"
+          }
+        },
+        "title": "OnboardingComplete",
+        "type": "object"
+      },
+      "OnboardingRead": {
+        "additionalProperties": false,
+        "properties": {
+          "avatar": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AvatarGenerationRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "can_continue_with_default": {
+            "default": false,
+            "title": "Can Continue With Default",
+            "type": "boolean"
+          },
+          "current_stage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "fertility",
+                  "pregnancy",
+                  "postpartum"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Stage"
+          },
+          "current_step": {
+            "enum": [
+              "profile",
+              "avatar",
+              "generating",
+              "review",
+              "done"
+            ],
+            "title": "Current Step",
+            "type": "string"
+          },
+          "onboarding_version": {
+            "default": 1,
+            "title": "Onboarding Version",
+            "type": "integer"
+          },
+          "primary_infant_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Infant Id"
+          },
+          "profile_confirmed": {
+            "default": false,
+            "title": "Profile Confirmed",
+            "type": "boolean"
+          },
+          "selected_avatar_file_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Avatar File Id"
+          },
+          "status": {
+            "enum": [
+              "required",
+              "avatar_required",
+              "avatar_generating",
+              "avatar_review",
+              "avatar_failed",
+              "completed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "current_step"
+        ],
+        "title": "OnboardingRead",
+        "type": "object"
+      },
+      "OnboardingReleaseResetRead": {
+        "additionalProperties": false,
+        "properties": {
+          "deleted_file_count": {
+            "minimum": 0.0,
+            "title": "Deleted File Count",
+            "type": "integer"
+          },
+          "object_cleanup_queued": {
+            "title": "Object Cleanup Queued",
+            "type": "boolean"
+          },
+          "release_id": {
+            "title": "Release Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "reset",
+              "already_reset"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "release_id",
+          "deleted_file_count",
+          "object_cleanup_queued"
+        ],
+        "title": "OnboardingReleaseResetRead",
+        "type": "object"
+      },
+      "OnboardingReleaseResetRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "release_id": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Release Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "release_id"
+        ],
+        "title": "OnboardingReleaseResetRequest",
         "type": "object"
       },
       "PlanCreate": {
@@ -3380,6 +3565,83 @@
         "title": "PlanTodoCompletionUpdate",
         "type": "object"
       },
+      "PostpartumOnboardingProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "age": {
+            "maximum": 70.0,
+            "minimum": 12.0,
+            "title": "Age",
+            "type": "integer"
+          },
+          "delivery_date": {
+            "format": "date",
+            "title": "Delivery Date",
+            "type": "string"
+          },
+          "delivery_gestational_age": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DeliveryGestationalAge"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "delivery_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "vaginal",
+                  "cesarean",
+                  "assisted",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Type"
+          },
+          "display_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "infant_count": {
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Infant Count",
+            "type": "integer"
+          },
+          "infants": {
+            "items": {
+              "$ref": "#/components/schemas/InfantOnboardingInput"
+            },
+            "title": "Infants",
+            "type": "array"
+          },
+          "stage": {
+            "const": "postpartum",
+            "title": "Stage",
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name",
+          "age",
+          "stage",
+          "delivery_date",
+          "infant_count",
+          "infants"
+        ],
+        "title": "PostpartumOnboardingProfile",
+        "type": "object"
+      },
       "PregnancyDiaryEntryCreate": {
         "properties": {
           "appointment_note": {
@@ -3741,6 +4003,48 @@
         "title": "PregnancyDiaryEntryUpdate",
         "type": "object"
       },
+      "PregnancyOnboardingProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "age": {
+            "maximum": 70.0,
+            "minimum": 12.0,
+            "title": "Age",
+            "type": "integer"
+          },
+          "display_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "expected_due_date": {
+            "format": "date",
+            "title": "Expected Due Date",
+            "type": "string"
+          },
+          "expected_infant_count": {
+            "default": 1,
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Expected Infant Count",
+            "type": "integer"
+          },
+          "stage": {
+            "const": "pregnancy",
+            "title": "Stage",
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name",
+          "age",
+          "stage",
+          "expected_due_date"
+        ],
+        "title": "PregnancyOnboardingProfile",
+        "type": "object"
+      },
       "PregnancyProgressRead": {
         "properties": {
           "days_remaining": {
@@ -3755,31 +4059,6 @@
               }
             ],
             "title": "Days Remaining"
-          },
-          "expected_due_date": {
-            "anyOf": [
-              {
-                "format": "date",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Expected Due Date"
-          },
-          "gestational_day": {
-            "anyOf": [
-              {
-                "maximum": 6.0,
-                "minimum": 0.0,
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gestational Day"
           },
           "gestational_week": {
             "anyOf": [
@@ -3898,18 +4177,6 @@
             "title": "Plan Id",
             "type": "string"
           },
-          "plan_type": {
-            "title": "Plan Type",
-            "type": "string"
-          },
-          "state": {
-            "enum": [
-              "ready",
-              "empty"
-            ],
-            "title": "State",
-            "type": "string"
-          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -3921,9 +4188,7 @@
           }
         },
         "required": [
-          "state",
           "plan_id",
-          "plan_type",
           "title",
           "completed_sessions",
           "total_sessions"
@@ -4615,35 +4880,6 @@
             ],
             "title": "Milk Volume Ml"
           },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
-          "plan_task_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Plan Task Id"
-          },
-          "pump_end_time": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Pump End Time"
-          },
           "pump_start_time": {
             "format": "date-time",
             "title": "Pump Start Time",
@@ -4652,28 +4888,12 @@
           "pump_type": {
             "title": "Pump Type",
             "type": "string"
-          },
-          "source": {
-            "title": "Source",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
-          "title": {
-            "title": "Title",
-            "type": "string"
           }
         },
         "required": [
           "id",
-          "owner_user_id",
           "pump_start_time",
-          "pump_type",
-          "source",
-          "title",
-          "status"
+          "pump_type"
         ],
         "title": "PumpingRecordRead",
         "type": "object"
@@ -4822,11 +5042,6 @@
             "title": "Infant Id",
             "type": "string"
           },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
           "sleep_kind": {
             "enum": [
               "night",
@@ -4836,28 +5051,17 @@
             "title": "Sleep Kind",
             "type": "string"
           },
-          "source": {
-            "title": "Source",
-            "type": "string"
-          },
           "started_at": {
             "format": "date-time",
             "title": "Started At",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
             "type": "string"
           }
         },
         "required": [
           "id",
-          "owner_user_id",
           "infant_id",
           "started_at",
-          "sleep_kind",
-          "source",
-          "status"
+          "sleep_kind"
         ],
         "title": "SleepRecordRead",
         "type": "object"
@@ -5228,17 +5432,22 @@
             ],
             "title": "Current Care Stage"
           },
-          "delivery_date": {
+          "delivery_type": {
             "anyOf": [
               {
-                "format": "date",
+                "enum": [
+                  "vaginal",
+                  "cesarean",
+                  "assisted",
+                  "other"
+                ],
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Delivery Date"
+            "title": "Delivery Type"
           },
           "display_name": {
             "default": "",
@@ -5257,25 +5466,22 @@
             ],
             "title": "Expected Due Date"
           },
-          "feeding_advice": {
-            "default": "",
-            "title": "Feeding Advice",
-            "type": "string"
-          },
-          "lactation_advice": {
-            "default": "",
-            "title": "Lactation Advice",
-            "type": "string"
-          },
-          "profile_onboarding_complete": {
-            "default": false,
-            "title": "Profile Onboarding Complete",
-            "type": "boolean"
-          },
           "profile_onboarding_skipped": {
             "default": false,
             "title": "Profile Onboarding Skipped",
             "type": "boolean"
+          },
+          "selected_avatar_file_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Avatar File Id"
           },
           "user_id": {
             "format": "uuid",
@@ -5290,6 +5496,7 @@
         "type": "object"
       },
       "UserProfileUpdate": {
+        "additionalProperties": false,
         "properties": {
           "actual_delivery_date": {
             "anyOf": [
@@ -5332,17 +5539,22 @@
             ],
             "title": "Current Care Stage"
           },
-          "delivery_date": {
+          "delivery_type": {
             "anyOf": [
               {
-                "format": "date",
+                "enum": [
+                  "vaginal",
+                  "cesarean",
+                  "assisted",
+                  "other"
+                ],
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Delivery Date"
+            "title": "Delivery Type"
           },
           "display_name": {
             "anyOf": [
@@ -5367,52 +5579,6 @@
               }
             ],
             "title": "Expected Due Date"
-          },
-          "feeding_advice": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Feeding Advice"
-          },
-          "lactation_advice": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Lactation Advice"
-          },
-          "profile_onboarding_completed_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Profile Onboarding Completed At"
-          },
-          "profile_onboarding_skipped_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Profile Onboarding Skipped At"
           }
         },
         "title": "UserProfileUpdate",
@@ -5600,19 +5766,6 @@
             "title": "Measured At",
             "type": "string"
           },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
-          "source": {
-            "title": "Source",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
           "systolic_mmhg": {
             "anyOf": [
               {
@@ -5649,10 +5802,7 @@
         },
         "required": [
           "id",
-          "owner_user_id",
-          "measured_at",
-          "source",
-          "status"
+          "measured_at"
         ],
         "title": "VitalRecordRead",
         "type": "object"
@@ -5722,28 +5872,12 @@
             "format": "date-time",
             "title": "Occurred At",
             "type": "string"
-          },
-          "owner_user_id": {
-            "format": "uuid",
-            "title": "Owner User Id",
-            "type": "string"
-          },
-          "source": {
-            "title": "Source",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
           }
         },
         "required": [
           "id",
-          "owner_user_id",
           "occurred_at",
-          "amount_ml",
-          "source",
-          "status"
+          "amount_ml"
         ],
         "title": "WaterIntakeRecordRead",
         "type": "object"
@@ -5758,11 +5892,6 @@
           "entry_count": {
             "title": "Entry Count",
             "type": "integer"
-          },
-          "measured_only": {
-            "default": true,
-            "title": "Measured Only",
-            "type": "boolean"
           },
           "total_water_ml": {
             "title": "Total Water Ml",
@@ -9425,6 +9554,317 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/onboarding/me": {
+      "get": {
+        "operationId": "get_my_onboarding_v1_onboarding_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get My Onboarding",
+        "tags": [
+          "onboarding"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "onboarding",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/onboarding/me/avatar-generations": {
+      "post": {
+        "operationId": "generate_my_onboarding_avatar_v1_onboarding_me_avatar_generations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarGenerationCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Generate My Onboarding Avatar",
+        "tags": [
+          "onboarding"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "onboarding",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/onboarding/me/complete": {
+      "post": {
+        "operationId": "complete_my_onboarding_v1_onboarding_me_complete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingComplete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Complete My Onboarding",
+        "tags": [
+          "onboarding"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "onboarding",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/onboarding/me/portrait": {
+      "post": {
+        "operationId": "upload_my_onboarding_portrait_v1_onboarding_me_portrait_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_my_onboarding_portrait_v1_onboarding_me_portrait_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Upload My Onboarding Portrait",
+        "tags": [
+          "onboarding"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "onboarding",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/onboarding/me/profile": {
+      "put": {
+        "operationId": "confirm_my_onboarding_profile_v1_onboarding_me_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "discriminator": {
+                  "mapping": {
+                    "fertility": "#/components/schemas/FertilityOnboardingProfile",
+                    "postpartum": "#/components/schemas/PostpartumOnboardingProfile",
+                    "pregnancy": "#/components/schemas/PregnancyOnboardingProfile"
+                  },
+                  "propertyName": "stage"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/FertilityOnboardingProfile"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PregnancyOnboardingProfile"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PostpartumOnboardingProfile"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Confirm My Onboarding Profile",
+        "tags": [
+          "onboarding"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "onboarding",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/onboarding/me/release-reset": {
+      "post": {
+        "operationId": "reset_my_account_data_for_release_v1_onboarding_me_release_reset_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingReleaseResetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingReleaseResetRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reset My Account Data For Release",
+        "tags": [
+          "onboarding"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "onboarding",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/plans": {
       "get": {
         "operationId": "list_plans_v1_plans_get",
@@ -11418,6 +11858,42 @@
               "default": true,
               "title": "Include Today",
               "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "timezone",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Timezone"
+            }
+          },
+          {
+            "in": "query",
+            "name": "utc_offset_minutes",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 840,
+                  "minimum": -840,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Utc Offset Minutes"
             }
           }
         ],

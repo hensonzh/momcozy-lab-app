@@ -7,6 +7,27 @@ import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
 import '../../support/fixture_api_transport.dart';
 
 void main() {
+  test('requests an idempotent cloud reset for the current release', () async {
+    final transport = FixtureApiJsonTransport(const {
+      'status': 'reset',
+      'release_id': '1.0.0+27',
+      'deleted_file_count': 3,
+      'object_cleanup_queued': true,
+    });
+    final repository = OnboardingApiRepository(
+      transport: transport,
+      multipartTransport: FixtureApiMultipartTransport(const {}),
+    );
+
+    final result = await repository.resetForRelease('1.0.0+27');
+
+    expect(transport.lastPath, onboardingReleaseResetEndpoint);
+    expect(transport.lastBody, {'release_id': '1.0.0+27'});
+    expect(result.status, OnboardingReleaseResetStatus.reset);
+    expect(result.deletedFileCount, 3);
+    expect(result.objectCleanupQueued, isTrue);
+  });
+
   test('maps required onboarding state', () async {
     final repository = OnboardingApiRepository(
       transport: FixtureApiJsonTransport(const {

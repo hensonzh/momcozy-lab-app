@@ -27,6 +27,46 @@ enum OnboardingStatus {
   completed,
 }
 
+enum OnboardingReleaseResetStatus { reset, alreadyReset }
+
+class OnboardingReleaseReset {
+  const OnboardingReleaseReset({
+    required this.status,
+    required this.releaseId,
+    required this.deletedFileCount,
+    required this.objectCleanupQueued,
+  });
+
+  factory OnboardingReleaseReset.fromMap(Map<String, Object?> map) {
+    final status = switch (_string(map['status'])) {
+      'reset' => OnboardingReleaseResetStatus.reset,
+      'already_reset' => OnboardingReleaseResetStatus.alreadyReset,
+      _ => null,
+    };
+    final releaseId = _string(map['release_id']).trim();
+    final deletedFileCount = map['deleted_file_count'];
+    final objectCleanupQueued = map['object_cleanup_queued'];
+    if (status == null ||
+        releaseId.isEmpty ||
+        deletedFileCount is! int ||
+        deletedFileCount < 0 ||
+        objectCleanupQueued is! bool) {
+      throw const FormatException('Invalid onboarding release reset response.');
+    }
+    return OnboardingReleaseReset(
+      status: status,
+      releaseId: releaseId,
+      deletedFileCount: deletedFileCount,
+      objectCleanupQueued: objectCleanupQueued,
+    );
+  }
+
+  final OnboardingReleaseResetStatus status;
+  final String releaseId;
+  final int deletedFileCount;
+  final bool objectCleanupQueued;
+}
+
 class OnboardingAvatarGeneration {
   const OnboardingAvatarGeneration({
     required this.id,
