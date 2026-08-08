@@ -123,16 +123,111 @@ void main() {
     );
   });
 
+  testWidgets('Pain Map uses six primary shortcuts and supports marker taps', (
+    tester,
+  ) async {
+    await _pumpApp(tester, initialLocation: '/more/body-profile/edit');
+
+    final map = find.byKey(const ValueKey('body-profile-pain-map'));
+    await _scrollUntilFound(tester, map);
+
+    const quickZones = <String>[
+      'head_neck',
+      'upper_chest',
+      'upper_back',
+      'lower_back',
+      'pelvis_hips',
+      'lower_body',
+    ];
+    for (final zone in quickZones) {
+      expect(find.byKey(ValueKey('body-profile-pain-$zone')), findsOneWidget);
+    }
+    expect(
+      find.byKey(const ValueKey('body-profile-pain-lower_abdomen')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('body-profile-pain-shoulders_neck')),
+      findsNothing,
+    );
+
+    final mapRect = tester.getRect(map);
+    final selectorRect = tester.getRect(
+      find.byKey(const ValueKey('body-profile-pain-quick-selector')),
+    );
+    expect(mapRect.width, greaterThanOrEqualTo(150));
+    expect(mapRect.height, greaterThanOrEqualTo(250));
+    expect(mapRect.right, lessThan(selectorRect.left));
+
+    final canvasRect = tester.getRect(
+      find.byKey(const ValueKey('body-profile-pain-map-canvas')),
+    );
+    await tester.tapAt(
+      canvasRect.topLeft +
+          Offset(canvasRect.width * 0.45, canvasRect.height * 0.5),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Selected Pain Zones'), findsOneWidget);
+    expect(find.text('Lower Abdomen'), findsOneWidget);
+
+    await tester.tapAt(
+      canvasRect.topLeft +
+          Offset(canvasRect.width * 0.45, canvasRect.height * 0.5),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Selected Pain Zones'), findsNothing);
+    expect(find.text('Lower Abdomen'), findsNothing);
+  });
+
+  testWidgets('Pain Map exposes detailed areas through Add Area', (
+    tester,
+  ) async {
+    await _pumpApp(tester, initialLocation: '/more/body-profile/edit');
+
+    final addArea = find.byKey(const ValueKey('body-profile-add-pain-area'));
+    await _scrollUntilFound(tester, addArea);
+    await tester.tap(addArea);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add a pain area'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('body-profile-additional-pain-lower_abdomen')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('body-profile-additional-pain-shoulders_neck')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('body-profile-additional-pain-other')),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('body-profile-additional-pain-shoulders_neck')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add a pain area'), findsNothing);
+    expect(find.text('Shoulders & Neck'), findsOneWidget);
+  });
+
   testWidgets('More remains usable on a narrow phone', (tester) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(360, 800);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.view.resetPhysicalSize);
+    await _pumpApp(
+      tester,
+      initialLocation: '/more/body-profile',
+      viewportSize: const Size(360, 800),
+    );
 
-    await _pumpApp(tester, initialLocation: '/more/body-profile');
-
+    await _scrollUntilFound(tester, find.text('No body profile data yet'));
     expect(find.text('No body profile data yet'), findsOneWidget);
     expect(tester.takeException(), isNull);
+    await _scrollUntilFound(
+      tester,
+      find.byKey(const ValueKey('more-add-health-record')),
+    );
     expect(
       find.byKey(const ValueKey('more-add-health-record')),
       findsOneWidget,
@@ -143,13 +238,14 @@ void main() {
   testWidgets('Body Profile supports 200 percent text', (tester) async {
     tester.platformDispatcher.textScaleFactorTestValue = 2;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(360, 800);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.view.resetPhysicalSize);
 
-    await _pumpApp(tester, initialLocation: '/more/body-profile');
+    await _pumpApp(
+      tester,
+      initialLocation: '/more/body-profile',
+      viewportSize: const Size(360, 800),
+    );
 
+    await _scrollUntilFound(tester, find.text('No body profile data yet'));
     expect(find.text('No body profile data yet'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -157,19 +253,24 @@ void main() {
   testWidgets('Body Profile editor supports 200 percent text', (tester) async {
     tester.platformDispatcher.textScaleFactorTestValue = 2;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(360, 800);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.view.resetPhysicalSize);
 
-    await _pumpApp(tester, initialLocation: '/more/body-profile/edit');
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('body-profile-pain-lower_body')),
-      280,
-      scrollable: find.byType(Scrollable).first,
+    await _pumpApp(
+      tester,
+      initialLocation: '/more/body-profile/edit',
+      viewportSize: const Size(360, 800),
     );
-    await tester.pumpAndSettle();
+    await _scrollUntilFound(
+      tester,
+      find.byKey(const ValueKey('body-profile-pain-map')),
+    );
 
+    final mapRect = tester.getRect(
+      find.byKey(const ValueKey('body-profile-pain-map')),
+    );
+    final selectorRect = tester.getRect(
+      find.byKey(const ValueKey('body-profile-pain-quick-selector')),
+    );
+    expect(mapRect.bottom, lessThan(selectorRect.top));
     expect(tester.takeException(), isNull);
   });
 
@@ -202,6 +303,72 @@ void main() {
       matchesGoldenFile('../../goldens/more/profile_editor.png'),
     );
   });
+
+  testWidgets('Pain Map matches the approved visual baseline', (tester) async {
+    await _pumpApp(
+      tester,
+      initialLocation: '/more/body-profile/edit',
+      bodyProfileResponse: _confirmedBodyProfile,
+    );
+
+    await _scrollUntilFound(
+      tester,
+      find.byKey(const ValueKey('body-profile-pain-map')),
+    );
+    await tester.ensureVisible(find.text('Pain Map'));
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byType(Scaffold).first,
+      matchesGoldenFile('../../goldens/more/profile_pain_map.png'),
+    );
+  });
+
+  testWidgets('Pain Map matches the 390px visual baseline', (tester) async {
+    await _pumpApp(
+      tester,
+      initialLocation: '/more/body-profile/edit',
+      bodyProfileResponse: _confirmedBodyProfile,
+      viewportSize: const Size(390, 932),
+    );
+
+    await _scrollUntilFound(
+      tester,
+      find.byKey(const ValueKey('body-profile-pain-map')),
+    );
+    await tester.ensureVisible(find.text('Pain Map'));
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byType(Scaffold).first,
+      matchesGoldenFile('../../goldens/more/profile_pain_map_390.png'),
+    );
+  });
+
+  testWidgets('Pain Map matches the 200 percent text visual baseline', (
+    tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pumpApp(
+      tester,
+      initialLocation: '/more/body-profile/edit',
+      bodyProfileResponse: _confirmedBodyProfile,
+      viewportSize: const Size(360, 1200),
+    );
+
+    await _scrollUntilFound(
+      tester,
+      find.byKey(const ValueKey('body-profile-pain-map')),
+    );
+    await tester.ensureVisible(find.text('Pain Map'));
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byType(Scaffold).first,
+      matchesGoldenFile('../../goldens/more/profile_pain_map_200_percent.png'),
+    );
+  });
 }
 
 Future<FixtureApiJsonTransportByPath> _pumpApp(
@@ -214,9 +381,10 @@ Future<FixtureApiJsonTransportByPath> _pumpApp(
     'recovery_score': null,
   },
   Map<String, Object?>? bodyProfileWriteResponse,
+  Size viewportSize = const Size(430, 932),
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(430, 932);
+  tester.view.physicalSize = viewportSize;
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
 
@@ -236,6 +404,17 @@ Future<FixtureApiJsonTransportByPath> _pumpApp(
   );
   await tester.pumpAndSettle();
   return transport;
+}
+
+Future<void> _scrollUntilFound(WidgetTester tester, Finder target) async {
+  final scrollable = find.byType(Scrollable).first;
+  for (var attempt = 0; attempt < 12 && target.evaluate().isEmpty; attempt++) {
+    await tester.drag(scrollable, const Offset(0, -360));
+    await tester.pumpAndSettle();
+  }
+  expect(target, findsOneWidget);
+  await tester.ensureVisible(target);
+  await tester.pumpAndSettle();
 }
 
 const _confirmedBodyProfile = <String, Object?>{
