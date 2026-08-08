@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
@@ -7,9 +8,10 @@ import 'package:momcozy_flutter_app/features/plan/presentation/plan_page.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
-  final now = DateTime(2026, 10, 22, 9, 41);
+  final now = DateTime(2024, 10, 22, 9, 41);
+  final emptyNow = DateTime(2025, 10, 14, 9, 41);
 
-  setUpAll(loadMomCozyTestFonts);
+  setUpAll(loadMomCozyPlanTestFonts);
 
   testWidgets('renders the supplied empty-plan structure without legacy UI', (
     tester,
@@ -21,8 +23,8 @@ void main() {
     var chatCount = 0;
     await _pumpPlanPage(
       tester,
-      dashboard: PlanDashboard.empty(weekOf: now),
-      now: now,
+      dashboard: PlanDashboard.empty(weekOf: emptyNow),
+      now: emptyNow,
       onCreatePlan: () => createCount += 1,
       onOpenCalendar: () => calendarCount += 1,
       onOpenAllPlans: () => allPlansCount += 1,
@@ -41,6 +43,108 @@ void main() {
     expect(find.text('+ Create Your First Plan'), findsOneWidget);
     expect(find.text('Service'), findsOneWidget);
     expect(find.text('Cozymate 1 on 1'), findsOneWidget);
+
+    final pageTitleStyle = _renderedTextStyle(tester, find.text('My Plans'));
+    expect(pageTitleStyle.fontFamily, 'Rubik');
+    expect(pageTitleStyle.fontSize, 24);
+    expect(pageTitleStyle.fontWeight, FontWeight.w700);
+    expect(pageTitleStyle.height, 1.2);
+
+    final heroTitleStyle = _renderedTextStyle(
+      tester,
+      find.text('No Plans Yet'),
+    );
+    expect(heroTitleStyle.fontFamily, 'Figtree');
+    expect(heroTitleStyle.fontSize, 24);
+    expect(heroTitleStyle.fontWeight, FontWeight.w700);
+    expect(heroTitleStyle.height, 1.3);
+
+    final bodyStyle = _renderedTextStyle(
+      tester,
+      find.textContaining('Create a personalized recovery plan'),
+    );
+    expect(bodyStyle.fontFamily, 'Figtree');
+    expect(bodyStyle.fontSize, 14);
+    expect(bodyStyle.fontWeight, FontWeight.w400);
+    expect(bodyStyle.height, 1.5);
+
+    expect(tester.getTopLeft(find.text('My Plans')).dx, closeTo(19, 0.6));
+    expect(
+      tester.getCenter(find.byKey(const ValueKey('plan-header-calendar'))).dx,
+      closeTo(229.5, 0.6),
+    );
+    expect(
+      tester.getCenter(find.byKey(const ValueKey('plan-header-all-plans'))).dx,
+      closeTo(354, 0.6),
+    );
+
+    await _pumpPlanPage(
+      tester,
+      dashboard: PlanDashboard.empty(weekOf: emptyNow),
+      now: emptyNow,
+      onCreatePlan: () => createCount += 1,
+      onOpenCalendar: () => calendarCount += 1,
+      onOpenAllPlans: () => allPlansCount += 1,
+      onStartSession: () => pumpCount += 1,
+      onChat: () => chatCount += 1,
+      viewportSize: const Size(390, 1140),
+    );
+    await expectLater(
+      find.byKey(const ValueKey('route-page-/plan')),
+      matchesGoldenFile('../../goldens/plan/empty_full_mobile.png'),
+    );
+
+    _expectRect(
+      tester,
+      const ValueKey('plan-header'),
+      const Rect.fromLTWH(0, 22, 390, 48),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-empty-week'),
+      const Rect.fromLTWH(18, 92, 354, 51),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-empty-illustration'),
+      const Rect.fromLTWH(18, 187, 354, 140),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-create-first-plan'),
+      const Rect.fromLTWH(18, 458, 354, 48),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-service-header'),
+      const Rect.fromLTWH(18, 519, 354, 104),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-service-recovery'),
+      const Rect.fromLTWH(18, 620, 354, 125),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-service-pump'),
+      const Rect.fromLTWH(18, 759, 354, 125),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-service-health'),
+      const Rect.fromLTWH(18, 898, 354, 111),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-cozymate-assistant'),
+      const Rect.fromLTWH(18, 1028, 354, 95),
+      tolerance: 1,
+    );
 
     await tester.tap(find.text('+ Create Your First Plan'));
     expect(createCount, 1);
@@ -109,6 +213,61 @@ void main() {
       find.byKey(const ValueKey('plan-period-week-selected')),
       findsOneWidget,
     );
+    _expectRect(
+      tester,
+      const ValueKey('plan-header'),
+      const Rect.fromLTWH(0, 18, 390, 48),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-category-tabs'),
+      const Rect.fromLTWH(18, 74, 354, 36),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-period-selector'),
+      const Rect.fromLTWH(18, 122, 354, 38),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-week-range'),
+      const Rect.fromLTWH(18, 164, 354, 32),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-week-calendar'),
+      const Rect.fromLTWH(18, 205, 354, 80),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-session-one'),
+      const Rect.fromLTWH(18, 329, 354, 59),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-session-two'),
+      const Rect.fromLTWH(18, 396, 354, 59),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-session-three'),
+      const Rect.fromLTWH(18, 463, 354, 59),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-week-summary'),
+      const Rect.fromLTWH(18, 569, 354, 94),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-monthly-calendar-section'),
+      const Rect.fromLTWH(18, 679, 354, 23.4),
+      tolerance: 1,
+    );
     await tester.tap(find.byKey(const ValueKey('plan-period-day')));
     await tester.pump();
     expect(
@@ -174,6 +333,65 @@ void main() {
       tester.getSize(find.byKey(const ValueKey('plan-milestone-ring'))),
       const Size.square(80),
     );
+    await _pumpPlanPage(
+      tester,
+      dashboard: _singlePlanDashboard(now),
+      now: now,
+      onBackToPlans: () => backCount += 1,
+      onOpenAllPlans: () => allPlansCount += 1,
+      onStartSession: () => startCount += 1,
+      onManualEdit: () => editCount += 1,
+      viewportSize: const Size(390, 1100),
+    );
+    await expectLater(
+      find.byKey(const ValueKey('route-page-/plan')),
+      matchesGoldenFile('../../goldens/plan/single_category_full_mobile.png'),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-single-header'),
+      const Rect.fromLTWH(18, 18, 354, 44),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-milestone-card'),
+      const Rect.fromLTWH(18, 80, 354, 112),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-milestone-week'),
+      const Rect.fromLTWH(18, 208, 354, 70),
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-single-session-one'),
+      const Rect.fromLTWH(18, 325, 354, 59),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-single-session-two'),
+      const Rect.fromLTWH(18, 394, 354, 61),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-single-session-five'),
+      const Rect.fromLTWH(18, 601, 354, 59),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-volume-progress'),
+      const Rect.fromLTWH(18, 709, 354, 108),
+      tolerance: 1,
+    );
+    _expectRect(
+      tester,
+      const ValueKey('plan-settings'),
+      const Rect.fromLTWH(18, 833, 354, 221),
+      tolerance: 1,
+    );
     await tester.tap(find.byKey(const ValueKey('plan-single-back')));
     await tester.tap(find.byKey(const ValueKey('plan-single-edit')));
     await tester.tap(find.byKey(const ValueKey('plan-single-all-plans')));
@@ -220,6 +438,69 @@ void main() {
       },
     );
   }
+
+  testWidgets('renders deterministic 2x design comparison fixtures', (
+    tester,
+  ) async {
+    for (final designCase in [
+      (
+        dashboard: PlanDashboard.empty(weekOf: emptyNow),
+        now: emptyNow,
+        viewport: const Size(390, 1140),
+        golden: '../../goldens/plan/empty_design_2x.png',
+      ),
+      (
+        dashboard: _multiCategoryDashboard(now),
+        now: now,
+        viewport: const Size(390, 683),
+        golden: '../../goldens/plan/multi_category_design_2x.png',
+      ),
+      (
+        dashboard: _singlePlanDashboard(now),
+        now: now,
+        viewport: const Size(390, 1060),
+        golden: '../../goldens/plan/single_category_design_2x.png',
+      ),
+    ]) {
+      await _pumpPlanPage(
+        tester,
+        dashboard: designCase.dashboard,
+        now: designCase.now,
+        viewportSize: designCase.viewport,
+        devicePixelRatio: 2,
+      );
+      await expectLater(
+        find.byKey(const ValueKey('route-page-/plan')),
+        matchesGoldenFile(designCase.golden),
+      );
+    }
+  });
+}
+
+TextStyle _renderedTextStyle(WidgetTester tester, Finder finder) {
+  final paragraph = tester.renderObject<RenderParagraph>(finder);
+  return paragraph.text.style!;
+}
+
+void _expectRect(
+  WidgetTester tester,
+  Key key,
+  Rect expected, {
+  double tolerance = 0.6,
+}) {
+  final actual = tester.getRect(find.byKey(key));
+  expect(actual.left, closeTo(expected.left, tolerance), reason: '$key left');
+  expect(actual.top, closeTo(expected.top, tolerance), reason: '$key top');
+  expect(
+    actual.width,
+    closeTo(expected.width, tolerance),
+    reason: '$key width',
+  );
+  expect(
+    actual.height,
+    closeTo(expected.height, tolerance),
+    reason: '$key height',
+  );
 }
 
 Future<void> _pumpPlanPage(
@@ -234,9 +515,13 @@ Future<void> _pumpPlanPage(
   VoidCallback? onStartSession,
   VoidCallback? onManualEdit,
   Size viewportSize = const Size(390, 844),
+  double devicePixelRatio = 1,
 }) async {
-  tester.view.physicalSize = viewportSize;
-  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = Size(
+    viewportSize.width * devicePixelRatio,
+    viewportSize.height * devicePixelRatio,
+  );
+  tester.view.devicePixelRatio = devicePixelRatio;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
   await tester.pumpWidget(
@@ -298,21 +583,21 @@ PlanDashboard _multiCategoryDashboard(DateTime now) {
         id: 'one',
         planId: 'lactation',
         title: 'Pumping: Express 20min',
-        scheduledAt: DateTime(2026, 10, 22, 8),
+        scheduledAt: DateTime(now.year, now.month, now.day, 8),
         status: PlanSessionStatus.completed,
       ),
       PlanSession(
         id: 'two',
         planId: 'lactation',
         title: 'Pumping: Express 20min',
-        scheduledAt: DateTime(2026, 10, 22, 11),
+        scheduledAt: DateTime(now.year, now.month, now.day, 11),
         status: PlanSessionStatus.next,
       ),
       PlanSession(
         id: 'three',
         planId: 'pelvic',
         title: 'Pelvic Floor: Evening Stretches 15min',
-        scheduledAt: DateTime(2026, 10, 22, 16),
+        scheduledAt: DateTime(now.year, now.month, now.day, 16),
         status: PlanSessionStatus.upcoming,
       ),
     ],
@@ -342,35 +627,35 @@ PlanDashboard _singlePlanDashboard(DateTime now) {
         planId: plan.id,
         title: 'Session 1',
         valueLabel: '120 ml',
-        scheduledAt: DateTime(2026, 10, 22, 8),
+        scheduledAt: DateTime(now.year, now.month, now.day, 8),
         status: PlanSessionStatus.completed,
       ),
       PlanSession(
         id: 'two',
         planId: plan.id,
         title: 'Session 2',
-        scheduledAt: DateTime(2026, 10, 22, 11),
+        scheduledAt: DateTime(now.year, now.month, now.day, 11),
         status: PlanSessionStatus.next,
       ),
       PlanSession(
         id: 'three',
         planId: plan.id,
         title: 'Session 3',
-        scheduledAt: DateTime(2026, 10, 22, 14),
+        scheduledAt: DateTime(now.year, now.month, now.day, 14),
         status: PlanSessionStatus.upcoming,
       ),
       PlanSession(
         id: 'four',
         planId: plan.id,
         title: 'Session 4',
-        scheduledAt: DateTime(2026, 10, 22, 17),
+        scheduledAt: DateTime(now.year, now.month, now.day, 17),
         status: PlanSessionStatus.upcoming,
       ),
       PlanSession(
         id: 'five',
         planId: plan.id,
         title: 'Session 5',
-        scheduledAt: DateTime(2026, 10, 22, 20),
+        scheduledAt: DateTime(now.year, now.month, now.day, 20),
         status: PlanSessionStatus.upcoming,
       ),
     ],

@@ -17,7 +17,7 @@ import '../../support/momcozy_test_fonts.dart';
 
 void main() {
   setUpAll(() async {
-    await loadMomCozyTestFonts();
+    await loadMomCozyPlanTestFonts();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_secureStorageChannel, (call) async {
           return switch (call.method) {

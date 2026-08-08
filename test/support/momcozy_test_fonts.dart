@@ -17,3 +17,17 @@ Future<void> loadMomCozyTestFonts() async {
     materialIcons.load(),
   ]);
 }
+
+Future<void> loadMomCozyPlanTestFonts() async {
+  await loadMomCozyTestFonts();
+
+  final rubik = FontLoader('Rubik')
+    ..addFont(rootBundle.load('assets/fonts/Rubik-Bold.ttf'));
+  final figtree = FontLoader('Figtree')
+    ..addFont(rootBundle.load('assets/fonts/Figtree-Regular.ttf'))
+    ..addFont(rootBundle.load('assets/fonts/Figtree-Medium.ttf'))
+    ..addFont(rootBundle.load('assets/fonts/Figtree-SemiBold.ttf'))
+    ..addFont(rootBundle.load('assets/fonts/Figtree-Bold.ttf'));
+
+  await Future.wait([rubik.load(), figtree.load()]);
+}
