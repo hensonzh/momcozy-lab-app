@@ -26,10 +26,12 @@ class MeBabyOverviewPage extends StatefulWidget {
     super.key,
     required this.path,
     required this.identity,
+    this.onBabySelected,
   });
 
   final String path;
   final ProfileIdentity identity;
+  final Future<void> Function(String babyId)? onBabySelected;
 
   @override
   State<MeBabyOverviewPage> createState() => _MeBabyOverviewPageState();
@@ -141,6 +143,8 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       controller.overview,
       controller.milkTrends,
       controller.feedingRecords,
+      controller.sleepRecords,
+      controller.diaperRecords,
       controller.growthRecords,
       controller.careStage,
       controller.growthMutation,
@@ -278,6 +282,20 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
         nextBabyId == controller.babyId) {
       return;
     }
+    final onBabySelected = widget.onBabySelected;
+    if (onBabySelected != null) {
+      try {
+        await onBabySelected(nextBabyId);
+      } catch (_) {
+        if (!mounted) return;
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(
+            content: Text("Couldn't save the selected infant. Try again."),
+          ),
+        );
+      }
+      return;
+    }
     final runtime = _runtime;
     if (runtime == null) return;
     _selectedBabyId = nextBabyId;
@@ -353,9 +371,11 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       },
     );
     if (!mounted || detail == null) return;
-    if (detail == _BabyDetail.feeding) {
+    if (detail == _BabyDetail.feeding ||
+        detail == _BabyDetail.sleep ||
+        detail == _BabyDetail.diaper) {
       _openBabyDetail(detail);
-      await _openRecordComposer();
+      await _openRecordComposer(initialDetail: detail);
       return;
     }
     if (!detail.isGrowth) return;
@@ -379,7 +399,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     );
   }
 
-  Future<void> _openRecordComposer() async {
+  Future<void> _openRecordComposer({_BabyDetail? initialDetail}) async {
     final controller = _overviewController;
     if (controller == null || controller.recordMutation.value.isSaving) return;
     controller.clearRecordMutationError();
@@ -394,6 +414,12 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       builder: (sheetContext) => _RecordComposerSheet(
         identity: widget.identity,
         controller: controller,
+        initialKind: switch (initialDetail) {
+          _BabyDetail.sleep => _RecordKind.sleep,
+          _BabyDetail.diaper => _RecordKind.diaper,
+          _BabyDetail.feeding => _RecordKind.feeding,
+          _ => null,
+        },
       ),
     );
     controller.clearRecordMutationError();
@@ -661,6 +687,8 @@ class _MeBabyOverviewData {
     required this.overview,
     required this.milkTrends,
     required this.feedingRecords,
+    required this.sleepRecords,
+    required this.diaperRecords,
     required this.growthRecords,
     required this.now,
   });
@@ -673,6 +701,8 @@ class _MeBabyOverviewData {
         overview: const ProfileOverviewResource.initial(),
         milkTrends: const ProfileOverviewResource.initial(),
         feedingRecords: const ProfileOverviewResource.initial(),
+        sleepRecords: const ProfileOverviewResource.initial(),
+        diaperRecords: const ProfileOverviewResource.initial(),
         growthRecords: const ProfileOverviewResource.initial(),
         now: DateTime.now(),
       );
@@ -681,6 +711,8 @@ class _MeBabyOverviewData {
       overview: controller.overview.value,
       milkTrends: controller.milkTrends.value,
       feedingRecords: controller.feedingRecords.value,
+      sleepRecords: controller.sleepRecords.value,
+      diaperRecords: controller.diaperRecords.value,
       growthRecords: controller.growthRecords.value,
       now: controller.now(),
     );
@@ -689,6 +721,8 @@ class _MeBabyOverviewData {
   final ProfileOverviewResource<ProfileOverview> overview;
   final ProfileOverviewResource<List<MilkTrendDay>> milkTrends;
   final ProfileOverviewResource<List<FeedingRecord>> feedingRecords;
+  final ProfileOverviewResource<List<SleepRecord>> sleepRecords;
+  final ProfileOverviewResource<List<DiaperRecord>> diaperRecords;
   final ProfileOverviewResource<List<GrowthRecord>> growthRecords;
   final DateTime now;
 
@@ -696,6 +730,8 @@ class _MeBabyOverviewData {
     overview,
     milkTrends,
     feedingRecords,
+    sleepRecords,
+    diaperRecords,
     growthRecords,
   ].any((resource) => resource.hasError && resource.data != null);
 
@@ -747,7 +783,7 @@ class _MeBabyOverviewData {
     return null;
   }
 
-  List<FeedingRecord> get feeds {
+  List<FeedingRecord> get _orderedFeeds {
     final values = List<FeedingRecord>.of(
       feedingRecords.data ?? const <FeedingRecord>[],
     );
@@ -762,8 +798,185 @@ class _MeBabyOverviewData {
     return values;
   }
 
+  List<FeedingRecord> get feeds {
+    final today = now.toLocal();
+    return _orderedFeeds
+        .where((record) {
+          final occurredAt = record.occurredAt?.toLocal();
+          return occurredAt != null && _sameCalendarDay(occurredAt, today);
+        })
+        .toList(growable: false);
+  }
+
+  List<FeedingRecord> get weeklyFeeds {
+    final today = now.toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - DateTime.monday));
+    final end = start.add(const Duration(days: 7));
+    return _orderedFeeds
+        .where((record) {
+          final occurredAt = record.occurredAt?.toLocal();
+          return occurredAt != null &&
+              !occurredAt.isBefore(start) &&
+              occurredAt.isBefore(end);
+        })
+        .toList(growable: false);
+  }
+
+  List<({DateTime date, int count, int measuredMl})> get weeklyFeedingDays {
+    final today = now.toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - DateTime.monday));
+    final weekly = weeklyFeeds;
+    return List.generate(7, (index) {
+      final date = start.add(Duration(days: index));
+      final records = weekly.where((record) {
+        final occurredAt = record.occurredAt?.toLocal();
+        return occurredAt != null && _sameCalendarDay(occurredAt, date);
+      });
+      return (
+        date: date,
+        count: records.length,
+        measuredMl: records.fold<int>(
+          0,
+          (total, record) => total + (record.amountMl ?? 0),
+        ),
+      );
+    }, growable: false);
+  }
+
   int get measuredFeedTotalMl =>
       feeds.fold<int>(0, (total, record) => total + (record.amountMl ?? 0));
+
+  int get weeklyMeasuredFeedTotalMl => weeklyFeeds.fold<int>(
+    0,
+    (total, record) => total + (record.amountMl ?? 0),
+  );
+
+  List<SleepRecord> get weeklySleeps {
+    final values = List<SleepRecord>.of(
+      sleepRecords.data ?? const <SleepRecord>[],
+    );
+    values.sort((left, right) {
+      final leftTime = left.startedAt;
+      final rightTime = right.startedAt;
+      if (leftTime == null && rightTime == null) return 0;
+      if (leftTime == null) return 1;
+      if (rightTime == null) return -1;
+      return rightTime.compareTo(leftTime);
+    });
+    return values;
+  }
+
+  List<SleepRecord> get todaySleeps {
+    final today = now.toLocal();
+    return weeklySleeps
+        .where((record) {
+          final startedAt = record.startedAt?.toLocal();
+          return startedAt != null && _sameCalendarDay(startedAt, today);
+        })
+        .toList(growable: false);
+  }
+
+  int get todaySleepSeconds => todaySleeps.fold<int>(
+    0,
+    (total, record) => total + record.durationSeconds,
+  );
+
+  List<SleepRecord> get todayNaps => todaySleeps
+      .where((record) => record.type.toLowerCase() == 'nap')
+      .toList(growable: false);
+
+  SleepRecord? get latestNightSleep {
+    for (final record in weeklySleeps) {
+      if (record.type.toLowerCase() == 'night') return record;
+    }
+    return null;
+  }
+
+  List<({DateTime date, int seconds})> get weeklySleepDays {
+    final today = now.toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - DateTime.monday));
+    return List.generate(7, (index) {
+      final date = start.add(Duration(days: index));
+      return (
+        date: date,
+        seconds: weeklySleeps
+            .where((record) {
+              final startedAt = record.startedAt?.toLocal();
+              return startedAt != null && _sameCalendarDay(startedAt, date);
+            })
+            .fold<int>(0, (total, record) => total + record.durationSeconds),
+      );
+    }, growable: false);
+  }
+
+  List<DiaperRecord> get weeklyDiapers {
+    final values = List<DiaperRecord>.of(
+      diaperRecords.data ?? const <DiaperRecord>[],
+    );
+    values.sort((left, right) {
+      final leftTime = left.changedAt;
+      final rightTime = right.changedAt;
+      if (leftTime == null && rightTime == null) return 0;
+      if (leftTime == null) return 1;
+      if (rightTime == null) return -1;
+      return rightTime.compareTo(leftTime);
+    });
+    return values;
+  }
+
+  List<DiaperRecord> get todayDiapers {
+    final today = now.toLocal();
+    return weeklyDiapers
+        .where((record) {
+          final changedAt = record.changedAt?.toLocal();
+          return changedAt != null && _sameCalendarDay(changedAt, today);
+        })
+        .toList(growable: false);
+  }
+
+  int get todayWetDiapers => todayDiapers
+      .where(
+        (record) => const {'wet', 'mixed'}.contains(record.type.toLowerCase()),
+      )
+      .length;
+
+  int get todayDirtyDiapers => todayDiapers
+      .where(
+        (record) =>
+            const {'dirty', 'mixed'}.contains(record.type.toLowerCase()),
+      )
+      .length;
+
+  List<({DateTime date, int count})> get weeklyDiaperDays {
+    final today = now.toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - DateTime.monday));
+    return List.generate(7, (index) {
+      final date = start.add(Duration(days: index));
+      return (
+        date: date,
+        count: weeklyDiapers.where((record) {
+          final changedAt = record.changedAt?.toLocal();
+          return changedAt != null && _sameCalendarDay(changedAt, date);
+        }).length,
+      );
+    }, growable: false);
+  }
 
   GrowthRecord? get latestGrowth {
     final values = orderedGrowthRecords;
@@ -798,6 +1011,12 @@ class _MeBabyOverviewData {
         ? 'No feeding data recorded today'
         : '$count ${count == 1 ? 'feed' : 'feeds'} recorded today';
   }
+}
+
+bool _sameCalendarDay(DateTime left, DateTime right) {
+  return left.year == right.year &&
+      left.month == right.month &&
+      left.day == right.day;
 }
 
 String _formatBabyAge(int? ageDays) {
@@ -1130,15 +1349,21 @@ class _MeBabyOverviewHeader extends StatelessWidget {
               ),
             ),
           const SizedBox(width: 8),
-          _DisabledCircleAction(
-            actionKey: const ValueKey('me-baby-overview-notification-disabled'),
-            semanticLabel: 'Notifications are not available yet',
+          _HeaderCircleAction(
+            actionKey: const ValueKey('me-baby-overview-notification'),
+            semanticLabel: 'Open notifications',
             icon: isBaby ? null : Icons.notifications_none_rounded,
             iconAsset: isBaby ? _MeBabyOverviewAssets.bellIcon : null,
             compact: true,
             size: isBaby ? 38 : null,
             backgroundColor: isBaby ? _BabyOverviewColors.pill : null,
             foregroundColor: isBaby ? _BabyOverviewColors.wine : null,
+            onPressed: () => context.go(
+              Uri(
+                path: '/notifications',
+                queryParameters: {'from': isBaby ? '/baby' : '/me'},
+              ).toString(),
+            ),
           ),
         ],
       ),
@@ -1299,35 +1524,43 @@ class _CareStageSelectorSheet extends StatelessWidget {
   }
 }
 
-enum _RecordKind { pumping, feeding, growth }
+enum _RecordKind { pumping, feeding, sleep, diaper, growth }
 
 class _RecordComposerSheet extends StatefulWidget {
   const _RecordComposerSheet({
     required this.identity,
     required this.controller,
+    this.initialKind,
   });
 
   final ProfileIdentity identity;
   final ProfileOverviewController controller;
+  final _RecordKind? initialKind;
 
   @override
   State<_RecordComposerSheet> createState() => _RecordComposerSheetState();
 }
 
 class _RecordComposerSheetState extends State<_RecordComposerSheet> {
-  late _RecordKind _kind = widget.identity == ProfileIdentity.mom
-      ? _RecordKind.pumping
-      : _RecordKind.feeding;
+  late _RecordKind _kind =
+      widget.initialKind ??
+      (widget.identity == ProfileIdentity.mom
+          ? _RecordKind.pumping
+          : _RecordKind.feeding);
   final _amountController = TextEditingController();
+  final _durationController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
   final _headController = TextEditingController();
   String _feedingType = 'bottle';
+  String _sleepType = 'nap';
+  String _diaperType = 'wet';
   String? _validationError;
 
   @override
   void dispose() {
     _amountController.dispose();
+    _durationController.dispose();
     _weightController.dispose();
     _heightController.dispose();
     _headController.dispose();
@@ -1364,6 +1597,27 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
           type: _feedingType,
           amountMl: amount,
         );
+      case _RecordKind.sleep:
+        final durationMinutes = _positiveNumber(_durationController);
+        if (durationMinutes == null || durationMinutes > 1440) {
+          setState(
+            () => _validationError =
+                'Enter a sleep duration between 1 and 1440 minutes.',
+          );
+          return;
+        }
+        setState(() => _validationError = null);
+        final endedAt = widget.controller.now();
+        saved = await widget.controller.saveSleepRecord(
+          startedAt: endedAt.subtract(
+            Duration(seconds: (durationMinutes * 60).round()),
+          ),
+          endedAt: endedAt,
+          type: _sleepType,
+        );
+      case _RecordKind.diaper:
+        setState(() => _validationError = null);
+        saved = await widget.controller.saveDiaperRecord(type: _diaperType);
       case _RecordKind.growth:
         final weight = _positiveNumber(_weightController);
         final height = _positiveNumber(_heightController);
@@ -1429,29 +1683,42 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                   ),
                   const SizedBox(height: 14),
                   if (!isMom) ...[
-                    SegmentedButton<_RecordKind>(
-                      segments: const [
-                        ButtonSegment(
-                          value: _RecordKind.feeding,
-                          icon: Icon(Icons.restaurant_outlined),
-                          label: Text('Feeding'),
-                        ),
-                        ButtonSegment(
-                          value: _RecordKind.growth,
-                          icon: Icon(Icons.monitor_weight_outlined),
-                          label: Text('Growth'),
-                        ),
-                      ],
-                      selected: {_kind},
-                      onSelectionChanged: mutation.isSaving
-                          ? null
-                          : (selection) {
-                              setState(() {
-                                _kind = selection.single;
-                                _validationError = null;
-                              });
-                              widget.controller.clearRecordMutationError();
-                            },
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SegmentedButton<_RecordKind>(
+                        segments: const [
+                          ButtonSegment(
+                            value: _RecordKind.feeding,
+                            icon: Icon(Icons.restaurant_outlined),
+                            label: Text('Feeding'),
+                          ),
+                          ButtonSegment(
+                            value: _RecordKind.growth,
+                            icon: Icon(Icons.monitor_weight_outlined),
+                            label: Text('Growth'),
+                          ),
+                          ButtonSegment(
+                            value: _RecordKind.sleep,
+                            icon: Icon(Icons.bedtime_outlined),
+                            label: Text('Sleep'),
+                          ),
+                          ButtonSegment(
+                            value: _RecordKind.diaper,
+                            icon: Icon(Icons.baby_changing_station_outlined),
+                            label: Text('Diaper'),
+                          ),
+                        ],
+                        selected: {_kind},
+                        onSelectionChanged: mutation.isSaving
+                            ? null
+                            : (selection) {
+                                setState(() {
+                                  _kind = selection.single;
+                                  _validationError = null;
+                                });
+                                widget.controller.clearRecordMutationError();
+                              },
+                      ),
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -1462,7 +1729,50 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                       headController: _headController,
                       enabled: !mutation.isSaving,
                     )
-                  else ...[
+                  else if (_kind == _RecordKind.sleep) ...[
+                    const Text(
+                      'Sleep type',
+                      style: _MeBabyOverviewText.supporting,
+                    ),
+                    const SizedBox(height: 8),
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'nap', label: Text('Nap')),
+                        ButtonSegment(value: 'night', label: Text('Night')),
+                      ],
+                      selected: {_sleepType},
+                      onSelectionChanged: mutation.isSaving
+                          ? null
+                          : (selection) =>
+                                setState(() => _sleepType = selection.single),
+                    ),
+                    const SizedBox(height: 18),
+                    _RecordNumberField(
+                      fieldKey: const ValueKey('record-sleep-duration'),
+                      controller: _durationController,
+                      label: 'Duration',
+                      suffix: 'min',
+                      enabled: !mutation.isSaving,
+                    ),
+                  ] else if (_kind == _RecordKind.diaper) ...[
+                    const Text(
+                      'Diaper type',
+                      style: _MeBabyOverviewText.supporting,
+                    ),
+                    const SizedBox(height: 8),
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'wet', label: Text('Wet')),
+                        ButtonSegment(value: 'dirty', label: Text('Dirty')),
+                        ButtonSegment(value: 'mixed', label: Text('Both')),
+                      ],
+                      selected: {_diaperType},
+                      onSelectionChanged: mutation.isSaving
+                          ? null
+                          : (selection) =>
+                                setState(() => _diaperType = selection.single),
+                    ),
+                  ] else ...[
                     if (_kind == _RecordKind.feeding) ...[
                       const Text(
                         'Feeding type',
@@ -3342,8 +3652,8 @@ class _OverviewStateCard extends StatelessWidget {
   }
 }
 
-class _DisabledCircleAction extends StatelessWidget {
-  const _DisabledCircleAction({
+class _HeaderCircleAction extends StatelessWidget {
+  const _HeaderCircleAction({
     required this.actionKey,
     required this.semanticLabel,
     this.icon,
@@ -3352,6 +3662,7 @@ class _DisabledCircleAction extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.size,
+    this.onPressed,
   });
 
   final Key actionKey;
@@ -3362,6 +3673,7 @@ class _DisabledCircleAction extends StatelessWidget {
   final Color? backgroundColor;
   final Color? foregroundColor;
   final double? size;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -3369,8 +3681,8 @@ class _DisabledCircleAction extends StatelessWidget {
     return Semantics(
       key: actionKey,
       label: semanticLabel,
-      button: false,
-      enabled: false,
+      button: onPressed != null,
+      enabled: onPressed != null,
       child: SizedBox.square(
         dimension: math.max(resolvedSize, MomCozyTapTargets.minimum),
         child: Center(
@@ -3379,7 +3691,7 @@ class _DisabledCircleAction extends StatelessWidget {
             shape: const CircleBorder(),
             child: InkWell(
               customBorder: const CircleBorder(),
-              onTap: null,
+              onTap: onPressed,
               child: Container(
                 width: resolvedSize,
                 height: resolvedSize,

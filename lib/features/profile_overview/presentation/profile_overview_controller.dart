@@ -82,6 +82,7 @@ class ProfileOverviewController {
   ProfileOverviewController({
     required this.profileOverviewRepository,
     required this.feedingRepository,
+    required this.babyCareRepository,
     required this.pumpMilkRepository,
     required this.milkTrendRepository,
     required this.growthRepository,
@@ -103,6 +104,16 @@ class ProfileOverviewController {
               ? const ProfileOverviewResource.initial()
               : ProfileOverviewResource.data(this.cache.feedingRecords!.value),
         );
+    sleepRecords = ValueNotifier<ProfileOverviewResource<List<SleepRecord>>>(
+      this.cache.sleepRecords == null
+          ? const ProfileOverviewResource.initial()
+          : ProfileOverviewResource.data(this.cache.sleepRecords!.value),
+    );
+    diaperRecords = ValueNotifier<ProfileOverviewResource<List<DiaperRecord>>>(
+      this.cache.diaperRecords == null
+          ? const ProfileOverviewResource.initial()
+          : ProfileOverviewResource.data(this.cache.diaperRecords!.value),
+    );
     milkTrends = ValueNotifier<ProfileOverviewResource<List<MilkTrendDay>>>(
       this.cache.milkTrends == null
           ? const ProfileOverviewResource.initial()
@@ -134,6 +145,7 @@ class ProfileOverviewController {
 
   final ProfileOverviewRepository profileOverviewRepository;
   final FeedingRecordsRepository feedingRepository;
+  final BabyCareRecordsRepository babyCareRepository;
   final PumpMilkRecordsRepository pumpMilkRepository;
   final MilkTrendRepository milkTrendRepository;
   final GrowthRecordsRepository growthRepository;
@@ -146,6 +158,10 @@ class ProfileOverviewController {
   late final ValueNotifier<ProfileOverviewResource<ProfileOverview>> overview;
   late final ValueNotifier<ProfileOverviewResource<List<FeedingRecord>>>
   feedingRecords;
+  late final ValueNotifier<ProfileOverviewResource<List<SleepRecord>>>
+  sleepRecords;
+  late final ValueNotifier<ProfileOverviewResource<List<DiaperRecord>>>
+  diaperRecords;
   late final ValueNotifier<ProfileOverviewResource<List<MilkTrendDay>>>
   milkTrends;
   late final ValueNotifier<ProfileOverviewResource<List<GrowthRecord>>>
@@ -201,6 +217,8 @@ class ProfileOverviewController {
       ProfileOverviewResourceKey.milkTrends,
       if (identity == ProfileIdentity.baby) ...{
         ProfileOverviewResourceKey.feeding,
+        ProfileOverviewResourceKey.sleep,
+        ProfileOverviewResourceKey.diaper,
         ProfileOverviewResourceKey.growth,
       },
     };
@@ -281,13 +299,47 @@ class ProfileOverviewController {
         );
       case ProfileOverviewResourceKey.feeding:
         final today = now();
+        final weekStart = DateTime(
+          today.year,
+          today.month,
+          today.day,
+        ).subtract(Duration(days: today.weekday - DateTime.monday));
         await _load(
           feedingRecords,
-          feedingRepository.fetchFeedingRecords(
-            date: DateTime(today.year, today.month, today.day),
+          feedingRepository.fetchFeedingRecordsRange(
+            start: weekStart,
+            end: weekStart.add(const Duration(days: 7)),
             babyId: _recordsBabyId,
           ),
           onData: (value) => cache.feedingRecords = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.sleep:
+        final range = _currentWeekRange(now());
+        await _load(
+          sleepRecords,
+          babyCareRepository.fetchSleepRecordsRange(
+            start: range.start,
+            end: range.end,
+            babyId: _recordsBabyId,
+          ),
+          onData: (value) => cache.sleepRecords = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.diaper:
+        final range = _currentWeekRange(now());
+        await _load(
+          diaperRecords,
+          babyCareRepository.fetchDiaperRecordsRange(
+            start: range.start,
+            end: range.end,
+            babyId: _recordsBabyId,
+          ),
+          onData: (value) => cache.diaperRecords = OverviewCacheEntry(
             value: value,
             fetchedAt: now(),
           ),
@@ -401,6 +453,43 @@ class ProfileOverviewController {
       );
       await _requestResource(
         ProfileOverviewResourceKey.feeding,
+        showLoading: false,
+        force: true,
+      );
+    });
+  }
+
+  Future<bool> saveSleepRecord({
+    required DateTime startedAt,
+    required DateTime endedAt,
+    required String type,
+  }) {
+    return _saveRecord(() async {
+      await babyCareRepository.createSleepRecord(
+        babyId: _recordsBabyId,
+        startedAt: startedAt,
+        endedAt: endedAt,
+        type: type,
+        idempotencyKey: _recordIdempotencyKey('sleep'),
+      );
+      await _requestResource(
+        ProfileOverviewResourceKey.sleep,
+        showLoading: false,
+        force: true,
+      );
+    });
+  }
+
+  Future<bool> saveDiaperRecord({required String type}) {
+    return _saveRecord(() async {
+      await babyCareRepository.createDiaperRecord(
+        babyId: _recordsBabyId,
+        changedAt: now(),
+        type: type,
+        idempotencyKey: _recordIdempotencyKey('diaper'),
+      );
+      await _requestResource(
+        ProfileOverviewResourceKey.diaper,
         showLoading: false,
         force: true,
       );
@@ -538,6 +627,14 @@ class ProfileOverviewController {
         feedingRecords.value = ProfileOverviewResource.loading(
           previous: feedingRecords.value.data,
         );
+      case ProfileOverviewResourceKey.sleep:
+        sleepRecords.value = ProfileOverviewResource.loading(
+          previous: sleepRecords.value.data,
+        );
+      case ProfileOverviewResourceKey.diaper:
+        diaperRecords.value = ProfileOverviewResource.loading(
+          previous: diaperRecords.value.data,
+        );
       case ProfileOverviewResourceKey.milkTrends:
         milkTrends.value = ProfileOverviewResource.loading(
           previous: milkTrends.value.data,
@@ -553,6 +650,8 @@ class ProfileOverviewController {
     final fetchedAt = switch (resource) {
       ProfileOverviewResourceKey.overview => cache.overview?.fetchedAt,
       ProfileOverviewResourceKey.feeding => cache.feedingRecords?.fetchedAt,
+      ProfileOverviewResourceKey.sleep => cache.sleepRecords?.fetchedAt,
+      ProfileOverviewResourceKey.diaper => cache.diaperRecords?.fetchedAt,
       ProfileOverviewResourceKey.milkTrends => cache.milkTrends?.fetchedAt,
       ProfileOverviewResourceKey.growth => cache.growthRecords?.fetchedAt,
     };
@@ -564,6 +663,8 @@ class ProfileOverviewController {
     return switch (resource) {
       ProfileOverviewResourceKey.overview => cache.overview != null,
       ProfileOverviewResourceKey.feeding => cache.feedingRecords != null,
+      ProfileOverviewResourceKey.sleep => cache.sleepRecords != null,
+      ProfileOverviewResourceKey.diaper => cache.diaperRecords != null,
       ProfileOverviewResourceKey.milkTrends => cache.milkTrends != null,
       ProfileOverviewResourceKey.growth => cache.growthRecords != null,
     };
@@ -574,12 +675,23 @@ class ProfileOverviewController {
     _disposed = true;
     overview.dispose();
     feedingRecords.dispose();
+    sleepRecords.dispose();
+    diaperRecords.dispose();
     milkTrends.dispose();
     growthRecords.dispose();
     careStage.dispose();
     growthMutation.dispose();
     recordMutation.dispose();
   }
+}
+
+({DateTime start, DateTime end}) _currentWeekRange(DateTime value) {
+  final start = DateTime(
+    value.year,
+    value.month,
+    value.day,
+  ).subtract(Duration(days: value.weekday - DateTime.monday));
+  return (start: start, end: start.add(const Duration(days: 7)));
 }
 
 GrowthRecord? _latestGrowthRecord(List<GrowthRecord> records) {

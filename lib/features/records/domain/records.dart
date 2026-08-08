@@ -4,6 +4,12 @@ abstract interface class FeedingRecordsRepository {
     required String babyId,
   });
 
+  Future<List<FeedingRecord>> fetchFeedingRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  });
+
   Future<FeedingRecord> createFeedingRecord({
     required String babyId,
     required DateTime occurredAt,
@@ -26,6 +32,37 @@ abstract interface class PumpMilkRecordsRepository {
     required DateTime occurredAt,
     double? amountMl,
     int? durationSeconds,
+    String? idempotencyKey,
+  });
+}
+
+abstract interface class BabyCareRecordsRepository {
+  Future<List<SleepRecord>> fetchSleepRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  });
+
+  Future<SleepRecord> createSleepRecord({
+    required String babyId,
+    required DateTime startedAt,
+    required DateTime endedAt,
+    required String type,
+    String notes = '',
+    String? idempotencyKey,
+  });
+
+  Future<List<DiaperRecord>> fetchDiaperRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  });
+
+  Future<DiaperRecord> createDiaperRecord({
+    required String babyId,
+    required DateTime changedAt,
+    required String type,
+    String notes = '',
     String? idempotencyKey,
   });
 }
@@ -63,10 +100,12 @@ class FeedingRecord {
     required this.id,
     required this.type,
     required this.amountMl,
+    this.infantId,
     this.occurredAt,
   });
 
   final String id;
+  final String? infantId;
   final String type;
   final int? amountMl;
   final DateTime? occurredAt;
@@ -126,4 +165,40 @@ class GrowthRecord {
   final DateTime? measuredAt;
 
   double? get weightKg => weightGram == null ? null : weightGram! / 1000;
+}
+
+class SleepRecord {
+  const SleepRecord({
+    required this.id,
+    required this.infantId,
+    required this.type,
+    required this.durationSeconds,
+    required this.startedAt,
+    required this.endedAt,
+    this.notes = '',
+  });
+
+  final String id;
+  final String infantId;
+  final String type;
+  final int durationSeconds;
+  final DateTime? startedAt;
+  final DateTime? endedAt;
+  final String notes;
+}
+
+class DiaperRecord {
+  const DiaperRecord({
+    required this.id,
+    required this.infantId,
+    required this.type,
+    required this.changedAt,
+    this.notes = '',
+  });
+
+  final String id;
+  final String infantId;
+  final String type;
+  final DateTime? changedAt;
+  final String notes;
 }
