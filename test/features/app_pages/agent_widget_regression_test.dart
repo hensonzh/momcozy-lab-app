@@ -135,6 +135,14 @@ void main() {
               ?.text,
           '第一行\n第二行\n第三行',
         );
+
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-plan')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
+        expect(
+          find.descendant(of: bottomNav, matching: find.text('Cozymate')),
+          findsNothing,
+        );
       },
     );
 

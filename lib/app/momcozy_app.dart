@@ -674,7 +674,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                             Expanded(
                               child: _CozymateNavSlot(
                                 selected: selectedIndex == 2,
-                                showLabel: location == '/plan',
+                                usePlanAvatar: location == '/plan',
                                 onTap: () => context.go(_tabPaths[2]),
                               ),
                             ),
@@ -819,19 +819,19 @@ class _MomCozyNavTab extends StatelessWidget {
 class _CozymateNavSlot extends StatelessWidget {
   const _CozymateNavSlot({
     required this.selected,
-    required this.showLabel,
+    required this.usePlanAvatar,
     required this.onTap,
   });
 
   final bool selected;
-  final bool showLabel;
+  final bool usePlanAvatar;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return _MomCozyAgentNavTab(
       selected: selected,
-      showLabel: showLabel,
+      usePlanAvatar: usePlanAvatar,
       onTap: onTap,
     );
   }
@@ -842,12 +842,12 @@ const _agentNavWakeDuration = Duration(milliseconds: 1640);
 class _MomCozyAgentNavTab extends StatefulWidget {
   const _MomCozyAgentNavTab({
     required this.selected,
-    required this.showLabel,
+    required this.usePlanAvatar,
     required this.onTap,
   });
 
   final bool selected;
-  final bool showLabel;
+  final bool usePlanAvatar;
   final VoidCallback onTap;
 
   @override
@@ -952,7 +952,7 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
             selected: widget.selected,
             button: true,
             child: Transform.translate(
-              offset: Offset(0, widget.showLabel ? -11 : -7),
+              offset: const Offset(0, -7),
               child: Material(
                 key: const ValueKey('bottom-nav-agent'),
                 color: Colors.transparent,
@@ -1106,7 +1106,7 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
                                               shape: BoxShape.circle,
                                               image: DecorationImage(
                                                 image: AssetImage(
-                                                  widget.showLabel
+                                                  widget.usePlanAvatar
                                                       ? MomCozyAssets
                                                             .planCozymateAvatar
                                                       : MomCozyAssets
@@ -1153,26 +1153,6 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
             ),
           ),
         ),
-        if (widget.showLabel)
-          const Positioned(
-            left: 0,
-            right: 0,
-            top: 50,
-            child: IgnorePointer(
-              child: Text(
-                'Cozymate',
-                maxLines: 1,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xff9e8880),
-                  fontFamily: MomCozyTypography.interfaceFontFamily,
-                  fontSize: 11,
-                  height: 1.05,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
       ],
     );
   }
