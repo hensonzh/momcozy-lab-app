@@ -6,7 +6,7 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import '../../../support/momcozy_test_fonts.dart';
 
 void main() {
-  setUpAll(loadMomCozyTestFonts);
+  setUpAll(loadMomCozyPlanTestFonts);
 
   group('Bottom navigation component parity goldens', () {
     testWidgets('Me tab selected matches compact baseline', (tester) async {
@@ -53,6 +53,10 @@ void main() {
       final bottomNav = find.byType(MomCozyBottomNavigation);
       expect(bottomNav, findsOneWidget);
       expect(find.byKey(const ValueKey('bottom-nav-plan')), findsOneWidget);
+      expect(
+        find.descendant(of: bottomNav, matching: find.text('Cozymate')),
+        findsOneWidget,
+      );
 
       await expectLater(
         bottomNav,
@@ -89,6 +93,10 @@ Future<void> _bottomNavigationComponentApp(
   await tester.runAsync(() async {
     await precacheImage(
       const AssetImage(MomCozyAssets.agentAvatar),
+      appContext,
+    ).timeout(const Duration(seconds: 5));
+    await precacheImage(
+      const AssetImage(MomCozyAssets.planCozymateAvatar),
       appContext,
     ).timeout(const Duration(seconds: 5));
   });

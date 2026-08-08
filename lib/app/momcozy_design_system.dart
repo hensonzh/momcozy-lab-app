@@ -95,6 +95,7 @@ class MomCozyAssets {
   static const planClock = 'assets/images/plan/clock.svg';
   static const planCheckCircle = 'assets/images/plan/check_circle.svg';
   static const planChevronRight = 'assets/images/plan/chevron_right.svg';
+  static const planActionArrow = 'assets/images/plan/action_arrow.svg';
   static const bottomNavMe = 'assets/images/nav_me.svg';
   static const bottomNavBaby = 'assets/images/nav_baby.svg';
   static const bottomNavPlan = 'assets/images/nav_plan.svg';
@@ -115,6 +116,8 @@ class MomCozyTypography {
   static const bodyFontFamily = 'Figtree';
   static const fontFamily = 'Quicksand';
   static const fontFamilyFallback = ['NotoSansSC', 'PingFang SC', 'Arial'];
+  static const displayFontFamily = 'Rubik';
+  static const interfaceFontFamily = 'Figtree';
 }
 
 class MomCozyShadows {

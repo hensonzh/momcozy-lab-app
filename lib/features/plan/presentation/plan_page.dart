@@ -106,39 +106,44 @@ class _PlanPageState extends State<PlanPage> {
     return Material(
       key: const ValueKey('route-page-/plan'),
       color: MomCozyV3Colors.background,
-      child: switch (state.phase) {
-        PlanLoadPhase.loading when dashboard == null =>
-          const _PlanLoadingView(),
-        PlanLoadPhase.error when dashboard == null => _PlanErrorView(
-          onRetry: _controller.load,
+      child: DefaultTextStyle.merge(
+        style: const TextStyle(
+          fontFamily: MomCozyTypography.interfaceFontFamily,
         ),
-        PlanLoadPhase.empty => _EmptyPlanView(
-          selectedDay: state.weekOf,
-          onCreatePlan: widget.onCreatePlan,
-          onOpenCalendar: widget.onOpenCalendar,
-          onOpenAllPlans: widget.onOpenAllPlans,
-          onChat: widget.onChat,
-          onStartSession: widget.onStartSession,
-        ),
-        _ when dashboard != null && dashboard.isSinglePlan => _SinglePlanView(
-          dashboard: dashboard,
-          onBackToPlans: widget.onBackToPlans,
-          onOpenAllPlans: widget.onOpenAllPlans,
-          onStartSession: widget.onStartSession,
-          onAdjustWithAi: widget.onChat,
-          onManualEdit: widget.onManualEdit,
-        ),
-        _ when dashboard != null => _MultiPlanView(
-          dashboard: dashboard,
-          selectedPlan: state.selectedPlan!,
-          onSelectPlan: _controller.selectPlan,
-          onBrowseWeek: _controller.browseWeek,
-          onOpenCalendar: widget.onOpenCalendar,
-          onOpenAllPlans: widget.onOpenAllPlans,
-          onStartSession: widget.onStartSession,
-        ),
-        _ => _PlanErrorView(onRetry: _controller.load),
-      },
+        child: switch (state.phase) {
+          PlanLoadPhase.loading when dashboard == null =>
+            const _PlanLoadingView(),
+          PlanLoadPhase.error when dashboard == null => _PlanErrorView(
+            onRetry: _controller.load,
+          ),
+          PlanLoadPhase.empty => _EmptyPlanView(
+            selectedDay: state.weekOf,
+            onCreatePlan: widget.onCreatePlan,
+            onOpenCalendar: widget.onOpenCalendar,
+            onOpenAllPlans: widget.onOpenAllPlans,
+            onChat: widget.onChat,
+            onStartSession: widget.onStartSession,
+          ),
+          _ when dashboard != null && dashboard.isSinglePlan => _SinglePlanView(
+            dashboard: dashboard,
+            onBackToPlans: widget.onBackToPlans,
+            onOpenAllPlans: widget.onOpenAllPlans,
+            onStartSession: widget.onStartSession,
+            onAdjustWithAi: widget.onChat,
+            onManualEdit: widget.onManualEdit,
+          ),
+          _ when dashboard != null => _MultiPlanView(
+            dashboard: dashboard,
+            selectedPlan: state.selectedPlan!,
+            onSelectPlan: _controller.selectPlan,
+            onBrowseWeek: _controller.browseWeek,
+            onOpenCalendar: widget.onOpenCalendar,
+            onOpenAllPlans: widget.onOpenAllPlans,
+            onStartSession: widget.onStartSession,
+          ),
+          _ => _PlanErrorView(onRetry: _controller.load),
+        },
+      ),
     );
   }
 }
@@ -220,18 +225,24 @@ class _EmptyPlanView extends StatelessWidget {
       bottom: false,
       child: ListView(
         key: const ValueKey('plan-empty-state'),
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 28),
+        padding: const EdgeInsets.fromLTRB(18, 22, 18, 28),
         children: [
           _PlanHeader(
             calendarAsset: MomCozyAssets.planEmptyAction,
             onOpenCalendar: onOpenCalendar,
             onOpenAllPlans: onOpenAllPlans,
           ),
-          const SizedBox(height: 20),
-          _PlanWeekStrip(selectedDay: selectedDay, compact: true),
-          const SizedBox(height: 24),
-          const _EmptyPlanIllustration(),
-          const SizedBox(height: 10),
+          const SizedBox(height: 22),
+          _PlanWeekStrip(
+            key: const ValueKey('plan-empty-week'),
+            selectedDay: selectedDay,
+            compact: true,
+          ),
+          const SizedBox(height: 44),
+          const _EmptyPlanIllustration(
+            key: ValueKey('plan-empty-illustration'),
+          ),
+          const SizedBox(height: 32),
           const Text(
             'No Plans Yet',
             textAlign: TextAlign.center,
@@ -241,54 +252,53 @@ class _EmptyPlanView extends StatelessWidget {
           const Text(
             'Create a personalized recovery plan to track your\npostpartum journey',
             textAlign: TextAlign.center,
-            style: _PlanText.body,
-          ),
-          const SizedBox(height: 22),
-          SizedBox(
-            height: 48,
-            child: FilledButton(
-              key: const ValueKey('plan-create-first-plan'),
-              onPressed: onCreatePlan,
-              style: FilledButton.styleFrom(
-                backgroundColor: MomCozyV3Colors.brand,
-                shape: const StadiumBorder(),
-              ),
-              child: const Text(
-                '+ Create Your First Plan',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
-              ),
+            style: TextStyle(
+              color: Color(0xffad938a),
+              fontFamily: MomCozyTypography.interfaceFontFamily,
+              fontSize: 14,
+              height: 1.5,
+              letterSpacing: -0.2,
+              fontWeight: FontWeight.w400,
             ),
           ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 18),
+          _PlanGradientButton(
+            key: const ValueKey('plan-create-first-plan'),
+            label: '+ Create Your First Plan',
+            onPressed: onCreatePlan,
+          ),
+          const SizedBox(height: 13),
           _ServiceHeader(onChat: onChat),
-          const SizedBox(height: 14),
           _ServiceCard(
             actionKey: const ValueKey('plan-service-recovery'),
             iconAsset: MomCozyAssets.planRecovery,
             title: 'Postpartum Recovery',
             subtitle: 'Postpartum recovery plan for body and mind',
-            action: 'Start guide',
+            action: 'Start guide →',
+            height: 125,
             onTap: onCreatePlan,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           _ServiceCard(
             actionKey: const ValueKey('plan-service-pump'),
             iconAsset: MomCozyAssets.planPump,
             title: 'momcozy Smart Pump',
             subtitle: 'Connect your momcozy pump and track sessions',
-            action: 'Check now',
+            action: 'Check now →',
+            height: 125,
             onTap: onStartSession,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           _ServiceCard(
             actionKey: const ValueKey('plan-service-health'),
             iconAsset: MomCozyAssets.planHealth,
             title: 'Breast Health Check',
             subtitle: 'AI-powered breast health assessment',
-            action: 'Check now',
+            action: 'Check now →',
+            height: 111,
             onTap: onChat,
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 19),
           _CozymateAssistantCard(onChat: onChat),
         ],
       ),
@@ -332,52 +342,78 @@ class _MultiPlanView extends StatelessWidget {
             onOpenCalendar: onOpenCalendar,
             onOpenAllPlans: onOpenAllPlans,
           ),
-          const SizedBox(height: 16),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (final plan in dashboard.plans) ...[
-                  _PlanCategoryChip(
-                    plan: plan,
-                    selected: plan.id == selectedPlan.id,
-                    onTap: () => onSelectPlan(plan.id),
-                  ),
-                  const SizedBox(width: 10),
+          const SizedBox(height: 8),
+          SizedBox(
+            key: const ValueKey('plan-category-tabs'),
+            height: 36,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (
+                    var index = 0;
+                    index < dashboard.plans.length;
+                    index++
+                  ) ...[
+                    _PlanCategoryChip(
+                      plan: dashboard.plans[index],
+                      selected: dashboard.plans[index].id == selectedPlan.id,
+                      onTap: () => onSelectPlan(dashboard.plans[index].id),
+                    ),
+                    if (index != dashboard.plans.length - 1)
+                      const SizedBox(width: 8),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           const _PeriodSelector(),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           _WeekRangeRow(
             selectedDay: dashboard.weekOf,
             onPrevious: () => onBrowseWeek(-1),
             onNext: () => onBrowseWeek(1),
           ),
-          const SizedBox(height: 6),
-          const Text('This Week', style: _PlanText.sectionTitle),
-          const SizedBox(height: 4),
-          _PlanWeekStrip(selectedDay: dashboard.weekOf),
-          const SizedBox(height: 18),
+          const SizedBox(height: 9),
+          SizedBox(
+            key: const ValueKey('plan-week-calendar'),
+            height: 80,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('This Week', style: _PlanText.sectionTitle),
+                const SizedBox(height: 5.6),
+                _PlanWeekStrip(selectedDay: dashboard.weekOf),
+              ],
+            ),
+          ),
+          const SizedBox(height: 13),
           const Text('Today', style: _PlanText.sectionTitle),
-          const SizedBox(height: 10),
-          for (final session in visibleSessions) ...[
+          const SizedBox(height: 7.6),
+          for (var index = 0; index < visibleSessions.length; index++) ...[
             _PlanSessionCard(
-              session: session,
-              onStart: session.status == PlanSessionStatus.next
+              key: ValueKey('plan-session-${visibleSessions[index].id}'),
+              session: visibleSessions[index],
+              onStart: visibleSessions[index].status == PlanSessionStatus.next
                   ? onStartSession
                   : null,
             ),
-            const SizedBox(height: 8),
+            if (index != visibleSessions.length - 1) const SizedBox(height: 8),
           ],
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           const Text('This Week', style: _PlanText.sectionTitle),
-          const SizedBox(height: 10),
+          const SizedBox(height: 7.6),
           _WeekSummaryCard(completed: completed, total: total),
-          const SizedBox(height: 22),
-          const Text('Monthly Calendar', style: _PlanText.sectionTitle),
+          const SizedBox(height: 16),
+          const SizedBox(
+            key: ValueKey('plan-monthly-calendar-section'),
+            height: 23.4,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Monthly Calendar', style: _PlanText.sectionTitle),
+            ),
+          ),
           const SizedBox(height: 12),
           _MonthlyCalendar(selectedDay: dashboard.weekOf),
         ],
@@ -411,7 +447,7 @@ class _SinglePlanView extends StatelessWidget {
       bottom: false,
       child: ListView(
         key: const ValueKey('plan-single-category-state'),
-        padding: const EdgeInsets.fromLTRB(18, 16, 18, 28),
+        padding: const EdgeInsets.fromLTRB(18, 18, 18, 28),
         children: [
           _SinglePlanHeader(
             title: plan.title,
@@ -419,27 +455,33 @@ class _SinglePlanView extends StatelessWidget {
             onEdit: onManualEdit,
             onOpenAllPlans: onOpenAllPlans,
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 18),
           _MilestoneCard(plan: plan),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           _MilestoneWeekStrip(selectedDay: dashboard.weekOf),
           const SizedBox(height: 18),
           const Text("Today's Sessions", style: _PlanText.sectionTitle),
-          const SizedBox(height: 10),
-          for (final session in sessions) ...[
+          const SizedBox(height: 5.6),
+          for (var index = 0; index < sessions.length; index++) ...[
             _SingleSessionCard(
-              session: session,
-              onStart: session.status == PlanSessionStatus.next
+              key: ValueKey('plan-single-session-${sessions[index].id}'),
+              session: sessions[index],
+              onStart: sessions[index].status == PlanSessionStatus.next
                   ? onStartSession
                   : null,
             ),
-            const SizedBox(height: 8),
+            if (index != sessions.length - 1)
+              SizedBox(
+                height: sessions[index].status == PlanSessionStatus.next
+                    ? 8
+                    : 10,
+              ),
           ],
-          const SizedBox(height: 12),
+          const SizedBox(height: 18),
           const Text('Volume Progress', style: _PlanText.sectionTitle),
-          const SizedBox(height: 12),
+          const SizedBox(height: 7.6),
           _VolumeProgressCard(plan: plan),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           _PlanSettingsCard(
             plan: plan,
             onAdjustWithAi: onAdjustWithAi,
@@ -464,27 +506,57 @@ class _PlanHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(child: Text('My Plans', style: _PlanText.pageTitle)),
-        _HeaderAssetButton(
-          key: const ValueKey('plan-header-calendar'),
-          asset: calendarAsset,
-          tooltip: 'Calendar',
-          onTap: onOpenCalendar,
-          width: 36,
-          height: 36,
+    final pageWidth = MediaQuery.sizeOf(context).width;
+    return SizedBox(
+      height: 48,
+      child: OverflowBox(
+        minWidth: pageWidth,
+        maxWidth: pageWidth,
+        minHeight: 48,
+        maxHeight: 48,
+        alignment: Alignment.center,
+        child: SizedBox(
+          key: const ValueKey('plan-header'),
+          width: pageWidth,
+          height: 48,
+          child: Stack(
+            children: [
+              const Positioned(
+                left: 19,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: Text('My Plans', style: _PlanText.pageTitle),
+                ),
+              ),
+              Positioned(
+                right: 138.5,
+                top: 2,
+                child: _HeaderAssetButton(
+                  key: const ValueKey('plan-header-calendar'),
+                  asset: calendarAsset,
+                  tooltip: 'Calendar',
+                  onTap: onOpenCalendar,
+                  width: 36,
+                  height: 36,
+                ),
+              ),
+              Positioned(
+                right: 14,
+                top: 2,
+                child: _HeaderAssetButton(
+                  key: const ValueKey('plan-header-all-plans'),
+                  asset: MomCozyAssets.planAllPlans,
+                  tooltip: 'All plans',
+                  onTap: onOpenAllPlans,
+                  width: 36,
+                  height: 19,
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(width: 12),
-        _HeaderAssetButton(
-          key: const ValueKey('plan-header-all-plans'),
-          asset: MomCozyAssets.planAllPlans,
-          tooltip: 'All plans',
-          onTap: onOpenAllPlans,
-          width: 36,
-          height: 19,
-        ),
-      ],
+      ),
     );
   }
 }
@@ -504,45 +576,74 @@ class _SinglePlanHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _HeaderAssetButton(
-          key: const ValueKey('plan-single-back'),
-          asset: MomCozyAssets.planBack,
-          tooltip: 'Back to plans',
-          onTap: onBack,
-          width: 36,
-          height: 38,
-        ),
-        Expanded(
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: MomCozyV3Colors.ink,
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-            ),
+    final pageWidth = MediaQuery.sizeOf(context).width;
+    return SizedBox(
+      key: const ValueKey('plan-single-header'),
+      height: 44,
+      child: OverflowBox(
+        minWidth: pageWidth,
+        maxWidth: pageWidth,
+        minHeight: 44,
+        maxHeight: 44,
+        alignment: Alignment.center,
+        child: SizedBox(
+          width: pageWidth,
+          height: 44,
+          child: Stack(
+            children: [
+              Positioned(
+                left: 6,
+                top: 0,
+                child: _HeaderAssetButton(
+                  key: const ValueKey('plan-single-back'),
+                  asset: MomCozyAssets.planBack,
+                  tooltip: 'Back to plans',
+                  onTap: onBack,
+                  width: 20,
+                  height: 20,
+                ),
+              ),
+              Positioned(
+                left: 82,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: _PlanText.headerTitle,
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 292,
+                top: 0,
+                child: _HeaderAssetButton(
+                  key: const ValueKey('plan-single-edit'),
+                  asset: MomCozyAssets.planEdit,
+                  tooltip: 'Edit plan',
+                  onTap: onEdit,
+                  width: 20,
+                  height: 20,
+                ),
+              ),
+              Positioned(
+                left: 332,
+                top: 0,
+                child: _HeaderAssetButton(
+                  key: const ValueKey('plan-single-all-plans'),
+                  asset: MomCozyAssets.planAllPlans,
+                  tooltip: 'All plans',
+                  onTap: onOpenAllPlans,
+                  width: 36,
+                  height: 19,
+                ),
+              ),
+            ],
           ),
         ),
-        _HeaderAssetButton(
-          key: const ValueKey('plan-single-edit'),
-          asset: MomCozyAssets.planEdit,
-          tooltip: 'Edit plan',
-          onTap: onEdit,
-          width: 24,
-          height: 24,
-        ),
-        const SizedBox(width: 8),
-        _HeaderAssetButton(
-          key: const ValueKey('plan-single-all-plans'),
-          asset: MomCozyAssets.planAllPlans,
-          tooltip: 'All plans',
-          onTap: onOpenAllPlans,
-          width: 36,
-          height: 19,
-        ),
-      ],
+      ),
     );
   }
 }
@@ -590,7 +691,11 @@ class _HeaderAssetButton extends StatelessWidget {
 }
 
 class _PlanWeekStrip extends StatelessWidget {
-  const _PlanWeekStrip({required this.selectedDay, this.compact = false});
+  const _PlanWeekStrip({
+    super.key,
+    required this.selectedDay,
+    this.compact = false,
+  });
 
   final DateTime selectedDay;
   final bool compact;
@@ -598,20 +703,34 @@ class _PlanWeekStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final week = _weekDays(selectedDay);
+    final dayWidth = compact ? 40.0 : 44.0;
+    final gap = compact ? 12.0 : 8.0;
+    final stripWidth = dayWidth * 7 + gap * 6;
     return SizedBox(
-      height: compact ? 40 : 56,
-      child: Row(
-        children: [
-          for (final day in week)
-            Expanded(
-              child: _PlanDay(
-                day: day,
-                selected: _sameDay(day, selectedDay),
-                showDot: !compact,
-                showFullWeekday: compact,
-              ),
-            ),
-        ],
+      height: 51,
+      child: OverflowBox(
+        alignment: compact ? Alignment.centerLeft : Alignment.center,
+        minWidth: stripWidth,
+        maxWidth: stripWidth,
+        child: SizedBox(
+          width: stripWidth,
+          child: Row(
+            children: [
+              for (var index = 0; index < week.length; index++) ...[
+                SizedBox(
+                  width: dayWidth,
+                  child: _PlanDay(
+                    day: week[index],
+                    selected: _sameDay(week[index], selectedDay),
+                    showDot: !compact,
+                    showFullWeekday: compact,
+                  ),
+                ),
+                if (index != week.length - 1) SizedBox(width: gap),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -635,88 +754,101 @@ class _PlanDay extends StatelessWidget {
     final foreground = selected ? Colors.white : MomCozyV3Colors.ink;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      padding: EdgeInsets.symmetric(vertical: showDot ? 2 : 1),
+      height: 51,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: selected ? const Color(0xffa94d6d) : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: selected
-            ? const [
-                BoxShadow(
-                  color: Color(0x2ca94d6d),
-                  blurRadius: 12,
-                  offset: Offset(0, 5),
-                ),
-              ]
+        color: selected ? null : Colors.transparent,
+        gradient: selected
+            ? const LinearGradient(
+                colors: [Color(0xff7a2840), Color(0xffbd5178)],
+              )
             : null,
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          Text(
-            showFullWeekday ? _weekdayLong(day.weekday) : _weekday(day.weekday),
-            style: TextStyle(
-              color: selected ? Colors.white : const Color(0xffa58f87),
-              fontSize: showFullWeekday ? 11 : 10,
-              height: 1,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(height: showDot ? 2 : 1),
-          Text(
-            '${day.day}',
-            style: TextStyle(
-              color: foreground,
-              fontSize: compactFont(showDot ? 17 : 18),
-              height: 1,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          if (showDot) ...[
-            const SizedBox(height: 1),
-            Container(
-              width: 5,
-              height: 5,
-              decoration: BoxDecoration(
-                color: selected ? Colors.white : _dayDotColor(day),
-                shape: BoxShape.circle,
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            child: Text(
+              showFullWeekday
+                  ? _weekdayLong(day.weekday)
+                  : _weekday(day.weekday),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: selected ? Colors.white : const Color(0xff9e8880),
+                fontFamily: MomCozyTypography.interfaceFontFamily,
+                fontSize: showFullWeekday ? 12 : 14,
+                height: 1.15,
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 21,
+            child: Text(
+              '${day.day}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: foreground,
+                fontFamily: MomCozyTypography.interfaceFontFamily,
+                fontSize: 18,
+                height: 1,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          if (showDot)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Center(
+                child: Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: selected ? Colors.white : _dayDotColor(day),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 }
 
-double compactFont(double value) => value;
-
 class _EmptyPlanIllustration extends StatelessWidget {
-  const _EmptyPlanIllustration();
+  const _EmptyPlanIllustration({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 130,
+      height: 140,
       child: Center(
         child: SizedBox(
           width: 170,
-          height: 130,
+          height: 140,
           child: Stack(
             alignment: Alignment.center,
             children: [
               Positioned(
-                left: 10,
+                left: 2,
                 top: 0,
                 child: _softCircle(96, const Color(0x55d4a4b2)),
               ),
               Positioned(
-                right: 6,
-                top: 46,
+                right: 18,
+                top: 54,
                 child: _softCircle(72, const Color(0x55d4a4b2)),
               ),
               Positioned(
-                left: 66,
+                left: 45,
                 bottom: 0,
                 child: _softCircle(48, const Color(0x55d4a4b2)),
               ),
@@ -737,8 +869,8 @@ class _EmptyPlanIllustration extends StatelessWidget {
                 child: Center(
                   child: SvgPicture.asset(
                     MomCozyAssets.planSparkles,
-                    width: 28,
-                    height: 28,
+                    width: 24,
+                    height: 24,
                   ),
                 ),
               ),
@@ -758,10 +890,52 @@ class _EmptyPlanIllustration extends StatelessWidget {
       ),
       shape: BoxShape.circle,
       boxShadow: const [
-        BoxShadow(color: Color(0x18a94d6d), blurRadius: 28, spreadRadius: 8),
+        BoxShadow(color: Color(0x18a94d6d), blurRadius: 20, spreadRadius: 4),
       ],
     ),
   );
+}
+
+class _PlanGradientButton extends StatelessWidget {
+  const _PlanGradientButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 48,
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(999)),
+          gradient: LinearGradient(
+            colors: [Color(0xff7a2840), Color(0xffbd5178)],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x247a2840),
+              blurRadius: 20,
+              offset: Offset(0, 9),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          shape: const StadiumBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onPressed,
+            child: Center(child: Text(label, style: _PlanText.primaryButton)),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ServiceHeader extends StatelessWidget {
@@ -771,50 +945,52 @@ class _ServiceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        const Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return SizedBox(
+      height: 101,
+      child: OverflowBox(
+        minHeight: 104,
+        maxHeight: 104,
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          key: const ValueKey('plan-service-header'),
+          height: 104,
+          child: Stack(
             children: [
-              Text('Service', style: _PlanText.sectionTitle),
-              SizedBox(height: 2),
-              Text(
-                'Cozymate 1 on 1',
-                style: TextStyle(
-                  color: MomCozyV3Colors.brand,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
+              const Positioned(
+                left: 0,
+                top: 18,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Service', style: _PlanText.serviceTitle),
+                    Text('Cozymate 1 on 1', style: _PlanText.serviceLabel),
+                    Text(
+                      'Your AI wellness companion',
+                      style: _PlanText.caption,
+                    ),
+                  ],
                 ),
               ),
-              Text('Your AI wellness companion', style: _PlanText.caption),
-            ],
-          ),
-        ),
-        const _PlanAvatar(radius: 27),
-        const SizedBox(width: 8),
-        FilledButton(
-          onPressed: onChat,
-          style: FilledButton.styleFrom(
-            backgroundColor: MomCozyV3Colors.ink,
-            minimumSize: const Size(68, 36),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            shape: const StadiumBorder(),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Chat',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+              const Positioned(
+                left: 198,
+                top: 3,
+                child: _PlanAvatar(radius: 40),
               ),
-              SizedBox(width: 4),
-              Icon(Icons.arrow_forward_rounded, size: 14),
+              Positioned(
+                right: 0,
+                top: 28,
+                child: _PlanPillButton(
+                  label: 'Chat',
+                  onPressed: onChat,
+                  width: 66,
+                  height: 36,
+                  trailingArrow: true,
+                ),
+              ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -826,6 +1002,7 @@ class _ServiceCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.action,
+    required this.height,
     this.onTap,
   });
 
@@ -834,88 +1011,73 @@ class _ServiceCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String action;
+  final double height;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        key: actionKey,
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Ink(
-          height: MediaQuery.sizeOf(context).width < 380 ? 112 : 104,
-          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-          decoration: _serviceCardDecoration(),
-          child: Row(
-            children: [
-              Container(
-                width: 58,
-                height: 58,
-                decoration: BoxDecoration(
-                  color: const Color(0xfff5ecea),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(iconAsset, width: 25, height: 25),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: _PlanText.cardTitle.copyWith(height: 1)),
-                    const SizedBox(height: 1),
-                    Text(
-                      subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: _PlanText.body.copyWith(fontSize: 13, height: 1),
+    return SizedBox(
+      key: actionKey,
+      height: height,
+      child: DecoratedBox(
+        decoration: _serviceCardDecoration(),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: const Color(0xfff5ecea),
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    const SizedBox(height: 4),
-                    DecoratedBox(
-                      decoration: const BoxDecoration(
-                        color: MomCozyV3Colors.ink,
-                        borderRadius: BorderRadius.all(Radius.circular(999)),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              action,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                height: 1,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            const SizedBox(width: 7),
-                            const Icon(
-                              Icons.arrow_forward_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ],
-                        ),
-                      ),
+                    child: Center(
+                      child: SvgPicture.asset(iconAsset, width: 25, height: 25),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title, style: _PlanText.cardTitle),
+                        const SizedBox(height: 3),
+                        Text(
+                          subtitle,
+                          maxLines: title == 'Breast Health Check' ? 1 : 2,
+                          softWrap: title != 'Breast Health Check',
+                          overflow: TextOverflow.ellipsis,
+                          style: _PlanText.cardBody.copyWith(
+                            fontSize: title == 'Breast Health Check' ? 13 : 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        _PlanPillButton(
+                          label: action,
+                          onPressed: onTap,
+                          width: action.startsWith('Start guide') ? 122 : 110,
+                          height: 32,
+                          trailingArrow: true,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SvgPicture.asset(
+                    MomCozyAssets.planChevronRight,
+                    width: 16,
+                    height: 16,
+                  ),
+                ],
               ),
-              SvgPicture.asset(
-                MomCozyAssets.planChevronRight,
-                width: 16,
-                height: 16,
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -931,37 +1093,56 @@ class _CozymateAssistantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      key: const ValueKey('plan-cozymate-assistant'),
+      height: 95,
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
       decoration: BoxDecoration(
         color: const Color(0xfff7eeeb),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 11),
         decoration: _cardDecoration(radius: 18),
         child: Row(
           children: [
-            const _PlanAvatar(radius: 22, showBorder: false),
-            const SizedBox(width: 10),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Cozymate Assistant', style: _PlanText.cardTitle),
-                  Text(
-                    'Let Cozymate help you build a plan',
-                    style: _PlanText.body,
-                  ),
-                ],
+            Container(
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(
+                color: Color(0xfff9ecef),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  MomCozyAssets.planSparkles,
+                  width: 18,
+                  height: 18,
+                ),
               ),
             ),
-            FilledButton(
-              onPressed: onChat,
-              style: FilledButton.styleFrom(
-                backgroundColor: MomCozyV3Colors.brand,
-                shape: const StadiumBorder(),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Transform.translate(
+                offset: const Offset(0, 2),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Cozymate Assistant', style: _PlanText.assistantTitle),
+                    Text(
+                      'Let Cozymate help you build a plan',
+                      style: _PlanText.assistantBody,
+                    ),
+                  ],
+                ),
               ),
-              child: const Text('Chat AI'),
+            ),
+            _PlanPillButton(
+              label: 'Chat AI',
+              onPressed: onChat,
+              backgroundColor: MomCozyV3Colors.brand,
+              width: 66,
+              height: 36,
             ),
           ],
         ),
@@ -970,31 +1151,80 @@ class _CozymateAssistantCard extends StatelessWidget {
   }
 }
 
+class _PlanPillButton extends StatelessWidget {
+  const _PlanPillButton({
+    required this.label,
+    required this.onPressed,
+    required this.height,
+    this.width,
+    this.trailingArrow = false,
+    this.backgroundColor = MomCozyV3Colors.ink,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final double height;
+  final double? width;
+  final bool trailingArrow;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Material(
+        color: backgroundColor,
+        shape: const StadiumBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onPressed,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: width == null ? 10 : 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(label, style: _PlanText.pillButton),
+                if (trailingArrow) ...[
+                  const SizedBox(width: 3),
+                  SvgPicture.asset(
+                    MomCozyAssets.planActionArrow,
+                    width: 16,
+                    height: 16,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _PlanAvatar extends StatelessWidget {
-  const _PlanAvatar({required this.radius, this.showBorder = true});
+  const _PlanAvatar({required this.radius});
 
   final double radius;
-  final bool showBorder;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: radius * 2,
       height: radius * 2,
-      padding: EdgeInsets.all(showBorder ? 2 : 0),
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
-        border: showBorder ? Border.all(color: const Color(0xffeadbd7)) : null,
-        boxShadow: showBorder
-            ? const [
-                BoxShadow(
-                  color: Color(0x26392832),
-                  blurRadius: 14,
-                  offset: Offset(0, 6),
-                ),
-              ]
-            : null,
+        border: Border.all(color: const Color(0xffeadbd7)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x26392832),
+            blurRadius: 14,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
       child: ClipOval(
         child: Image.asset(MomCozyAssets.planCozymateAvatar, fit: BoxFit.cover),
@@ -1037,7 +1267,9 @@ class _PlanCategoryChip extends StatelessWidget {
             color: selected ? MomCozyV3Colors.brand : Colors.white,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? MomCozyV3Colors.brand : const Color(0xffe4d4d0),
+              color: plan.category == PlanCategory.yoga
+                  ? Colors.white
+                  : const Color(0xffe8dcda),
             ),
           ),
           child: FittedBox(
@@ -1048,9 +1280,11 @@ class _PlanCategoryChip extends StatelessWidget {
                   : plan.category.label,
               maxLines: 1,
               style: TextStyle(
-                color: selected ? Colors.white : const Color(0xff9d8981),
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
+                color: selected ? Colors.white : const Color(0xff9e8880),
+                fontFamily: MomCozyTypography.interfaceFontFamily,
+                fontSize: 13,
+                height: 1.2,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
           ),
@@ -1075,6 +1309,7 @@ class _PeriodSelectorState extends State<_PeriodSelector> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: const ValueKey('plan-period-selector'),
       height: 38,
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
@@ -1181,34 +1416,58 @@ class _WeekRangeRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final days = _weekDays(selectedDay);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          tooltip: 'Previous week',
-          onPressed: onPrevious,
-          icon: const Icon(Icons.chevron_left_rounded, size: 32),
-        ),
-        Text(
-          '${_monthShort(days.first.month)} ${days.first.day} – ${_monthShort(days.last.month)} ${days.last.day}',
-          style: const TextStyle(
-            color: MomCozyV3Colors.ink,
-            fontSize: 17,
-            fontWeight: FontWeight.w900,
+    return SizedBox(
+      key: const ValueKey('plan-week-range'),
+      height: 32,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _WeekArrowButton(tooltip: 'Previous week', onPressed: onPrevious),
+          Text(
+            '${_monthShort(days.first.month)} ${days.first.day} - ${_monthShort(days.last.month)} ${days.last.day}',
+            style: _PlanText.weekRange,
+          ),
+          _WeekArrowButton(tooltip: 'Next week', onPressed: onNext),
+        ],
+      ),
+    );
+  }
+}
+
+class _WeekArrowButton extends StatelessWidget {
+  const _WeekArrowButton({required this.tooltip, required this.onPressed});
+
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(16),
+        child: SizedBox(
+          width: 24,
+          height: 32,
+          child: Align(
+            alignment: tooltip == 'Previous week'
+                ? Alignment.centerLeft
+                : Alignment.center,
+            child: SvgPicture.asset(
+              MomCozyAssets.planChevronRight,
+              width: 16,
+              height: 16,
+            ),
           ),
         ),
-        IconButton(
-          tooltip: 'Next week',
-          onPressed: onNext,
-          icon: const Icon(Icons.chevron_right_rounded, size: 32),
-        ),
-      ],
+      ),
     );
   }
 }
 
 class _PlanSessionCard extends StatelessWidget {
-  const _PlanSessionCard({required this.session, this.onStart});
+  const _PlanSessionCard({super.key, required this.session, this.onStart});
 
   final PlanSession session;
   final VoidCallback? onStart;
@@ -1217,67 +1476,73 @@ class _PlanSessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final next = session.status == PlanSessionStatus.next;
     final muted = session.status == PlanSessionStatus.upcoming;
-    return SizedBox(
-      height: 59,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: next ? const Color(0xfffbf2f2) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: next ? MomCozyV3Colors.brand : const Color(0xffeadbd7),
-            width: next ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _time(session.scheduledAt),
-                    style: TextStyle(
-                      color: muted
-                          ? const Color(0xff7d7b7b)
-                          : next
-                          ? MomCozyV3Colors.brand
-                          : MomCozyV3Colors.ink,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 1),
-                  Text(
-                    session.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: muted
-                          ? const Color(0xffc4b5af)
-                          : const Color(0xffa9897e),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
+    return Opacity(
+      opacity: muted ? 0.6 : 1,
+      child: SizedBox(
+        height: 59,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: next ? const Color(0xfff5ecea) : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: next ? MomCozyV3Colors.brand : const Color(0xffe8dcda),
+              width: next ? 1.5 : 1,
             ),
-            switch (session.status) {
-              PlanSessionStatus.completed => const _StatusBadge(
-                label: 'Completed',
-                foreground: Color(0xff3dbb86),
-                background: Color(0xffe6f7f1),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _time(session.scheduledAt),
+                      style: TextStyle(
+                        color: next
+                            ? MomCozyV3Colors.brand
+                            : MomCozyV3Colors.ink,
+                        fontFamily: MomCozyTypography.interfaceFontFamily,
+                        fontSize: 14,
+                        height: 1.3,
+                        letterSpacing: -0.2,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      session.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: next
+                            ? MomCozyV3Colors.brand
+                            : const Color(0xff9e8880),
+                        fontFamily: MomCozyTypography.interfaceFontFamily,
+                        fontSize: 13,
+                        height: 1.3,
+                        letterSpacing: -0.05,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              PlanSessionStatus.next => _StartButton(onPressed: onStart),
-              PlanSessionStatus.upcoming => const _StatusBadge(
-                label: 'Upcoming',
-                foreground: Color(0xffad7b89),
-                background: Color(0xfff8eeee),
-              ),
-            },
-          ],
+              switch (session.status) {
+                PlanSessionStatus.completed => const _StatusBadge(
+                  label: 'Completed',
+                  foreground: Color(0xff42b883),
+                  background: Color(0xffebf9f4),
+                ),
+                PlanSessionStatus.next => _StartButton(onPressed: onStart),
+                PlanSessionStatus.upcoming => const _StatusBadge(
+                  label: 'Upcoming',
+                  foreground: MomCozyV3Colors.brand,
+                  background: Color(0xfff5ecea),
+                ),
+              },
+            ],
+          ),
         ),
       ),
     );
@@ -1292,21 +1557,24 @@ class _StartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 66,
-      height: 30,
+      width: 52,
+      height: 26,
       child: FilledButton(
         onPressed: onPressed,
         style: FilledButton.styleFrom(
           padding: EdgeInsets.zero,
-          minimumSize: const Size(66, 30),
+          minimumSize: const Size(52, 26),
           backgroundColor: MomCozyV3Colors.brand,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape: const StadiumBorder(),
         ),
         child: const Text(
           'Start',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+          style: TextStyle(
+            fontFamily: MomCozyTypography.interfaceFontFamily,
+            fontSize: 13,
+            height: 1,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
@@ -1327,7 +1595,9 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      width: label == 'Completed' ? 86 : 81,
+      height: 26,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(999),
@@ -1336,8 +1606,10 @@ class _StatusBadge extends StatelessWidget {
         label,
         style: TextStyle(
           color: foreground,
+          fontFamily: MomCozyTypography.interfaceFontFamily,
           fontSize: 13,
-          fontWeight: FontWeight.w800,
+          height: 1,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -1354,9 +1626,10 @@ class _WeekSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = (completed / total).clamp(0.0, 1.0);
     return SizedBox(
+      key: const ValueKey('plan-week-summary'),
       height: 94,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+        padding: const EdgeInsets.fromLTRB(16, 17, 16, 0),
         decoration: _flatCardDecoration(radius: 22, showBorder: true),
         child: Column(
           children: [
@@ -1365,34 +1638,40 @@ class _WeekSummaryCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     '$completed of $total sessions completed',
-                    style: _PlanText.bodyStrong,
+                    style: _PlanText.summaryLabel,
                   ),
                 ),
                 Text(
                   '${(progress * 100).round()}%',
                   style: const TextStyle(
                     color: MomCozyV3Colors.brand,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                    fontFamily: MomCozyTypography.interfaceFontFamily,
+                    fontSize: 14,
+                    height: 1.3,
+                    letterSpacing: -0.1,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             ClipRRect(
               borderRadius: BorderRadius.circular(999),
               child: LinearProgressIndicator(
                 minHeight: 6,
-                value: progress,
+                value: progress * 0.9333333333,
                 color: MomCozyV3Colors.brand,
-                backgroundColor: const Color(0xffeee3e0),
+                backgroundColor: const Color(0xfff5ecea),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 13),
             Row(
               children: [
                 const Expanded(
-                  child: Text('View week details', style: _PlanText.cardTitle),
+                  child: Text(
+                    'View week details',
+                    style: _PlanText.summaryLink,
+                  ),
                 ),
                 SvgPicture.asset(
                   MomCozyAssets.planChevronRight,
@@ -1486,7 +1765,9 @@ class _MilestoneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width < 380;
     return Container(
+      key: const ValueKey('plan-milestone-card'),
       height: 112,
       padding: const EdgeInsets.all(16),
       decoration: _flatCardDecoration(radius: 20),
@@ -1500,48 +1781,104 @@ class _MilestoneCard extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 Positioned.fill(
-                  child: CircularProgressIndicator(
-                    value: plan.weekNumber / math.max(1, plan.totalWeeks),
-                    strokeWidth: 6,
-                    color: MomCozyV3Colors.brand,
-                    backgroundColor: const Color(0xffeadfdd),
+                  child: CustomPaint(
+                    painter: _MilestoneRingPainter(
+                      progress: plan.weekNumber / math.max(1, plan.totalWeeks),
+                    ),
                   ),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Week', style: _PlanText.bodyStrong),
-                    Text(
-                      '${plan.weekNumber}/${plan.totalWeeks}',
-                      style: const TextStyle(
-                        color: MomCozyV3Colors.brand,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                Transform.translate(
+                  offset: const Offset(0, 2),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Week',
+                        style: TextStyle(
+                          color: MomCozyV3Colors.ink,
+                          fontFamily: MomCozyTypography.interfaceFontFamily,
+                          fontSize: 14,
+                          height: 1.2,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        '${plan.weekNumber}/${plan.totalWeeks}',
+                        style: const TextStyle(
+                          color: MomCozyV3Colors.brand,
+                          fontFamily: MomCozyTypography.interfaceFontFamily,
+                          fontSize: 20,
+                          height: 1.2,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 16),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Mid-Way Milestone', style: _PlanText.cardTitle),
-                const SizedBox(height: 4),
-                Text(
-                  "You've consistently completed ${plan.sessionsPerDay} sessions a day this week. Keep it up!",
-                  style: _PlanText.body.copyWith(fontSize: 13, height: 1.25),
-                ),
-              ],
+            child: Transform.translate(
+              offset: Offset(0, compact ? 0 : 9),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Mid-Way Milestone',
+                    style: _PlanText.cardTitle.copyWith(letterSpacing: 0.1),
+                  ),
+                  SizedBox(height: compact ? 4 : 6),
+                  Text(
+                    "You've consistently completed ${plan.sessionsPerDay} sessions a day this week. Keep it up!",
+                    style: _PlanText.body.copyWith(
+                      fontSize: compact ? 13 : 14,
+                      height: 1.25,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
     );
   }
+}
+
+class _MilestoneRingPainter extends CustomPainter {
+  const _MilestoneRingPainter({required this.progress});
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = math.min(size.width, size.height) / 2 - 3;
+    final track = Paint()
+      ..color = const Color(0xffe8dcda)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6;
+    final progressPaint = Paint()
+      ..color = MomCozyV3Colors.brand
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.butt;
+    canvas.drawCircle(center, radius, track);
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -math.pi / 2,
+      math.pi * 2 * progress.clamp(0.0, 1.0),
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _MilestoneRingPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }
 
 class _MilestoneWeekStrip extends StatelessWidget {
@@ -1553,8 +1890,9 @@ class _MilestoneWeekStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     final days = _weekDays(selectedDay);
     return Container(
+      key: const ValueKey('plan-milestone-week'),
       height: 70,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 9),
       decoration: _flatCardDecoration(radius: 18),
       child: Row(
         children: [
@@ -1563,10 +1901,10 @@ class _MilestoneWeekStrip extends StatelessWidget {
               child: Column(
                 children: [
                   Text(_weekday(days[index].weekday), style: _PlanText.caption),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 8),
                   Container(
-                    width: 29,
-                    height: 29,
+                    width: 22,
+                    height: 22,
                     decoration: BoxDecoration(
                       color: index < 2 ? MomCozyV3Colors.brand : Colors.white,
                       shape: BoxShape.circle,
@@ -1581,7 +1919,7 @@ class _MilestoneWeekStrip extends StatelessWidget {
                         ? const Icon(
                             Icons.check_rounded,
                             color: Colors.white,
-                            size: 18,
+                            size: 15,
                           )
                         : null,
                   ),
@@ -1595,7 +1933,7 @@ class _MilestoneWeekStrip extends StatelessWidget {
 }
 
 class _SingleSessionCard extends StatelessWidget {
-  const _SingleSessionCard({required this.session, this.onStart});
+  const _SingleSessionCard({super.key, required this.session, this.onStart});
 
   final PlanSession session;
   final VoidCallback? onStart;
@@ -1609,88 +1947,110 @@ class _SingleSessionCard extends StatelessWidget {
         : next
         ? MomCozyAssets.planPlay
         : MomCozyAssets.planClock;
-    return SizedBox(
-      height: 59,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        decoration: BoxDecoration(
-          color: next ? const Color(0xfffbf2f2) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: next ? MomCozyV3Colors.brand : Colors.transparent,
-            width: 1.5,
+    final columnOffset = completed
+        ? 0.0
+        : next
+        ? 1.0
+        : 4.0;
+    return Opacity(
+      opacity: completed || next ? 1 : 0.6,
+      child: SizedBox(
+        height: next ? 61 : 59,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: next ? const Color(0xfff5ecea) : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: next ? MomCozyV3Colors.brand : Colors.transparent,
+              width: 1.5,
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Color(0xfff9efed),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  iconAsset,
-                  width: completed || !next ? 18 : 16,
-                  height: completed || !next ? 18 : 16,
-                  colorFilter: !next && !completed
-                      ? const ColorFilter.mode(
-                          Color(0xffc6b7b2),
-                          BlendMode.srcIn,
-                        )
-                      : null,
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: const BoxDecoration(
+                  color: Color(0xfff5ecea),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    iconAsset,
+                    width: completed || !next ? 15 : 14,
+                    height: completed || !next ? 15 : 14,
+                    colorFilter: !next && !completed
+                        ? const ColorFilter.mode(
+                            Color(0xff9e8880),
+                            BlendMode.srcIn,
+                          )
+                        : null,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    session.title,
-                    style: TextStyle(
-                      color: next
-                          ? MomCozyV3Colors.brand
-                          : completed
-                          ? MomCozyV3Colors.ink
-                          : const Color(0xff898584),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w900,
-                    ),
+              SizedBox(width: next ? 12 : 10),
+              Expanded(
+                child: Transform.translate(
+                  offset: Offset(0, columnOffset),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        session.title,
+                        style: TextStyle(
+                          color: next
+                              ? MomCozyV3Colors.brand
+                              : MomCozyV3Colors.ink,
+                          fontFamily: MomCozyTypography.interfaceFontFamily,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        '${completed
+                            ? 'Completed'
+                            : next
+                            ? 'Next Up'
+                            : 'Upcoming'} · ${_time(session.scheduledAt)}',
+                        style:
+                            const TextStyle(
+                              color: Color(0xff9e8880),
+                              fontFamily: MomCozyTypography.interfaceFontFamily,
+                              fontSize: 12,
+                              height: 1.5,
+                              fontWeight: FontWeight.w400,
+                            ).copyWith(
+                              color: next
+                                  ? MomCozyV3Colors.brand
+                                  : const Color(0xff9e8880),
+                            ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '${completed
-                        ? 'Completed'
-                        : next
-                        ? 'Next Up'
-                        : 'Upcoming'} · ${_time(session.scheduledAt)}',
-                    style: _PlanText.body.copyWith(fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-            if (completed) ...[
-              Text(
-                session.valueLabel ?? '',
-                style: const TextStyle(
-                  color: Color(0xff3dbb86),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w900,
                 ),
               ),
-              const SizedBox(width: 7),
-              SvgPicture.asset(
-                MomCozyAssets.planCheckCircle,
-                width: 20,
-                height: 20,
-              ),
-            ] else if (next)
-              _StartButton(onPressed: onStart),
-          ],
+              if (completed) ...[
+                Text(
+                  session.valueLabel ?? '',
+                  style: const TextStyle(
+                    color: Color(0xff42b883),
+                    fontFamily: MomCozyTypography.interfaceFontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(width: 7),
+                SvgPicture.asset(
+                  MomCozyAssets.planCheckCircle,
+                  width: 16,
+                  height: 16,
+                ),
+              ] else if (next)
+                _StartButton(onPressed: onStart),
+            ],
+          ),
         ),
       ),
     );
@@ -1705,7 +2065,9 @@ class _VolumeProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      key: const ValueKey('plan-volume-progress'),
+      height: 108,
+      padding: const EdgeInsets.fromLTRB(16, 13, 16, 11),
       decoration: _flatCardDecoration(radius: 20),
       child: Column(
         children: [
@@ -1715,7 +2077,7 @@ class _VolumeProgressCard extends StatelessWidget {
             progress:
                 plan.todayVolumeMl / math.max(1, plan.dailyTargetVolumeMl),
           ),
-          const Divider(height: 28, color: Color(0xffeadbd7)),
+          const Divider(height: 22, color: Color(0xffe8dcda)),
           _VolumeProgressRow(
             label: 'Weekly Target',
             value:
@@ -1746,24 +2108,44 @@ class _VolumeProgressRow extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: Text(label, style: _PlanText.bodyStrong)),
-            Text(
-              value,
-              style: const TextStyle(
-                color: MomCozyV3Colors.brand,
-                fontWeight: FontWeight.w900,
+            Expanded(
+              child: Transform.translate(
+                offset: Offset(label == 'Weekly Target' ? -1 : -3, 2),
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: MomCozyV3Colors.ink,
+                    fontFamily: MomCozyTypography.interfaceFontFamily,
+                    fontSize: 12,
+                    height: 1.5,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            Transform.translate(
+              offset: const Offset(0, 3),
+              child: Text(
+                value,
+                style: const TextStyle(
+                  color: MomCozyV3Colors.brand,
+                  fontFamily: MomCozyTypography.interfaceFontFamily,
+                  fontSize: 12,
+                  height: 1.5,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 5),
         ClipRRect(
           borderRadius: BorderRadius.circular(999),
           child: LinearProgressIndicator(
-            minHeight: 7,
-            value: progress.clamp(0.0, 1.0),
+            minHeight: 5,
+            value: (progress * 0.98).clamp(0.0, 1.0),
             color: MomCozyV3Colors.brand,
-            backgroundColor: const Color(0xffeee3e0),
+            backgroundColor: const Color(0xfff5ecea),
           ),
         ),
       ],
@@ -1785,62 +2167,118 @@ class _PlanSettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      key: const ValueKey('plan-settings'),
+      height: 221,
       decoration: _flatCardDecoration(radius: 20, showBorder: true),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: const Color(0xffeee4ff),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: const Text(
-              'AI Coach Available',
-              style: TextStyle(
-                color: Color(0xff9a75ed),
-                fontWeight: FontWeight.w800,
+          Positioned(
+            left: 16,
+            top: 16,
+            child: Container(
+              width: 124,
+              height: 22,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: const Color(0xfff0ebff),
+                borderRadius: BorderRadius.circular(999),
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text('Plan Settings', style: _PlanText.sectionTitle),
-          const SizedBox(height: 16),
-          _SettingRow(
-            label: 'Sessions per day',
-            value: '${plan.sessionsPerDay} sessions',
-          ),
-          const SizedBox(height: 14),
-          _SettingRow(
-            label: 'Daily Target Volume',
-            value: '${plan.dailyTargetVolumeMl} ml',
-          ),
-          const Divider(height: 28, color: Color(0xffeadbd7)),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: FilledButton(
-              onPressed: onAdjustWithAi,
-              style: FilledButton.styleFrom(
-                backgroundColor: MomCozyV3Colors.brand,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              child: Transform.translate(
+                offset: const Offset(-1, 0),
+                child: const Text(
+                  'AI Coach Available',
+                  style: TextStyle(
+                    color: Color(0xff8c73f0),
+                    fontFamily: MomCozyTypography.interfaceFontFamily,
+                    fontSize: 12,
+                    height: 1,
+                    letterSpacing: -0.075,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-              child: const Text('Adjust with AI'),
             ),
           ),
-          const SizedBox(height: 10),
-          Center(
-            child: TextButton(
-              onPressed: onManualEdit,
-              child: const Text(
-                'Manual Edit',
-                style: TextStyle(
-                  color: MomCozyV3Colors.brand,
-                  decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.w800,
+          const Positioned(
+            left: 15,
+            top: 48,
+            child: Text('Plan Settings', style: _PlanText.cardTitle),
+          ),
+          Positioned(
+            left: 15,
+            right: 15,
+            top: 77,
+            height: 21,
+            child: _SettingRow(
+              label: 'Sessions per day',
+              value: '${plan.sessionsPerDay} sessions',
+            ),
+          ),
+          Positioned(
+            left: 15,
+            right: 15,
+            top: 105,
+            height: 21,
+            child: _SettingRow(
+              label: 'Daily Target Volume',
+              value: '${plan.dailyTargetVolumeMl} ml',
+            ),
+          ),
+          const Positioned(
+            left: 16,
+            right: 16,
+            top: 135,
+            child: Divider(height: 1, color: Color(0xffe8dcda)),
+          ),
+          Positioned(
+            left: 16,
+            right: 16,
+            top: 143,
+            height: 36,
+            child: Material(
+              color: MomCozyV3Colors.brand,
+              borderRadius: BorderRadius.circular(10),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: onAdjustWithAi,
+                child: const Center(
+                  child: Text(
+                    'Adjust with AI',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: MomCozyTypography.interfaceFontFamily,
+                      fontSize: 14,
+                      height: 1.2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 100,
+            right: 100,
+            top: 184,
+            height: 28,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onManualEdit,
+                borderRadius: BorderRadius.circular(8),
+                child: const Center(
+                  child: Text(
+                    'Manual Edit',
+                    style: TextStyle(
+                      color: MomCozyV3Colors.brand,
+                      fontFamily: MomCozyTypography.interfaceFontFamily,
+                      fontSize: 13,
+                      height: 1.2,
+                      letterSpacing: -0.3,
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -1861,8 +2299,8 @@ class _SettingRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Text(label, style: _PlanText.body)),
-        Text(value, style: _PlanText.bodyStrong),
+        Expanded(child: Text(label, style: _PlanText.settingsLabel)),
+        Text(value, style: _PlanText.settingsValue),
       ],
     );
   }
@@ -1873,41 +2311,147 @@ class _PlanText {
 
   static const pageTitle = TextStyle(
     color: MomCozyV3Colors.ink,
-    fontSize: 34,
-    height: 1,
-    fontWeight: FontWeight.w900,
-    letterSpacing: -1.2,
+    fontFamily: MomCozyTypography.displayFontFamily,
+    fontSize: 24,
+    height: 1.2,
+    letterSpacing: -0.25,
+    fontWeight: FontWeight.w700,
   );
   static const heroTitle = TextStyle(
     color: MomCozyV3Colors.ink,
-    fontSize: 28,
-    fontWeight: FontWeight.w900,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 24,
+    height: 1.3,
+    letterSpacing: -0.3,
+    fontWeight: FontWeight.w700,
+  );
+  static const headerTitle = TextStyle(
+    color: MomCozyV3Colors.ink,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 18,
+    height: 1.3,
+    letterSpacing: -0.25,
+    fontWeight: FontWeight.w700,
   );
   static const sectionTitle = TextStyle(
     color: MomCozyV3Colors.ink,
-    fontSize: 20,
-    fontWeight: FontWeight.w900,
-    letterSpacing: -0.4,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 18,
+    height: 1.3,
+    letterSpacing: -0.2,
+    fontWeight: FontWeight.w700,
   );
   static const cardTitle = TextStyle(
     color: MomCozyV3Colors.ink,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
     fontSize: 16,
-    fontWeight: FontWeight.w900,
+    height: 1.3,
+    letterSpacing: -0.2,
+    fontWeight: FontWeight.w700,
   );
-  static const bodyStrong = TextStyle(
-    color: Color(0xff5d4b46),
+  static const cardBody = TextStyle(
+    color: Color(0xff9e8880),
+    fontFamily: MomCozyTypography.interfaceFontFamily,
     fontSize: 14,
-    fontWeight: FontWeight.w800,
+    height: 1.2,
+    letterSpacing: -0.2,
+    fontWeight: FontWeight.w400,
+  );
+  static const assistantTitle = TextStyle(
+    color: MomCozyV3Colors.ink,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 14,
+    height: 1.3,
+    letterSpacing: -0.2,
+    fontWeight: FontWeight.w700,
+  );
+  static const assistantBody = TextStyle(
+    color: Color(0xffad938a),
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 14,
+    height: 1.3,
+    letterSpacing: -0.2,
+    fontWeight: FontWeight.w400,
   );
   static const body = TextStyle(
     color: Color(0xffad938a),
+    fontFamily: MomCozyTypography.interfaceFontFamily,
     fontSize: 14,
-    height: 1.3,
-    fontWeight: FontWeight.w600,
+    height: 1.5,
+    fontWeight: FontWeight.w400,
   );
   static const caption = TextStyle(
     color: Color(0xffa58f87),
-    fontSize: 12,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 11,
+    height: 1.4,
+    fontWeight: FontWeight.w600,
+  );
+  static const serviceLabel = TextStyle(
+    color: MomCozyV3Colors.brand,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 14,
+    height: 1.3,
+    fontWeight: FontWeight.w700,
+  );
+  static const serviceTitle = TextStyle(
+    color: MomCozyV3Colors.ink,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 18,
+    height: 1.3,
+    fontWeight: FontWeight.w700,
+  );
+  static const weekRange = TextStyle(
+    color: MomCozyV3Colors.ink,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 13,
+    height: 1.3,
+    letterSpacing: -0.2,
+    fontWeight: FontWeight.w700,
+  );
+  static const summaryLabel = TextStyle(
+    color: Color(0xff9e8880),
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 13,
+    height: 1.3,
+    letterSpacing: -0.1,
+    fontWeight: FontWeight.w400,
+  );
+  static const summaryLink = TextStyle(
+    color: Color(0xff4a3a38),
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 13,
+    height: 1.3,
+    letterSpacing: -0.1,
+    fontWeight: FontWeight.w400,
+  );
+  static const settingsLabel = TextStyle(
+    color: Color(0xff9e8880),
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 13,
+    height: 1.5,
+    letterSpacing: -0.1,
+    fontWeight: FontWeight.w400,
+  );
+  static const settingsValue = TextStyle(
+    color: MomCozyV3Colors.ink,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 13,
+    height: 1.5,
+    fontWeight: FontWeight.w400,
+  );
+  static const primaryButton = TextStyle(
+    color: Colors.white,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 16,
+    height: 1.2,
+    fontWeight: FontWeight.w700,
+  );
+  static const pillButton = TextStyle(
+    color: Colors.white,
+    fontFamily: MomCozyTypography.interfaceFontFamily,
+    fontSize: 13,
+    height: 1,
     fontWeight: FontWeight.w700,
   );
 }
@@ -1927,15 +2471,15 @@ BoxDecoration _flatCardDecoration({
 }) => BoxDecoration(
   color: Colors.white,
   borderRadius: BorderRadius.circular(radius),
-  border: showBorder ? Border.all(color: const Color(0xffeadbd7)) : null,
+  border: showBorder ? Border.all(color: const Color(0xffe8dcda)) : null,
 );
 
 BoxDecoration _serviceCardDecoration() => BoxDecoration(
   color: Colors.white,
-  borderRadius: BorderRadius.circular(16),
-  border: Border.all(color: const Color(0xffe8dcda)),
+  borderRadius: BorderRadius.circular(18),
+  border: Border.all(color: const Color(0xfff0e8e6)),
   boxShadow: const [
-    BoxShadow(color: Color(0x20392832), blurRadius: 18, offset: Offset(0, 7)),
+    BoxShadow(color: Color(0x10392832), blurRadius: 24, offset: Offset(0, 7)),
   ],
 );
 
@@ -1961,8 +2505,8 @@ Color _dayDotColor(DateTime day) => const [
   Color(0xff8a233f),
   Color(0xff7d65d6),
   Color(0xff40b985),
+  Color(0xff8066ef),
   Color(0xff8a233f),
-  Color(0xff7d65d6),
   Color(0xff40b985),
   Color(0xff8a233f),
 ][day.weekday - 1];
