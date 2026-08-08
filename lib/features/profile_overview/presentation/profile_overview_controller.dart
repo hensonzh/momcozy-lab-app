@@ -412,6 +412,7 @@ class ProfileOverviewController {
               today.day,
             ).subtract(const Duration(days: 30)),
             days: 31,
+            utcOffsetMinutes: today.timeZoneOffset.inMinutes,
           ),
           onData: (value) => cache.milkTrends = OverviewCacheEntry(
             value: value,
