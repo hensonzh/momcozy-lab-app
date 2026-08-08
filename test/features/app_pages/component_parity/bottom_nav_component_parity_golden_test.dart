@@ -55,7 +55,7 @@ void main() {
       expect(find.byKey(const ValueKey('bottom-nav-plan')), findsOneWidget);
       expect(
         find.descendant(of: bottomNav, matching: find.text('Cozymate')),
-        findsOneWidget,
+        findsNothing,
       );
 
       await expectLater(
