@@ -151,7 +151,8 @@ void main() {
   test('runtime creates typed repositories over the injected transport', () {
     final transport = FixtureApiJsonTransport({
       'user_id': 'user-fixture',
-      'delivery_date': '2026-06-11',
+      'current_care_stage': 'postpartum',
+      'actual_delivery_date': '2026-06-11',
     });
     final volumePreferences = _MemoryVolumeUnitPreferenceStore();
     final runtime = MomCozyApiRuntime(

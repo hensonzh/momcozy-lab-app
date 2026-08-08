@@ -18,14 +18,20 @@ class BirthPrepProfileDefaults {
   factory BirthPrepProfileDefaults.fromProfileMap(
     Map<String, Object?> profile,
   ) {
+    final currentCareStage = _firstProfileText(profile, const [
+      'current_care_stage',
+      'currentCareStage',
+    ]);
     return BirthPrepProfileDefaults(
       age: _profileAge(profile['age']),
-      dueDateOrWeek: _firstProfileText(profile, const [
-        'birth_prep_due_date_or_week',
-        'birthPrepDueDateOrWeek',
-        'delivery_date',
-        'deliveryDate',
-      ]),
+      dueDateOrWeek: currentCareStage == 'pregnancy'
+          ? _firstProfileText(profile, const [
+              'birth_prep_due_date_or_week',
+              'birthPrepDueDateOrWeek',
+              'expected_due_date',
+              'expectedDueDate',
+            ])
+          : null,
       ivf: _firstProfileText(profile, const ['birth_prep_ivf', 'birthPrepIvf']),
       fetusCount: _firstProfileText(profile, const [
         'birth_prep_fetus_count',

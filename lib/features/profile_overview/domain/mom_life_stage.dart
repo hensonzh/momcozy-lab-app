@@ -37,19 +37,14 @@ enum MomLifeStage {
 
   static MomLifeStage resolve({
     Object? explicitValue,
-    DateTime? deliveryDate,
+    DateTime? expectedDueDate,
+    DateTime? actualDeliveryDate,
     bool hasPregnancyDetails = false,
-    DateTime Function()? now,
   }) {
     final explicit = tryParse(explicitValue);
     if (explicit != null) return explicit;
-    if (deliveryDate != null) {
-      final value = (now ?? DateTime.now)();
-      final today = DateTime(value.year, value.month, value.day);
-      return deliveryDate.isAfter(today)
-          ? MomLifeStage.pregnancy
-          : MomLifeStage.postpartum;
-    }
+    if (actualDeliveryDate != null) return MomLifeStage.postpartum;
+    if (expectedDueDate != null) return MomLifeStage.pregnancy;
     if (hasPregnancyDetails) return MomLifeStage.pregnancy;
     return MomLifeStage.postpartum;
   }

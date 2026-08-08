@@ -7,26 +7,19 @@ void main() {
       expect(
         MomLifeStage.resolve(
           explicitValue: 'fertility',
-          deliveryDate: DateTime(2026, 9, 20),
-          now: () => DateTime(2026, 7, 1),
+          expectedDueDate: DateTime(2026, 9, 20),
         ),
         MomLifeStage.fertility,
       );
     });
 
-    test('infers pregnancy only while a delivery date is in the future', () {
+    test('infers the stage from canonical dates', () {
       expect(
-        MomLifeStage.resolve(
-          deliveryDate: DateTime(2026, 9, 20),
-          now: () => DateTime(2026, 7, 1),
-        ),
+        MomLifeStage.resolve(expectedDueDate: DateTime(2026, 9, 20)),
         MomLifeStage.pregnancy,
       );
       expect(
-        MomLifeStage.resolve(
-          deliveryDate: DateTime(2026, 5, 20),
-          now: () => DateTime(2026, 7, 1),
-        ),
+        MomLifeStage.resolve(actualDeliveryDate: DateTime(2026, 5, 20)),
         MomLifeStage.postpartum,
       );
     });

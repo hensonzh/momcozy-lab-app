@@ -96,10 +96,17 @@ class RecordsApiRepository
     String? idempotencyKey,
   }) async {
     final selectedBabyId = _requiredBabyId(babyId);
+    final normalizedType = type.trim().toLowerCase();
     final body = <String, Object?>{
       'infant_id': selectedBabyId,
       'feed_time': occurredAt.toUtc().toIso8601String(),
-      'feed_type': type.trim(),
+      'feed_type': normalizedType == 'formula' ? 'bottle' : normalizedType,
+      'feed_action': switch (normalizedType) {
+        'formula' => 'formula',
+        'bottle' => 'expressed_milk',
+        'breast' || 'breastfeeding' => 'direct',
+        _ => normalizedType,
+      },
       'volume_ml': amountMl,
       'duration_seconds': durationSeconds,
     }..removeWhere((_, value) => value == null);
@@ -518,7 +525,9 @@ FeedingRecord _feedingRecord(Map<String, Object?> data) {
     infantId: _string(data['infant_id'] ?? data['infantId'])?.trim(),
     type:
         _string(data['feed_type'] ?? data['type'] ?? data['feedingType']) ?? '',
+    action: _string(data['feed_action'] ?? data['feedAction']) ?? '',
     amountMl: _int(data['volume_ml'] ?? data['amount_ml'] ?? data['amountMl']),
+    durationSeconds: _int(data['duration_seconds'] ?? data['durationSeconds']),
     occurredAt: _dateTime(
       data['feed_time'] ?? data['occurred_at'] ?? data['occurredAt'],
     ),
@@ -528,10 +537,7 @@ FeedingRecord _feedingRecord(Map<String, Object?> data) {
 PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
   return PumpMilkRecord(
     id: _id(data['pump_id'] ?? data['pumpId'] ?? data['id']),
-    title:
-        _string(data['pump_title'] ?? data['pumpTitle'] ?? data['title']) ?? '',
-    pumpType: _int(data['pump_type'] ?? data['pumpType']),
-    pumpSource: _int(data['pump_source'] ?? data['pumpSource']),
+    pumpType: _string(data['pump_type'] ?? data['pumpType']) ?? '',
     breastSide: BreastSide.tryParse(data['breast_side'] ?? data['breastSide']),
     amountMl: _int(
       data['milk_volume_ml'] ??
@@ -540,6 +546,7 @@ PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
           data['amount_ml'] ??
           data['amountMl'],
     ),
+    durationSeconds: _int(data['duration_seconds'] ?? data['durationSeconds']),
     occurredAt: _dateTime(
       data['pump_start_time'] ??
           data['pump_time'] ??
@@ -565,7 +572,6 @@ WaterTrendDay? _waterTrendDay(Map<String, Object?> data) {
     date: DateTime(date.year, date.month, date.day),
     totalWaterMl: _double(data['total_water_ml'] ?? data['totalWaterMl']) ?? 0,
     entryCount: _int(data['entry_count'] ?? data['entryCount']) ?? 0,
-    measuredOnly: data['measured_only'] != false,
   );
 }
 
@@ -592,7 +598,6 @@ SleepRecord _sleepRecord(Map<String, Object?> data) {
     startedAt: startedAt,
     endedAt: _dateTime(data['ended_at'] ?? data['endedAt']),
     kind: SleepKind.tryParse(data['sleep_kind'] ?? data['sleepKind']),
-    notes: _string(data['notes']) ?? '',
   );
 }
 
@@ -616,7 +621,7 @@ DiaperRecord _diaperRecord(Map<String, Object?> data) {
 }
 
 MilkTrendDay? _milkTrendDay(Map<String, Object?> data) {
-  final date = _dateTime(data['date'] ?? data['delivery_date']);
+  final date = _dateTime(data['date']);
   if (date == null) return null;
   return MilkTrendDay(
     date: DateTime(date.year, date.month, date.day),
@@ -628,18 +633,6 @@ MilkTrendDay? _milkTrendDay(Map<String, Object?> data) {
         ) ??
         0,
     pumpingCount: _int(data['pumping_count'] ?? data['pump_count']) ?? 0,
-    measuredOnly: data['measured_only'] != false,
-    estimatedMilkVolumeMl: _double(
-      data['estimated_milk_volume_ml'] ??
-          data['total_milk_estimate'] ??
-          data['totol_milk_estimate'],
-    ),
-    referenceLowerMl: _double(
-      data['reference_lower_ml'] ?? data['reference_lower'],
-    ),
-    referenceUpperMl: _double(
-      data['reference_upper_ml'] ?? data['reference_upper'],
-    ),
   );
 }
 

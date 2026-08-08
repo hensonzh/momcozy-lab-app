@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/features/notifications/data/notifications_ap
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/maternal_care_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 
@@ -25,6 +26,61 @@ void main() {
     );
     records = _map(fixture['records']);
     infantId = _map(_items(_map(fixture['infants'])).single)['id']! as String;
+  });
+
+  test('omits retired response fields from the canonical fixture', () {
+    expect(
+      _map(fixture['meta'])['schema_version'],
+      'momcozy.postpartum_day20.v3',
+    );
+    final profile = _map(fixture['profile']);
+    final infant = _map(_items(_map(fixture['infants'])).single);
+    final body = _map(fixture['body_profile']);
+    final care = _map(fixture['care_overview']);
+
+    for (final field in [
+      'delivery_date',
+      'expected_due_date',
+      'lactation_advice',
+      'feeding_advice',
+      'profile_onboarding_complete',
+    ]) {
+      expect(profile, isNot(contains(field)));
+    }
+    for (final field in ['owner_user_id', 'status']) {
+      expect(infant, isNot(contains(field)));
+    }
+    expect(infant['sex'], 'female');
+    for (final field in ['owner_user_id', 'recovery_score', 'delivery_type']) {
+      expect(body, isNot(contains(field)));
+    }
+    expect(care, isNot(contains('capabilities')));
+    expect(care, isNot(contains('generated_at')));
+
+    const retiredRecordFields = {
+      'owner_user_id',
+      'plan_task_id',
+      'pump_end_time',
+      'source',
+      'title',
+      'status',
+    };
+    for (final resource in [
+      'feeding',
+      'pumping',
+      'water',
+      'vitals',
+      'sleep',
+      'diaper',
+      'growth',
+    ]) {
+      for (final rawItem in _items(_map(records[resource]))) {
+        expect(
+          _map(rawItem).keys.toSet().intersection(retiredRecordFields),
+          isEmpty,
+        );
+      }
+    }
   });
 
   test('maps the Day 20 profile, care overview, and body profile', () async {
@@ -46,13 +102,15 @@ void main() {
 
     expect(profile.mom?.stage, MomLifeStage.postpartum);
     expect(profile.mom?.postpartumDay, 20);
+    expect(profile.mom?.deliveryType, DeliveryType.vaginal);
     expect(profile.baby?.ageDays, 20);
     expect(profile.baby?.nickname, '小满');
+    expect(profile.baby?.sex, 'female');
+    expect(profile.baby?.birthDate, profile.mom?.actualDeliveryDate);
     expect(care.program?.completedSessions, 8);
     expect(care.program?.totalSessions, 14);
     expect(body.hasConfirmedData, isTrue);
     expect(body.painAreas, hasLength(2));
-    expect(body.recoveryScore, isNull);
   });
 
   test(

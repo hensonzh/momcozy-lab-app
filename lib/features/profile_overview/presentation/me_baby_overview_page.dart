@@ -444,15 +444,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: _MomAddRecordSheet(
-                  capabilities:
-                      _overviewController
-                          ?.maternalCareOverview
-                          .value
-                          .data
-                          ?.capabilities ??
-                      const MaternalCareCapabilities(),
-                ),
+                child: const _MomAddRecordSheet(),
               ),
             ],
           ),
@@ -1686,14 +1678,10 @@ enum _MomRecordChoice {
 }
 
 class _MomAddRecordSheet extends StatelessWidget {
-  const _MomAddRecordSheet({required this.capabilities});
-
-  final MaternalCareCapabilities capabilities;
+  const _MomAddRecordSheet();
 
   @override
   Widget build(BuildContext context) {
-    final vitalsAvailable =
-        capabilities.vitalRecords == CapabilityState.available;
     final options = [
       (
         _MomRecordChoice.pumpingLeft,
@@ -1715,21 +1703,21 @@ class _MomAddRecordSheet extends StatelessWidget {
         'weight',
         'Weight',
         Icons.monitor_weight_outlined,
-        vitalsAvailable,
+        true,
       ),
       (
         _MomRecordChoice.water,
         'water-intake',
         'Water Intake',
         Icons.water_drop_outlined,
-        capabilities.waterRecords == CapabilityState.available,
+        true,
       ),
       (
         _MomRecordChoice.vitals,
         'vitals',
         'Vitals',
         Icons.monitor_heart_outlined,
-        vitalsAvailable,
+        true,
       ),
     ];
     final scaledLabelHeight = MediaQuery.textScalerOf(context).scale(16);

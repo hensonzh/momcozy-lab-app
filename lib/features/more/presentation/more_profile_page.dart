@@ -139,7 +139,6 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
   RecoveryFrequency? _lowerAbdominalPain;
   int? _pelvicFloorStrength;
   DiastasisSeverity? _diastasisSeverity;
-  DeliveryType? _deliveryType;
   final Set<PainZone> _painZones = {};
   final _impactController = TextEditingController();
   final _woundController = TextEditingController();
@@ -170,7 +169,6 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
       _lowerAbdominalPain = profile.lowerAbdominalPain;
       _pelvicFloorStrength = profile.pelvicFloorStrength;
       _diastasisSeverity = profile.diastasisSeverity;
-      _deliveryType = profile.deliveryType;
       _painZones
         ..clear()
         ..addAll(profile.painAreas.map((area) => area.zone));
@@ -202,7 +200,6 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
         _lowerAbdominalPain != null ||
         _pelvicFloorStrength != null ||
         _diastasisSeverity != null ||
-        _deliveryType != null ||
         _painZones.isNotEmpty ||
         impact.isNotEmpty ||
         _woundController.text.trim().isNotEmpty ||
@@ -225,7 +222,6 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
       pelvicFloorStrength: _pelvicFloorStrength,
       diastasisSeverity: _diastasisSeverity,
       dailyImpactDescription: impact,
-      deliveryType: _deliveryType,
       woundStatus: _woundController.text.trim(),
       bleedingStatus: _bleedingController.text.trim(),
       bowelStatus: _bowelController.text.trim(),
@@ -548,27 +544,6 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Delivery', style: _ProfileText.fieldTitle),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            for (final type in DeliveryType.values)
-                              _ProfileChoiceChip(
-                                label: type.label,
-                                selected: _deliveryType == type,
-                                onSelected: state.isBusy
-                                    ? null
-                                    : (selected) => setState(
-                                        () => _deliveryType = selected
-                                            ? type
-                                            : null,
-                                      ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
                         _RecoveryTextField(
                           controller: _woundController,
                           label: 'Wound status (optional)',
@@ -720,7 +695,6 @@ class _RecoverySummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chips = <String>[
-      if (profile.deliveryType != null) profile.deliveryType!.label,
       if (profile.diastasisSeverity != null)
         '${profile.diastasisSeverity!.label} core separation',
       if (profile.painAreas.isNotEmpty)
@@ -887,8 +861,7 @@ class _ConfirmedProfileContent extends StatelessWidget {
           const SizedBox(height: 14),
           _PainAreasCard(areas: profile.painAreas),
         ],
-        if (profile.deliveryType != null ||
-            profile.woundStatus.isNotEmpty ||
+        if (profile.woundStatus.isNotEmpty ||
             profile.bleedingStatus.isNotEmpty ||
             profile.bowelStatus.isNotEmpty) ...[
           const SizedBox(height: 14),
@@ -896,8 +869,6 @@ class _ConfirmedProfileContent extends StatelessWidget {
             title: 'Postpartum recovery',
             accent: _ProfileColors.wine,
             rows: [
-              if (profile.deliveryType != null)
-                ('Delivery', profile.deliveryType!.label),
               if (profile.woundStatus.isNotEmpty)
                 ('Wound', profile.woundStatus),
               if (profile.bleedingStatus.isNotEmpty)

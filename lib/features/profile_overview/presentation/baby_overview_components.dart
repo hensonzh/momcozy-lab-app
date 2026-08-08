@@ -1198,15 +1198,22 @@ class _BabyFeedingContent extends StatelessWidget {
       : MaterialLocalizations.of(
           context,
         ).formatTimeOfDay(TimeOfDay.fromDateTime(occurredAt));
-  final type = switch (record.type.toLowerCase()) {
-    'breast' || 'breastfeeding' => 'Breastfeeding',
+  final type = switch (record.action.toLowerCase()) {
+    'direct' || 'direct_breast' => 'Breastfeeding',
     'formula' => 'Formula',
-    'bottle' => 'Bottle feeding',
-    _ => 'Feeding',
+    'expressed_milk' => 'Bottle feeding',
+    _ => switch (record.type.toLowerCase()) {
+      'breast' || 'breastfeeding' => 'Breastfeeding',
+      'formula' => 'Formula',
+      'bottle' => 'Bottle feeding',
+      _ => 'Feeding',
+    },
   };
-  final amount = record.amountMl == null
-      ? 'Not measured'
-      : '${record.amountMl} mL';
+  final amount = switch ((record.amountMl, record.durationSeconds)) {
+    (final amountMl?, _) => '$amountMl mL',
+    (_, final seconds?) when seconds > 0 => _durationLabel(seconds),
+    _ => 'Not measured',
+  };
   return (time, type, amount, 'Confirmed record');
 }
 

@@ -113,7 +113,7 @@ void main() {
               'user_id': 'profile-overview-user',
               'display_name': 'Avery',
               'current_care_stage': 'pregnancy',
-              'delivery_date': '2026-12-20',
+              'expected_due_date': '2026-12-20',
             },
             careOverviewResponse: const {
               'stage': 'pregnancy',
@@ -336,7 +336,7 @@ void main() {
               'user_id': 'profile-overview-user',
               'display_name': 'Avery',
               'current_care_stage': 'pregnancy',
-              'delivery_date': '2026-10-09',
+              'expected_due_date': '2026-10-09',
             },
             planItems: const [
               {
@@ -1591,7 +1591,7 @@ void main() {
       },
     );
 
-    testWidgets('avatar and record actions expose genuine capabilities', (
+    testWidgets('avatar and supported record actions stay available', (
       tester,
     ) async {
       final transport = _profileOverviewTransport();
@@ -1785,6 +1785,7 @@ void main() {
         'infant_id': 'profile-overview-baby',
         'feed_time': '2026-07-03T00:00:00.000Z',
         'feed_type': 'bottle',
+        'feed_action': 'expressed_milk',
         'volume_ml': 75.0,
       });
     });
@@ -2498,7 +2499,8 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
           const {
             'user_id': 'profile-overview-user',
             'display_name': 'Avery',
-            'delivery_date': '2026-06-12',
+            'current_care_stage': 'postpartum',
+            'actual_delivery_date': '2026-06-12',
           },
       profileInfantsEndpoint: {
         'items':
@@ -2659,17 +2661,7 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
       planListEndpoint: {'items': planItems ?? const <Object?>[]},
       planSessionListEndpoint: {'items': planSessionItems ?? const <Object?>[]},
       maternalCareOverviewEndpoint:
-          careOverviewResponse ??
-          const <String, Object?>{
-            'capabilities': {
-              'pregnancy_progress': 'available',
-              'program_progress': 'available',
-              'cycle_tracking': 'unavailable',
-              'body_profile': 'available',
-              'water_records': 'available',
-              'vital_records': 'available',
-            },
-          },
+          careOverviewResponse ?? const <String, Object?>{},
     },
     writeResponsesByPath: {
       profileMeEndpoint: ?writeResponse,

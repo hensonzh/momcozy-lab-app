@@ -13,29 +13,16 @@ void main() {
           'stage': 'pregnancy',
           'pregnancy': {
             'state': 'ready',
-            'expected_due_date': '2026-10-31',
             'gestational_week': 28,
-            'gestational_day': 0,
             'days_remaining': 84,
             'trimester': 'third',
           },
           'program': {
-            'state': 'ready',
             'plan_id': 'plan-prenatal',
-            'plan_type': 'prenatal_yoga',
             'title': 'Prenatal Yoga Program',
             'completed_sessions': 6,
             'total_sessions': 12,
           },
-          'capabilities': {
-            'pregnancy_progress': 'available',
-            'program_progress': 'available',
-            'cycle_tracking': 'unavailable',
-            'body_profile': 'unavailable',
-            'water_records': 'unavailable',
-            'vital_records': 'unavailable',
-          },
-          'generated_at': '2026-08-08T01:00:00Z',
         },
       });
       final repository = MaternalCareOverviewApiRepository(
@@ -50,15 +37,12 @@ void main() {
       expect(transport.lastQuery, {'date': '2026-08-08'});
       expect(overview.stage, MomLifeStage.pregnancy);
       expect(overview.pregnancy?.state, PregnancyProgressState.ready);
-      expect(overview.pregnancy?.expectedDueDate, DateTime(2026, 10, 31));
       expect(overview.pregnancy?.gestationalWeek, 28);
-      expect(overview.pregnancy?.gestationalDay, 0);
       expect(overview.pregnancy?.daysRemaining, 84);
       expect(overview.pregnancy?.trimester, PregnancyTrimester.third);
       expect(overview.program?.planId, 'plan-prenatal');
       expect(overview.program?.completedSessions, 6);
       expect(overview.program?.totalSessions, 12);
-      expect(overview.capabilities.bodyProfile, CapabilityState.unavailable);
     });
 
     test(
@@ -90,11 +74,7 @@ void main() {
         transport: FixtureApiJsonTransportByPath({
           maternalCareOverviewEndpoint: const {
             'stage': 'pregnancy',
-            'pregnancy': {
-              'state': 'ready',
-              'expected_due_date': '2026-10-31',
-              'gestational_week': 28,
-            },
+            'pregnancy': {'state': 'ready', 'gestational_week': 28},
           },
         }),
       );

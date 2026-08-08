@@ -83,7 +83,7 @@ void main() {
     expect(find.text('Sometimes'), findsOneWidget);
     expect(find.text('Core & abdomen'), findsOneWidget);
     expect(find.text('Lower Abdomen'), findsOneWidget);
-    expect(find.text('Vaginal birth'), findsWidgets);
+    expect(find.text('Vaginal birth'), findsNothing);
     expect(find.text('74'), findsNothing);
   });
 
@@ -417,7 +417,6 @@ const _confirmedBodyProfile = <String, Object?>{
   'pelvic_floor_strength': 3,
   'diastasis_severity': 'mild',
   'daily_impact_description': 'Tightness while lifting the baby',
-  'delivery_type': 'vaginal',
   'wound_status': 'No current discomfort',
   'bleeding_status': 'Decreasing and lighter',
   'bowel_status': 'Occasional constipation',

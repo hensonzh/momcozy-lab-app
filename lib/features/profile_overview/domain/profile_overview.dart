@@ -1,9 +1,12 @@
+import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 
 abstract interface class ProfileOverviewRepository {
   Future<ProfileOverview> fetchOverview();
 
   Future<MomLifeStage> updateCareStage(MomLifeStage stage);
+
+  Future<DeliveryType?> updateDeliveryType(DeliveryType? deliveryType);
 }
 
 class ProfileOverview {
@@ -37,18 +40,18 @@ class MomProfileOverview {
     this.displayName,
     this.stage,
     this.postpartumDay,
-    this.deliveryDate,
     this.expectedDueDate,
     this.actualDeliveryDate,
+    this.deliveryType,
     this.dueDateOrWeek,
   });
 
   final String? displayName;
   final MomLifeStage? stage;
   final int? postpartumDay;
-  final DateTime? deliveryDate;
   final DateTime? expectedDueDate;
   final DateTime? actualDeliveryDate;
+  final DeliveryType? deliveryType;
   final String? dueDateOrWeek;
 
   MomProfileOverview copyWith({MomLifeStage? stage}) {
@@ -56,9 +59,9 @@ class MomProfileOverview {
       displayName: displayName,
       stage: stage ?? this.stage,
       postpartumDay: postpartumDay,
-      deliveryDate: deliveryDate,
       expectedDueDate: expectedDueDate,
       actualDeliveryDate: actualDeliveryDate,
+      deliveryType: deliveryType,
       dueDateOrWeek: dueDateOrWeek,
     );
   }
@@ -70,10 +73,12 @@ class BabyProfileOverview {
     this.nickname,
     this.ageDays,
     this.birthDate,
+    this.sex,
   });
 
   final String? id;
   final String? nickname;
   final int? ageDays;
   final DateTime? birthDate;
+  final String? sex;
 }
