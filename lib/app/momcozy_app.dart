@@ -583,6 +583,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
   Widget _buildNavigation(BuildContext context) {
     final selectedIndex = _selectedTabIndex(location);
+    final matchesPlanDesign = location == '/plan';
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: Color(0xfffcf7f5)),
@@ -633,6 +634,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 selected: selectedIndex == 0,
                                 asset: MomCozyAssets.bottomNavMe,
                                 iconSize: const Size.square(20),
+                                matchesPlanDesign: matchesPlanDesign,
                                 onTap: () => context.go(_tabPaths[0]),
                               ),
                             ),
@@ -643,12 +645,14 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 selected: selectedIndex == 1,
                                 asset: MomCozyAssets.bottomNavBaby,
                                 iconSize: const Size.square(22),
+                                matchesPlanDesign: matchesPlanDesign,
                                 onTap: () => context.go(_tabPaths[1]),
                               ),
                             ),
                             Expanded(
                               child: _CozymateNavSlot(
                                 selected: selectedIndex == 2,
+                                showLabel: location == '/plan',
                                 onTap: () => context.go(_tabPaths[2]),
                               ),
                             ),
@@ -659,6 +663,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 selected: selectedIndex == 3,
                                 asset: MomCozyAssets.bottomNavPlan,
                                 iconSize: const Size.square(22),
+                                matchesPlanDesign: matchesPlanDesign,
                                 onTap: () {
                                   MomCozyRuntimeScope.read(
                                     context,
@@ -674,6 +679,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 selected: selectedIndex == 4,
                                 asset: MomCozyAssets.bottomNavMore,
                                 iconSize: const Size.square(16),
+                                matchesPlanDesign: matchesPlanDesign,
                                 onTap: null,
                               ),
                             ),
@@ -699,6 +705,7 @@ class _MomCozyNavTab extends StatelessWidget {
     required this.selected,
     required this.asset,
     required this.iconSize,
+    required this.matchesPlanDesign,
     required this.onTap,
   });
 
@@ -707,6 +714,7 @@ class _MomCozyNavTab extends StatelessWidget {
   final bool selected;
   final String asset;
   final Size iconSize;
+  final bool matchesPlanDesign;
   final VoidCallback? onTap;
 
   @override
@@ -734,12 +742,20 @@ class _MomCozyNavTab extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 4),
                 child: DefaultTextStyle(
                   style: TextStyle(
-                    fontFamily: MomCozyTypography.fontFamily,
+                    fontFamily: matchesPlanDesign
+                        ? MomCozyTypography.interfaceFontFamily
+                        : MomCozyTypography.fontFamily,
                     fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
                     color: foreground,
                     fontSize: 11,
                     height: 1.05,
-                    fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                    fontWeight: matchesPlanDesign
+                        ? selected
+                              ? FontWeight.w600
+                              : FontWeight.w500
+                        : selected
+                        ? FontWeight.w800
+                        : FontWeight.w600,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -779,23 +795,37 @@ class _MomCozyNavTab extends StatelessWidget {
 }
 
 class _CozymateNavSlot extends StatelessWidget {
-  const _CozymateNavSlot({required this.selected, required this.onTap});
+  const _CozymateNavSlot({
+    required this.selected,
+    required this.showLabel,
+    required this.onTap,
+  });
 
   final bool selected;
+  final bool showLabel;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return _MomCozyAgentNavTab(selected: selected, onTap: onTap);
+    return _MomCozyAgentNavTab(
+      selected: selected,
+      showLabel: showLabel,
+      onTap: onTap,
+    );
   }
 }
 
 const _agentNavWakeDuration = Duration(milliseconds: 1640);
 
 class _MomCozyAgentNavTab extends StatefulWidget {
-  const _MomCozyAgentNavTab({required this.selected, required this.onTap});
+  const _MomCozyAgentNavTab({
+    required this.selected,
+    required this.showLabel,
+    required this.onTap,
+  });
 
   final bool selected;
+  final bool showLabel;
   final VoidCallback onTap;
 
   @override
@@ -891,202 +921,237 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Semantics(
-        label: 'Cozymate',
-        selected: widget.selected,
-        button: true,
-        child: Transform.translate(
-          offset: const Offset(0, -7),
-          child: Material(
-            key: const ValueKey('bottom-nav-agent'),
-            color: Colors.transparent,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: widget.onTap,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                width: MomCozyLayout.bottomNavCenterSize,
-                height: MomCozyLayout.bottomNavCenterSize,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  border: Border.all(color: MomCozyV3Colors.ink, width: 3),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x263a2731),
-                      blurRadius: 16,
-                      offset: Offset(0, 7),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Center(
+          child: Semantics(
+            label: 'Cozymate',
+            selected: widget.selected,
+            button: true,
+            child: Transform.translate(
+              offset: Offset(0, widget.showLabel ? -11 : -7),
+              child: Material(
+                key: const ValueKey('bottom-nav-agent'),
+                color: Colors.transparent,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: widget.onTap,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    width: MomCozyLayout.bottomNavCenterSize,
+                    height: MomCozyLayout.bottomNavCenterSize,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      border: Border.all(color: MomCozyV3Colors.ink, width: 3),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x263a2731),
+                          blurRadius: 16,
+                          offset: Offset(0, 7),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.center,
-                  children: [
-                    if (widget.selected)
-                      Positioned.fill(
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.1),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        if (widget.selected)
+                          Positioned.fill(
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    AnimatedBuilder(
-                      animation: _wakeController,
-                      builder: (context, child) {
-                        final waking =
-                            _wakeController.value > 0 &&
-                            _wakeController.value < 1;
-                        final haloOpacity = waking ? _haloOpacity.value : 0.0;
-                        final haloScale = waking ? _haloScale.value : 1.0;
-                        final ringOpacity = waking ? _ringOpacity.value : 0.0;
-                        final ringScale = waking ? _ringScale.value : 1.0;
-                        final ringRotation = waking ? _ringRotation.value : 0.0;
-                        final presenceScale = waking
-                            ? _presenceScale.value
-                            : 1.0;
-                        final presenceOffsetY = waking
-                            ? _presenceOffsetY.value
-                            : 0.0;
-                        final presenceRotation = waking
-                            ? _presenceRotation.value
-                            : 0.0;
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          alignment: Alignment.center,
-                          children: [
-                            Opacity(
-                              key: const ValueKey(
-                                'bottom-nav-agent-avatar-wake-halo',
-                              ),
-                              opacity: haloOpacity,
-                              child: Transform.scale(
-                                scale: haloScale,
-                                child: Container(
-                                  width: 74,
-                                  height: 74,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        Color(0xbdfff6fa),
-                                        Color(0x5cf49dbd),
-                                        Color(0x387ccac0),
-                                        Color(0x00ffffff),
-                                      ],
-                                      stops: [0, 0.42, 0.6, 0.72],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Opacity(
-                              key: const ValueKey(
-                                'bottom-nav-agent-avatar-wake-ring-opacity',
-                              ),
-                              opacity: ringOpacity,
-                              child: Transform.rotate(
-                                angle: _degreesToRadians(ringRotation),
-                                child: Transform.scale(
+                        AnimatedBuilder(
+                          animation: _wakeController,
+                          builder: (context, child) {
+                            final waking =
+                                _wakeController.value > 0 &&
+                                _wakeController.value < 1;
+                            final haloOpacity = waking
+                                ? _haloOpacity.value
+                                : 0.0;
+                            final haloScale = waking ? _haloScale.value : 1.0;
+                            final ringOpacity = waking
+                                ? _ringOpacity.value
+                                : 0.0;
+                            final ringScale = waking ? _ringScale.value : 1.0;
+                            final ringRotation = waking
+                                ? _ringRotation.value
+                                : 0.0;
+                            final presenceScale = waking
+                                ? _presenceScale.value
+                                : 1.0;
+                            final presenceOffsetY = waking
+                                ? _presenceOffsetY.value
+                                : 0.0;
+                            final presenceRotation = waking
+                                ? _presenceRotation.value
+                                : 0.0;
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              alignment: Alignment.center,
+                              children: [
+                                Opacity(
                                   key: const ValueKey(
-                                    'bottom-nav-agent-avatar-wake-ring',
+                                    'bottom-nav-agent-avatar-wake-halo',
                                   ),
-                                  scale: ringScale,
-                                  child: Container(
-                                    width: 66,
-                                    height: 66,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: const Color(0xb87ccac0),
-                                        width: 2.5,
+                                  opacity: haloOpacity,
+                                  child: Transform.scale(
+                                    scale: haloScale,
+                                    child: Container(
+                                      width: 74,
+                                      height: 74,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: RadialGradient(
+                                          colors: [
+                                            Color(0xbdfff6fa),
+                                            Color(0x5cf49dbd),
+                                            Color(0x387ccac0),
+                                            Color(0x00ffffff),
+                                          ],
+                                          stops: [0, 0.42, 0.6, 0.72],
+                                        ),
                                       ),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Color(0x3ddb799a),
-                                          blurRadius: 12,
-                                        ),
-                                        BoxShadow(
-                                          color: Color(0x267ccac0),
-                                          blurRadius: 22,
-                                        ),
-                                      ],
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Transform.translate(
-                              offset: Offset(0, presenceOffsetY),
-                              child: Transform.rotate(
-                                angle: _degreesToRadians(presenceRotation),
-                                child: Transform.scale(
+                                Opacity(
                                   key: const ValueKey(
-                                    'bottom-nav-agent-avatar-presence-scale',
+                                    'bottom-nav-agent-avatar-wake-ring-opacity',
                                   ),
-                                  scale: presenceScale,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        key: const ValueKey(
-                                          'bottom-nav-agent-avatar',
-                                        ),
-                                        width: 50,
-                                        height: 50,
+                                  opacity: ringOpacity,
+                                  child: Transform.rotate(
+                                    angle: _degreesToRadians(ringRotation),
+                                    child: Transform.scale(
+                                      key: const ValueKey(
+                                        'bottom-nav-agent-avatar-wake-ring',
+                                      ),
+                                      scale: ringScale,
+                                      child: Container(
+                                        width: 66,
+                                        height: 66,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                              MomCozyAssets.agentAvatar,
-                                            ),
-                                            fit: BoxFit.cover,
+                                          border: Border.all(
+                                            color: const Color(0xb87ccac0),
+                                            width: 2.5,
                                           ),
                                           boxShadow: const [
                                             BoxShadow(
-                                              color: Color(0x243a2731),
-                                              blurRadius: 10,
-                                              offset: Offset(0, 4),
+                                              color: Color(0x3ddb799a),
+                                              blurRadius: 12,
+                                            ),
+                                            BoxShadow(
+                                              color: Color(0x267ccac0),
+                                              blurRadius: 22,
                                             ),
                                           ],
                                         ),
                                       ),
-                                      if (waking && _wakeGifBytes != null)
-                                        ClipOval(
-                                          child: Image.memory(
-                                            _wakeGifBytes!,
-                                            key: ValueKey(
-                                              'bottom-nav-agent-avatar-wake-media-$_wakeReplayCount',
-                                            ),
-                                            width: 60,
-                                            height: 60,
-                                            fit: BoxFit.cover,
-                                            gaplessPlayback: false,
-                                          ),
-                                        ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                                Transform.translate(
+                                  offset: Offset(0, presenceOffsetY),
+                                  child: Transform.rotate(
+                                    angle: _degreesToRadians(presenceRotation),
+                                    child: Transform.scale(
+                                      key: const ValueKey(
+                                        'bottom-nav-agent-avatar-presence-scale',
+                                      ),
+                                      scale: presenceScale,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            key: const ValueKey(
+                                              'bottom-nav-agent-avatar',
+                                            ),
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                  widget.showLabel
+                                                      ? MomCozyAssets
+                                                            .planCozymateAvatar
+                                                      : MomCozyAssets
+                                                            .agentAvatar,
+                                                ),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color(0x243a2731),
+                                                  blurRadius: 10,
+                                                  offset: Offset(0, 4),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          if (waking && _wakeGifBytes != null)
+                                            ClipOval(
+                                              child: Image.memory(
+                                                _wakeGifBytes!,
+                                                key: ValueKey(
+                                                  'bottom-nav-agent-avatar-wake-media-$_wakeReplayCount',
+                                                ),
+                                                width: 60,
+                                                height: 60,
+                                                fit: BoxFit.cover,
+                                                gaplessPlayback: false,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
+        if (widget.showLabel)
+          const Positioned(
+            left: 0,
+            right: 0,
+            top: 50,
+            child: IgnorePointer(
+              child: Text(
+                'Cozymate',
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xff9e8880),
+                  fontFamily: MomCozyTypography.interfaceFontFamily,
+                  fontSize: 11,
+                  height: 1.05,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
