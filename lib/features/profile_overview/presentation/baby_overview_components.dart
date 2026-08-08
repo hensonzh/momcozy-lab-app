@@ -173,6 +173,8 @@ class _BabyAvatarStage extends StatelessWidget {
             constraints.maxHeight * (compact ? 0.67 : 0.70),
             538.0,
           );
+          final avatarWidth = math.min(constraints.maxWidth * 0.88, 378.0);
+          final avatarHeight = math.min(cardHeight * 1.05, 560.0);
           return Stack(
             clipBehavior: Clip.none,
             children: [
@@ -198,13 +200,39 @@ class _BabyAvatarStage extends StatelessWidget {
               Positioned(
                 right: compact ? -8 : 3,
                 top: compact ? -34 : -24,
-                width: math.min(constraints.maxWidth * 0.88, 378),
-                height: math.min(cardHeight * 1.05, 560),
-                child: Image.asset(
-                  _MeBabyOverviewAssets.babyAvatarFull,
-                  alignment: Alignment.bottomRight,
-                  fit: BoxFit.contain,
-                  semanticLabel: 'Baby avatar',
+                width: avatarWidth,
+                height: avatarHeight,
+                child: ClipRect(
+                  key: const ValueKey('baby-avatar-without-baked-name'),
+                  clipper: const _BabyAvatarWithoutBakedNameClipper(),
+                  child: Image.asset(
+                    _MeBabyOverviewAssets.babyAvatarFull,
+                    key: const ValueKey('baby-avatar-expanded-image'),
+                    alignment: Alignment.bottomRight,
+                    fit: BoxFit.contain,
+                    semanticLabel: 'Baby avatar',
+                  ),
+                ),
+              ),
+              Positioned(
+                right: compact ? 58 : 76,
+                top: cardHeight * 0.81,
+                width: 120,
+                child: Text(
+                  data.babyName,
+                  key: const ValueKey('baby-avatar-dynamic-name'),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color(0xffffcaca),
+                    fontSize: 42,
+                    height: 1,
+                    fontWeight: FontWeight.w900,
+                    shadows: [
+                      Shadow(color: Color(0x55c98d8d), offset: Offset(0, 2)),
+                    ],
+                  ),
                 ),
               ),
               Positioned(
@@ -326,6 +354,17 @@ class _BabyAvatarStage extends StatelessWidget {
   }
 }
 
+class _BabyAvatarWithoutBakedNameClipper extends CustomClipper<Rect> {
+  const _BabyAvatarWithoutBakedNameClipper();
+
+  @override
+  Rect getClip(Size size) =>
+      Rect.fromLTWH(0, 0, size.width, size.height * 0.83);
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Rect> oldClipper) => false;
+}
+
 class _AvatarMonitorPreview extends StatelessWidget {
   const _AvatarMonitorPreview();
 
@@ -361,10 +400,11 @@ class _BabyContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (section) {
       'sleep' => _BabySleepContent(
+        data: data,
         onOpenDetail: () => onOpenDetail(_BabyDetail.sleep),
       ),
       'feeding' => _BabyFeedingContent(data: data),
-      'diaper' => const _BabyDiaperContent(),
+      'diaper' => _BabyDiaperContent(data: data),
       _ => const _BabyMonitorContent(),
     };
   }
@@ -504,12 +544,25 @@ class _BabyMonitorContent extends StatelessWidget {
 }
 
 class _BabySleepContent extends StatelessWidget {
-  const _BabySleepContent({required this.onOpenDetail});
+  const _BabySleepContent({required this.data, required this.onOpenDetail});
 
+  final _MeBabyOverviewData data;
   final VoidCallback onOpenDetail;
 
   @override
   Widget build(BuildContext context) {
+    final records = data.todaySleepRecords;
+    final naps = data.todayNaps;
+    final isLoading =
+        data.sleepRecords.phase == OverviewResourcePhase.initial ||
+        data.sleepRecords.phase == OverviewResourcePhase.loading;
+    final summary = records.isEmpty
+        ? data.sleepRecords.hasError
+              ? 'Sleep records could not be refreshed'
+              : isLoading
+              ? 'Loading confirmed sleep records…'
+              : 'No sleep data recorded today'
+        : '${records.length} confirmed ${records.length == 1 ? 'session' : 'sessions'}';
     return Column(
       children: [
         Material(
@@ -518,11 +571,11 @@ class _BabySleepContent extends StatelessWidget {
             key: const ValueKey('baby-sleep-summary-card'),
             borderRadius: BorderRadius.circular(26),
             onTap: onOpenDetail,
-            child: const _V2Card(
+            child: _V2Card(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       _BabyRoundIcon(icon: Icons.bedtime_outlined),
                       SizedBox(width: 10),
@@ -534,37 +587,45 @@ class _BabySleepContent extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
-                  Text('— h', style: _BabyText.heroMetric),
-                  SizedBox(height: 7),
+                  const SizedBox(height: 12),
                   Text(
-                    'No sleep data recorded today',
-                    style: _BabyText.supporting,
+                    records.isEmpty
+                        ? '— h'
+                        : _formatSleepDuration(data.todaySleepDuration),
+                    style: _BabyText.heroMetric,
                   ),
+                  const SizedBox(height: 7),
+                  Text(summary, style: _BabyText.supporting),
                 ],
               ),
             ),
           ),
         ),
         const SizedBox(height: 10),
-        const _V2Card(
-          padding: EdgeInsets.all(16),
+        _V2Card(
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Sleep Pattern Today',
                       style: _BabyText.cardTitle,
                     ),
                   ),
-                  Text('0 naps', style: _BabyText.accentLabel),
+                  Text(
+                    '${naps.length} ${naps.length == 1 ? 'nap' : 'naps'}',
+                    style: _BabyText.accentLabel,
+                  ),
                 ],
               ),
-              SizedBox(height: 16),
-              _EmptyTimeline(),
+              const SizedBox(height: 16),
+              if (records.isEmpty)
+                const _EmptyTimeline()
+              else
+                _SleepDayTimeline(records: records, now: data.now),
             ],
           ),
         ),
@@ -603,13 +664,23 @@ class _BabyFeedingContent extends StatelessWidget {
         data.feedingRecords.phase == OverviewResourcePhase.initial ||
         data.feedingRecords.phase == OverviewResourcePhase.loading;
     if (feeds.isEmpty) {
-      return _OverviewStateCard(
-        title: isLoading ? 'Loading feeding data…' : 'No feeding data yet',
-        description: data.feedingRecords.hasError
-            ? 'Feeding records could not be refreshed. Try again later.'
-            : 'Confirmed feeding records will appear here.',
-        icon: isLoading ? Icons.sync_rounded : Icons.restaurant_outlined,
-        loading: isLoading,
+      return Column(
+        children: [
+          _OverviewStateCard(
+            title: isLoading
+                ? 'Loading feeding data…'
+                : 'No feeding data today',
+            description: data.feedingRecords.hasError
+                ? 'Feeding records could not be refreshed. Try again later.'
+                : 'Confirmed feeding records will appear here.',
+            icon: isLoading ? Icons.sync_rounded : Icons.restaurant_outlined,
+            loading: isLoading,
+          ),
+          const SizedBox(height: 14),
+          _FeedingDiaperSummaryCard(data: data),
+          const SizedBox(height: 14),
+          _FeedingWeekTrendCard(data: data),
+        ],
       );
     }
     return Column(
@@ -679,37 +750,151 @@ class _BabyFeedingContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 14),
-        const _V2Card(
-          padding: EdgeInsets.all(16),
+        _FeedingDiaperSummaryCard(data: data),
+        const SizedBox(height: 14),
+        _FeedingWeekTrendCard(data: data),
+      ],
+    );
+  }
+}
+
+class _FeedingDiaperSummaryCard extends StatelessWidget {
+  const _FeedingDiaperSummaryCard({required this.data});
+
+  final _MeBabyOverviewData data;
+
+  @override
+  Widget build(BuildContext context) {
+    final records = data.todayDiaperRecords;
+    final wet = records.where((record) => record.includesWet).length;
+    final dirty = records.where((record) => record.includesDirty).length;
+    final isLoading =
+        data.diaperRecords.phase == OverviewResourcePhase.initial ||
+        data.diaperRecords.phase == OverviewResourcePhase.loading;
+    return _V2Card(
+      cardKey: const ValueKey('baby-feeding-diaper-summary'),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Text('Diaper Tracker', style: _BabyText.cardTitle),
+              ),
+              if (records.isNotEmpty)
+                Text(
+                  '$wet wet / $dirty dirty today',
+                  style: _BabyText.accentLabel,
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          if (records.isEmpty)
+            _EmptyInlineState(
+              icon: Icons.baby_changing_station_outlined,
+              title: isLoading
+                  ? 'Loading diaper records…'
+                  : 'No diaper records today',
+              description: data.diaperRecords.hasError
+                  ? 'Diaper records could not be refreshed.'
+                  : 'Confirmed changes will appear here.',
+            )
+          else
+            Wrap(
+              spacing: 20,
+              runSpacing: 8,
+              children: [
+                _FeedingCareMetric(
+                  icon: Icons.water_drop_outlined,
+                  label: '$wet Wet Diapers',
+                ),
+                _FeedingCareMetric(
+                  icon: Icons.baby_changing_station_outlined,
+                  label: '$dirty Dirty Diapers',
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeedingCareMetric extends StatelessWidget {
+  const _FeedingCareMetric({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: _BabyOverviewColors.wine, size: 22),
+        const SizedBox(width: 7),
+        Text(label, style: _BabyText.cardTitle),
+      ],
+    );
+  }
+}
+
+class _FeedingWeekTrendCard extends StatelessWidget {
+  const _FeedingWeekTrendCard({required this.data});
+
+  final _MeBabyOverviewData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return _V2Card(
+      cardKey: const ValueKey('baby-feeding-weekly-trend'),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Weekly Intake Trend', style: _BabyText.cardTitle),
+          const SizedBox(height: 12),
+          _FeedingWeekBars(records: data.orderedFeedingRecords, now: data.now),
+        ],
+      ),
+    );
+  }
+}
+
+class _BabyFeedingWeekContent extends StatelessWidget {
+  const _BabyFeedingWeekContent({required this.data});
+
+  final _MeBabyOverviewData data;
+
+  @override
+  Widget build(BuildContext context) {
+    final records = _feedingRecordsInWeek(
+      records: data.orderedFeedingRecords,
+      now: data.now,
+    );
+    final measuredTotal = records.fold<int>(
+      0,
+      (total, record) => total + (record.amountMl ?? 0),
+    );
+    return Column(
+      children: [
+        _V2Card(
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Diaper Tracker', style: _BabyText.cardTitle),
-              SizedBox(height: 10),
-              _EmptyInlineState(
-                icon: Icons.baby_changing_station_outlined,
-                title: 'No linked diaper data',
-                description: 'Diaper records are not available yet.',
+              const Text('7-Day Feeding Summary', style: _BabyText.cardTitle),
+              const SizedBox(height: 7),
+              Text(
+                '${records.length} confirmed ${records.length == 1 ? 'feed' : 'feeds'} · $measuredTotal mL measured',
+                style: _BabyText.supporting,
               ),
             ],
           ),
         ),
         const SizedBox(height: 14),
-        const _V2Card(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Weekly Intake Trend', style: _BabyText.cardTitle),
-              SizedBox(height: 10),
-              _EmptyInlineState(
-                icon: Icons.bar_chart_rounded,
-                title: 'Weekly trend unavailable',
-                description: 'The current API provides today’s records only.',
-              ),
-            ],
-          ),
-        ),
+        _FeedingWeekTrendCard(data: data),
       ],
     );
   }
@@ -738,18 +923,34 @@ class _BabyFeedingContent extends StatelessWidget {
 }
 
 class _BabyDiaperContent extends StatelessWidget {
-  const _BabyDiaperContent();
+  const _BabyDiaperContent({required this.data});
+
+  final _MeBabyOverviewData data;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final records = data.todayDiaperRecords;
+    final wetCount = records.where((record) => record.includesWet).length;
+    final dirtyCount = records.where((record) => record.includesDirty).length;
+    final count = records.length;
+    final isLoading =
+        data.diaperRecords.phase == OverviewResourcePhase.initial ||
+        data.diaperRecords.phase == OverviewResourcePhase.loading;
+    final stateLabel = count > 0
+        ? 'Confirmed records'
+        : data.diaperRecords.hasError
+        ? 'Refresh failed'
+        : isLoading
+        ? 'Loading records…'
+        : 'No diaper data yet';
+    return Column(
       children: [
         _V2Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('TODAY’S SUMMARY', style: _BabyText.eyebrow),
-              SizedBox(height: 12),
+              const Text('TODAY’S SUMMARY', style: _BabyText.eyebrow),
+              const SizedBox(height: 12),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -758,16 +959,19 @@ class _BabyDiaperContent extends StatelessWidget {
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.bottomLeft,
-                      child: Text('0 changes', style: _BabyText.heroMetric),
+                      child: Text(
+                        '$count ${count == 1 ? 'change' : 'changes'}',
+                        style: _BabyText.heroMetric,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: EdgeInsets.only(bottom: 7),
+                      padding: const EdgeInsets.only(bottom: 7),
                       child: Text(
-                        'No diaper data yet',
+                        stateLabel,
                         textAlign: TextAlign.right,
                         style: _BabyText.supporting,
                       ),
@@ -778,54 +982,63 @@ class _BabyDiaperContent extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 14),
+        const SizedBox(height: 14),
         Row(
           children: [
             Expanded(
               child: _DiaperMetric(
                 icon: Icons.water_drop_outlined,
-                iconColor: Color(0xff2d9cdb),
-                value: '0 Wet',
-                subtitle: 'No records',
+                iconColor: const Color(0xff2d9cdb),
+                value: '$wetCount Wet',
+                subtitle: wetCount == 0 ? 'No records' : 'Confirmed today',
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: _DiaperMetric(
                 icon: Icons.baby_changing_station_outlined,
-                value: '0 Dirty',
-                subtitle: 'No records',
+                value: '$dirtyCount Dirty',
+                subtitle: dirtyCount == 0 ? 'No records' : 'Confirmed today',
               ),
             ),
           ],
         ),
-        SizedBox(height: 14),
+        const SizedBox(height: 14),
         _V2Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Diaper Timeline', style: _BabyText.cardTitle),
-              SizedBox(height: 12),
-              _EmptyInlineState(
-                icon: Icons.history_rounded,
-                title: 'No confirmed changes',
-                description:
-                    'Recorded diaper changes will appear here when the service is connected.',
-              ),
+              const Text('Diaper Timeline', style: _BabyText.cardTitle),
+              const SizedBox(height: 12),
+              if (records.isEmpty)
+                const _EmptyInlineState(
+                  icon: Icons.history_rounded,
+                  title: 'No confirmed changes',
+                  description: 'Recorded diaper changes will appear here.',
+                )
+              else
+                for (var index = 0; index < records.length; index += 1) ...[
+                  _DiaperTimelineRow(record: records[index]),
+                  if (index < records.length - 1)
+                    const Divider(color: _BabyOverviewColors.line, height: 16),
+                ],
             ],
           ),
         ),
-        SizedBox(height: 14),
+        const SizedBox(height: 14),
         _V2Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Weekly Overview (Total Changes)',
                 style: _BabyText.cardTitle,
               ),
-              SizedBox(height: 12),
-              _EmptyTimeline(),
+              const SizedBox(height: 12),
+              _DiaperWeekBars(
+                records: data.orderedDiaperRecords,
+                now: data.now,
+              ),
             ],
           ),
         ),
@@ -875,9 +1088,9 @@ class _BabyDetailPage extends StatelessWidget {
           if (detail == _BabyDetail.feeding)
             _BabyFeedingDetailContent(data: data)
           else if (detail == _BabyDetail.diaper)
-            const _BabyDiaperContent()
+            _BabyDiaperContent(data: data)
           else if (detail == _BabyDetail.sleep)
-            _BabySleepReportContent(babyName: data.babyName)
+            _BabySleepReportContent(data: data)
           else
             _BabyGrowthDetailContent(detail: detail, data: data),
         ],
@@ -1013,12 +1226,7 @@ class _BabyFeedingDetailContentState extends State<_BabyFeedingDetailContent> {
         if (_period == 'day')
           _BabyFeedingContent(data: widget.data)
         else
-          const _OverviewStateCard(
-            title: 'Weekly feeding data unavailable',
-            description:
-                'The current service provides today’s confirmed records only.',
-            icon: Icons.bar_chart_rounded,
-          ),
+          _BabyFeedingWeekContent(data: widget.data),
       ],
     );
   }
@@ -1082,12 +1290,17 @@ class _DetailPeriodTabs extends StatelessWidget {
 }
 
 class _BabySleepReportContent extends StatelessWidget {
-  const _BabySleepReportContent({required this.babyName});
+  const _BabySleepReportContent({required this.data});
 
-  final String babyName;
+  final _MeBabyOverviewData data;
 
   @override
   Widget build(BuildContext context) {
+    final nightRecords = data.orderedSleepRecords
+        .where((record) => record.kind == SleepKind.night)
+        .toList(growable: false);
+    final latestNight = nightRecords.isEmpty ? null : nightRecords.first;
+    final naps = data.todayNaps;
     return Column(
       children: [
         _V2Card(
@@ -1096,54 +1309,80 @@ class _BabySleepReportContent extends StatelessWidget {
             children: [
               const Text("LAST NIGHT'S SLEEP", style: _BabyText.eyebrow),
               const SizedBox(height: 10),
-              const Row(
+              Row(
                 children: [
-                  Expanded(child: Text('— hours', style: _BabyText.heroMetric)),
-                  _WineBadge(label: 'No data'),
+                  Expanded(
+                    child: Text(
+                      latestNight == null
+                          ? '— hours'
+                          : _formatSleepDuration(
+                              latestNight.durationUntil(data.now),
+                            ),
+                      style: _BabyText.heroMetric,
+                    ),
+                  ),
+                  _WineBadge(
+                    label: latestNight == null ? 'No data' : 'Recorded',
+                  ),
                 ],
               ),
               const Divider(color: _BabyOverviewColors.line, height: 28),
               Text(
-                'No confirmed sleep record is available for $babyName.',
+                latestNight == null
+                    ? 'No confirmed sleep record is available for ${data.babyName}.'
+                    : _sleepIntervalLabel(context, latestNight),
                 style: _BabyText.supporting,
               ),
             ],
           ),
         ),
         const SizedBox(height: 14),
-        const _V2Card(
+        _V2Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Sleep Timeline', style: _BabyText.cardTitle),
-              SizedBox(height: 16),
-              _EmptyTimeline(),
+              const Text('Sleep Timeline', style: _BabyText.cardTitle),
+              const SizedBox(height: 16),
+              if (data.todaySleepRecords.isEmpty)
+                const _EmptyTimeline()
+              else
+                _SleepDayTimeline(
+                  records: data.todaySleepRecords,
+                  now: data.now,
+                ),
             ],
           ),
         ),
         const SizedBox(height: 14),
-        const _V2Card(
+        _V2Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Today's Naps", style: _BabyText.cardTitle),
-              SizedBox(height: 12),
-              _EmptyInlineState(
-                icon: Icons.bedtime_outlined,
-                title: 'No naps recorded',
-                description: 'Confirmed nap records will appear here.',
-              ),
+              const Text("Today's Naps", style: _BabyText.cardTitle),
+              const SizedBox(height: 12),
+              if (naps.isEmpty)
+                const _EmptyInlineState(
+                  icon: Icons.bedtime_outlined,
+                  title: 'No naps recorded',
+                  description: 'Confirmed nap records will appear here.',
+                )
+              else
+                for (var index = 0; index < naps.length; index += 1) ...[
+                  _SleepRecordRow(record: naps[index], now: data.now),
+                  if (index < naps.length - 1)
+                    const Divider(color: _BabyOverviewColors.line, height: 16),
+                ],
             ],
           ),
         ),
         const SizedBox(height: 14),
-        const _V2Card(
+        _V2Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Weekly Pattern', style: _BabyText.cardTitle),
-              SizedBox(height: 16),
-              _EmptyTimeline(),
+              const Text('Weekly Pattern', style: _BabyText.cardTitle),
+              const SizedBox(height: 16),
+              _SleepWeekBars(records: data.orderedSleepRecords, now: data.now),
             ],
           ),
         ),
@@ -1930,6 +2169,386 @@ class _EmptyInlineState extends StatelessWidget {
       ],
     );
   }
+}
+
+class _SleepDayTimeline extends StatelessWidget {
+  const _SleepDayTimeline({required this.records, required this.now});
+
+  final List<SleepRecord> records;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final localNow = now.toLocal();
+    final dayStart = DateTime(localNow.year, localNow.month, localNow.day);
+    final dayEnd = dayStart.add(const Duration(days: 1));
+    final segments = <({double start, double end, SleepKind kind})>[];
+    for (final record in records) {
+      final rawStart = record.startedAt.toLocal();
+      final rawEnd = (record.endedAt ?? now).toLocal();
+      final start = rawStart.isBefore(dayStart) ? dayStart : rawStart;
+      final end = rawEnd.isAfter(dayEnd) ? dayEnd : rawEnd;
+      if (!end.isAfter(start)) continue;
+      segments.add((
+        start: start.difference(dayStart).inSeconds / 86400,
+        end: end.difference(dayStart).inSeconds / 86400,
+        kind: record.kind,
+      ));
+    }
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: SizedBox(
+            height: 24,
+            width: double.infinity,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Stack(
+                  children: [
+                    const Positioned.fill(
+                      child: ColoredBox(color: _BabyOverviewColors.pill),
+                    ),
+                    for (final segment in segments)
+                      Positioned(
+                        left: segment.start * constraints.maxWidth,
+                        width: math.max(
+                          4,
+                          (segment.end - segment.start) * constraints.maxWidth,
+                        ),
+                        top: 0,
+                        bottom: 0,
+                        child: ColoredBox(
+                          color: segment.kind == SleepKind.nap
+                              ? const Color(0xffd96c8f)
+                              : _BabyOverviewColors.wine,
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 7),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('12am', style: _BabyText.supportingSmall),
+            Text('6am', style: _BabyText.supportingSmall),
+            Text('12pm', style: _BabyText.supportingSmall),
+            Text('6pm', style: _BabyText.supportingSmall),
+            Text('Now', style: _BabyText.supportingSmall),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _SleepRecordRow extends StatelessWidget {
+  const _SleepRecordRow({required this.record, required this.now});
+
+  final SleepRecord record;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const _BabyRoundIcon(icon: Icons.bedtime_outlined),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _formatSleepDuration(record.durationUntil(now)),
+                style: _BabyText.cardTitle,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                _sleepIntervalLabel(context, record),
+                style: _BabyText.supportingSmall,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DiaperTimelineRow extends StatelessWidget {
+  const _DiaperTimelineRow({required this.record});
+
+  final DiaperRecord record;
+
+  @override
+  Widget build(BuildContext context) {
+    final localTime = record.changedAt.toLocal();
+    final time = MaterialLocalizations.of(
+      context,
+    ).formatTimeOfDay(TimeOfDay.fromDateTime(localTime));
+    final label = switch (record.kind) {
+      DiaperKind.wet => 'Wet diaper',
+      DiaperKind.dirty => 'Dirty diaper',
+      DiaperKind.both => 'Wet & dirty',
+    };
+    final observations = <String>[
+      if (record.wetness != null) _capitalize(record.wetness!.name),
+      if (record.stoolColor?.trim().isNotEmpty == true)
+        record.stoolColor!.trim(),
+      if (record.stoolConsistency?.trim().isNotEmpty == true)
+        record.stoolConsistency!.trim(),
+    ];
+    return Row(
+      children: [
+        _BabyRoundIcon(
+          icon: record.includesWet
+              ? Icons.water_drop_outlined
+              : Icons.baby_changing_station_outlined,
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: _BabyText.cardTitle),
+              if (observations.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  observations.join(' · '),
+                  style: _BabyText.supportingSmall,
+                ),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(time, style: _BabyText.supporting),
+      ],
+    );
+  }
+}
+
+class _SleepWeekBars extends StatelessWidget {
+  const _SleepWeekBars({required this.records, required this.now});
+
+  final List<SleepRecord> records;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final localNow = now.toLocal();
+    final today = DateTime(localNow.year, localNow.month, localNow.day);
+    final days = [
+      for (var offset = 6; offset >= 0; offset -= 1)
+        today.subtract(Duration(days: offset)),
+    ];
+    final minutes = [
+      for (final day in days)
+        records.fold<int>(
+          0,
+          (total, record) =>
+              total + _sleepDurationInDay(record, day, now).inMinutes,
+        ),
+    ];
+    return _RawWeekBars(
+      values: minutes,
+      labels: days.map(_babyWeekdayLabel).toList(growable: false),
+      semanticsLabel: 'Confirmed sleep minutes for the last seven days',
+    );
+  }
+}
+
+class _DiaperWeekBars extends StatelessWidget {
+  const _DiaperWeekBars({required this.records, required this.now});
+
+  final List<DiaperRecord> records;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final localNow = now.toLocal();
+    final today = DateTime(localNow.year, localNow.month, localNow.day);
+    final days = [
+      for (var offset = 6; offset >= 0; offset -= 1)
+        today.subtract(Duration(days: offset)),
+    ];
+    final counts = [
+      for (final day in days)
+        records.where((record) {
+          final value = record.changedAt.toLocal();
+          return value.year == day.year &&
+              value.month == day.month &&
+              value.day == day.day;
+        }).length,
+    ];
+    return _RawWeekBars(
+      values: counts,
+      labels: days.map(_babyWeekdayLabel).toList(growable: false),
+      semanticsLabel: 'Confirmed diaper changes for the last seven days',
+    );
+  }
+}
+
+class _FeedingWeekBars extends StatelessWidget {
+  const _FeedingWeekBars({required this.records, required this.now});
+
+  final List<FeedingRecord> records;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final localNow = now.toLocal();
+    final today = DateTime(localNow.year, localNow.month, localNow.day);
+    final days = [
+      for (var offset = 6; offset >= 0; offset -= 1)
+        today.subtract(Duration(days: offset)),
+    ];
+    final totals = [
+      for (final day in days)
+        records.fold<int>(0, (total, record) {
+          final value = record.occurredAt?.toLocal();
+          if (value == null ||
+              value.year != day.year ||
+              value.month != day.month ||
+              value.day != day.day) {
+            return total;
+          }
+          return total + (record.amountMl ?? 0);
+        }),
+    ];
+    return _RawWeekBars(
+      values: totals,
+      labels: days.map(_babyWeekdayLabel).toList(growable: false),
+      semanticsLabel:
+          'Confirmed measured feeding totals for the last seven days',
+    );
+  }
+}
+
+List<FeedingRecord> _feedingRecordsInWeek({
+  required List<FeedingRecord> records,
+  required DateTime now,
+}) {
+  final localNow = now.toLocal();
+  final end = DateTime(
+    localNow.year,
+    localNow.month,
+    localNow.day,
+  ).add(const Duration(days: 1));
+  final start = end.subtract(const Duration(days: 7));
+  return records
+      .where((record) {
+        final value = record.occurredAt?.toLocal();
+        return value != null && !value.isBefore(start) && value.isBefore(end);
+      })
+      .toList(growable: false);
+}
+
+class _RawWeekBars extends StatelessWidget {
+  const _RawWeekBars({
+    required this.values,
+    required this.labels,
+    required this.semanticsLabel,
+  });
+
+  final List<int> values;
+  final List<String> labels;
+  final String semanticsLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final maximum = values.fold<int>(
+      0,
+      (current, value) => current > value ? current : value,
+    );
+    final scaleMaximum = math.max(1, maximum);
+    return Semantics(
+      label: semanticsLabel,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 88),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            for (var index = 0; index < values.length; index += 1)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        '${values[index]}',
+                        style: _BabyText.supportingSmall,
+                      ),
+                      const SizedBox(height: 3),
+                      Container(
+                        height: math.max(
+                          5,
+                          48 * values[index] / scaleMaximum,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _BabyOverviewColors.wine,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(7),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(labels[index], style: _BabyText.supportingSmall),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Duration _sleepDurationInDay(SleepRecord record, DateTime day, DateTime now) {
+  final dayEnd = day.add(const Duration(days: 1));
+  final rawStart = record.startedAt.toLocal();
+  final rawEnd = (record.endedAt ?? now).toLocal();
+  final start = rawStart.isBefore(day) ? day : rawStart;
+  final end = rawEnd.isAfter(dayEnd) ? dayEnd : rawEnd;
+  return end.isAfter(start) ? end.difference(start) : Duration.zero;
+}
+
+String _formatSleepDuration(Duration duration) {
+  final totalMinutes = duration.inMinutes;
+  final hours = totalMinutes ~/ 60;
+  final minutes = totalMinutes % 60;
+  if (hours == 0) return '$minutes m';
+  if (minutes == 0) return '$hours h';
+  return '$hours h $minutes m';
+}
+
+String _sleepIntervalLabel(BuildContext context, SleepRecord record) {
+  final localizations = MaterialLocalizations.of(context);
+  final start = localizations.formatTimeOfDay(
+    TimeOfDay.fromDateTime(record.startedAt.toLocal()),
+  );
+  final end = record.endedAt == null
+      ? 'Ongoing'
+      : localizations.formatTimeOfDay(
+          TimeOfDay.fromDateTime(record.endedAt!.toLocal()),
+        );
+  return '$start – $end';
+}
+
+String _babyWeekdayLabel(DateTime value) {
+  return const ['M', 'T', 'W', 'T', 'F', 'S', 'S'][value.weekday - 1];
+}
+
+String _capitalize(String value) {
+  return value.isEmpty
+      ? value
+      : '${value[0].toUpperCase()}${value.substring(1)}';
 }
 
 class _EmptyTimeline extends StatelessWidget {

@@ -74,6 +74,12 @@ MomProfileOverview? _momProfileOverview(
 }) {
   if (data == null || data.isEmpty) return null;
   final deliveryDate = _date(data['delivery_date']);
+  final expectedDueDate = _date(
+    data['expected_due_date'] ?? data['expectedDueDate'],
+  );
+  final actualDeliveryDate = _date(
+    data['actual_delivery_date'] ?? data['actualDeliveryDate'],
+  );
   final dueDateOrWeek = _string(
     data['birth_prep_due_date_or_week'] ?? data['birthPrepDueDateOrWeek'],
   );
@@ -82,19 +88,27 @@ MomProfileOverview? _momProfileOverview(
     data['current_care_stage'] ?? data['currentCareStage'],
   );
   if (deliveryDate == null &&
+      expectedDueDate == null &&
+      actualDeliveryDate == null &&
       dueDateOrWeek?.trim().isNotEmpty != true &&
       displayName?.trim().isNotEmpty != true &&
       explicitStage == null) {
     return null;
   }
   final hasStageEvidence =
-      deliveryDate != null || dueDateOrWeek?.trim().isNotEmpty == true;
+      deliveryDate != null ||
+      expectedDueDate != null ||
+      actualDeliveryDate != null ||
+      dueDateOrWeek?.trim().isNotEmpty == true;
   final stage =
       explicitStage ??
       (hasStageEvidence
           ? MomLifeStage.resolve(
-              deliveryDate: deliveryDate,
-              hasPregnancyDetails: dueDateOrWeek?.trim().isNotEmpty == true,
+              deliveryDate:
+                  actualDeliveryDate ?? expectedDueDate ?? deliveryDate,
+              hasPregnancyDetails:
+                  expectedDueDate != null ||
+                  dueDateOrWeek?.trim().isNotEmpty == true,
               now: now,
             )
           : null);
@@ -102,9 +116,11 @@ MomProfileOverview? _momProfileOverview(
     displayName: displayName,
     stage: stage,
     postpartumDay: stage == MomLifeStage.postpartum
-        ? _ageDays(deliveryDate, now: now)
+        ? _ageDays(actualDeliveryDate ?? deliveryDate, now: now)
         : null,
     deliveryDate: deliveryDate,
+    expectedDueDate: expectedDueDate,
+    actualDeliveryDate: actualDeliveryDate,
     dueDateOrWeek: dueDateOrWeek,
   );
 }

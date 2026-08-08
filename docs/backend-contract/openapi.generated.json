@@ -969,6 +969,103 @@
         "title": "AgentThreadCreate",
         "type": "object"
       },
+      "AgentThreadHistoryMessageRead": {
+        "properties": {
+          "content": {
+            "additionalProperties": true,
+            "title": "Content",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "message_type": {
+            "title": "Message Type",
+            "type": "string"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "message_type",
+          "content",
+          "status",
+          "sequence",
+          "created_at"
+        ],
+        "title": "AgentThreadHistoryMessageRead",
+        "type": "object"
+      },
+      "AgentThreadHistoryPage": {
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/AgentEventRead"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AgentThreadHistoryMessageRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_before_sequence": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Before Sequence"
+          },
+          "thread": {
+            "$ref": "#/components/schemas/AgentThreadRead"
+          }
+        },
+        "required": [
+          "thread",
+          "items",
+          "events"
+        ],
+        "title": "AgentThreadHistoryPage",
+        "type": "object"
+      },
       "AgentThreadListResponse": {
         "properties": {
           "items": {
@@ -987,6 +1084,11 @@
       },
       "AgentThreadRead": {
         "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -1009,6 +1111,11 @@
           "title": {
             "title": "Title",
             "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
           }
         },
         "required": [
@@ -1016,9 +1123,419 @@
           "owner_user_id",
           "title",
           "status",
-          "metadata"
+          "metadata",
+          "created_at",
+          "updated_at"
         ],
         "title": "AgentThreadRead",
+        "type": "object"
+      },
+      "BodyPainAreaRead": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "intensity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intensity"
+          },
+          "pattern": {
+            "default": "",
+            "title": "Pattern",
+            "type": "string"
+          },
+          "sensation": {
+            "default": "",
+            "title": "Sensation",
+            "type": "string"
+          },
+          "zone": {
+            "enum": [
+              "head_neck",
+              "upper_chest",
+              "upper_back",
+              "lower_back",
+              "lower_abdomen",
+              "pelvis_hips",
+              "lower_body",
+              "shoulders_neck",
+              "other"
+            ],
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "zone"
+        ],
+        "title": "BodyPainAreaRead",
+        "type": "object"
+      },
+      "BodyPainAreaWrite": {
+        "properties": {
+          "intensity": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intensity"
+          },
+          "pattern": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "",
+            "title": "Pattern"
+          },
+          "sensation": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "",
+            "title": "Sensation"
+          },
+          "zone": {
+            "enum": [
+              "head_neck",
+              "upper_chest",
+              "upper_back",
+              "lower_back",
+              "lower_abdomen",
+              "pelvis_hips",
+              "lower_body",
+              "shoulders_neck",
+              "other"
+            ],
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "zone"
+        ],
+        "title": "BodyPainAreaWrite",
+        "type": "object"
+      },
+      "BodyProfileRead": {
+        "properties": {
+          "bleeding_status": {
+            "default": "",
+            "title": "Bleeding Status",
+            "type": "string"
+          },
+          "bowel_status": {
+            "default": "",
+            "title": "Bowel Status",
+            "type": "string"
+          },
+          "daily_impact_description": {
+            "default": "",
+            "title": "Daily Impact Description",
+            "type": "string"
+          },
+          "delivery_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "vaginal",
+                  "cesarean",
+                  "assisted",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Type"
+          },
+          "diastasis_severity": {
+            "anyOf": [
+              {
+                "enum": [
+                  "not_sure",
+                  "none",
+                  "mild",
+                  "moderate",
+                  "severe"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diastasis Severity"
+          },
+          "has_confirmed_data": {
+            "default": false,
+            "title": "Has Confirmed Data",
+            "type": "boolean"
+          },
+          "lower_abdominal_pain": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "rare",
+                  "sometimes",
+                  "often",
+                  "always"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lower Abdominal Pain"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "pain_areas": {
+            "items": {
+              "$ref": "#/components/schemas/BodyPainAreaRead"
+            },
+            "title": "Pain Areas",
+            "type": "array"
+          },
+          "pelvic_floor_strength": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pelvic Floor Strength"
+          },
+          "recovery_score": {
+            "title": "Recovery Score",
+            "type": "null"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "urine_leakage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "rare",
+                  "sometimes",
+                  "often",
+                  "always"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urine Leakage"
+          },
+          "wound_status": {
+            "default": "",
+            "title": "Wound Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "owner_user_id"
+        ],
+        "title": "BodyProfileRead",
+        "type": "object"
+      },
+      "BodyProfileUpdate": {
+        "properties": {
+          "bleeding_status": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "",
+            "title": "Bleeding Status"
+          },
+          "bowel_status": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "",
+            "title": "Bowel Status"
+          },
+          "daily_impact_description": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "",
+            "title": "Daily Impact Description"
+          },
+          "delivery_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "vaginal",
+                  "cesarean",
+                  "assisted",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Type"
+          },
+          "diastasis_severity": {
+            "anyOf": [
+              {
+                "enum": [
+                  "not_sure",
+                  "none",
+                  "mild",
+                  "moderate",
+                  "severe"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diastasis Severity"
+          },
+          "lower_abdominal_pain": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "rare",
+                  "sometimes",
+                  "often",
+                  "always"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lower Abdominal Pain"
+          },
+          "pain_areas": {
+            "items": {
+              "$ref": "#/components/schemas/BodyPainAreaWrite"
+            },
+            "maxItems": 20,
+            "title": "Pain Areas",
+            "type": "array"
+          },
+          "pelvic_floor_strength": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pelvic Floor Strength"
+          },
+          "urine_leakage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "rare",
+                  "sometimes",
+                  "often",
+                  "always"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urine Leakage"
+          },
+          "wound_status": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "",
+            "title": "Wound Status"
+          }
+        },
+        "title": "BodyProfileUpdate",
         "type": "object"
       },
       "Body_upload_file_v1_files_upload_post": {
@@ -1033,6 +1550,273 @@
           "file"
         ],
         "title": "Body_upload_file_v1_files_upload_post",
+        "type": "object"
+      },
+      "CareOverviewCapabilitiesRead": {
+        "properties": {
+          "body_profile": {
+            "default": "available",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Body Profile",
+            "type": "string"
+          },
+          "cycle_tracking": {
+            "default": "unavailable",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Cycle Tracking",
+            "type": "string"
+          },
+          "pregnancy_progress": {
+            "default": "available",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Pregnancy Progress",
+            "type": "string"
+          },
+          "program_progress": {
+            "default": "available",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Program Progress",
+            "type": "string"
+          },
+          "vital_records": {
+            "default": "available",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Vital Records",
+            "type": "string"
+          },
+          "water_records": {
+            "default": "available",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Water Records",
+            "type": "string"
+          }
+        },
+        "title": "CareOverviewCapabilitiesRead",
+        "type": "object"
+      },
+      "DiaperRecordCreate": {
+        "properties": {
+          "changed_at": {
+            "format": "date-time",
+            "title": "Changed At",
+            "type": "string"
+          },
+          "diaper_kind": {
+            "enum": [
+              "wet",
+              "dirty",
+              "both"
+            ],
+            "title": "Diaper Kind",
+            "type": "string"
+          },
+          "infant_id": {
+            "format": "uuid",
+            "title": "Infant Id",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "",
+            "title": "Notes"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "manual",
+            "title": "Source"
+          },
+          "stool_color": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stool Color"
+          },
+          "stool_consistency": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stool Consistency"
+          },
+          "wetness": {
+            "anyOf": [
+              {
+                "enum": [
+                  "light",
+                  "medium",
+                  "heavy"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wetness"
+          }
+        },
+        "required": [
+          "infant_id",
+          "changed_at",
+          "diaper_kind"
+        ],
+        "title": "DiaperRecordCreate",
+        "type": "object"
+      },
+      "DiaperRecordListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DiaperRecordRead"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "DiaperRecordListResponse",
+        "type": "object"
+      },
+      "DiaperRecordRead": {
+        "properties": {
+          "changed_at": {
+            "format": "date-time",
+            "title": "Changed At",
+            "type": "string"
+          },
+          "diaper_kind": {
+            "enum": [
+              "wet",
+              "dirty",
+              "both"
+            ],
+            "title": "Diaper Kind",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "infant_id": {
+            "format": "uuid",
+            "title": "Infant Id",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "stool_color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stool Color"
+          },
+          "stool_consistency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stool Consistency"
+          },
+          "wetness": {
+            "anyOf": [
+              {
+                "enum": [
+                  "light",
+                  "medium",
+                  "heavy"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wetness"
+          }
+        },
+        "required": [
+          "id",
+          "owner_user_id",
+          "infant_id",
+          "changed_at",
+          "diaper_kind",
+          "notes",
+          "source",
+          "status"
+        ],
+        "title": "DiaperRecordRead",
         "type": "object"
       },
       "FeedingRecordCreate": {
@@ -1268,6 +2052,18 @@
           "content_type": {
             "title": "Content Type",
             "type": "string"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
           },
           "id": {
             "format": "uuid",
@@ -1887,6 +2683,56 @@
           }
         },
         "title": "LogoutResponse",
+        "type": "object"
+      },
+      "MeCareOverviewRead": {
+        "properties": {
+          "capabilities": {
+            "$ref": "#/components/schemas/CareOverviewCapabilitiesRead"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "pregnancy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PregnancyProgressRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "program": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProgramProgressRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "fertility",
+                  "pregnancy",
+                  "postpartum"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage"
+          }
+        },
+        "title": "MeCareOverviewRead",
         "type": "object"
       },
       "MilkTrendDayRead": {
@@ -2895,6 +3741,91 @@
         "title": "PregnancyDiaryEntryUpdate",
         "type": "object"
       },
+      "PregnancyProgressRead": {
+        "properties": {
+          "days_remaining": {
+            "anyOf": [
+              {
+                "maximum": 280.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Remaining"
+          },
+          "expected_due_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Due Date"
+          },
+          "gestational_day": {
+            "anyOf": [
+              {
+                "maximum": 6.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gestational Day"
+          },
+          "gestational_week": {
+            "anyOf": [
+              {
+                "maximum": 40.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gestational Week"
+          },
+          "state": {
+            "enum": [
+              "ready",
+              "missing_due_date",
+              "out_of_range"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "trimester": {
+            "anyOf": [
+              {
+                "enum": [
+                  "first",
+                  "second",
+                  "third"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trimester"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "title": "PregnancyProgressRead",
+        "type": "object"
+      },
       "ProductAssetListResponse": {
         "properties": {
           "items": {
@@ -2953,6 +3884,51 @@
           "size_bytes"
         ],
         "title": "ProductAssetRead",
+        "type": "object"
+      },
+      "ProgramProgressRead": {
+        "properties": {
+          "completed_sessions": {
+            "minimum": 0.0,
+            "title": "Completed Sessions",
+            "type": "integer"
+          },
+          "plan_id": {
+            "format": "uuid",
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "plan_type": {
+            "title": "Plan Type",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "ready",
+              "empty"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "total_sessions": {
+            "minimum": 0.0,
+            "title": "Total Sessions",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "state",
+          "plan_id",
+          "plan_type",
+          "title",
+          "completed_sessions",
+          "total_sessions"
+        ],
+        "title": "ProgramProgressRead",
         "type": "object"
       },
       "PumpDeviceListResponse": {
@@ -3465,6 +4441,22 @@
       },
       "PumpingRecordCreate": {
         "properties": {
+          "breast_side": {
+            "anyOf": [
+              {
+                "enum": [
+                  "left",
+                  "right",
+                  "both"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breast Side"
+          },
           "duration_seconds": {
             "anyOf": [
               {
@@ -3580,6 +4572,22 @@
       },
       "PumpingRecordRead": {
         "properties": {
+          "breast_side": {
+            "anyOf": [
+              {
+                "enum": [
+                  "left",
+                  "right",
+                  "both"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breast Side"
+          },
           "duration_seconds": {
             "anyOf": [
               {
@@ -3717,6 +4725,141 @@
           "password"
         ],
         "title": "SignupRequest",
+        "type": "object"
+      },
+      "SleepRecordCreate": {
+        "properties": {
+          "ended_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "infant_id": {
+            "format": "uuid",
+            "title": "Infant Id",
+            "type": "string"
+          },
+          "sleep_kind": {
+            "default": "other",
+            "enum": [
+              "night",
+              "nap",
+              "other"
+            ],
+            "title": "Sleep Kind",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "manual",
+            "title": "Source"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "infant_id",
+          "started_at"
+        ],
+        "title": "SleepRecordCreate",
+        "type": "object"
+      },
+      "SleepRecordListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SleepRecordRead"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "SleepRecordListResponse",
+        "type": "object"
+      },
+      "SleepRecordRead": {
+        "properties": {
+          "ended_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "infant_id": {
+            "format": "uuid",
+            "title": "Infant Id",
+            "type": "string"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "sleep_kind": {
+            "enum": [
+              "night",
+              "nap",
+              "other"
+            ],
+            "title": "Sleep Kind",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "owner_user_id",
+          "infant_id",
+          "started_at",
+          "sleep_kind",
+          "source",
+          "status"
+        ],
+        "title": "SleepRecordRead",
         "type": "object"
       },
       "SupportTicketCreate": {
@@ -4046,6 +5189,18 @@
       },
       "UserProfileRead": {
         "properties": {
+          "actual_delivery_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Delivery Date"
+          },
           "age": {
             "anyOf": [
               {
@@ -4090,6 +5245,18 @@
             "title": "Display Name",
             "type": "string"
           },
+          "expected_due_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Due Date"
+          },
           "feeding_advice": {
             "default": "",
             "title": "Feeding Advice",
@@ -4124,6 +5291,18 @@
       },
       "UserProfileUpdate": {
         "properties": {
+          "actual_delivery_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Delivery Date"
+          },
           "age": {
             "anyOf": [
               {
@@ -4176,6 +5355,18 @@
               }
             ],
             "title": "Display Name"
+          },
+          "expected_due_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Due Date"
           },
           "feeding_advice": {
             "anyOf": [
@@ -4265,6 +5456,351 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "VitalRecordCreate": {
+        "properties": {
+          "diastolic_mmhg": {
+            "anyOf": [
+              {
+                "maximum": 200.0,
+                "minimum": 20.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diastolic Mmhg"
+          },
+          "heart_rate_bpm": {
+            "anyOf": [
+              {
+                "maximum": 300.0,
+                "minimum": 20.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heart Rate Bpm"
+          },
+          "measured_at": {
+            "format": "date-time",
+            "title": "Measured At",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "manual",
+            "title": "Source"
+          },
+          "systolic_mmhg": {
+            "anyOf": [
+              {
+                "maximum": 300.0,
+                "minimum": 40.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Systolic Mmhg"
+          },
+          "temperature_c": {
+            "anyOf": [
+              {
+                "maximum": 45.0,
+                "minimum": 25.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature C"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 500.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Kg"
+          }
+        },
+        "required": [
+          "measured_at"
+        ],
+        "title": "VitalRecordCreate",
+        "type": "object"
+      },
+      "VitalRecordListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/VitalRecordRead"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "VitalRecordListResponse",
+        "type": "object"
+      },
+      "VitalRecordRead": {
+        "properties": {
+          "diastolic_mmhg": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diastolic Mmhg"
+          },
+          "heart_rate_bpm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heart Rate Bpm"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "measured_at": {
+            "format": "date-time",
+            "title": "Measured At",
+            "type": "string"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "systolic_mmhg": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Systolic Mmhg"
+          },
+          "temperature_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature C"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Kg"
+          }
+        },
+        "required": [
+          "id",
+          "owner_user_id",
+          "measured_at",
+          "source",
+          "status"
+        ],
+        "title": "VitalRecordRead",
+        "type": "object"
+      },
+      "WaterIntakeRecordCreate": {
+        "properties": {
+          "amount_ml": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 10000.0,
+            "title": "Amount Ml",
+            "type": "number"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "manual",
+            "title": "Source"
+          }
+        },
+        "required": [
+          "occurred_at",
+          "amount_ml"
+        ],
+        "title": "WaterIntakeRecordCreate",
+        "type": "object"
+      },
+      "WaterIntakeRecordListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WaterIntakeRecordRead"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "WaterIntakeRecordListResponse",
+        "type": "object"
+      },
+      "WaterIntakeRecordRead": {
+        "properties": {
+          "amount_ml": {
+            "title": "Amount Ml",
+            "type": "number"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "owner_user_id",
+          "occurred_at",
+          "amount_ml",
+          "source",
+          "status"
+        ],
+        "title": "WaterIntakeRecordRead",
+        "type": "object"
+      },
+      "WaterTrendDayRead": {
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "entry_count": {
+            "title": "Entry Count",
+            "type": "integer"
+          },
+          "measured_only": {
+            "default": true,
+            "title": "Measured Only",
+            "type": "boolean"
+          },
+          "total_water_ml": {
+            "title": "Total Water Ml",
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "total_water_ml",
+          "entry_count"
+        ],
+        "title": "WaterTrendDayRead",
+        "type": "object"
+      },
+      "WaterTrendListResponse": {
+        "properties": {
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WaterTrendDayRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "days",
+          "timezone"
+        ],
+        "title": "WaterTrendListResponse",
         "type": "object"
       }
     },
@@ -5853,6 +7389,89 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/agent/threads/{thread_id}/history": {
+      "get": {
+        "operationId": "get_thread_history_v1_agent_threads__thread_id__history_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Thread Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before_sequence",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Before Sequence"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentThreadHistoryPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Thread History",
+        "tags": [
+          "agent"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/assets": {
       "get": {
         "operationId": "list_product_assets_v1_assets_get",
@@ -5914,6 +7533,20 @@
             "required": true,
             "schema": {
               "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "variant",
+            "required": false,
+            "schema": {
+              "default": "original",
+              "enum": [
+                "original",
+                "display"
+              ],
+              "title": "Variant",
               "type": "string"
             }
           }
@@ -6167,6 +7800,161 @@
           "flutter"
         ],
         "x-momcozy-owner": "auth",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/body-profile/me": {
+      "get": {
+        "operationId": "get_my_body_profile_v1_body_profile_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyProfileRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get My Body Profile",
+        "tags": [
+          "body-profile"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "body-profile",
+        "x-momcozy-stability": "stable"
+      },
+      "put": {
+        "operationId": "save_my_body_profile_v1_body_profile_me_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BodyProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyProfileRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save My Body Profile",
+        "tags": [
+          "body-profile"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "body-profile",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/care-overview/me": {
+      "get": {
+        "operationId": "get_my_care_overview_v1_care_overview_me_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "timezone",
+            "required": false,
+            "schema": {
+              "default": "UTC",
+              "maxLength": 64,
+              "minLength": 1,
+              "title": "Timezone",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeCareOverviewRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get My Care Overview",
+        "tags": [
+          "care-overview"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "care-overview",
         "x-momcozy-stability": "stable"
       }
     },
@@ -6889,6 +8677,16 @@
         "operationId": "upload_file_v1_files_upload_post",
         "parameters": [
           {
+            "in": "query",
+            "name": "temporary",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Temporary",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "header",
             "name": "Idempotency-Key",
             "required": false,
@@ -7058,6 +8856,106 @@
           }
         ],
         "summary": "Get File",
+        "tags": [
+          "files"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "files",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/files/{file_id}/content": {
+      "get": {
+        "operationId": "get_file_content_v1_files__file_id__content_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "file_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "File Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get File Content",
+        "tags": [
+          "files"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "files",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/files/{file_id}/thumbnail": {
+      "get": {
+        "operationId": "get_file_thumbnail_v1_files__file_id__thumbnail_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "file_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "File Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/webp": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get File Thumbnail",
         "tags": [
           "files"
         ],
@@ -8792,6 +10690,221 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/records/diaper": {
+      "get": {
+        "operationId": "list_diapers_v1_records_diaper_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "infant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Infant Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiaperRecordListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Diapers",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      },
+      "post": {
+        "operationId": "create_diaper_v1_records_diaper_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiaperRecordCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiaperRecordRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Diaper",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/diaper/{record_id}": {
+      "delete": {
+        "operationId": "delete_diaper_v1_records_diaper__record_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Diaper",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/records/feeding": {
       "get": {
         "operationId": "list_feedings_v1_records_feeding_get",
@@ -9541,6 +11654,740 @@
           }
         ],
         "summary": "Delete Pumping",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/sleep": {
+      "get": {
+        "operationId": "list_sleep_v1_records_sleep_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "infant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Infant Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SleepRecordListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Sleep",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      },
+      "post": {
+        "operationId": "create_sleep_v1_records_sleep_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SleepRecordCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SleepRecordRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Sleep",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/sleep/{record_id}": {
+      "delete": {
+        "operationId": "delete_sleep_v1_records_sleep__record_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Sleep",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/vitals": {
+      "get": {
+        "operationId": "list_vitals_v1_records_vitals_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VitalRecordListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Vitals",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      },
+      "post": {
+        "operationId": "create_vital_v1_records_vitals_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VitalRecordCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VitalRecordRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Vital",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/vitals/{record_id}": {
+      "delete": {
+        "operationId": "delete_vital_v1_records_vitals__record_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Vital",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/water": {
+      "get": {
+        "operationId": "list_water_v1_records_water_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterIntakeRecordListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Water",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      },
+      "post": {
+        "operationId": "create_water_v1_records_water_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterIntakeRecordCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterIntakeRecordRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Water",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/water-trends": {
+      "get": {
+        "operationId": "get_water_trends_v1_records_water_trends_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 7,
+              "maximum": 90,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "timezone",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Timezone"
+            }
+          },
+          {
+            "in": "query",
+            "name": "utc_offset_minutes",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 840,
+                  "minimum": -840,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Utc Offset Minutes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterTrendListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Water Trends",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/water/{record_id}": {
+      "delete": {
+        "operationId": "delete_water_v1_records_water__record_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Water",
         "tags": [
           "records"
         ],

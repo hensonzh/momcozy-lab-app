@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
@@ -86,6 +87,12 @@ class ProfileOverviewController {
     required this.pumpMilkRepository,
     required this.milkTrendRepository,
     required this.growthRepository,
+    this.waterRepository,
+    this.waterTrendRepository,
+    this.vitalRepository,
+    this.sleepRepository,
+    this.diaperRepository,
+    this.maternalCareOverviewRepository,
     this.planRepository,
     required this.babyId,
     required this.identity,
@@ -99,6 +106,14 @@ class ProfileOverviewController {
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.overview!.value),
     );
+    maternalCareOverview =
+        ValueNotifier<ProfileOverviewResource<MaternalCareOverview>>(
+          this.cache.maternalCareOverview == null
+              ? const ProfileOverviewResource.initial()
+              : ProfileOverviewResource.data(
+                  this.cache.maternalCareOverview!.value,
+                ),
+        );
     feedingRecords =
         ValueNotifier<ProfileOverviewResource<List<FeedingRecord>>>(
           this.cache.feedingRecords == null
@@ -110,6 +125,32 @@ class ProfileOverviewController {
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.milkTrends!.value),
     );
+    waterRecords =
+        ValueNotifier<ProfileOverviewResource<List<WaterIntakeRecord>>>(
+          this.cache.waterRecords == null
+              ? const ProfileOverviewResource.initial()
+              : ProfileOverviewResource.data(this.cache.waterRecords!.value),
+        );
+    waterTrends = ValueNotifier<ProfileOverviewResource<List<WaterTrendDay>>>(
+      this.cache.waterTrends == null
+          ? const ProfileOverviewResource.initial()
+          : ProfileOverviewResource.data(this.cache.waterTrends!.value),
+    );
+    vitalRecords = ValueNotifier<ProfileOverviewResource<List<VitalRecord>>>(
+      this.cache.vitalRecords == null
+          ? const ProfileOverviewResource.initial()
+          : ProfileOverviewResource.data(this.cache.vitalRecords!.value),
+    );
+    sleepRecords = ValueNotifier<ProfileOverviewResource<List<SleepRecord>>>(
+      this.cache.sleepRecords == null
+          ? const ProfileOverviewResource.initial()
+          : ProfileOverviewResource.data(this.cache.sleepRecords!.value),
+    );
+    diaperRecords = ValueNotifier<ProfileOverviewResource<List<DiaperRecord>>>(
+      this.cache.diaperRecords == null
+          ? const ProfileOverviewResource.initial()
+          : ProfileOverviewResource.data(this.cache.diaperRecords!.value),
+    );
     growthRecords = ValueNotifier<ProfileOverviewResource<List<GrowthRecord>>>(
       this.cache.growthRecords == null
           ? const ProfileOverviewResource.initial()
@@ -120,11 +161,15 @@ class ProfileOverviewController {
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.planDashboard!.value),
     );
-    final cachedStage = this.cache.overview?.value.mom?.stage;
+    final cachedStage =
+        this.cache.maternalCareOverview?.value.stage ??
+        this.cache.overview?.value.mom?.stage;
     careStage = ValueNotifier<CareStageSelectionState>(
       CareStageSelectionState(
         stage: cachedStage,
-        isResolved: this.cache.overview != null,
+        isResolved:
+            this.cache.overview != null ||
+            this.cache.maternalCareOverview != null,
       ),
     );
     growthMutation = ValueNotifier<ProfileOverviewMutationState>(
@@ -144,6 +189,12 @@ class ProfileOverviewController {
   final PumpMilkRecordsRepository pumpMilkRepository;
   final MilkTrendRepository milkTrendRepository;
   final GrowthRecordsRepository growthRepository;
+  final WaterRecordsRepository? waterRepository;
+  final WaterTrendRepository? waterTrendRepository;
+  final VitalRecordsRepository? vitalRepository;
+  final SleepRecordsRepository? sleepRepository;
+  final DiaperRecordsRepository? diaperRepository;
+  final MaternalCareOverviewRepository? maternalCareOverviewRepository;
   final PlanRepository? planRepository;
   final String babyId;
   final ProfileIdentity identity;
@@ -152,10 +203,22 @@ class ProfileOverviewController {
   final ProfileOverviewCachePolicy cachePolicy;
 
   late final ValueNotifier<ProfileOverviewResource<ProfileOverview>> overview;
+  late final ValueNotifier<ProfileOverviewResource<MaternalCareOverview>>
+  maternalCareOverview;
   late final ValueNotifier<ProfileOverviewResource<List<FeedingRecord>>>
   feedingRecords;
   late final ValueNotifier<ProfileOverviewResource<List<MilkTrendDay>>>
   milkTrends;
+  late final ValueNotifier<ProfileOverviewResource<List<WaterIntakeRecord>>>
+  waterRecords;
+  late final ValueNotifier<ProfileOverviewResource<List<WaterTrendDay>>>
+  waterTrends;
+  late final ValueNotifier<ProfileOverviewResource<List<VitalRecord>>>
+  vitalRecords;
+  late final ValueNotifier<ProfileOverviewResource<List<SleepRecord>>>
+  sleepRecords;
+  late final ValueNotifier<ProfileOverviewResource<List<DiaperRecord>>>
+  diaperRecords;
   late final ValueNotifier<ProfileOverviewResource<List<GrowthRecord>>>
   growthRecords;
   late final ValueNotifier<ProfileOverviewResource<PlanDashboard>> plans;
@@ -208,8 +271,19 @@ class ProfileOverviewController {
     return {
       ProfileOverviewResourceKey.overview,
       ProfileOverviewResourceKey.milkTrends,
+      if (identity == ProfileIdentity.mom && waterRepository != null)
+        ProfileOverviewResourceKey.waterRecords,
+      if (identity == ProfileIdentity.mom && waterTrendRepository != null)
+        ProfileOverviewResourceKey.waterTrends,
+      if (identity == ProfileIdentity.mom && vitalRepository != null)
+        ProfileOverviewResourceKey.vitals,
+      if (identity == ProfileIdentity.mom &&
+          maternalCareOverviewRepository != null)
+        ProfileOverviewResourceKey.maternalCareOverview,
       if (identity == ProfileIdentity.baby) ...{
         ProfileOverviewResourceKey.feeding,
+        if (sleepRepository != null) ProfileOverviewResourceKey.sleep,
+        if (diaperRepository != null) ProfileOverviewResourceKey.diapers,
         ProfileOverviewResourceKey.growth,
       },
       if (identity == ProfileIdentity.mom && planRepository != null)
@@ -290,6 +364,28 @@ class ProfileOverviewController {
             }
           },
         );
+      case ProfileOverviewResourceKey.maternalCareOverview:
+        final repository = maternalCareOverviewRepository;
+        if (repository == null) return;
+        final today = now();
+        await _load(
+          maternalCareOverview,
+          repository.fetchOverview(
+            onDate: DateTime(today.year, today.month, today.day),
+          ),
+          onData: (value) {
+            cache.maternalCareOverview = OverviewCacheEntry(
+              value: value,
+              fetchedAt: now(),
+            );
+            if (identity == ProfileIdentity.mom && value.stage != null) {
+              careStage.value = CareStageSelectionState(
+                stage: value.stage,
+                isResolved: true,
+              );
+            }
+          },
+        );
       case ProfileOverviewResourceKey.feeding:
         final today = now();
         await _load(
@@ -297,6 +393,7 @@ class ProfileOverviewController {
           feedingRepository.fetchFeedingRecords(
             date: DateTime(today.year, today.month, today.day),
             babyId: _recordsBabyId,
+            days: 7,
           ),
           onData: (value) => cache.feedingRecords = OverviewCacheEntry(
             value: value,
@@ -316,6 +413,82 @@ class ProfileOverviewController {
             days: 31,
           ),
           onData: (value) => cache.milkTrends = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.waterRecords:
+        final repository = waterRepository;
+        if (repository == null) return;
+        final today = now();
+        await _load(
+          waterRecords,
+          repository.fetchWaterRecords(
+            date: DateTime(today.year, today.month, today.day),
+          ),
+          onData: (value) => cache.waterRecords = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.waterTrends:
+        final repository = waterTrendRepository;
+        if (repository == null) return;
+        final today = now();
+        final localToday = DateTime(today.year, today.month, today.day);
+        await _load(
+          waterTrends,
+          repository.fetchWaterTrends(
+            startDate: localToday.subtract(const Duration(days: 6)),
+            days: 7,
+            utcOffsetMinutes: today.timeZoneOffset.inMinutes,
+          ),
+          onData: (value) => cache.waterTrends = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.vitals:
+        final repository = vitalRepository;
+        if (repository == null) return;
+        await _load(
+          vitalRecords,
+          repository.fetchVitalRecords(),
+          onData: (value) => cache.vitalRecords = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.sleep:
+        final repository = sleepRepository;
+        if (repository == null) return;
+        final today = now();
+        final localToday = DateTime(today.year, today.month, today.day);
+        await _load(
+          sleepRecords,
+          repository.fetchSleepRecords(
+            babyId: _recordsBabyId,
+            start: localToday.subtract(const Duration(days: 6)),
+            end: localToday.add(const Duration(days: 1)),
+          ),
+          onData: (value) => cache.sleepRecords = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.diapers:
+        final repository = diaperRepository;
+        if (repository == null) return;
+        final today = now();
+        final localToday = DateTime(today.year, today.month, today.day);
+        await _load(
+          diaperRecords,
+          repository.fetchDiaperRecords(
+            babyId: _recordsBabyId,
+            start: localToday.subtract(const Duration(days: 6)),
+            end: localToday.add(const Duration(days: 1)),
+          ),
+          onData: (value) => cache.diaperRecords = OverviewCacheEntry(
             value: value,
             fetchedAt: now(),
           ),
@@ -385,6 +558,15 @@ class ProfileOverviewController {
       if (_disposed) return false;
       _replaceOverviewStage(saved);
       careStage.value = CareStageSelectionState(stage: saved, isResolved: true);
+      if (maternalCareOverviewRepository != null) {
+        unawaited(
+          _requestResource(
+            ProfileOverviewResourceKey.maternalCareOverview,
+            showLoading: false,
+            force: true,
+          ),
+        );
+      }
       return true;
     } catch (error) {
       if (_disposed) return false;
@@ -397,15 +579,89 @@ class ProfileOverviewController {
     }
   }
 
-  Future<bool> savePumpingRecord({required double amountMl}) {
+  Future<bool> savePumpingRecord({
+    required double amountMl,
+    required BreastSide breastSide,
+  }) {
     return _saveRecord(() async {
       await pumpMilkRepository.createPumpMilkRecord(
         occurredAt: now(),
         amountMl: amountMl,
+        breastSide: breastSide,
         idempotencyKey: _recordIdempotencyKey('pumping'),
       );
       await _requestResource(
         ProfileOverviewResourceKey.milkTrends,
+        showLoading: false,
+        force: true,
+      );
+    });
+  }
+
+  Future<bool> saveWaterRecord({required double amountMl}) {
+    final repository = waterRepository;
+    if (repository == null || amountMl <= 0 || amountMl > 10000) {
+      recordMutation.value = RecordMutationState(
+        error: ArgumentError.value(amountMl, 'amountMl'),
+      );
+      return Future<bool>.value(false);
+    }
+    return _saveRecord(() async {
+      await repository.createWaterRecord(
+        occurredAt: now(),
+        amountMl: amountMl,
+        idempotencyKey: _recordIdempotencyKey('water'),
+      );
+      await Future.wait<void>([
+        _requestResource(
+          ProfileOverviewResourceKey.waterRecords,
+          showLoading: false,
+          force: true,
+        ),
+        if (waterTrendRepository != null)
+          _requestResource(
+            ProfileOverviewResourceKey.waterTrends,
+            showLoading: false,
+            force: true,
+          ),
+      ]);
+    });
+  }
+
+  Future<bool> saveVitalRecord({
+    double? weightKg,
+    int? systolicMmhg,
+    int? diastolicMmhg,
+    int? heartRateBpm,
+    double? temperatureC,
+  }) {
+    final repository = vitalRepository;
+    final hasMeasurement =
+        weightKg != null ||
+        systolicMmhg != null ||
+        diastolicMmhg != null ||
+        heartRateBpm != null ||
+        temperatureC != null;
+    final hasCompletePressure =
+        (systolicMmhg == null) == (diastolicMmhg == null);
+    if (repository == null || !hasMeasurement || !hasCompletePressure) {
+      recordMutation.value = RecordMutationState(
+        error: ArgumentError('A complete confirmed vital is required.'),
+      );
+      return Future<bool>.value(false);
+    }
+    return _saveRecord(() async {
+      await repository.createVitalRecord(
+        measuredAt: now(),
+        weightKg: weightKg,
+        systolicMmhg: systolicMmhg,
+        diastolicMmhg: diastolicMmhg,
+        heartRateBpm: heartRateBpm,
+        temperatureC: temperatureC,
+        idempotencyKey: _recordIdempotencyKey('vital'),
+      );
+      await _requestResource(
+        ProfileOverviewResourceKey.vitals,
         showLoading: false,
         force: true,
       );
@@ -454,6 +710,75 @@ class ProfileOverviewController {
     });
   }
 
+  Future<bool> saveSleepRecord({
+    required int durationMinutes,
+    required SleepKind kind,
+  }) {
+    final repository = sleepRepository;
+    if (repository == null || durationMinutes <= 0 || durationMinutes > 1440) {
+      recordMutation.value = RecordMutationState(
+        error: ArgumentError.value(durationMinutes, 'durationMinutes'),
+      );
+      return Future<bool>.value(false);
+    }
+    return _saveRecord(() async {
+      final endedAt = now();
+      await repository.createSleepRecord(
+        babyId: _recordsBabyId,
+        startedAt: endedAt.subtract(Duration(minutes: durationMinutes)),
+        endedAt: endedAt,
+        kind: kind,
+        idempotencyKey: _recordIdempotencyKey('sleep'),
+      );
+      await _requestResource(
+        ProfileOverviewResourceKey.sleep,
+        showLoading: false,
+        force: true,
+      );
+    });
+  }
+
+  Future<bool> saveDiaperRecord({
+    required DiaperKind kind,
+    DiaperWetness? wetness,
+    String? stoolColor,
+    String? stoolConsistency,
+    String notes = '',
+  }) {
+    final repository = diaperRepository;
+    final hasStoolObservation =
+        stoolColor?.trim().isNotEmpty == true ||
+        stoolConsistency?.trim().isNotEmpty == true;
+    final observationsMatch = switch (kind) {
+      DiaperKind.wet => !hasStoolObservation,
+      DiaperKind.dirty => wetness == null,
+      DiaperKind.both => true,
+    };
+    if (repository == null || !observationsMatch) {
+      recordMutation.value = RecordMutationState(
+        error: ArgumentError('Diaper observations do not match the type.'),
+      );
+      return Future<bool>.value(false);
+    }
+    return _saveRecord(() async {
+      await repository.createDiaperRecord(
+        babyId: _recordsBabyId,
+        changedAt: now(),
+        kind: kind,
+        wetness: wetness,
+        stoolColor: stoolColor,
+        stoolConsistency: stoolConsistency,
+        notes: notes,
+        idempotencyKey: _recordIdempotencyKey('diaper'),
+      );
+      await _requestResource(
+        ProfileOverviewResourceKey.diapers,
+        showLoading: false,
+        force: true,
+      );
+    });
+  }
+
   Future<bool> _saveRecord(Future<void> Function() operation) async {
     if (_disposed || recordMutation.value.isSaving) return false;
     recordMutation.value = const RecordMutationState(isSaving: true);
@@ -494,6 +819,17 @@ class ProfileOverviewController {
     final updated = current.copyWith(mom: mom);
     overview.value = ProfileOverviewResource.data(updated);
     cache.overview = OverviewCacheEntry(value: updated, fetchedAt: now());
+    final currentCareOverview = maternalCareOverview.value.data;
+    if (currentCareOverview != null) {
+      final updatedCareOverview = currentCareOverview.withStage(stage);
+      maternalCareOverview.value = ProfileOverviewResource.data(
+        updatedCareOverview,
+      );
+      cache.maternalCareOverview = OverviewCacheEntry(
+        value: updatedCareOverview,
+        fetchedAt: now(),
+      );
+    }
   }
 
   Future<bool> saveGrowth({
@@ -559,6 +895,10 @@ class ProfileOverviewController {
         overview.value = ProfileOverviewResource.loading(
           previous: overview.value.data,
         );
+      case ProfileOverviewResourceKey.maternalCareOverview:
+        maternalCareOverview.value = ProfileOverviewResource.loading(
+          previous: maternalCareOverview.value.data,
+        );
       case ProfileOverviewResourceKey.feeding:
         feedingRecords.value = ProfileOverviewResource.loading(
           previous: feedingRecords.value.data,
@@ -566,6 +906,26 @@ class ProfileOverviewController {
       case ProfileOverviewResourceKey.milkTrends:
         milkTrends.value = ProfileOverviewResource.loading(
           previous: milkTrends.value.data,
+        );
+      case ProfileOverviewResourceKey.waterRecords:
+        waterRecords.value = ProfileOverviewResource.loading(
+          previous: waterRecords.value.data,
+        );
+      case ProfileOverviewResourceKey.waterTrends:
+        waterTrends.value = ProfileOverviewResource.loading(
+          previous: waterTrends.value.data,
+        );
+      case ProfileOverviewResourceKey.vitals:
+        vitalRecords.value = ProfileOverviewResource.loading(
+          previous: vitalRecords.value.data,
+        );
+      case ProfileOverviewResourceKey.sleep:
+        sleepRecords.value = ProfileOverviewResource.loading(
+          previous: sleepRecords.value.data,
+        );
+      case ProfileOverviewResourceKey.diapers:
+        diaperRecords.value = ProfileOverviewResource.loading(
+          previous: diaperRecords.value.data,
         );
       case ProfileOverviewResourceKey.growth:
         growthRecords.value = ProfileOverviewResource.loading(
@@ -581,8 +941,15 @@ class ProfileOverviewController {
   bool _resourceIsFresh(ProfileOverviewResourceKey resource) {
     final fetchedAt = switch (resource) {
       ProfileOverviewResourceKey.overview => cache.overview?.fetchedAt,
+      ProfileOverviewResourceKey.maternalCareOverview =>
+        cache.maternalCareOverview?.fetchedAt,
       ProfileOverviewResourceKey.feeding => cache.feedingRecords?.fetchedAt,
       ProfileOverviewResourceKey.milkTrends => cache.milkTrends?.fetchedAt,
+      ProfileOverviewResourceKey.waterRecords => cache.waterRecords?.fetchedAt,
+      ProfileOverviewResourceKey.waterTrends => cache.waterTrends?.fetchedAt,
+      ProfileOverviewResourceKey.vitals => cache.vitalRecords?.fetchedAt,
+      ProfileOverviewResourceKey.sleep => cache.sleepRecords?.fetchedAt,
+      ProfileOverviewResourceKey.diapers => cache.diaperRecords?.fetchedAt,
       ProfileOverviewResourceKey.growth => cache.growthRecords?.fetchedAt,
       ProfileOverviewResourceKey.plans => cache.planDashboard?.fetchedAt,
     };
@@ -593,8 +960,15 @@ class ProfileOverviewController {
   bool _resourceHasCache(ProfileOverviewResourceKey resource) {
     return switch (resource) {
       ProfileOverviewResourceKey.overview => cache.overview != null,
+      ProfileOverviewResourceKey.maternalCareOverview =>
+        cache.maternalCareOverview != null,
       ProfileOverviewResourceKey.feeding => cache.feedingRecords != null,
       ProfileOverviewResourceKey.milkTrends => cache.milkTrends != null,
+      ProfileOverviewResourceKey.waterRecords => cache.waterRecords != null,
+      ProfileOverviewResourceKey.waterTrends => cache.waterTrends != null,
+      ProfileOverviewResourceKey.vitals => cache.vitalRecords != null,
+      ProfileOverviewResourceKey.sleep => cache.sleepRecords != null,
+      ProfileOverviewResourceKey.diapers => cache.diaperRecords != null,
       ProfileOverviewResourceKey.growth => cache.growthRecords != null,
       ProfileOverviewResourceKey.plans => cache.planDashboard != null,
     };
@@ -604,8 +978,14 @@ class ProfileOverviewController {
     if (_disposed) return;
     _disposed = true;
     overview.dispose();
+    maternalCareOverview.dispose();
     feedingRecords.dispose();
     milkTrends.dispose();
+    waterRecords.dispose();
+    waterTrends.dispose();
+    vitalRecords.dispose();
+    sleepRecords.dispose();
+    diaperRecords.dispose();
     growthRecords.dispose();
     plans.dispose();
     careStage.dispose();

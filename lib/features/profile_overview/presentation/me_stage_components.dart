@@ -26,18 +26,26 @@ class _MomStageWorkspace extends StatelessWidget {
           children: [
             Column(
               children: [
-                _MomStageHero(
-                  stage: stage,
-                  data: data,
-                  onOpenAvatar: onOpenAvatar,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: _MomStageHero(
+                    stage: stage,
+                    data: data,
+                    onOpenAvatar: onOpenAvatar,
+                  ),
                 ),
                 const SizedBox(height: 6),
-                _MomStageTabs(
-                  stage: stage,
-                  selected: selectedSection,
-                  onSelected: onSelected,
-                  backgroundOnly: showAvatar,
-                ),
+                if (showAvatar)
+                  const SizedBox(height: 48)
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: _MomStageTabs(
+                      stage: stage,
+                      selected: selectedSection,
+                      onSelected: onSelected,
+                    ),
+                  ),
                 if (stage == MomLifeStage.postpartum) ...[
                   const SizedBox(height: 10),
                   _StagePageIndicator(
@@ -64,23 +72,18 @@ class _MomStageWorkspace extends StatelessWidget {
               ),
             if (showAvatar)
               Positioned(
-                left: 0,
-                right: 0,
-                top: 202,
-                child: IgnorePointer(
-                  child: ExcludeSemantics(
-                    child: _MomStageTabs(
-                      stage: stage,
-                      selected: selectedSection,
-                      onSelected: onSelected,
-                      foregroundOnly: true,
-                    ),
-                  ),
+                left: 6,
+                right: 6,
+                top: 207,
+                child: _MomStageTabs(
+                  stage: stage,
+                  selected: selectedSection,
+                  onSelected: onSelected,
                 ),
               ),
           ],
         ),
-        const SizedBox(height: 14),
+        SizedBox(height: stage == MomLifeStage.postpartum ? 21 : 25),
         _MomStageContent(stage: stage, section: selectedSection, data: data),
       ],
     );
@@ -103,7 +106,7 @@ class _MomStageHero extends StatelessWidget {
     final program = _stageProgram(stage, data);
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final expandedText = textScale > 1.35;
-    final heroHeight = expandedText ? 326.0 : 196.0;
+    final heroHeight = expandedText ? 326.0 : 186.0;
     return Semantics(
       key: const ValueKey('me-baby-overview-open-avatar'),
       label: 'View ${stage.label} avatar',
@@ -124,26 +127,27 @@ class _MomStageHero extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 Positioned(
-                  left: 24,
-                  top: expandedText ? 28 : 42,
+                  left: 16,
+                  top: expandedText ? 28 : 36,
                   right: expandedText ? 24 : 140,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         program.title,
+                        key: const ValueKey('me-stage-program-title'),
                         maxLines: expandedText ? 3 : 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: _MeBabyOverviewColors.ink,
-                          fontSize: 19,
+                          fontSize: 14,
                           height: 1.15,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 6),
                       _ProgramProgress(value: program.progress),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Text(
                         program.progressLabel,
                         maxLines: expandedText ? 3 : 2,
@@ -155,7 +159,7 @@ class _MomStageHero extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 5),
                       _BodyProfileButton(compact: expandedText),
                     ],
                   ),
@@ -192,45 +196,66 @@ class _BodyProfileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tapHeight = compact ? 48.0 : MomCozyTapTargets.minimum;
+    final surfaceHeight = compact ? 48.0 : 32.0;
+    final textScale = MediaQuery.textScalerOf(context).scale(15) / 15;
+    final buttonWidth = math.min(230.0, (compact ? 150.0 : 132.0) * textScale);
     return Semantics(
       button: true,
       label: 'Open Body Profile',
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        elevation: 2,
-        shadowColor: const Color(0x18000000),
-        child: InkWell(
-          key: const ValueKey('me-stage-body-profile'),
+      child: SizedBox(
+        width: buttonWidth,
+        height: tapHeight,
+        child: Material(
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(18),
-          onTap: () => context.go('/more/body-profile'),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 48),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: compact ? 14 : 16,
-                vertical: 10,
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      'Body Profile',
-                      style: TextStyle(
-                        color: _MeBabyOverviewColors.wine,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w900,
+          child: InkWell(
+            key: const ValueKey('me-stage-body-profile'),
+            borderRadius: BorderRadius.circular(18),
+            onTap: () => context.go('/more/body-profile'),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Ink(
+                key: const ValueKey('me-stage-body-profile-surface'),
+                height: surfaceHeight,
+                padding: EdgeInsets.symmetric(horizontal: compact ? 14 : 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x18000000),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        'Body Profile',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: _MeBabyOverviewColors.wine,
+                          fontSize: compact ? 15 : 12,
+                          fontWeight: compact
+                              ? FontWeight.w900
+                              : FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 9),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    color: _MeBabyOverviewColors.wine,
-                    size: 20,
-                  ),
-                ],
+                    SizedBox(width: compact ? 9 : 7),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      color: _MeBabyOverviewColors.wine,
+                      size: compact ? 20 : 16,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -289,6 +314,39 @@ class _StageProgram {
 }
 
 _StageProgram _stageProgram(MomLifeStage stage, _MeBabyOverviewData data) {
+  final dashboard = data.plans.data;
+  final plans = dashboard?.plans ?? const <CarePlan>[];
+  final authoritative = data.maternalCareOverview.data;
+  if (authoritative?.stage == stage) {
+    final progress = authoritative?.program;
+    if (progress == null) {
+      return _StageProgram(
+        title: stage == MomLifeStage.pregnancy
+            ? 'Prenatal Program'
+            : stage == MomLifeStage.postpartum
+            ? 'Postpartum Recovery'
+            : 'Cycle Tracking',
+        progressLabel: 'No active program yet',
+        progress: null,
+      );
+    }
+    final selected = plans
+        .where((plan) => plan.id == progress.planId)
+        .firstOrNull;
+    final sessions = selected == null
+        ? const <PlanSession>[]
+        : dashboard!.sessionsFor(selected.id);
+    final total = progress.totalSessions;
+    return _StageProgram(
+      title: progress.title,
+      progressLabel: total == 0
+          ? 'No sessions scheduled yet'
+          : '${progress.completedSessions} of $total sessions completed',
+      progress: total == 0 ? null : progress.completedSessions / total,
+      plan: selected,
+      sessions: sessions,
+    );
+  }
   if (stage == MomLifeStage.fertility) {
     return const _StageProgram(
       title: 'Cycle Tracking',
@@ -296,8 +354,6 @@ _StageProgram _stageProgram(MomLifeStage stage, _MeBabyOverviewData data) {
       progress: null,
     );
   }
-  final dashboard = data.plans.data;
-  final plans = dashboard?.plans ?? const <CarePlan>[];
   CarePlan? selected;
   if (stage == MomLifeStage.pregnancy) {
     selected = plans
@@ -351,18 +407,11 @@ class _MomStageTabs extends StatelessWidget {
     required this.stage,
     required this.selected,
     required this.onSelected,
-    this.compact = false,
-    this.backgroundOnly = false,
-    this.foregroundOnly = false,
-  }) : assert(!backgroundOnly || !foregroundOnly);
+  });
 
   final MomLifeStage stage;
   final String selected;
   final ValueChanged<String> onSelected;
-  final bool compact;
-  final bool backgroundOnly;
-  final bool foregroundOnly;
-
   @override
   Widget build(BuildContext context) {
     final sections = switch (stage) {
@@ -380,8 +429,8 @@ class _MomStageTabs extends StatelessWidget {
       ],
     };
     return SizedBox(
-      key: foregroundOnly ? null : ValueKey('me-stage-tabs-${stage.wireValue}'),
-      height: compact ? 48 : 54,
+      key: ValueKey('me-stage-tabs-${stage.wireValue}'),
+      height: 48,
       child: Row(
         children: [
           for (var index = 0; index < sections.length; index += 1) ...[
@@ -393,8 +442,6 @@ class _MomStageTabs extends StatelessWidget {
                 icon: sections[index].$3,
                 selected: selected == sections[index].$1,
                 onTap: () => onSelected(sections[index].$1),
-                backgroundOnly: backgroundOnly,
-                foregroundOnly: foregroundOnly,
               ),
             ),
           ],
@@ -411,50 +458,16 @@ class _MomStageTab extends StatelessWidget {
     required this.icon,
     required this.selected,
     required this.onTap,
-    this.backgroundOnly = false,
-    this.foregroundOnly = false,
-  }) : assert(!backgroundOnly || !foregroundOnly);
+  });
 
   final String section;
   final String label;
   final IconData icon;
   final bool selected;
   final VoidCallback onTap;
-  final bool backgroundOnly;
-  final bool foregroundOnly;
 
   @override
   Widget build(BuildContext context) {
-    final content = ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 48),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: selected ? Colors.white : _MeBabyOverviewColors.ink,
-              size: 19,
-            ),
-            const SizedBox(width: 9),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: selected ? Colors.white : _MeBabyOverviewColors.ink,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (foregroundOnly) return content;
     return Semantics(
       key: ValueKey('me-section-$section'),
       label: label,
@@ -463,14 +476,53 @@ class _MomStageTab extends StatelessWidget {
       button: true,
       inMutuallyExclusiveGroup: true,
       child: Material(
-        color: selected
-            ? _MeBabyOverviewColors.ink
-            : _MeBabyOverviewColors.pill,
-        borderRadius: BorderRadius.circular(28),
+        color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(28),
           onTap: onTap,
-          child: backgroundOnly ? const SizedBox.expand() : content,
+          child: Center(
+            child: Ink(
+              key: ValueKey('me-stage-tab-surface-$section'),
+              height: 36,
+              decoration: BoxDecoration(
+                color: selected
+                    ? _MeBabyOverviewColors.ink
+                    : _MeBabyOverviewColors.pill,
+                borderRadius: BorderRadius.circular(28),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      color: selected
+                          ? Colors.white
+                          : _MeBabyOverviewColors.ink,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 9),
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: selected
+                              ? Colors.white
+                              : _MeBabyOverviewColors.ink,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -1035,7 +1087,24 @@ class _EmptyRecoveryRingPainter extends CustomPainter {
 }
 
 _PregnancyProgress? _pregnancyProgress(_MeBabyOverviewData data) {
-  final dueDate = data.overview.data?.mom?.deliveryDate;
+  final authoritative = data.maternalCareOverview.data;
+  if (authoritative?.stage == MomLifeStage.pregnancy) {
+    final progress = authoritative?.pregnancy;
+    if (progress?.state != PregnancyProgressState.ready ||
+        progress?.gestationalWeek == null ||
+        progress?.daysRemaining == null ||
+        progress?.trimester == null) {
+      return null;
+    }
+    return _PregnancyProgress(
+      week: progress!.gestationalWeek!,
+      daysRemaining: progress.daysRemaining!,
+      trimester: progress.trimester!.label,
+      hasConfirmedDueDate: true,
+    );
+  }
+  final mom = data.overview.data?.mom;
+  final dueDate = mom?.expectedDueDate ?? mom?.deliveryDate;
   int week;
   int daysRemaining;
   final hasConfirmedDueDate = dueDate != null;
@@ -1046,7 +1115,7 @@ _PregnancyProgress? _pregnancyProgress(_MeBabyOverviewData data) {
     if (daysRemaining < 0 || daysRemaining > 280) return null;
     week = ((280 - daysRemaining) ~/ 7).clamp(0, 40);
   } else {
-    final confirmed = data.overview.data?.mom?.dueDateOrWeek?.trim();
+    final confirmed = mom?.dueDateOrWeek?.trim();
     final match = confirmed == null
         ? null
         : RegExp(r'(?<!\d)([0-3]?\d|40)(?!\d)').firstMatch(confirmed);
@@ -1362,7 +1431,6 @@ class _MomAvatarStage extends StatelessWidget {
                       stage: stage,
                       selected: selectedSection,
                       onSelected: onSelected,
-                      compact: true,
                     ),
                   ],
                 ),
