@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 
@@ -10,6 +12,28 @@ void main() {
 
       expect(routePaths, containsAll(_documentedRoutePaths));
       expect(routePaths, isNot(contains('/status')));
+      expect(routePaths, isNot(contains('/schedule')));
+    });
+
+    test('retired UI implementations and internal aliases stay removed', () {
+      expect(
+        File('lib/features/more/presentation/more_page.dart').existsSync(),
+        isFalse,
+      );
+      expect(Directory('lib/features/status').existsSync(), isFalse);
+      expect(Directory('lib/features/schedule').existsSync(), isFalse);
+      expect(Directory('lib/features/pregnancy_plan').existsSync(), isFalse);
+
+      final featurePages = File(
+        'lib/features/app_pages/momcozy_feature_pages.dart',
+      ).readAsStringSync();
+      final stageComponents = File(
+        'lib/features/profile_overview/presentation/me_stage_components.dart',
+      ).readAsStringSync();
+
+      expect(featurePages, isNot(contains('more_page.dart')));
+      expect(featurePages, isNot(contains('MorePage(')));
+      expect(stageComponents, isNot(contains("context.go('/schedule')")));
     });
 
     test(

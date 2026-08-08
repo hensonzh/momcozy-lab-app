@@ -1497,6 +1497,7 @@ const _routesWithoutBottomNavigation = {
   '/hospital-bag-cart',
   '/ibclc-chat.html',
   '/media-viewer',
+  '/more',
   '/more/body-profile',
   '/more/body-profile/edit',
 };

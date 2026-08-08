@@ -15,7 +15,6 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
-import 'package:momcozy_flutter_app/features/more/presentation/more_page.dart';
 import 'package:momcozy_flutter_app/features/more/presentation/more_profile_page.dart';
 import 'package:momcozy_flutter_app/features/notifications/presentation/notifications_page.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
@@ -87,7 +86,7 @@ class MomCozyFeaturePage extends StatelessWidget {
         ),
         onStartSession: () => context.go('/pump'),
       ),
-      '/more' => MorePage(path: path, onLogout: onLogout),
+      '/more' => MoreProfileOverviewPage(path: path),
       '/more/body-profile' => MoreProfileOverviewPage(path: path),
       '/more/body-profile/edit' => MoreBodyProfileEditorPage(
         path: path,

@@ -1,5 +1,8 @@
 # Momcozy App UI/UX V3 更新方案
 
+> [!IMPORTANT]
+> 本文已归档，仅保留为 UI/UX V3 迁移过程记录，不再代表当前实现。当前一级业务路由为 `/me`、`/baby`、`/plan`；`/status`、`/schedule` 仅作为已发布外部链接的兼容入口。`/more` 当前直接展示 Body Profile，底部 More 入口保持禁用；旧 Status、Schedule、More 设置聚合页均已移除。
+
 > 文档状态：方案稿 v1.0
 > 更新日期：2026-08-07
 > 适用仓库：MomCozyApp

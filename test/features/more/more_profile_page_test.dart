@@ -29,19 +29,12 @@ void main() {
     await _pumpApp(tester, initialLocation: '/more');
 
     expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
-    expect(find.text('设备与服务'), findsOneWidget);
-    expect(find.text('账户与偏好'), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('more-body-profile')));
-    await tester.pumpAndSettle();
-
-    expect(
-      find.byKey(const ValueKey('route-page-/more/body-profile')),
-      findsOneWidget,
-    );
     expect(find.text('Body Profile'), findsOneWidget);
     expect(find.text('No body profile data yet'), findsOneWidget);
     expect(find.text('Nothing is inferred'), findsOneWidget);
+    expect(find.text('设备与服务'), findsNothing);
+    expect(find.text('账户与偏好'), findsNothing);
+    expect(find.byKey(const ValueKey('more-body-profile')), findsNothing);
     expect(find.text('Pelvic floor & bladder'), findsNothing);
     expect(find.text('Core & abdomen'), findsNothing);
     expect(find.text('74'), findsNothing);
