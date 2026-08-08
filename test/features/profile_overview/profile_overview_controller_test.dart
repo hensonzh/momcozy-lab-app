@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
@@ -22,6 +23,9 @@ void main() {
 
       expect(controller.overview.value.phase, OverviewResourcePhase.data);
       expect(controller.milkTrends.value.phase, OverviewResourcePhase.data);
+      expect(controller.waterRecords.value.phase, OverviewResourcePhase.data);
+      expect(controller.waterTrends.value.phase, OverviewResourcePhase.data);
+      expect(controller.vitalRecords.value.phase, OverviewResourcePhase.data);
       expect(
         controller.feedingRecords.value.phase,
         OverviewResourcePhase.initial,
@@ -32,6 +36,9 @@ void main() {
       );
       expect(overviewRepository.fetchCount, 1);
       expect(records.milkTrendFetchCount, 1);
+      expect(records.waterFetchCount, 1);
+      expect(records.waterTrendFetchCount, 1);
+      expect(records.vitalFetchCount, 1);
       expect(records.feedingFetchCount, 0);
       expect(records.growthFetchCount, 0);
       expect(records.milkTrendStart, DateTime(2026, 6, 11));
@@ -63,6 +70,46 @@ void main() {
       );
     });
 
+    test('Me loads the authoritative maternal care overview', () async {
+      final careOverviewRepository = _FakeMaternalCareOverviewRepository(
+        const MaternalCareOverview(
+          stage: MomLifeStage.pregnancy,
+          pregnancy: PregnancyProgress(
+            state: PregnancyProgressState.ready,
+            gestationalWeek: 28,
+            gestationalDay: 0,
+            daysRemaining: 84,
+            trimester: PregnancyTrimester.third,
+          ),
+          program: MaternalProgramProgress(
+            state: ProgramProgressState.ready,
+            planId: 'prenatal-yoga',
+            planType: 'prenatal_yoga',
+            title: 'Prenatal Yoga Program',
+            completedSessions: 6,
+            totalSessions: 12,
+          ),
+        ),
+      );
+      final controller = _controller(
+        maternalCareOverviewRepository: careOverviewRepository,
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(careOverviewRepository.fetchCount, 1);
+      expect(careOverviewRepository.requestedDate, DateTime(2026, 7, 11));
+      expect(
+        controller.maternalCareOverview.value.phase,
+        OverviewResourcePhase.data,
+      );
+      expect(
+        controller.maternalCareOverview.value.data?.pregnancy?.gestationalWeek,
+        28,
+      );
+    });
+
     test(
       'Baby loads feeding and growth while keeping failures local',
       () async {
@@ -82,6 +129,11 @@ void main() {
 
         expect(controller.overview.value.phase, OverviewResourcePhase.data);
         expect(controller.feedingRecords.value.data?.single.amountMl, 80);
+        expect(controller.sleepRecords.value.phase, OverviewResourcePhase.data);
+        expect(
+          controller.diaperRecords.value.phase,
+          OverviewResourcePhase.data,
+        );
         expect(controller.milkTrends.value.phase, OverviewResourcePhase.data);
         expect(controller.growthRecords.value.hasError, isTrue);
       },
@@ -309,6 +361,7 @@ void main() {
       await controller.initialize();
 
       expect(records.feedingBabyId, 'baby-001');
+      expect(records.feedingDays, 7);
     });
 
     test(
@@ -338,10 +391,14 @@ void main() {
       addTearDown(controller.dispose);
       await controller.initialize();
 
-      final saved = await controller.savePumpingRecord(amountMl: 95);
+      final saved = await controller.savePumpingRecord(
+        amountMl: 95,
+        breastSide: BreastSide.left,
+      );
 
       expect(saved, isTrue);
       expect(records.createdPumpingAmountMl, 95);
+      expect(records.createdPumpingBreastSide, BreastSide.left);
       expect(records.milkTrendFetchCount, 2);
       expect(controller.recordMutation.value.isSaving, isFalse);
       expect(controller.recordMutation.value.error, isNull);
@@ -383,6 +440,70 @@ void main() {
       expect(records.createdGrowthWeightKg, 6.3);
       expect(records.growthFetchCount, 2);
     });
+
+    test('saving infant sleep and diaper records keeps infant scope', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(
+        records: records,
+        identity: ProfileIdentity.baby,
+      );
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      final sleepSaved = await controller.saveSleepRecord(
+        durationMinutes: 45,
+        kind: SleepKind.nap,
+      );
+      final diaperSaved = await controller.saveDiaperRecord(
+        kind: DiaperKind.both,
+        wetness: DiaperWetness.medium,
+        stoolColor: 'gold',
+        stoolConsistency: 'soft',
+      );
+
+      expect(sleepSaved, isTrue);
+      expect(diaperSaved, isTrue);
+      expect(records.createdSleepBabyId, 'baby-001');
+      expect(records.createdSleepDuration, const Duration(minutes: 45));
+      expect(records.createdDiaperBabyId, 'baby-001');
+      expect(records.createdDiaperKind, DiaperKind.both);
+      expect(records.sleepFetchCount, 2);
+      expect(records.diaperFetchCount, 2);
+    });
+
+    test('saving water refreshes today and weekly measured data', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(records: records);
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      final saved = await controller.saveWaterRecord(amountMl: 250);
+
+      expect(saved, isTrue);
+      expect(records.createdWaterAmountMl, 250);
+      expect(records.waterFetchCount, 2);
+      expect(records.waterTrendFetchCount, 2);
+    });
+
+    test('saving weight and vitals refreshes maternal vital records', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(records: records);
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      final saved = await controller.saveVitalRecord(
+        weightKg: 62.5,
+        systolicMmhg: 118,
+        diastolicMmhg: 76,
+        heartRateBpm: 72,
+        temperatureC: 36.7,
+      );
+
+      expect(saved, isTrue);
+      expect(records.createdVitalWeightKg, 62.5);
+      expect(records.createdVitalHeartRateBpm, 72);
+      expect(records.vitalFetchCount, 2);
+    });
   });
 }
 
@@ -393,6 +514,7 @@ ProfileOverviewController _controller({
   ProfileIdentity identity = ProfileIdentity.mom,
   DateTime Function()? now,
   PlanRepository? planRepository,
+  MaternalCareOverviewRepository? maternalCareOverviewRepository,
 }) {
   final effectiveRecords = records ?? _FakeRecordsRepository();
   return ProfileOverviewController(
@@ -402,12 +524,34 @@ ProfileOverviewController _controller({
     pumpMilkRepository: effectiveRecords,
     milkTrendRepository: effectiveRecords,
     growthRepository: effectiveRecords,
+    waterRepository: effectiveRecords,
+    waterTrendRepository: effectiveRecords,
+    vitalRepository: effectiveRecords,
+    sleepRepository: effectiveRecords,
+    diaperRepository: effectiveRecords,
     planRepository: planRepository,
+    maternalCareOverviewRepository: maternalCareOverviewRepository,
     babyId: 'baby-001',
     identity: identity,
     cache: cache,
     now: now ?? () => DateTime(2026, 7, 11, 10),
   );
+}
+
+class _FakeMaternalCareOverviewRepository
+    implements MaternalCareOverviewRepository {
+  _FakeMaternalCareOverviewRepository(this.overview);
+
+  final MaternalCareOverview overview;
+  var fetchCount = 0;
+  DateTime? requestedDate;
+
+  @override
+  Future<MaternalCareOverview> fetchOverview({required DateTime onDate}) async {
+    fetchCount += 1;
+    requestedDate = onDate;
+    return overview;
+  }
 }
 
 class _FakePlanRepository implements PlanRepository {
@@ -462,7 +606,12 @@ class _FakeRecordsRepository
         FeedingRecordsRepository,
         PumpMilkRecordsRepository,
         MilkTrendRepository,
-        GrowthRecordsRepository {
+        GrowthRecordsRepository,
+        WaterRecordsRepository,
+        WaterTrendRepository,
+        VitalRecordsRepository,
+        SleepRecordsRepository,
+        DiaperRecordsRepository {
   _FakeRecordsRepository({
     this.feeding = const <FeedingRecord>[],
     this.growth = const <GrowthRecord>[],
@@ -479,13 +628,27 @@ class _FakeRecordsRepository
   var growthFetchCount = 0;
   var growthCreateCount = 0;
   var growthUpdateCount = 0;
+  var waterFetchCount = 0;
+  var waterTrendFetchCount = 0;
+  var vitalFetchCount = 0;
+  var sleepFetchCount = 0;
+  var diaperFetchCount = 0;
   double? savedWeightKg;
   double? savedHeightCm;
   double? savedHeadCm;
   String? feedingBabyId;
+  int? feedingDays;
   String? createdFeedingBabyId;
   double? createdFeedingAmountMl;
   double? createdPumpingAmountMl;
+  BreastSide? createdPumpingBreastSide;
+  double? createdWaterAmountMl;
+  double? createdVitalWeightKg;
+  int? createdVitalHeartRateBpm;
+  String? createdSleepBabyId;
+  Duration? createdSleepDuration;
+  String? createdDiaperBabyId;
+  DiaperKind? createdDiaperKind;
   String? createdGrowthBabyId;
   double? createdGrowthWeightKg;
 
@@ -493,9 +656,11 @@ class _FakeRecordsRepository
   Future<List<FeedingRecord>> fetchFeedingRecords({
     required DateTime date,
     required String babyId,
+    int days = 1,
   }) async {
     feedingFetchCount += 1;
     feedingBabyId = babyId;
+    feedingDays = days;
     return feeding;
   }
 
@@ -533,15 +698,144 @@ class _FakeRecordsRepository
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
     double? amountMl,
+    BreastSide? breastSide,
     int? durationSeconds,
     String? idempotencyKey,
   }) async {
     createdPumpingAmountMl = amountMl;
+    createdPumpingBreastSide = breastSide;
     return PumpMilkRecord(
       id: 'pumping-created',
       title: '',
       amountMl: amountMl?.round(),
       occurredAt: occurredAt,
+      breastSide: breastSide,
+    );
+  }
+
+  @override
+  Future<List<WaterIntakeRecord>> fetchWaterRecords({
+    required DateTime date,
+  }) async {
+    waterFetchCount += 1;
+    return const [];
+  }
+
+  @override
+  Future<WaterIntakeRecord> createWaterRecord({
+    required DateTime occurredAt,
+    required double amountMl,
+    String? idempotencyKey,
+  }) async {
+    createdWaterAmountMl = amountMl;
+    return WaterIntakeRecord(
+      id: 'water-created',
+      amountMl: amountMl,
+      occurredAt: occurredAt,
+    );
+  }
+
+  @override
+  Future<List<WaterTrendDay>> fetchWaterTrends({
+    required DateTime startDate,
+    required int days,
+    required int utcOffsetMinutes,
+  }) async {
+    waterTrendFetchCount += 1;
+    return const [];
+  }
+
+  @override
+  Future<List<VitalRecord>> fetchVitalRecords({
+    DateTime? start,
+    DateTime? end,
+  }) async {
+    vitalFetchCount += 1;
+    return const [];
+  }
+
+  @override
+  Future<VitalRecord> createVitalRecord({
+    required DateTime measuredAt,
+    double? weightKg,
+    int? systolicMmhg,
+    int? diastolicMmhg,
+    int? heartRateBpm,
+    double? temperatureC,
+    String? idempotencyKey,
+  }) async {
+    createdVitalWeightKg = weightKg;
+    createdVitalHeartRateBpm = heartRateBpm;
+    return VitalRecord(
+      id: 'vital-created',
+      measuredAt: measuredAt,
+      weightKg: weightKg,
+      systolicMmhg: systolicMmhg,
+      diastolicMmhg: diastolicMmhg,
+      heartRateBpm: heartRateBpm,
+      temperatureC: temperatureC,
+    );
+  }
+
+  @override
+  Future<List<SleepRecord>> fetchSleepRecords({
+    required String babyId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    sleepFetchCount += 1;
+    return const [];
+  }
+
+  @override
+  Future<SleepRecord> createSleepRecord({
+    required String babyId,
+    required DateTime startedAt,
+    DateTime? endedAt,
+    required SleepKind kind,
+    String? idempotencyKey,
+  }) async {
+    createdSleepBabyId = babyId;
+    createdSleepDuration = endedAt?.difference(startedAt);
+    return SleepRecord(
+      id: 'sleep-created',
+      startedAt: startedAt,
+      endedAt: endedAt,
+      kind: kind,
+    );
+  }
+
+  @override
+  Future<List<DiaperRecord>> fetchDiaperRecords({
+    required String babyId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    diaperFetchCount += 1;
+    return const [];
+  }
+
+  @override
+  Future<DiaperRecord> createDiaperRecord({
+    required String babyId,
+    required DateTime changedAt,
+    required DiaperKind kind,
+    DiaperWetness? wetness,
+    String? stoolColor,
+    String? stoolConsistency,
+    String notes = '',
+    String? idempotencyKey,
+  }) async {
+    createdDiaperBabyId = babyId;
+    createdDiaperKind = kind;
+    return DiaperRecord(
+      id: 'diaper-created',
+      changedAt: changedAt,
+      kind: kind,
+      wetness: wetness,
+      stoolColor: stoolColor,
+      stoolConsistency: stoolConsistency,
+      notes: notes,
     );
   }
 

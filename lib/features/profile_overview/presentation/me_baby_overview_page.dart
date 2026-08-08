@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
@@ -131,7 +132,13 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   ) {
     return [
       controller.overview,
+      controller.maternalCareOverview,
       controller.milkTrends,
+      controller.waterRecords,
+      controller.waterTrends,
+      controller.vitalRecords,
+      controller.sleepRecords,
+      controller.diaperRecords,
       controller.feedingRecords,
       controller.growthRecords,
       controller.plans,
@@ -303,7 +310,15 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     if (!mounted || detail == null) return;
     _openBabyDetail(detail);
     if (detail == _BabyDetail.feeding) {
-      await _openRecordComposer();
+      await _openRecordComposer(initialKind: _RecordKind.feeding);
+      return;
+    }
+    if (detail == _BabyDetail.sleep) {
+      await _openRecordComposer(initialKind: _RecordKind.sleep);
+      return;
+    }
+    if (detail == _BabyDetail.diaper) {
+      await _openRecordComposer(initialKind: _RecordKind.diaper);
       return;
     }
     if (detail.isGrowth) {
@@ -326,17 +341,83 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       );
       return;
     }
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Recording is not available until this service is connected.',
-        ),
-      ),
-    );
   }
 
-  Future<void> _openRecordComposer() async {
+  Future<void> _showMomAddRecordSheet() async {
+    final choice = await showGeneralDialog<_MomRecordChoice>(
+      context: context,
+      useRootNavigator: true,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black.withValues(alpha: 0.28),
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (dialogContext, _, _) {
+        return Material(
+          type: MaterialType.transparency,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Semantics(
+                  label: 'Dismiss add record sheet',
+                  button: true,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Navigator.of(dialogContext).pop(),
+                    child: BackdropFilter(
+                      filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                      child: const SizedBox.expand(),
+                    ),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: _MomAddRecordSheet(
+                  capabilities:
+                      _overviewController
+                          ?.maternalCareOverview
+                          .value
+                          .data
+                          ?.capabilities ??
+                      const MaternalCareCapabilities(),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, _, child) => FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+        child: child,
+      ),
+    );
+    if (!mounted || choice == null) return;
+    switch (choice) {
+      case _MomRecordChoice.pumpingLeft:
+        await _openRecordComposer(
+          initialKind: _RecordKind.pumping,
+          initialBreastSide: BreastSide.left,
+        );
+      case _MomRecordChoice.pumpingRight:
+        await _openRecordComposer(
+          initialKind: _RecordKind.pumping,
+          initialBreastSide: BreastSide.right,
+        );
+      case _MomRecordChoice.water:
+        await _openRecordComposer(initialKind: _RecordKind.water);
+      case _MomRecordChoice.weight:
+        await _openRecordComposer(initialKind: _RecordKind.weight);
+      case _MomRecordChoice.vitals:
+        await _openRecordComposer(initialKind: _RecordKind.vitals);
+      case _MomRecordChoice.sleep:
+        return;
+    }
+  }
+
+  Future<void> _openRecordComposer({
+    _RecordKind? initialKind,
+    BreastSide? initialBreastSide,
+  }) async {
     final controller = _overviewController;
     if (controller == null || controller.recordMutation.value.isSaving) return;
     controller.clearRecordMutationError();
@@ -351,6 +432,8 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       builder: (sheetContext) => _RecordComposerSheet(
         identity: widget.identity,
         controller: controller,
+        initialKind: initialKind,
+        initialBreastSide: initialBreastSide,
       ),
     );
     controller.clearRecordMutationError();
@@ -578,7 +661,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
             child: _AddRecordButton(
               saving:
                   _overviewController?.recordMutation.value.isSaving == true,
-              onPressed: _openRecordComposer,
+              onPressed: _showMomAddRecordSheet,
             ),
           ),
       ],
@@ -598,7 +681,13 @@ String _initialSection(ProfileIdentity identity, [MomLifeStage? stage]) {
 class _MeBabyOverviewData {
   const _MeBabyOverviewData({
     required this.overview,
+    required this.maternalCareOverview,
     required this.milkTrends,
+    required this.waterRecords,
+    required this.waterTrends,
+    required this.vitalRecords,
+    required this.sleepRecords,
+    required this.diaperRecords,
     required this.feedingRecords,
     required this.growthRecords,
     required this.plans,
@@ -611,7 +700,13 @@ class _MeBabyOverviewData {
     if (controller == null) {
       return _MeBabyOverviewData(
         overview: const ProfileOverviewResource.initial(),
+        maternalCareOverview: const ProfileOverviewResource.initial(),
         milkTrends: const ProfileOverviewResource.initial(),
+        waterRecords: const ProfileOverviewResource.initial(),
+        waterTrends: const ProfileOverviewResource.initial(),
+        vitalRecords: const ProfileOverviewResource.initial(),
+        sleepRecords: const ProfileOverviewResource.initial(),
+        diaperRecords: const ProfileOverviewResource.initial(),
         feedingRecords: const ProfileOverviewResource.initial(),
         growthRecords: const ProfileOverviewResource.initial(),
         plans: const ProfileOverviewResource.initial(),
@@ -620,7 +715,13 @@ class _MeBabyOverviewData {
     }
     return _MeBabyOverviewData(
       overview: controller.overview.value,
+      maternalCareOverview: controller.maternalCareOverview.value,
       milkTrends: controller.milkTrends.value,
+      waterRecords: controller.waterRecords.value,
+      waterTrends: controller.waterTrends.value,
+      vitalRecords: controller.vitalRecords.value,
+      sleepRecords: controller.sleepRecords.value,
+      diaperRecords: controller.diaperRecords.value,
       feedingRecords: controller.feedingRecords.value,
       growthRecords: controller.growthRecords.value,
       plans: controller.plans.value,
@@ -629,7 +730,13 @@ class _MeBabyOverviewData {
   }
 
   final ProfileOverviewResource<ProfileOverview> overview;
+  final ProfileOverviewResource<MaternalCareOverview> maternalCareOverview;
   final ProfileOverviewResource<List<MilkTrendDay>> milkTrends;
+  final ProfileOverviewResource<List<WaterIntakeRecord>> waterRecords;
+  final ProfileOverviewResource<List<WaterTrendDay>> waterTrends;
+  final ProfileOverviewResource<List<VitalRecord>> vitalRecords;
+  final ProfileOverviewResource<List<SleepRecord>> sleepRecords;
+  final ProfileOverviewResource<List<DiaperRecord>> diaperRecords;
   final ProfileOverviewResource<List<FeedingRecord>> feedingRecords;
   final ProfileOverviewResource<List<GrowthRecord>> growthRecords;
   final ProfileOverviewResource<PlanDashboard> plans;
@@ -637,7 +744,13 @@ class _MeBabyOverviewData {
 
   bool get hasStaleRefreshFailure => [
     overview,
+    maternalCareOverview,
     milkTrends,
+    waterRecords,
+    waterTrends,
+    vitalRecords,
+    sleepRecords,
+    diaperRecords,
     feedingRecords,
     growthRecords,
     plans,
@@ -691,7 +804,7 @@ class _MeBabyOverviewData {
     return null;
   }
 
-  List<FeedingRecord> get feeds {
+  List<FeedingRecord> get orderedFeedingRecords {
     final values = List<FeedingRecord>.of(
       feedingRecords.data ?? const <FeedingRecord>[],
     );
@@ -706,8 +819,77 @@ class _MeBabyOverviewData {
     return values;
   }
 
+  List<FeedingRecord> get feeds {
+    final localNow = now.toLocal();
+    return orderedFeedingRecords
+        .where((record) {
+          final value = record.occurredAt?.toLocal();
+          return value != null &&
+              value.year == localNow.year &&
+              value.month == localNow.month &&
+              value.day == localNow.day;
+        })
+        .toList(growable: false);
+  }
+
   int get measuredFeedTotalMl =>
       feeds.fold<int>(0, (total, record) => total + (record.amountMl ?? 0));
+
+  List<SleepRecord> get orderedSleepRecords {
+    final values = List<SleepRecord>.of(
+      sleepRecords.data ?? const <SleepRecord>[],
+    );
+    values.sort((left, right) => right.startedAt.compareTo(left.startedAt));
+    return values;
+  }
+
+  List<SleepRecord> get todaySleepRecords {
+    final localNow = now.toLocal();
+    final start = DateTime(localNow.year, localNow.month, localNow.day);
+    final end = start.add(const Duration(days: 1));
+    return orderedSleepRecords
+        .where((record) => _sleepOverlaps(record, start, end, localNow))
+        .toList(growable: false);
+  }
+
+  Duration get todaySleepDuration {
+    final localNow = now.toLocal();
+    final start = DateTime(localNow.year, localNow.month, localNow.day);
+    final end = start.add(const Duration(days: 1));
+    return todaySleepRecords.fold<Duration>(Duration.zero, (total, record) {
+      final recordStart = record.startedAt.toLocal();
+      final recordEnd = (record.endedAt ?? now).toLocal();
+      final clippedStart = recordStart.isBefore(start) ? start : recordStart;
+      final clippedEnd = recordEnd.isAfter(end) ? end : recordEnd;
+      return clippedEnd.isAfter(clippedStart)
+          ? total + clippedEnd.difference(clippedStart)
+          : total;
+    });
+  }
+
+  List<SleepRecord> get todayNaps => todaySleepRecords
+      .where((record) => record.kind == SleepKind.nap)
+      .toList(growable: false);
+
+  List<DiaperRecord> get orderedDiaperRecords {
+    final values = List<DiaperRecord>.of(
+      diaperRecords.data ?? const <DiaperRecord>[],
+    );
+    values.sort((left, right) => right.changedAt.compareTo(left.changedAt));
+    return values;
+  }
+
+  List<DiaperRecord> get todayDiaperRecords {
+    final localNow = now.toLocal();
+    return orderedDiaperRecords
+        .where((record) {
+          final value = record.changedAt.toLocal();
+          return value.year == localNow.year &&
+              value.month == localNow.month &&
+              value.day == localNow.day;
+        })
+        .toList(growable: false);
+  }
 
   GrowthRecord? get latestGrowth {
     final values = orderedGrowthRecords;
@@ -744,6 +926,17 @@ class _MeBabyOverviewData {
   }
 }
 
+bool _sleepOverlaps(
+  SleepRecord record,
+  DateTime start,
+  DateTime end,
+  DateTime now,
+) {
+  final recordStart = record.startedAt.toLocal();
+  final recordEnd = (record.endedAt ?? now).toLocal();
+  return recordStart.isBefore(end) && recordEnd.isAfter(start);
+}
+
 String _formatBabyAge(int? ageDays) {
   if (ageDays == null || ageDays < 0) return 'Age not recorded';
   final weeks = ageDays ~/ 7;
@@ -777,7 +970,8 @@ class _MeBabyOverviewHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMom = identity == ProfileIdentity.mom;
     final isBaby = identity == ProfileIdentity.baby;
-    final highlighted = isMom && avatarExpanded;
+    final highlighted =
+        isMom && avatarExpanded && careStage.stage == MomLifeStage.pregnancy;
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final label = !isMom
         ? 'Infant'
@@ -1000,116 +1194,125 @@ class _CareStageSelectorSheet extends StatelessWidget {
           canPop: !state.isSaving,
           child: SafeArea(
             top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: maxHeight),
-                child: Material(
-                  key: const ValueKey('me-stage-selector-card'),
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                  clipBehavior: Clip.antiAlias,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          color: _MeBabyOverviewColors.hero,
-                          padding: const EdgeInsets.fromLTRB(24, 12, 14, 12),
-                          child: Row(
-                            children: [
-                              const Expanded(
-                                child: Text(
-                                  'Select Current Stage',
-                                  style: TextStyle(
-                                    color: _MeBabyOverviewColors.wine,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                key: const ValueKey('me-stage-selector-close'),
-                                tooltip: 'Close',
-                                onPressed: state.isSaving
-                                    ? null
-                                    : () => Navigator.of(context).pop(),
-                                icon: const Icon(Icons.close_rounded),
-                                color: _MeBabyOverviewColors.wine,
-                              ),
-                            ],
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              child: Material(
+                key: const ValueKey('me-stage-selector-card'),
+                color: Colors.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(30),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: DecoratedBox(
+                          key: ValueKey('me-stage-selector-drag-handle'),
+                          decoration: BoxDecoration(
+                            color: Color(0xff8c7379),
+                            borderRadius: BorderRadius.all(Radius.circular(3)),
                           ),
+                          child: SizedBox(width: 40, height: 5),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
-                          child: Column(
-                            children: [
-                              for (final stage in MomLifeStage.values) ...[
-                                _CareStageOption(
-                                  stage: stage,
-                                  selected: state.stage == stage,
-                                  saving: state.pendingStage == stage,
-                                  enabled: !state.isSaving,
-                                  onTap: () async {
-                                    if (stage == state.stage) {
-                                      Navigator.of(context).pop();
-                                      return;
-                                    }
-                                    final changed = await controller
-                                        .updateCareStage(stage);
-                                    if (context.mounted && changed) {
-                                      Navigator.of(context).pop();
-                                    }
-                                  },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(28, 8, 18, 12),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              child: Text(
+                                'Select Current Stage',
+                                style: TextStyle(
+                                  color: _MeBabyOverviewColors.wine,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w900,
                                 ),
-                                if (stage != MomLifeStage.values.last)
-                                  const Divider(
-                                    color: _MeBabyOverviewColors.line,
-                                    height: 1,
+                              ),
+                            ),
+                            IconButton(
+                              key: const ValueKey('me-stage-selector-close'),
+                              tooltip: 'Close',
+                              onPressed: state.isSaving
+                                  ? null
+                                  : () => Navigator.of(context).pop(),
+                              icon: const Icon(Icons.close_rounded),
+                              color: _MeBabyOverviewColors.wine,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                        child: Column(
+                          children: [
+                            for (final stage in MomLifeStage.values) ...[
+                              _CareStageOption(
+                                stage: stage,
+                                selected: state.stage == stage,
+                                saving: state.pendingStage == stage,
+                                enabled: !state.isSaving,
+                                onTap: () async {
+                                  if (stage == state.stage) {
+                                    Navigator.of(context).pop();
+                                    return;
+                                  }
+                                  final changed = await controller
+                                      .updateCareStage(stage);
+                                  if (context.mounted && changed) {
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              ),
+                              if (stage != MomLifeStage.values.last)
+                                const Divider(
+                                  color: _MeBabyOverviewColors.line,
+                                  height: 1,
+                                ),
+                            ],
+                            if (state.error != null) ...[
+                              const SizedBox(height: 14),
+                              Semantics(
+                                liveRegion: true,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 12,
                                   ),
-                              ],
-                              if (state.error != null) ...[
-                                const SizedBox(height: 14),
-                                Semantics(
-                                  liveRegion: true,
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 14,
-                                      vertical: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xfffff0f2),
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                    child: const Row(
-                                      children: [
-                                        Icon(
-                                          Icons.error_outline_rounded,
-                                          color: _MeBabyOverviewColors.wine,
-                                          size: 20,
-                                        ),
-                                        SizedBox(width: 9),
-                                        Expanded(
-                                          child: Text(
-                                            'Couldn’t change stage. Try again.',
-                                            style: TextStyle(
-                                              color: _MeBabyOverviewColors.wine,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w800,
-                                            ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xfffff0f2),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.error_outline_rounded,
+                                        color: _MeBabyOverviewColors.wine,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: 9),
+                                      Expanded(
+                                        child: Text(
+                                          'Couldn’t change stage. Try again.',
+                                          style: TextStyle(
+                                            color: _MeBabyOverviewColors.wine,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w800,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
                             ],
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -1121,30 +1324,261 @@ class _CareStageSelectorSheet extends StatelessWidget {
   }
 }
 
-enum _RecordKind { pumping, feeding, growth }
+enum _MomRecordChoice {
+  pumpingLeft,
+  pumpingRight,
+  sleep,
+  weight,
+  water,
+  vitals,
+}
+
+class _MomAddRecordSheet extends StatelessWidget {
+  const _MomAddRecordSheet({required this.capabilities});
+
+  final MaternalCareCapabilities capabilities;
+
+  @override
+  Widget build(BuildContext context) {
+    final vitalsAvailable =
+        capabilities.vitalRecords == CapabilityState.available;
+    final options = [
+      (
+        _MomRecordChoice.pumpingLeft,
+        'pumping-left',
+        'Pumping (Left)',
+        Icons.cancel_outlined,
+        true,
+      ),
+      (
+        _MomRecordChoice.pumpingRight,
+        'pumping-right',
+        'Pumping (Right)',
+        Icons.cancel_outlined,
+        true,
+      ),
+      (_MomRecordChoice.sleep, 'sleep', 'Sleep', Icons.bedtime_outlined, false),
+      (
+        _MomRecordChoice.weight,
+        'weight',
+        'Weight',
+        Icons.monitor_weight_outlined,
+        vitalsAvailable,
+      ),
+      (
+        _MomRecordChoice.water,
+        'water-intake',
+        'Water Intake',
+        Icons.water_drop_outlined,
+        capabilities.waterRecords == CapabilityState.available,
+      ),
+      (
+        _MomRecordChoice.vitals,
+        'vitals',
+        'Vitals',
+        Icons.monitor_heart_outlined,
+        vitalsAvailable,
+      ),
+    ];
+    final scaledLabelHeight = MediaQuery.textScalerOf(context).scale(16);
+    final childAspectRatio = scaledLabelHeight > 22 ? 1.25 : 1.58;
+    return SafeArea(
+      top: false,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+        ),
+        child: Container(
+          key: const ValueKey('mom-add-record-sheet'),
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 72),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: _MeBabyOverviewColors.line,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(height: 13),
+              Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'Add Record',
+                      style: TextStyle(
+                        color: _MeBabyOverviewColors.ink,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  IconButton.filledTonal(
+                    key: const ValueKey('mom-add-record-close'),
+                    tooltip: 'Close add record',
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: IconButton.styleFrom(
+                      backgroundColor: _MeBabyOverviewColors.pill,
+                      foregroundColor: _MeBabyOverviewColors.wine,
+                      shape: const CircleBorder(),
+                      minimumSize: const Size.square(MomCozyTapTargets.minimum),
+                    ),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 7),
+              Flexible(
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: childAspectRatio,
+                  ),
+                  itemCount: options.length,
+                  itemBuilder: (context, index) {
+                    final option = options[index];
+                    return Semantics(
+                      key: ValueKey('mom-add-record-${option.$2}'),
+                      label: option.$3,
+                      hint: option.$5 ? 'Add record' : 'Coming soon',
+                      button: true,
+                      enabled: option.$5,
+                      excludeSemantics: true,
+                      child: Material(
+                        color: option.$5
+                            ? Colors.white
+                            : _MeBabyOverviewColors.pill.withValues(alpha: 0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(
+                            color: _MeBabyOverviewColors.line,
+                          ),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: option.$5
+                              ? () => Navigator.of(context).pop(option.$1)
+                              : null,
+                          child: Opacity(
+                            opacity: option.$5 ? 1 : 0.58,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                DecoratedBox(
+                                  decoration: const BoxDecoration(
+                                    color: _MeBabyOverviewColors.pill,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(13),
+                                    child: Icon(
+                                      option.$4,
+                                      color: _MeBabyOverviewColors.wine,
+                                      size: 26,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 7),
+                                Text(
+                                  option.$3,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: _MeBabyOverviewColors.ink,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                if (!option.$5) ...[
+                                  const SizedBox(height: 1),
+                                  const Text(
+                                    'Coming soon',
+                                    style: TextStyle(
+                                      color: _MeBabyOverviewColors.wine,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+enum _RecordKind {
+  pumping,
+  feeding,
+  growth,
+  water,
+  weight,
+  vitals,
+  sleep,
+  diaper,
+}
 
 class _RecordComposerSheet extends StatefulWidget {
   const _RecordComposerSheet({
     required this.identity,
     required this.controller,
+    this.initialKind,
+    this.initialBreastSide,
   });
 
   final ProfileIdentity identity;
   final ProfileOverviewController controller;
+  final _RecordKind? initialKind;
+  final BreastSide? initialBreastSide;
 
   @override
   State<_RecordComposerSheet> createState() => _RecordComposerSheetState();
 }
 
 class _RecordComposerSheetState extends State<_RecordComposerSheet> {
-  late _RecordKind _kind = widget.identity == ProfileIdentity.mom
-      ? _RecordKind.pumping
-      : _RecordKind.feeding;
+  late _RecordKind _kind =
+      widget.initialKind ??
+      (widget.identity == ProfileIdentity.mom
+          ? _RecordKind.pumping
+          : _RecordKind.feeding);
+  late BreastSide _breastSide = widget.initialBreastSide ?? BreastSide.left;
   final _amountController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
   final _headController = TextEditingController();
+  final _systolicController = TextEditingController();
+  final _diastolicController = TextEditingController();
+  final _heartRateController = TextEditingController();
+  final _temperatureController = TextEditingController();
+  final _durationController = TextEditingController();
+  final _stoolColorController = TextEditingController();
+  final _stoolConsistencyController = TextEditingController();
+  final _notesController = TextEditingController();
   String _feedingType = 'bottle';
+  SleepKind _sleepKind = SleepKind.nap;
+  DiaperKind _diaperKind = DiaperKind.wet;
+  DiaperWetness _diaperWetness = DiaperWetness.medium;
   String? _validationError;
 
   @override
@@ -1153,6 +1587,14 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     _weightController.dispose();
     _heightController.dispose();
     _headController.dispose();
+    _systolicController.dispose();
+    _diastolicController.dispose();
+    _heartRateController.dispose();
+    _temperatureController.dispose();
+    _durationController.dispose();
+    _stoolColorController.dispose();
+    _stoolConsistencyController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -1160,6 +1602,21 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     final value = double.tryParse(controller.text.trim().replaceAll(',', '.'));
     return value != null && value > 0 ? value : null;
   }
+
+  int? _positiveInteger(TextEditingController controller) {
+    final value = int.tryParse(controller.text.trim());
+    return value != null && value > 0 ? value : null;
+  }
+
+  String get _title => switch (_kind) {
+    _RecordKind.pumping => 'Log pumping session',
+    _RecordKind.water => 'Add water intake',
+    _RecordKind.weight => 'Add weight',
+    _RecordKind.vitals => 'Add vitals',
+    _RecordKind.sleep => 'Add sleep',
+    _RecordKind.diaper => 'Add diaper change',
+    _RecordKind.feeding || _RecordKind.growth => 'Add baby record',
+  };
 
   Future<void> _save() async {
     widget.controller.clearRecordMutationError();
@@ -1172,7 +1629,10 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
           return;
         }
         setState(() => _validationError = null);
-        saved = await widget.controller.savePumpingRecord(amountMl: amount);
+        saved = await widget.controller.savePumpingRecord(
+          amountMl: amount,
+          breastSide: _breastSide,
+        );
       case _RecordKind.feeding:
         final amount = _positiveNumber(_amountController);
         if (amount == null) {
@@ -1203,9 +1663,93 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
           heightCm: height,
           headCm: head,
         );
+      case _RecordKind.water:
+        final amount = _positiveNumber(_amountController);
+        if (amount == null || amount > 10000) {
+          setState(
+            () => _validationError =
+                'Enter a water amount between 1 and 10,000 mL.',
+          );
+          return;
+        }
+        setState(() => _validationError = null);
+        saved = await widget.controller.saveWaterRecord(amountMl: amount);
+      case _RecordKind.weight:
+        final weight = _positiveNumber(_weightController);
+        if (weight == null || weight > 500) {
+          setState(
+            () => _validationError = 'Enter a weight between 0 and 500 kg.',
+          );
+          return;
+        }
+        setState(() => _validationError = null);
+        saved = await widget.controller.saveVitalRecord(weightKg: weight);
+      case _RecordKind.vitals:
+        final systolic = _positiveInteger(_systolicController);
+        final diastolic = _positiveInteger(_diastolicController);
+        final heartRate = _positiveInteger(_heartRateController);
+        final temperature = _positiveNumber(_temperatureController);
+        final bloodPressureIsPartial =
+            (systolic == null) != (diastolic == null);
+        final hasMeasurement =
+            systolic != null ||
+            diastolic != null ||
+            heartRate != null ||
+            temperature != null;
+        if (!hasMeasurement || bloodPressureIsPartial) {
+          setState(
+            () => _validationError = bloodPressureIsPartial
+                ? 'Enter both systolic and diastolic blood pressure.'
+                : 'Enter at least one confirmed vital measurement.',
+          );
+          return;
+        }
+        setState(() => _validationError = null);
+        saved = await widget.controller.saveVitalRecord(
+          systolicMmhg: systolic,
+          diastolicMmhg: diastolic,
+          heartRateBpm: heartRate,
+          temperatureC: temperature,
+        );
+      case _RecordKind.sleep:
+        final durationMinutes = _positiveInteger(_durationController);
+        if (durationMinutes == null || durationMinutes > 1440) {
+          setState(
+            () => _validationError =
+                'Enter a sleep duration between 1 and 1,440 minutes.',
+          );
+          return;
+        }
+        setState(() => _validationError = null);
+        saved = await widget.controller.saveSleepRecord(
+          durationMinutes: durationMinutes,
+          kind: _sleepKind,
+        );
+      case _RecordKind.diaper:
+        setState(() => _validationError = null);
+        final includesWet =
+            _diaperKind == DiaperKind.wet || _diaperKind == DiaperKind.both;
+        final includesDirty =
+            _diaperKind == DiaperKind.dirty || _diaperKind == DiaperKind.both;
+        saved = await widget.controller.saveDiaperRecord(
+          kind: _diaperKind,
+          wetness: includesWet ? _diaperWetness : null,
+          stoolColor: includesDirty
+              ? _optionalText(_stoolColorController)
+              : null,
+          stoolConsistency: includesDirty
+              ? _optionalText(_stoolConsistencyController)
+              : null,
+          notes: _notesController.text.trim(),
+        );
     }
     if (!mounted || !saved) return;
     Navigator.of(context).pop(true);
+  }
+
+  String? _optionalText(TextEditingController controller) {
+    final value = controller.text.trim();
+    return value.isEmpty ? null : value;
   }
 
   @override
@@ -1232,7 +1776,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                     children: [
                       Expanded(
                         child: Text(
-                          isMom ? 'Add pumping record' : 'Add baby record',
+                          _title,
                           style: const TextStyle(
                             color: _MeBabyOverviewColors.ink,
                             fontSize: 24,
@@ -1250,7 +1794,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                     ],
                   ),
                   const SizedBox(height: 14),
-                  if (!isMom) ...[
+                  if (!isMom && widget.initialKind == null) ...[
                     SegmentedButton<_RecordKind>(
                       segments: const [
                         ButtonSegment(
@@ -1284,7 +1828,227 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                       headController: _headController,
                       enabled: !mutation.isSaving,
                     )
+                  else if (_kind == _RecordKind.weight)
+                    _RecordNumberField(
+                      fieldKey: const ValueKey('record-maternal-weight'),
+                      controller: _weightController,
+                      label: 'Measured weight',
+                      suffix: 'kg',
+                      enabled: !mutation.isSaving,
+                    )
+                  else if (_kind == _RecordKind.vitals)
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _RecordNumberField(
+                                fieldKey: const ValueKey(
+                                  'record-vital-systolic',
+                                ),
+                                controller: _systolicController,
+                                label: 'Systolic',
+                                suffix: 'mmHg',
+                                enabled: !mutation.isSaving,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _RecordNumberField(
+                                fieldKey: const ValueKey(
+                                  'record-vital-diastolic',
+                                ),
+                                controller: _diastolicController,
+                                label: 'Diastolic',
+                                suffix: 'mmHg',
+                                enabled: !mutation.isSaving,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        _RecordNumberField(
+                          fieldKey: const ValueKey('record-vital-heart-rate'),
+                          controller: _heartRateController,
+                          label: 'Heart rate',
+                          suffix: 'bpm',
+                          enabled: !mutation.isSaving,
+                        ),
+                        const SizedBox(height: 14),
+                        _RecordNumberField(
+                          fieldKey: const ValueKey('record-vital-temperature'),
+                          controller: _temperatureController,
+                          label: 'Temperature',
+                          suffix: '°C',
+                          enabled: !mutation.isSaving,
+                        ),
+                      ],
+                    )
+                  else if (_kind == _RecordKind.sleep)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Sleep type',
+                          style: _MeBabyOverviewText.supporting,
+                        ),
+                        const SizedBox(height: 8),
+                        SegmentedButton<SleepKind>(
+                          key: const ValueKey('record-sleep-kind'),
+                          segments: const [
+                            ButtonSegment(
+                              value: SleepKind.nap,
+                              label: Text('Nap'),
+                            ),
+                            ButtonSegment(
+                              value: SleepKind.night,
+                              label: Text('Night'),
+                            ),
+                            ButtonSegment(
+                              value: SleepKind.other,
+                              label: Text('Other'),
+                            ),
+                          ],
+                          selected: {_sleepKind},
+                          onSelectionChanged: mutation.isSaving
+                              ? null
+                              : (selection) => setState(
+                                  () => _sleepKind = selection.single,
+                                ),
+                        ),
+                        const SizedBox(height: 18),
+                        _RecordNumberField(
+                          fieldKey: const ValueKey('record-sleep-duration'),
+                          controller: _durationController,
+                          label: 'Duration',
+                          suffix: 'minutes',
+                          enabled: !mutation.isSaving,
+                        ),
+                      ],
+                    )
+                  else if (_kind == _RecordKind.diaper)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Change type',
+                          style: _MeBabyOverviewText.supporting,
+                        ),
+                        const SizedBox(height: 8),
+                        SegmentedButton<DiaperKind>(
+                          key: const ValueKey('record-diaper-kind'),
+                          segments: const [
+                            ButtonSegment(
+                              value: DiaperKind.wet,
+                              label: Text('Wet'),
+                            ),
+                            ButtonSegment(
+                              value: DiaperKind.dirty,
+                              label: Text('Dirty'),
+                            ),
+                            ButtonSegment(
+                              value: DiaperKind.both,
+                              label: Text('Both'),
+                            ),
+                          ],
+                          selected: {_diaperKind},
+                          onSelectionChanged: mutation.isSaving
+                              ? null
+                              : (selection) => setState(
+                                  () => _diaperKind = selection.single,
+                                ),
+                        ),
+                        if (_diaperKind != DiaperKind.dirty) ...[
+                          const SizedBox(height: 18),
+                          const Text(
+                            'Wetness',
+                            style: _MeBabyOverviewText.supporting,
+                          ),
+                          const SizedBox(height: 8),
+                          SegmentedButton<DiaperWetness>(
+                            key: const ValueKey('record-diaper-wetness'),
+                            segments: const [
+                              ButtonSegment(
+                                value: DiaperWetness.light,
+                                label: Text('Light'),
+                              ),
+                              ButtonSegment(
+                                value: DiaperWetness.medium,
+                                label: Text('Medium'),
+                              ),
+                              ButtonSegment(
+                                value: DiaperWetness.heavy,
+                                label: Text('Heavy'),
+                              ),
+                            ],
+                            selected: {_diaperWetness},
+                            onSelectionChanged: mutation.isSaving
+                                ? null
+                                : (selection) => setState(
+                                    () => _diaperWetness = selection.single,
+                                  ),
+                          ),
+                        ],
+                        if (_diaperKind != DiaperKind.wet) ...[
+                          const SizedBox(height: 14),
+                          _RecordTextField(
+                            fieldKey: const ValueKey(
+                              'record-diaper-stool-color',
+                            ),
+                            controller: _stoolColorController,
+                            label: 'Stool color (optional)',
+                            enabled: !mutation.isSaving,
+                          ),
+                          const SizedBox(height: 14),
+                          _RecordTextField(
+                            fieldKey: const ValueKey(
+                              'record-diaper-stool-consistency',
+                            ),
+                            controller: _stoolConsistencyController,
+                            label: 'Consistency (optional)',
+                            enabled: !mutation.isSaving,
+                          ),
+                        ],
+                        const SizedBox(height: 14),
+                        _RecordTextField(
+                          fieldKey: const ValueKey('record-diaper-notes'),
+                          controller: _notesController,
+                          label: 'Notes (optional)',
+                          enabled: !mutation.isSaving,
+                        ),
+                      ],
+                    )
                   else ...[
+                    if (_kind == _RecordKind.pumping) ...[
+                      const Text(
+                        'Breast side',
+                        style: _MeBabyOverviewText.supporting,
+                      ),
+                      const SizedBox(height: 8),
+                      SegmentedButton<BreastSide>(
+                        segments: const [
+                          ButtonSegment(
+                            value: BreastSide.left,
+                            label: Text('Left'),
+                          ),
+                          ButtonSegment(
+                            value: BreastSide.right,
+                            label: Text('Right'),
+                          ),
+                          ButtonSegment(
+                            value: BreastSide.both,
+                            label: Text('Both'),
+                          ),
+                        ],
+                        selected: {_breastSide},
+                        onSelectionChanged: mutation.isSaving
+                            ? null
+                            : (selection) => setState(
+                                () => _breastSide = selection.single,
+                              ),
+                      ),
+                      const SizedBox(height: 18),
+                    ],
                     if (_kind == _RecordKind.feeding) ...[
                       const Text(
                         'Feeding type',
@@ -1312,11 +2076,15 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                       fieldKey: ValueKey(
                         _kind == _RecordKind.pumping
                             ? 'record-pumping-amount'
+                            : _kind == _RecordKind.water
+                            ? 'record-water-amount'
                             : 'record-feeding-amount',
                       ),
                       controller: _amountController,
                       label: _kind == _RecordKind.pumping
                           ? 'Measured milk'
+                          : _kind == _RecordKind.water
+                          ? 'Water amount'
                           : 'Measured amount',
                       suffix: 'mL',
                       enabled: !mutation.isSaving,
@@ -1437,6 +2205,39 @@ class _RecordNumberField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         suffixText: suffix,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
+
+class _RecordTextField extends StatelessWidget {
+  const _RecordTextField({
+    required this.fieldKey,
+    required this.controller,
+    required this.label,
+    required this.enabled,
+  });
+
+  final Key fieldKey;
+  final TextEditingController controller;
+  final String label;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      key: fieldKey,
+      controller: controller,
+      enabled: enabled,
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        labelText: label,
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(

@@ -1,8 +1,21 @@
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
 
-enum ProfileOverviewResourceKey { overview, feeding, milkTrends, growth, plans }
+enum ProfileOverviewResourceKey {
+  overview,
+  maternalCareOverview,
+  feeding,
+  milkTrends,
+  waterRecords,
+  waterTrends,
+  vitals,
+  sleep,
+  diapers,
+  growth,
+  plans,
+}
 
 class OverviewCacheEntry<T> {
   const OverviewCacheEntry({required this.value, required this.fetchedAt});
@@ -18,23 +31,42 @@ class OverviewCacheEntry<T> {
 class ProfileOverviewCachePolicy {
   const ProfileOverviewCachePolicy({
     this.overviewTtl = const Duration(minutes: 5),
+    this.maternalCareOverviewTtl = const Duration(minutes: 2),
     this.feedingTtl = const Duration(seconds: 30),
     this.milkTrendsTtl = const Duration(minutes: 2),
+    this.waterRecordsTtl = const Duration(seconds: 30),
+    this.waterTrendsTtl = const Duration(minutes: 2),
+    this.vitalsTtl = const Duration(minutes: 2),
+    this.sleepTtl = const Duration(seconds: 30),
+    this.diapersTtl = const Duration(seconds: 30),
     this.growthTtl = const Duration(minutes: 2),
     this.plansTtl = const Duration(minutes: 2),
   });
 
   final Duration overviewTtl;
+  final Duration maternalCareOverviewTtl;
   final Duration feedingTtl;
   final Duration milkTrendsTtl;
+  final Duration waterRecordsTtl;
+  final Duration waterTrendsTtl;
+  final Duration vitalsTtl;
+  final Duration sleepTtl;
+  final Duration diapersTtl;
   final Duration growthTtl;
   final Duration plansTtl;
 
   Duration ttlFor(ProfileOverviewResourceKey resource) {
     return switch (resource) {
       ProfileOverviewResourceKey.overview => overviewTtl,
+      ProfileOverviewResourceKey.maternalCareOverview =>
+        maternalCareOverviewTtl,
       ProfileOverviewResourceKey.feeding => feedingTtl,
       ProfileOverviewResourceKey.milkTrends => milkTrendsTtl,
+      ProfileOverviewResourceKey.waterRecords => waterRecordsTtl,
+      ProfileOverviewResourceKey.waterTrends => waterTrendsTtl,
+      ProfileOverviewResourceKey.vitals => vitalsTtl,
+      ProfileOverviewResourceKey.sleep => sleepTtl,
+      ProfileOverviewResourceKey.diapers => diapersTtl,
       ProfileOverviewResourceKey.growth => growthTtl,
       ProfileOverviewResourceKey.plans => plansTtl,
     };
@@ -48,8 +80,14 @@ class ProfileOverviewCache {
   final String babyId;
 
   OverviewCacheEntry<ProfileOverview>? overview;
+  OverviewCacheEntry<MaternalCareOverview>? maternalCareOverview;
   OverviewCacheEntry<List<FeedingRecord>>? feedingRecords;
   OverviewCacheEntry<List<MilkTrendDay>>? milkTrends;
+  OverviewCacheEntry<List<WaterIntakeRecord>>? waterRecords;
+  OverviewCacheEntry<List<WaterTrendDay>>? waterTrends;
+  OverviewCacheEntry<List<VitalRecord>>? vitalRecords;
+  OverviewCacheEntry<List<SleepRecord>>? sleepRecords;
+  OverviewCacheEntry<List<DiaperRecord>>? diaperRecords;
   OverviewCacheEntry<List<GrowthRecord>>? growthRecords;
   OverviewCacheEntry<PlanDashboard>? planDashboard;
 
@@ -59,8 +97,14 @@ class ProfileOverviewCache {
 
   void clear() {
     overview = null;
+    maternalCareOverview = null;
     feedingRecords = null;
     milkTrends = null;
+    waterRecords = null;
+    waterTrends = null;
+    vitalRecords = null;
+    sleepRecords = null;
+    diaperRecords = null;
     growthRecords = null;
     planDashboard = null;
   }

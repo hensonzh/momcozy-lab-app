@@ -5,13 +5,23 @@ const feedingRecordsEndpoint = '/v1/records/feeding';
 const pumpMilkRecordsEndpoint = '/v1/records/pumping';
 const milkTrendsEndpoint = '/v1/records/milk-trends';
 const growthRecordsEndpoint = '/v1/records/growth';
+const waterRecordsEndpoint = '/v1/records/water';
+const waterTrendsEndpoint = '/v1/records/water-trends';
+const vitalRecordsEndpoint = '/v1/records/vitals';
+const sleepRecordsEndpoint = '/v1/records/sleep';
+const diaperRecordsEndpoint = '/v1/records/diaper';
 
 class RecordsApiRepository
     implements
         FeedingRecordsRepository,
         PumpMilkRecordsRepository,
         MilkTrendRepository,
-        GrowthRecordsRepository {
+        GrowthRecordsRepository,
+        WaterRecordsRepository,
+        WaterTrendRepository,
+        VitalRecordsRepository,
+        SleepRecordsRepository,
+        DiaperRecordsRepository {
   const RecordsApiRepository({required this.transport});
 
   final ApiJsonTransport transport;
@@ -20,15 +30,21 @@ class RecordsApiRepository
   Future<List<FeedingRecord>> fetchFeedingRecords({
     required DateTime date,
     required String babyId,
+    int days = 1,
   }) async {
+    if (days < 1 || days > 7) {
+      throw ArgumentError.value(days, 'days', 'Must be between 1 and 7.');
+    }
     final range = _dayRange(date);
     final response = await transport.getJson(
       feedingRecordsEndpoint,
       query: {
-        'start_at': range.start.toIso8601String(),
+        'start_at': range.start
+            .subtract(Duration(days: days - 1))
+            .toIso8601String(),
         'end_at': range.end.toIso8601String(),
         if (babyId.trim().isNotEmpty) 'infant_id': babyId.trim(),
-        'limit': 50,
+        'limit': days == 1 ? 50 : 100,
       },
     );
     final records = response['items'];
@@ -91,6 +107,7 @@ class RecordsApiRepository
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
     double? amountMl,
+    BreastSide? breastSide,
     int? durationSeconds,
     String? idempotencyKey,
   }) async {
@@ -99,6 +116,7 @@ class RecordsApiRepository
       'milk_volume_ml': amountMl,
       'duration_seconds': durationSeconds,
       'pump_type': 'manual',
+      'breast_side': breastSide?.apiValue,
       'source': 'manual',
     }..removeWhere((_, value) => value == null);
     final response = await transport.postJson(
@@ -110,6 +128,234 @@ class RecordsApiRepository
       },
     );
     return _pumpMilkRecord(response);
+  }
+
+  @override
+  Future<List<WaterIntakeRecord>> fetchWaterRecords({
+    required DateTime date,
+  }) async {
+    final range = _dayRange(date);
+    final response = await transport.getJson(
+      waterRecordsEndpoint,
+      query: {
+        'start_at': range.start.toIso8601String(),
+        'end_at': range.end.toIso8601String(),
+        'limit': 100,
+      },
+    );
+    final records = response['items'];
+    return records is List
+        ? records
+              .whereType<Map>()
+              .map((record) => _waterRecord(Map<String, Object?>.from(record)))
+              .toList(growable: false)
+        : const <WaterIntakeRecord>[];
+  }
+
+  @override
+  Future<WaterIntakeRecord> createWaterRecord({
+    required DateTime occurredAt,
+    required double amountMl,
+    String? idempotencyKey,
+  }) async {
+    final response = await transport.postJson(
+      waterRecordsEndpoint,
+      body: {
+        'occurred_at': occurredAt.toUtc().toIso8601String(),
+        'amount_ml': amountMl,
+        'source': 'manual',
+      },
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _waterRecord(response);
+  }
+
+  @override
+  Future<List<WaterTrendDay>> fetchWaterTrends({
+    required DateTime startDate,
+    required int days,
+    required int utcOffsetMinutes,
+  }) async {
+    final response = await transport.getJson(
+      waterTrendsEndpoint,
+      query: {
+        'start_date': _dateKey(startDate),
+        'days': days,
+        'utc_offset_minutes': utcOffsetMinutes,
+      },
+    );
+    final records = response['items'];
+    if (records is! List) return const <WaterTrendDay>[];
+    return records
+        .whereType<Map>()
+        .map((record) => _waterTrendDay(Map<String, Object?>.from(record)))
+        .whereType<WaterTrendDay>()
+        .toList(growable: false);
+  }
+
+  @override
+  Future<List<VitalRecord>> fetchVitalRecords({
+    DateTime? start,
+    DateTime? end,
+  }) async {
+    final response = await transport.getJson(
+      vitalRecordsEndpoint,
+      query: {
+        if (start != null) 'start_at': start.toUtc().toIso8601String(),
+        if (end != null) 'end_at': end.toUtc().toIso8601String(),
+        'limit': 100,
+      },
+    );
+    final records = response['items'];
+    return records is List
+        ? records
+              .whereType<Map>()
+              .map((record) => _vitalRecord(Map<String, Object?>.from(record)))
+              .toList(growable: false)
+        : const <VitalRecord>[];
+  }
+
+  @override
+  Future<VitalRecord> createVitalRecord({
+    required DateTime measuredAt,
+    double? weightKg,
+    int? systolicMmhg,
+    int? diastolicMmhg,
+    int? heartRateBpm,
+    double? temperatureC,
+    String? idempotencyKey,
+  }) async {
+    final body = <String, Object?>{
+      'measured_at': measuredAt.toUtc().toIso8601String(),
+      'weight_kg': weightKg,
+      'systolic_mmhg': systolicMmhg,
+      'diastolic_mmhg': diastolicMmhg,
+      'heart_rate_bpm': heartRateBpm,
+      'temperature_c': temperatureC,
+      'source': 'manual',
+    }..removeWhere((_, value) => value == null);
+    final response = await transport.postJson(
+      vitalRecordsEndpoint,
+      body: body,
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _vitalRecord(response);
+  }
+
+  @override
+  Future<List<SleepRecord>> fetchSleepRecords({
+    required String babyId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    final response = await transport.getJson(
+      sleepRecordsEndpoint,
+      query: {
+        'infant_id': babyId.trim(),
+        'start_at': start.toUtc().toIso8601String(),
+        'end_at': end.toUtc().toIso8601String(),
+        'limit': 100,
+      },
+    );
+    final records = response['items'];
+    return records is List
+        ? records
+              .whereType<Map>()
+              .map((record) => _sleepRecord(Map<String, Object?>.from(record)))
+              .toList(growable: false)
+        : const <SleepRecord>[];
+  }
+
+  @override
+  Future<SleepRecord> createSleepRecord({
+    required String babyId,
+    required DateTime startedAt,
+    DateTime? endedAt,
+    required SleepKind kind,
+    String? idempotencyKey,
+  }) async {
+    final body = <String, Object?>{
+      'infant_id': babyId.trim(),
+      'started_at': startedAt.toUtc().toIso8601String(),
+      'ended_at': endedAt?.toUtc().toIso8601String(),
+      'sleep_kind': kind.apiValue,
+      'source': 'manual',
+    }..removeWhere((_, value) => value == null);
+    final response = await transport.postJson(
+      sleepRecordsEndpoint,
+      body: body,
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _sleepRecord(response);
+  }
+
+  @override
+  Future<List<DiaperRecord>> fetchDiaperRecords({
+    required String babyId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    final response = await transport.getJson(
+      diaperRecordsEndpoint,
+      query: {
+        'infant_id': babyId.trim(),
+        'start_at': start.toUtc().toIso8601String(),
+        'end_at': end.toUtc().toIso8601String(),
+        'limit': 100,
+      },
+    );
+    final records = response['items'];
+    return records is List
+        ? records
+              .whereType<Map>()
+              .map((record) => _diaperRecord(Map<String, Object?>.from(record)))
+              .toList(growable: false)
+        : const <DiaperRecord>[];
+  }
+
+  @override
+  Future<DiaperRecord> createDiaperRecord({
+    required String babyId,
+    required DateTime changedAt,
+    required DiaperKind kind,
+    DiaperWetness? wetness,
+    String? stoolColor,
+    String? stoolConsistency,
+    String notes = '',
+    String? idempotencyKey,
+  }) async {
+    final body =
+        <String, Object?>{
+          'infant_id': babyId.trim(),
+          'changed_at': changedAt.toUtc().toIso8601String(),
+          'diaper_kind': kind.apiValue,
+          'wetness': wetness?.apiValue,
+          'stool_color': stoolColor?.trim(),
+          'stool_consistency': stoolConsistency?.trim(),
+          'notes': notes.trim(),
+          'source': 'manual',
+        }..removeWhere(
+          (_, value) => value == null || (value is String && value.isEmpty),
+        );
+    body['notes'] = notes.trim();
+    final response = await transport.postJson(
+      diaperRecordsEndpoint,
+      body: body,
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _diaperRecord(response);
   }
 
   Future<List<PumpMilkRecord>> _fetchPumpMilkRecordsRange({
@@ -249,6 +495,7 @@ PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
         _string(data['pump_title'] ?? data['pumpTitle'] ?? data['title']) ?? '',
     pumpType: _int(data['pump_type'] ?? data['pumpType']),
     pumpSource: _int(data['pump_source'] ?? data['pumpSource']),
+    breastSide: BreastSide.tryParse(data['breast_side'] ?? data['breastSide']),
     amountMl: _int(
       data['milk_volume_ml'] ??
           data['pump_milk_volum'] ??
@@ -263,6 +510,68 @@ PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
           data['occurred_at'] ??
           data['occurredAt'],
     ),
+  );
+}
+
+WaterIntakeRecord _waterRecord(Map<String, Object?> data) {
+  return WaterIntakeRecord(
+    id: _id(data['id'] ?? data['recordId']),
+    amountMl: _double(data['amount_ml'] ?? data['amountMl']) ?? 0,
+    occurredAt: _dateTime(data['occurred_at'] ?? data['occurredAt']),
+  );
+}
+
+WaterTrendDay? _waterTrendDay(Map<String, Object?> data) {
+  final date = _dateTime(data['date']);
+  if (date == null) return null;
+  return WaterTrendDay(
+    date: DateTime(date.year, date.month, date.day),
+    totalWaterMl: _double(data['total_water_ml'] ?? data['totalWaterMl']) ?? 0,
+    entryCount: _int(data['entry_count'] ?? data['entryCount']) ?? 0,
+    measuredOnly: data['measured_only'] != false,
+  );
+}
+
+VitalRecord _vitalRecord(Map<String, Object?> data) {
+  return VitalRecord(
+    id: _id(data['id'] ?? data['recordId']),
+    measuredAt: _dateTime(data['measured_at'] ?? data['measuredAt']),
+    weightKg: _double(data['weight_kg'] ?? data['weightKg']),
+    systolicMmhg: _int(data['systolic_mmhg'] ?? data['systolicMmhg']),
+    diastolicMmhg: _int(data['diastolic_mmhg'] ?? data['diastolicMmhg']),
+    heartRateBpm: _int(data['heart_rate_bpm'] ?? data['heartRateBpm']),
+    temperatureC: _double(data['temperature_c'] ?? data['temperatureC']),
+  );
+}
+
+SleepRecord _sleepRecord(Map<String, Object?> data) {
+  final startedAt = _dateTime(data['started_at'] ?? data['startedAt']);
+  if (startedAt == null) {
+    throw const FormatException('Sleep record started_at is missing.');
+  }
+  return SleepRecord(
+    id: _id(data['id'] ?? data['recordId']),
+    startedAt: startedAt,
+    endedAt: _dateTime(data['ended_at'] ?? data['endedAt']),
+    kind: SleepKind.tryParse(data['sleep_kind'] ?? data['sleepKind']),
+  );
+}
+
+DiaperRecord _diaperRecord(Map<String, Object?> data) {
+  final changedAt = _dateTime(data['changed_at'] ?? data['changedAt']);
+  if (changedAt == null) {
+    throw const FormatException('Diaper record changed_at is missing.');
+  }
+  return DiaperRecord(
+    id: _id(data['id'] ?? data['recordId']),
+    changedAt: changedAt,
+    kind: DiaperKind.tryParse(data['diaper_kind'] ?? data['diaperKind']),
+    wetness: DiaperWetness.tryParse(data['wetness']),
+    stoolColor: _string(data['stool_color'] ?? data['stoolColor']),
+    stoolConsistency: _string(
+      data['stool_consistency'] ?? data['stoolConsistency'],
+    ),
+    notes: _string(data['notes']) ?? '',
   );
 }
 
