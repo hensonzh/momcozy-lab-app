@@ -14,7 +14,9 @@ void main() {
             'id': 'feeding-001',
             'infant_id': 'infant-fixture',
             'feed_type': 'bottle',
+            'feed_action': 'expressed_milk',
             'volume_ml': 80.0,
+            'duration_seconds': 900,
             'feed_time': '2026-06-29T08:00:00Z',
           },
           {
@@ -44,7 +46,9 @@ void main() {
       expect(records.single.id, 'feeding-001');
       expect(records.single.infantId, 'infant-fixture');
       expect(records.single.type, 'bottle');
+      expect(records.single.action, 'expressed_milk');
       expect(records.single.amountMl, 80);
+      expect(records.single.durationSeconds, 900);
       expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:00:00Z'));
     });
 
@@ -73,6 +77,7 @@ void main() {
             'id': 'feeding-001',
             'infant_id': 'infant-fixture',
             'feed_type': 'bottle',
+            'feed_action': 'expressed_milk',
             'volume_ml': 80,
             'feed_time': '2026-06-25T08:00:00Z',
           },
@@ -80,6 +85,7 @@ void main() {
             'id': 'feeding-other',
             'infant_id': 'infant-other',
             'feed_type': 'formula',
+            'feed_action': 'formula',
             'volume_ml': 120,
             'feed_time': '2026-06-26T09:00:00Z',
           },
@@ -128,11 +134,10 @@ void main() {
         'items': [
           {
             'id': 'pump-001',
-            'title': 'Morning pump',
             'pump_type': 'electric',
             'breast_side': 'left',
-            'source': 'manual',
             'milk_volume_ml': 120.0,
+            'duration_seconds': 1200,
             'pump_start_time': '2026-06-29T08:40:00Z',
           },
         ],
@@ -151,11 +156,10 @@ void main() {
       });
       expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
       expect(records.single.id, 'pump-001');
-      expect(records.single.title, 'Morning pump');
-      expect(records.single.pumpType, isNull);
-      expect(records.single.pumpSource, isNull);
+      expect(records.single.pumpType, 'electric');
       expect(records.single.breastSide, BreastSide.left);
       expect(records.single.amountMl, 120);
+      expect(records.single.durationSeconds, 1200);
       expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:40:00Z'));
     });
 
@@ -164,6 +168,7 @@ void main() {
         'id': 'feeding-new',
         'infant_id': 'infant-fixture',
         'feed_type': 'bottle',
+        'feed_action': 'expressed_milk',
         'volume_ml': 95.0,
         'feed_time': '2026-07-11T08:00:00Z',
       });
@@ -187,6 +192,7 @@ void main() {
         'infant_id': 'infant-fixture',
         'feed_time': '2026-07-11T08:00:00.000Z',
         'feed_type': 'bottle',
+        'feed_action': 'expressed_milk',
         'volume_ml': 95.0,
       });
       expect(feeding.amountMl, 95);
@@ -197,8 +203,6 @@ void main() {
         'milk_volume_ml': 110.0,
         'pump_type': 'manual',
         'breast_side': 'right',
-        'source': 'manual',
-        'title': '',
       });
       final pumpingRepository = RecordsApiRepository(
         transport: pumpingTransport,
@@ -226,6 +230,35 @@ void main() {
       expect(pumping.breastSide, BreastSide.right);
     });
 
+    test('encodes formula as a bottle feed with a formula action', () async {
+      final transport = FixtureApiJsonTransport({
+        'id': 'feeding-formula',
+        'infant_id': 'infant-fixture',
+        'feed_type': 'bottle',
+        'feed_action': 'formula',
+        'volume_ml': 60.0,
+        'feed_time': '2026-07-11T10:00:00Z',
+      });
+
+      final record = await RecordsApiRepository(transport: transport)
+          .createFeedingRecord(
+            babyId: 'infant-fixture',
+            occurredAt: DateTime.parse('2026-07-11T10:00:00Z'),
+            type: 'formula',
+            amountMl: 60,
+          );
+
+      expect(transport.lastBody, {
+        'infant_id': 'infant-fixture',
+        'feed_time': '2026-07-11T10:00:00.000Z',
+        'feed_type': 'bottle',
+        'feed_action': 'formula',
+        'volume_ml': 60.0,
+      });
+      expect(record.type, 'bottle');
+      expect(record.action, 'formula');
+    });
+
     test('maps and creates owner-scoped water records', () async {
       final listTransport = FixtureApiJsonTransport({
         'items': [
@@ -233,7 +266,6 @@ void main() {
             'id': 'water-001',
             'occurred_at': '2026-08-08T08:00:00Z',
             'amount_ml': 250.0,
-            'source': 'manual',
           },
         ],
       });
@@ -255,7 +287,6 @@ void main() {
         'id': 'water-new',
         'occurred_at': '2026-08-08T09:00:00Z',
         'amount_ml': 300.0,
-        'source': 'manual',
       });
       final created = await RecordsApiRepository(transport: createTransport)
           .createWaterRecord(
@@ -279,12 +310,7 @@ void main() {
     test('maps water trends using the device UTC offset', () async {
       final transport = FixtureApiJsonTransport({
         'items': [
-          {
-            'date': '2026-08-08',
-            'total_water_ml': 1850.0,
-            'entry_count': 7,
-            'measured_only': true,
-          },
+          {'date': '2026-08-08', 'total_water_ml': 1850.0, 'entry_count': 7},
         ],
         'days': 7,
         'timezone': 'UTC+08:00',
@@ -316,7 +342,6 @@ void main() {
         'diastolic_mmhg': 76,
         'heart_rate_bpm': 72,
         'temperature_c': 36.7,
-        'source': 'manual',
       });
       final repository = RecordsApiRepository(transport: transport);
 
@@ -489,23 +514,18 @@ void main() {
       });
     });
 
-    test('maps measured milk trends and optional legacy analytics', () async {
+    test('maps measured milk trends', () async {
       final transport = FixtureApiJsonTransport({
         'items': [
           {
             'date': '2026-07-01',
             'pumped_milk_volume_ml': 180.5,
             'pumping_count': 2,
-            'measured_only': true,
           },
           {
-            'delivery_date': '2026-07-02',
-            'total_milk': '210',
-            'pump_count': '3',
-            'total_milk_estimate': '260',
-            'reference_lower': '200',
-            'reference_upper': 320,
-            'measured_only': false,
+            'date': '2026-07-02',
+            'pumped_milk_volume_ml': 210.0,
+            'pumping_count': 3,
           },
         ],
       });
@@ -526,13 +546,8 @@ void main() {
       });
       expect(trends.first.pumpedMilkVolumeMl, 180.5);
       expect(trends.first.pumpingCount, 2);
-      expect(trends.first.measuredOnly, isTrue);
       expect(trends.last.pumpedMilkVolumeMl, 210);
       expect(trends.last.pumpingCount, 3);
-      expect(trends.last.estimatedMilkVolumeMl, 260);
-      expect(trends.last.referenceLowerMl, 200);
-      expect(trends.last.referenceUpperMl, 320);
-      expect(trends.last.measuredOnly, isFalse);
     });
 
     test('maps production growth records and owner-scoped query', () async {
@@ -571,7 +586,6 @@ void main() {
         'height_cm': 55.0,
         'head_cm': 36.5,
         'measured_at': '2026-07-11T08:00:00Z',
-        'status': 'active',
       });
       final repository = RecordsApiRepository(transport: transport);
 

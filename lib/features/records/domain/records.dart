@@ -139,6 +139,8 @@ class FeedingRecord {
     required this.id,
     required this.type,
     required this.amountMl,
+    this.action = '',
+    this.durationSeconds,
     this.infantId,
     this.occurredAt,
   });
@@ -146,27 +148,27 @@ class FeedingRecord {
   final String id;
   final String? infantId;
   final String type;
+  final String action;
   final int? amountMl;
+  final int? durationSeconds;
   final DateTime? occurredAt;
 }
 
 class PumpMilkRecord {
   const PumpMilkRecord({
     required this.id,
-    required this.title,
-    this.pumpType,
-    this.pumpSource,
+    this.pumpType = '',
     this.breastSide,
     this.amountMl,
+    this.durationSeconds,
     this.occurredAt,
   });
 
   final String id;
-  final String title;
-  final int? pumpType;
-  final int? pumpSource;
+  final String pumpType;
   final BreastSide? breastSide;
   final int? amountMl;
+  final int? durationSeconds;
   final DateTime? occurredAt;
 }
 
@@ -204,13 +206,11 @@ class WaterTrendDay {
     required this.date,
     required this.totalWaterMl,
     required this.entryCount,
-    this.measuredOnly = true,
   });
 
   final DateTime date;
   final double totalWaterMl;
   final int entryCount;
-  final bool measuredOnly;
 }
 
 class VitalRecord {
@@ -256,7 +256,6 @@ class SleepRecord {
     required this.kind,
     this.infantId,
     this.endedAt,
-    this.notes = '',
   });
 
   final String id;
@@ -264,7 +263,6 @@ class SleepRecord {
   final DateTime startedAt;
   final DateTime? endedAt;
   final SleepKind kind;
-  final String notes;
 
   Duration? get duration => endedAt?.difference(startedAt);
   int get durationSeconds => duration?.inSeconds ?? 0;
@@ -342,19 +340,11 @@ class MilkTrendDay {
     required this.date,
     required this.pumpedMilkVolumeMl,
     required this.pumpingCount,
-    this.measuredOnly = true,
-    this.estimatedMilkVolumeMl,
-    this.referenceLowerMl,
-    this.referenceUpperMl,
   });
 
   final DateTime date;
   final double pumpedMilkVolumeMl;
   final int pumpingCount;
-  final bool measuredOnly;
-  final double? estimatedMilkVolumeMl;
-  final double? referenceLowerMl;
-  final double? referenceUpperMl;
 }
 
 class GrowthRecord {

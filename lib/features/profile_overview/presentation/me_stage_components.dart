@@ -1113,7 +1113,7 @@ _PregnancyProgress? _pregnancyProgress(_MeBabyOverviewData data) {
     );
   }
   final mom = data.overview.data?.mom;
-  final dueDate = mom?.expectedDueDate ?? mom?.deliveryDate;
+  final dueDate = mom?.expectedDueDate;
   int week;
   int daysRemaining;
   final hasConfirmedDueDate = dueDate != null;

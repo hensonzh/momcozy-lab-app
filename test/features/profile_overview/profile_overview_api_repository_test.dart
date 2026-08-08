@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -15,7 +16,8 @@ void main() {
           'user_id': 'user-001',
           'display_name': 'Mom',
           'current_care_stage': 'postpartum',
-          'delivery_date': '2026-05-20',
+          'actual_delivery_date': '2026-05-20',
+          'delivery_type': 'vaginal',
         },
         profileInfantsEndpoint: {
           'items': [
@@ -66,35 +68,96 @@ void main() {
       expect(overview.mom?.stage, MomLifeStage.postpartum);
       expect(overview.mom?.displayName, 'Mom');
       expect(overview.mom?.postpartumDay, 42);
-      expect(overview.mom?.deliveryDate, DateTime.parse('2026-05-20'));
-      expect(overview.mom?.dueDateOrWeek, '孕 32 周');
+      expect(overview.mom?.actualDeliveryDate, DateTime.parse('2026-05-20'));
+      expect(overview.mom?.deliveryType, DeliveryType.vaginal);
+      expect(overview.mom?.dueDateOrWeek, isNull);
       expect(overview.baby?.id, 'infant-001');
       expect(overview.baby?.nickname, 'Baby');
       expect(overview.baby?.ageDays, 42);
       expect(overview.baby?.birthDate, DateTime.parse('2026-05-20'));
+      expect(overview.baby?.sex, 'female');
     });
 
-    test(
-      'maps an explicit stage before using the delivery-date fallback',
-      () async {
-        final repository = ProfileOverviewApiRepository(
-          transport: FixtureApiJsonTransportByPath({
-            profileMeEndpoint: const {
-              'user_id': 'user-001',
-              'current_care_stage': 'fertility',
-              'delivery_date': '2026-09-20',
-            },
-            profileInfantsEndpoint: const {'items': []},
-          }),
-          babyId: 'infant-001',
-          now: () => DateTime.utc(2026, 7, 1),
-        );
+    test('maps an explicit stage without date inference', () async {
+      final repository = ProfileOverviewApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          profileMeEndpoint: const {
+            'user_id': 'user-001',
+            'current_care_stage': 'fertility',
+          },
+          profileInfantsEndpoint: const {'items': []},
+        }),
+        babyId: 'infant-001',
+        now: () => DateTime.utc(2026, 7, 1),
+      );
 
-        final overview = await repository.fetchOverview();
+      final overview = await repository.fetchOverview();
 
-        expect(overview.mom?.stage, MomLifeStage.fertility);
-      },
-    );
+      expect(overview.mom?.stage, MomLifeStage.fertility);
+    });
+
+    test('maps only the canonical date for the active stage', () async {
+      final repository = ProfileOverviewApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          profileMeEndpoint: const {
+            'user_id': 'user-001',
+            'current_care_stage': 'postpartum',
+            'expected_due_date': '2026-07-21',
+            'actual_delivery_date': '2026-07-01',
+          },
+          profileInfantsEndpoint: const {'items': []},
+        }),
+        babyId: 'infant-001',
+        now: () => DateTime.utc(2026, 7, 21),
+      );
+
+      final overview = await repository.fetchOverview();
+
+      expect(overview.mom?.postpartumDay, 20);
+      expect(overview.mom?.expectedDueDate, isNull);
+      expect(overview.mom?.actualDeliveryDate, DateTime.parse('2026-07-01'));
+    });
+
+    test('does not expose an old postpartum date in pregnancy', () async {
+      final repository = ProfileOverviewApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          profileMeEndpoint: const {
+            'user_id': 'user-001',
+            'current_care_stage': 'pregnancy',
+            'expected_due_date': '2026-10-31',
+            'actual_delivery_date': '2026-07-01',
+          },
+          profileInfantsEndpoint: const {'items': []},
+        }),
+        babyId: 'infant-001',
+        now: () => DateTime.utc(2026, 8, 8),
+      );
+
+      final overview = await repository.fetchOverview();
+
+      expect(overview.mom?.stage, MomLifeStage.pregnancy);
+      expect(overview.mom?.expectedDueDate, DateTime.parse('2026-10-31'));
+      expect(overview.mom?.actualDeliveryDate, isNull);
+      expect(overview.mom?.postpartumDay, isNull);
+    });
+
+    test('does not infer profile state from removed delivery_date', () async {
+      final repository = ProfileOverviewApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          profileMeEndpoint: const {
+            'user_id': 'legacy-user',
+            'delivery_date': '2026-06-30',
+          },
+          profileInfantsEndpoint: const {'items': []},
+        }),
+        babyId: 'infant-001',
+        now: () => DateTime.utc(2026, 7, 1),
+      );
+
+      final overview = await repository.fetchOverview();
+
+      expect(overview.mom, isNull);
+    });
 
     test(
       'updates the current stage through the authenticated profile',
@@ -119,6 +182,35 @@ void main() {
         expect(transport.lastMethod, 'PUT');
         expect(transport.lastPath, profileMeEndpoint);
         expect(transport.lastBody, {'current_care_stage': 'pregnancy'});
+      },
+    );
+
+    test(
+      'updates delivery type through the maternal profile contract',
+      () async {
+        final transport = FixtureApiJsonTransportByPath(
+          const {},
+          writeResponsesByPath: const {
+            profileMeEndpoint: {
+              'user_id': 'user-001',
+              'current_care_stage': 'postpartum',
+              'delivery_type': 'cesarean',
+            },
+          },
+        );
+        final repository = ProfileOverviewApiRepository(
+          transport: transport,
+          babyId: 'infant-001',
+        );
+
+        final deliveryType = await repository.updateDeliveryType(
+          DeliveryType.cesarean,
+        );
+
+        expect(deliveryType, DeliveryType.cesarean);
+        expect(transport.lastMethod, 'PUT');
+        expect(transport.lastPath, profileMeEndpoint);
+        expect(transport.lastBody, {'delivery_type': 'cesarean'});
       },
     );
 
@@ -175,7 +267,8 @@ void main() {
           transport: FixtureApiJsonTransportByPath({
             profileMeEndpoint: const {
               'user_id': 'user-local-day',
-              'delivery_date': '2026-06-30',
+              'current_care_stage': 'postpartum',
+              'actual_delivery_date': '2026-06-30',
             },
             profileInfantsEndpoint: const {
               'items': [
@@ -191,6 +284,26 @@ void main() {
 
         expect(overview.mom?.postpartumDay, 1);
         expect(overview.baby?.ageDays, 1);
+      },
+    );
+
+    test(
+      'does not infer a stage from dates when current stage is absent',
+      () async {
+        final repository = ProfileOverviewApiRepository(
+          transport: FixtureApiJsonTransportByPath({
+            profileMeEndpoint: const {
+              'user_id': 'invalid-profile',
+              'actual_delivery_date': '2026-07-01',
+            },
+            profileInfantsEndpoint: const {'items': []},
+          }),
+          babyId: 'infant-001',
+        );
+
+        final overview = await repository.fetchOverview();
+
+        expect(overview.mom, isNull);
       },
     );
 

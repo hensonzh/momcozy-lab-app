@@ -1,4 +1,5 @@
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 
@@ -86,6 +87,32 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
     }
     return saved;
   }
+
+  @override
+  Future<DeliveryType?> updateDeliveryType(DeliveryType? deliveryType) async {
+    final mutations = transport;
+    if (mutations is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Profile updates require JSON mutation support.');
+    }
+    final response = await (mutations as ApiJsonMutationTransport).putJson(
+      profileMeEndpoint,
+      body: {'delivery_type': deliveryType?.apiValue},
+    );
+    if (!response.containsKey('delivery_type')) {
+      throw const FormatException(
+        'Profile update response is missing delivery_type.',
+      );
+    }
+    final rawValue = response['delivery_type'];
+    if (rawValue == null) return null;
+    final saved = DeliveryType.tryParse(rawValue);
+    if (saved == null) {
+      throw const FormatException(
+        'Profile update response has an invalid delivery_type.',
+      );
+    }
+    return saved;
+  }
 }
 
 String? _infantId(Map<String, Object?> data) {
@@ -98,11 +125,10 @@ MomProfileOverview? _momProfileOverview(
   DateTime Function()? now,
 }) {
   if (data == null || data.isEmpty) return null;
-  final deliveryDate = _date(data['delivery_date']);
-  final expectedDueDate = _date(
+  final canonicalExpectedDueDate = _date(
     data['expected_due_date'] ?? data['expectedDueDate'],
   );
-  final actualDeliveryDate = _date(
+  final canonicalActualDeliveryDate = _date(
     data['actual_delivery_date'] ?? data['actualDeliveryDate'],
   );
   final profilePregnancyContext = _string(
@@ -116,44 +142,31 @@ MomProfileOverview? _momProfileOverview(
   final explicitStage = MomLifeStage.tryParse(
     data['current_care_stage'] ?? data['currentCareStage'],
   );
-  if (deliveryDate == null &&
-      expectedDueDate == null &&
-      actualDeliveryDate == null &&
-      confirmedPregnancyContext?.isNotEmpty != true &&
-      displayName?.trim().isNotEmpty != true &&
-      explicitStage == null) {
+  if (displayName?.trim().isNotEmpty != true && explicitStage == null) {
     return null;
   }
-  final hasStageEvidence =
-      deliveryDate != null ||
-      expectedDueDate != null ||
-      actualDeliveryDate != null ||
-      confirmedPregnancyContext?.isNotEmpty == true;
-  final stage =
-      explicitStage ??
-      (hasStageEvidence
-          ? MomLifeStage.resolve(
-              deliveryDate:
-                  actualDeliveryDate ?? expectedDueDate ?? deliveryDate,
-              hasPregnancyDetails:
-                  expectedDueDate != null ||
-                  confirmedPregnancyContext?.isNotEmpty == true,
-              now: now,
-            )
-          : null);
+  final stage = explicitStage;
+  final expectedDueDate = stage == MomLifeStage.pregnancy
+      ? canonicalExpectedDueDate
+      : null;
+  final actualDeliveryDate = stage == MomLifeStage.postpartum
+      ? canonicalActualDeliveryDate
+      : null;
   return MomProfileOverview(
     displayName: displayName,
     stage: stage,
     postpartumDay: stage == MomLifeStage.postpartum
-        ? _ageDays(actualDeliveryDate ?? deliveryDate, now: now)
+        ? _ageDays(actualDeliveryDate, now: now)
         : null,
-    deliveryDate: deliveryDate,
     expectedDueDate: expectedDueDate,
     actualDeliveryDate: actualDeliveryDate,
+    deliveryType: stage == MomLifeStage.postpartum
+        ? DeliveryType.tryParse(data['delivery_type'])
+        : null,
     dueDateOrWeek: _resolvedPregnancyContext(
       stage: stage,
       confirmedValue: confirmedPregnancyContext,
-      deliveryDate: expectedDueDate ?? deliveryDate,
+      expectedDueDate: expectedDueDate,
       now: now,
     ),
   );
@@ -178,13 +191,13 @@ String? _verifiedDueDateOrWeek(Map<String, Object?> response) {
 String? _resolvedPregnancyContext({
   required MomLifeStage? stage,
   required String? confirmedValue,
-  required DateTime? deliveryDate,
+  required DateTime? expectedDueDate,
   DateTime Function()? now,
 }) {
-  if (stage != MomLifeStage.pregnancy) return confirmedValue;
+  if (stage != MomLifeStage.pregnancy) return null;
   final confirmedDate = _date(confirmedValue);
   final weekLabel = _gestationalWeekLabel(
-    confirmedDate ?? deliveryDate,
+    confirmedDate ?? expectedDueDate,
     now: now,
   );
   return weekLabel ?? confirmedValue;
@@ -212,6 +225,7 @@ BabyProfileOverview? _babyProfileOverview(
     ),
     ageDays: _ageDays(birthDate, now: now),
     birthDate: birthDate,
+    sex: _nonEmptyString(data['sex']),
   );
 }
 
@@ -220,6 +234,11 @@ Map<String, Object?>? _mapOrNull(Object? value) {
 }
 
 String? _string(Object? value) => value is String ? value : null;
+
+String? _nonEmptyString(Object? value) {
+  final normalized = _string(value)?.trim();
+  return normalized?.isNotEmpty == true ? normalized : null;
+}
 
 DateTime? _date(Object? value) {
   if (value is! String || value.isEmpty) return null;

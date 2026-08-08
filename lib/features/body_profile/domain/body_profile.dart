@@ -53,29 +53,6 @@ enum DiastasisSeverity {
   }
 }
 
-enum DeliveryType {
-  vaginal,
-  cesarean,
-  assisted,
-  other;
-
-  String get apiValue => name;
-
-  String get label => switch (this) {
-    DeliveryType.vaginal => 'Vaginal birth',
-    DeliveryType.cesarean => 'Cesarean birth',
-    DeliveryType.assisted => 'Assisted birth',
-    DeliveryType.other => 'Other',
-  };
-
-  static DeliveryType? tryParse(Object? value) {
-    for (final type in values) {
-      if (type.apiValue == value) return type;
-    }
-    return null;
-  }
-}
-
 enum PainZone {
   headNeck('head_neck', 'Head & Neck'),
   upperChest('upper_chest', 'Upper Chest'),
@@ -103,13 +80,11 @@ enum PainZone {
 class BodyPainArea {
   const BodyPainArea({
     required this.zone,
-    this.id = '',
     this.intensity,
     this.sensation = '',
     this.pattern = '',
   });
 
-  final String id;
   final PainZone zone;
   final int? intensity;
   final String sensation;
@@ -123,14 +98,12 @@ class BodyProfile {
     this.pelvicFloorStrength,
     this.diastasisSeverity,
     this.dailyImpactDescription = '',
-    this.deliveryType,
     this.woundStatus = '',
     this.bleedingStatus = '',
     this.bowelStatus = '',
     this.painAreas = const [],
     this.updatedAt,
     this.hasConfirmedData = false,
-    this.recoveryScore,
   });
 
   final RecoveryFrequency? urineLeakage;
@@ -138,14 +111,12 @@ class BodyProfile {
   final int? pelvicFloorStrength;
   final DiastasisSeverity? diastasisSeverity;
   final String dailyImpactDescription;
-  final DeliveryType? deliveryType;
   final String woundStatus;
   final String bleedingStatus;
   final String bowelStatus;
   final List<BodyPainArea> painAreas;
   final DateTime? updatedAt;
   final bool hasConfirmedData;
-  final int? recoveryScore;
 
   BodyProfile copyWith({
     RecoveryFrequency? urineLeakage,
@@ -153,7 +124,6 @@ class BodyProfile {
     int? pelvicFloorStrength,
     DiastasisSeverity? diastasisSeverity,
     String? dailyImpactDescription,
-    DeliveryType? deliveryType,
     String? woundStatus,
     String? bleedingStatus,
     String? bowelStatus,
@@ -166,14 +136,12 @@ class BodyProfile {
       diastasisSeverity: diastasisSeverity ?? this.diastasisSeverity,
       dailyImpactDescription:
           dailyImpactDescription ?? this.dailyImpactDescription,
-      deliveryType: deliveryType ?? this.deliveryType,
       woundStatus: woundStatus ?? this.woundStatus,
       bleedingStatus: bleedingStatus ?? this.bleedingStatus,
       bowelStatus: bowelStatus ?? this.bowelStatus,
       painAreas: painAreas ?? this.painAreas,
       updatedAt: updatedAt,
       hasConfirmedData: true,
-      recoveryScore: null,
     );
   }
 }

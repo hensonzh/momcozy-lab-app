@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
@@ -81,14 +82,11 @@ void main() {
           pregnancy: PregnancyProgress(
             state: PregnancyProgressState.ready,
             gestationalWeek: 28,
-            gestationalDay: 0,
             daysRemaining: 84,
             trimester: PregnancyTrimester.third,
           ),
           program: MaternalProgramProgress(
-            state: ProgramProgressState.ready,
             planId: 'prenatal-yoga',
-            planType: 'prenatal_yoga',
             title: 'Prenatal Yoga Program',
             completedSessions: 6,
             totalSessions: 12,
@@ -628,6 +626,11 @@ class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
     if (updateError != null) throw updateError!;
     return stage;
   }
+
+  @override
+  Future<DeliveryType?> updateDeliveryType(DeliveryType? deliveryType) async {
+    return deliveryType;
+  }
 }
 
 class _FakeRecordsRepository
@@ -755,7 +758,7 @@ class _FakeRecordsRepository
     createdPumpingBreastSide = breastSide;
     return PumpMilkRecord(
       id: 'pumping-created',
-      title: '',
+      pumpType: 'manual',
       amountMl: amountMl?.round(),
       occurredAt: occurredAt,
       breastSide: breastSide,

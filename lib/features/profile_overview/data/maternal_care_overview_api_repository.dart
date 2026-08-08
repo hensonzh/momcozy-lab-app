@@ -25,8 +25,6 @@ MaternalCareOverview _overview(Map<String, Object?> data) {
     stage: MomLifeStage.tryParse(data['stage']),
     pregnancy: _pregnancy(_mapOrNull(data['pregnancy'])),
     program: _program(_mapOrNull(data['program'])),
-    capabilities: _capabilities(_mapOrNull(data['capabilities'])),
-    generatedAt: _dateTime(data['generated_at']),
   );
 }
 
@@ -39,23 +37,14 @@ PregnancyProgress? _pregnancy(Map<String, Object?>? data) {
     _ => throw const FormatException('Unknown pregnancy progress state.'),
   };
   if (state != PregnancyProgressState.ready) {
-    return PregnancyProgress(
-      state: state,
-      expectedDueDate: _date(data['expected_due_date']),
-    );
+    return PregnancyProgress(state: state);
   }
-  final expectedDueDate = _date(data['expected_due_date']);
   final week = _integer(data['gestational_week']);
-  final day = _integer(data['gestational_day']);
   final daysRemaining = _integer(data['days_remaining']);
   final trimester = _trimester(data['trimester']);
-  if (expectedDueDate == null ||
-      week == null ||
+  if (week == null ||
       week < 0 ||
       week > 40 ||
-      day == null ||
-      day < 0 ||
-      day > 6 ||
       daysRemaining == null ||
       daysRemaining < 0 ||
       daysRemaining > 280 ||
@@ -64,9 +53,7 @@ PregnancyProgress? _pregnancy(Map<String, Object?>? data) {
   }
   return PregnancyProgress(
     state: state,
-    expectedDueDate: expectedDueDate,
     gestationalWeek: week,
-    gestationalDay: day,
     daysRemaining: daysRemaining,
     trimester: trimester,
   );
@@ -74,11 +61,6 @@ PregnancyProgress? _pregnancy(Map<String, Object?>? data) {
 
 MaternalProgramProgress? _program(Map<String, Object?>? data) {
   if (data == null) return null;
-  final state = switch (_requiredString(data, 'state')) {
-    'ready' => ProgramProgressState.ready,
-    'empty' => ProgramProgressState.empty,
-    _ => throw const FormatException('Unknown program progress state.'),
-  };
   final completed = _integer(data['completed_sessions']);
   final total = _integer(data['total_sessions']);
   if (completed == null ||
@@ -89,32 +71,12 @@ MaternalProgramProgress? _program(Map<String, Object?>? data) {
     throw const FormatException('Program progress counts are invalid.');
   }
   return MaternalProgramProgress(
-    state: state,
     planId: _requiredString(data, 'plan_id'),
-    planType: _requiredString(data, 'plan_type'),
     title: _requiredString(data, 'title'),
     completedSessions: completed,
     totalSessions: total,
   );
 }
-
-MaternalCareCapabilities _capabilities(Map<String, Object?>? data) {
-  if (data == null) return const MaternalCareCapabilities();
-  return MaternalCareCapabilities(
-    pregnancyProgress: _capability(data['pregnancy_progress']),
-    programProgress: _capability(data['program_progress']),
-    cycleTracking: _capability(data['cycle_tracking']),
-    bodyProfile: _capability(data['body_profile']),
-    waterRecords: _capability(data['water_records']),
-    vitalRecords: _capability(data['vital_records']),
-  );
-}
-
-CapabilityState _capability(Object? value) => switch (value) {
-  'available' => CapabilityState.available,
-  'unavailable' || null => CapabilityState.unavailable,
-  _ => throw const FormatException('Unknown care overview capability.'),
-};
 
 PregnancyTrimester? _trimester(Object? value) => switch (value) {
   'first' => PregnancyTrimester.first,
@@ -134,17 +96,6 @@ String _requiredString(Map<String, Object?> data, String key) {
 }
 
 int? _integer(Object? value) => value is int ? value : null;
-
-DateTime? _date(Object? value) {
-  if (value is! String || value.isEmpty) return null;
-  final parsed = DateTime.tryParse(value);
-  if (parsed == null) return null;
-  return DateTime(parsed.year, parsed.month, parsed.day);
-}
-
-DateTime? _dateTime(Object? value) {
-  return value is String ? DateTime.tryParse(value) : null;
-}
 
 String _apiDate(DateTime value) {
   final local = value.toLocal();

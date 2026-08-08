@@ -33,7 +33,8 @@ void main() {
         'user_id': 'user-profile',
         'display_name': ' 小美 ',
         'age': 29,
-        'delivery_date': '2026-09-20',
+        'current_care_stage': 'pregnancy',
+        'expected_due_date': '2026-09-12',
         'profile_onboarding_skipped': false,
         'birth_prep_fetus_count': '单胎',
         'birthPrepBirthHospital': '深圳市妇幼',
@@ -49,7 +50,7 @@ void main() {
       expect(profile.needsOnboarding, isFalse);
       expect(profile.birthPrepDefaults.toFormDefaultValues(), {
         'age': 29,
-        'due_date_or_week': '2026-09-20',
+        'due_date_or_week': '2026-09-12',
         'fetus_count': '单胎',
         'birth_hospital': '深圳市妇幼',
         'birth_setting': '深圳市妇幼',
@@ -57,6 +58,22 @@ void main() {
       });
     },
   );
+
+  test('does not prefill pregnancy dates from a postpartum profile', () async {
+    final repository = AgentHubProfileRepository(
+      transport: FixtureApiJsonTransport({
+        'display_name': '小美',
+        'age': 29,
+        'current_care_stage': 'postpartum',
+        'expected_due_date': '2026-09-12',
+        'actual_delivery_date': '2026-07-01',
+      }),
+    );
+
+    final profile = await repository.fetchGreetingProfile();
+
+    expect(profile.birthPrepDefaults.dueDateOrWeek, isNull);
+  });
 
   test('drops legacy placeholder defaults', () async {
     final repository = AgentHubProfileRepository(

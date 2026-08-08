@@ -1986,7 +1986,8 @@ MomCozyApiRuntime _appRuntime({
         FixtureApiJsonTransportByPath({
           profileMeEndpoint: const <String, Object?>{
             'user_id': 'demo-user-fixture',
-            'delivery_date': '2026-06-11',
+            'current_care_stage': 'postpartum',
+            'actual_delivery_date': '2026-06-11',
           },
           profileInfantsEndpoint: const <String, Object?>{
             'items': <Object?>[

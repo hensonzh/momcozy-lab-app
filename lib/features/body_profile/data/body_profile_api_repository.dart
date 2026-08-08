@@ -26,7 +26,6 @@ class BodyProfileApiRepository implements BodyProfileRepository {
           'pelvic_floor_strength': profile.pelvicFloorStrength,
           'diastasis_severity': profile.diastasisSeverity?.apiValue,
           'daily_impact_description': profile.dailyImpactDescription.trim(),
-          'delivery_type': profile.deliveryType?.apiValue,
           'wound_status': profile.woundStatus.trim(),
           'bleeding_status': profile.bleedingStatus.trim(),
           'bowel_status': profile.bowelStatus.trim(),
@@ -61,7 +60,6 @@ BodyProfile _bodyProfile(Map<String, Object?> data) {
     pelvicFloorStrength: _int(data['pelvic_floor_strength']),
     diastasisSeverity: DiastasisSeverity.tryParse(data['diastasis_severity']),
     dailyImpactDescription: _string(data['daily_impact_description']) ?? '',
-    deliveryType: DeliveryType.tryParse(data['delivery_type']),
     woundStatus: _string(data['wound_status']) ?? '',
     bleedingStatus: _string(data['bleeding_status']) ?? '',
     bowelStatus: _string(data['bowel_status']) ?? '',
@@ -74,7 +72,6 @@ BodyProfile _bodyProfile(Map<String, Object?> data) {
         : const [],
     updatedAt: _dateTime(data['updated_at']),
     hasConfirmedData: data['has_confirmed_data'] == true,
-    recoveryScore: _int(data['recovery_score']),
   );
 }
 
@@ -82,7 +79,6 @@ BodyPainArea? _painArea(Map<String, Object?> data) {
   final zone = PainZone.tryParse(data['zone']);
   if (zone == null) return null;
   return BodyPainArea(
-    id: _string(data['id']) ?? '',
     zone: zone,
     intensity: _int(data['intensity']),
     sensation: _string(data['sensation']) ?? '',
