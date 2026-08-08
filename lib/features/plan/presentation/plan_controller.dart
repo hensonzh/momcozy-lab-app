@@ -3,6 +3,8 @@ import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 
 enum PlanLoadPhase { loading, empty, success, error }
 
+enum PlanPeriod { day, week, month }
+
 @immutable
 class PlanViewState {
   const PlanViewState({
@@ -11,6 +13,7 @@ class PlanViewState {
     this.dashboard,
     this.selectedPlanId,
     this.errorMessage,
+    this.period = PlanPeriod.week,
   });
 
   final PlanLoadPhase phase;
@@ -18,6 +21,7 @@ class PlanViewState {
   final PlanDashboard? dashboard;
   final String? selectedPlanId;
   final String? errorMessage;
+  final PlanPeriod period;
 
   CarePlan? get selectedPlan {
     final plans = dashboard?.plans ?? const <CarePlan>[];
@@ -31,16 +35,15 @@ class PlanViewState {
 
 class PlanController extends ChangeNotifier {
   PlanController({required this.repository, required DateTime initialWeek})
-    : _state = PlanViewState(
-        phase: PlanLoadPhase.loading,
-        weekOf: _dateOnly(initialWeek),
-      );
+    : _state = _initialState(repository, initialWeek);
 
   final PlanRepository repository;
   PlanViewState _state;
   int _loadGeneration = 0;
 
   PlanViewState get state => _state;
+
+  bool get canEditSessions => repository is PlanSessionMutationRepository;
 
   Future<void> load() async {
     final generation = ++_loadGeneration;
@@ -50,6 +53,7 @@ class PlanController extends ChangeNotifier {
       weekOf: weekOf,
       dashboard: _state.dashboard,
       selectedPlanId: _state.selectedPlanId,
+      period: _state.period,
     );
     notifyListeners();
     try {
@@ -64,6 +68,7 @@ class PlanController extends ChangeNotifier {
         weekOf: weekOf,
         dashboard: dashboard,
         selectedPlanId: selectedPlanId,
+        period: _state.period,
       );
     } catch (_) {
       if (generation != _loadGeneration) return;
@@ -73,6 +78,7 @@ class PlanController extends ChangeNotifier {
         dashboard: _state.dashboard,
         selectedPlanId: _state.selectedPlanId,
         errorMessage: 'Plans could not be loaded.',
+        period: _state.period,
       );
     }
     notifyListeners();
@@ -90,22 +96,80 @@ class PlanController extends ChangeNotifier {
       weekOf: _state.weekOf,
       dashboard: dashboard,
       selectedPlanId: planId,
+      period: _state.period,
     );
     notifyListeners();
   }
 
-  Future<void> browseWeek(int direction) async {
-    if (direction == 0) return;
+  void selectPeriod(PlanPeriod period) {
+    if (_state.period == period) return;
     _state = PlanViewState(
-      phase: PlanLoadPhase.loading,
-      weekOf: _state.weekOf.add(Duration(days: direction * 7)),
+      phase: _state.phase,
+      weekOf: _state.weekOf,
       dashboard: _state.dashboard,
       selectedPlanId: _state.selectedPlanId,
+      errorMessage: _state.errorMessage,
+      period: period,
     );
     notifyListeners();
+  }
+
+  Future<void> selectDay(DateTime value) async {
+    final selectedDay = _dateOnly(value);
+    if (selectedDay == _state.weekOf) return;
+    _state = PlanViewState(
+      phase: PlanLoadPhase.loading,
+      weekOf: selectedDay,
+      dashboard: _state.dashboard,
+      selectedPlanId: _state.selectedPlanId,
+      period: _state.period,
+    );
+    notifyListeners();
+    await load();
+  }
+
+  Future<void> browseWeek(int direction) async {
+    if (direction == 0) return;
+    await selectDay(_state.weekOf.add(Duration(days: direction * 7)));
+  }
+
+  Future<void> updateSession({
+    required String sessionId,
+    required String title,
+    required DateTime scheduledAt,
+  }) async {
+    if (repository is! PlanSessionMutationRepository) {
+      throw UnsupportedError('This Plan source does not support editing.');
+    }
+    final mutationRepository = repository as PlanSessionMutationRepository;
+    await mutationRepository.updateSession(
+      sessionId: sessionId,
+      title: title,
+      scheduledAt: scheduledAt,
+    );
     await load();
   }
 }
 
 DateTime _dateOnly(DateTime value) =>
     DateTime(value.year, value.month, value.day);
+
+PlanViewState _initialState(PlanRepository repository, DateTime initialWeek) {
+  final weekOf = _dateOnly(initialWeek);
+  final dashboard = switch (repository) {
+    PlanDashboardSnapshotProvider provider => provider.snapshotFor(
+      weekOf: weekOf,
+    ),
+    _ => null,
+  };
+  return PlanViewState(
+    phase: dashboard == null
+        ? PlanLoadPhase.loading
+        : dashboard.isEmpty
+        ? PlanLoadPhase.empty
+        : PlanLoadPhase.success,
+    weekOf: weekOf,
+    dashboard: dashboard,
+    selectedPlanId: dashboard?.plans.firstOrNull?.id,
+  );
+}

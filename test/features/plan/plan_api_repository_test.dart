@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 
@@ -88,6 +91,79 @@ void main() {
   );
 
   test(
+    'starts plan and session requests together for the active-plan path',
+    () async {
+      final transport = _DeferredPlanApiTransport();
+      final repository = PlanApiRepository(transport: transport);
+
+      final dashboardFuture = repository.fetchDashboard(
+        weekOf: DateTime(2026, 10, 22),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(transport.getPaths, [planListEndpoint, planSessionListEndpoint]);
+
+      transport.completePlans(const {
+        'items': [
+          {
+            'id': 'milk-plan',
+            'plan_type': 'milk_management',
+            'title': 'Breast Pumping Plan',
+            'payload': <String, Object?>{},
+          },
+        ],
+      });
+      transport.completeSessions(const {'items': <Object?>[]});
+
+      final dashboard = await dashboardFuture;
+      expect(dashboard.plans, hasLength(1));
+    },
+  );
+
+  test('coalesces duplicate dashboard loads for the same day', () async {
+    final transport = _DeferredPlanApiTransport();
+    final repository = PlanApiRepository(transport: transport);
+    final selectedDay = DateTime(2026, 10, 22);
+
+    final first = repository.fetchDashboard(weekOf: selectedDay);
+    final second = repository.fetchDashboard(weekOf: selectedDay);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(transport.getPaths, [planListEndpoint, planSessionListEndpoint]);
+
+    transport.completePlans(const {'items': <Object?>[]});
+    transport.completeSessions(const {'items': <Object?>[]});
+    final dashboards = await Future.wait([first, second]);
+
+    expect(dashboards.last, same(dashboards.first));
+    expect(repository.snapshotFor(weekOf: selectedDay), same(dashboards.first));
+    expect(
+      repository.snapshotFor(weekOf: selectedDay.add(const Duration(days: 1))),
+      isNull,
+    );
+  });
+
+  test(
+    'empty dashboard does not wait for the parallel session request',
+    () async {
+      final transport = _DeferredPlanApiTransport();
+      final repository = PlanApiRepository(transport: transport);
+
+      final dashboardFuture = repository.fetchDashboard(
+        weekOf: DateTime(2026, 10, 22),
+      );
+      transport.completePlans(const {'items': <Object?>[]});
+
+      final dashboard = await dashboardFuture.timeout(
+        const Duration(seconds: 1),
+      );
+      expect(dashboard.isEmpty, isTrue);
+
+      transport.completeSessions(const {'items': <Object?>[]});
+    },
+  );
+
+  test(
     'returns the supplied empty state when there are no active plans',
     () async {
       final transport = FixtureApiJsonTransportByPath({
@@ -100,7 +176,7 @@ void main() {
       ).fetchDashboard(weekOf: DateTime(2026, 10, 22));
 
       expect(dashboard.isEmpty, isTrue);
-      expect(transport.getPaths, [planListEndpoint]);
+      expect(transport.getPaths, [planListEndpoint, planSessionListEndpoint]);
     },
   );
 
@@ -119,4 +195,112 @@ void main() {
       );
     },
   );
+
+  test('updates a plan session through the task PATCH contract', () async {
+    final transport = FixtureApiJsonTransportByPath(
+      const {},
+      writeResponsesByPath: const {
+        '/v1/plans/tasks/session-2': {'id': 'session-2'},
+      },
+    );
+    final repository = PlanApiRepository(transport: transport);
+
+    expect(repository, isA<PlanSessionMutationRepository>());
+    await (repository as PlanSessionMutationRepository).updateSession(
+      sessionId: 'session-2',
+      title: ' Evening recovery stretch ',
+      scheduledAt: DateTime(2026, 10, 23, 18, 5),
+    );
+
+    expect(transport.lastMethod, 'PATCH');
+    expect(transport.lastPath, '/v1/plans/tasks/session-2');
+    expect(transport.lastBody, {
+      'title': 'Evening recovery stretch',
+      'task_date': '2026-10-23',
+      'task_time': '18:05',
+    });
+  });
+
+  test('session updates invalidate the cached dashboard snapshot', () async {
+    final selectedDay = DateTime(2026, 10, 22);
+    final transport = FixtureApiJsonTransportByPath(
+      {
+        planListEndpoint: const {
+          'items': [
+            {
+              'id': 'milk-plan',
+              'plan_type': 'milk_management',
+              'title': 'Breast Pumping Plan',
+              'payload': <String, Object?>{},
+            },
+          ],
+        },
+        planSessionListEndpoint: const {'items': <Object?>[]},
+      },
+      writeResponsesByPath: const {
+        '/v1/plans/tasks/session-1': {'id': 'session-1'},
+      },
+    );
+    final repository = PlanApiRepository(transport: transport);
+
+    await repository.fetchDashboard(weekOf: selectedDay);
+    expect(repository.snapshotFor(weekOf: selectedDay), isNotNull);
+
+    await repository.updateSession(
+      sessionId: 'session-1',
+      title: 'Updated session',
+      scheduledAt: DateTime(2026, 10, 22, 10),
+    );
+
+    expect(repository.snapshotFor(weekOf: selectedDay), isNull);
+  });
+
+  test('reports when the injected transport cannot PATCH sessions', () async {
+    final repository = PlanApiRepository(
+      transport: _DeferredPlanApiTransport(),
+    );
+
+    await expectLater(
+      repository.updateSession(
+        sessionId: 'session-1',
+        title: 'Updated session',
+        scheduledAt: DateTime(2026, 10, 22, 10),
+      ),
+      throwsA(isA<UnsupportedError>()),
+    );
+  });
+}
+
+class _DeferredPlanApiTransport implements ApiJsonTransport {
+  final Completer<Map<String, Object?>> _plans =
+      Completer<Map<String, Object?>>();
+  final Completer<Map<String, Object?>> _sessions =
+      Completer<Map<String, Object?>>();
+  final List<String> getPaths = <String>[];
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) {
+    getPaths.add(path);
+    return switch (path) {
+      planListEndpoint => _plans.future,
+      planSessionListEndpoint => _sessions.future,
+      _ => throw StateError('Unexpected path: $path'),
+    };
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) => throw UnsupportedError('POST is not used by Plan dashboard loading.');
+
+  void completePlans(Map<String, Object?> response) =>
+      _plans.complete(response);
+
+  void completeSessions(Map<String, Object?> response) =>
+      _sessions.complete(response);
 }
