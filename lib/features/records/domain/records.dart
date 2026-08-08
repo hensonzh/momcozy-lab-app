@@ -110,6 +110,7 @@ abstract interface class MilkTrendRepository {
     required DateTime startDate,
     required int days,
     bool includeToday = true,
+    int? utcOffsetMinutes,
   });
 }
 

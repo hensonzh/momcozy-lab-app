@@ -514,6 +514,7 @@ void main() {
       final trends = await repository.fetchMilkTrends(
         startDate: DateTime(2026, 6, 2),
         days: 31,
+        utcOffsetMinutes: 480,
       );
 
       expect(transport.lastPath, milkTrendsEndpoint);
@@ -521,6 +522,7 @@ void main() {
         'start_date': '2026-06-02',
         'days': 31,
         'include_today': true,
+        'utc_offset_minutes': 480,
       });
       expect(trends.first.pumpedMilkVolumeMl, 180.5);
       expect(trends.first.pumpingCount, 2);

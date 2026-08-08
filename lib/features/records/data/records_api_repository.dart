@@ -422,6 +422,7 @@ class RecordsApiRepository
     required DateTime startDate,
     required int days,
     bool includeToday = true,
+    int? utcOffsetMinutes,
   }) async {
     final response = await transport.getJson(
       milkTrendsEndpoint,
@@ -429,6 +430,7 @@ class RecordsApiRepository
         'start_date': _dateKey(startDate),
         'days': days,
         'include_today': includeToday,
+        'utc_offset_minutes': ?utcOffsetMinutes,
       },
     );
     final records = response['items'];

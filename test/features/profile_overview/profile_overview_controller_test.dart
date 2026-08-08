@@ -42,6 +42,10 @@ void main() {
       expect(records.feedingFetchCount, 0);
       expect(records.growthFetchCount, 0);
       expect(records.milkTrendStart, DateTime(2026, 6, 11));
+      expect(
+        records.milkTrendUtcOffsetMinutes,
+        DateTime(2026, 7, 11).timeZoneOffset.inMinutes,
+      );
     });
 
     test('Me exposes confirmed active plans to the stage workspace', () async {
@@ -652,6 +656,7 @@ class _FakeRecordsRepository
   final Object? growthError;
   Object? milkTrendError;
   DateTime? milkTrendStart;
+  int? milkTrendUtcOffsetMinutes;
   var feedingFetchCount = 0;
   var sleepFetchCount = 0;
   var diaperFetchCount = 0;
@@ -890,9 +895,11 @@ class _FakeRecordsRepository
     required DateTime startDate,
     required int days,
     bool includeToday = true,
+    int? utcOffsetMinutes,
   }) async {
     milkTrendFetchCount += 1;
     milkTrendStart = startDate;
+    milkTrendUtcOffsetMinutes = utcOffsetMinutes;
     if (milkTrendError != null) throw milkTrendError!;
     return [
       MilkTrendDay(
