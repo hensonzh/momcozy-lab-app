@@ -1,5 +1,75 @@
 part of 'me_baby_overview_page.dart';
 
+class _MomAvatarImage extends StatefulWidget {
+  const _MomAvatarImage({
+    required this.stage,
+    required this.fileId,
+    required this.fit,
+    required this.alignment,
+  });
+
+  final MomLifeStage stage;
+  final String? fileId;
+  final BoxFit fit;
+  final AlignmentGeometry alignment;
+
+  @override
+  State<_MomAvatarImage> createState() => _MomAvatarImageState();
+}
+
+class _MomAvatarImageState extends State<_MomAvatarImage> {
+  Future<Uint8List>? _load;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _startLoad();
+  }
+
+  @override
+  void didUpdateWidget(covariant _MomAvatarImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.fileId != widget.fileId) _startLoad();
+  }
+
+  void _startLoad() {
+    final fileId = widget.fileId?.trim();
+    _load = fileId == null || fileId.isEmpty
+        ? null
+        : MomCozyRuntimeScope.of(
+            context,
+          ).mediaContentRepository.loadImage(fileId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final load = _load;
+    if (load == null) return _defaultAvatar();
+    return FutureBuilder<Uint8List>(
+      future: load,
+      builder: (context, snapshot) {
+        final bytes = snapshot.data;
+        if (bytes == null) return _defaultAvatar();
+        return Image.memory(
+          bytes,
+          fit: widget.fit,
+          alignment: widget.alignment,
+          gaplessPlayback: true,
+        );
+      },
+    );
+  }
+
+  Widget _defaultAvatar() {
+    final asset = switch (widget.stage) {
+      MomLifeStage.pregnancy => _MeBabyOverviewAssets.pregnancyAvatar,
+      MomLifeStage.postpartum => _MeBabyOverviewAssets.postpartumAvatar,
+      MomLifeStage.fertility => _MeBabyOverviewAssets.momAvatar,
+    };
+    return Image.asset(asset, fit: widget.fit, alignment: widget.alignment);
+  }
+}
+
 class _MomStageWorkspace extends StatelessWidget {
   const _MomStageWorkspace({
     required this.stage,
@@ -61,10 +131,9 @@ class _MomStageWorkspace extends StatelessWidget {
                 width: stage == MomLifeStage.pregnancy ? 218 : 210,
                 height: stage == MomLifeStage.pregnancy ? 290 : 304,
                 child: IgnorePointer(
-                  child: Image.asset(
-                    stage == MomLifeStage.pregnancy
-                        ? _MeBabyOverviewAssets.pregnancyAvatar
-                        : _MeBabyOverviewAssets.momAvatar,
+                  child: _MomAvatarImage(
+                    stage: stage,
+                    fileId: data.overview.data?.mom?.avatarFileId,
                     alignment: Alignment.bottomCenter,
                     fit: BoxFit.contain,
                   ),
@@ -1316,10 +1385,9 @@ class _MomAvatarStage extends StatelessWidget {
                 right: stage == MomLifeStage.pregnancy ? -24 : -4,
                 top: compact ? 0 : 16,
                 bottom: compact ? 118 : 126,
-                child: Image.asset(
-                  stage == MomLifeStage.pregnancy
-                      ? _MeBabyOverviewAssets.pregnancyAvatar
-                      : _MeBabyOverviewAssets.momAvatar,
+                child: _MomAvatarImage(
+                  stage: stage,
+                  fileId: data.overview.data?.mom?.avatarFileId,
                   fit: BoxFit.contain,
                   alignment: Alignment.topCenter,
                 ),

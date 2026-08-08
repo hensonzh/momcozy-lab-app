@@ -2810,13 +2810,19 @@ class _ProfileHero extends StatelessWidget {
       bottom: isMom ? -38 : -30,
       width: isMom ? 205 : 190,
       child: IgnorePointer(
-        child: Image.asset(
-          isMom
-              ? _MeBabyOverviewAssets.momAvatar
-              : _MeBabyOverviewAssets.babyAvatar,
-          alignment: Alignment.bottomCenter,
-          fit: BoxFit.contain,
-        ),
+        child: isMom
+            ? _MomAvatarImage(
+                stage:
+                    data.overview.data?.mom?.stage ?? MomLifeStage.postpartum,
+                fileId: data.overview.data?.mom?.avatarFileId,
+                alignment: Alignment.bottomCenter,
+                fit: BoxFit.contain,
+              )
+            : Image.asset(
+                _MeBabyOverviewAssets.babyAvatar,
+                alignment: Alignment.bottomCenter,
+                fit: BoxFit.contain,
+              ),
       ),
     );
     return Container(
@@ -4069,6 +4075,8 @@ abstract final class _MeBabyOverviewAssets {
   static const momAvatar = 'assets/images/me_baby_overview/mom_avatar.png';
   static const pregnancyAvatar =
       'assets/images/me_baby_overview/pregnancy_avatar.png';
+  static const postpartumAvatar =
+      'assets/images/me_baby_overview/postpartum_avatar.png';
   static const babyAvatar = 'assets/images/me_baby_overview/baby_avatar.png';
   static const babyAvatarFull =
       'assets/images/me_baby_overview/baby_avatar_full.png';

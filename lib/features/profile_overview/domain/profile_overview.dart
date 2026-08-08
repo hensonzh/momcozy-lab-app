@@ -44,6 +44,7 @@ class MomProfileOverview {
     this.actualDeliveryDate,
     this.deliveryType,
     this.dueDateOrWeek,
+    this.avatarFileId,
   });
 
   final String? displayName;
@@ -53,6 +54,7 @@ class MomProfileOverview {
   final DateTime? actualDeliveryDate;
   final DeliveryType? deliveryType;
   final String? dueDateOrWeek;
+  final String? avatarFileId;
 
   MomProfileOverview copyWith({MomLifeStage? stage}) {
     return MomProfileOverview(
@@ -63,6 +65,7 @@ class MomProfileOverview {
       actualDeliveryDate: actualDeliveryDate,
       deliveryType: deliveryType,
       dueDateOrWeek: dueDateOrWeek,
+      avatarFileId: avatarFileId,
     );
   }
 }

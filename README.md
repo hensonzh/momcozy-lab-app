@@ -88,6 +88,22 @@ Current Android package IDs:
 - Packaging policy: [docs/flutter/android-packaging.md](docs/flutter/android-packaging.md)
 - Release gate: [docs/flutter/release-gate.md](docs/flutter/release-gate.md)
 
+## New-user onboarding
+
+Authenticated users whose backend onboarding state is incomplete are held on
+the full-screen `/onboarding` route before the main App shell is available. The
+flow collects a stage-exclusive maternal profile, the fields required by that
+stage, and one shared delivery/infant set for postpartum users. It then offers
+camera or gallery portrait capture, polls the asynchronous avatar job, lets the
+user review the result, and keeps the stage-specific MomCozy character as an
+explicit fallback.
+
+The client uses `/v1/onboarding/me` and its profile, portrait, generation, and
+completion sub-routes. Portraits are sent only through authenticated multipart
+transport; the backend normalizes them and applies its temporary privacy
+lifecycle. Existing users grandfathered by the backend migration bypass this
+new-user gate.
+
 ## Contract and Regression Tests
 
 Current Dart test coverage:
@@ -114,6 +130,7 @@ Current Dart test coverage:
 - Android route intent adapter covers pending route consumption and native active route events.
 - P0 native fake platform interfaces cover BLE permission/settings/scan failure/notification/read/write/subscribe flows, pump protocol command schemas, pump foreground lifecycle/notice events, wake lock reference counting, and one-shot route consumption/active dispatch.
 - Android MethodChannel adapter fixtures cover `MmcBle` BLE method schemas/events and `PumpSessionNotification` foreground method schemas.
+- Onboarding fixtures cover stage-exclusive serialization, postpartum delivery/infant collection, route gating, portrait upload, avatar selection, and completed-user bypass.
 - Pump agent upload MethodChannel adapter fixtures cover native method schemas and failure events.
 - Pump agent upload fake platform fixtures cover method schemas, call/failure streams, sensitive failure redaction, and duplicate upload dedupe keys.
 - Agent Hub runtime fixtures cover default SSE runner injection, production run payload generation, and route-shell composer send-ready state.

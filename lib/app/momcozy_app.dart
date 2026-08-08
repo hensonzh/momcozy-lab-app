@@ -22,6 +22,8 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
+import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_page.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -71,10 +73,19 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
         widget.apiRuntime ?? MomCozyApiRuntime.fromEnvironment(),
       );
   late final bool _ownsRuntimeController = widget.runtimeController == null;
+  late final OnboardingController? _onboardingController =
+      widget.router == null &&
+          _runtimeController.runtime.supportsSessionAutoRefresh
+      ? OnboardingController(
+          runtimeController: _runtimeController,
+          onPrimaryInfantSelected: _runtimeController.selectBaby,
+        )
+      : null;
   late final GoRouter _router =
       widget.router ??
       createMomCozyRouter(
         runtimeController: _runtimeController,
+        onboardingController: _onboardingController,
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
         lastInviteCodeStore: widget.lastInviteCodeStore,
@@ -104,6 +115,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       final platform = _routeIntentPlatform;
       if (platform is AndroidRouteIntentPlatform) unawaited(platform.dispose());
     }
+    _onboardingController?.dispose();
     if (_ownsRuntimeController) _runtimeController.dispose();
     if (_ownsRouter) _router.dispose();
     super.dispose();
@@ -356,6 +368,7 @@ ThemeData momCozyTheme() {
 GoRouter createMomCozyRouter({
   String initialLocation = '/',
   MomCozyRuntimeController? runtimeController,
+  OnboardingController? onboardingController,
   MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
   MomCozyAuthDeviceIdStore authDeviceIdStore =
       const FlutterSecureMomCozyAuthDeviceIdStore(),
@@ -376,14 +389,28 @@ GoRouter createMomCozyRouter({
           );
   return GoRouter(
     initialLocation: initialLocation,
-    refreshListenable: runtimeController,
+    refreshListenable: runtimeController == null
+        ? onboardingController
+        : onboardingController == null
+        ? runtimeController
+        : Listenable.merge([runtimeController, onboardingController]),
     redirect: (context, state) {
       if (state.uri.path == '/status') return '/me';
       if (state.uri.path == '/schedule') {
         return state.uri.replace(path: '/plan').toString();
       }
       if (runtimeController == null) return null;
-      return _authRedirect(runtimeController, state);
+      final authRedirect = _authRedirect(runtimeController, state);
+      if (authRedirect != null) return authRedirect;
+      if (onboardingController == null ||
+          !runtimeController.currentSession.isAuthenticated) {
+        return null;
+      }
+      return _onboardingRedirect(
+        runtimeController,
+        onboardingController,
+        state,
+      );
     },
     routes: [
       if (runtimeController != null)
@@ -396,6 +423,12 @@ GoRouter createMomCozyRouter({
             authDeviceIdStore: authDeviceIdStore,
             lastInviteCodeStore: lastInviteCodeStore,
           ),
+        ),
+      if (runtimeController != null && onboardingController != null)
+        GoRoute(
+          path: '/onboarding',
+          builder: (context, state) =>
+              OnboardingPage(controller: onboardingController),
         ),
       ShellRoute(
         builder: (context, state, child) {
@@ -437,6 +470,30 @@ GoRouter createMomCozyRouter({
       );
     },
   );
+}
+
+String? _onboardingRedirect(
+  MomCozyRuntimeController runtimeController,
+  OnboardingController onboardingController,
+  GoRouterState state,
+) {
+  final userId = runtimeController.currentSession.userId;
+  final isOnboarding = state.uri.path == '/onboarding';
+  if (!onboardingController.isResolvedFor(userId)) {
+    return isOnboarding ? null : '/onboarding';
+  }
+  if (onboardingController.requiresOnboardingFor(userId)) {
+    if (isOnboarding) return null;
+    final from = state.uri.toString();
+    return Uri(
+      path: '/onboarding',
+      queryParameters: from == '/' ? null : {'from': from},
+    ).toString();
+  }
+  if (isOnboarding) {
+    return _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/';
+  }
+  return null;
 }
 
 String? _authRedirect(

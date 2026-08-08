@@ -169,6 +169,9 @@ MomProfileOverview? _momProfileOverview(
       expectedDueDate: expectedDueDate,
       now: now,
     ),
+    avatarFileId: _nonEmptyString(
+      data['selected_avatar_file_id'] ?? data['selectedAvatarFileId'],
+    ),
   );
 }
 
