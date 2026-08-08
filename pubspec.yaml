@@ -82,22 +82,6 @@ flutter:
   fonts:
     - family: Figtree
       fonts:
-        - asset: assets/fonts/Figtree-VF.ttf
-    - family: Rubik
-      fonts:
-        - asset: assets/fonts/Rubik-VF.ttf
-    - family: Quicksand
-      fonts:
-        - asset: assets/fonts/Quicksand-VF.ttf
-    - family: NotoSansSC
-      fonts:
-        - asset: assets/fonts/NotoSansCJKsc-Regular.otf
-    - family: Rubik
-      fonts:
-        - asset: assets/fonts/Rubik-Bold.ttf
-          weight: 700
-    - family: Figtree
-      fonts:
         - asset: assets/fonts/Figtree-Regular.ttf
           weight: 400
         - asset: assets/fonts/Figtree-Medium.ttf
@@ -106,6 +90,26 @@ flutter:
           weight: 600
         - asset: assets/fonts/Figtree-Bold.ttf
           weight: 700
+        - asset: assets/fonts/Figtree-VF.ttf
+          weight: 800
+        - asset: assets/fonts/Figtree-VF.ttf
+          weight: 900
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/Rubik-VF.ttf
+          weight: 400
+        - asset: assets/fonts/Rubik-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Rubik-VF.ttf
+          weight: 800
+        - asset: assets/fonts/Rubik-VF.ttf
+          weight: 900
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand-VF.ttf
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/NotoSansCJKsc-Regular.otf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
