@@ -596,11 +596,19 @@ class _BabyAvatarStage extends StatelessWidget {
                             maxWidth: avatarConstraints.maxWidth,
                             minHeight: fullHeight,
                             maxHeight: fullHeight,
-                            child: Image.asset(
-                              _MeBabyOverviewAssets.babyAvatarFull,
-                              alignment: Alignment.bottomRight,
-                              fit: BoxFit.contain,
-                              semanticLabel: 'Baby avatar',
+                            child: KeyedSubtree(
+                              key: const ValueKey(
+                                'baby-avatar-without-baked-name',
+                              ),
+                              child: Image.asset(
+                                _MeBabyOverviewAssets.babyAvatarFull,
+                                key: const ValueKey(
+                                  'baby-avatar-expanded-image',
+                                ),
+                                alignment: Alignment.bottomRight,
+                                fit: BoxFit.contain,
+                                semanticLabel: 'Baby avatar',
+                              ),
                             ),
                           ),
                         ),
@@ -1212,9 +1220,9 @@ String _durationLabel(int seconds) {
 }
 
 String _sleepRangeLabel(BuildContext context, SleepRecord record) {
-  final start = record.startedAt?.toLocal();
+  final start = record.startedAt.toLocal();
   final end = record.endedAt?.toLocal();
-  if (start == null || end == null) return 'Time not recorded';
+  if (end == null) return 'Time not recorded';
   final localizations = MaterialLocalizations.of(context);
   final startLabel = localizations.formatTimeOfDay(
     TimeOfDay.fromDateTime(start),
@@ -1288,12 +1296,10 @@ class _DiaperTimelineRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final changedAt = record.changedAt?.toLocal();
-    final time = changedAt == null
-        ? 'Time not recorded'
-        : MaterialLocalizations.of(
-            context,
-          ).formatTimeOfDay(TimeOfDay.fromDateTime(changedAt));
+    final changedAt = record.changedAt.toLocal();
+    final time = MaterialLocalizations.of(
+      context,
+    ).formatTimeOfDay(TimeOfDay.fromDateTime(changedAt));
     final type = switch (record.type.toLowerCase()) {
       'wet' => 'Wet diaper',
       'dirty' => 'Dirty diaper',

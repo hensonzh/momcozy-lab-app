@@ -99,25 +99,44 @@ MomProfileOverview? _momProfileOverview(
 }) {
   if (data == null || data.isEmpty) return null;
   final deliveryDate = _date(data['delivery_date']);
-  final confirmedPregnancyContext = dueDateOrWeek?.trim();
+  final expectedDueDate = _date(
+    data['expected_due_date'] ?? data['expectedDueDate'],
+  );
+  final actualDeliveryDate = _date(
+    data['actual_delivery_date'] ?? data['actualDeliveryDate'],
+  );
+  final profilePregnancyContext = _string(
+    data['birth_prep_due_date_or_week'] ?? data['birthPrepDueDateOrWeek'],
+  )?.trim();
+  final fallbackPregnancyContext = dueDateOrWeek?.trim();
+  final confirmedPregnancyContext = profilePregnancyContext?.isNotEmpty == true
+      ? profilePregnancyContext
+      : fallbackPregnancyContext;
   final displayName = _string(data['display_name'] ?? data['displayName']);
   final explicitStage = MomLifeStage.tryParse(
     data['current_care_stage'] ?? data['currentCareStage'],
   );
   if (deliveryDate == null &&
+      expectedDueDate == null &&
+      actualDeliveryDate == null &&
       confirmedPregnancyContext?.isNotEmpty != true &&
       displayName?.trim().isNotEmpty != true &&
       explicitStage == null) {
     return null;
   }
   final hasStageEvidence =
-      deliveryDate != null || confirmedPregnancyContext?.isNotEmpty == true;
+      deliveryDate != null ||
+      expectedDueDate != null ||
+      actualDeliveryDate != null ||
+      confirmedPregnancyContext?.isNotEmpty == true;
   final stage =
       explicitStage ??
       (hasStageEvidence
           ? MomLifeStage.resolve(
-              deliveryDate: deliveryDate,
+              deliveryDate:
+                  actualDeliveryDate ?? expectedDueDate ?? deliveryDate,
               hasPregnancyDetails:
+                  expectedDueDate != null ||
                   confirmedPregnancyContext?.isNotEmpty == true,
               now: now,
             )
@@ -126,13 +145,15 @@ MomProfileOverview? _momProfileOverview(
     displayName: displayName,
     stage: stage,
     postpartumDay: stage == MomLifeStage.postpartum
-        ? _ageDays(deliveryDate, now: now)
+        ? _ageDays(actualDeliveryDate ?? deliveryDate, now: now)
         : null,
     deliveryDate: deliveryDate,
+    expectedDueDate: expectedDueDate,
+    actualDeliveryDate: actualDeliveryDate,
     dueDateOrWeek: _resolvedPregnancyContext(
       stage: stage,
       confirmedValue: confirmedPregnancyContext,
-      deliveryDate: deliveryDate,
+      deliveryDate: expectedDueDate ?? deliveryDate,
       now: now,
     ),
   );

@@ -38,6 +38,8 @@ class MomProfileOverview {
     this.stage,
     this.postpartumDay,
     this.deliveryDate,
+    this.expectedDueDate,
+    this.actualDeliveryDate,
     this.dueDateOrWeek,
   });
 
@@ -45,6 +47,8 @@ class MomProfileOverview {
   final MomLifeStage? stage;
   final int? postpartumDay;
   final DateTime? deliveryDate;
+  final DateTime? expectedDueDate;
+  final DateTime? actualDeliveryDate;
   final String? dueDateOrWeek;
 
   MomProfileOverview copyWith({MomLifeStage? stage}) {
@@ -53,6 +57,8 @@ class MomProfileOverview {
       stage: stage ?? this.stage,
       postpartumDay: postpartumDay,
       deliveryDate: deliveryDate,
+      expectedDueDate: expectedDueDate,
+      actualDeliveryDate: actualDeliveryDate,
       dueDateOrWeek: dueDateOrWeek,
     );
   }

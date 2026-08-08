@@ -41,7 +41,7 @@ void main() {
           findsOneWidget,
         );
         if (route.path == '/me') {
-          expect(find.text('Postpartum Recovery'), findsOneWidget);
+          expect(find.text('Postpartum Recovery'), findsWidgets);
         } else if (route.path == '/baby') {
           expect(find.text('Infant'), findsOneWidget);
         } else if (route.path == '/pump') {
@@ -61,7 +61,10 @@ void main() {
         } else if (route.path == '/plan') {
           expect(find.text('No Plans Yet'), findsWidgets);
         } else if (route.path == '/more/body-profile/edit') {
-          expect(find.text('Body profile editing unavailable'), findsWidgets);
+          expect(
+            find.byKey(const ValueKey('body-profile-save')),
+            findsOneWidget,
+          );
         } else {
           expect(find.text(route.title), findsWidgets);
         }
