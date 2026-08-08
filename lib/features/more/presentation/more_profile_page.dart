@@ -7,6 +7,21 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/features/body_profile/domain/body_profile.dart';
 import 'package:momcozy_flutter_app/features/body_profile/presentation/body_profile_controller.dart';
 
+const _primaryPainZones = <PainZone>[
+  PainZone.headNeck,
+  PainZone.upperChest,
+  PainZone.upperBack,
+  PainZone.lowerBack,
+  PainZone.pelvisHips,
+  PainZone.lowerBody,
+];
+
+const _additionalPainZones = <PainZone>[
+  PainZone.lowerAbdomen,
+  PainZone.shouldersNeck,
+  PainZone.other,
+];
+
 class MoreProfileOverviewPage extends StatefulWidget {
   const MoreProfileOverviewPage({super.key, required this.path});
 
@@ -225,6 +240,65 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
     context.go('/more/body-profile');
   }
 
+  Future<void> _showPainAreaPicker() async {
+    final selectedZone = await showModalBottomSheet<PainZone>(
+      context: context,
+      showDragHandle: true,
+      useSafeArea: true,
+      backgroundColor: _ProfileColors.background,
+      builder: (sheetContext) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Add a pain area', style: _ProfileText.cardTitle),
+              const SizedBox(height: 8),
+              const Text(
+                'Choose a more specific area. You can remove it again from the selected list.',
+                style: _ProfileText.supporting,
+              ),
+              const SizedBox(height: 14),
+              for (final zone in _additionalPainZones)
+                ListTile(
+                  key: ValueKey(
+                    'body-profile-additional-pain-${zone.apiValue}',
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                  minTileHeight: 52,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  selected: _painZones.contains(zone),
+                  selectedColor: _ProfileColors.wine,
+                  leading: CircleAvatar(
+                    radius: 5,
+                    backgroundColor: _painZones.contains(zone)
+                        ? _ProfileColors.wine
+                        : const Color(0xffb9a9ae),
+                  ),
+                  title: Text(zone.label),
+                  trailing: Icon(
+                    _painZones.contains(zone)
+                        ? Icons.check_rounded
+                        : Icons.add_rounded,
+                  ),
+                  onTap: () => Navigator.of(sheetContext).pop(zone),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+    if (!mounted || selectedZone == null) return;
+    setState(() {
+      _painZones.contains(selectedZone)
+          ? _painZones.remove(selectedZone)
+          : _painZones.add(selectedZone);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = _controller?.value ?? const BodyProfileState();
@@ -278,21 +352,40 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
                               setState(() => _lowerAbdominalPain = value),
                         ),
                         const SizedBox(height: 22),
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                'Pelvic Floor Strength',
-                                style: _ProfileText.fieldTitle,
-                              ),
-                            ),
-                            Text(
-                              _pelvicFloorStrength == null
-                                  ? 'Not set'
-                                  : _strengthLabel(_pelvicFloorStrength!),
-                              style: _ProfileText.accentValue,
-                            ),
-                          ],
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final value = _pelvicFloorStrength == null
+                                ? 'Not set'
+                                : _strengthLabel(_pelvicFloorStrength!);
+                            final useStackedHeading =
+                                MediaQuery.textScalerOf(context).scale(1) >
+                                    1.3 ||
+                                constraints.maxWidth < 280;
+                            if (useStackedHeading) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Pelvic Floor Strength',
+                                    style: _ProfileText.fieldTitle,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(value, style: _ProfileText.accentValue),
+                                ],
+                              );
+                            }
+                            return Row(
+                              children: [
+                                const Expanded(
+                                  child: Text(
+                                    'Pelvic Floor Strength',
+                                    style: _ProfileText.fieldTitle,
+                                  ),
+                                ),
+                                Text(value, style: _ProfileText.accentValue),
+                              ],
+                            );
+                          },
                         ),
                         Slider(
                           key: const ValueKey('body-profile-strength'),
@@ -309,14 +402,27 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
                                 ),
                         ),
                         const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Weak', style: _ProfileText.supportingSmall),
-                            Text(
-                              'Moderate',
-                              style: _ProfileText.supportingSmall,
+                            Expanded(
+                              child: Text(
+                                'Weak',
+                                style: _ProfileText.supportingSmall,
+                              ),
                             ),
-                            Text('Strong', style: _ProfileText.supportingSmall),
+                            Expanded(
+                              child: Text(
+                                'Moderate',
+                                textAlign: TextAlign.center,
+                                style: _ProfileText.supportingSmall,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Strong',
+                                textAlign: TextAlign.right,
+                                style: _ProfileText.supportingSmall,
+                              ),
+                            ),
                           ],
                         ),
                         if (_pelvicFloorStrength != null)
@@ -412,23 +518,26 @@ class _MoreBodyProfileEditorPageState extends State<MoreBodyProfileEditorPage> {
                             style: _ProfileText.fieldTitle,
                           ),
                           const SizedBox(height: 10),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              for (final zone in _painZones)
-                                InputChip(
-                                  label: Text(zone.label),
-                                  selected: true,
-                                  onDeleted: state.isBusy
-                                      ? null
-                                      : () => setState(
-                                          () => _painZones.remove(zone),
-                                        ),
-                                ),
-                            ],
+                          _SelectedPainZones(
+                            zones: _painZones,
+                            enabled: !state.isBusy,
+                            onRemove: (zone) =>
+                                setState(() => _painZones.remove(zone)),
                           ),
                         ],
+                        const SizedBox(height: 14),
+                        OutlinedButton.icon(
+                          key: const ValueKey('body-profile-add-pain-area'),
+                          onPressed: state.isBusy ? null : _showPainAreaPicker,
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(0, 44),
+                            foregroundColor: _ProfileColors.wine,
+                            side: const BorderSide(color: _ProfileColors.pink),
+                            shape: const StadiumBorder(),
+                          ),
+                          icon: const Icon(Icons.add_rounded, size: 18),
+                          label: const Text('Add Area'),
+                        ),
                       ],
                     ),
                   ),
@@ -1064,77 +1173,281 @@ class _PainMapEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 106,
-          height: 210,
-          decoration: BoxDecoration(
-            color: _ProfileColors.roseTint,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: _PainBodyMap(selected: selected, showAllMarkers: true),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textScale = MediaQuery.textScalerOf(context).scale(1);
+        final useStackedLayout = constraints.maxWidth < 300 || textScale > 1.3;
+        final selector = _PainQuickSelector(
+          selected: selected,
+          enabled: enabled,
+          useTwoColumns: useStackedLayout && textScale <= 1.3,
+          onToggle: onToggle,
+        );
+
+        Widget map({required double width}) {
+          return SizedBox(
+            key: const ValueKey('body-profile-pain-map'),
+            width: width,
+            height: 260,
+            child: _PainBodyMap(
+              selected: selected,
+              showAllMarkers: true,
+              enabled: enabled,
+              onToggle: onToggle,
+            ),
+          );
+        }
+
+        if (useStackedLayout) {
+          final mapWidth = constraints.maxWidth < 180
+              ? constraints.maxWidth
+              : 180.0;
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('QUICK SELECTOR', style: _ProfileText.eyebrow),
-              const SizedBox(height: 8),
-              for (final zone in PainZone.values.where(
-                (zone) => zone != PainZone.other,
-              )) ...[
-                SizedBox(
-                  width: double.infinity,
-                  child: FilterChip(
-                    key: ValueKey('body-profile-pain-${zone.apiValue}'),
-                    avatar: CircleAvatar(
-                      radius: 4,
-                      backgroundColor: selected.contains(zone)
-                          ? _ProfileColors.wine
-                          : const Color(0xffb9a9ae),
-                    ),
-                    label: Text(zone.label),
-                    selected: selected.contains(zone),
-                    showCheckmark: false,
-                    selectedColor: _ProfileColors.roseTint,
-                    backgroundColor: Colors.white,
-                    side: BorderSide(
-                      color: selected.contains(zone)
-                          ? _ProfileColors.pink
-                          : _ProfileColors.line,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    labelStyle: TextStyle(
-                      color: selected.contains(zone)
-                          ? _ProfileColors.wine
-                          : _ProfileColors.muted,
-                      fontWeight: selected.contains(zone)
-                          ? FontWeight.w800
-                          : FontWeight.w600,
-                    ),
-                    onSelected: enabled ? (_) => onToggle(zone) : null,
-                  ),
-                ),
-                const SizedBox(height: 4),
-              ],
+              Align(
+                alignment: Alignment.center,
+                child: map(width: mapWidth),
+              ),
+              const SizedBox(height: 18),
+              selector,
             ],
-          ),
-        ),
+          );
+        }
+
+        final mapWidth = (constraints.maxWidth * 0.46).clamp(150.0, 160.0);
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            map(width: mapWidth),
+            const SizedBox(width: 16),
+            Expanded(child: selector),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _PainQuickSelector extends StatelessWidget {
+  const _PainQuickSelector({
+    required this.selected,
+    required this.enabled,
+    required this.useTwoColumns,
+    required this.onToggle,
+  });
+
+  final Set<PainZone> selected;
+  final bool enabled;
+  final bool useTwoColumns;
+  final ValueChanged<PainZone> onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: const ValueKey('body-profile-pain-quick-selector'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('QUICK SELECTOR', style: _ProfileText.eyebrow),
+        const SizedBox(height: 8),
+        if (useTwoColumns)
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final chipWidth = (constraints.maxWidth - 8) / 2;
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final zone in _primaryPainZones)
+                    SizedBox(
+                      width: chipWidth,
+                      child: _PainZoneChip(
+                        zone: zone,
+                        selected: selected.contains(zone),
+                        enabled: enabled,
+                        onToggle: onToggle,
+                      ),
+                    ),
+                ],
+              );
+            },
+          )
+        else
+          for (var index = 0; index < _primaryPainZones.length; index++) ...[
+            SizedBox(
+              width: double.infinity,
+              child: _PainZoneChip(
+                zone: _primaryPainZones[index],
+                selected: selected.contains(_primaryPainZones[index]),
+                enabled: enabled,
+                onToggle: onToggle,
+              ),
+            ),
+            if (index < _primaryPainZones.length - 1) const SizedBox(height: 8),
+          ],
       ],
     );
   }
 }
 
+class _PainZoneChip extends StatelessWidget {
+  const _PainZoneChip({
+    required this.zone,
+    required this.selected,
+    required this.enabled,
+    required this.onToggle,
+  });
+
+  final PainZone zone;
+  final bool selected;
+  final bool enabled;
+  final ValueChanged<PainZone> onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+      key: ValueKey('body-profile-pain-${zone.apiValue}'),
+      avatar: CircleAvatar(
+        radius: 4,
+        backgroundColor: selected
+            ? _ProfileColors.wine
+            : const Color(0xffb9a9ae),
+      ),
+      label: Text(zone.label),
+      selected: selected,
+      showCheckmark: false,
+      selectedColor: _ProfileColors.roseTint,
+      backgroundColor: Colors.white,
+      side: BorderSide(
+        color: selected ? _ProfileColors.pink : _ProfileColors.line,
+      ),
+      shape: const StadiumBorder(),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+      labelStyle: TextStyle(
+        color: selected ? _ProfileColors.wine : _ProfileColors.muted,
+        fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+      ),
+      onSelected: enabled ? (_) => onToggle(zone) : null,
+    );
+  }
+}
+
+class _SelectedPainZones extends StatelessWidget {
+  const _SelectedPainZones({
+    required this.zones,
+    required this.enabled,
+    required this.onRemove,
+  });
+
+  final Set<PainZone> zones;
+  final bool enabled;
+  final ValueChanged<PainZone> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final useRows = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    if (!useRows) {
+      return Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final zone in zones)
+            InputChip(
+              key: ValueKey('body-profile-selected-pain-${zone.apiValue}'),
+              label: Text(zone.label),
+              selected: true,
+              selectedColor: _ProfileColors.wine,
+              labelStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+              deleteIconColor: Colors.white,
+              onDeleted: enabled ? () => onRemove(zone) : null,
+            ),
+        ],
+      );
+    }
+
+    return Column(
+      children: [
+        for (var index = 0; index < zones.length; index++) ...[
+          _SelectedPainZoneRow(
+            zone: zones.elementAt(index),
+            enabled: enabled,
+            onRemove: onRemove,
+          ),
+          if (index < zones.length - 1) const SizedBox(height: 8),
+        ],
+      ],
+    );
+  }
+}
+
+class _SelectedPainZoneRow extends StatelessWidget {
+  const _SelectedPainZoneRow({
+    required this.zone,
+    required this.enabled,
+    required this.onRemove,
+  });
+
+  final PainZone zone;
+  final bool enabled;
+  final ValueChanged<PainZone> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: ValueKey('body-profile-selected-pain-${zone.apiValue}'),
+      width: double.infinity,
+      constraints: const BoxConstraints(minHeight: 48),
+      padding: const EdgeInsets.only(left: 14),
+      decoration: BoxDecoration(
+        color: _ProfileColors.wine,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.check_rounded, color: Colors.white, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                zone.label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            key: ValueKey('body-profile-remove-selected-pain-${zone.apiValue}'),
+            tooltip: 'Remove ${zone.label}',
+            onPressed: enabled ? () => onRemove(zone) : null,
+            color: Colors.white,
+            disabledColor: Colors.white54,
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+            icon: const Icon(Icons.close_rounded, size: 20),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _PainBodyMap extends StatelessWidget {
-  const _PainBodyMap({required this.selected, this.showAllMarkers = false});
+  const _PainBodyMap({
+    required this.selected,
+    this.showAllMarkers = false,
+    this.enabled = false,
+    this.onToggle,
+  });
 
   final Set<PainZone> selected;
   final bool showAllMarkers;
+  final bool enabled;
+  final ValueChanged<PainZone>? onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -1143,6 +1456,9 @@ class _PainBodyMap extends StatelessWidget {
       label: selected.isEmpty
           ? 'No pain areas selected'
           : 'Pain areas: $labels',
+      hint: enabled && onToggle != null
+          ? 'Tap a body marker to select or remove that pain area'
+          : null,
       image: true,
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -1151,12 +1467,31 @@ class _PainBodyMap extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(8),
-          child: CustomPaint(
-            painter: _PainBodyPainter(
-              selected: selected,
-              showAllMarkers: showAllMarkers,
-            ),
-            child: const SizedBox.expand(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return GestureDetector(
+                key: showAllMarkers
+                    ? const ValueKey('body-profile-pain-map-canvas')
+                    : null,
+                behavior: HitTestBehavior.opaque,
+                onTapUp: enabled && onToggle != null
+                    ? (details) {
+                        final zone = _painZoneAt(
+                          details.localPosition,
+                          constraints.biggest,
+                        );
+                        if (zone != null) onToggle!(zone);
+                      }
+                    : null,
+                child: CustomPaint(
+                  painter: _PainBodyPainter(
+                    selected: selected,
+                    showAllMarkers: showAllMarkers,
+                  ),
+                  child: const SizedBox.expand(),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -1281,6 +1616,24 @@ Offset _painMarkerPoint(PainZone zone, Size size) {
     PainZone.other => const Offset(0.75, 0.58),
   };
   return Offset(normalized.dx * size.width, normalized.dy * size.height);
+}
+
+PainZone? _painZoneAt(Offset position, Size size) {
+  PainZone? nearest;
+  var nearestDistanceSquared = double.infinity;
+  for (final zone in PainZone.values) {
+    if (zone == PainZone.other) continue;
+    final distanceSquared =
+        (_painMarkerPoint(zone, size) - position).distanceSquared;
+    if (distanceSquared < nearestDistanceSquared) {
+      nearest = zone;
+      nearestDistanceSquared = distanceSquared;
+    }
+  }
+  const minimumTapRadius = 22.0;
+  return nearestDistanceSquared <= minimumTapRadius * minimumTapRadius
+      ? nearest
+      : null;
 }
 
 class _EditorCard extends StatelessWidget {
