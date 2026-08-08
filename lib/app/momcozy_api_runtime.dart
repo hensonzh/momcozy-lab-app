@@ -19,6 +19,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart'
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/body_profile/data/body_profile_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_file_cache.dart';
@@ -32,6 +33,7 @@ import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart'
 import 'package:momcozy_flutter_app/features/plan/data/plan_change_persistence.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/data/maternal_care_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
@@ -462,6 +464,10 @@ class MomCozyApiRuntime {
     );
   }
 
+  MaternalCareOverviewApiRepository get maternalCareOverviewRepository {
+    return MaternalCareOverviewApiRepository(transport: jsonTransport);
+  }
+
   AgentHubProfileRepository get agentHubProfileRepository {
     return AgentHubProfileRepository(transport: jsonTransport);
   }
@@ -486,6 +492,10 @@ class MomCozyApiRuntime {
     return NotificationsApiRepository(transport: jsonTransport);
   }
 
+  BodyProfileApiRepository get bodyProfileRepository {
+    return BodyProfileApiRepository(transport: jsonTransport);
+  }
+
   VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
     return _volumeUnitPreferenceStore ??=
         FlutterSecureVolumeUnitPreferenceStore(userId: currentSession.userId);
@@ -507,10 +517,16 @@ class MomCozyApiRuntime {
         now: now,
       ),
       feedingRepository: records,
-      babyCareRepository: records,
       pumpMilkRepository: records,
       milkTrendRepository: records,
       growthRepository: records,
+      waterRepository: records,
+      waterTrendRepository: records,
+      vitalRepository: records,
+      sleepRepository: records,
+      diaperRepository: records,
+      maternalCareOverviewRepository: maternalCareOverviewRepository,
+      planRepository: planRepository,
       cache:
           profileOverviewCache.matches(
             ownerUserId: currentSession.userId,
