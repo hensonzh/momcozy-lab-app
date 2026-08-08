@@ -20,7 +20,7 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Me and Baby profile overview pages', () {
-    testWidgets('navigation exposes all five destinations with disabled More', (
+    testWidgets('navigation exposes all five active destinations', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
@@ -51,9 +51,12 @@ void main() {
 
       await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('route-page-/plan')), findsOneWidget);
-      expect(find.byKey(const ValueKey('route-page-/more')), findsNothing);
-      expect(find.byKey(const ValueKey('bottom-nav-more')), findsOneWidget);
+      expect(find.byKey(const ValueKey('route-page-/plan')), findsNothing);
+      expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
+      final moreTab = find.byKey(const ValueKey('bottom-nav-more'));
+      expect(moreTab, findsOneWidget);
+      expect(tester.widget<Semantics>(moreTab).properties.enabled, isTrue);
+      expect(tester.widget<Semantics>(moreTab).properties.selected, isTrue);
 
       await tester.tap(find.byKey(const ValueKey('bottom-nav-baby')));
       await tester.pumpAndSettle();

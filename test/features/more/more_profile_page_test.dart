@@ -10,17 +10,26 @@ import '../../support/fixture_api_transport.dart';
 void main() {
   setUpAll(loadMomCozyTestFonts);
 
-  testWidgets('More primary tab is disabled', (tester) async {
+  testWidgets('More primary tab opens the recovery profile overview', (
+    tester,
+  ) async {
     await _pumpApp(tester, initialLocation: '/me');
 
     final moreTab = find.byKey(const ValueKey('bottom-nav-more'));
-    expect(tester.widget<Semantics>(moreTab).properties.enabled, isFalse);
+    expect(tester.widget<Semantics>(moreTab).properties.enabled, isTrue);
 
     await tester.tap(moreTab);
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/me')), findsOneWidget);
-    expect(find.byKey(const ValueKey('route-page-/more')), findsNothing);
+    expect(find.byKey(const ValueKey('route-page-/me')), findsNothing);
+    expect(find.byKey(const ValueKey('route-page-/more')), findsOneWidget);
+
+    final selectedMoreTab = find.byKey(const ValueKey('bottom-nav-more'));
+    expect(selectedMoreTab, findsOneWidget);
+    expect(
+      tester.widget<Semantics>(selectedMoreTab).properties.selected,
+      isTrue,
+    );
   });
 
   testWidgets('More direct route links to the recovery profile overview', (
@@ -43,7 +52,9 @@ void main() {
       findsOneWidget,
     );
 
-    expect(find.byKey(const ValueKey('bottom-nav-more')), findsNothing);
+    final moreTab = find.byKey(const ValueKey('bottom-nav-more'));
+    expect(moreTab, findsOneWidget);
+    expect(tester.widget<Semantics>(moreTab).properties.selected, isTrue);
   });
 
   testWidgets('direct editor route loads the confirmed profile form', (

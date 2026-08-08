@@ -65,6 +65,24 @@ void main() {
         ),
       );
     });
+
+    testWidgets('More tab selected matches active baseline', (tester) async {
+      await _bottomNavigationComponentApp(tester, location: '/more');
+
+      final bottomNav = find.byType(MomCozyBottomNavigation);
+      final moreTab = find.byKey(const ValueKey('bottom-nav-more'));
+      expect(bottomNav, findsOneWidget);
+      expect(moreTab, findsOneWidget);
+      expect(tester.widget<Semantics>(moreTab).properties.enabled, isTrue);
+      expect(tester.widget<Semantics>(moreTab).properties.selected, isTrue);
+
+      await expectLater(
+        bottomNav,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/bottom_nav_more_selected.png',
+        ),
+      );
+    });
   });
 }
 

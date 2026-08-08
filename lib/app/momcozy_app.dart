@@ -759,7 +759,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 asset: MomCozyAssets.bottomNavMore,
                                 iconSize: const Size.square(16),
                                 matchesPlanDesign: matchesPlanDesign,
-                                onTap: null,
+                                onTap: () => context.go(_tabPaths[4]),
                               ),
                             ),
                           ],
@@ -1554,7 +1554,6 @@ const _routesWithoutBottomNavigation = {
   '/hospital-bag-cart',
   '/ibclc-chat.html',
   '/media-viewer',
-  '/more',
   '/more/body-profile',
   '/more/body-profile/edit',
 };
