@@ -4,28 +4,105 @@ import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 const planListEndpoint = '/v1/plans';
 const planSessionListEndpoint = '/v1/plans/tasks/list';
 
-class PlanApiRepository implements PlanRepository {
-  const PlanApiRepository({required this.transport});
+String planSessionEndpoint(String sessionId) =>
+    '/v1/plans/tasks/${Uri.encodeComponent(sessionId.trim())}';
+
+class PlanApiRepository
+    implements
+        PlanRepository,
+        PlanDashboardSnapshotProvider,
+        PlanSessionMutationRepository {
+  PlanApiRepository({required this.transport});
 
   final ApiJsonTransport transport;
+  PlanDashboard? _snapshot;
+  DateTime? _snapshotDay;
+  Future<PlanDashboard>? _inFlight;
+  DateTime? _inFlightDay;
+  int _cacheRevision = 0;
 
   @override
-  Future<PlanDashboard> fetchDashboard({required DateTime weekOf}) async {
+  Future<PlanDashboard> fetchDashboard({required DateTime weekOf}) {
     final selectedDay = _dateOnly(weekOf);
-    final planResponse = await transport.getJson(
+    final inFlight = _inFlight;
+    if (inFlight != null && _sameDay(_inFlightDay, selectedDay)) {
+      return inFlight;
+    }
+
+    late final Future<PlanDashboard> request;
+    final cacheRevision = _cacheRevision;
+    request = _fetchDashboard(selectedDay)
+        .then((dashboard) {
+          if (_cacheRevision == cacheRevision) {
+            _snapshot = dashboard;
+            _snapshotDay = selectedDay;
+          }
+          return dashboard;
+        })
+        .whenComplete(() {
+          if (identical(_inFlight, request)) {
+            _inFlight = null;
+            _inFlightDay = null;
+          }
+        });
+    _inFlight = request;
+    _inFlightDay = selectedDay;
+    return request;
+  }
+
+  @override
+  PlanDashboard? snapshotFor({required DateTime weekOf}) {
+    return _sameDay(_snapshotDay, _dateOnly(weekOf)) ? _snapshot : null;
+  }
+
+  @override
+  Future<void> updateSession({
+    required String sessionId,
+    required String title,
+    required DateTime scheduledAt,
+  }) async {
+    final normalizedSessionId = sessionId.trim();
+    final normalizedTitle = title.trim();
+    if (normalizedSessionId.isEmpty) {
+      throw ArgumentError.value(sessionId, 'sessionId', 'must not be empty');
+    }
+    if (normalizedTitle.isEmpty) {
+      throw ArgumentError.value(title, 'title', 'must not be empty');
+    }
+    if (transport is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Plan session editing requires PATCH support.');
+    }
+    final mutationTransport = transport as ApiJsonMutationTransport;
+
+    await mutationTransport.patchJson(
+      planSessionEndpoint(normalizedSessionId),
+      body: {
+        'title': normalizedTitle,
+        'task_date': _apiDate(scheduledAt),
+        'task_time': _apiTime(scheduledAt),
+      },
+    );
+    _cacheRevision += 1;
+    _snapshot = null;
+    _snapshotDay = null;
+    _inFlight = null;
+    _inFlightDay = null;
+  }
+
+  Future<PlanDashboard> _fetchDashboard(DateTime selectedDay) async {
+    final planRequest = transport.getJson(
       planListEndpoint,
       query: const {'status': 'active', 'limit': 20},
     );
+    final sessionRequest = _fetchSessions(selectedDay);
+    final planResponse = await planRequest;
     final plans = _items(
       planResponse,
       endpoint: planListEndpoint,
     ).map(_carePlan).toList(growable: false);
     if (plans.isEmpty) return PlanDashboard.empty(weekOf: selectedDay);
 
-    final sessionResponse = await transport.getJson(
-      planSessionListEndpoint,
-      query: {'task_date': _apiDate(selectedDay), 'limit': 100},
-    );
+    final sessionResponse = (await sessionRequest).unwrap();
     final activePlanIds = plans.map((plan) => plan.id).toSet();
     final rawSessions =
         _items(sessionResponse, endpoint: planSessionListEndpoint)
@@ -68,6 +145,47 @@ class PlanApiRepository implements PlanRepository {
       weeklyCompletedSessions: _integer(metrics['weekly_completed_sessions']),
       weeklyTotalSessions: _integer(metrics['weekly_total_sessions']),
     );
+  }
+
+  Future<_PlanSessionResponse> _fetchSessions(DateTime selectedDay) async {
+    try {
+      return _PlanSessionResponse.success(
+        await transport.getJson(
+          planSessionListEndpoint,
+          query: {'task_date': _apiDate(selectedDay), 'limit': 100},
+        ),
+      );
+    } catch (error, stackTrace) {
+      return _PlanSessionResponse.failure(error, stackTrace);
+    }
+  }
+}
+
+bool _sameDay(DateTime? left, DateTime right) {
+  return left != null &&
+      left.year == right.year &&
+      left.month == right.month &&
+      left.day == right.day;
+}
+
+class _PlanSessionResponse {
+  const _PlanSessionResponse.success(this.response)
+    : error = null,
+      stackTrace = null;
+
+  const _PlanSessionResponse.failure(this.error, this.stackTrace)
+    : response = null;
+
+  final Map<String, Object?>? response;
+  final Object? error;
+  final StackTrace? stackTrace;
+
+  Map<String, Object?> unwrap() {
+    final error = this.error;
+    if (error != null) {
+      Error.throwWithStackTrace(error, stackTrace!);
+    }
+    return response!;
   }
 }
 
@@ -213,3 +331,7 @@ String _apiDate(DateTime value) =>
     '${value.year.toString().padLeft(4, '0')}-'
     '${value.month.toString().padLeft(2, '0')}-'
     '${value.day.toString().padLeft(2, '0')}';
+
+String _apiTime(DateTime value) =>
+    '${value.hour.toString().padLeft(2, '0')}:'
+    '${value.minute.toString().padLeft(2, '0')}';

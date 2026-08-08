@@ -391,6 +391,7 @@ class MomCozyApiRuntime {
   AgentHubPlatformDocumentPicker? _agentHubPlatformDocumentPicker;
   ProductAssetRepository? _productAssetRepository;
   MediaContentRepository? _mediaContentRepository;
+  PlanApiRepository? _planRepository;
   VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
   late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
@@ -474,7 +475,7 @@ class MomCozyApiRuntime {
   }
 
   PlanApiRepository get planRepository {
-    return PlanApiRepository(transport: jsonTransport);
+    return _planRepository ??= PlanApiRepository(transport: jsonTransport);
   }
 
   RecordsApiRepository get recordsRepository {

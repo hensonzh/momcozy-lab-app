@@ -86,12 +86,6 @@ class MomCozyFeaturePage extends StatelessWidget {
           extra: const {'agentPrefill': 'Help me review and adjust my plan'},
         ),
         onStartSession: () => context.go('/pump'),
-        onManualEdit: () => context.go(
-          '/',
-          extra: const {
-            'agentPrefill': 'Help me manually edit my pumping plan',
-          },
-        ),
       ),
       '/more' => MorePage(path: path, onLogout: onLogout),
       '/more/body-profile' => MoreProfileOverviewPage(path: path),

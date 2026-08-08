@@ -491,6 +491,27 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   final AgentVoicePlaybackCoordinator _voicePlaybackCoordinator =
       AgentVoicePlaybackCoordinator();
   late bool _hasBuiltAgentHub = widget.location == '/';
+  MomCozyApiRuntime? _warmedPlanRuntime;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final runtime = MomCozyRuntimeScope.of(context);
+    if (identical(_warmedPlanRuntime, runtime)) return;
+    _warmedPlanRuntime = runtime;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !identical(_warmedPlanRuntime, runtime)) return;
+      unawaited(_warmPlanDashboard(runtime));
+    });
+  }
+
+  Future<void> _warmPlanDashboard(MomCozyApiRuntime runtime) async {
+    try {
+      await runtime.planRepository.fetchDashboard(weekOf: runtime.now());
+    } catch (_) {
+      // Warm-up is optional; PlanPage performs the user-visible retry.
+    }
+  }
 
   @override
   void didUpdateWidget(covariant MomCozyRouteShell oldWidget) {
