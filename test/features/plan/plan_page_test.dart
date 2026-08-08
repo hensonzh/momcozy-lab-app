@@ -184,13 +184,6 @@ void main() {
       const Rect.fromLTWH(18, 898, 354, 111),
       tolerance: 1,
     );
-    _expectRect(
-      tester,
-      const ValueKey('plan-cozymate-assistant'),
-      const Rect.fromLTWH(18, 1028, 354, 95),
-      tolerance: 1,
-    );
-
     await tester.tap(find.text('+ Create Your First Plan'));
     expect(createCount, 1);
 
@@ -216,6 +209,44 @@ void main() {
     expect(find.text('泌乳计划'), findsNothing);
     expect(find.text('今天还没有计划任务'), findsNothing);
     expect(find.text('Day'), findsNothing);
+  });
+
+  testWidgets('service cards use concise CTA labels without duplicate arrows', (
+    tester,
+  ) async {
+    await _pumpPlanPage(
+      tester,
+      dashboard: PlanDashboard.empty(weekOf: emptyNow),
+      now: emptyNow,
+      viewportSize: const Size(390, 1140),
+    );
+
+    expect(find.text('Start guide'), findsOneWidget);
+    expect(find.text('Check now'), findsNWidgets(2));
+    expect(find.text('Start guide →'), findsNothing);
+    expect(find.text('Check now →'), findsNothing);
+  });
+
+  testWidgets('service header keeps only a right-aligned Cozymate avatar', (
+    tester,
+  ) async {
+    await _pumpPlanPage(
+      tester,
+      dashboard: PlanDashboard.empty(weekOf: emptyNow),
+      now: emptyNow,
+      viewportSize: const Size(390, 1140),
+    );
+
+    expect(find.text('Chat'), findsNothing);
+    expect(find.text('Chat AI'), findsNothing);
+    expect(find.byKey(const ValueKey('plan-cozymate-assistant')), findsNothing);
+    final serviceHeader = tester.getRect(
+      find.byKey(const ValueKey('plan-service-header')),
+    );
+    final avatar = tester.getRect(
+      find.byKey(const ValueKey('plan-service-avatar')),
+    );
+    expect(avatar.right, closeTo(serviceHeader.right, 0.6));
   });
 
   testWidgets('renders the supplied multi-category weekly plan structure', (
