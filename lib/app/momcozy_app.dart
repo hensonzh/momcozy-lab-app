@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_sto
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/core/update/app_release_lifecycle.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
@@ -45,6 +46,7 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.sessionStore = const FlutterSecureMomCozySessionStore(),
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
     this.lastInviteCodeStore = const FlutterSecureMomCozyLastInviteCodeStore(),
+    this.onboardingReleasePolicy = const NoopOnboardingReleasePolicy(),
     this.agentHubBuilder,
     this.externalUrlLauncher = const PlatformExternalUrlLauncher(),
   }) : assert(
@@ -59,6 +61,7 @@ class MomCozyFlutterApp extends StatefulWidget {
   final MomCozySessionStore sessionStore;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
   final MomCozyLastInviteCodeStore lastInviteCodeStore;
+  final OnboardingReleasePolicy onboardingReleasePolicy;
   final MomCozyAgentHubBuilder? agentHubBuilder;
   final ExternalUrlLauncher externalUrlLauncher;
 
@@ -79,6 +82,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       ? OnboardingController(
           runtimeController: _runtimeController,
           onPrimaryInfantSelected: _runtimeController.selectBaby,
+          releasePolicy: widget.onboardingReleasePolicy,
         )
       : null;
   late final GoRouter _router =
@@ -759,7 +763,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 asset: MomCozyAssets.bottomNavMore,
                                 iconSize: const Size.square(16),
                                 matchesPlanDesign: matchesPlanDesign,
-                                onTap: () => context.go(_tabPaths[4]),
+                                onTap: null,
                               ),
                             ),
                           ],
@@ -1554,6 +1558,7 @@ const _routesWithoutBottomNavigation = {
   '/hospital-bag-cart',
   '/ibclc-chat.html',
   '/media-viewer',
+  '/more',
   '/more/body-profile',
   '/more/body-profile/edit',
 };

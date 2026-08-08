@@ -25,6 +25,20 @@ class ProductAssetFileCache implements ProductAssetPersistentCache {
   final DateTime Function() _now;
   Future<Directory>? _directory;
 
+  Future<void> clear() async {
+    final parent = await _directoryProvider();
+    final directory = Directory(
+      '${parent.path}${Platform.pathSeparator}${_namespace.replaceAll('/', Platform.pathSeparator)}',
+    );
+    _directory = null;
+    try {
+      if (await directory.exists()) await directory.delete(recursive: true);
+    } on FileSystemException {
+      // Temporary cache cleanup is best-effort; secure account data is
+      // cleared independently before the runtime is created.
+    }
+  }
+
   @override
   Future<ProductAssetContent?> read(
     ProductAssetReference reference, {

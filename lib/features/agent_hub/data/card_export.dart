@@ -11,6 +11,20 @@ class PlatformAgentCardExportService implements AgentCardExportService {
   static const _directoryName = 'momcozy-card-exports';
   static const _retention = Duration(days: 1);
 
+  Future<void> clear() async {
+    final temporaryDirectory = await getTemporaryDirectory();
+    final exportDirectory = Directory(
+      '${temporaryDirectory.path}${Platform.pathSeparator}$_directoryName',
+    );
+    try {
+      if (await exportDirectory.exists()) {
+        await exportDirectory.delete(recursive: true);
+      }
+    } on FileSystemException {
+      // Export files are temporary and can still age out on the next export.
+    }
+  }
+
   @override
   Future<void> sharePng({
     required Uint8List bytes,

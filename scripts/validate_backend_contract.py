@@ -21,6 +21,7 @@ REQUIRED_OPENAPI_PATHS = {
     "/v1/auth/refresh",
     "/v1/auth/logout",
     "/v1/files/upload",
+    "/v1/onboarding/me/release-reset",
     "/v1/records/feeding",
     "/v1/records/pumping",
     "/v1/records/growth",

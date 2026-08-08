@@ -101,8 +101,17 @@ explicit fallback.
 The client uses `/v1/onboarding/me` and its profile, portrait, generation, and
 completion sub-routes. Portraits are sent only through authenticated multipart
 transport; the backend normalizes them and applies its temporary privacy
-lifecycle. Existing users grandfathered by the backend migration bypass this
-new-user gate.
+lifecycle.
+
+For the current internal-test policy, startup compares the installed runtime
+version and build number (for example `1.0.0+27`) with the last launched
+release. A changed release clears the local session, all user-scoped secure
+storage, generated-card/product media caches, and prior onboarding completion
+markers while preserving the device ID and last invite code. After the user
+signs in, the App performs the matching idempotent cloud reset before loading
+onboarding. Reset failure keeps the user behind the onboarding gate. Completion
+is recorded per user, so another account on the same device still receives its
+own reset and onboarding flow.
 
 ## Contract and Regression Tests
 
