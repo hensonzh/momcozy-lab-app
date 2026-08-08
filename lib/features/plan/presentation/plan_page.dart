@@ -391,13 +391,13 @@ class _EmptyPlanView extends StatelessWidget {
             onPressed: onCreatePlan,
           ),
           const SizedBox(height: 13),
-          _ServiceHeader(onChat: onChat),
+          const _ServiceHeader(),
           _ServiceCard(
             actionKey: const ValueKey('plan-service-recovery'),
             iconAsset: MomCozyAssets.planRecovery,
             title: 'Postpartum Recovery',
             subtitle: 'Postpartum recovery plan for body and mind',
-            action: 'Start guide →',
+            action: 'Start guide',
             height: 125,
             onTap: onCreatePlan,
           ),
@@ -407,7 +407,7 @@ class _EmptyPlanView extends StatelessWidget {
             iconAsset: MomCozyAssets.planPump,
             title: 'momcozy Smart Pump',
             subtitle: 'Connect your momcozy pump and track sessions',
-            action: 'Check now →',
+            action: 'Check now',
             height: 125,
             onTap: onStartSession,
           ),
@@ -417,12 +417,10 @@ class _EmptyPlanView extends StatelessWidget {
             iconAsset: MomCozyAssets.planHealth,
             title: 'Breast Health Check',
             subtitle: 'AI-powered breast health assessment',
-            action: 'Check now →',
+            action: 'Check now',
             height: 111,
             onTap: onChat,
           ),
-          const SizedBox(height: 19),
-          _CozymateAssistantCard(onChat: onChat),
         ],
       ),
     );
@@ -1138,9 +1136,7 @@ class _PlanGradientButton extends StatelessWidget {
 }
 
 class _ServiceHeader extends StatelessWidget {
-  const _ServiceHeader({this.onChat});
-
-  final VoidCallback? onChat;
+  const _ServiceHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -1171,19 +1167,11 @@ class _ServiceHeader extends StatelessWidget {
                 ),
               ),
               const Positioned(
-                left: 198,
-                top: 3,
-                child: _PlanAvatar(radius: 40),
-              ),
-              Positioned(
                 right: 0,
-                top: 28,
-                child: _PlanPillButton(
-                  label: 'Chat',
-                  onPressed: onChat,
-                  width: 66,
-                  height: 36,
-                  trailingArrow: true,
+                top: 3,
+                child: _PlanAvatar(
+                  key: ValueKey('plan-service-avatar'),
+                  radius: 40,
                 ),
               ),
             ],
@@ -1269,81 +1257,10 @@ class _ServiceCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SvgPicture.asset(
-                    MomCozyAssets.planChevronRight,
-                    width: 16,
-                    height: 16,
-                  ),
                 ],
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CozymateAssistantCard extends StatelessWidget {
-  const _CozymateAssistantCard({this.onChat});
-
-  final VoidCallback? onChat;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      key: const ValueKey('plan-cozymate-assistant'),
-      height: 95,
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xfff7eeeb),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 11),
-        decoration: _cardDecoration(radius: 18),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: const BoxDecoration(
-                color: Color(0xfff9ecef),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  MomCozyAssets.planSparkles,
-                  width: 18,
-                  height: 18,
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Transform.translate(
-                offset: const Offset(0, 2),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Cozymate Assistant', style: _PlanText.assistantTitle),
-                    Text(
-                      'Let Cozymate help you build a plan',
-                      style: _PlanText.assistantBody,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            _PlanPillButton(
-              label: 'Chat AI',
-              onPressed: onChat,
-              backgroundColor: MomCozyV3Colors.brand,
-              width: 66,
-              height: 36,
-            ),
-          ],
         ),
       ),
     );
@@ -1357,7 +1274,6 @@ class _PlanPillButton extends StatelessWidget {
     required this.height,
     this.width,
     this.trailingArrow = false,
-    this.backgroundColor = MomCozyV3Colors.ink,
   });
 
   final String label;
@@ -1365,7 +1281,6 @@ class _PlanPillButton extends StatelessWidget {
   final double height;
   final double? width;
   final bool trailingArrow;
-  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -1373,7 +1288,7 @@ class _PlanPillButton extends StatelessWidget {
       width: width,
       height: height,
       child: Material(
-        color: backgroundColor,
+        color: MomCozyV3Colors.ink,
         shape: const StadiumBorder(),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -1406,7 +1321,7 @@ class _PlanPillButton extends StatelessWidget {
 }
 
 class _PlanAvatar extends StatelessWidget {
-  const _PlanAvatar({required this.radius});
+  const _PlanAvatar({super.key, required this.radius});
 
   final double radius;
 
@@ -3041,22 +2956,6 @@ class _PlanText {
     letterSpacing: -0.2,
     fontWeight: FontWeight.w400,
   );
-  static const assistantTitle = TextStyle(
-    color: MomCozyV3Colors.ink,
-    fontFamily: MomCozyTypography.interfaceFontFamily,
-    fontSize: 14,
-    height: 1.3,
-    letterSpacing: -0.2,
-    fontWeight: FontWeight.w700,
-  );
-  static const assistantBody = TextStyle(
-    color: Color(0xffad938a),
-    fontFamily: MomCozyTypography.interfaceFontFamily,
-    fontSize: 14,
-    height: 1.3,
-    letterSpacing: -0.2,
-    fontWeight: FontWeight.w400,
-  );
   static const body = TextStyle(
     color: Color(0xffad938a),
     fontFamily: MomCozyTypography.interfaceFontFamily,
@@ -3139,15 +3038,6 @@ class _PlanText {
     fontWeight: FontWeight.w700,
   );
 }
-
-BoxDecoration _cardDecoration({required double radius}) => BoxDecoration(
-  color: Colors.white,
-  borderRadius: BorderRadius.circular(radius),
-  border: Border.all(color: const Color(0xffeadbd7)),
-  boxShadow: const [
-    BoxShadow(color: Color(0x0f392832), blurRadius: 18, offset: Offset(0, 7)),
-  ],
-);
 
 BoxDecoration _flatCardDecoration({
   required double radius,

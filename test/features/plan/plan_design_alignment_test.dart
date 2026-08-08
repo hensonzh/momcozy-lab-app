@@ -15,6 +15,12 @@ void main() {
       comparisonHeight: 1140,
       maxMeanAbsoluteError: 7.5,
       maxSignificantDifferenceRatio: 0.05,
+      // Product-approved simplification: the Service chat action and the
+      // duplicate assistant card no longer follow the original 0806 export.
+      ignoredRegions: [
+        _ImageRect(12, 514, 366, 109),
+        _ImageRect(12, 1024, 366, 104),
+      ],
       regions: [
         _AlignmentRegion('header', _ImageRect(0, 0, 390, 70)),
         _AlignmentRegion(
@@ -29,16 +35,10 @@ void main() {
           maxMeanAbsoluteError: 9,
         ),
         _AlignmentRegion(
-          'service header',
-          _ImageRect(12, 514, 366, 109),
-          maxMeanAbsoluteError: 10,
-        ),
-        _AlignmentRegion(
           'service cards',
           _ImageRect(0, 617, 390, 400),
           maxMeanAbsoluteError: 10,
         ),
-        _AlignmentRegion('assistant card', _ImageRect(12, 1024, 366, 104)),
       ],
     ),
     _AlignmentCase(
@@ -130,6 +130,11 @@ void main() {
         width: 390,
         height: alignmentCase.comparisonHeight,
       );
+      _maskApprovedDifferences(
+        reference,
+        rendered,
+        alignmentCase.ignoredRegions,
+      );
 
       final rawDifference = _measureDifference(reference, rendered);
       final difference = _measurePerceptualDifference(reference, rendered);
@@ -217,13 +222,6 @@ void main() {
       maxMeanAbsoluteError: 8,
     ),
     _ComponentAlignmentCase(
-      name: 'empty service header',
-      sourcePath: 'MomcozyAI切图0806/ServiceHeader.png',
-      renderedPath: 'test/goldens/plan/empty_design_2x.png',
-      renderedRect: _ImageRect(18, 519, 354, 104),
-      maxMeanAbsoluteError: 10,
-    ),
-    _ComponentAlignmentCase(
       name: 'empty service cards',
       sourcePath: 'MomcozyAI切图0806/ServiceCardsStack.png',
       renderedPath: 'test/goldens/plan/empty_design_2x.png',
@@ -286,6 +284,11 @@ void main() {
       width: 390,
       height: 84,
     );
+    // Product-approved Plan navigation keeps the Cozymate avatar but hides
+    // its label, so only that center slot intentionally differs from 0806.
+    _maskApprovedDifferences(reference, rendered, const [
+      _ImageRect(156, 0, 78, 84),
+    ]);
 
     final difference = _measurePerceptualDifference(reference, rendered);
     expect(
@@ -321,6 +324,32 @@ image.Image _crop(image.Image source, _ImageRect rect) => image.copyCrop(
   width: rect.width,
   height: rect.height,
 );
+
+void _maskApprovedDifferences(
+  image.Image reference,
+  image.Image rendered,
+  List<_ImageRect> regions,
+) {
+  final background = image.ColorRgb8(0xfb, 0xf5, 0xf3);
+  for (final rect in regions) {
+    image.fillRect(
+      reference,
+      x1: rect.x,
+      y1: rect.y,
+      x2: rect.x + rect.width - 1,
+      y2: rect.y + rect.height - 1,
+      color: background,
+    );
+    image.fillRect(
+      rendered,
+      x1: rect.x,
+      y1: rect.y,
+      x2: rect.x + rect.width - 1,
+      y2: rect.y + rect.height - 1,
+      color: background,
+    );
+  }
+}
 
 image.Image _flatten(image.Image source, _RgbColor background) {
   final result = image.Image(width: source.width, height: source.height);
@@ -391,6 +420,7 @@ class _AlignmentCase {
     required this.maxMeanAbsoluteError,
     required this.maxSignificantDifferenceRatio,
     required this.regions,
+    this.ignoredRegions = const [],
   });
 
   final String name;
@@ -403,6 +433,7 @@ class _AlignmentCase {
   final double maxMeanAbsoluteError;
   final double maxSignificantDifferenceRatio;
   final List<_AlignmentRegion> regions;
+  final List<_ImageRect> ignoredRegions;
 }
 
 class _AlignmentRegion {
