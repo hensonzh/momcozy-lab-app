@@ -1165,7 +1165,7 @@ class _StageWellnessContent extends StatelessWidget {
               ? 'Review confirmed prenatal tasks and sessions'
               : 'Organize preparation and wellness tasks',
           actionLabel: 'Open Plan',
-          onTap: () => context.go('/schedule'),
+          onTap: () => context.go('/plan'),
         ),
         const SizedBox(height: 14),
         _StageActionCard(
