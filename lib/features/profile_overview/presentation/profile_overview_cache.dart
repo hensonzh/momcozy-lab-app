@@ -1,7 +1,14 @@
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 
-enum ProfileOverviewResourceKey { overview, feeding, milkTrends, growth }
+enum ProfileOverviewResourceKey {
+  overview,
+  feeding,
+  sleep,
+  diaper,
+  milkTrends,
+  growth,
+}
 
 class OverviewCacheEntry<T> {
   const OverviewCacheEntry({required this.value, required this.fetchedAt});
@@ -18,12 +25,16 @@ class ProfileOverviewCachePolicy {
   const ProfileOverviewCachePolicy({
     this.overviewTtl = const Duration(minutes: 5),
     this.feedingTtl = const Duration(seconds: 30),
+    this.sleepTtl = const Duration(seconds: 30),
+    this.diaperTtl = const Duration(seconds: 30),
     this.milkTrendsTtl = const Duration(minutes: 2),
     this.growthTtl = const Duration(minutes: 2),
   });
 
   final Duration overviewTtl;
   final Duration feedingTtl;
+  final Duration sleepTtl;
+  final Duration diaperTtl;
   final Duration milkTrendsTtl;
   final Duration growthTtl;
 
@@ -31,6 +42,8 @@ class ProfileOverviewCachePolicy {
     return switch (resource) {
       ProfileOverviewResourceKey.overview => overviewTtl,
       ProfileOverviewResourceKey.feeding => feedingTtl,
+      ProfileOverviewResourceKey.sleep => sleepTtl,
+      ProfileOverviewResourceKey.diaper => diaperTtl,
       ProfileOverviewResourceKey.milkTrends => milkTrendsTtl,
       ProfileOverviewResourceKey.growth => growthTtl,
     };
@@ -45,6 +58,8 @@ class ProfileOverviewCache {
 
   OverviewCacheEntry<ProfileOverview>? overview;
   OverviewCacheEntry<List<FeedingRecord>>? feedingRecords;
+  OverviewCacheEntry<List<SleepRecord>>? sleepRecords;
+  OverviewCacheEntry<List<DiaperRecord>>? diaperRecords;
   OverviewCacheEntry<List<MilkTrendDay>>? milkTrends;
   OverviewCacheEntry<List<GrowthRecord>>? growthRecords;
 
@@ -55,6 +70,8 @@ class ProfileOverviewCache {
   void clear() {
     overview = null;
     feedingRecords = null;
+    sleepRecords = null;
+    diaperRecords = null;
     milkTrends = null;
     growthRecords = null;
   }

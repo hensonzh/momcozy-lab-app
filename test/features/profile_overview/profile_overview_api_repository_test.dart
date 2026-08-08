@@ -16,7 +16,6 @@ void main() {
           'display_name': 'Mom',
           'current_care_stage': 'postpartum',
           'delivery_date': '2026-05-20',
-          'birth_prep_due_date_or_week': '孕 32 周',
         },
         profileInfantsEndpoint: {
           'items': [
@@ -30,6 +29,16 @@ void main() {
             },
           ],
         },
+        profilePregnancyFactEndpoint: {
+          'items': [
+            {
+              'fact_key': pregnancyDueDateOrWeekFactKey,
+              'fact_kind': 'verified',
+              'status': 'active',
+              'value': '孕 32 周',
+            },
+          ],
+        },
       });
       final repository = ProfileOverviewApiRepository(
         transport: transport,
@@ -40,8 +49,20 @@ void main() {
       final overview = await repository.fetchOverview();
 
       expect(transport.postedBodies, isEmpty);
-      expect(transport.lastPath, profileInfantsEndpoint);
-      expect(transport.lastQuery, isEmpty);
+      expect(
+        transport.getPaths,
+        containsAll(<String>[
+          profileMeEndpoint,
+          profileInfantsEndpoint,
+          profilePregnancyFactEndpoint,
+        ]),
+      );
+      expect(transport.lastPath, profilePregnancyFactEndpoint);
+      expect(transport.lastQuery, {
+        'fact_kind': 'verified',
+        'fact_key': pregnancyDueDateOrWeekFactKey,
+        'limit': 1,
+      });
       expect(overview.mom?.stage, MomLifeStage.postpartum);
       expect(overview.mom?.displayName, 'Mom');
       expect(overview.mom?.postpartumDay, 42);
@@ -186,9 +207,11 @@ void main() {
       expect(transport.startedPaths, {
         profileMeEndpoint,
         profileInfantsEndpoint,
+        profilePregnancyFactEndpoint,
       });
       transport.complete(profileMeEndpoint, const {'user_id': 'user-001'});
       transport.complete(profileInfantsEndpoint, const {'items': []});
+      transport.complete(profilePregnancyFactEndpoint, const {'items': []});
       await overview;
     });
 

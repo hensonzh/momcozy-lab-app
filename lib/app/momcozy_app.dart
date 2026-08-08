@@ -424,6 +424,7 @@ GoRouter createMomCozyRouter({
                     ? null
                     : () =>
                           runtimeController.logout(sessionStore: sessionStore),
+                onBabySelected: runtimeController?.selectBaby,
               ),
             ),
         ],
@@ -1107,12 +1108,14 @@ class MomCozyRoutePage extends StatelessWidget {
     this.uri,
     this.extra,
     this.onLogout,
+    this.onBabySelected,
   });
 
   final MomCozyRouteConfig route;
   final Uri? uri;
   final Object? extra;
   final Future<void> Function()? onLogout;
+  final Future<void> Function(String babyId)? onBabySelected;
 
   @override
   Widget build(BuildContext context) {
@@ -1135,6 +1138,7 @@ class MomCozyRoutePage extends StatelessWidget {
       routeUri: uri,
       routeExtra: extra,
       onLogout: onLogout,
+      onBabySelected: onBabySelected,
     );
   }
 }
@@ -1296,6 +1300,14 @@ const momCozyRoutes = [
     title: 'Baby Development',
     summary: 'Confirmed pregnancy week and prenatal education.',
     icon: Icons.pregnant_woman_rounded,
+    accent: Color(0xff862644),
+    priority: 'P0',
+  ),
+  MomCozyRouteConfig(
+    path: '/notifications',
+    title: 'Notifications',
+    summary: 'Confirmed reminders and account updates.',
+    icon: Icons.notifications_rounded,
     accent: Color(0xff862644),
     priority: 'P0',
   ),

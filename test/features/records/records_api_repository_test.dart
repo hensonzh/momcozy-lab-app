@@ -11,9 +11,17 @@ void main() {
         'items': [
           {
             'id': 'feeding-001',
+            'infant_id': 'infant-fixture',
             'feed_type': 'bottle',
             'volume_ml': 80.0,
             'feed_time': '2026-06-29T08:00:00Z',
+          },
+          {
+            'id': 'feeding-other',
+            'infant_id': 'infant-other',
+            'feed_type': 'formula',
+            'volume_ml': 120.0,
+            'feed_time': '2026-06-29T09:00:00Z',
           },
         ],
       });
@@ -33,6 +41,7 @@ void main() {
       });
       expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
       expect(records.single.id, 'feeding-001');
+      expect(records.single.infantId, 'infant-fixture');
       expect(records.single.type, 'bottle');
       expect(records.single.amountMl, 80);
       expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:00:00Z'));
@@ -54,6 +63,140 @@ void main() {
         'infant_id': 'infant-fixture',
         'limit': 50,
       });
+    });
+
+    test('loads an infant-scoped feeding range for weekly views', () async {
+      final transport = FixtureApiJsonTransport({
+        'items': [
+          {
+            'id': 'feeding-001',
+            'infant_id': 'infant-fixture',
+            'feed_type': 'bottle',
+            'volume_ml': 80,
+            'feed_time': '2026-06-25T08:00:00Z',
+          },
+          {
+            'id': 'feeding-other',
+            'infant_id': 'infant-other',
+            'feed_type': 'formula',
+            'volume_ml': 120,
+            'feed_time': '2026-06-26T09:00:00Z',
+          },
+        ],
+      });
+      final repository = RecordsApiRepository(transport: transport);
+
+      final records = await repository.fetchFeedingRecordsRange(
+        start: DateTime.utc(2026, 6, 23),
+        end: DateTime.utc(2026, 6, 30),
+        babyId: 'infant-fixture',
+      );
+
+      expect(transport.lastQuery, {
+        'start_at': '2026-06-23T00:00:00.000Z',
+        'end_at': '2026-06-30T00:00:00.000Z',
+        'infant_id': 'infant-fixture',
+        'limit': 100,
+      });
+      expect(records.map((record) => record.id), ['feeding-001']);
+    });
+
+    test('maps infant-scoped sleep and diaper ranges', () async {
+      final sleepTransport = FixtureApiJsonTransport({
+        'items': [
+          {
+            'id': 'sleep-001',
+            'infant_id': 'infant-fixture',
+            'started_at': '2026-06-29T01:00:00Z',
+            'ended_at': '2026-06-29T03:00:00Z',
+            'sleep_type': 'nap',
+            'duration_seconds': 7200,
+            'notes': '',
+          },
+        ],
+      });
+      final diaperTransport = FixtureApiJsonTransport({
+        'items': [
+          {
+            'id': 'diaper-001',
+            'infant_id': 'infant-fixture',
+            'changed_at': '2026-06-29T04:00:00Z',
+            'diaper_type': 'mixed',
+            'notes': '',
+          },
+        ],
+      });
+
+      final sleeps = await RecordsApiRepository(transport: sleepTransport)
+          .fetchSleepRecordsRange(
+            start: DateTime.utc(2026, 6, 23),
+            end: DateTime.utc(2026, 6, 30),
+            babyId: 'infant-fixture',
+          );
+      final diapers = await RecordsApiRepository(transport: diaperTransport)
+          .fetchDiaperRecordsRange(
+            start: DateTime.utc(2026, 6, 23),
+            end: DateTime.utc(2026, 6, 30),
+            babyId: 'infant-fixture',
+          );
+
+      expect(sleepTransport.lastPath, sleepRecordsEndpoint);
+      expect(sleepTransport.lastQuery, {
+        'start_at': '2026-06-23T00:00:00.000Z',
+        'end_at': '2026-06-30T00:00:00.000Z',
+        'infant_id': 'infant-fixture',
+        'limit': 100,
+      });
+      expect(sleeps.single.durationSeconds, 7200);
+      expect(diaperTransport.lastPath, diaperRecordsEndpoint);
+      expect(diapers.single.type, 'mixed');
+    });
+
+    test('creates sleep and diaper records for the selected infant', () async {
+      final sleepTransport = FixtureApiJsonTransport({
+        'id': 'sleep-created',
+        'infant_id': 'infant-fixture',
+        'started_at': '2026-06-29T01:00:00Z',
+        'ended_at': '2026-06-29T03:00:00Z',
+        'sleep_type': 'nap',
+        'duration_seconds': 7200,
+        'notes': '',
+      });
+      final diaperTransport = FixtureApiJsonTransport({
+        'id': 'diaper-created',
+        'infant_id': 'infant-fixture',
+        'changed_at': '2026-06-29T04:00:00Z',
+        'diaper_type': 'wet',
+        'notes': '',
+      });
+
+      await RecordsApiRepository(transport: sleepTransport).createSleepRecord(
+        babyId: 'infant-fixture',
+        startedAt: DateTime.utc(2026, 6, 29, 1),
+        endedAt: DateTime.utc(2026, 6, 29, 3),
+        type: 'nap',
+        idempotencyKey: 'sleep-key',
+      );
+      await RecordsApiRepository(transport: diaperTransport).createDiaperRecord(
+        babyId: 'infant-fixture',
+        changedAt: DateTime.utc(2026, 6, 29, 4),
+        type: 'wet',
+        idempotencyKey: 'diaper-key',
+      );
+
+      expect(sleepTransport.lastBody, {
+        'infant_id': 'infant-fixture',
+        'started_at': '2026-06-29T01:00:00.000Z',
+        'ended_at': '2026-06-29T03:00:00.000Z',
+        'sleep_type': 'nap',
+      });
+      expect(sleepTransport.lastHeaders, {'Idempotency-Key': 'sleep-key'});
+      expect(diaperTransport.lastBody, {
+        'infant_id': 'infant-fixture',
+        'changed_at': '2026-06-29T04:00:00.000Z',
+        'diaper_type': 'wet',
+      });
+      expect(diaperTransport.lastHeaders, {'Idempotency-Key': 'diaper-key'});
     });
 
     test('maps production pumping records and request contract', () async {

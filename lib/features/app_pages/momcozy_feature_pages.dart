@@ -17,6 +17,7 @@ import 'package:momcozy_flutter_app/features/media/presentation/product_asset_im
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
 import 'package:momcozy_flutter_app/features/more/presentation/more_page.dart';
 import 'package:momcozy_flutter_app/features/more/presentation/more_profile_page.dart';
+import 'package:momcozy_flutter_app/features/notifications/presentation/notifications_page.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/plan/presentation/plan_page.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
@@ -36,6 +37,7 @@ class MomCozyFeaturePage extends StatelessWidget {
     this.routeUri,
     this.routeExtra,
     this.onLogout,
+    this.onBabySelected,
   });
 
   final String path;
@@ -47,6 +49,7 @@ class MomCozyFeaturePage extends StatelessWidget {
   final Uri? routeUri;
   final Object? routeExtra;
   final Future<void> Function()? onLogout;
+  final Future<void> Function(String babyId)? onBabySelected;
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +100,23 @@ class MomCozyFeaturePage extends StatelessWidget {
         onBack: () => context.go('/more/body-profile'),
       ),
       '/me' => MeBabyOverviewPage(path: path, identity: ProfileIdentity.mom),
-      '/baby' => MeBabyOverviewPage(path: path, identity: ProfileIdentity.baby),
+      '/baby' => MeBabyOverviewPage(
+        path: path,
+        identity: ProfileIdentity.baby,
+        onBabySelected: onBabySelected,
+      ),
       '/baby/development' => MeBabyOverviewPage(
         path: path,
         identity: ProfileIdentity.baby,
+        onBabySelected: onBabySelected,
+      ),
+      '/notifications' => NotificationsPage(
+        repository: MomCozyRuntimeScope.of(context).notificationsRepository,
+        now: MomCozyRuntimeScope.of(context).now,
+        onBack: () {
+          final requested = routeUri?.queryParameters['from'];
+          context.go(requested == '/me' ? '/me' : '/baby');
+        },
       ),
       '/community' => _CommunityPage(
         path: path,
