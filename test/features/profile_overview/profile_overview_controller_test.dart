@@ -43,6 +43,24 @@ void main() {
           feeding: const [
             FeedingRecord(id: 'feed-001', type: 'bottle', amountMl: 80),
           ],
+          sleep: const [
+            SleepRecord(
+              id: 'sleep-001',
+              infantId: 'baby-001',
+              type: 'nap',
+              durationSeconds: 3600,
+              startedAt: null,
+              endedAt: null,
+            ),
+          ],
+          diapers: const [
+            DiaperRecord(
+              id: 'diaper-001',
+              infantId: 'baby-001',
+              type: 'wet',
+              changedAt: null,
+            ),
+          ],
           growthError: StateError('growth unavailable'),
         );
         final controller = _controller(
@@ -55,6 +73,11 @@ void main() {
 
         expect(controller.overview.value.phase, OverviewResourcePhase.data);
         expect(controller.feedingRecords.value.data?.single.amountMl, 80);
+        expect(
+          controller.sleepRecords.value.data?.single.durationSeconds,
+          3600,
+        );
+        expect(controller.diaperRecords.value.data?.single.type, 'wet');
         expect(controller.milkTrends.value.phase, OverviewResourcePhase.data);
         expect(controller.growthRecords.value.hasError, isTrue);
       },
@@ -282,6 +305,8 @@ void main() {
       await controller.initialize();
 
       expect(records.feedingBabyId, 'baby-001');
+      expect(records.feedingRangeStart, DateTime(2026, 7, 6));
+      expect(records.feedingRangeEnd, DateTime(2026, 7, 13));
     });
 
     test(
@@ -340,6 +365,35 @@ void main() {
       expect(records.feedingFetchCount, 2);
     });
 
+    test(
+      'saving baby-care records refreshes the current infant scope',
+      () async {
+        final records = _FakeRecordsRepository();
+        final controller = _controller(
+          records: records,
+          identity: ProfileIdentity.baby,
+        );
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final sleepSaved = await controller.saveSleepRecord(
+          startedAt: DateTime(2026, 7, 11, 8),
+          endedAt: DateTime(2026, 7, 11, 10),
+          type: 'nap',
+        );
+        final diaperSaved = await controller.saveDiaperRecord(type: 'mixed');
+
+        expect(sleepSaved, isTrue);
+        expect(diaperSaved, isTrue);
+        expect(records.createdSleepBabyId, 'baby-001');
+        expect(records.createdSleepType, 'nap');
+        expect(records.sleepFetchCount, 2);
+        expect(records.createdDiaperBabyId, 'baby-001');
+        expect(records.createdDiaperType, 'mixed');
+        expect(records.diaperFetchCount, 2);
+      },
+    );
+
     test('saving a growth record refreshes growth data', () async {
       final records = _FakeRecordsRepository();
       final controller = _controller(
@@ -371,6 +425,7 @@ ProfileOverviewController _controller({
     profileOverviewRepository:
         overviewRepository ?? _FakeProfileOverviewRepository(),
     feedingRepository: effectiveRecords,
+    babyCareRepository: effectiveRecords,
     pumpMilkRepository: effectiveRecords,
     milkTrendRepository: effectiveRecords,
     growthRepository: effectiveRecords,
@@ -418,21 +473,28 @@ class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
 class _FakeRecordsRepository
     implements
         FeedingRecordsRepository,
+        BabyCareRecordsRepository,
         PumpMilkRecordsRepository,
         MilkTrendRepository,
         GrowthRecordsRepository {
   _FakeRecordsRepository({
     this.feeding = const <FeedingRecord>[],
+    this.sleep = const <SleepRecord>[],
+    this.diapers = const <DiaperRecord>[],
     this.growth = const <GrowthRecord>[],
     this.growthError,
   });
 
   final List<FeedingRecord> feeding;
+  final List<SleepRecord> sleep;
+  final List<DiaperRecord> diapers;
   final List<GrowthRecord> growth;
   final Object? growthError;
   Object? milkTrendError;
   DateTime? milkTrendStart;
   var feedingFetchCount = 0;
+  var sleepFetchCount = 0;
+  var diaperFetchCount = 0;
   var milkTrendFetchCount = 0;
   var growthFetchCount = 0;
   var growthCreateCount = 0;
@@ -441,8 +503,14 @@ class _FakeRecordsRepository
   double? savedHeightCm;
   double? savedHeadCm;
   String? feedingBabyId;
+  DateTime? feedingRangeStart;
+  DateTime? feedingRangeEnd;
   String? createdFeedingBabyId;
   double? createdFeedingAmountMl;
+  String? createdSleepBabyId;
+  String? createdSleepType;
+  String? createdDiaperBabyId;
+  String? createdDiaperType;
   double? createdPumpingAmountMl;
   String? createdGrowthBabyId;
   double? createdGrowthWeightKg;
@@ -454,6 +522,19 @@ class _FakeRecordsRepository
   }) async {
     feedingFetchCount += 1;
     feedingBabyId = babyId;
+    return feeding;
+  }
+
+  @override
+  Future<List<FeedingRecord>> fetchFeedingRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  }) async {
+    feedingFetchCount += 1;
+    feedingBabyId = babyId;
+    feedingRangeStart = start;
+    feedingRangeEnd = end;
     return feeding;
   }
 
@@ -473,6 +554,67 @@ class _FakeRecordsRepository
       type: type,
       amountMl: amountMl?.round(),
       occurredAt: occurredAt,
+    );
+  }
+
+  @override
+  Future<List<SleepRecord>> fetchSleepRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  }) async {
+    sleepFetchCount += 1;
+    return sleep;
+  }
+
+  @override
+  Future<SleepRecord> createSleepRecord({
+    required String babyId,
+    required DateTime startedAt,
+    required DateTime endedAt,
+    required String type,
+    String notes = '',
+    String? idempotencyKey,
+  }) async {
+    createdSleepBabyId = babyId;
+    createdSleepType = type;
+    return SleepRecord(
+      id: 'sleep-created',
+      infantId: babyId,
+      type: type,
+      durationSeconds: endedAt.difference(startedAt).inSeconds,
+      startedAt: startedAt,
+      endedAt: endedAt,
+      notes: notes,
+    );
+  }
+
+  @override
+  Future<List<DiaperRecord>> fetchDiaperRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyId,
+  }) async {
+    diaperFetchCount += 1;
+    return diapers;
+  }
+
+  @override
+  Future<DiaperRecord> createDiaperRecord({
+    required String babyId,
+    required DateTime changedAt,
+    required String type,
+    String notes = '',
+    String? idempotencyKey,
+  }) async {
+    createdDiaperBabyId = babyId;
+    createdDiaperType = type;
+    return DiaperRecord(
+      id: 'diaper-created',
+      infantId: babyId,
+      type: type,
+      changedAt: changedAt,
+      notes: notes,
     );
   }
 

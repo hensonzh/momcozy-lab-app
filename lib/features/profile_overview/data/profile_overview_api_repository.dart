@@ -4,6 +4,8 @@ import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_ove
 
 const profileMeEndpoint = '/v1/profile/me';
 const profileInfantsEndpoint = '/v1/profile/infants';
+const profilePregnancyFactEndpoint = '/v1/agent/facts';
+const pregnancyDueDateOrWeekFactKey = 'pregnancy.due_date_or_week';
 const profileOverviewEndpoint = profileMeEndpoint;
 
 class ProfileOverviewApiRepository implements ProfileOverviewRepository {
@@ -22,9 +24,11 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
     final responses = await Future.wait([
       transport.getJson(profileMeEndpoint),
       transport.getJson(profileInfantsEndpoint),
+      _fetchVerifiedPregnancyFact(),
     ]);
     final profile = responses[0];
     final infants = responses[1];
+    final dueDateOrWeek = _verifiedDueDateOrWeek(responses[2]);
     final infantItems = infants['items'];
     final mappedInfants = infantItems is List
         ? infantItems
@@ -32,16 +36,36 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
               .whereType<Map<String, Object?>>()
               .toList(growable: false)
         : const <Map<String, Object?>>[];
-    final matchingInfant = mappedInfants
-        .where((infant) => _infantId(infant) == babyId.trim())
+    final infantOverviews = mappedInfants
+        .map((infant) => _babyProfileOverview(infant, now: now))
+        .whereType<BabyProfileOverview>()
+        .toList(growable: false);
+    final matchingInfant = infantOverviews
+        .where((infant) => infant.id == babyId.trim())
         .firstOrNull;
     final selectedInfant =
         matchingInfant ??
-        (mappedInfants.length == 1 ? mappedInfants.single : null);
+        (infantOverviews.length == 1 ? infantOverviews.single : null);
     return ProfileOverview(
-      mom: _momProfileOverview(profile, now: now),
-      baby: _babyProfileOverview(selectedInfant, now: now),
+      mom: _momProfileOverview(profile, dueDateOrWeek: dueDateOrWeek, now: now),
+      baby: selectedInfant,
+      infants: infantOverviews,
     );
+  }
+
+  Future<Map<String, Object?>> _fetchVerifiedPregnancyFact() async {
+    try {
+      return await transport.getJson(
+        profilePregnancyFactEndpoint,
+        query: const {
+          'fact_kind': 'verified',
+          'fact_key': pregnancyDueDateOrWeekFactKey,
+          'limit': 1,
+        },
+      );
+    } catch (_) {
+      return const <String, Object?>{'items': <Object>[]};
+    }
   }
 
   @override
@@ -70,31 +94,31 @@ String? _infantId(Map<String, Object?> data) {
 
 MomProfileOverview? _momProfileOverview(
   Map<String, Object?>? data, {
+  String? dueDateOrWeek,
   DateTime Function()? now,
 }) {
   if (data == null || data.isEmpty) return null;
   final deliveryDate = _date(data['delivery_date']);
-  final dueDateOrWeek = _string(
-    data['birth_prep_due_date_or_week'] ?? data['birthPrepDueDateOrWeek'],
-  );
+  final confirmedPregnancyContext = dueDateOrWeek?.trim();
   final displayName = _string(data['display_name'] ?? data['displayName']);
   final explicitStage = MomLifeStage.tryParse(
     data['current_care_stage'] ?? data['currentCareStage'],
   );
   if (deliveryDate == null &&
-      dueDateOrWeek?.trim().isNotEmpty != true &&
+      confirmedPregnancyContext?.isNotEmpty != true &&
       displayName?.trim().isNotEmpty != true &&
       explicitStage == null) {
     return null;
   }
   final hasStageEvidence =
-      deliveryDate != null || dueDateOrWeek?.trim().isNotEmpty == true;
+      deliveryDate != null || confirmedPregnancyContext?.isNotEmpty == true;
   final stage =
       explicitStage ??
       (hasStageEvidence
           ? MomLifeStage.resolve(
               deliveryDate: deliveryDate,
-              hasPregnancyDetails: dueDateOrWeek?.trim().isNotEmpty == true,
+              hasPregnancyDetails:
+                  confirmedPregnancyContext?.isNotEmpty == true,
               now: now,
             )
           : null);
@@ -105,8 +129,53 @@ MomProfileOverview? _momProfileOverview(
         ? _ageDays(deliveryDate, now: now)
         : null,
     deliveryDate: deliveryDate,
-    dueDateOrWeek: dueDateOrWeek,
+    dueDateOrWeek: _resolvedPregnancyContext(
+      stage: stage,
+      confirmedValue: confirmedPregnancyContext,
+      deliveryDate: deliveryDate,
+      now: now,
+    ),
   );
+}
+
+String? _verifiedDueDateOrWeek(Map<String, Object?> response) {
+  final items = response['items'];
+  if (items is! List) return null;
+  for (final item in items.whereType<Map>()) {
+    final fact = Map<String, Object?>.from(item);
+    if (fact['fact_key'] != pregnancyDueDateOrWeekFactKey ||
+        fact['fact_kind'] != 'verified' ||
+        fact['status'] != 'active') {
+      continue;
+    }
+    final value = _string(fact['value'])?.trim();
+    if (value?.isNotEmpty == true) return value;
+  }
+  return null;
+}
+
+String? _resolvedPregnancyContext({
+  required MomLifeStage? stage,
+  required String? confirmedValue,
+  required DateTime? deliveryDate,
+  DateTime Function()? now,
+}) {
+  if (stage != MomLifeStage.pregnancy) return confirmedValue;
+  final confirmedDate = _date(confirmedValue);
+  final weekLabel = _gestationalWeekLabel(
+    confirmedDate ?? deliveryDate,
+    now: now,
+  );
+  return weekLabel ?? confirmedValue;
+}
+
+String? _gestationalWeekLabel(DateTime? dueDate, {DateTime Function()? now}) {
+  if (dueDate == null) return null;
+  final dueDay = DateTime(dueDate.year, dueDate.month, dueDate.day);
+  final gestationalDays = 280 - dueDay.difference(_today(now)).inDays;
+  final week = gestationalDays ~/ 7;
+  if (week < 1 || week > 42) return null;
+  return 'Week $week';
 }
 
 BabyProfileOverview? _babyProfileOverview(

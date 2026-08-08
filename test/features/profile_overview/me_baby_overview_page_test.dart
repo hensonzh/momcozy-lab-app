@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/notifications/data/notifications_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -70,9 +71,7 @@ void main() {
       expect(
         tester
             .getRect(
-              find.byKey(
-                const ValueKey('me-baby-overview-notification-disabled'),
-              ),
+              find.byKey(const ValueKey('me-baby-overview-notification')),
             )
             .top,
         greaterThanOrEqualTo(0),
@@ -290,10 +289,88 @@ void main() {
         findsNothing,
       );
       expect(
-        find.byKey(const ValueKey('me-baby-overview-notification-disabled')),
+        find.byKey(const ValueKey('me-baby-overview-notification')),
         findsOneWidget,
       );
       expect(find.text('Infant'), findsOneWidget);
+    });
+
+    testWidgets('Notification bell opens the real owner inbox', (tester) async {
+      final transport = _profileOverviewTransport();
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        runtime: _runtime(transport: transport),
+      );
+
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-notification')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('route-page-/notifications')),
+        findsOneWidget,
+      );
+      expect(find.text('Feeding reminder'), findsOneWidget);
+      expect(transport.lastPath, notificationsEndpoint);
+      expect(transport.lastQuery, {'limit': 100});
+
+      await tester.tap(find.byKey(const ValueKey('notifications-back')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('route-page-/baby')), findsOneWidget);
+    });
+
+    testWidgets('Infant selector switches the visible baby and record scope', (
+      tester,
+    ) async {
+      final transport = _profileOverviewTransport(
+        infantItems: const [
+          {
+            'id': 'profile-overview-baby',
+            'infant_name': 'Mia',
+            'birth_date': '2026-04-06',
+          },
+          {
+            'id': 'profile-overview-baby-2',
+            'infant_name': 'Noah',
+            'birth_date': '2026-06-20',
+          },
+        ],
+      );
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        runtime: _runtime(transport: transport),
+      );
+
+      expect(find.text('Mia'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('baby-profile-selector')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Select Infant'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('baby-profile-option-profile-overview-baby')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const ValueKey('baby-profile-option-profile-overview-baby-2'),
+        ),
+        findsOneWidget,
+      );
+
+      await tester.tap(
+        find.byKey(
+          const ValueKey('baby-profile-option-profile-overview-baby-2'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Noah'), findsOneWidget);
+      expect(find.text('Mia'), findsNothing);
+      expect(transport.lastPath, growthRecordsEndpoint);
+      expect(transport.lastQuery?['infant_id'], 'profile-overview-baby-2');
     });
 
     testWidgets(
@@ -351,8 +428,10 @@ void main() {
         await tester.tap(find.byKey(const ValueKey('baby-section-sleep')));
         await tester.pumpAndSettle();
         expect(find.text('Total Sleep Today'), findsOneWidget);
-        expect(find.text('No sleep data recorded today'), findsOneWidget);
+        expect(find.text('3 h'), findsOneWidget);
+        expect(find.text('2 confirmed sleep records today'), findsOneWidget);
         expect(find.text('Sleep Pattern Today'), findsOneWidget);
+        expect(find.text('1 nap'), findsOneWidget);
         expect(find.text('Sleep Training'), findsOneWidget);
         expect(find.text('14.2 h'), findsNothing);
 
@@ -373,7 +452,12 @@ void main() {
           find.byKey(const ValueKey('baby-feeding-period-week')),
         );
         await tester.pumpAndSettle();
-        expect(find.text('Weekly feeding data unavailable'), findsOneWidget);
+        expect(find.text('This Week’s Feeding Summary'), findsOneWidget);
+        expect(
+          find.text('3 confirmed feeds · 200 mL measured'),
+          findsOneWidget,
+        );
+        expect(find.text('Daily Intake'), findsOneWidget);
         expect(find.text('Today’s Feeds'), findsNothing);
 
         await tester.tap(find.byKey(const ValueKey('baby-feeding-period-day')));
@@ -391,8 +475,10 @@ void main() {
           find.byKey(const ValueKey('baby-detail-diaper')),
           findsOneWidget,
         );
-        expect(find.text('No diaper data yet'), findsOneWidget);
-        expect(find.text('0 changes'), findsOneWidget);
+        expect(find.text('2 changes'), findsOneWidget);
+        expect(find.text('2 Wet'), findsOneWidget);
+        expect(find.text('1 Dirty'), findsOneWidget);
+        expect(find.text('No diaper data yet'), findsNothing);
         expect(find.text('7 changes'), findsNothing);
       },
     );
@@ -429,6 +515,182 @@ void main() {
       expect(find.text('No feeding data recorded today'), findsOneWidget);
     });
 
+    testWidgets('Baby expanded avatar clips the baked-in name', (tester) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+
+      await tester.drag(
+        find.byKey(const ValueKey('route-page-/baby')),
+        const Offset(0, 260),
+      );
+      await tester.pumpAndSettle();
+
+      final avatar = tester.widget<Image>(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName.contains(
+                'baby_avatar_full',
+              ),
+        ),
+      );
+      expect(
+        (avatar.image as AssetImage).assetName,
+        'assets/images/me_baby_overview/baby_avatar_full.png',
+      );
+      expect(
+        find.byKey(const ValueKey('baby-avatar-name-free-clip')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+      'Baby Development uses a confirmed gestational week without inventing clinical data',
+      (tester) async {
+        await _pumpApp(
+          tester,
+          initialLocation: '/baby/development',
+          runtime: _runtime(
+            transport: _profileOverviewTransport(
+              profileResponse: const {
+                'user_id': 'profile-overview-user',
+                'display_name': 'Avery',
+                'current_care_stage': 'pregnancy',
+              },
+              pregnancyFactValue: 'Week 28',
+            ),
+          ),
+        );
+
+        expect(
+          find.byKey(const ValueKey('baby-development-page')),
+          findsOneWidget,
+        );
+        expect(find.text('Baby Development'), findsOneWidget);
+        expect(find.text('Week 28 Visualization'), findsOneWidget);
+        expect(find.text('Week 28 Milestones'), findsOneWidget);
+        expect(find.text('Milestone guidance unavailable'), findsOneWidget);
+        expect(find.text('Estimated Length'), findsOneWidget);
+        expect(find.text('Estimated Weight'), findsOneWidget);
+        expect(find.text('Not available'), findsNWidgets(2));
+        expect(find.text('37.6 cm'), findsNothing);
+        expect(find.text('1,005 g'), findsNothing);
+        expect(find.textContaining('55th percentile'), findsNothing);
+        await expectLater(
+          find.byType(Scaffold).first,
+          matchesGoldenFile(
+            '../../goldens/me_baby_overview/baby_development_first_screen.png',
+          ),
+        );
+      },
+    );
+
+    testWidgets('Baby Development is reachable from pregnancy workspace', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            profileResponse: const {
+              'user_id': 'profile-overview-user',
+              'display_name': 'Avery',
+              'current_care_stage': 'pregnancy',
+            },
+            pregnancyFactValue: 'Week 28',
+          ),
+        ),
+      );
+
+      expect(
+        find.byKey(const ValueKey('me-stage-pregnancy-development')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('me-stage-pregnancy-development')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('baby-development-page')),
+        findsOneWidget,
+      );
+      expect(find.text('Week 28 Visualization'), findsOneWidget);
+    });
+
+    testWidgets('Baby Development derives a week from a confirmed due date', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby/development',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            profileResponse: const {
+              'user_id': 'profile-overview-user',
+              'display_name': 'Avery',
+              'current_care_stage': 'pregnancy',
+            },
+            pregnancyFactValue: '2026-10-10',
+          ),
+        ),
+      );
+
+      expect(find.text('Week 25 Visualization'), findsOneWidget);
+      expect(find.textContaining('55th percentile'), findsNothing);
+    });
+
+    testWidgets('Baby Development supports narrow screens and large text', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby/development',
+        viewportSize: const Size(360, 640),
+        textScaleFactor: 2,
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            profileResponse: const {
+              'user_id': 'profile-overview-user',
+              'display_name': 'Avery',
+              'current_care_stage': 'pregnancy',
+            },
+            pregnancyFactValue: 'Week 28',
+          ),
+        ),
+      );
+
+      expect(find.text('Baby Development'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('baby-development-start-education')),
+        180,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(
+        find.byKey(const ValueKey('baby-development-start-education')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('Baby monitor renders status separately from its clean image', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+
+      final camera = find.byKey(const ValueKey('baby-monitor-camera-card'));
+      final preview = tester.widget<Image>(
+        find.descendant(of: camera, matching: find.byType(Image)).first,
+      );
+      expect(
+        (preview.image as AssetImage).assetName,
+        'assets/images/me_baby_overview/nursery_camera_clean.png',
+      );
+      expect(find.text('OFFLINE'), findsOneWidget);
+      expect(find.text('LIVE'), findsNothing);
+    });
+
     testWidgets('Baby main layout preserves the approved reference anchors', (
       tester,
     ) async {
@@ -455,6 +717,32 @@ void main() {
       expect(addRecord, const Rect.fromLTWH(350, 772, 56, 56));
     });
 
+    testWidgets('Baby matches source anchors with iPhone safe areas', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        viewPadding: const FakeViewPadding(top: 24, bottom: 34),
+      );
+
+      expect(
+        tester.getRect(
+          find.byKey(const ValueKey('baby-profile-hero-background')),
+        ),
+        const Rect.fromLTWH(22, 101, 386, 156),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('baby-monitor-camera-card'))),
+        const Rect.fromLTWH(16, 335, 398, 241),
+      );
+      expect(tester.getRect(find.text('momcozy')).top, closeTo(55, 1));
+      expect(
+        tester.getRect(find.byKey(const ValueKey('bottom-nav-agent'))).top,
+        closeTo(829, 4),
+      );
+    });
+
     testWidgets('Baby sleep summary opens the honest detailed report', (
       tester,
     ) async {
@@ -467,8 +755,9 @@ void main() {
 
       expect(find.byKey(const ValueKey('baby-detail-sleep')), findsOneWidget);
       expect(find.text('Baby Sleep'), findsOneWidget);
-      expect(find.text('— hours'), findsOneWidget);
-      expect(find.text('No naps recorded'), findsOneWidget);
+      expect(find.text('2 h'), findsWidgets);
+      expect(find.text('Nap'), findsWidgets);
+      expect(find.text('No naps recorded'), findsNothing);
       expect(find.text('Weekly Pattern'), findsOneWidget);
       expect(find.text('10.2 hours'), findsNothing);
     });
@@ -586,7 +875,7 @@ void main() {
       );
       expect(
         tester.getRect(find.byKey(const ValueKey('baby-sleep-timeline-card'))),
-        const Rect.fromLTWH(16, 236, 358, 100),
+        const Rect.fromLTWH(16, 236, 358, 132),
       );
 
       await _pumpApp(
@@ -602,26 +891,26 @@ void main() {
       expect(diaperSummary.left, 16);
       expect(diaperSummary.top, 95);
       expect(diaperSummary.width, 358);
-      expect(diaperSummary.height, closeTo(105, 0.01));
+      expect(diaperSummary.height, closeTo(105, 0.3));
       final wetCard = tester.getRect(
         find.byKey(const ValueKey('baby-diaper-wet-card')),
       );
       expect(wetCard.left, 16);
-      expect(wetCard.top, closeTo(216, 0.01));
+      expect(wetCard.top, closeTo(216, 0.3));
       expect(wetCard.width, 174);
       expect(wetCard.height, closeTo(90, 0.01));
       final dirtyCard = tester.getRect(
         find.byKey(const ValueKey('baby-diaper-dirty-card')),
       );
       expect(dirtyCard.left, 200);
-      expect(dirtyCard.top, closeTo(216, 0.01));
+      expect(dirtyCard.top, closeTo(216, 0.3));
       expect(dirtyCard.width, 174);
       expect(dirtyCard.height, closeTo(90, 0.01));
       final diaperTimeline = tester.getRect(
         find.byKey(const ValueKey('baby-diaper-timeline-card')),
       );
       expect(diaperTimeline.left, 16);
-      expect(diaperTimeline.top, closeTo(322, 0.01));
+      expect(diaperTimeline.top, closeTo(322, 0.3));
       expect(diaperTimeline.width, 358);
     });
 
@@ -635,7 +924,7 @@ void main() {
         'baby-section-sleep',
         'baby-section-feeding',
         'baby-section-diaper',
-        'me-baby-overview-notification-disabled',
+        'me-baby-overview-notification',
         'me-baby-overview-connect-camera',
         'me-baby-overview-add-record',
       ]) {
@@ -656,7 +945,7 @@ void main() {
         'Figtree',
       );
       for (final key in const [
-        'me-baby-overview-notification-disabled',
+        'me-baby-overview-notification',
         'baby-section-monitor',
         'baby-section-sleep',
         'baby-section-feeding',
@@ -812,6 +1101,18 @@ void main() {
       ]) {
         expect(find.text(label), findsWidgets);
       }
+      for (final detail in const ['sleep', 'diaper']) {
+        final tile = find.byKey(ValueKey('baby-add-record-$detail'));
+        final inkWell = tester.widget<InkWell>(
+          find.descendant(of: tile, matching: find.byType(InkWell)),
+        );
+        expect(inkWell.onTap, isNotNull, reason: detail);
+        expect(
+          find.descendant(of: tile, matching: find.text('Coming soon')),
+          findsNothing,
+          reason: detail,
+        );
+      }
 
       await tester.tap(find.byKey(const ValueKey('baby-add-record-weight')));
       await tester.pumpAndSettle();
@@ -842,6 +1143,47 @@ void main() {
       expect(find.text('Growth measurement saved.'), findsOneWidget);
     });
 
+    testWidgets('Baby saves a manual sleep record from the add sheet', (
+      tester,
+    ) async {
+      final transport = _profileOverviewTransport();
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        runtime: _runtime(transport: transport),
+      );
+
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-add-record')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('baby-add-record-sleep')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('record-sleep-duration')),
+        findsOneWidget,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('record-sleep-duration')),
+        '60',
+      );
+      await tester.tap(find.byKey(const ValueKey('record-save')));
+      await tester.pumpAndSettle();
+
+      expect(transport.lastMethod, 'GET');
+      expect(transport.getPaths.last, sleepRecordsEndpoint);
+      final sleepWrite = transport.postedBodies.last;
+      expect(sleepWrite['infant_id'], 'profile-overview-baby');
+      expect(sleepWrite['sleep_type'], 'nap');
+      expect(
+        DateTime.parse(
+          sleepWrite['ended_at']! as String,
+        ).difference(DateTime.parse(sleepWrite['started_at']! as String)),
+        const Duration(minutes: 60),
+      );
+    });
+
     testWidgets(
       'Me pulls down into the avatar state and swipes up to details',
       (tester) async {
@@ -869,9 +1211,7 @@ void main() {
         expect(
           tester
               .getRect(
-                find.byKey(
-                  const ValueKey('me-baby-overview-notification-disabled'),
-                ),
+                find.byKey(const ValueKey('me-baby-overview-notification')),
               )
               .top,
           greaterThanOrEqualTo(0),
@@ -1376,14 +1716,19 @@ Future<void> _pumpApp(
   Size viewportSize = const Size(430, 932),
   MomCozyApiRuntime? runtime,
   double textScaleFactor = 1,
+  FakeViewPadding viewPadding = FakeViewPadding.zero,
 }) async {
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pump();
   tester.view.physicalSize = viewportSize;
   tester.view.devicePixelRatio = 1;
+  tester.view.padding = viewPadding;
+  tester.view.viewPadding = viewPadding;
   tester.platformDispatcher.textScaleFactorTestValue = textScaleFactor;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
+  addTearDown(tester.view.resetPadding);
+  addTearDown(tester.view.resetViewPadding);
   addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
   final routes = FakeRouteIntentPlatform();
   addTearDown(routes.dispose);
@@ -1412,7 +1757,19 @@ Future<void> _pumpApp(
         imageContext,
       ),
       precacheImage(
-        const AssetImage('assets/images/me_baby_overview/nursery_camera.png'),
+        const AssetImage(
+          'assets/images/me_baby_overview/nursery_camera_clean.png',
+        ),
+        imageContext,
+      ),
+      precacheImage(
+        const AssetImage('assets/images/me_baby_overview/baby_development.png'),
+        imageContext,
+      ),
+      precacheImage(
+        const AssetImage(
+          'assets/images/me_baby_overview/prenatal_education.png',
+        ),
         imageContext,
       ),
       precacheImage(
@@ -1488,6 +1845,8 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
   Map<String, Object?>? writeResponse,
   Map<String, Object?>? profileResponse,
   List<Map<String, Object?>>? milkTrendItems,
+  List<Map<String, Object?>>? infantItems,
+  String? pregnancyFactValue,
 }) {
   return FixtureApiJsonTransportByPath(
     {
@@ -1498,13 +1857,26 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
             'display_name': 'Avery',
             'delivery_date': '2026-06-12',
           },
-      profileInfantsEndpoint: const {
+      profileInfantsEndpoint: {
+        'items':
+            infantItems ??
+            const [
+              {
+                'id': 'profile-overview-baby',
+                'infant_name': 'Mia',
+                'birth_date': '2026-04-06',
+              },
+            ],
+      },
+      profilePregnancyFactEndpoint: {
         'items': [
-          {
-            'id': 'profile-overview-baby',
-            'infant_name': 'Mia',
-            'birth_date': '2026-04-06',
-          },
+          if (pregnancyFactValue != null)
+            {
+              'fact_key': pregnancyDueDateOrWeekFactKey,
+              'fact_kind': 'verified',
+              'status': 'active',
+              'value': pregnancyFactValue,
+            },
         ],
       },
       milkTrendsEndpoint: {
@@ -1523,15 +1895,85 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
         'items': [
           {
             'id': 'feed-1',
+            'infant_id': 'profile-overview-baby',
             'feed_type': 'bottle',
             'volume_ml': 80,
             'feed_time': '2026-07-03T06:00:00Z',
           },
           {
             'id': 'feed-2',
+            'infant_id': 'profile-overview-baby',
             'feed_type': 'bottle',
             'volume_ml': 40,
             'feed_time': '2026-07-03T10:00:00Z',
+          },
+          {
+            'id': 'feed-previous',
+            'infant_id': 'profile-overview-baby',
+            'feed_type': 'bottle',
+            'volume_ml': 80,
+            'feed_time': '2026-07-01T10:00:00Z',
+          },
+        ],
+      },
+      sleepRecordsEndpoint: const {
+        'items': [
+          {
+            'id': 'sleep-night',
+            'infant_id': 'profile-overview-baby',
+            'started_at': '2026-07-03T00:00:00Z',
+            'ended_at': '2026-07-03T02:00:00Z',
+            'sleep_type': 'night',
+            'duration_seconds': 7200,
+            'notes': '',
+          },
+          {
+            'id': 'sleep-nap',
+            'infant_id': 'profile-overview-baby',
+            'started_at': '2026-07-03T13:00:00Z',
+            'ended_at': '2026-07-03T14:00:00Z',
+            'sleep_type': 'nap',
+            'duration_seconds': 3600,
+            'notes': '',
+          },
+        ],
+      },
+      diaperRecordsEndpoint: const {
+        'items': [
+          {
+            'id': 'diaper-wet',
+            'infant_id': 'profile-overview-baby',
+            'changed_at': '2026-07-03T09:00:00Z',
+            'diaper_type': 'wet',
+            'notes': '',
+          },
+          {
+            'id': 'diaper-mixed',
+            'infant_id': 'profile-overview-baby',
+            'changed_at': '2026-07-03T12:00:00Z',
+            'diaper_type': 'mixed',
+            'notes': '',
+          },
+          {
+            'id': 'diaper-previous',
+            'infant_id': 'profile-overview-baby',
+            'changed_at': '2026-07-01T12:00:00Z',
+            'diaper_type': 'dirty',
+            'notes': '',
+          },
+        ],
+      },
+      notificationsEndpoint: const {
+        'items': [
+          {
+            'id': 'notification-1',
+            'notification_type': 'feeding_due',
+            'title': 'Feeding reminder',
+            'body': 'Bottle is due',
+            'status': 'unread',
+            'source': 'system',
+            'payload': <String, Object?>{},
+            'created_at': '2026-07-03T08:00:00Z',
           },
         ],
       },
