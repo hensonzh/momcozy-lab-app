@@ -18,6 +18,7 @@ void main() {
           'current_care_stage': 'postpartum',
           'actual_delivery_date': '2026-05-20',
           'delivery_type': 'vaginal',
+          'selected_avatar_file_id': '3d359f49-d269-48db-bef8-1f3fe6d8d09a',
         },
         profileInfantsEndpoint: {
           'items': [
@@ -71,6 +72,10 @@ void main() {
       expect(overview.mom?.actualDeliveryDate, DateTime.parse('2026-05-20'));
       expect(overview.mom?.deliveryType, DeliveryType.vaginal);
       expect(overview.mom?.dueDateOrWeek, isNull);
+      expect(
+        overview.mom?.avatarFileId,
+        '3d359f49-d269-48db-bef8-1f3fe6d8d09a',
+      );
       expect(overview.baby?.id, 'infant-001');
       expect(overview.baby?.nickname, 'Baby');
       expect(overview.baby?.ageDays, 42);
