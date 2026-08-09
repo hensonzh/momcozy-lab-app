@@ -1601,6 +1601,61 @@
         "title": "Body_upload_my_onboarding_portrait_v1_onboarding_me_portrait_post",
         "type": "object"
       },
+      "CompletedFeedingDaysRead": {
+        "properties": {
+          "average_feedings_per_recorded_day": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Feedings Per Recorded Day"
+          },
+          "average_volume_per_measured_day_ml": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Volume Per Measured Day Ml"
+          },
+          "daily_series": {
+            "items": {
+              "$ref": "#/components/schemas/FeedingTrendDayRead"
+            },
+            "title": "Daily Series",
+            "type": "array"
+          },
+          "measured_days": {
+            "title": "Measured Days",
+            "type": "integer"
+          },
+          "recorded_days": {
+            "title": "Recorded Days",
+            "type": "integer"
+          },
+          "window_days": {
+            "title": "Window Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "window_days",
+          "recorded_days",
+          "measured_days",
+          "average_volume_per_measured_day_ml",
+          "average_feedings_per_recorded_day",
+          "daily_series"
+        ],
+        "title": "CompletedFeedingDaysRead",
+        "type": "object"
+      },
       "DeliveryGestationalAge": {
         "additionalProperties": false,
         "properties": {
@@ -1815,6 +1870,67 @@
         "title": "DiaperRecordRead",
         "type": "object"
       },
+      "FeedingMilkComponentRead": {
+        "properties": {
+          "milk_source": {
+            "enum": [
+              "breast_milk",
+              "formula",
+              "donor_milk",
+              "unknown"
+            ],
+            "title": "Milk Source",
+            "type": "string"
+          },
+          "volume_ml": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume Ml"
+          }
+        },
+        "required": [
+          "milk_source"
+        ],
+        "title": "FeedingMilkComponentRead",
+        "type": "object"
+      },
+      "FeedingMilkComponentWrite": {
+        "properties": {
+          "milk_source": {
+            "enum": [
+              "breast_milk",
+              "formula",
+              "donor_milk",
+              "unknown"
+            ],
+            "title": "Milk Source",
+            "type": "string"
+          },
+          "volume_ml": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume Ml"
+          }
+        },
+        "required": [
+          "milk_source"
+        ],
+        "title": "FeedingMilkComponentWrite",
+        "type": "object"
+      },
       "FeedingRecordCreate": {
         "properties": {
           "duration_seconds": {
@@ -1829,40 +1945,36 @@
             ],
             "title": "Duration Seconds"
           },
-          "feed_action": {
-            "anyOf": [
-              {
-                "maxLength": 32,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Feed Action"
-          },
           "feed_time": {
             "format": "date-time",
             "title": "Feed Time",
             "type": "string"
           },
-          "feed_type": {
-            "maxLength": 32,
-            "minLength": 1,
-            "title": "Feed Type",
+          "feeding_method": {
+            "enum": [
+              "direct_breastfeeding",
+              "bottle",
+              "cup",
+              "syringe",
+              "tube",
+              "other"
+            ],
+            "title": "Feeding Method",
             "type": "string"
           },
           "infant_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Infant Id"
+            "format": "uuid",
+            "title": "Infant Id",
+            "type": "string"
+          },
+          "milk_components": {
+            "items": {
+              "$ref": "#/components/schemas/FeedingMilkComponentWrite"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Milk Components",
+            "type": "array"
           },
           "plan_task_id": {
             "anyOf": [
@@ -1887,23 +1999,13 @@
               }
             ],
             "title": "Title"
-          },
-          "volume_ml": {
-            "anyOf": [
-              {
-                "minimum": 0.0,
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Volume Ml"
           }
         },
         "required": [
+          "infant_id",
           "feed_time",
-          "feed_type"
+          "feeding_method",
+          "milk_components"
         ],
         "title": "FeedingRecordCreate",
         "type": "object"
@@ -1937,17 +2039,21 @@
             ],
             "title": "Duration Seconds"
           },
-          "feed_action": {
-            "title": "Feed Action",
-            "type": "string"
-          },
           "feed_time": {
             "format": "date-time",
             "title": "Feed Time",
             "type": "string"
           },
-          "feed_type": {
-            "title": "Feed Type",
+          "feeding_method": {
+            "enum": [
+              "direct_breastfeeding",
+              "bottle",
+              "cup",
+              "syringe",
+              "tube",
+              "other"
+            ],
+            "title": "Feeding Method",
             "type": "string"
           },
           "id": {
@@ -1967,7 +2073,26 @@
             ],
             "title": "Infant Id"
           },
-          "volume_ml": {
+          "milk_components": {
+            "items": {
+              "$ref": "#/components/schemas/FeedingMilkComponentRead"
+            },
+            "title": "Milk Components",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "feed_time",
+          "feeding_method",
+          "milk_components"
+        ],
+        "title": "FeedingRecordRead",
+        "type": "object"
+      },
+      "FeedingSummaryRead": {
+        "properties": {
+          "average_measured_volume_ml": {
             "anyOf": [
               {
                 "type": "number"
@@ -1976,16 +2101,115 @@
                 "type": "null"
               }
             ],
-            "title": "Volume Ml"
+            "title": "Average Measured Volume Ml"
+          },
+          "comparison": {
+            "$ref": "#/components/schemas/MilkWindowComparisonRead"
+          },
+          "completed_days": {
+            "$ref": "#/components/schemas/CompletedFeedingDaysRead"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "feeding_count": {
+            "title": "Feeding Count",
+            "type": "integer"
+          },
+          "feeding_method_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Feeding Method Counts",
+            "type": "object"
+          },
+          "intake_evaluation_context": {
+            "$ref": "#/components/schemas/IntakeEvaluationContextRead"
+          },
+          "latest_feeding_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Feeding At"
+          },
+          "measured_volume_count": {
+            "title": "Measured Volume Count",
+            "type": "integer"
+          },
+          "measured_volume_ml": {
+            "title": "Measured Volume Ml",
+            "type": "number"
+          },
+          "milk_source_volumes_ml": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Milk Source Volumes Ml",
+            "type": "object"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
           }
         },
         "required": [
-          "id",
-          "feed_time",
-          "feed_type",
-          "feed_action"
+          "days",
+          "timezone",
+          "feeding_count",
+          "measured_volume_count",
+          "measured_volume_ml",
+          "average_measured_volume_ml",
+          "feeding_method_counts",
+          "milk_source_volumes_ml",
+          "latest_feeding_at",
+          "completed_days",
+          "comparison",
+          "intake_evaluation_context"
         ],
-        "title": "FeedingRecordRead",
+        "title": "FeedingSummaryRead",
+        "type": "object"
+      },
+      "FeedingTrendDayRead": {
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "feeding_count": {
+            "title": "Feeding Count",
+            "type": "integer"
+          },
+          "measured_feeding_count": {
+            "title": "Measured Feeding Count",
+            "type": "integer"
+          },
+          "measured_volume_ml": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measured Volume Ml"
+          }
+        },
+        "required": [
+          "date",
+          "measured_volume_ml",
+          "feeding_count",
+          "measured_feeding_count"
+        ],
+        "title": "FeedingTrendDayRead",
         "type": "object"
       },
       "FertilityOnboardingProfile": {
@@ -2107,6 +2331,7 @@
             "anyOf": [
               {
                 "exclusiveMinimum": 0.0,
+                "maximum": 100.0,
                 "type": "number"
               },
               {
@@ -2119,6 +2344,7 @@
             "anyOf": [
               {
                 "exclusiveMinimum": 0.0,
+                "maximum": 300.0,
                 "type": "number"
               },
               {
@@ -2128,26 +2354,36 @@
             "title": "Height Cm"
           },
           "infant_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Infant Id"
+            "format": "uuid",
+            "title": "Infant Id",
+            "type": "string"
           },
           "measured_at": {
             "format": "date-time",
             "title": "Measured At",
             "type": "string"
           },
+          "measurement_context": {
+            "enum": [
+              "birth",
+              "routine"
+            ],
+            "title": "Measurement Context",
+            "type": "string"
+          },
+          "measurement_position": {
+            "enum": [
+              "recumbent",
+              "standing"
+            ],
+            "title": "Measurement Position",
+            "type": "string"
+          },
           "weight_kg": {
             "anyOf": [
               {
                 "exclusiveMinimum": 0.0,
+                "maximum": 500.0,
                 "type": "number"
               },
               {
@@ -2158,7 +2394,10 @@
           }
         },
         "required": [
-          "measured_at"
+          "infant_id",
+          "measured_at",
+          "measurement_position",
+          "measurement_context"
         ],
         "title": "GrowthRecordCreate",
         "type": "object"
@@ -2225,6 +2464,24 @@
             "title": "Measured At",
             "type": "string"
           },
+          "measurement_context": {
+            "enum": [
+              "birth",
+              "routine",
+              "unknown"
+            ],
+            "title": "Measurement Context",
+            "type": "string"
+          },
+          "measurement_position": {
+            "enum": [
+              "recumbent",
+              "standing",
+              "unknown"
+            ],
+            "title": "Measurement Position",
+            "type": "string"
+          },
           "weight_kg": {
             "anyOf": [
               {
@@ -2239,7 +2496,9 @@
         },
         "required": [
           "id",
-          "measured_at"
+          "measured_at",
+          "measurement_position",
+          "measurement_context"
         ],
         "title": "GrowthRecordRead",
         "type": "object"
@@ -2250,6 +2509,7 @@
             "anyOf": [
               {
                 "exclusiveMinimum": 0.0,
+                "maximum": 100.0,
                 "type": "number"
               },
               {
@@ -2262,6 +2522,7 @@
             "anyOf": [
               {
                 "exclusiveMinimum": 0.0,
+                "maximum": 300.0,
                 "type": "number"
               },
               {
@@ -2294,10 +2555,43 @@
             ],
             "title": "Measured At"
           },
+          "measurement_context": {
+            "anyOf": [
+              {
+                "enum": [
+                  "birth",
+                  "routine",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measurement Context"
+          },
+          "measurement_position": {
+            "anyOf": [
+              {
+                "enum": [
+                  "recumbent",
+                  "standing",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measurement Position"
+          },
           "weight_kg": {
             "anyOf": [
               {
                 "exclusiveMinimum": 0.0,
+                "maximum": 500.0,
                 "type": "number"
               },
               {
@@ -2452,6 +2746,62 @@
           "infant_name"
         ],
         "title": "InfantProfileRead",
+        "type": "object"
+      },
+      "IntakeEvaluationContextRead": {
+        "properties": {
+          "chronological_age_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chronological Age Days"
+          },
+          "growth_measurement_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Measurement Date"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason Code"
+          },
+          "status": {
+            "enum": [
+              "evidence_available",
+              "insufficient_data",
+              "unsupported",
+              "dependency_unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "reason_code",
+          "growth_measurement_date",
+          "chronological_age_days"
+        ],
+        "title": "IntakeEvaluationContextRead",
         "type": "object"
       },
       "InviteCodeCreate": {
@@ -2754,9 +3104,20 @@
             "title": "Date",
             "type": "string"
           },
-          "pumped_milk_volume_ml": {
-            "title": "Pumped Milk Volume Ml",
-            "type": "number"
+          "measured_pumping_count": {
+            "title": "Measured Pumping Count",
+            "type": "integer"
+          },
+          "measured_volume_ml": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measured Volume Ml"
           },
           "pumping_count": {
             "title": "Pumping Count",
@@ -2765,8 +3126,9 @@
         },
         "required": [
           "date",
-          "pumped_milk_volume_ml",
-          "pumping_count"
+          "measured_volume_ml",
+          "pumping_count",
+          "measured_pumping_count"
         ],
         "title": "MilkTrendDayRead",
         "type": "object"
@@ -2802,6 +3164,74 @@
         "title": "MilkTrendListResponse",
         "type": "object"
       },
+      "MilkWindowComparisonRead": {
+        "properties": {
+          "change_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Percent"
+          },
+          "current_average_volume_per_measured_day_ml": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Average Volume Per Measured Day Ml"
+          },
+          "current_measured_days": {
+            "title": "Current Measured Days",
+            "type": "integer"
+          },
+          "minimum_measured_days": {
+            "title": "Minimum Measured Days",
+            "type": "integer"
+          },
+          "previous_average_volume_per_measured_day_ml": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Average Volume Per Measured Day Ml"
+          },
+          "previous_measured_days": {
+            "title": "Previous Measured Days",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "insufficient_data"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "current_average_volume_per_measured_day_ml",
+          "previous_average_volume_per_measured_day_ml",
+          "change_percent",
+          "current_measured_days",
+          "previous_measured_days",
+          "minimum_measured_days"
+        ],
+        "title": "MilkWindowComparisonRead",
+        "type": "object"
+      },
       "NotificationListResponse": {
         "properties": {
           "items": {
@@ -2822,6 +3252,11 @@
         "properties": {
           "body": {
             "title": "Body",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
             "type": "string"
           },
           "delivered_at": {
@@ -2888,7 +3323,8 @@
           "body",
           "status",
           "source",
-          "payload"
+          "payload",
+          "created_at"
         ],
         "title": "NotificationRead",
         "type": "object"
@@ -4704,24 +5140,67 @@
         "title": "PumpWorkstateRead",
         "type": "object"
       },
-      "PumpingRecordCreate": {
+      "PumpingOutputRead": {
         "properties": {
           "breast_side": {
+            "enum": [
+              "left",
+              "right",
+              "unassigned"
+            ],
+            "title": "Breast Side",
+            "type": "string"
+          },
+          "volume_ml": {
             "anyOf": [
               {
-                "enum": [
-                  "left",
-                  "right",
-                  "both"
-                ],
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Breast Side"
+            "title": "Volume Ml"
+          }
+        },
+        "required": [
+          "breast_side"
+        ],
+        "title": "PumpingOutputRead",
+        "type": "object"
+      },
+      "PumpingOutputWrite": {
+        "properties": {
+          "breast_side": {
+            "enum": [
+              "left",
+              "right",
+              "unassigned"
+            ],
+            "title": "Breast Side",
+            "type": "string"
           },
+          "volume_ml": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume Ml"
+          }
+        },
+        "required": [
+          "breast_side"
+        ],
+        "title": "PumpingOutputWrite",
+        "type": "object"
+      },
+      "PumpingRecordCreate": {
+        "properties": {
           "duration_seconds": {
             "anyOf": [
               {
@@ -4734,17 +5213,13 @@
             ],
             "title": "Duration Seconds"
           },
-          "milk_volume_ml": {
-            "anyOf": [
-              {
-                "minimum": 0.0,
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Milk Volume Ml"
+          "outputs": {
+            "items": {
+              "$ref": "#/components/schemas/PumpingOutputWrite"
+            },
+            "maxItems": 3,
+            "title": "Outputs",
+            "type": "array"
           },
           "plan_task_id": {
             "anyOf": [
@@ -4837,22 +5312,6 @@
       },
       "PumpingRecordRead": {
         "properties": {
-          "breast_side": {
-            "anyOf": [
-              {
-                "enum": [
-                  "left",
-                  "right",
-                  "both"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Breast Side"
-          },
           "duration_seconds": {
             "anyOf": [
               {
@@ -4869,16 +5328,12 @@
             "title": "Id",
             "type": "string"
           },
-          "milk_volume_ml": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Milk Volume Ml"
+          "outputs": {
+            "items": {
+              "$ref": "#/components/schemas/PumpingOutputRead"
+            },
+            "title": "Outputs",
+            "type": "array"
           },
           "pump_start_time": {
             "format": "date-time",
@@ -4893,6 +5348,7 @@
         "required": [
           "id",
           "pump_start_time",
+          "outputs",
           "pump_type"
         ],
         "title": "PumpingRecordRead",
@@ -5432,6 +5888,24 @@
             ],
             "title": "Current Care Stage"
           },
+          "current_feeding_method": {
+            "anyOf": [
+              {
+                "enum": [
+                  "breastfeeding",
+                  "exclusive_pumping",
+                  "mixed",
+                  "formula",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Feeding Method"
+          },
           "delivery_type": {
             "anyOf": [
               {
@@ -5538,6 +6012,24 @@
               }
             ],
             "title": "Current Care Stage"
+          },
+          "current_feeding_method": {
+            "anyOf": [
+              {
+                "enum": [
+                  "breastfeeding",
+                  "exclusive_pumping",
+                  "mixed",
+                  "formula",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Feeding Method"
           },
           "delivery_type": {
             "anyOf": [
@@ -6617,6 +7109,23 @@
                 }
               ],
               "title": "Fact Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "fact_key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 160,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Fact Key"
             }
           },
           {
@@ -11351,6 +11860,16 @@
         "parameters": [
           {
             "in": "query",
+            "name": "infant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Infant Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "start_at",
             "required": false,
             "schema": {
@@ -11381,23 +11900,6 @@
                 }
               ],
               "title": "End At"
-            }
-          },
-          {
-            "in": "query",
-            "name": "infant_id",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "format": "uuid",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Infant Id"
             }
           },
           {
@@ -11520,6 +12022,83 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/records/feeding-summary": {
+      "get": {
+        "operationId": "get_feeding_summary_v1_records_feeding_summary_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "infant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Infant Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 7,
+              "maximum": 90,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "timezone",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "title": "Timezone",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedingSummaryRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Feeding Summary",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/records/feeding/{record_id}": {
       "delete": {
         "operationId": "delete_feeding_v1_records_feeding__record_id__delete",
@@ -11574,18 +12153,11 @@
           {
             "in": "query",
             "name": "infant_id",
-            "required": false,
+            "required": true,
             "schema": {
-              "anyOf": [
-                {
-                  "format": "uuid",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Infant Id"
+              "format": "uuid",
+              "title": "Infant Id",
+              "type": "string"
             }
           },
           {

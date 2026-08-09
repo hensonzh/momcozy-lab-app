@@ -1,0 +1,50 @@
+name: backend-contract
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/backend-contract.yml"
+      - "Makefile"
+      - "docs/backend-contract/**"
+      - "scripts/validate_backend_contract.py"
+      - "scripts/tests/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/backend-contract.yml"
+      - "Makefile"
+      - "docs/backend-contract/**"
+      - "scripts/validate_backend_contract.py"
+      - "scripts/tests/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-agent-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out MomCozyApp
+        uses: actions/checkout@v4
+        with:
+          path: MomCozyApp
+
+      - name: Check out authoritative MomCozyAgent contract
+        uses: actions/checkout@v4
+        with:
+          repository: hensonzh/MomCozyAgent
+          ref: main
+          path: MomCozyAgent
+
+      - name: Test contract validator
+        working-directory: MomCozyApp
+        run: python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+
+      - name: Require byte-identical Agent contracts
+        working-directory: MomCozyApp
+        run: >-
+          python3 scripts/validate_backend_contract.py
+          --source-repository ../MomCozyAgent
+          --require-source

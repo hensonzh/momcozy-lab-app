@@ -2,6 +2,7 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 
 const feedingRecordsEndpoint = '/v1/records/feeding';
+const feedingSummaryEndpoint = '/v1/records/feeding-summary';
 const pumpMilkRecordsEndpoint = '/v1/records/pumping';
 const milkTrendsEndpoint = '/v1/records/milk-trends';
 const growthRecordsEndpoint = '/v1/records/growth';
@@ -90,24 +91,23 @@ class RecordsApiRepository
   Future<FeedingRecord> createFeedingRecord({
     required String babyId,
     required DateTime occurredAt,
-    required String type,
-    double? amountMl,
+    required FeedingMethod feedingMethod,
+    required List<FeedingMilkComponent> milkComponents,
     int? durationSeconds,
     String? idempotencyKey,
   }) async {
     final selectedBabyId = _requiredBabyId(babyId);
-    final normalizedType = type.trim().toLowerCase();
     final body = <String, Object?>{
       'infant_id': selectedBabyId,
       'feed_time': occurredAt.toUtc().toIso8601String(),
-      'feed_type': normalizedType == 'formula' ? 'bottle' : normalizedType,
-      'feed_action': switch (normalizedType) {
-        'formula' => 'formula',
-        'bottle' => 'expressed_milk',
-        'breast' || 'breastfeeding' => 'direct',
-        _ => normalizedType,
-      },
-      'volume_ml': amountMl,
+      'feeding_method': feedingMethod.apiValue,
+      'milk_components': [
+        for (final component in milkComponents)
+          {
+            'milk_source': component.milkSource.apiValue,
+            'volume_ml': component.volumeMl,
+          },
+      ],
       'duration_seconds': durationSeconds,
     }..removeWhere((_, value) => value == null);
     final response = await transport.postJson(
@@ -119,6 +119,28 @@ class RecordsApiRepository
       },
     );
     return _feedingRecord(response);
+  }
+
+  @override
+  Future<FeedingSummary> fetchFeedingSummary({
+    required String babyId,
+    required int days,
+    required String timezone,
+  }) async {
+    final selectedBabyId = _requiredBabyId(babyId);
+    final selectedTimezone = timezone.trim();
+    if (selectedTimezone.isEmpty) {
+      throw ArgumentError.value(timezone, 'timezone', 'Timezone is required.');
+    }
+    final response = await transport.getJson(
+      feedingSummaryEndpoint,
+      query: {
+        'infant_id': selectedBabyId,
+        'days': days,
+        'timezone': selectedTimezone,
+      },
+    );
+    return _feedingSummary(response);
   }
 
   @override
@@ -142,17 +164,21 @@ class RecordsApiRepository
   @override
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
-    double? amountMl,
-    BreastSide? breastSide,
+    required List<PumpingOutput> outputs,
     int? durationSeconds,
     String? idempotencyKey,
   }) async {
     final body = <String, Object?>{
       'pump_start_time': occurredAt.toUtc().toIso8601String(),
-      'milk_volume_ml': amountMl,
+      'outputs': [
+        for (final output in outputs)
+          {
+            'breast_side': output.breastSide.apiValue,
+            'volume_ml': output.volumeMl,
+          },
+      ],
       'duration_seconds': durationSeconds,
       'pump_type': 'manual',
-      'breast_side': breastSide?.apiValue,
       'source': 'manual',
     }..removeWhere((_, value) => value == null);
     final response = await transport.postJson(
@@ -474,6 +500,8 @@ class RecordsApiRepository
     double? weightKg,
     double? heightCm,
     double? headCm,
+    required MeasurementPosition measurementPosition,
+    required MeasurementContext measurementContext,
     String? idempotencyKey,
   }) async {
     final selectedBabyId = _requiredBabyId(babyId);
@@ -483,6 +511,8 @@ class RecordsApiRepository
       'weight_kg': weightKg,
       'height_cm': heightCm,
       'head_cm': headCm,
+      'measurement_position': measurementPosition.apiValue,
+      'measurement_context': measurementContext.apiValue,
     }..removeWhere((_, value) => value == null);
     final response = await transport.postJson(
       growthRecordsEndpoint,
@@ -501,6 +531,8 @@ class RecordsApiRepository
     double? weightKg,
     double? heightCm,
     double? headCm,
+    MeasurementPosition? measurementPosition,
+    MeasurementContext? measurementContext,
   }) async {
     final mutations = transport;
     if (mutations is! ApiJsonMutationTransport) {
@@ -510,6 +542,8 @@ class RecordsApiRepository
       'weight_kg': weightKg,
       'height_cm': heightCm,
       'head_cm': headCm,
+      'measurement_position': measurementPosition?.apiValue,
+      'measurement_context': measurementContext?.apiValue,
     }..removeWhere((_, value) => value == null);
     final response = await (mutations as ApiJsonMutationTransport).patchJson(
       '$growthRecordsEndpoint/${Uri.encodeComponent(recordId.trim())}',
@@ -520,40 +554,27 @@ class RecordsApiRepository
 }
 
 FeedingRecord _feedingRecord(Map<String, Object?> data) {
+  final feedingMethod = FeedingMethod.tryParse(data['feeding_method']);
+  if (feedingMethod == null) {
+    throw const FormatException('Feeding record feeding_method is invalid.');
+  }
   return FeedingRecord(
     id: _string(data['id'] ?? data['recordId']) ?? '',
     infantId: _string(data['infant_id'] ?? data['infantId'])?.trim(),
-    type:
-        _string(data['feed_type'] ?? data['type'] ?? data['feedingType']) ?? '',
-    action: _string(data['feed_action'] ?? data['feedAction']) ?? '',
-    amountMl: _int(data['volume_ml'] ?? data['amount_ml'] ?? data['amountMl']),
+    feedingMethod: feedingMethod,
+    milkComponents: _feedingMilkComponents(data['milk_components']),
     durationSeconds: _int(data['duration_seconds'] ?? data['durationSeconds']),
-    occurredAt: _dateTime(
-      data['feed_time'] ?? data['occurred_at'] ?? data['occurredAt'],
-    ),
+    occurredAt: _dateTime(data['feed_time']),
   );
 }
 
 PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
   return PumpMilkRecord(
-    id: _id(data['pump_id'] ?? data['pumpId'] ?? data['id']),
-    pumpType: _string(data['pump_type'] ?? data['pumpType']) ?? '',
-    breastSide: BreastSide.tryParse(data['breast_side'] ?? data['breastSide']),
-    amountMl: _int(
-      data['milk_volume_ml'] ??
-          data['pump_milk_volum'] ??
-          data['pumpMilkVolum'] ??
-          data['amount_ml'] ??
-          data['amountMl'],
-    ),
-    durationSeconds: _int(data['duration_seconds'] ?? data['durationSeconds']),
-    occurredAt: _dateTime(
-      data['pump_start_time'] ??
-          data['pump_time'] ??
-          data['pumpTime'] ??
-          data['occurred_at'] ??
-          data['occurredAt'],
-    ),
+    id: _id(data['id']),
+    pumpType: _string(data['pump_type']) ?? '',
+    outputs: _pumpingOutputs(data['outputs']),
+    durationSeconds: _int(data['duration_seconds']),
+    occurredAt: _dateTime(data['pump_start_time']),
   );
 }
 
@@ -621,18 +642,24 @@ DiaperRecord _diaperRecord(Map<String, Object?> data) {
 }
 
 MilkTrendDay? _milkTrendDay(Map<String, Object?> data) {
+  if (!data.containsKey('measured_volume_ml') ||
+      !data.containsKey('pumping_count') ||
+      !data.containsKey('measured_pumping_count')) {
+    throw const FormatException(
+      'Milk trend must use measured_volume_ml and measured count fields.',
+    );
+  }
   final date = _dateTime(data['date']);
-  if (date == null) return null;
+  final pumpingCount = _int(data['pumping_count']);
+  final measuredPumpingCount = _int(data['measured_pumping_count']);
+  if (date == null || pumpingCount == null || measuredPumpingCount == null) {
+    throw const FormatException('Milk trend fields are invalid.');
+  }
   return MilkTrendDay(
     date: DateTime(date.year, date.month, date.day),
-    pumpedMilkVolumeMl:
-        _double(
-          data['pumped_milk_volume_ml'] ??
-              data['total_milk'] ??
-              data['actual_ml'],
-        ) ??
-        0,
-    pumpingCount: _int(data['pumping_count'] ?? data['pump_count']) ?? 0,
+    measuredVolumeMl: _double(data['measured_volume_ml']),
+    pumpingCount: pumpingCount,
+    measuredPumpingCount: measuredPumpingCount,
   );
 }
 
@@ -645,8 +672,144 @@ GrowthRecord _growthRecord(Map<String, Object?> data) {
     heightCm: _double(data['height_cm'] ?? data['heightCm']),
     headCm: _double(data['head_cm'] ?? data['headCm']),
     measuredAt: _dateTime(data['measured_at'] ?? data['measuredAt']),
+    measurementPosition: MeasurementPosition.tryParse(
+      data['measurement_position'],
+    ),
+    measurementContext: MeasurementContext.tryParse(
+      data['measurement_context'],
+    ),
   );
 }
+
+List<FeedingMilkComponent> _feedingMilkComponents(Object? value) {
+  if (value is! List) return const <FeedingMilkComponent>[];
+  return value
+      .whereType<Map>()
+      .map((raw) {
+        final data = Map<String, Object?>.from(raw);
+        final source = MilkSource.tryParse(data['milk_source']);
+        if (source == null) {
+          throw const FormatException(
+            'Feeding component milk_source is invalid.',
+          );
+        }
+        return FeedingMilkComponent(
+          milkSource: source,
+          volumeMl: _double(data['volume_ml']),
+        );
+      })
+      .toList(growable: false);
+}
+
+List<PumpingOutput> _pumpingOutputs(Object? value) {
+  if (value is! List) return const <PumpingOutput>[];
+  return value
+      .whereType<Map>()
+      .map((raw) {
+        final data = Map<String, Object?>.from(raw);
+        final side = PumpingSide.tryParse(data['breast_side']);
+        if (side == null) {
+          throw const FormatException('Pumping output breast_side is invalid.');
+        }
+        return PumpingOutput(
+          breastSide: side,
+          volumeMl: _double(data['volume_ml']),
+        );
+      })
+      .toList(growable: false);
+}
+
+FeedingSummary _feedingSummary(Map<String, Object?> data) {
+  final completed = _objectMap(data['completed_days']);
+  final comparison = _objectMap(data['comparison']);
+  final evaluation = _objectMap(data['intake_evaluation_context']);
+  final dailySeries = completed['daily_series'];
+  return FeedingSummary(
+    days: _int(data['days']) ?? 0,
+    timezone: _string(data['timezone']) ?? '',
+    feedingCount: _int(data['feeding_count']) ?? 0,
+    measuredVolumeCount: _int(data['measured_volume_count']) ?? 0,
+    measuredVolumeMl: _double(data['measured_volume_ml']) ?? 0,
+    averageMeasuredVolumeMl: _double(data['average_measured_volume_ml']),
+    feedingMethodCounts: _feedingMethodCounts(data['feeding_method_counts']),
+    milkSourceVolumesMl: _milkSourceVolumes(data['milk_source_volumes_ml']),
+    latestFeedingAt: _dateTime(data['latest_feeding_at']),
+    completedDays: CompletedFeedingDays(
+      windowDays: _int(completed['window_days']) ?? 0,
+      recordedDays: _int(completed['recorded_days']) ?? 0,
+      measuredDays: _int(completed['measured_days']) ?? 0,
+      averageVolumePerMeasuredDayMl: _double(
+        completed['average_volume_per_measured_day_ml'],
+      ),
+      averageFeedingsPerRecordedDay: _double(
+        completed['average_feedings_per_recorded_day'],
+      ),
+      dailySeries: dailySeries is List
+          ? dailySeries
+                .whereType<Map>()
+                .map((raw) {
+                  final day = Map<String, Object?>.from(raw);
+                  final date = _dateTime(day['date']);
+                  if (date == null) {
+                    throw const FormatException(
+                      'Feeding summary date is invalid.',
+                    );
+                  }
+                  return FeedingTrendDay(
+                    date: DateTime(date.year, date.month, date.day),
+                    measuredVolumeMl: _double(day['measured_volume_ml']),
+                    feedingCount: _int(day['feeding_count']) ?? 0,
+                    measuredFeedingCount:
+                        _int(day['measured_feeding_count']) ?? 0,
+                  );
+                })
+                .toList(growable: false)
+          : const <FeedingTrendDay>[],
+    ),
+    comparison: MilkWindowComparison(
+      status: _string(comparison['status']) ?? 'insufficient_data',
+      currentAverageVolumePerMeasuredDayMl: _double(
+        comparison['current_average_volume_per_measured_day_ml'],
+      ),
+      previousAverageVolumePerMeasuredDayMl: _double(
+        comparison['previous_average_volume_per_measured_day_ml'],
+      ),
+      changePercent: _double(comparison['change_percent']),
+      currentMeasuredDays: _int(comparison['current_measured_days']) ?? 0,
+      previousMeasuredDays: _int(comparison['previous_measured_days']) ?? 0,
+      minimumMeasuredDays: _int(comparison['minimum_measured_days']) ?? 0,
+    ),
+    intakeEvaluationContext: IntakeEvaluationContext(
+      status: IntakeEvaluationStatus.tryParse(evaluation['status']),
+      reasonCode: _string(evaluation['reason_code']),
+      growthMeasurementDate: _dateTime(evaluation['growth_measurement_date']),
+      chronologicalAgeDays: _int(evaluation['chronological_age_days']),
+    ),
+  );
+}
+
+Map<FeedingMethod, int> _feedingMethodCounts(Object? value) {
+  final data = _objectMap(value);
+  final counts = <FeedingMethod, int>{};
+  for (final entry in data.entries) {
+    final method = FeedingMethod.tryParse(entry.key);
+    if (method != null) counts[method] = _int(entry.value) ?? 0;
+  }
+  return counts;
+}
+
+Map<MilkSource, double> _milkSourceVolumes(Object? value) {
+  final data = _objectMap(value);
+  final volumes = <MilkSource, double>{};
+  for (final entry in data.entries) {
+    final source = MilkSource.tryParse(entry.key);
+    if (source != null) volumes[source] = _double(entry.value) ?? 0;
+  }
+  return volumes;
+}
+
+Map<String, Object?> _objectMap(Object? value) =>
+    value is Map ? Map<String, Object?>.from(value) : const <String, Object?>{};
 
 String _requiredBabyId(String value) {
   final babyId = value.trim();

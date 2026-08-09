@@ -1119,7 +1119,7 @@ class _BabyFeedingContent extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      '${feeds.length} confirmed ${feeds.length == 1 ? 'feed' : 'feeds'} · ${data.measuredFeedTotalMl} mL measured',
+                      '${feeds.length} confirmed ${feeds.length == 1 ? 'feed' : 'feeds'} · ${_formatNumber(data.measuredFeedTotalMl)} mL measured',
                       maxLines: 2,
                       style: _BabyText.supporting,
                     ),
@@ -1176,9 +1176,9 @@ class _BabyFeedingContent extends StatelessWidget {
               _EmptyInlineState(
                 iconAsset: _MeBabyOverviewAssets.activityIcon,
                 title:
-                    '${data.weeklyFeeds.length} confirmed ${data.weeklyFeeds.length == 1 ? 'feed' : 'feeds'} this week',
+                    '${data.weeklyFeedingCount} confirmed ${data.weeklyFeedingCount == 1 ? 'feed' : 'feeds'} in the last 7 days',
                 description:
-                    '${data.weeklyMeasuredFeedTotalMl} mL measured across the current week.',
+                    '${_formatNumber(data.weeklyMeasuredFeedTotalMl)} mL measured; unmeasured feeds are not treated as 0 mL.',
               ),
             ],
           ),
@@ -1198,19 +1198,22 @@ class _BabyFeedingContent extends StatelessWidget {
       : MaterialLocalizations.of(
           context,
         ).formatTimeOfDay(TimeOfDay.fromDateTime(occurredAt));
-  final type = switch (record.action.toLowerCase()) {
-    'direct' || 'direct_breast' => 'Breastfeeding',
-    'formula' => 'Formula',
-    'expressed_milk' => 'Bottle feeding',
-    _ => switch (record.type.toLowerCase()) {
-      'breast' || 'breastfeeding' => 'Breastfeeding',
-      'formula' => 'Formula',
-      'bottle' => 'Bottle feeding',
-      _ => 'Feeding',
-    },
+  final sources = record.milkComponents
+      .map((component) => component.milkSource)
+      .toSet();
+  final type = switch (record.feedingMethod) {
+    FeedingMethod.directBreastfeeding => 'Breastfeeding',
+    FeedingMethod.bottle when sources.length > 1 => 'Mixed bottle feeding',
+    FeedingMethod.bottle when sources.contains(MilkSource.formula) =>
+      'Formula feeding',
+    FeedingMethod.bottle => 'Bottle feeding',
+    FeedingMethod.cup => 'Cup feeding',
+    FeedingMethod.syringe => 'Syringe feeding',
+    FeedingMethod.tube => 'Tube feeding',
+    FeedingMethod.other => 'Other feeding',
   };
-  final amount = switch ((record.amountMl, record.durationSeconds)) {
-    (final amountMl?, _) => '$amountMl mL',
+  final amount = switch ((record.measuredVolumeMl, record.durationSeconds)) {
+    (final amountMl?, _) => '${_formatNumber(amountMl)} mL',
     (_, final seconds?) when seconds > 0 => _durationLabel(seconds),
     _ => 'Not measured',
   };
@@ -1661,16 +1664,16 @@ class _BabyWeeklyFeedingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final feeds = data.weeklyFeeds;
+    final summary = data.feedingSummary.data;
     final isLoading =
-        data.feedingRecords.phase == OverviewResourcePhase.initial ||
-        data.feedingRecords.phase == OverviewResourcePhase.loading;
-    if (feeds.isEmpty) {
+        data.feedingSummary.phase == OverviewResourcePhase.initial ||
+        data.feedingSummary.phase == OverviewResourcePhase.loading;
+    if (summary == null || summary.feedingCount == 0) {
       return _OverviewStateCard(
         title: isLoading
             ? 'Loading weekly feeding data…'
-            : 'No feeds this week',
-        description: data.feedingRecords.hasError
+            : 'No feeds in the last 7 days',
+        description: data.feedingSummary.hasError
             ? 'Weekly feeding records could not be refreshed. Try again later.'
             : 'Confirmed feeding records will build the weekly view.',
         icon: isLoading ? Icons.sync_rounded : Icons.bar_chart_rounded,
@@ -1678,9 +1681,11 @@ class _BabyWeeklyFeedingContent extends StatelessWidget {
       );
     }
     final days = data.weeklyFeedingDays;
-    final useMeasuredVolume = days.any((day) => day.measuredMl > 0);
-    final maxValue = days.fold<int>(1, (maximum, day) {
-      final value = useMeasuredVolume ? day.measuredMl : day.count;
+    final useMeasuredVolume = days.any((day) => day.measuredVolumeMl != null);
+    final maxValue = days.fold<double>(1, (maximum, day) {
+      final value = useMeasuredVolume
+          ? day.measuredVolumeMl ?? 0
+          : day.feedingCount.toDouble();
       return math.max(maximum, value);
     });
     return Column(
@@ -1692,12 +1697,12 @@ class _BabyWeeklyFeedingContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'This Week’s Feeding Summary',
+                'Last 7 Days Feeding Summary',
                 style: _BabyText.cardTitle,
               ),
               const SizedBox(height: 7),
               Text(
-                '${feeds.length} confirmed ${feeds.length == 1 ? 'feed' : 'feeds'} · ${data.weeklyMeasuredFeedTotalMl} mL measured',
+                '${summary.feedingCount} confirmed ${summary.feedingCount == 1 ? 'feed' : 'feeds'} · ${_formatNumber(summary.measuredVolumeMl)} mL measured',
                 style: _BabyText.supporting,
               ),
             ],
@@ -1710,12 +1715,16 @@ class _BabyWeeklyFeedingContent extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Daily Intake', style: _BabyText.cardTitle),
+              const Text('Completed-day intake', style: _BabyText.cardTitle),
               const SizedBox(height: 14),
               _FixedLineChart(
                 values: [
                   for (final day in days)
-                    (useMeasuredVolume ? day.measuredMl : day.count) / maxValue,
+                    useMeasuredVolume
+                        ? day.measuredVolumeMl == null
+                              ? null
+                              : day.measuredVolumeMl! / maxValue
+                        : day.feedingCount / maxValue,
                 ],
                 labels: [
                   for (final day in days) _weekdayLabel(day.date.weekday),
@@ -1724,8 +1733,8 @@ class _BabyWeeklyFeedingContent extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 useMeasuredVolume
-                    ? '${data.weeklyMeasuredFeedTotalMl} mL measured across ${feeds.length} confirmed ${feeds.length == 1 ? 'feed' : 'feeds'}'
-                    : '${feeds.length} confirmed ${feeds.length == 1 ? 'feed' : 'feeds'} without measured volume',
+                    ? '${summary.completedDays.measuredDays} measured complete ${summary.completedDays.measuredDays == 1 ? 'day' : 'days'}; gaps mean no measured volume, not 0 mL'
+                    : '${summary.feedingCount} confirmed ${summary.feedingCount == 1 ? 'feed' : 'feeds'} without measured volume',
                 style: _BabyText.supporting,
               ),
             ],
@@ -2477,6 +2486,8 @@ class _GrowthRecordSheet extends StatefulWidget {
 
 class _GrowthRecordSheetState extends State<_GrowthRecordSheet> {
   late final TextEditingController _valueController;
+  MeasurementPosition? _measurementPosition;
+  MeasurementContext? _measurementContext;
   String? _validationError;
 
   @override
@@ -2491,6 +2502,16 @@ class _GrowthRecordSheetState extends State<_GrowthRecordSheet> {
     _valueController = TextEditingController(
       text: current == null ? '' : _formatNumber(current),
     );
+    _measurementPosition = switch (latest?.measurementPosition) {
+      MeasurementPosition.recumbent => MeasurementPosition.recumbent,
+      MeasurementPosition.standing => MeasurementPosition.standing,
+      _ => null,
+    };
+    _measurementContext = switch (latest?.measurementContext) {
+      MeasurementContext.birth => MeasurementContext.birth,
+      MeasurementContext.routine => MeasurementContext.routine,
+      _ => null,
+    };
   }
 
   @override
@@ -2505,11 +2526,29 @@ class _GrowthRecordSheetState extends State<_GrowthRecordSheet> {
       setState(() => _validationError = 'Enter a valid measurement.');
       return;
     }
+    if (_measurementPosition == null || _measurementContext == null) {
+      setState(
+        () => _validationError = 'Select the measurement position and context.',
+      );
+      return;
+    }
     setState(() => _validationError = null);
     final saved = await switch (widget.detail) {
-      _BabyDetail.weight => widget.onSave(weightKg: value),
-      _BabyDetail.height => widget.onSave(heightCm: value),
-      _ => widget.onSave(headCm: value),
+      _BabyDetail.weight => widget.onSave(
+        weightKg: value,
+        measurementPosition: _measurementPosition!,
+        measurementContext: _measurementContext!,
+      ),
+      _BabyDetail.height => widget.onSave(
+        heightCm: value,
+        measurementPosition: _measurementPosition!,
+        measurementContext: _measurementContext!,
+      ),
+      _ => widget.onSave(
+        headCm: value,
+        measurementPosition: _measurementPosition!,
+        measurementContext: _measurementContext!,
+      ),
     };
     if (!mounted) return;
     if (saved) {
@@ -2623,6 +2662,46 @@ class _GrowthRecordSheetState extends State<_GrowthRecordSheet> {
                       ),
                     ),
                   ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Measurement position', style: _BabyText.supporting),
+                const SizedBox(height: 8),
+                SegmentedButton<MeasurementPosition>(
+                  key: const ValueKey('baby-growth-position'),
+                  segments: const [
+                    ButtonSegment(
+                      value: MeasurementPosition.recumbent,
+                      label: Text('Lying down'),
+                    ),
+                    ButtonSegment(
+                      value: MeasurementPosition.standing,
+                      label: Text('Standing'),
+                    ),
+                  ],
+                  selected: {?_measurementPosition},
+                  emptySelectionAllowed: true,
+                  onSelectionChanged: (selection) =>
+                      setState(() => _measurementPosition = selection.single),
+                ),
+                const SizedBox(height: 16),
+                const Text('Measurement context', style: _BabyText.supporting),
+                const SizedBox(height: 8),
+                SegmentedButton<MeasurementContext>(
+                  key: const ValueKey('baby-growth-context'),
+                  segments: const [
+                    ButtonSegment(
+                      value: MeasurementContext.routine,
+                      label: Text('Routine'),
+                    ),
+                    ButtonSegment(
+                      value: MeasurementContext.birth,
+                      label: Text('At birth'),
+                    ),
+                  ],
+                  selected: {?_measurementContext},
+                  emptySelectionAllowed: true,
+                  onSelectionChanged: (selection) =>
+                      setState(() => _measurementContext = selection.single),
                 ),
                 const SizedBox(height: 16),
                 ValueListenableBuilder<ProfileOverviewMutationState>(

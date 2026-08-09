@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -12,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_DIR = ROOT / "docs" / "backend-contract"
 OPENAPI_PATH = CONTRACT_DIR / "openapi.generated.json"
 SMOKE_FLOWS_PATH = CONTRACT_DIR / "flutter-smoke-flows.json"
+DEFAULT_SOURCE_REPOSITORY = ROOT.parent / "MomCozyAgent"
 FORBIDDEN_REPOSITORY_PATHS = ("production_backend/", "flutter_app/")
 
 REQUIRED_OPENAPI_PATHS = {
@@ -23,6 +25,7 @@ REQUIRED_OPENAPI_PATHS = {
     "/v1/files/upload",
     "/v1/onboarding/me/release-reset",
     "/v1/records/feeding",
+    "/v1/records/feeding-summary",
     "/v1/records/pumping",
     "/v1/records/growth",
     "/v1/plans",
@@ -49,6 +52,7 @@ REQUIRED_OPENAPI_OPERATIONS = {
 }
 REQUIRED_QUERY_KEYS = {
     "/v1/records/feeding": {"infant_id"},
+    "/v1/records/feeding-summary": {"infant_id", "days", "timezone"},
     "/v1/plans": {"plan_type", "status"},
     "/v1/agent/runs/{run_id}/stream": {"after_sequence", "follow"},
 }
@@ -69,6 +73,21 @@ AUTH_EXEMPT_PATHS = {
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Validate the Flutter backend contract snapshot."
+    )
+    parser.add_argument(
+        "--source-repository",
+        type=Path,
+        help="MomCozyAgent checkout whose generated contracts must match byte-for-byte.",
+    )
+    parser.add_argument(
+        "--require-source",
+        action="store_true",
+        help="Fail when no MomCozyAgent source checkout is available.",
+    )
+    args = parser.parse_args()
+
     errors: list[str] = []
     for document in sorted(CONTRACT_DIR.glob("*.md")):
         content = document.read_text()
@@ -81,6 +100,32 @@ def main() -> int:
 
     schema = _read_json_object(OPENAPI_PATH)
     smoke_flows = _read_json_object(SMOKE_FLOWS_PATH)
+
+    source_repository = args.source_repository
+    if source_repository is None and DEFAULT_SOURCE_REPOSITORY.is_dir():
+        source_repository = DEFAULT_SOURCE_REPOSITORY
+    if source_repository is None:
+        if args.require_source:
+            errors.append(
+                "MomCozyAgent source checkout is required; pass --source-repository."
+            )
+    else:
+        source_contract_dir = source_repository.resolve() / "docs"
+        errors.extend(
+            _compare_snapshot(
+                local=OPENAPI_PATH,
+                source=source_contract_dir / "openapi.generated.json",
+                label="OpenAPI",
+            )
+        )
+        errors.extend(
+            _compare_snapshot(
+                local=SMOKE_FLOWS_PATH,
+                source=source_contract_dir / "flutter-smoke-flows.json",
+                label="Smoke-flow",
+            )
+        )
+
     paths = schema.get("paths")
     if not isinstance(paths, dict):
         errors.append("OpenAPI snapshot is missing a paths object.")
@@ -118,7 +163,7 @@ def main() -> int:
         missing = sorted(required_query_keys - query_keys)
         if missing:
             errors.append(
-                f"GET {path} is missing stream query parameters: "
+                f"GET {path} is missing required query parameters: "
                 f"{', '.join(missing)}."
             )
 
@@ -136,8 +181,21 @@ def main() -> int:
         "backend-contract: validated "
         f"{len(smoke_flows.get('flows', []))} smoke flows against "
         f"{len(paths)} OpenAPI paths"
+        + (
+            f" and matched Agent source at {source_repository.resolve()}"
+            if source_repository is not None
+            else ""
+        )
     )
     return 0
+
+
+def _compare_snapshot(*, local: Path, source: Path, label: str) -> list[str]:
+    if not source.is_file():
+        return [f"Agent source snapshot is missing: {source}"]
+    if local.read_bytes() != source.read_bytes():
+        return [f"{label} snapshot differs from Agent source: {source}"]
+    return []
 
 
 def _validate_step(

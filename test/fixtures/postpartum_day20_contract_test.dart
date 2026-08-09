@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overv
 import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 
 import '../support/fixture_api_transport.dart';
 
@@ -31,7 +32,7 @@ void main() {
   test('omits retired response fields from the canonical fixture', () {
     expect(
       _map(fixture['meta'])['schema_version'],
-      'momcozy.postpartum_day20.v3',
+      'momcozy.postpartum_day20.v4',
     );
     final profile = _map(fixture['profile']);
     final infant = _map(_items(_map(fixture['infants'])).single);
@@ -175,21 +176,23 @@ void main() {
 
       expect(todayFeedings, hasLength(8));
       expect(
-        todayFeedings.where((record) => record.type == 'breast'),
+        todayFeedings.where(
+          (record) => record.feedingMethod == FeedingMethod.directBreastfeeding,
+        ),
         hasLength(2),
       );
       expect(
-        todayFeedings.fold<int>(
+        todayFeedings.fold<double>(
           0,
-          (total, record) => total + (record.amountMl ?? 0),
+          (total, record) => total + (record.measuredVolumeMl ?? 0),
         ),
         450,
       );
       expect(todayPumpings, hasLength(6));
       expect(
-        todayPumpings.fold<int>(
+        todayPumpings.fold<double>(
           0,
-          (total, record) => total + (record.amountMl ?? 0),
+          (total, record) => total + (record.measuredVolumeMl ?? 0),
         ),
         610,
       );
@@ -238,7 +241,7 @@ void main() {
 
       expect(dashboard.plans, hasLength(1));
       expect(dashboard.sessions, hasLength(2));
-      expect(milkTrends.map((item) => item.pumpedMilkVolumeMl), [
+      expect(milkTrends.map((item) => item.measuredVolumeMl), [
         590,
         605,
         620,

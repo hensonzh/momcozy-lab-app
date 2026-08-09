@@ -25,3 +25,12 @@
 - Flutter client compatibility：[MomCozyAgent Flutter compatibility](https://github.com/hensonzh/MomCozyAgent/blob/main/docs/flutter-client-compatibility.md)
 
 人读合同以 MomCozyAgent 仓库为唯一来源，本仓库不维护手工副本。
+
+在两个仓库相邻检出时，运行 `make backend-contract-validate-source`。该
+门禁会逐字节比对 Agent 的 OpenAPI 与 smoke-flow 源文件，并继续校验
+关键路径、查询参数、鉴权和幂等要求；CI 若使用其他目录，可通过
+`BACKEND_SOURCE_REPO=/path/to/MomCozyAgent` 指定检出位置。单仓库环境可用
+`make backend-contract-validate` 校验已提交快照。
+
+GitHub 的 `backend-contract` gate 会对比 MomCozyAgent `main`，因此破坏性契约
+变更应先合并 Agent，再合并携带新快照的 App。

@@ -57,7 +57,14 @@ void main() {
 
       await transport.postJson(
         '/v1/records/feeding',
-        body: {'feed_time': '2026-06-29T08:00:00Z', 'feed_type': 'bottle'},
+        body: {
+          'infant_id': 'infant-fixture',
+          'feed_time': '2026-06-29T08:00:00Z',
+          'feeding_method': 'bottle',
+          'milk_components': [
+            {'milk_source': 'breast_milk', 'volume_ml': 80},
+          ],
+        },
         headers: {'Idempotency-Key': 'idem-001'},
       );
 
@@ -71,8 +78,12 @@ void main() {
       );
       expect(connector.headers, containsPair('Idempotency-Key', 'idem-001'));
       expect(jsonDecode(connector.body!) as Map<String, Object?>, {
+        'infant_id': 'infant-fixture',
         'feed_time': '2026-06-29T08:00:00Z',
-        'feed_type': 'bottle',
+        'feeding_method': 'bottle',
+        'milk_components': [
+          {'milk_source': 'breast_milk', 'volume_ml': 80},
+        ],
       });
     });
 
