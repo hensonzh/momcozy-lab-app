@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -60,6 +61,21 @@ void main() {
     expect(find.text('按语音提示侧身站立，系统会实时检查取景和动作。'), findsNothing);
     expect(find.text('视频与关键点默认只在本机处理'), findsNothing);
     expect(find.text('结果只反映当前画面，不替代医疗诊断。'), findsNothing);
+
+    final leadingIcon = find.byIcon(Icons.accessibility_new_rounded);
+    final title = find.text('人体姿态动态评估');
+    final brandLogo = find.byWidgetPredicate(
+      (widget) =>
+          widget is Image &&
+          widget.image is AssetImage &&
+          (widget.image as AssetImage).assetName == MomCozyAssets.momcozyLogo,
+    );
+    expect(leadingIcon, findsOneWidget);
+    expect(brandLogo, findsOneWidget);
+    final titleCenterY = tester.getCenter(title).dy;
+    expect(tester.getCenter(leadingIcon).dy, closeTo(titleCenterY, 0.5));
+    expect(tester.getCenter(brandLogo).dy, closeTo(titleCenterY, 0.5));
+
     await tester.tap(find.text('开始评估'));
     await tester.pump();
 

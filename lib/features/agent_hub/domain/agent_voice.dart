@@ -130,8 +130,11 @@ class AgentVoicePlaybackCoordinator {
   AgentVoicePlaybackCoordinator();
 
   _ActiveAgentVoicePlayback? _active;
+  bool _suspended = false;
   int _nextToken = 0;
   final Set<void Function()> _idleListeners = <void Function()>{};
+
+  bool get isSuspended => _suspended;
 
   AgentVoicePlaybackSource? get activeSource => _active?.source;
 
@@ -145,6 +148,9 @@ class AgentVoicePlaybackCoordinator {
   }) {
     final playbackId = id.trim();
     if (playbackId.isEmpty) {
+      return const AgentVoicePlaybackRequestResult.rejected();
+    }
+    if (_suspended) {
       return const AgentVoicePlaybackRequestResult.rejected();
     }
 
@@ -175,6 +181,16 @@ class AgentVoicePlaybackCoordinator {
       cancel: cancel,
     );
     return AgentVoicePlaybackRequestResult.started(handle);
+  }
+
+  void suspend() {
+    if (_suspended) return;
+    _suspended = true;
+    cancel();
+  }
+
+  void resume() {
+    _suspended = false;
   }
 
   bool cancel({

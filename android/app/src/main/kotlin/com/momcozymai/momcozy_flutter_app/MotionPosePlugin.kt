@@ -186,7 +186,10 @@ private class MotionPosePlatformView(
     private val analysisExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private var cameraProvider: ProcessCameraProvider? = null
     private var poseLandmarker: PoseLandmarker? = null
+    @Volatile
     private var started = false
+
+    @Volatile
     private var disposed = false
     private var lastSubmittedAtMs = 0L
 
@@ -226,10 +229,12 @@ private class MotionPosePlatformView(
             val landmarker = try {
                 createPoseLandmarker(previewView.context)
             } catch (error: RuntimeException) {
-                emitError(
-                    "pose_model_initialization_failed",
-                    error.message ?: "MediaPipe failed to initialize",
-                )
+                if (started && !disposed) {
+                    emitError(
+                        "pose_model_initialization_failed",
+                        error.message ?: "MediaPipe failed to initialize",
+                    )
+                }
                 return@analysis
             }
             ContextCompat.getMainExecutor(previewView.context).execute main@{
@@ -340,7 +345,12 @@ private class MotionPosePlatformView(
             .setMinTrackingConfidence(0.5f)
             .setResultListener(::onPoseResult)
             .setErrorListener { error ->
-                emitError("pose_inference_failed", error.message ?: "MediaPipe pose inference failed")
+                if (started && !disposed) {
+                    emitError(
+                        "pose_inference_failed",
+                        error.message ?: "MediaPipe pose inference failed",
+                    )
+                }
             }
             .build()
         return PoseLandmarker.createFromOptions(context, options)
