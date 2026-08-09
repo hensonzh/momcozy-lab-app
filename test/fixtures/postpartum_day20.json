@@ -2276,29 +2276,6 @@
           "weekly_total_sessions": 14
         },
         "version": 1
-      },
-      {
-        "id": "ce595e48-1847-5348-baa6-4343a2481267",
-        "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
-        "plan_type": "milk_management",
-        "title": "泌乳节奏计划",
-        "summary": "结合直接亲喂和泵奶记录，维持稳定的日间节奏。",
-        "status": "active",
-        "source": "postpartum_day20_seed",
-        "payload": {
-          "scenario": "postpartum_day_20_happy_path",
-          "anchor_date": "2026-08-08",
-          "week_number": 3,
-          "total_weeks": 8,
-          "sessions_per_day": 6,
-          "daily_target_volume_ml": 650,
-          "today_volume_ml": 610,
-          "weekly_target_volume_ml": 4550,
-          "weekly_volume_ml": 4375.0,
-          "weekly_completed_sessions": 41,
-          "weekly_total_sessions": 43
-        },
-        "version": 1
       }
     ]
   },
@@ -2498,90 +2475,6 @@
         "payload": {
           "value_label": "12 min",
           "record_kind": "recovery"
-        }
-      },
-      {
-        "id": "f5789bf2-edb1-541c-b84a-69c4a7cc1983",
-        "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
-        "plan_id": "ce595e48-1847-5348-baa6-4343a2481267",
-        "task_date": "2026-08-08",
-        "task_time": "05:30",
-        "title": "泵奶记录 1",
-        "description": "按身体感受调整时长，记录实际奶量。",
-        "status": "completed",
-        "payload": {
-          "value_label": "95 ml",
-          "record_kind": "pumping"
-        }
-      },
-      {
-        "id": "c6fd763f-1e19-5e94-be49-aed588ae9fea",
-        "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
-        "plan_id": "ce595e48-1847-5348-baa6-4343a2481267",
-        "task_date": "2026-08-08",
-        "task_time": "09:00",
-        "title": "泵奶记录 2",
-        "description": "按身体感受调整时长，记录实际奶量。",
-        "status": "completed",
-        "payload": {
-          "value_label": "105 ml",
-          "record_kind": "pumping"
-        }
-      },
-      {
-        "id": "b944082c-2698-5e99-933a-607f58d55ddb",
-        "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
-        "plan_id": "ce595e48-1847-5348-baa6-4343a2481267",
-        "task_date": "2026-08-08",
-        "task_time": "12:30",
-        "title": "泵奶记录 3",
-        "description": "按身体感受调整时长，记录实际奶量。",
-        "status": "completed",
-        "payload": {
-          "value_label": "100 ml",
-          "record_kind": "pumping"
-        }
-      },
-      {
-        "id": "3dbd6a08-0e60-52fc-a7cd-034db1292611",
-        "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
-        "plan_id": "ce595e48-1847-5348-baa6-4343a2481267",
-        "task_date": "2026-08-08",
-        "task_time": "16:00",
-        "title": "泵奶记录 4",
-        "description": "按身体感受调整时长，记录实际奶量。",
-        "status": "completed",
-        "payload": {
-          "value_label": "110 ml",
-          "record_kind": "pumping"
-        }
-      },
-      {
-        "id": "dc7309c8-0285-5359-9f67-32db4fd2f198",
-        "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
-        "plan_id": "ce595e48-1847-5348-baa6-4343a2481267",
-        "task_date": "2026-08-08",
-        "task_time": "19:30",
-        "title": "泵奶记录 5",
-        "description": "按身体感受调整时长，记录实际奶量。",
-        "status": "completed",
-        "payload": {
-          "value_label": "100 ml",
-          "record_kind": "pumping"
-        }
-      },
-      {
-        "id": "d8780902-83c9-59ec-a6f1-2c1e0038ebe9",
-        "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
-        "plan_id": "ce595e48-1847-5348-baa6-4343a2481267",
-        "task_date": "2026-08-08",
-        "task_time": "23:00",
-        "title": "泵奶记录 6",
-        "description": "按身体感受调整时长，记录实际奶量。",
-        "status": "completed",
-        "payload": {
-          "value_label": "100 ml",
-          "record_kind": "pumping"
         }
       }
     ]

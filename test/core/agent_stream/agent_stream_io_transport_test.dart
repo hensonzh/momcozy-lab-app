@@ -763,7 +763,7 @@ void main() {
 
         final recorderFailure = await failingClient.post(
           const AgentStreamClientEventRequest(
-            eventType: 'milk_analysis_generated',
+            eventType: 'task_reminder_triggered',
             occurredAt: '2026-06-29T10:00:00+08:00',
           ),
         );

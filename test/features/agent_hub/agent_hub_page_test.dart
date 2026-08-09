@@ -179,83 +179,6 @@ void main() {
     expect(find.text('影响范围：仅此任务'), findsOneWidget);
   });
 
-  testWidgets('lactation plan status changes expose before and after states', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.waitingForConfirmation,
-            textContent: '请确认计划状态变更。',
-            events: [
-              AgentStreamEvent(const {
-                'type': 'action.confirmation_required',
-                'action_id': 'milk-plan-status-1',
-                'payload': {
-                  'action_type': 'milk_plan_status_update',
-                  'preview_payload': {
-                    'title': '暂停泌乳计划',
-                    'target': '稳奶计划',
-                    'current_status': 'active',
-                    'next_status': 'paused',
-                    'timezone': 'Asia/Shanghai',
-                  },
-                },
-              }),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text('泌乳计划状态变更'), findsOneWidget);
-    expect(find.text('对象：稳奶计划'), findsOneWidget);
-    expect(find.text('原值：active'), findsOneWidget);
-    expect(find.text('变更后：paused'), findsOneWidget);
-    expect(find.text('时区：Asia/Shanghai'), findsOneWidget);
-  });
-
-  testWidgets('lactation plan cards suppress content-editing actions', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _host(
-        AgentArtifactPanel(
-          cards: const [
-            AgentArtifactCardView(
-              id: 'bounded-milk-plan',
-              title: '稳奶计划',
-              artifactType: 'milk_plan_card',
-              presentationKind: AgentArtifactPresentationKind.milkPlanCard,
-              statusLabel: '执行中',
-              rows: ['不应展示的计划内容'],
-              actions: [
-                AgentArtifactActionView(
-                  label: '管理计划状态',
-                  icon: Icons.settings_outlined,
-                  kind: 'route',
-                  routePath: '/plan',
-                ),
-                AgentArtifactActionView(
-                  label: '编辑计划内容',
-                  icon: Icons.edit_outlined,
-                  kind: 'route',
-                  routePath: '/plan',
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-
-    expect(find.text('管理计划状态'), findsOneWidget);
-    expect(find.text('编辑计划内容'), findsNothing);
-    expect(find.text('不应展示的计划内容'), findsNothing);
-    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
-  });
-
   testWidgets('Agent Hub shows loop light rail while preparing a reply', (
     tester,
   ) async {
@@ -460,7 +383,7 @@ void main() {
         AgentHubPage(
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.streaming,
-            artifactEvents: {'milk-plan-001': artifactEvent},
+            artifactEvents: {'care-note-001': artifactEvent},
             completedAssistantMessageReceived: true,
           ),
         ),
@@ -683,7 +606,7 @@ void main() {
         AgentHubPage(
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.error,
-            artifactEvents: {'milk-plan-001': artifactEvent},
+            artifactEvents: {'care-note-001': artifactEvent},
           ),
         ),
       ),
@@ -4524,7 +4447,7 @@ void main() {
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
-      'Review my pump sessions',
+      'Check my device status',
     );
     await tester.pump();
 
@@ -4533,12 +4456,12 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
     expect(find.text('处理进度'), findsNothing);
-    expect(find.text('已生成分析卡片'), findsWidgets);
+    expect(find.text('已生成设备状态说明'), findsWidgets);
     expect(
-      find.text('I found two sessions today and prepared a draft analysis.'),
+      find.text('I checked the device status and prepared the next step.'),
       findsOneWidget,
     );
-    expect(find.textContaining('pump_session_summary_query'), findsNothing);
+    expect(find.textContaining('devices.pump_status.read'), findsNothing);
     expect(find.textContaining('{"ok"'), findsNothing);
   });
 
@@ -4557,8 +4480,8 @@ void main() {
                 'thread_id': 'thread-tool',
                 'run_id': 'run-tool',
                 'payload': {
-                  'tool_call_id': 'call-pump-summary',
-                  'tool_name': 'pump_session_summary_query',
+                  'tool_call_id': 'call-device-status',
+                  'tool_name': 'devices.pump_status.read',
                 },
               }),
               AgentStreamEvent(const {
@@ -4566,8 +4489,8 @@ void main() {
                 'thread_id': 'thread-tool',
                 'run_id': 'run-tool',
                 'payload': {
-                  'tool_call_id': 'call-pump-summary',
-                  'tool_name': 'pump_session_summary_query',
+                  'tool_call_id': 'call-device-status',
+                  'tool_name': 'devices.pump_status.read',
                 },
               }),
             ],
@@ -4863,16 +4786,9 @@ void main() {
     tester,
   ) async {
     final artifactEvent = _productionArtifactEvent(
-      id: 'restored-history-preview',
-      type: 'milk_plan_preview',
-      payload: {
-        'title': '历史奶量计划',
-        'summary': '这张卡片来自上一次会话。',
-        'direction': 'maintain',
-        'tasks': [
-          {'title': '20:00 泵奶'},
-        ],
-      },
+      id: 'restored-history-note',
+      type: 'rich_text',
+      payload: {'title': '历史说明', 'content': '这张说明卡片来自上一次会话。'},
     );
     final historicalRunState =
         const AgentStreamRunState(phase: AgentStreamRunPhase.streaming)
@@ -4898,13 +4814,11 @@ void main() {
 
     expect(find.text('这是上一次的计划。'), findsOneWidget);
     expect(
-      find.byKey(
-        const ValueKey('agent-artifact-milk-preview-restored-history-preview'),
-      ),
+      find.byKey(const ValueKey('agent-artifact-card-restored-history-note')),
       findsOneWidget,
     );
-    expect(find.text('20:00 泵奶'), findsNothing);
-    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
+    expect(find.text('历史说明'), findsOneWidget);
+    expect(find.text('这张说明卡片来自上一次会话。'), findsOneWidget);
   });
 
   testWidgets('Agent Hub does not archive an unpublished failed artifact', (
@@ -4924,7 +4838,7 @@ void main() {
           interactionStateStore: store,
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.error,
-            artifactEvents: {'milk-plan-001': artifactEvent},
+            artifactEvents: {'care-note-001': artifactEvent},
           ),
         ),
       ),
@@ -5701,24 +5615,22 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('agent-artifact-card-milk-plan-001')),
+      find.byKey(const ValueKey('agent-artifact-card-care-note-001')),
       findsOneWidget,
     );
-    expect(find.text('Milk supply plan'), findsOneWidget);
-    expect(find.text('Draft'), findsOneWidget);
+    expect(find.text('Care note'), findsOneWidget);
+    expect(find.text('Ready'), findsOneWidget);
     expect(
-      find.text('Draft card generated from safe artifact payload.'),
-      findsNothing,
+      find.text('A concise note generated from a safe artifact payload.'),
+      findsOneWidget,
     );
-    expect(find.text('Review flange comfort'), findsNothing);
-    expect(find.text('Track two more pumping sessions'), findsNothing);
-    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
+    expect(find.text('Review the device status'), findsOneWidget);
+    expect(find.text('Open the next step when ready'), findsOneWidget);
     expect(find.text('打开结果卡片'), findsOneWidget);
-    expect(find.textContaining('milk_plan_preview_create'), findsNothing);
     expect(find.textContaining('{"'), findsNothing);
 
     await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-action-milk-plan-001-0')),
+      find.byKey(const ValueKey('agent-artifact-action-care-note-001-0')),
     );
     await tester.pump();
   });
@@ -5745,7 +5657,7 @@ void main() {
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.finished,
             textContent: 'I prepared indexed cards.',
-            artifactEvents: {'milk-plan-001': artifactEvent},
+            artifactEvents: {'care-note-001': artifactEvent},
             actionEvents: {'action-indexed-001': actionEvent},
           ),
         ),
@@ -5754,51 +5666,18 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('agent-artifact-card-milk-plan-001')),
+      find.byKey(const ValueKey('agent-artifact-card-care-note-001')),
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
     expect(find.text('确认索引动作'), findsOneWidget);
   });
 
-  testWidgets('Agent Hub renders specialized legacy artifact cards', (
-    tester,
-  ) async {
+  testWidgets('Agent Hub renders specialized artifact cards', (tester) async {
     final state = AgentStreamRunState(
       phase: AgentStreamRunPhase.finished,
       textContent: '我整理好了这些卡片。',
       events: [
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'milk-plan-card',
-          'payload': {
-            'artifact_type': 'milk_plan_card',
-            'card': {
-              'card_type': 'milk_plan_card',
-              'schema_version': '1.0',
-              'card_json': {
-                'title': '追奶计划',
-                'sections': [
-                  {
-                    'id': 'target',
-                    'title': '目标',
-                    'tone': 'normal',
-                    'items': ['当前每日奶量约 549 ml，目标约 709.2 ml。'],
-                  },
-                  {
-                    'id': 'plan',
-                    'title': '计划',
-                    'tone': 'info',
-                    'metrics': [
-                      {'label': '周期', 'value': '3 天', 'detail': '从明天开始'},
-                    ],
-                    'items': ['新增 1 个吸奶任务。'],
-                  },
-                ],
-              },
-            },
-          },
-        }),
         AgentStreamEvent({
           'type': 'artifact.created',
           'artifact_id': 'birth-journey-card',
@@ -5881,16 +5760,6 @@ void main() {
     );
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-milk-plan-card')),
-      findsOneWidget,
-    );
-    expect(find.text('目标'), findsNothing);
-    expect(find.text('周期'), findsNothing);
-    expect(find.text('3 天'), findsNothing);
-    expect(find.text('新增 1 个吸奶任务。'), findsNothing);
-    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
 
     expect(
       find.byKey(const ValueKey('agent-artifact-birth-journey-card')),
@@ -6115,22 +5984,6 @@ void main() {
           },
         ),
         _productionArtifactEvent(
-          id: 'milk-preview-current',
-          type: 'milk_plan_preview',
-          payload: {
-            'title': '三天泵奶计划',
-            'summary': '将晚间泵奶提前，先观察三天。',
-            'direction': 'maintain',
-            'days': 3,
-            'tasks': [
-              {'title': '20:00 泵奶', 'detail': '保持舒适档位'},
-            ],
-            'reminders': [
-              {'title': '及时补水'},
-            ],
-          },
-        ),
-        _productionArtifactEvent(
           id: 'cart-current',
           type: 'hospital_bag_cart',
           payload: {
@@ -6175,18 +6028,6 @@ void main() {
     expect(find.text('12 年经验'), findsOneWidget);
     expect(find.text('擅长含乳支持。'), findsOneWidget);
     expect(find.textContaining('隐私政策'), findsOneWidget);
-
-    expect(
-      find.byKey(
-        const ValueKey('agent-artifact-milk-preview-milk-preview-current'),
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('将晚间泵奶提前，先观察三天。'), findsNothing);
-    expect(find.text('维持当前节奏'), findsNothing);
-    expect(find.textContaining('20:00 泵奶'), findsNothing);
-    expect(find.text('及时补水'), findsNothing);
-    expect(find.textContaining('Cozymate 不生成或编辑计划内容'), findsOneWidget);
 
     expect(
       find.byKey(const ValueKey('agent-artifact-cart-cart-current')),
@@ -8343,14 +8184,14 @@ milk_total: 120ml
                   'type': 'tool.completed',
                   'payload': {
                     'tool_call_id': 'tool-read-001',
-                    'tool_name': 'pump_session_summary_query',
+                    'tool_name': 'devices.pump_status.read',
                   },
                 }),
                 AgentStreamEvent({
                   'type': 'artifact.created',
                   'payload': {
-                    'artifact_id': 'artifact-plan-001',
-                    'artifact_type': 'milk_plan_card',
+                    'artifact_id': 'artifact-note-001',
+                    'artifact_type': 'rich_text',
                   },
                 }),
               ],
@@ -8360,8 +8201,6 @@ milk_total: 120ml
       );
 
       expect(find.text('我接着处理下一步'), findsNothing);
-      expect(find.text('正在读取泵奶记录'), findsNothing);
-      expect(find.text('泵奶记录已读取'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-run-status-line')),
         findsOneWidget,

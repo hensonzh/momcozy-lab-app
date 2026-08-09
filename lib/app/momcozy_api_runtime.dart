@@ -30,8 +30,6 @@ import 'package:momcozy_flutter_app/features/notifications/data/notifications_ap
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
-import 'package:momcozy_flutter_app/features/plan/data/plan_change_persistence.dart';
-import 'package:momcozy_flutter_app/features/plan/domain/plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/maternal_care_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
@@ -81,7 +79,6 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
-    PlanChangeStore? planChangeStore,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
     DateTime Function()? now,
@@ -140,16 +137,6 @@ class MomCozyApiRuntime {
             ownerUserId: this.session.userId,
             babyId: this.session.babyId,
           );
-    this.planChangeStore =
-        planChangeStore ??
-        PlanChangeStore(
-          persistence: FlutterSecurePlanChangePersistence(
-            userId: this.session.status == MomCozySessionStatus.authenticated
-                ? this.session.userId
-                : '',
-          ),
-        );
-    unawaited(this.planChangeStore.restore());
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
@@ -174,7 +161,6 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
-    PlanChangeStore? planChangeStore,
     String? userId,
     String? babyId,
     String? locale,
@@ -199,7 +185,6 @@ class MomCozyApiRuntime {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
-      planChangeStore: planChangeStore,
     );
   }
 
@@ -216,7 +201,6 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
-    PlanChangeStore? planChangeStore,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
@@ -302,7 +286,6 @@ class MomCozyApiRuntime {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
-      planChangeStore: planChangeStore,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
@@ -375,7 +358,6 @@ class MomCozyApiRuntime {
   final HospitalBagCartStore hospitalBagCartStore;
   late final IbclcConsultStore ibclcConsultStore;
   late final ProfileOverviewCache profileOverviewCache;
-  late final PlanChangeStore planChangeStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
@@ -749,12 +731,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
         sameAuthenticatedAccount && session.babyId == currentSession.babyId
         ? _runtime.profileOverviewCache
         : null;
-    final planChangeStore =
-        session.status == MomCozySessionStatus.authenticated &&
-            currentSession.status == MomCozySessionStatus.authenticated &&
-            session.userId == currentSession.userId
-        ? _runtime.planChangeStore
-        : null;
     final volumeUnitPreferenceStore = sameAuthenticatedAccount
         ? _runtime.volumeUnitPreferenceStore
         : null;
@@ -771,7 +747,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
         hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
         profileOverviewCache: profileOverviewCache,
-        planChangeStore: planChangeStore,
         volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       );
     }
@@ -787,7 +762,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
-      planChangeStore: planChangeStore,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       sessionStore: store,
       sessionProvider: () => _currentSession,

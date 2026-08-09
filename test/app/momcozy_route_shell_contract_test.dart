@@ -86,7 +86,5 @@ const _routeIntentFixtures = [
   'agent_artifact_and_feature_navigation_intents.json',
   'malformed_and_unknown_route_fallbacks.json',
   'media_viewer_and_ibclc_return_intents.json',
-  'native_notification_analysis_intents.json',
-  'plan_pending_intent.json',
   'pump_notification_intents.json',
 ];

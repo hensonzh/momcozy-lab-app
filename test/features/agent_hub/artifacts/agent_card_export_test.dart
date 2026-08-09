@@ -40,10 +40,6 @@ void main() {
       find.byKey(const ValueKey('agent-card-export-hospital-bag')),
       findsNothing,
     );
-    expect(
-      find.byKey(const ValueKey('agent-card-export-milk-plan')),
-      findsNothing,
-    );
   });
 
   for (final width in [360.0, 390.0, 430.0]) {
@@ -120,12 +116,7 @@ class _RecordingCardExportService implements AgentCardExportService {
   }) async {}
 }
 
-const _exportScopeCards = [
-  _journeyCard,
-  _birthPlanCard,
-  _hospitalBagCard,
-  _milkPlanCard,
-];
+const _exportScopeCards = [_journeyCard, _birthPlanCard, _hospitalBagCard];
 
 const _journeyCard = AgentArtifactCardView(
   id: 'journey',
@@ -188,12 +179,4 @@ const _hospitalBagCard = AgentArtifactCardView(
     subtitle: '住院母婴必备用品',
     groups: [],
   ),
-);
-
-const _milkPlanCard = AgentArtifactCardView(
-  id: 'milk-plan',
-  title: '奶量计划',
-  artifactType: 'milk_plan_card',
-  schemaVersion: '1.0',
-  presentationKind: AgentArtifactPresentationKind.milkPlanCard,
 );

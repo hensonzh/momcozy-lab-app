@@ -22,17 +22,6 @@ List<RouteIntent> routeIntentsFromNativePayloads(List<Object?> payloads) {
       .toList(growable: false);
 }
 
-List<RouteIntent> routeIntentsFromPendingStorage(Map<String, Object?> storage) {
-  final milkPlanIntent = _planPendingIntent(
-    raw: _string(storage['mmc_milk_plan_nav_pending']),
-    type: 'OpenPlanBadge',
-    path: '/plan',
-    fallbackPayload: const {'source': 'milkPlanChanged'},
-  );
-
-  return [?milkPlanIntent];
-}
-
 List<RouteIntent> routeIntentsFromAgentNavigationEvents(List<Object?> events) {
   return events
       .whereType<Map>()
@@ -72,7 +61,6 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
   final uri = Uri.tryParse(path);
   final cleanPath = uri?.path ?? _stripQuery(path);
   final notify = _decodeObject(_string(payload['notifyJson']));
-  final event = _string(notify?['event']);
 
   if (cleanPath == '/plan' || cleanPath == '/schedule') {
     return const RouteIntent(
@@ -121,24 +109,6 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
       path: cleanPath,
       payload: const {'fallback': 'AgentHub'},
     );
-  }
-
-  switch (event) {
-    case 'milk_analysis':
-      final card = _record(notify?['analysis_card']);
-      return RouteIntent(
-        type: 'OpenAgentHubWithMilkAnalysis',
-        path: '/',
-        payload: {
-          'kind': _string(card?['kind']) ?? 'milk_analysis',
-          'chatMessageId': _string(notify?['chatMessageId']),
-          'message': _string(notify?['body']) ?? '',
-          'notification': true,
-          'requiresContextEvent': true,
-          'requiresFollowupQueue': true,
-        },
-        consume: 'once',
-      );
   }
 
   if (notify == null && path == '/') return null;
@@ -334,59 +304,6 @@ RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
     type: 'AgentArtifactRouteIntent',
     payload: {'rawRoute': route, 'status': 'unknown'},
   );
-}
-
-RouteIntent? _planPendingIntent({
-  required String? raw,
-  required String type,
-  required String path,
-  required Map<String, Object?> fallbackPayload,
-}) {
-  if (raw == null) return null;
-  final payload = raw == '1'
-      ? fallbackPayload
-      : _planPayloadFromRecord(_decodeObject(raw)) ?? fallbackPayload;
-  return RouteIntent(type: type, path: path, payload: payload, consume: 'once');
-}
-
-Map<String, Object?>? _planPayloadFromRecord(Map<String, Object?>? record) {
-  if (record == null) return null;
-  final payload = <String, Object?>{};
-  void putString(String key) {
-    final value = _string(record[key]);
-    if (value != null && value.trim().isNotEmpty) payload[key] = value;
-  }
-
-  putString('kind');
-  putString('reason');
-  putString('label');
-  final planId = record['planId'] ?? record['plan_id'];
-  if (planId is num && planId.isFinite) payload['planId'] = planId.toInt();
-  putString('planType');
-  final planTypeSnake = _string(record['plan_type']);
-  if (!payload.containsKey('planType') &&
-      planTypeSnake != null &&
-      planTypeSnake.trim().isNotEmpty) {
-    payload['planType'] = planTypeSnake;
-  }
-  final dates = _uniqueDateStrings(record['dates']);
-  if (dates.isNotEmpty) payload['dates'] = dates;
-  putString('summary');
-  return payload.isEmpty ? null : payload;
-}
-
-List<String> _uniqueDateStrings(Object? value) {
-  if (value is! List) return const [];
-  final dates = <String>[];
-  final seen = <String>{};
-  for (final item in value) {
-    if (item is! String) continue;
-    final trimmed = item.trim();
-    if (!RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(trimmed)) continue;
-    final date = trimmed.substring(0, 10);
-    if (seen.add(date)) dates.add(date);
-  }
-  return dates;
 }
 
 String _resolveMediaUrl(String url) {

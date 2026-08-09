@@ -6,32 +6,6 @@ import '../../support/fixture_reader.dart';
 void main() {
   group('Route intent fixtures', () {
     test(
-      'map native notification payloads to typed one-shot route intents',
-      () {
-        final fixture = readFixtureMap(
-          'route_intents/native_notification_analysis_intents.json',
-        );
-        final input = Map<String, Object?>.from(fixture['input']! as Map);
-        final payloads = List<Object?>.from(
-          input['pendingNavigatePayloads']! as List,
-        );
-        final expected = List<Object?>.from(fixture['expectedIntents']! as List)
-            .whereType<Map>()
-            .map((value) => Map<String, Object?>.from(value))
-            .toList(growable: false);
-
-        final actual = routeIntentsFromNativePayloads(payloads);
-
-        _expectIntentsMatchExpected(actual, expected);
-        expect(actual.every((intent) => intent.payload.isNotEmpty), isTrue);
-        expect(
-          actual.first.payload,
-          containsPair('requiresContextEvent', true),
-        );
-      },
-    );
-
-    test(
       'keeps retired events generic and migrates old status links to Me',
       () {
         const retiredEvents = ['summary', 'mom_baby', 'health_issue'];
@@ -114,20 +88,6 @@ void main() {
           .toList(growable: false);
 
       final actual = routeIntentsFromNativePayloads(payloads);
-
-      _expectIntentsMatchExpected(actual, expected);
-    });
-
-    test('maps a pending plan update to the Plan intent', () {
-      final fixture = readFixtureMap('route_intents/plan_pending_intent.json');
-      final input = Map<String, Object?>.from(fixture['input']! as Map);
-      final storage = Map<String, Object?>.from(input['localStorage']! as Map);
-      final expected = List<Object?>.from(fixture['expectedIntents']! as List)
-          .whereType<Map>()
-          .map((value) => Map<String, Object?>.from(value))
-          .toList(growable: false);
-
-      final actual = routeIntentsFromPendingStorage(storage);
 
       _expectIntentsMatchExpected(actual, expected);
     });

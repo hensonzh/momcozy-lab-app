@@ -236,8 +236,8 @@ void main() {
         transport: FixtureApiJsonTransport(_map(fixture['notifications'])),
       ).fetchNotifications();
 
-      expect(dashboard.plans, hasLength(2));
-      expect(dashboard.sessions, hasLength(8));
+      expect(dashboard.plans, hasLength(1));
+      expect(dashboard.sessions, hasLength(2));
       expect(milkTrends.map((item) => item.pumpedMilkVolumeMl), [
         590,
         605,

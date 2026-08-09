@@ -15,9 +15,9 @@ void main() {
         planListEndpoint: const {
           'items': [
             {
-              'id': 'milk-plan',
-              'plan_type': 'milk_management',
-              'title': 'Breast Pumping Plan',
+              'id': 'lactation-plan',
+              'plan_type': 'lactation',
+              'title': 'Lactation Plan',
               'summary': 'Five sessions every day',
               'status': 'active',
               'payload': {
@@ -44,7 +44,7 @@ void main() {
           'items': [
             {
               'id': 'session-1',
-              'plan_id': 'milk-plan',
+              'plan_id': 'lactation-plan',
               'task_date': '2026-10-22',
               'task_time': '08:00',
               'title': 'Session 1',
@@ -53,7 +53,7 @@ void main() {
             },
             {
               'id': 'session-2',
-              'plan_id': 'milk-plan',
+              'plan_id': 'lactation-plan',
               'task_date': '2026-10-22',
               'task_time': '11:00',
               'title': 'Session 2',
@@ -106,9 +106,9 @@ void main() {
       transport.completePlans(const {
         'items': [
           {
-            'id': 'milk-plan',
-            'plan_type': 'milk_management',
-            'title': 'Breast Pumping Plan',
+            'id': 'lactation-plan',
+            'plan_type': 'lactation',
+            'title': 'Lactation Plan',
             'payload': <String, Object?>{},
           },
         ],
@@ -228,9 +228,9 @@ void main() {
         planListEndpoint: const {
           'items': [
             {
-              'id': 'milk-plan',
-              'plan_type': 'milk_management',
-              'title': 'Breast Pumping Plan',
+              'id': 'lactation-plan',
+              'plan_type': 'lactation',
+              'title': 'Lactation Plan',
               'payload': <String, Object?>{},
             },
           ],

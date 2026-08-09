@@ -158,6 +158,6 @@ AgentStreamRunState _richAgentState() {
     runId: 'run-fixture-tool-001',
     messageId: 'msg-reply-tool-001',
     textContent:
-        'I found two sessions today and prepared a draft analysis. You can review the card before saving.',
+        'I checked the device status and prepared the next step. You can review the note before continuing.',
   );
 }

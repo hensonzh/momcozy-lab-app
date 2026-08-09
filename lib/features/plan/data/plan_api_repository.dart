@@ -258,9 +258,7 @@ class _RawPlanSession {
 
 PlanCategory _category(String wireValue) {
   return switch (wireValue.trim().toLowerCase()) {
-    'milk_management' ||
-    'lactation' ||
-    'breast_pumping' => PlanCategory.lactation,
+    'lactation' || 'breast_pumping' => PlanCategory.lactation,
     'yoga' || 'recovery_yoga' => PlanCategory.yoga,
     'pelvic_floor' || 'pelvic-floor' => PlanCategory.pelvicFloor,
     _ => PlanCategory.other,
