@@ -875,28 +875,10 @@ class _BabyMonitorContent extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '—°C',
-                    style: TextStyle(
-                      fontFamily: MomCozyTypography.displayFontFamily,
-                      color: _BabyOverviewColors.ink,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    'Sensor readings unavailable',
+                    textAlign: TextAlign.end,
+                    style: _BabyText.supportingSmall,
                   ),
-                  SizedBox(width: 4),
-                  Text('Temp', style: _BabyText.supportingSmall),
-                  SizedBox(width: 14),
-                  Text(
-                    '—%',
-                    style: TextStyle(
-                      fontFamily: MomCozyTypography.displayFontFamily,
-                      color: _BabyOverviewColors.ink,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(width: 4),
-                  Text('Humidity', style: _BabyText.supportingSmall),
                 ],
               ),
             ],
@@ -969,19 +951,22 @@ class _BabySleepContent extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      data.todaySleeps.isEmpty
-                          ? '— h'
-                          : _durationLabel(data.todaySleepSeconds),
-                      style: _BabyText.heroMetric,
-                    ),
-                    const SizedBox(height: 7),
-                    Text(
-                      data.todaySleeps.isEmpty
-                          ? 'No sleep data recorded today'
-                          : '${data.todaySleeps.length} confirmed sleep ${data.todaySleeps.length == 1 ? 'record' : 'records'} today',
-                      style: _BabyText.supporting,
-                    ),
+                    if (data.todaySleeps.isEmpty)
+                      const _BabyMetricEmptyState(
+                        title: 'No sleep recorded today',
+                        description: 'Add a sleep record to see today’s total.',
+                      )
+                    else ...[
+                      Text(
+                        _durationLabel(data.todaySleepSeconds),
+                        style: _BabyText.heroMetric,
+                      ),
+                      const SizedBox(height: 7),
+                      Text(
+                        '${data.todaySleeps.length} confirmed sleep ${data.todaySleeps.length == 1 ? 'record' : 'records'} today',
+                        style: _BabyText.supporting,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -1849,26 +1834,30 @@ class _BabySleepReportContent extends StatelessWidget {
             children: [
               const Text("LAST NIGHT'S SLEEP", style: _BabyText.eyebrow),
               const SizedBox(height: 7),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      night == null
-                          ? '— hours'
-                          : _durationLabel(night.durationSeconds),
-                      style: _BabyText.detailMetric,
+              if (night == null)
+                _BabyMetricEmptyState(
+                  title: 'No night sleep recorded',
+                  description:
+                      'Add a confirmed night sleep record for ${data.babyName}.',
+                )
+              else ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _durationLabel(night.durationSeconds),
+                        style: _BabyText.detailMetric,
+                      ),
                     ),
-                  ),
-                  _WineBadge(label: night == null ? 'No data' : 'Confirmed'),
-                ],
-              ),
-              const Divider(color: _BabyOverviewColors.line, height: 12),
-              Text(
-                night == null
-                    ? 'No confirmed night sleep record is available for ${data.babyName}.'
-                    : _sleepRangeLabel(context, night),
-                style: _BabyText.supporting,
-              ),
+                    const _WineBadge(label: 'Confirmed'),
+                  ],
+                ),
+                const Divider(color: _BabyOverviewColors.line, height: 12),
+                Text(
+                  _sleepRangeLabel(context, night),
+                  style: _BabyText.supporting,
+                ),
+              ],
             ],
           ),
         ),
@@ -2075,6 +2064,7 @@ class _BabyGrowthDetailContent extends StatelessWidget {
   };
 
   String _formatMeasurement(double? value) {
+    if (value == null) return 'Measurement unavailable';
     final unit = detail == _BabyDetail.weight ? 'kg' : 'cm';
     return '${_formatNumber(value)} $unit';
   }
@@ -2096,7 +2086,7 @@ List<String> _growthChartLabels(
   BuildContext context,
   List<GrowthRecord> records,
 ) {
-  if (records.isEmpty) return const ['—'];
+  if (records.isEmpty) return const ['No records'];
   final indexes = records.length == 1
       ? const [0]
       : records.length == 2
@@ -2842,6 +2832,47 @@ class _EmptyInlineState extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _BabyMetricEmptyState extends StatelessWidget {
+  const _BabyMetricEmptyState({required this.title, required this.description});
+
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      container: true,
+      label: '$title. $description',
+      child: ExcludeSemantics(
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: const BoxDecoration(
+            color: _BabyOverviewColors.pill,
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: MomCozyTypography.displayFontFamily,
+                  color: _BabyOverviewColors.ink,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(description, style: _BabyText.supportingSmall),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
