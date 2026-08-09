@@ -101,6 +101,8 @@ void main() {
       _instructions(events.single),
       contains('motion_assessment.context.v2'),
     );
+    expect(_instructions(events.single), contains('默认使用简体中文'));
+    expect(_instructions(events.single), contains('用户明确要求'));
     expect(_instructions(events.single), isNot(contains('请只说下面这句')));
   });
 
