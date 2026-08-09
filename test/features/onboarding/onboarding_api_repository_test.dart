@@ -113,25 +113,62 @@ void main() {
     expect(multipart.lastFile?.sizeBytes, 3);
   });
 
-  test('completes with exactly one avatar selection mode', () async {
+  test(
+    'maps four avatar candidates and completes with one candidate',
+    () async {
+      final transport = FixtureApiJsonTransport(const {
+        'status': 'completed',
+        'current_step': 'done',
+        'profile_confirmed': true,
+        'selected_avatar_file_id': 'output-id',
+        'avatar': {
+          'id': 'generation-id',
+          'status': 'succeeded',
+          'stage': 'postpartum',
+          'error_code': '',
+          'created_at': '2026-08-09T00:00:00Z',
+          'candidates': [
+            {'id': 'candidate-1', 'file_id': 'file-1', 'position': 1},
+            {'id': 'candidate-2', 'file_id': 'file-2', 'position': 2},
+            {'id': 'candidate-3', 'file_id': 'file-3', 'position': 3},
+            {'id': 'candidate-4', 'file_id': 'file-4', 'position': 4},
+          ],
+        },
+      });
+      final repository = OnboardingApiRepository(
+        transport: transport,
+        multipartTransport: FixtureApiMultipartTransport(const {}),
+      );
+
+      final state = await repository.completeWithAvatar('candidate-2');
+
+      expect(transport.lastPath, '$onboardingMeEndpoint/complete');
+      expect(transport.lastBody, {
+        'avatar_candidate_id': 'candidate-2',
+        'use_default_avatar': false,
+      });
+      expect(state.isCompleted, isTrue);
+      expect(state.avatar?.candidates, hasLength(4));
+      expect(state.avatar?.candidates[1].fileId, 'file-2');
+    },
+  );
+
+  test('completes with the explicit MomCozy default selection', () async {
     final transport = FixtureApiJsonTransport(const {
       'status': 'completed',
       'current_step': 'done',
       'profile_confirmed': true,
-      'selected_avatar_file_id': 'output-id',
     });
     final repository = OnboardingApiRepository(
       transport: transport,
       multipartTransport: FixtureApiMultipartTransport(const {}),
     );
 
-    final state = await repository.completeWithAvatar('generation-id');
+    await repository.completeWithDefault();
 
-    expect(transport.lastPath, '$onboardingMeEndpoint/complete');
     expect(transport.lastBody, {
-      'avatar_generation_id': 'generation-id',
-      'use_default_avatar': false,
+      'avatar_candidate_id': null,
+      'use_default_avatar': true,
     });
-    expect(state.isCompleted, isTrue);
   });
 }

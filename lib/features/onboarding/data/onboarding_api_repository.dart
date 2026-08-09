@@ -77,16 +77,16 @@ class OnboardingApiRepository {
     );
   }
 
-  Future<OnboardingState> completeWithAvatar(String generationId) async {
+  Future<OnboardingState> completeWithAvatar(String candidateId) async {
     return _complete({
-      'avatar_generation_id': generationId,
+      'avatar_candidate_id': candidateId,
       'use_default_avatar': false,
     });
   }
 
   Future<OnboardingState> completeWithDefault() async {
     return _complete(const {
-      'avatar_generation_id': null,
+      'avatar_candidate_id': null,
       'use_default_avatar': true,
     });
   }
