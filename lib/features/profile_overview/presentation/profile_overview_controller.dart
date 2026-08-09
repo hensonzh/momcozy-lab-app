@@ -38,15 +38,11 @@ class CareStageSelectionState {
   const CareStageSelectionState({
     this.stage,
     this.isResolved = false,
-    this.isSaving = false,
-    this.pendingStage,
     this.error,
   });
 
   final MomLifeStage? stage;
   final bool isResolved;
-  final bool isSaving;
-  final MomLifeStage? pendingStage;
   final Object? error;
 }
 
@@ -567,47 +563,6 @@ class ProfileOverviewController {
     }
   }
 
-  Future<bool> updateCareStage(MomLifeStage stage) async {
-    if (_disposed || identity != ProfileIdentity.mom) return false;
-    final current = careStage.value;
-    if (current.isSaving) return false;
-    if (stage == current.stage) {
-      clearCareStageError();
-      return true;
-    }
-
-    careStage.value = CareStageSelectionState(
-      stage: current.stage,
-      isResolved: true,
-      isSaving: true,
-      pendingStage: stage,
-    );
-    try {
-      final saved = await profileOverviewRepository.updateCareStage(stage);
-      if (_disposed) return false;
-      _replaceOverviewStage(saved);
-      careStage.value = CareStageSelectionState(stage: saved, isResolved: true);
-      if (maternalCareOverviewRepository != null) {
-        unawaited(
-          _requestResource(
-            ProfileOverviewResourceKey.maternalCareOverview,
-            showLoading: false,
-            force: true,
-          ),
-        );
-      }
-      return true;
-    } catch (error) {
-      if (_disposed) return false;
-      careStage.value = CareStageSelectionState(
-        stage: current.stage,
-        isResolved: true,
-        error: error,
-      );
-      return false;
-    }
-  }
-
   Future<bool> savePumpingRecord({
     required List<PumpingOutput> outputs,
     int? durationSeconds,
@@ -850,35 +805,6 @@ class ProfileOverviewController {
   void clearRecordMutationError() {
     if (_disposed || recordMutation.value.error == null) return;
     recordMutation.value = const RecordMutationState();
-  }
-
-  void clearCareStageError() {
-    if (_disposed || careStage.value.error == null) return;
-    careStage.value = CareStageSelectionState(
-      stage: careStage.value.stage,
-      isResolved: careStage.value.isResolved,
-    );
-  }
-
-  void _replaceOverviewStage(MomLifeStage stage) {
-    final current = overview.value.data ?? const ProfileOverview();
-    final mom = (current.mom ?? const MomProfileOverview()).copyWith(
-      stage: stage,
-    );
-    final updated = current.copyWith(mom: mom);
-    overview.value = ProfileOverviewResource.data(updated);
-    cache.overview = OverviewCacheEntry(value: updated, fetchedAt: now());
-    final currentCareOverview = maternalCareOverview.value.data;
-    if (currentCareOverview != null) {
-      final updatedCareOverview = currentCareOverview.withStage(stage);
-      maternalCareOverview.value = ProfileOverviewResource.data(
-        updatedCareOverview,
-      );
-      cache.maternalCareOverview = OverviewCacheEntry(
-        value: updatedCareOverview,
-        fetchedAt: now(),
-      );
-    }
   }
 
   Future<bool> saveGrowth({

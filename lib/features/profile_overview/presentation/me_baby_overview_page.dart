@@ -63,7 +63,6 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   bool _refreshing = false;
   MomLifeStage? _displayedStage;
   _BabyDetail? _babyDetail;
-  String? _selectedBabyId;
   MomCozyApiRuntime? _runtime;
   ProfileOverviewController? _overviewController;
 
@@ -82,7 +81,6 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
       _runtime = runtime;
-      _selectedBabyId = null;
       _attachOverviewController(runtime);
     }
   }
@@ -97,7 +95,6 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     _avatarExpanded = false;
     _displayedStage = null;
     _babyDetail = null;
-    _selectedBabyId = null;
     if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
     final runtime = _runtime;
     if (runtime != null) _attachOverviewController(runtime);
@@ -111,11 +108,10 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     super.dispose();
   }
 
-  void _attachOverviewController(MomCozyApiRuntime runtime, {String? babyId}) {
+  void _attachOverviewController(MomCozyApiRuntime runtime) {
     _detachOverviewController();
     final controller = runtime.createProfileOverviewController(
       initialIdentity: widget.identity,
-      babyId: babyId ?? _selectedBabyId,
     );
     _overviewController = controller;
     _displayedStage = controller.careStage.value.stage;
@@ -246,84 +242,6 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     }
     setState(() => _section = section);
     if (revealDetails) _settleDetails(0);
-  }
-
-  Future<void> _openCareStageSelector() async {
-    final controller = _overviewController;
-    if (controller == null || !controller.careStage.value.isResolved) return;
-    controller.clearCareStageError();
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: false,
-      useSafeArea: true,
-      useRootNavigator: true,
-      barrierLabel: 'Dismiss current stage selector',
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.46),
-      builder: (sheetContext) =>
-          _CareStageSelectorSheet(controller: controller),
-    );
-    controller.clearCareStageError();
-  }
-
-  Future<void> _openBabyProfileSelector() async {
-    final controller = _overviewController;
-    final overview = controller?.overview.value.data;
-    final infants = (overview?.infants ?? const <BabyProfileOverview>[])
-        .where((infant) => infant.id?.trim().isNotEmpty == true)
-        .toList(growable: false);
-    if (controller == null || infants.isEmpty) return;
-    final selected = await showModalBottomSheet<BabyProfileOverview>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      useSafeArea: true,
-      useRootNavigator: true,
-      barrierLabel: 'Dismiss infant selector',
-      backgroundColor: _BabyOverviewColors.background,
-      builder: (sheetContext) => _BabyProfileSelectorSheet(
-        infants: infants,
-        selectedBabyId: overview?.baby?.id ?? controller.babyId,
-      ),
-    );
-    if (!mounted ||
-        selected == null ||
-        !identical(controller, _overviewController)) {
-      return;
-    }
-    final nextBabyId = selected.id?.trim();
-    if (nextBabyId == null ||
-        nextBabyId.isEmpty ||
-        nextBabyId == controller.babyId) {
-      return;
-    }
-    final onBabySelected = widget.onBabySelected;
-    if (onBabySelected != null) {
-      try {
-        await onBabySelected(nextBabyId);
-      } catch (_) {
-        if (!mounted) return;
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-          const SnackBar(
-            content: Text("Couldn't save the selected infant. Try again."),
-          ),
-        );
-      }
-      return;
-    }
-    final runtime = _runtime;
-    if (runtime == null) return;
-    _selectedBabyId = nextBabyId;
-    _attachOverviewController(runtime, babyId: nextBabyId);
-    setState(() {
-      _section = _initialSection(widget.identity);
-      _detailsPosition.value = 0;
-      _showAvatarLayer = false;
-      _avatarExpanded = false;
-      _babyDetail = null;
-    });
-    if (_detailsScroll.hasClients) _detailsScroll.jumpTo(0);
   }
 
   void _openBabyDetail(_BabyDetail detail) {
@@ -638,9 +556,6 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                     loadFailed:
                                         !stageState.isResolved &&
                                         stageState.error != null,
-                                    onSelectStage: stageState.isResolved
-                                        ? _openCareStageSelector
-                                        : null,
                                     onRetry: () {
                                       final controller = _overviewController;
                                       if (controller != null) {
@@ -727,19 +642,11 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                 ? _BabyOverviewColors.background
                 : _MeBabyOverviewColors.background,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                widget.identity == ProfileIdentity.baby ? 22 : 16,
-                widget.identity == ProfileIdentity.baby ? 14 : 8,
-                widget.identity == ProfileIdentity.baby ? 18 : 16,
-                widget.identity == ProfileIdentity.baby ? 2 : 8,
-              ),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: _MeBabyOverviewHeader(
                 identity: widget.identity,
                 careStage: stageState,
-                overview: data.overview,
                 avatarExpanded: _avatarExpanded,
-                onStagePressed: _openCareStageSelector,
-                onBabyPressed: _openBabyProfileSelector,
               ),
             ),
           ),
@@ -1100,155 +1007,16 @@ String _formatNumber(num? value) {
       : number.toStringAsFixed(1);
 }
 
-class _BabyProfileSelectorSheet extends StatelessWidget {
-  const _BabyProfileSelectorSheet({
-    required this.infants,
-    required this.selectedBabyId,
-  });
-
-  final List<BabyProfileOverview> infants;
-  final String selectedBabyId;
-
-  @override
-  Widget build(BuildContext context) {
-    final listHeight = math.min(infants.length * 72.0, 360.0);
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Select Infant',
-              style: TextStyle(
-                fontFamily: MomCozyTypography.displayFontFamily,
-                color: _BabyOverviewColors.ink,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: listHeight,
-              child: ListView.separated(
-                padding: EdgeInsets.zero,
-                itemCount: infants.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 8),
-                itemBuilder: (context, index) {
-                  final infant = infants[index];
-                  final infantId = infant.id!.trim();
-                  final nickname = infant.nickname?.trim();
-                  final label = nickname?.isNotEmpty == true
-                      ? nickname!
-                      : 'Infant ${index + 1}';
-                  final isSelected = infantId == selectedBabyId.trim();
-                  return Semantics(
-                    selected: isSelected,
-                    button: true,
-                    label: '$label, ${_formatBabyAge(infant.ageDays)}',
-                    child: Material(
-                      key: ValueKey('baby-profile-option-$infantId'),
-                      color: isSelected
-                          ? _BabyOverviewColors.pill
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(18),
-                        onTap: () => Navigator.of(context).pop(infant),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            minHeight: MomCozyTapTargets.minimum,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 10,
-                            ),
-                            child: Row(
-                              children: [
-                                DecoratedBox(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(9),
-                                    child: _BabySvgIcon(
-                                      asset: _MeBabyOverviewAssets.babyIcon,
-                                      color: _BabyOverviewColors.wine,
-                                      size: 22,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        label,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontFamily: MomCozyTypography
-                                              .displayFontFamily,
-                                          color: _BabyOverviewColors.ink,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      Text(
-                                        _formatBabyAge(infant.ageDays),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: _BabyText.supporting,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                if (isSelected)
-                                  const Icon(
-                                    Icons.check_circle_rounded,
-                                    color: _BabyOverviewColors.wine,
-                                    size: 22,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _MeBabyOverviewHeader extends StatelessWidget {
   const _MeBabyOverviewHeader({
     required this.identity,
     required this.careStage,
-    required this.overview,
     required this.avatarExpanded,
-    required this.onStagePressed,
-    required this.onBabyPressed,
   });
 
   final ProfileIdentity identity;
   final CareStageSelectionState careStage;
-  final ProfileOverviewResource<ProfileOverview> overview;
   final bool avatarExpanded;
-  final VoidCallback onStagePressed;
-  final VoidCallback onBabyPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -1266,68 +1034,28 @@ class _MeBabyOverviewHeader extends StatelessWidget {
         : careStage.error != null
         ? 'Stage unavailable'
         : 'My Stage';
-    final infantOptions = overview.data?.infants
-        .where((infant) => infant.id?.trim().isNotEmpty == true)
-        .toList(growable: false);
-    final babySelectorEnabled = infantOptions?.isNotEmpty == true;
-    final selectedInfantName = overview.data?.baby?.nickname?.trim();
     final babyPill = Semantics(
-      label: selectedInfantName?.isNotEmpty == true
-          ? '$label profile, $selectedInfantName. Select infant.'
-          : '$label profile. Select infant.',
-      button: true,
-      enabled: babySelectorEnabled,
+      key: const ValueKey('baby-current-profile-indicator'),
+      label: 'Infant profile. Locked to the infant selected for this session.',
+      button: false,
+      enabled: false,
       child: Material(
-        key: const ValueKey('baby-profile-selector'),
-        color: _BabyOverviewColors.pill,
+        color: _MeBabyOverviewColors.pill,
         borderRadius: BorderRadius.circular(24),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: babySelectorEnabled ? onBabyPressed : null,
-          child: SizedBox(
-            height: 44,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        label,
-                        maxLines: 1,
-                        style: const TextStyle(
-                          fontFamily: MomCozyTypography.bodyFontFamily,
-                          color: _BabyOverviewColors.wine,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  if (overview.isLoading && overview.data == null)
-                    const SizedBox.square(
-                      dimension: 15,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: _BabyOverviewColors.wine,
-                      ),
-                    )
-                  else if (overview.hasError && overview.data == null)
-                    const Icon(
-                      Icons.error_outline_rounded,
-                      color: _BabyOverviewColors.wine,
-                      size: 19,
-                    )
-                  else if (babySelectorEnabled)
-                    const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: _BabyOverviewColors.wine,
-                      size: 19,
-                    ),
-                ],
+        child: SizedBox(
+          height: 44,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Center(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: _MeBabyOverviewColors.wine,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
           ),
@@ -1338,113 +1066,78 @@ class _MeBabyOverviewHeader extends StatelessWidget {
       height: 54,
       child: Row(
         children: [
-          if (isBaby)
-            const Expanded(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: _MomCozyWordmark(useBabyPalette: true),
-              ),
-            )
-          else if (textScale < 1.8) ...[
+          if (textScale < 1.8) ...[
             const _MomCozyWordmark(),
             const SizedBox(width: 10),
           ],
-          if (isBaby)
-            SizedBox(width: 110, child: babyPill)
-          else
-            Expanded(
-              child: Semantics(
-                label: 'Current stage: $label. Change current stage.',
-                button: true,
-                enabled: careStage.isResolved && !careStage.isSaving,
-                child: Material(
-                  key: const ValueKey('me-current-stage-selector'),
-                  color: highlighted
-                      ? _MeBabyOverviewColors.wine
-                      : _MeBabyOverviewColors.pill,
-                  borderRadius: BorderRadius.circular(24),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(24),
-                    onTap: careStage.isResolved && !careStage.isSaving
-                        ? onStagePressed
-                        : null,
-                    child: SizedBox(
-                      height: 44,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                label,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: highlighted
-                                      ? Colors.white
-                                      : _MeBabyOverviewColors.wine,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
+          Expanded(
+            child: isBaby
+                ? babyPill
+                : Semantics(
+                    label: 'Current stage: $label. Locked after onboarding.',
+                    child: Material(
+                      key: const ValueKey('me-current-stage-indicator'),
+                      color: highlighted
+                          ? _MeBabyOverviewColors.wine
+                          : _MeBabyOverviewColors.pill,
+                      borderRadius: BorderRadius.circular(24),
+                      child: SizedBox(
+                        height: 44,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  label,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: highlighted
+                                        ? Colors.white
+                                        : _MeBabyOverviewColors.wine,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 5),
-                            if (careStage.isSaving ||
-                                (!careStage.isResolved &&
-                                    careStage.error == null))
-                              SizedBox.square(
-                                dimension: 15,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: highlighted
-                                      ? Colors.white
-                                      : _MeBabyOverviewColors.wine,
-                                ),
-                              )
-                            else if (!careStage.isResolved)
-                              Icon(
-                                Icons.error_outline_rounded,
-                                color: highlighted
-                                    ? Colors.white
-                                    : _MeBabyOverviewColors.wine,
-                                size: 19,
-                              )
-                            else
-                              Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: highlighted
-                                    ? Colors.white
-                                    : _MeBabyOverviewColors.wine,
-                                size: 19,
-                              ),
-                          ],
+                              if (!careStage.isResolved) ...[
+                                const SizedBox(width: 5),
+                                if (careStage.error == null)
+                                  SizedBox.square(
+                                    dimension: 15,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: highlighted
+                                          ? Colors.white
+                                          : _MeBabyOverviewColors.wine,
+                                    ),
+                                  )
+                                else
+                                  Icon(
+                                    Icons.error_outline_rounded,
+                                    color: highlighted
+                                        ? Colors.white
+                                        : _MeBabyOverviewColors.wine,
+                                    size: 19,
+                                  ),
+                              ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
+          ),
           const SizedBox(width: 8),
           _HeaderCircleAction(
             actionKey: const ValueKey('me-baby-overview-notification'),
             semanticLabel: 'Open notifications',
-            icon: isBaby ? null : Icons.notifications_none_rounded,
-            iconAsset: isBaby ? _MeBabyOverviewAssets.bellIcon : null,
+            icon: Icons.notifications_none_rounded,
             compact: true,
-            size: isBaby ? 38 : null,
-            backgroundColor: isBaby
-                ? _BabyOverviewColors.pill
-                : highlighted
-                ? _MeBabyOverviewColors.wine
-                : null,
-            foregroundColor: isBaby
-                ? _BabyOverviewColors.wine
-                : highlighted
-                ? Colors.white
-                : null,
+            backgroundColor: highlighted ? _MeBabyOverviewColors.wine : null,
+            foregroundColor: highlighted ? Colors.white : null,
             onPressed: () => context.go(
               Uri(
                 path: '/notifications',
@@ -1494,154 +1187,6 @@ class _RefreshFailureBanner extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _CareStageSelectorSheet extends StatelessWidget {
-  const _CareStageSelectorSheet({required this.controller});
-
-  final ProfileOverviewController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<CareStageSelectionState>(
-      valueListenable: controller.careStage,
-      builder: (context, state, _) {
-        final maxHeight = math.min(
-          MediaQuery.sizeOf(context).height * 0.76,
-          520.0,
-        );
-        return PopScope(
-          canPop: !state.isSaving,
-          child: SafeArea(
-            top: false,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: maxHeight),
-              child: Material(
-                key: const ValueKey('me-stage-selector-card'),
-                color: Colors.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(30),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: DecoratedBox(
-                          key: ValueKey('me-stage-selector-drag-handle'),
-                          decoration: BoxDecoration(
-                            color: Color(0xff8c7379),
-                            borderRadius: BorderRadius.all(Radius.circular(3)),
-                          ),
-                          child: SizedBox(width: 40, height: 5),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(28, 8, 18, 12),
-                        child: Row(
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                'Select Current Stage',
-                                style: TextStyle(
-                                  color: _MeBabyOverviewColors.wine,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              key: const ValueKey('me-stage-selector-close'),
-                              tooltip: 'Close',
-                              onPressed: state.isSaving
-                                  ? null
-                                  : () => Navigator.of(context).pop(),
-                              icon: const Icon(Icons.close_rounded),
-                              color: _MeBabyOverviewColors.wine,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                        child: Column(
-                          children: [
-                            for (final stage in MomLifeStage.values) ...[
-                              _CareStageOption(
-                                stage: stage,
-                                selected: state.stage == stage,
-                                saving: state.pendingStage == stage,
-                                enabled: !state.isSaving,
-                                onTap: () async {
-                                  if (stage == state.stage) {
-                                    Navigator.of(context).pop();
-                                    return;
-                                  }
-                                  final changed = await controller
-                                      .updateCareStage(stage);
-                                  if (context.mounted && changed) {
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                              ),
-                              if (stage != MomLifeStage.values.last)
-                                const Divider(
-                                  color: _MeBabyOverviewColors.line,
-                                  height: 1,
-                                ),
-                            ],
-                            if (state.error != null) ...[
-                              const SizedBox(height: 14),
-                              Semantics(
-                                liveRegion: true,
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xfffff0f2),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.error_outline_rounded,
-                                        color: _MeBabyOverviewColors.wine,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 9),
-                                      Expanded(
-                                        child: Text(
-                                          'Couldn’t change stage. Try again.',
-                                          style: TextStyle(
-                                            color: _MeBabyOverviewColors.wine,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }
@@ -2861,143 +2406,20 @@ class _AddRecordButton extends StatelessWidget {
   }
 }
 
-class _CareStageOption extends StatelessWidget {
-  const _CareStageOption({
-    required this.stage,
-    required this.selected,
-    required this.saving,
-    required this.enabled,
-    required this.onTap,
-  });
-
-  final MomLifeStage stage;
-  final bool selected;
-  final bool saving;
-  final bool enabled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      selected: selected,
-      button: true,
-      inMutuallyExclusiveGroup: true,
-      label: '${stage.label}. ${stage.subtitle}',
-      child: Material(
-        key: ValueKey('me-stage-option-${stage.wireValue}'),
-        color: selected ? const Color(0xfffff8f8) : Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: enabled ? onTap : null,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 86),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              child: Row(
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: _stageColor(stage),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const SizedBox.square(dimension: 12),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          stage.label,
-                          style: TextStyle(
-                            color: selected
-                                ? _MeBabyOverviewColors.wine
-                                : _MeBabyOverviewColors.ink,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          stage.subtitle,
-                          style: _MeBabyOverviewText.supporting,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  SizedBox.square(
-                    dimension: 28,
-                    child: saving
-                        ? const Padding(
-                            padding: EdgeInsets.all(4),
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: _MeBabyOverviewColors.wine,
-                            ),
-                          )
-                        : DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: selected
-                                  ? _MeBabyOverviewColors.wine
-                                  : Colors.transparent,
-                              shape: BoxShape.circle,
-                              border: selected
-                                  ? null
-                                  : Border.all(
-                                      color: _MeBabyOverviewColors.line,
-                                      width: 2,
-                                    ),
-                            ),
-                            child: selected
-                                ? const Icon(
-                                    Icons.check_rounded,
-                                    color: Colors.white,
-                                    size: 18,
-                                  )
-                                : null,
-                          ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-Color _stageColor(MomLifeStage stage) {
-  return switch (stage) {
-    MomLifeStage.fertility => const Color(0xffdf6a91),
-    MomLifeStage.pregnancy => _MeBabyOverviewColors.wine,
-    MomLifeStage.postpartum => const Color(0xffaa928a),
-  };
-}
-
 class _MomCozyWordmark extends StatelessWidget {
-  const _MomCozyWordmark({this.useBabyPalette = false});
-
-  final bool useBabyPalette;
+  const _MomCozyWordmark();
 
   @override
   Widget build(BuildContext context) {
     return MediaQuery.withNoTextScaling(
       child: Text(
         'momcozy',
-        style: TextStyle(
-          fontFamily: useBabyPalette
-              ? MomCozyTypography.displayFontFamily
-              : null,
-          color: useBabyPalette
-              ? _BabyOverviewColors.ink
-              : _MeBabyOverviewColors.ink,
-          fontSize: useBabyPalette ? 20 : 25,
+        style: const TextStyle(
+          color: _MeBabyOverviewColors.ink,
+          fontSize: 25,
           height: 1,
-          fontWeight: useBabyPalette ? FontWeight.w800 : FontWeight.w900,
-          letterSpacing: useBabyPalette ? 0 : -1,
+          fontWeight: FontWeight.w900,
+          letterSpacing: -1,
         ),
       ),
     );
@@ -3195,13 +2617,11 @@ class _UnselectedStageWorkspace extends StatelessWidget {
   const _UnselectedStageWorkspace({
     required this.loading,
     required this.loadFailed,
-    required this.onSelectStage,
     required this.onRetry,
   });
 
   final bool loading;
   final bool loadFailed;
-  final VoidCallback? onSelectStage;
   final VoidCallback onRetry;
 
   @override
@@ -3210,12 +2630,12 @@ class _UnselectedStageWorkspace extends StatelessWidget {
         ? 'Loading your care stage…'
         : loadFailed
         ? 'Your care stage is unavailable'
-        : 'Choose your current stage';
+        : 'Complete onboarding to continue';
     final description = loading
         ? 'Your workspace will appear when your profile is ready.'
         : loadFailed
         ? 'We couldn’t refresh your profile. Your stage was not guessed.'
-        : 'Select the stage that matches you now to open the right workspace.';
+        : 'Your care stage is collected during onboarding and locked afterwards.';
     return Semantics(
       key: const ValueKey('me-stage-unselected'),
       liveRegion: loadFailed,
@@ -3258,21 +2678,17 @@ class _UnselectedStageWorkspace extends StatelessWidget {
               textAlign: TextAlign.center,
               style: _MeBabyOverviewText.supporting,
             ),
-            if (!loading) ...[
+            if (loadFailed) ...[
               const SizedBox(height: 20),
               FilledButton.icon(
-                key: ValueKey(
-                  loadFailed ? 'me-stage-retry' : 'me-stage-choose',
-                ),
-                onPressed: loadFailed ? onRetry : onSelectStage,
+                key: const ValueKey('me-stage-retry'),
+                onPressed: onRetry,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(48),
                   backgroundColor: _MeBabyOverviewColors.wine,
                 ),
-                icon: Icon(
-                  loadFailed ? Icons.refresh_rounded : Icons.swap_horiz_rounded,
-                ),
-                label: Text(loadFailed ? 'Try again' : 'Select stage'),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Try again'),
               ),
             ],
           ],
@@ -4118,28 +3534,24 @@ class _HeaderCircleAction extends StatelessWidget {
   const _HeaderCircleAction({
     required this.actionKey,
     required this.semanticLabel,
-    this.icon,
-    this.iconAsset,
+    required this.icon,
     this.compact = false,
     this.backgroundColor,
     this.foregroundColor,
-    this.size,
     this.onPressed,
   });
 
   final Key actionKey;
   final String semanticLabel;
-  final IconData? icon;
-  final String? iconAsset;
+  final IconData icon;
   final bool compact;
   final Color? backgroundColor;
   final Color? foregroundColor;
-  final double? size;
   final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final resolvedSize = size ?? (compact ? 44.0 : 62.0);
+    final resolvedSize = compact ? 44.0 : 62.0;
     return Semantics(
       key: actionKey,
       label: semanticLabel,
@@ -4174,27 +3586,13 @@ class _HeaderCircleAction extends StatelessWidget {
                           ),
                         ],
                 ),
-                child: iconAsset == null
-                    ? Icon(
-                        icon,
-                        color:
-                            foregroundColor ??
-                            (compact
-                                ? _MeBabyOverviewColors.wine
-                                : Colors.white),
-                        size: compact ? 24 : 32,
-                      )
-                    : Center(
-                        child: _BabySvgIcon(
-                          asset: iconAsset!,
-                          color:
-                              foregroundColor ??
-                              (compact
-                                  ? _MeBabyOverviewColors.wine
-                                  : Colors.white),
-                          size: compact ? 20 : 28,
-                        ),
-                      ),
+                child: Icon(
+                  icon,
+                  color:
+                      foregroundColor ??
+                      (compact ? _MeBabyOverviewColors.wine : Colors.white),
+                  size: compact ? 24 : 32,
+                ),
               ),
             ),
           ),
@@ -4360,7 +3758,6 @@ abstract final class _MeBabyOverviewAssets {
   static const activityIcon = '$_babyIconRoot/activity.svg';
   static const backButton = '$_babyIconRoot/back-button.svg';
   static const babyIcon = '$_babyIconRoot/baby.svg';
-  static const bellIcon = '$_babyIconRoot/bell.svg';
   static const bottleWineIcon = '$_babyIconRoot/bottle-wine.svg';
   static const circleXIcon = '$_babyIconRoot/circle-x.svg';
   static const closeButton = '$_babyIconRoot/close-button.svg';

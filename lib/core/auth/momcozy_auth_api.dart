@@ -118,7 +118,7 @@ class MomCozyAuthUser {
   factory MomCozyAuthUser.fromMap(Map<String, Object?> map) {
     return MomCozyAuthUser(
       id: _requiredString(map, 'id'),
-      displayName: _requiredString(map, 'display_name'),
+      displayName: _optionalString(map, 'display_name') ?? '',
     );
   }
 

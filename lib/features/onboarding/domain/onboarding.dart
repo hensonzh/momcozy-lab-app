@@ -67,20 +67,75 @@ class OnboardingReleaseReset {
   final bool objectCleanupQueued;
 }
 
+class OnboardingAvatarCandidate {
+  const OnboardingAvatarCandidate({
+    required this.id,
+    required this.fileId,
+    required this.position,
+  });
+
+  factory OnboardingAvatarCandidate.fromMap(Map<String, Object?> map) {
+    final id = _string(map['id']).trim();
+    final fileId = _string(map['file_id']).trim();
+    final position = map['position'];
+    if (id.isEmpty ||
+        fileId.isEmpty ||
+        position is! int ||
+        position < 1 ||
+        position > 4) {
+      throw const FormatException('Invalid avatar candidate response.');
+    }
+    return OnboardingAvatarCandidate(
+      id: id,
+      fileId: fileId,
+      position: position,
+    );
+  }
+
+  final String id;
+  final String fileId;
+  final int position;
+}
+
 class OnboardingAvatarGeneration {
   const OnboardingAvatarGeneration({
     required this.id,
     required this.status,
     this.outputFileId,
     this.errorCode = '',
+    this.candidates = const [],
   });
 
   factory OnboardingAvatarGeneration.fromMap(Map<String, Object?> map) {
+    final rawCandidates = map['candidates'];
+    final candidates = rawCandidates is List
+        ? rawCandidates
+              .map(
+                (value) => value is Map
+                    ? OnboardingAvatarCandidate.fromMap(
+                        Map<String, Object?>.from(value),
+                      )
+                    : throw const FormatException(
+                        'Invalid avatar candidate response.',
+                      ),
+              )
+              .toList()
+        : <OnboardingAvatarCandidate>[];
+    candidates.sort((left, right) => left.position.compareTo(right.position));
+    final status = _status(_string(map['status']));
+    if (status == OnboardingStatus.avatarReview &&
+        (candidates.length != 4 ||
+            candidates.map((value) => value.position).toSet().length != 4)) {
+      throw const FormatException(
+        'Avatar generation did not return four candidates.',
+      );
+    }
     return OnboardingAvatarGeneration(
       id: _string(map['id']),
-      status: _status(_string(map['status'])),
+      status: status,
       outputFileId: _nullableString(map['output_file_id']),
       errorCode: _string(map['error_code']),
+      candidates: List.unmodifiable(candidates),
     );
   }
 
@@ -88,6 +143,7 @@ class OnboardingAvatarGeneration {
   final OnboardingStatus status;
   final String? outputFileId;
   final String errorCode;
+  final List<OnboardingAvatarCandidate> candidates;
 }
 
 class OnboardingState {
