@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -203,6 +204,55 @@ void main() {
     router.dispose();
   });
 
+  testWidgets(
+    'successful invite auth reports a local session persistence failure',
+    (tester) async {
+      final transport = FixtureApiJsonTransport(_tokenResponse());
+      final telemetry = MemoryMomCozyTelemetrySink();
+      final runtime = MomCozyApiRuntime(
+        jsonTransport: transport,
+        userId: 'demo-user',
+        babyId: 'demo-baby',
+        locale: 'zh-CN',
+        observability: MomCozyObservability(sink: telemetry),
+      );
+      final controller = MomCozyRuntimeController(runtime);
+      final store = _FailingSessionStore();
+      final lastInviteCodeStore = _MemoryLastInviteCodeStore('MCZ-LAST-0001');
+      final router = _authRouter(
+        controller: controller,
+        store: store,
+        deviceId: 'flutter-device-001',
+        lastInviteCodeStore: lastInviteCodeStore,
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+        'MCZ-ABCD-2345',
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
+      await tester.pumpAndSettle();
+
+      expect(transport.lastPath, authInviteLoginEndpoint);
+      expect(find.text('账号认证已通过，但无法保存本机登录状态。请重启 App 后重试。'), findsOneWidget);
+      expect(controller.currentSession.isAuthenticated, isFalse);
+      expect(lastInviteCodeStore.value, 'MCZ-LAST-0001');
+      final event = telemetry.events.singleWhere(
+        (event) => event.name == 'app.non_fatal',
+      );
+      expect(event.attributes['context'], {
+        'feature': 'auth',
+        'operation': 'persist_session',
+      });
+      expect(event.attributes.toString(), isNot(contains('access-token-001')));
+      expect(event.attributes.toString(), isNot(contains('refresh-token-001')));
+
+      controller.dispose();
+      router.dispose();
+    },
+  );
+
   testWidgets('invite login shows bound-device message on permission denied', (
     tester,
   ) async {
@@ -258,6 +308,14 @@ GoRouter _authRouter({
 }) {
   return GoRouter(
     initialLocation: '/login',
+    refreshListenable: controller,
+    redirect: (context, state) {
+      if (controller.currentSession.isAuthenticated &&
+          state.uri.path == '/login') {
+        return '/';
+      }
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/login',
@@ -339,4 +397,17 @@ class _DeferredLastInviteCodeStore implements MomCozyLastInviteCodeStore {
 
   @override
   Future<void> writeLastInviteCode(String inviteCode) async {}
+}
+
+class _FailingSessionStore implements MomCozySessionStore {
+  @override
+  Future<void> clearSession() async {}
+
+  @override
+  Future<MomCozySession?> readSession() async => null;
+
+  @override
+  Future<void> writeSession(MomCozySession session) async {
+    throw StateError('simulated secure storage failure');
+  }
 }

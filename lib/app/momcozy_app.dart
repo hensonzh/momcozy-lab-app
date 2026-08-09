@@ -423,7 +423,6 @@ GoRouter createMomCozyRouter({
           builder: (context, state) => MomCozyAuthPage(
             runtimeController: runtimeController,
             sessionStore: sessionStore,
-            redirectTo: state.uri.queryParameters['from'],
             authDeviceIdStore: authDeviceIdStore,
             lastInviteCodeStore: lastInviteCodeStore,
           ),
