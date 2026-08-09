@@ -1360,18 +1360,45 @@ void main() {
       expect(find.text('Record saved'), findsOneWidget);
     });
 
-    testWidgets('record forms stay usable on narrow screens with large text', (
-      tester,
-    ) async {
-      for (final form in const [
-        ('feeding', 'record-feeding-start'),
-        ('growth', 'record-growth-date'),
-        ('sleep', 'record-sleep-start'),
-        ('diaper', 'record-diaper-wet-count'),
-      ]) {
+    testWidgets(
+      'all supported record forms use the shared composer on narrow screens',
+      (tester) async {
+        for (final form in const [
+          ('feeding', 'record-feeding-start'),
+          ('growth', 'record-growth-date'),
+          ('sleep', 'record-sleep-start'),
+          ('diaper', 'record-diaper-wet-count'),
+        ]) {
+          await _pumpApp(
+            tester,
+            initialLocation: '/baby',
+            viewportSize: const Size(360, 800),
+            textScaleFactor: 2,
+          );
+          await tester.tap(
+            find.byKey(const ValueKey('me-baby-overview-add-record')),
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(ValueKey('baby-add-record-${form.$1}')));
+          await tester.pumpAndSettle();
+
+          expect(
+            find.byKey(const ValueKey('record-composer-sheet')),
+            findsOneWidget,
+            reason: form.$1,
+          );
+          expect(find.byKey(ValueKey(form.$2)), findsOneWidget);
+          expect(
+            find.byKey(const ValueKey('record-save')),
+            findsOneWidget,
+            reason: form.$1,
+          );
+          expect(tester.takeException(), isNull, reason: form.$1);
+        }
+
         await _pumpApp(
           tester,
-          initialLocation: '/baby',
+          initialLocation: '/me',
           viewportSize: const Size(360, 800),
           textScaleFactor: 2,
         );
@@ -1379,30 +1406,18 @@ void main() {
           find.byKey(const ValueKey('me-baby-overview-add-record')),
         );
         await tester.pumpAndSettle();
-        await tester.tap(find.byKey(ValueKey('baby-add-record-${form.$1}')));
-        await tester.pumpAndSettle();
 
-        expect(find.byKey(ValueKey(form.$2)), findsOneWidget);
-        expect(tester.takeException(), isNull, reason: form.$1);
-      }
-
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        viewportSize: const Size(360, 800),
-        textScaleFactor: 2,
-      );
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-add-record')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('record-pumping-left-amount')),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull, reason: 'pumping');
-    });
+        expect(
+          find.byKey(const ValueKey('record-composer-sheet')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('record-pumping-left-amount')),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull, reason: 'pumping');
+      },
+    );
 
     testWidgets('Baby saves a manual sleep record from the add sheet', (
       tester,
