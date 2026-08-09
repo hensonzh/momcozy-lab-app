@@ -32,6 +32,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final _ageController = TextEditingController();
   int _profileStep = 0;
   OnboardingProfileDraft? _draft;
+  bool _editingConfirmedProfile = false;
   String _validationMessage = '';
 
   @override
@@ -76,7 +77,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget _buildReady(BuildContext context) {
     final state = widget.controller.state;
     if (state == null) return const _LoadingView();
-    if (!state.profileConfirmed) return _buildProfileFlow(context);
+    if (!state.profileConfirmed || _editingConfirmedProfile) {
+      return _buildProfileFlow(context);
+    }
     return _buildAvatarFlow(context, state);
   }
 
@@ -198,7 +201,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ..age = age;
     if (_draft!.stage == OnboardingCareStage.fertility) {
       setState(() => _validationMessage = '');
-      await widget.controller.confirmProfile(_draft!);
+      await _confirmProfile(_draft!);
       return;
     }
     setState(() {
@@ -269,9 +272,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const _StepPrompt(
-          title: 'When did you give birth?',
+          title: 'Tell us about your delivery',
           reason:
-              'The delivery date and pregnancy length help us time recovery and baby guidance.',
+              'Your delivery date and gestational age help us personalize your postpartum recovery and your baby’s age-based guidance.',
         ),
         const SizedBox(height: 24),
         _DateField(
@@ -291,31 +294,49 @@ class _OnboardingPageState extends State<OnboardingPage> {
           },
         ),
         const SizedBox(height: 16),
+        const Text(
+          'Gestational age at delivery',
+          style: TextStyle(
+            color: MomCozyV3Colors.ink,
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 6),
+        const _FieldHint(
+          text:
+              'How far along the pregnancy was at delivery—for example, 39 weeks + 2 days. Weeks are required; days are optional.',
+        ),
+        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
-              flex: 2,
+              flex: 3,
               child: TextFormField(
                 key: const ValueKey('onboarding-gestational-weeks'),
                 initialValue: draft.gestationalWeeks?.toString() ?? '',
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Pregnancy weeks (optional)',
-                ),
+                decoration: const InputDecoration(labelText: 'Weeks *'),
                 onChanged: (value) =>
                     draft.gestationalWeeks = int.tryParse(value),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: DropdownButtonFormField<int>(
+              flex: 2,
+              child: DropdownButtonFormField<int?>(
                 initialValue: draft.gestationalDays,
+                isExpanded: true,
                 decoration: const InputDecoration(labelText: 'Days'),
                 items: [
+                  const DropdownMenuItem<int?>(
+                    value: null,
+                    child: Text('Not sure'),
+                  ),
                   for (var day = 0; day <= 6; day++)
-                    DropdownMenuItem(value: day, child: Text('$day')),
+                    DropdownMenuItem<int?>(value: day, child: Text('$day')),
                 ],
-                onChanged: (value) => draft.gestationalDays = value ?? 0,
+                onChanged: (value) => draft.gestationalDays = value,
               ),
             ),
           ],
@@ -335,6 +356,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final draft = _draft!;
     if (draft.deliveryDate == null) {
       setState(() => _validationMessage = 'Choose your delivery date.');
+      return;
+    }
+    if (draft.gestationalWeeks == null) {
+      setState(
+        () => _validationMessage =
+            'Enter how many weeks pregnant you were at delivery.',
+      );
       return;
     }
     if (draft.gestationalWeeks != null &&
@@ -407,6 +435,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
       setState(() => _validationMessage = 'Choose your delivery date.');
       return;
     }
+    if (draft.stage == OnboardingCareStage.postpartum &&
+        draft.gestationalWeeks == null) {
+      setState(
+        () => _validationMessage =
+            'Enter how many weeks pregnant you were at delivery.',
+      );
+      return;
+    }
     if (draft.gestationalWeeks != null &&
         (draft.gestationalWeeks! < 0 || draft.gestationalWeeks! > 45)) {
       setState(
@@ -416,7 +452,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
       return;
     }
     setState(() => _validationMessage = '');
-    await widget.controller.confirmProfile(draft);
+    await _confirmProfile(draft);
+  }
+
+  Future<void> _confirmProfile(OnboardingProfileDraft draft) async {
+    final confirmed = await widget.controller.confirmProfile(draft);
+    if (!mounted || !confirmed) return;
+    setState(() => _editingConfirmedProfile = false);
   }
 
   int _totalStepsForStage(OnboardingCareStage? stage) => switch (stage) {
@@ -428,9 +470,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _buildAvatarFlow(BuildContext context, OnboardingState state) {
     final totalSteps = _totalStepsForStage(state.stage);
+    final canReturnToProfile = _draft != null && !widget.controller.busy;
     return Column(
       children: [
-        _OnboardingHeader(step: totalSteps, totalSteps: totalSteps),
+        _OnboardingHeader(
+          step: totalSteps,
+          totalSteps: totalSteps,
+          backKey: const ValueKey('onboarding-avatar-back'),
+          onBack: canReturnToProfile ? _returnToProfileFlow : null,
+        ),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
@@ -447,6 +495,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       ],
     );
+  }
+
+  void _returnToProfileFlow() {
+    final draft = _draft;
+    if (draft == null) return;
+    widget.controller.clearError();
+    setState(() {
+      _profileStep = switch (draft.stage) {
+        OnboardingCareStage.fertility => 1,
+        OnboardingCareStage.pregnancy => 2,
+        OnboardingCareStage.postpartum => 3,
+      };
+      _editingConfirmedProfile = true;
+      _validationMessage = '';
+    });
   }
 
   Widget _avatarChoiceView(OnboardingState state, {bool failed = false}) {
@@ -776,10 +839,16 @@ class _LoadFailureView extends StatelessWidget {
 }
 
 class _OnboardingHeader extends StatelessWidget {
-  const _OnboardingHeader({required this.step, this.totalSteps, this.onBack});
+  const _OnboardingHeader({
+    required this.step,
+    this.totalSteps,
+    this.backKey,
+    this.onBack,
+  });
 
   final int step;
   final int? totalSteps;
+  final Key? backKey;
   final VoidCallback? onBack;
 
   @override
@@ -793,6 +862,7 @@ class _OnboardingHeader extends StatelessWidget {
             child: onBack == null
                 ? null
                 : IconButton(
+                    key: backKey,
                     tooltip: 'Back',
                     onPressed: onBack,
                     icon: const Icon(Icons.arrow_back_rounded),
@@ -819,6 +889,40 @@ class _OnboardingHeader extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _FieldHint extends StatelessWidget {
+  const _FieldHint({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 1),
+          child: Icon(
+            Icons.info_outline_rounded,
+            size: 16,
+            color: MomCozyV3Colors.mutedText,
+          ),
+        ),
+        const SizedBox(width: 7),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: MomCozyV3Colors.mutedText,
+              fontSize: 12.5,
+              height: 1.35,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
