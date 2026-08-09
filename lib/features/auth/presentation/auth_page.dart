@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
@@ -14,14 +13,12 @@ class MomCozyAuthPage extends StatefulWidget {
     super.key,
     required this.runtimeController,
     required this.sessionStore,
-    this.redirectTo,
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
     this.lastInviteCodeStore = const FlutterSecureMomCozyLastInviteCodeStore(),
   });
 
   final MomCozyRuntimeController runtimeController;
   final MomCozySessionStore sessionStore;
-  final String? redirectTo;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
   final MomCozyLastInviteCodeStore lastInviteCodeStore;
 
@@ -129,37 +126,61 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
       _errorText = null;
     });
 
+    final runtime = widget.runtimeController.runtime;
+    final String deviceId;
     try {
-      final runtime = widget.runtimeController.runtime;
-      final deviceId = await widget.authDeviceIdStore.readOrCreateDeviceId();
-      final tokens = await runtime.authRepository.inviteLogin(
+      deviceId = await widget.authDeviceIdStore.readOrCreateDeviceId();
+    } catch (error, stackTrace) {
+      _recordLocalAuthFailure(
+        runtime,
+        operation: 'read_auth_device_id',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      _showError('无法读取本机登录标识。请重启 App 后重试。');
+      return;
+    }
+
+    final MomCozyAuthTokenResponse tokens;
+    try {
+      tokens = await runtime.authRepository.inviteLogin(
         inviteCode: inviteCode,
         deviceId: deviceId,
       );
-      await _completeAuth(tokens, runtime, inviteCode);
     } catch (error) {
-      if (!mounted) return;
-      setState(() {
-        _submitting = false;
-        _errorText = _authErrorText(error, inviteLogin: true);
-      });
+      _showError(_authErrorText(error, inviteLogin: true));
+      return;
     }
-  }
 
-  Future<void> _completeAuth(
-    MomCozyAuthTokenResponse tokens,
-    MomCozyApiRuntime runtime,
-    String inviteCode,
-  ) async {
     final session = tokens.toSession(
       babyId: runtime.babyId,
       locale: runtime.locale,
     );
-    await widget.sessionStore.writeSession(session);
+    try {
+      await widget.sessionStore.writeSession(session);
+    } catch (error, stackTrace) {
+      _recordLocalAuthFailure(
+        runtime,
+        operation: 'persist_session',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      _showError('账号认证已通过，但无法保存本机登录状态。请重启 App 后重试。');
+      return;
+    }
+
     await _rememberInviteCode(inviteCode, runtime);
-    widget.runtimeController.replaceSession(session);
-    if (!mounted) return;
-    context.go(_safeRedirect(widget.redirectTo) ?? '/');
+    try {
+      widget.runtimeController.replaceSession(session);
+    } catch (error, stackTrace) {
+      _recordLocalAuthFailure(
+        runtime,
+        operation: 'activate_session',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      _showError('登录状态已保存，请重启 App 继续。');
+    }
   }
 
   Future<void> _loadLastInviteCode() async {
@@ -201,6 +222,45 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
       );
     }
   }
+
+  void _recordLocalAuthFailure(
+    MomCozyApiRuntime runtime, {
+    required String operation,
+    required Object error,
+    required StackTrace stackTrace,
+  }) {
+    runtime.observability.recordNonFatal(
+      _SanitizedLocalAuthFailure(
+        operation: operation,
+        causeType: error.runtimeType.toString(),
+      ),
+      stackTrace: stackTrace,
+      context: {'feature': 'auth', 'operation': operation},
+    );
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    setState(() {
+      _submitting = false;
+      _errorText = message;
+    });
+  }
+}
+
+class _SanitizedLocalAuthFailure implements Exception {
+  const _SanitizedLocalAuthFailure({
+    required this.operation,
+    required this.causeType,
+  });
+
+  final String operation;
+  final String causeType;
+
+  @override
+  String toString() {
+    return 'Local auth failure(operation: $operation, causeType: $causeType)';
+  }
 }
 
 String _authErrorText(Object error, {bool inviteLogin = false}) {
@@ -213,13 +273,4 @@ String _authErrorText(Object error, {bool inviteLogin = false}) {
         : '认证失败，请稍后重试。';
   }
   return '认证失败，请稍后重试。';
-}
-
-String? _safeRedirect(String? value) {
-  final uri = Uri.tryParse(value ?? '');
-  if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
-  final path = uri.path;
-  if (path.isEmpty || !path.startsWith('/')) return null;
-  if (path == '/login') return null;
-  return uri.toString();
 }

@@ -5,8 +5,7 @@ void main() {
   test('new release purges account data and requires a cloud reset', () async {
     final storage = _MemoryReleaseStorage({
       'momcozy.releaseLifecycle.v1.installedRelease': '1.0.0+26',
-      'momcozy.session.v1.accessToken': 'access',
-      'momcozy.session.v1.refreshToken': 'refresh',
+      'momcozy.session.v1.payload': 'atomic-session',
       'momcozy.agentHub.v1.user.test-user.snapshot': 'draft',
       'momcozy.storageMigration.v1.user.test-user.preferences.volumeUnit': 'mL',
       'momcozy.releaseLifecycle.v1.onboardingComplete.old': '1.0.0+26',
@@ -22,7 +21,7 @@ void main() {
 
     await lifecycle.prepareForLaunch();
 
-    expect(storage.values, isNot(contains('momcozy.session.v1.accessToken')));
+    expect(storage.values, isNot(contains('momcozy.session.v1.payload')));
     expect(
       storage.values,
       isNot(contains('momcozy.agentHub.v1.user.test-user.snapshot')),
@@ -57,7 +56,7 @@ void main() {
     final storage = _MemoryReleaseStorage({
       'momcozy.releaseLifecycle.v1.installedRelease': '1.0.0+27',
       'momcozy.releaseLifecycle.v1.pendingCloudReset': '1.0.0+27',
-      'momcozy.session.v1.accessToken': 'new-session',
+      'momcozy.session.v1.payload': 'new-session',
     });
     var fileCacheClears = 0;
     final lifecycle = AppReleaseLifecycle(
@@ -69,7 +68,7 @@ void main() {
     await lifecycle.prepareForLaunch();
     await lifecycle.markCompletedFor('user-a');
 
-    expect(storage.values['momcozy.session.v1.accessToken'], 'new-session');
+    expect(storage.values['momcozy.session.v1.payload'], 'new-session');
     expect(fileCacheClears, 0);
     expect(await lifecycle.requiresResetFor('user-a'), isFalse);
     expect(await lifecycle.requiresResetFor('user-b'), isTrue);

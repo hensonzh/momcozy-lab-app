@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/network/staging_certificate_trust.dart';
 
@@ -60,5 +62,34 @@ void main() {
             ),
       ),
     );
+  });
+
+  testWidgets('Android secure storage persists and verifies one session', (
+    tester,
+  ) async {
+    const store = FlutterSecureMomCozySessionStore(
+      namespace: 'momcozy.integration_test.auth.session.v1',
+    );
+    await store.clearSession();
+    addTearDown(store.clearSession);
+
+    const issued = MomCozySession(
+      status: MomCozySessionStatus.authenticated,
+      userId: 'integration-user',
+      babyId: 'integration-baby',
+      locale: 'zh-CN',
+      accessToken: 'integration-access',
+      refreshToken: 'integration-refresh',
+    );
+
+    await store.writeSession(issued);
+    final restored = await store.readSession();
+
+    expect(restored?.status, MomCozySessionStatus.authenticated);
+    expect(restored?.userId, 'integration-user');
+    expect(restored?.babyId, 'integration-baby');
+    expect(restored?.locale, 'zh-CN');
+    expect(restored?.accessToken, 'integration-access');
+    expect(restored?.refreshToken, 'integration-refresh');
   });
 }
