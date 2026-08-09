@@ -102,8 +102,41 @@ class ProfileOverviewCache extends ChangeNotifier {
   }
 
   void invalidateOverview() {
-    overview = null;
-    notifyListeners();
+    invalidate(const [ProfileOverviewResourceKey.overview]);
+  }
+
+  void invalidate(Iterable<ProfileOverviewResourceKey> resources) {
+    var invalidated = false;
+    for (final resource in resources) {
+      invalidated = true;
+      switch (resource) {
+        case ProfileOverviewResourceKey.overview:
+          overview = null;
+        case ProfileOverviewResourceKey.maternalCareOverview:
+          maternalCareOverview = null;
+        case ProfileOverviewResourceKey.feeding:
+          feedingRecords = null;
+        case ProfileOverviewResourceKey.feedingSummary:
+          feedingSummary = null;
+        case ProfileOverviewResourceKey.milkTrends:
+          milkTrends = null;
+        case ProfileOverviewResourceKey.waterRecords:
+          waterRecords = null;
+        case ProfileOverviewResourceKey.waterTrends:
+          waterTrends = null;
+        case ProfileOverviewResourceKey.vitals:
+          vitalRecords = null;
+        case ProfileOverviewResourceKey.sleep:
+          sleepRecords = null;
+        case ProfileOverviewResourceKey.diapers:
+          diaperRecords = null;
+        case ProfileOverviewResourceKey.growth:
+          growthRecords = null;
+        case ProfileOverviewResourceKey.plans:
+          planDashboard = null;
+      }
+    }
+    if (invalidated) notifyListeners();
   }
 
   void clear() {
