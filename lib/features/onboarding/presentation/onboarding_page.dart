@@ -654,49 +654,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _generatingView(OnboardingState state) {
-    return Column(
-      children: [
-        const SizedBox(height: 36),
-        SizedBox(
-          width: 230,
-          height: 280,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              _ReferenceAvatar(stage: state.stage, compact: true),
-              const Positioned(
-                bottom: 8,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: MomCozyV3Colors.surface,
-                    shape: BoxShape.circle,
-                    boxShadow: MomCozyShadows.soft,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(13),
-                    child: SizedBox.square(
-                      dimension: 25,
-                      child: CircularProgressIndicator(strokeWidth: 3),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 24),
-        const Text(
-          'Creating four companions…',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'This can take a little while. Keep this screen open while we prepare four options for you.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: MomCozyV3Colors.mutedText, height: 1.45),
-        ),
-      ],
+    return _AvatarGenerationWaitingView(
+      phase: state.avatar?.phase ?? OnboardingAvatarGenerationPhase.unknown,
     );
   }
 
@@ -986,6 +945,549 @@ class _StepPrompt extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _AvatarGenerationWaitingView extends StatelessWidget {
+  const _AvatarGenerationWaitingView({required this.phase});
+
+  final OnboardingAvatarGenerationPhase phase;
+
+  @override
+  Widget build(BuildContext context) {
+    final statusTitle = switch (phase) {
+      OnboardingAvatarGenerationPhase.queued => 'Waiting to start',
+      OnboardingAvatarGenerationPhase.generating =>
+        'Creating your four options',
+      _ => 'Preparing your options',
+    };
+    final statusDescription = switch (phase) {
+      OnboardingAvatarGenerationPhase.queued =>
+        'Your photo is uploaded. Image creation will begin as soon as a generation slot is available.',
+      OnboardingAvatarGenerationPhase.generating =>
+        'We’re using your photo and the MomCozy illustration style. This is usually the longest part.',
+      _ =>
+        'We’re preparing your photo and the MomCozy illustration style for image creation.',
+    };
+
+    return Column(
+      key: const ValueKey('onboarding-avatar-generation-waiting'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'Your four options are on the way',
+          style: TextStyle(
+            color: MomCozyV3Colors.ink,
+            fontSize: 29,
+            height: 1.12,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 12),
+        const Text(
+          'Your photo has been received. When all four MomCozy-style companions are ready, this page will update so you can choose your favorite.',
+          style: TextStyle(
+            color: MomCozyV3Colors.mutedText,
+            fontSize: 15,
+            height: 1.45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 22),
+        const _AvatarGenerationRecipe(),
+        const SizedBox(height: 16),
+        _AvatarGenerationTimeline(
+          statusTitle: statusTitle,
+          statusDescription: statusDescription,
+        ),
+        const SizedBox(height: 14),
+        const _AvatarGenerationWaitNote(),
+      ],
+    );
+  }
+}
+
+class _AvatarGenerationRecipe extends StatelessWidget {
+  const _AvatarGenerationRecipe();
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      image: true,
+      label:
+          'Your uploaded photo and the MomCozy illustration style are being used to create four avatar options.',
+      child: ExcludeSemantics(
+        child: Container(
+          key: const ValueKey('onboarding-avatar-generation-recipe'),
+          padding: const EdgeInsets.fromLTRB(16, 15, 16, 17),
+          decoration: BoxDecoration(
+            color: MomCozyV3Colors.surface,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: MomCozyV3Colors.divider),
+            boxShadow: MomCozyShadows.soft,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'What’s happening',
+                style: TextStyle(
+                  color: MomCozyV3Colors.ink,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 14),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final textScale = MediaQuery.textScalerOf(context).scale(1);
+                  final stacked = constraints.maxWidth < 268 || textScale > 1.3;
+                  final photo = const _AvatarGenerationRecipeNode(
+                    label: 'Your photo',
+                    visual: _AvatarPhotoReceivedVisual(),
+                  );
+                  const style = _AvatarGenerationRecipeNode(
+                    label: 'MomCozy style',
+                    visual: _AvatarReferenceStyleVisual(),
+                  );
+                  const options = _AvatarGenerationRecipeNode(
+                    width: 84,
+                    label: '4 options',
+                    visual: _AvatarOptionsVisual(),
+                  );
+
+                  if (stacked) {
+                    return Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            photo,
+                            const _AvatarGenerationOperator(
+                              icon: Icons.add_rounded,
+                            ),
+                            style,
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        const Icon(
+                          Icons.arrow_downward_rounded,
+                          color: MomCozyV3Colors.brand,
+                          size: 22,
+                        ),
+                        const SizedBox(height: 6),
+                        options,
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      photo,
+                      const _AvatarGenerationOperator(icon: Icons.add_rounded),
+                      style,
+                      const _AvatarGenerationOperator(
+                        icon: Icons.arrow_forward_rounded,
+                      ),
+                      options,
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarGenerationRecipeNode extends StatelessWidget {
+  const _AvatarGenerationRecipeNode({
+    required this.label,
+    required this.visual,
+    this.width = 72,
+  });
+
+  final String label;
+  final Widget visual;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          visual,
+          const SizedBox(height: 7),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: MomCozyV3Colors.mutedText,
+              fontSize: 12,
+              height: 1.2,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AvatarGenerationOperator extends StatelessWidget {
+  const _AvatarGenerationOperator({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 18, 2, 0),
+      child: Icon(icon, color: MomCozyV3Colors.brand, size: 20),
+    );
+  }
+}
+
+class _AvatarPhotoReceivedVisual extends StatelessWidget {
+  const _AvatarPhotoReceivedVisual();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: 58,
+      child: Stack(
+        children: [
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: MomCozyV3Colors.surfaceTint,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.add_a_photo_outlined,
+                color: MomCozyV3Colors.brand,
+                size: 25,
+              ),
+            ),
+          ),
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: MomCozyV3Colors.success,
+                shape: BoxShape.circle,
+                border: Border.all(color: MomCozyV3Colors.surface, width: 2),
+              ),
+              child: const Icon(
+                Icons.check_rounded,
+                color: Colors.white,
+                size: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AvatarReferenceStyleVisual extends StatelessWidget {
+  const _AvatarReferenceStyleVisual();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.square(
+      dimension: 58,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: MomCozyV3Colors.roseTint,
+          shape: BoxShape.circle,
+          border: Border.fromBorderSide(
+            BorderSide(color: MomCozyV3Colors.divider),
+          ),
+        ),
+        child: Icon(
+          Icons.auto_awesome_rounded,
+          color: MomCozyV3Colors.brand,
+          size: 27,
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarOptionsVisual extends StatelessWidget {
+  const _AvatarOptionsVisual();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 78,
+      height: 58,
+      child: Column(children: [_row(), const SizedBox(height: 4), _row()]),
+    );
+  }
+
+  Widget _row() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _AvatarOptionPlaceholder(),
+        SizedBox(width: 4),
+        _AvatarOptionPlaceholder(),
+      ],
+    );
+  }
+}
+
+class _AvatarOptionPlaceholder extends StatelessWidget {
+  const _AvatarOptionPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 30,
+      height: 27,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: MomCozyV3Colors.roseTint,
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Icon(
+          Icons.person_outline_rounded,
+          color: MomCozyV3Colors.brand,
+          size: 16,
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarGenerationTimeline extends StatelessWidget {
+  const _AvatarGenerationTimeline({
+    required this.statusTitle,
+    required this.statusDescription,
+  });
+
+  final String statusTitle;
+  final String statusDescription;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('onboarding-avatar-generation-timeline'),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: MomCozyV3Colors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: MomCozyV3Colors.divider),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Where we are',
+            style: TextStyle(
+              color: MomCozyV3Colors.ink,
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 14),
+          const _AvatarGenerationStep(
+            state: _AvatarGenerationStepState.complete,
+            title: 'Photo uploaded',
+          ),
+          const _AvatarGenerationConnector(active: true),
+          _AvatarGenerationStep(
+            key: const ValueKey('onboarding-avatar-generation-current-status'),
+            state: _AvatarGenerationStepState.active,
+            title: statusTitle,
+            description: statusDescription,
+          ),
+          const _AvatarGenerationConnector(active: false),
+          const _AvatarGenerationStep(
+            state: _AvatarGenerationStepState.upcoming,
+            title: 'Choose your favorite',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+enum _AvatarGenerationStepState { complete, active, upcoming }
+
+class _AvatarGenerationStep extends StatelessWidget {
+  const _AvatarGenerationStep({
+    super.key,
+    required this.state,
+    required this.title,
+    this.description,
+  });
+
+  final _AvatarGenerationStepState state;
+  final String title;
+  final String? description;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = state == _AvatarGenerationStepState.active;
+    final content = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: switch (state) {
+              _AvatarGenerationStepState.complete => MomCozyV3Colors.brand,
+              _AvatarGenerationStepState.active => MomCozyV3Colors.roseTint,
+              _AvatarGenerationStepState.upcoming =>
+                MomCozyV3Colors.surfaceTint,
+            },
+            shape: BoxShape.circle,
+            border: active ? Border.all(color: MomCozyV3Colors.brand) : null,
+          ),
+          alignment: Alignment.center,
+          child: switch (state) {
+            _AvatarGenerationStepState.complete => const Icon(
+              Icons.check_rounded,
+              color: Colors.white,
+              size: 17,
+            ),
+            _AvatarGenerationStepState.active => const SizedBox.square(
+              dimension: 14,
+              child: CircularProgressIndicator(strokeWidth: 2.2),
+            ),
+            _AvatarGenerationStepState.upcoming => const Icon(
+              Icons.favorite_outline_rounded,
+              color: MomCozyV3Colors.mutedText,
+              size: 16,
+            ),
+          },
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: active
+                        ? MomCozyV3Colors.ink
+                        : state == _AvatarGenerationStepState.upcoming
+                        ? MomCozyV3Colors.mutedText
+                        : MomCozyV3Colors.ink,
+                    fontSize: 14.5,
+                    fontWeight: active ? FontWeight.w800 : FontWeight.w700,
+                  ),
+                ),
+                if (description != null) ...[
+                  const SizedBox(height: 5),
+                  Text(
+                    description!,
+                    style: const TextStyle(
+                      color: MomCozyV3Colors.mutedText,
+                      fontSize: 13,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const LinearProgressIndicator(
+                    minHeight: 4,
+                    borderRadius: BorderRadius.all(Radius.circular(99)),
+                    backgroundColor: MomCozyV3Colors.divider,
+                    semanticsLabel: 'Avatar generation in progress',
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+
+    if (!active) return content;
+    return Semantics(
+      liveRegion: true,
+      label: 'Current step: $title. $description',
+      child: ExcludeSemantics(child: content),
+    );
+  }
+}
+
+class _AvatarGenerationConnector extends StatelessWidget {
+  const _AvatarGenerationConnector({required this.active});
+
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 13),
+      child: SizedBox(
+        width: 2,
+        height: 13,
+        child: ColoredBox(
+          color: active ? MomCozyV3Colors.brand : MomCozyV3Colors.divider,
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarGenerationWaitNote extends StatelessWidget {
+  const _AvatarGenerationWaitNote();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('onboarding-avatar-generation-wait-note'),
+      padding: const EdgeInsets.all(13),
+      decoration: BoxDecoration(
+        color: MomCozyV3Colors.surfaceTint,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 1),
+            child: Icon(
+              Icons.schedule_rounded,
+              color: MomCozyV3Colors.brand,
+              size: 19,
+            ),
+          ),
+          SizedBox(width: 9),
+          Expanded(
+            child: Text(
+              'Image generation can take a few minutes. There’s nothing else you need to do—generation continues in the cloud if you briefly leave the app.',
+              style: TextStyle(
+                color: MomCozyV3Colors.mutedText,
+                fontSize: 13,
+                height: 1.4,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

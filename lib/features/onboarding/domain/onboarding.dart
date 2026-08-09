@@ -27,6 +27,14 @@ enum OnboardingStatus {
   completed,
 }
 
+enum OnboardingAvatarGenerationPhase {
+  queued,
+  generating,
+  succeeded,
+  failed,
+  unknown,
+}
+
 enum OnboardingReleaseResetStatus { reset, alreadyReset }
 
 class OnboardingReleaseReset {
@@ -101,12 +109,14 @@ class OnboardingAvatarGeneration {
   const OnboardingAvatarGeneration({
     required this.id,
     required this.status,
+    required this.phase,
     this.outputFileId,
     this.errorCode = '',
     this.candidates = const [],
   });
 
   factory OnboardingAvatarGeneration.fromMap(Map<String, Object?> map) {
+    final rawStatus = _string(map['status']).trim();
     final rawCandidates = map['candidates'];
     final candidates = rawCandidates is List
         ? rawCandidates
@@ -122,7 +132,7 @@ class OnboardingAvatarGeneration {
               .toList()
         : <OnboardingAvatarCandidate>[];
     candidates.sort((left, right) => left.position.compareTo(right.position));
-    final status = _status(_string(map['status']));
+    final status = _status(rawStatus);
     if (status == OnboardingStatus.avatarReview &&
         (candidates.length != 4 ||
             candidates.map((value) => value.position).toSet().length != 4)) {
@@ -133,6 +143,7 @@ class OnboardingAvatarGeneration {
     return OnboardingAvatarGeneration(
       id: _string(map['id']),
       status: status,
+      phase: _avatarGenerationPhase(rawStatus),
       outputFileId: _nullableString(map['output_file_id']),
       errorCode: _string(map['error_code']),
       candidates: List.unmodifiable(candidates),
@@ -141,6 +152,7 @@ class OnboardingAvatarGeneration {
 
   final String id;
   final OnboardingStatus status;
+  final OnboardingAvatarGenerationPhase phase;
   final String? outputFileId;
   final String errorCode;
   final List<OnboardingAvatarCandidate> candidates;
@@ -281,6 +293,15 @@ OnboardingStatus _status(String value) => switch (value) {
   'completed' => OnboardingStatus.completed,
   _ => OnboardingStatus.required,
 };
+
+OnboardingAvatarGenerationPhase _avatarGenerationPhase(String value) =>
+    switch (value) {
+      'queued' => OnboardingAvatarGenerationPhase.queued,
+      'generating' => OnboardingAvatarGenerationPhase.generating,
+      'succeeded' => OnboardingAvatarGenerationPhase.succeeded,
+      'failed' => OnboardingAvatarGenerationPhase.failed,
+      _ => OnboardingAvatarGenerationPhase.unknown,
+    };
 
 OnboardingCareStage? _stage(String? value) => switch (value) {
   'fertility' => OnboardingCareStage.fertility,

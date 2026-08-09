@@ -60,4 +60,65 @@ void main() {
     onboardingController.dispose();
     runtimeController.dispose();
   });
+
+  testWidgets('avatar generation wait makes cloud work understandable', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final runtimeController = MomCozyRuntimeController(
+      MomCozyApiRuntime(
+        jsonTransport: FixtureApiJsonTransport(const {
+          'status': 'avatar_generating',
+          'current_step': 'generating',
+          'current_stage': 'postpartum',
+          'profile_confirmed': true,
+          'can_continue_with_default': true,
+          'avatar': {
+            'id': 'golden-generation',
+            'stage': 'postpartum',
+            'status': 'generating',
+            'error_code': '',
+            'created_at': '2026-08-09T00:00:00Z',
+            'candidates': <Object?>[],
+          },
+        }),
+        multipartTransport: FixtureApiMultipartTransport(const {}),
+        session: const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'golden-avatar-generating-user',
+          babyId: '',
+          locale: 'en-US',
+          accessToken: 'access',
+        ),
+      ),
+    );
+    final onboardingController = OnboardingController(
+      runtimeController: runtimeController,
+    );
+    await onboardingController.load();
+    final router = createMomCozyRouter(
+      runtimeController: runtimeController,
+      onboardingController: onboardingController,
+    );
+
+    await tester.pumpWidget(
+      MomCozyFlutterApp(router: router, runtimeController: runtimeController),
+    );
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump();
+
+    expect(find.text('Creating your four options'), findsOneWidget);
+    await expectLater(
+      find.byType(OnboardingPage),
+      matchesGoldenFile('../../goldens/onboarding/avatar_generating.png'),
+    );
+
+    router.dispose();
+    onboardingController.dispose();
+    runtimeController.dispose();
+  });
 }
