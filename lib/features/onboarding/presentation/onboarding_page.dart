@@ -81,11 +81,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _buildProfileFlow(BuildContext context) {
+    final totalSteps = _draft == null
+        ? null
+        : _totalStepsForStage(_draft!.stage);
     return Column(
       children: [
         _OnboardingHeader(
           step: _profileStep + 1,
-          totalSteps: 4,
+          totalSteps: totalSteps,
           onBack: _profileStep == 0
               ? null
               : () => setState(() {
@@ -99,7 +102,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: switch (_profileStep) {
               0 => _stageStep(),
               1 => _basicsStep(),
-              _ => _stageDetailsStep(context),
+              2 when _draft?.stage == OnboardingCareStage.postpartum =>
+                _postpartumDeliveryStep(context),
+              2 => _pregnancyDetailsStep(context),
+              3 => _postpartumBirthStep(),
+              _ => const SizedBox.shrink(),
             },
           ),
         ),
@@ -111,39 +118,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _IntroCopy(
-          eyebrow: 'LET’S GET TO KNOW YOU',
+        const _StepPrompt(
           title: 'Which stage are you in?',
-          body:
-              'We’ll personalize your home, care plan, and digital companion around where you are today.',
+          reason:
+              'Your stage helps us show the right home, care plan, and digital companion.',
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 22),
         for (final stage in OnboardingCareStage.values) ...[
           _StageCard(
             stage: stage,
             selected: _draft?.stage == stage,
             onTap: () => setState(() {
               _draft = OnboardingProfileDraft(stage: stage);
+              _profileStep = 1;
               _validationMessage = '';
             }),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
         ],
-        const SizedBox(height: 16),
-        _errorText(),
-        _PrimaryButton(
-          label: 'Continue',
-          onPressed: () {
-            if (_draft == null) {
-              setState(() => _validationMessage = 'Choose your current stage.');
-              return;
-            }
-            setState(() {
-              _profileStep = 1;
-              _validationMessage = '';
-            });
-          },
-        ),
       ],
     );
   }
@@ -152,13 +144,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _IntroCopy(
-          eyebrow: 'ABOUT YOU',
+        const _StepPrompt(
           title: 'A few basics first',
-          body:
-              'This helps MomCozy address you naturally and tailor age-aware guidance.',
+          reason:
+              'Your name personalizes the app, and your age helps us tailor guidance safely.',
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 24),
         TextField(
           key: const ValueKey('onboarding-display-name'),
           controller: _nameController,
@@ -180,13 +171,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ),
         const SizedBox(height: 28),
-        _errorText(),
-        _PrimaryButton(label: 'Continue', onPressed: _continueFromBasics),
+        _errorText(controllerError: true),
+        _PrimaryButton(
+          label: 'Continue',
+          loading: widget.controller.busy,
+          onPressed: widget.controller.busy ? null : _continueFromBasics,
+        ),
       ],
     );
   }
 
-  void _continueFromBasics() {
+  Future<void> _continueFromBasics() async {
     final age = int.tryParse(_ageController.text.trim());
     if (_nameController.text.trim().isEmpty) {
       setState(
@@ -201,40 +196,31 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _draft!
       ..displayName = _nameController.text.trim()
       ..age = age;
+    if (_draft!.stage == OnboardingCareStage.fertility) {
+      setState(() => _validationMessage = '');
+      await widget.controller.confirmProfile(_draft!);
+      return;
+    }
     setState(() {
       _profileStep = 2;
       _validationMessage = '';
     });
   }
 
-  Widget _stageDetailsStep(BuildContext context) {
+  Widget _pregnancyDetailsStep(BuildContext context) {
     final draft = _draft!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _IntroCopy(
-          eyebrow: draft.stage.title.toUpperCase(),
-          title: switch (draft.stage) {
-            OnboardingCareStage.fertility => 'You’re all set',
-            OnboardingCareStage.pregnancy => 'Tell us about this pregnancy',
-            OnboardingCareStage.postpartum => 'Tell us about your delivery',
-          },
-          body: switch (draft.stage) {
-            OnboardingCareStage.fertility =>
-              'We’ll start with gentle preconception and cycle-aware support.',
-            OnboardingCareStage.pregnancy =>
-              'Your due date lets us calculate the right gestational guidance.',
-            OnboardingCareStage.postpartum =>
-              'One shared delivery record keeps your information and each baby’s profile consistent.',
-          },
+        const _StepPrompt(
+          title: 'About your pregnancy',
+          reason:
+              'Your due date and baby count help us time pregnancy guidance and prepare the right plan.',
         ),
+        const SizedBox(height: 24),
+        ..._pregnancyFields(context, draft),
         const SizedBox(height: 26),
-        if (draft.stage == OnboardingCareStage.pregnancy)
-          ..._pregnancyFields(context, draft),
-        if (draft.stage == OnboardingCareStage.postpartum)
-          ..._postpartumFields(context, draft),
-        const SizedBox(height: 26),
-        _errorText(),
+        _errorText(controllerError: true),
         _PrimaryButton(
           label: 'Save and continue',
           loading: widget.controller.busy,
@@ -277,80 +263,136 @@ class _OnboardingPageState extends State<OnboardingPage> {
     ];
   }
 
-  List<Widget> _postpartumFields(
-    BuildContext context,
-    OnboardingProfileDraft draft,
-  ) {
-    return [
-      _DateField(
-        label: 'Delivery date',
-        value: draft.deliveryDate,
-        onTap: () async {
-          final today = DateUtils.dateOnly(DateTime.now());
-          final selected = await showDatePicker(
-            context: context,
-            initialDate: draft.deliveryDate ?? today,
-            firstDate: DateTime(today.year - 2),
-            lastDate: today,
-          );
-          if (selected != null) setState(() => draft.deliveryDate = selected);
-        },
-      ),
-      const SizedBox(height: 16),
-      Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              key: const ValueKey('onboarding-gestational-weeks'),
-              initialValue: draft.gestationalWeeks?.toString() ?? '',
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Weeks (optional)'),
-              onChanged: (value) =>
-                  draft.gestationalWeeks = int.tryParse(value),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: DropdownButtonFormField<int>(
-              initialValue: draft.gestationalDays,
-              decoration: const InputDecoration(labelText: 'Days'),
-              items: [
-                for (var day = 0; day <= 6; day++)
-                  DropdownMenuItem(value: day, child: Text('$day')),
-              ],
-              onChanged: (value) => draft.gestationalDays = value ?? 0,
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 16),
-      DropdownButtonFormField<String?>(
-        initialValue: draft.deliveryType,
-        isExpanded: true,
-        decoration: const InputDecoration(
-          labelText: 'Delivery method (optional)',
+  Widget _postpartumDeliveryStep(BuildContext context) {
+    final draft = _draft!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _StepPrompt(
+          title: 'When did you give birth?',
+          reason:
+              'The delivery date and pregnancy length help us time recovery and baby guidance.',
         ),
-        items: const [
-          DropdownMenuItem(value: null, child: Text('Prefer not to say yet')),
-          DropdownMenuItem(value: 'vaginal', child: Text('Vaginal birth')),
-          DropdownMenuItem(value: 'cesarean', child: Text('Cesarean birth')),
-          DropdownMenuItem(value: 'assisted', child: Text('Assisted birth')),
-          DropdownMenuItem(value: 'other', child: Text('Other')),
-        ],
-        onChanged: (value) => draft.deliveryType = value,
-      ),
-      const SizedBox(height: 16),
-      _CountField(
-        label: 'Number of babies',
-        value: draft.infantCount,
-        onChanged: (value) => setState(() => draft.setInfantCount(value)),
-      ),
-      const SizedBox(height: 18),
-      for (var index = 0; index < draft.infants.length; index++) ...[
-        _InfantFields(index: index, infant: draft.infants[index]),
-        if (index != draft.infants.length - 1) const SizedBox(height: 12),
+        const SizedBox(height: 24),
+        _DateField(
+          label: 'Delivery date',
+          value: draft.deliveryDate,
+          onTap: () async {
+            final today = DateUtils.dateOnly(DateTime.now());
+            final selected = await showDatePicker(
+              context: context,
+              initialDate: draft.deliveryDate ?? today,
+              firstDate: DateTime(today.year - 2),
+              lastDate: today,
+            );
+            if (selected != null) {
+              setState(() => draft.deliveryDate = selected);
+            }
+          },
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: TextFormField(
+                key: const ValueKey('onboarding-gestational-weeks'),
+                initialValue: draft.gestationalWeeks?.toString() ?? '',
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Pregnancy weeks (optional)',
+                ),
+                onChanged: (value) =>
+                    draft.gestationalWeeks = int.tryParse(value),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: DropdownButtonFormField<int>(
+                initialValue: draft.gestationalDays,
+                decoration: const InputDecoration(labelText: 'Days'),
+                items: [
+                  for (var day = 0; day <= 6; day++)
+                    DropdownMenuItem(value: day, child: Text('$day')),
+                ],
+                onChanged: (value) => draft.gestationalDays = value ?? 0,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 26),
+        _errorText(controllerError: true),
+        _PrimaryButton(
+          key: const ValueKey('onboarding-postpartum-delivery-continue'),
+          label: 'Continue',
+          onPressed: _continueFromPostpartumDelivery,
+        ),
       ],
-    ];
+    );
+  }
+
+  void _continueFromPostpartumDelivery() {
+    final draft = _draft!;
+    if (draft.deliveryDate == null) {
+      setState(() => _validationMessage = 'Choose your delivery date.');
+      return;
+    }
+    if (draft.gestationalWeeks != null &&
+        (draft.gestationalWeeks! < 0 || draft.gestationalWeeks! > 45)) {
+      setState(
+        () =>
+            _validationMessage = 'Gestational weeks must be between 0 and 45.',
+      );
+      return;
+    }
+    setState(() {
+      _profileStep = 3;
+      _validationMessage = '';
+    });
+  }
+
+  Widget _postpartumBirthStep() {
+    final draft = _draft!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _StepPrompt(
+          title: 'How was your delivery?',
+          reason:
+              'Delivery method and baby count help personalize recovery and create the right baby profiles.',
+        ),
+        const SizedBox(height: 24),
+        DropdownButtonFormField<String?>(
+          initialValue: draft.deliveryType,
+          isExpanded: true,
+          decoration: const InputDecoration(
+            labelText: 'Delivery method (optional)',
+          ),
+          items: const [
+            DropdownMenuItem(value: null, child: Text('Prefer not to say yet')),
+            DropdownMenuItem(value: 'vaginal', child: Text('Vaginal birth')),
+            DropdownMenuItem(value: 'cesarean', child: Text('Cesarean birth')),
+            DropdownMenuItem(value: 'assisted', child: Text('Assisted birth')),
+            DropdownMenuItem(value: 'other', child: Text('Other')),
+          ],
+          onChanged: (value) => draft.deliveryType = value,
+        ),
+        const SizedBox(height: 16),
+        _CountField(
+          label: 'How many babies did you welcome?',
+          value: draft.infantCount,
+          onChanged: (value) => setState(() => draft.setInfantCount(value)),
+        ),
+        const SizedBox(height: 26),
+        _errorText(),
+        _PrimaryButton(
+          key: const ValueKey('onboarding-postpartum-save'),
+          label: 'Save and continue',
+          loading: widget.controller.busy,
+          onPressed: widget.controller.busy ? null : _submitProfile,
+        ),
+      ],
+    );
   }
 
   Future<void> _submitProfile() async {
@@ -377,10 +419,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
     await widget.controller.confirmProfile(draft);
   }
 
+  int _totalStepsForStage(OnboardingCareStage? stage) => switch (stage) {
+    OnboardingCareStage.fertility => 3,
+    OnboardingCareStage.pregnancy => 4,
+    OnboardingCareStage.postpartum => 5,
+    null => 4,
+  };
+
   Widget _buildAvatarFlow(BuildContext context, OnboardingState state) {
+    final totalSteps = _totalStepsForStage(state.stage);
     return Column(
       children: [
-        const _OnboardingHeader(step: 4, totalSteps: 4),
+        _OnboardingHeader(step: totalSteps, totalSteps: totalSteps),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
@@ -403,37 +453,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _IntroCopy(
-          eyebrow: 'YOUR DIGITAL COMPANION',
-          title: failed ? 'Let’s try another photo' : 'Make her feel like you',
-          body: failed
-              ? 'We couldn’t create your avatar from that photo. A clear, front-facing portrait usually works best.'
-              : 'Upload a clear portrait. We’ll combine your likeness with our ${state.stage?.title.toLowerCase() ?? 'stage'} character style.',
+        _StepPrompt(
+          title: failed
+              ? 'Let’s try another photo'
+              : 'Create your digital companion',
+          reason: failed
+              ? 'A clear, front-facing portrait helps us create a companion that feels more like you. We couldn’t use the last photo.'
+              : 'A portrait helps us make your companion feel more like you.',
         ),
-        const SizedBox(height: 22),
-        _ReferenceAvatar(stage: state.stage),
         const SizedBox(height: 18),
-        const _PrivacyNote(),
-        const SizedBox(height: 22),
+        _ReferenceAvatar(stage: state.stage, compact: true),
+        const SizedBox(height: 18),
         _errorText(controllerError: true),
         _PrimaryButton(
-          label: 'Take a photo',
-          icon: Icons.camera_alt_rounded,
+          label: 'Upload a photo',
+          icon: Icons.add_a_photo_outlined,
           loading: widget.controller.busy,
-          onPressed: widget.controller.busy
-              ? null
-              : () => _choosePortrait(OnboardingPortraitSource.camera),
-        ),
-        const SizedBox(height: 10),
-        OutlinedButton.icon(
-          onPressed: widget.controller.busy
-              ? null
-              : () => _choosePortrait(OnboardingPortraitSource.gallery),
-          icon: const Icon(Icons.photo_library_outlined),
-          label: const Text('Choose from library'),
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(52),
-          ),
+          onPressed: widget.controller.busy ? null : _showPortraitSourceSheet,
         ),
         const SizedBox(height: 10),
         TextButton(
@@ -442,7 +478,88 @@ class _OnboardingPageState extends State<OnboardingPage> {
               : widget.controller.completeWithDefaultAvatar,
           child: const Text('Use the MomCozy character for now'),
         ),
+        TextButton.icon(
+          onPressed: _showPhotoPrivacy,
+          icon: const Icon(Icons.lock_outline_rounded, size: 18),
+          label: const Text('How your photo is used'),
+        ),
       ],
+    );
+  }
+
+  Future<void> _showPortraitSourceSheet() async {
+    final source = await showModalBottomSheet<OnboardingPortraitSource>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                child: Text(
+                  'Choose a photo',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                ),
+              ),
+              ListTile(
+                key: const ValueKey('onboarding-camera-source'),
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: const Text('Take a photo'),
+                onTap: () =>
+                    Navigator.of(context).pop(OnboardingPortraitSource.camera),
+              ),
+              ListTile(
+                key: const ValueKey('onboarding-library-source'),
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('Choose from library'),
+                onTap: () =>
+                    Navigator.of(context).pop(OnboardingPortraitSource.gallery),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (source != null && mounted) await _choosePortrait(source);
+  }
+
+  Future<void> _showPhotoPrivacy() {
+    return showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => const SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 0, 24, 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.lock_outline_rounded,
+                    color: MomCozyV3Colors.brand,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    'How your photo is used',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                  ),
+                ],
+              ),
+              SizedBox(height: 14),
+              Text(
+                'Your portrait is securely processed only to create this avatar. Our uploaded copy is deleted after success, or automatically within 24 hours.',
+                style: TextStyle(color: MomCozyV3Colors.mutedText, height: 1.5),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -514,15 +631,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _IntroCopy(
-          eyebrow: 'MEET YOUR DIGITAL YOU',
+        const _StepPrompt(
           title: 'How does she look?',
-          body:
-              'You can use this avatar now or choose a different portrait and try again.',
+          reason:
+              'Reviewing it now helps make sure your companion feels right to you.',
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 18),
         Container(
-          height: 390,
+          height: 340,
           decoration: BoxDecoration(
             color: MomCozyV3Colors.roseTint,
             borderRadius: BorderRadius.circular(28),
@@ -543,9 +659,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
         const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: widget.controller.busy
-              ? null
-              : () => _choosePortrait(OnboardingPortraitSource.gallery),
+          onPressed: widget.controller.busy ? null : _showPortraitSourceSheet,
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(52),
           ),
@@ -627,14 +741,10 @@ class _LoadFailureView extends StatelessWidget {
 }
 
 class _OnboardingHeader extends StatelessWidget {
-  const _OnboardingHeader({
-    required this.step,
-    required this.totalSteps,
-    this.onBack,
-  });
+  const _OnboardingHeader({required this.step, this.totalSteps, this.onBack});
 
   final int step;
-  final int totalSteps;
+  final int? totalSteps;
   final VoidCallback? onBack;
 
   @override
@@ -658,7 +768,7 @@ class _OnboardingHeader extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(99),
               child: LinearProgressIndicator(
-                value: step / totalSteps,
+                value: totalSteps == null ? 0.2 : step / totalSteps!,
                 minHeight: 6,
                 backgroundColor: MomCozyV3Colors.divider,
               ),
@@ -666,7 +776,7 @@ class _OnboardingHeader extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            '$step/$totalSteps',
+            totalSteps == null ? 'Step $step' : '$step/$totalSteps',
             style: const TextStyle(
               color: MomCozyV3Colors.mutedText,
               fontWeight: FontWeight.w700,
@@ -678,16 +788,11 @@ class _OnboardingHeader extends StatelessWidget {
   }
 }
 
-class _IntroCopy extends StatelessWidget {
-  const _IntroCopy({
-    required this.eyebrow,
-    required this.title,
-    required this.body,
-  });
+class _StepPrompt extends StatelessWidget {
+  const _StepPrompt({required this.title, required this.reason});
 
-  final String eyebrow;
   final String title;
-  final String body;
+  final String reason;
 
   @override
   Widget build(BuildContext context) {
@@ -695,32 +800,50 @@ class _IntroCopy extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          eyebrow,
-          style: const TextStyle(
-            color: MomCozyV3Colors.brand,
-            fontSize: 12,
-            letterSpacing: 1.2,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
           title,
           style: const TextStyle(
             color: MomCozyV3Colors.ink,
-            fontSize: 31,
+            fontSize: 29,
             height: 1.12,
             fontWeight: FontWeight.w900,
           ),
         ),
-        const SizedBox(height: 12),
-        Text(
-          body,
-          style: const TextStyle(
-            color: MomCozyV3Colors.mutedText,
-            fontSize: 15,
-            height: 1.5,
-            fontWeight: FontWeight.w500,
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: MomCozyV3Colors.surfaceTint,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.auto_awesome_outlined,
+                size: 18,
+                color: MomCozyV3Colors.brand,
+              ),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'Why we ask: ',
+                        style: TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                      TextSpan(text: reason),
+                    ],
+                  ),
+                  style: const TextStyle(
+                    color: MomCozyV3Colors.mutedText,
+                    fontSize: 14,
+                    height: 1.4,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -749,7 +872,7 @@ class _StageCard extends StatelessWidget {
     return Material(
       color: selected ? MomCozyV3Colors.roseTint : MomCozyV3Colors.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         side: BorderSide(
           color: selected ? MomCozyV3Colors.brand : MomCozyV3Colors.divider,
           width: selected ? 1.8 : 1,
@@ -758,14 +881,14 @@ class _StageCard extends StatelessWidget {
       child: InkWell(
         key: ValueKey('onboarding-stage-${stage.name}'),
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(14),
           child: Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 42,
+                height: 42,
                 decoration: const BoxDecoration(
                   color: MomCozyV3Colors.surfaceTint,
                   shape: BoxShape.circle,
@@ -774,22 +897,12 @@ class _StageCard extends StatelessWidget {
               ),
               const SizedBox(width: 15),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      stage.title,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      stage.subtitle,
-                      style: const TextStyle(color: MomCozyV3Colors.mutedText),
-                    ),
-                  ],
+                child: Text(
+                  stage.title,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
               Icon(
@@ -861,56 +974,6 @@ class _CountField extends StatelessWidget {
       onChanged: (next) {
         if (next != null) onChanged(next);
       },
-    );
-  }
-}
-
-class _InfantFields extends StatelessWidget {
-  const _InfantFields({required this.index, required this.infant});
-
-  final int index;
-  final OnboardingInfantDraft infant;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: MomCozyV3Colors.surfaceTint,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Baby ${index + 1}',
-            style: const TextStyle(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            initialValue: infant.nickname,
-            decoration: const InputDecoration(labelText: 'Nickname (optional)'),
-            onChanged: (value) => infant.nickname = value,
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String?>(
-            initialValue: infant.sex,
-            isExpanded: true,
-            decoration: const InputDecoration(labelText: 'Sex (optional)'),
-            items: const [
-              DropdownMenuItem(
-                value: null,
-                child: Text('Prefer not to say yet'),
-              ),
-              DropdownMenuItem(value: 'female', child: Text('Female')),
-              DropdownMenuItem(value: 'male', child: Text('Male')),
-              DropdownMenuItem(value: 'intersex', child: Text('Intersex')),
-              DropdownMenuItem(value: 'unknown', child: Text('Unknown')),
-            ],
-            onChanged: (value) => infant.sex = value,
-          ),
-        ],
-      ),
     );
   }
 }
@@ -994,33 +1057,9 @@ class _GeneratedAvatarState extends State<_GeneratedAvatar> {
   }
 }
 
-class _PrivacyNote extends StatelessWidget {
-  const _PrivacyNote();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          Icons.lock_outline_rounded,
-          size: 19,
-          color: MomCozyV3Colors.brand,
-        ),
-        SizedBox(width: 9),
-        Expanded(
-          child: Text(
-            'Your portrait is securely processed only to create this avatar. Our uploaded copy is deleted after success, or automatically within 24 hours.',
-            style: TextStyle(color: MomCozyV3Colors.mutedText, height: 1.4),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _PrimaryButton extends StatelessWidget {
   const _PrimaryButton({
+    super.key,
     required this.label,
     required this.onPressed,
     this.loading = false,
