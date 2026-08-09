@@ -863,21 +863,22 @@ class _BabyMonitorContent extends StatelessWidget {
               const SizedBox(height: 7),
               const Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      'Nursery Camera',
-                      style: TextStyle(
-                        fontFamily: MomCozyTypography.displayFontFamily,
-                        color: _BabyOverviewColors.ink,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  Text(
+                    'Nursery Camera',
+                    style: TextStyle(
+                      fontFamily: MomCozyTypography.displayFontFamily,
+                      color: _BabyOverviewColors.ink,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  Text(
-                    'Sensor readings unavailable',
-                    textAlign: TextAlign.end,
-                    style: _BabyText.supportingSmall,
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Sensor readings unavailable',
+                      textAlign: TextAlign.end,
+                      style: _BabyText.supportingSmall,
+                    ),
                   ),
                 ],
               ),
