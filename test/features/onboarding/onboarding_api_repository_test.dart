@@ -42,6 +42,8 @@ void main() {
 
     expect(state.status, OnboardingStatus.required);
     expect(state.profileConfirmed, isFalse);
+    expect(state.canEnterApp, isFalse);
+    expect(state.avatarSetupCompleted, isFalse);
   });
 
   test('preserves the avatar worker phase for truthful progress UI', () {
@@ -54,6 +56,8 @@ void main() {
         'current_step': 'generating',
         'current_stage': 'postpartum',
         'profile_confirmed': true,
+        'can_enter_app': true,
+        'avatar_setup_completed': false,
         'avatar': {
           'id': 'generation-$raw',
           'stage': 'postpartum',
@@ -66,6 +70,8 @@ void main() {
 
       expect(state.status, OnboardingStatus.avatarGenerating);
       expect(state.avatar?.phase, expected);
+      expect(state.canEnterApp, isTrue);
+      expect(state.avatarSetupCompleted, isFalse);
     }
   });
 
@@ -145,6 +151,8 @@ void main() {
         'status': 'completed',
         'current_step': 'done',
         'profile_confirmed': true,
+        'can_enter_app': true,
+        'avatar_setup_completed': true,
         'selected_avatar_file_id': 'output-id',
         'avatar': {
           'id': 'generation-id',
@@ -183,6 +191,8 @@ void main() {
       'status': 'completed',
       'current_step': 'done',
       'profile_confirmed': true,
+      'can_enter_app': true,
+      'avatar_setup_completed': true,
     });
     final repository = OnboardingApiRepository(
       transport: transport,

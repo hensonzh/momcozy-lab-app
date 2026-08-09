@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
+import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_controller.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -383,6 +385,8 @@ void main() {
             'current_step': 'generating',
             'current_stage': 'postpartum',
             'profile_confirmed': true,
+            'can_enter_app': true,
+            'avatar_setup_completed': false,
             'can_continue_with_default': true,
             'avatar': {
               'id': 'generation-queued',
@@ -408,6 +412,7 @@ void main() {
       );
       await onboardingController.load();
       final router = createMomCozyRouter(
+        initialLocation: '/onboarding',
         runtimeController: runtimeController,
         onboardingController: onboardingController,
       );
@@ -470,6 +475,8 @@ void main() {
             'current_step': 'review',
             'current_stage': 'postpartum',
             'profile_confirmed': true,
+            'can_enter_app': true,
+            'avatar_setup_completed': false,
             'can_continue_with_default': true,
             'avatar': {
               'id': 'generation-id',
@@ -516,6 +523,7 @@ void main() {
       );
       await onboardingController.load();
       final router = createMomCozyRouter(
+        initialLocation: '/onboarding',
         runtimeController: runtimeController,
         onboardingController: onboardingController,
       );
@@ -558,4 +566,130 @@ void main() {
       runtimeController.dispose();
     },
   );
+
+  testWidgets('app shell shows a restorable avatar task and opens review', (
+    tester,
+  ) async {
+    final responses = <String, Map<String, Object?>>{
+      onboardingMeEndpoint: _shellGeneratingState,
+    };
+    final runtimeController = MomCozyRuntimeController(
+      MomCozyApiRuntime(
+        jsonTransport: FixtureApiJsonTransportByPath(responses),
+        multipartTransport: FixtureApiMultipartTransport(const {}),
+        session: const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'shell-avatar-user',
+          babyId: '',
+          locale: 'en-US',
+          accessToken: 'access',
+        ),
+      ),
+    );
+    final onboardingController = OnboardingController(
+      runtimeController: runtimeController,
+    );
+    await onboardingController.load();
+    final taskController = AvatarTaskController(
+      onboardingController: onboardingController,
+      pollInterval: const Duration(days: 1),
+    );
+    final router = createMomCozyRouter(
+      runtimeController: runtimeController,
+      onboardingController: onboardingController,
+      avatarTaskController: taskController,
+      agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) =>
+          const Center(child: Text('App content')),
+    );
+
+    await tester.pumpWidget(
+      MomCozyFlutterApp(router: router, runtimeController: runtimeController),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('App content'), findsOneWidget);
+    expect(find.byKey(const ValueKey('avatar-task-banner')), findsOneWidget);
+    expect(find.text('Creating your digital companion'), findsOneWidget);
+    expect(find.byKey(const ValueKey('bottom-nav-me')), findsOneWidget);
+
+    responses[onboardingMeEndpoint] = _shellReviewState;
+    await taskController.refresh();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Your 4 companion options are ready'), findsOneWidget);
+    expect(find.text('Tap to choose your favorite'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('avatar-task-banner')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Choose your companion'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('onboarding-avatar-back')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('bottom-nav-me')), findsNothing);
+
+    router.dispose();
+    taskController.dispose();
+    onboardingController.dispose();
+    runtimeController.dispose();
+  });
 }
+
+const _shellGeneratingState = <String, Object?>{
+  'status': 'avatar_generating',
+  'current_step': 'generating',
+  'current_stage': 'postpartum',
+  'profile_confirmed': true,
+  'can_enter_app': true,
+  'avatar_setup_completed': false,
+  'avatar': {
+    'id': 'shell-generation',
+    'stage': 'postpartum',
+    'status': 'generating',
+    'error_code': '',
+    'created_at': '2026-08-09T00:00:00Z',
+    'candidates': <Object?>[],
+  },
+};
+
+const _shellReviewState = <String, Object?>{
+  'status': 'avatar_review',
+  'current_step': 'review',
+  'current_stage': 'postpartum',
+  'profile_confirmed': true,
+  'can_enter_app': true,
+  'avatar_setup_completed': false,
+  'can_continue_with_default': true,
+  'avatar': {
+    'id': 'shell-generation',
+    'stage': 'postpartum',
+    'status': 'succeeded',
+    'error_code': '',
+    'created_at': '2026-08-09T00:00:00Z',
+    'candidates': [
+      {
+        'id': 'candidate-1',
+        'file_id': '00000000-0000-4000-8000-000000000001',
+        'position': 1,
+      },
+      {
+        'id': 'candidate-2',
+        'file_id': '00000000-0000-4000-8000-000000000002',
+        'position': 2,
+      },
+      {
+        'id': 'candidate-3',
+        'file_id': '00000000-0000-4000-8000-000000000003',
+        'position': 3,
+      },
+      {
+        'id': 'candidate-4',
+        'file_id': '00000000-0000-4000-8000-000000000004',
+        'position': 4,
+      },
+    ],
+  },
+};

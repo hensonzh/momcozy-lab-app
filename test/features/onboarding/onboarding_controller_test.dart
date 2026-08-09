@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -44,6 +45,8 @@ void main() {
           'status': 'completed',
           'current_step': 'done',
           'profile_confirmed': true,
+          'can_enter_app': true,
+          'avatar_setup_completed': true,
         }),
         multipartTransport: FixtureApiMultipartTransport(const {}),
         session: const MomCozySession(
@@ -67,7 +70,7 @@ void main() {
   });
 
   test(
-    'avatar review stays gated until one of four candidates is confirmed',
+    'avatar review allows app entry before one of four candidates is confirmed',
     () async {
       final transport = FixtureApiJsonTransportByPath(
         const {
@@ -76,6 +79,8 @@ void main() {
             'current_step': 'review',
             'current_stage': 'postpartum',
             'profile_confirmed': true,
+            'can_enter_app': true,
+            'avatar_setup_completed': false,
             'can_continue_with_default': true,
             'avatar': {
               'id': 'generation-id',
@@ -98,6 +103,8 @@ void main() {
             'current_step': 'done',
             'current_stage': 'postpartum',
             'profile_confirmed': true,
+            'can_enter_app': true,
+            'avatar_setup_completed': true,
             'selected_avatar_file_id': 'file-2',
           },
         },
@@ -121,7 +128,7 @@ void main() {
 
       await controller.load();
 
-      expect(controller.requiresOnboardingFor('avatar-review-user'), isTrue);
+      expect(controller.requiresOnboardingFor('avatar-review-user'), isFalse);
       expect(transport.postedBodies, isEmpty);
       expect(controller.hasAvatarSelection, isFalse);
 
@@ -138,6 +145,66 @@ void main() {
         'use_default_avatar': false,
       });
       expect(controller.requiresOnboardingFor('avatar-review-user'), isFalse);
+
+      controller.dispose();
+      runtimeController.dispose();
+    },
+  );
+
+  test(
+    'silent avatar refresh failure does not send the user back to onboarding',
+    () async {
+      final responses = <String, Map<String, Object?>>{
+        '/v1/onboarding/me': const {
+          'status': 'avatar_generating',
+          'current_step': 'generating',
+          'current_stage': 'postpartum',
+          'profile_confirmed': true,
+          'can_enter_app': true,
+          'avatar_setup_completed': false,
+          'avatar': {
+            'id': 'generation-id',
+            'stage': 'postpartum',
+            'status': 'generating',
+            'error_code': '',
+            'created_at': '2026-08-09T00:00:00Z',
+            'candidates': <Object?>[],
+          },
+        },
+      };
+      final runtimeController = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: FixtureApiJsonTransportByPath(responses),
+          multipartTransport: FixtureApiMultipartTransport(const {}),
+          session: const MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: 'silent-refresh-user',
+            babyId: '',
+            locale: 'en-US',
+            accessToken: 'access',
+          ),
+        ),
+      );
+      final controller = OnboardingController(
+        runtimeController: runtimeController,
+      );
+      await controller.load();
+      responses['/v1/onboarding/me'] = const {
+        'http_status': 503,
+        'status_text': 'Unavailable',
+        'body': {
+          'error': {
+            'code': 'server_unavailable',
+            'message': 'Try again later.',
+          },
+        },
+      };
+
+      await controller.load(silent: true);
+
+      expect(controller.phase, OnboardingGatePhase.ready);
+      expect(controller.requiresOnboardingFor('silent-refresh-user'), isFalse);
+      expect(controller.state?.status, OnboardingStatus.avatarGenerating);
 
       controller.dispose();
       runtimeController.dispose();

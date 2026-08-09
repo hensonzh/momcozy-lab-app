@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/platform_portrait_picker.dart';
@@ -16,10 +17,14 @@ class OnboardingPage extends StatefulWidget {
     super.key,
     required this.controller,
     this.pickPortrait,
+    this.entryPath = '/',
+    this.avatarTaskMode = false,
   });
 
   final OnboardingController controller;
   final OnboardingPortraitPicker? pickPortrait;
+  final String entryPath;
+  final bool avatarTaskMode;
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -470,14 +475,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _buildAvatarFlow(BuildContext context, OnboardingState state) {
     final totalSteps = _totalStepsForStage(state.stage);
-    final canReturnToProfile = _draft != null && !widget.controller.busy;
+    final canReturnToProfile =
+        _draft != null && !state.canEnterApp && !widget.controller.busy;
     return Column(
       children: [
         _OnboardingHeader(
           step: totalSteps,
           totalSteps: totalSteps,
           backKey: const ValueKey('onboarding-avatar-back'),
-          onBack: canReturnToProfile ? _returnToProfileFlow : null,
+          onBack: widget.avatarTaskMode
+              ? _leaveAvatarTaskPage
+              : canReturnToProfile
+              ? _returnToProfileFlow
+              : null,
         ),
         Expanded(
           child: SingleChildScrollView(
@@ -633,7 +643,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
     );
     if (confirmed == true && mounted) {
-      await widget.controller.completeWithDefaultAvatar();
+      final completed = await widget.controller.completeWithDefaultAvatar();
+      if (completed && mounted && widget.avatarTaskMode) {
+        _leaveAvatarTaskPage();
+      }
     }
   }
 
@@ -642,7 +655,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
     try {
       final portrait = await _pickPortrait(source);
       if (portrait == null) return;
-      await widget.controller.uploadAndGenerate(portrait);
+      final accepted = await widget.controller.uploadAndGenerate(portrait);
+      if (!mounted ||
+          !accepted ||
+          widget.controller.state?.canEnterApp != true) {
+        return;
+      }
+      if (widget.avatarTaskMode) {
+        _leaveAvatarTaskPage();
+        return;
+      }
+      await _showGenerationHandoff();
     } catch (error) {
       if (!mounted) return;
       setState(
@@ -650,6 +673,56 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ? error.message
             : 'We couldn’t open that photo. Please try another one.',
       );
+    }
+  }
+
+  Future<void> _showGenerationHandoff() async {
+    final enterApp = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          icon: const CircleAvatar(
+            radius: 28,
+            backgroundColor: MomCozyV3Colors.roseTint,
+            child: Icon(
+              Icons.auto_awesome_rounded,
+              color: MomCozyV3Colors.brand,
+              size: 28,
+            ),
+          ),
+          title: const Text(
+            'Your digital companion is being created',
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            'Creating four options can take a few minutes. We’ll keep working in the cloud, so you can start using the app now. We’ll let you know when they’re ready.',
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Wait here'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Enter the app'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (enterApp == true && mounted) context.go(widget.entryPath);
+  }
+
+  void _leaveAvatarTaskPage() {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      context.pop();
+    } else {
+      context.go(widget.entryPath);
     }
   }
 
@@ -712,7 +785,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           onPressed:
               widget.controller.busy || !widget.controller.hasAvatarSelection
               ? null
-              : widget.controller.confirmAvatarSelection,
+              : _confirmAvatarSelection,
         ),
         const SizedBox(height: 10),
         OutlinedButton(
@@ -724,6 +797,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       ],
     );
+  }
+
+  Future<void> _confirmAvatarSelection() async {
+    final completed = await widget.controller.confirmAvatarSelection();
+    if (completed && mounted && widget.avatarTaskMode) {
+      _leaveAvatarTaskPage();
+    }
   }
 
   Widget _errorText({bool controllerError = false}) {

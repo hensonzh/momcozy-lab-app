@@ -3499,9 +3499,19 @@
               }
             ]
           },
+          "avatar_setup_completed": {
+            "default": false,
+            "title": "Avatar Setup Completed",
+            "type": "boolean"
+          },
           "can_continue_with_default": {
             "default": false,
             "title": "Can Continue With Default",
+            "type": "boolean"
+          },
+          "can_enter_app": {
+            "default": false,
+            "title": "Can Enter App",
             "type": "boolean"
           },
           "current_stage": {
