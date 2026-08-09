@@ -46,29 +46,6 @@ class CareStageSelectionState {
   final Object? error;
 }
 
-enum ProfileOverviewMutationPhase { idle, saving, success, error }
-
-class ProfileOverviewMutationState {
-  const ProfileOverviewMutationState._({required this.phase, this.message});
-
-  const ProfileOverviewMutationState.idle()
-    : this._(phase: ProfileOverviewMutationPhase.idle);
-
-  const ProfileOverviewMutationState.saving()
-    : this._(phase: ProfileOverviewMutationPhase.saving);
-
-  const ProfileOverviewMutationState.success(String value)
-    : this._(phase: ProfileOverviewMutationPhase.success, message: value);
-
-  const ProfileOverviewMutationState.error(String value)
-    : this._(phase: ProfileOverviewMutationPhase.error, message: value);
-
-  final ProfileOverviewMutationPhase phase;
-  final String? message;
-
-  bool get isSaving => phase == ProfileOverviewMutationPhase.saving;
-}
-
 class RecordMutationState {
   const RecordMutationState({this.isSaving = false, this.error});
 
@@ -174,9 +151,6 @@ class ProfileOverviewController {
             this.cache.maternalCareOverview != null,
       ),
     );
-    growthMutation = ValueNotifier<ProfileOverviewMutationState>(
-      const ProfileOverviewMutationState.idle(),
-    );
     recordMutation = ValueNotifier<RecordMutationState>(
       const RecordMutationState(),
     );
@@ -228,7 +202,6 @@ class ProfileOverviewController {
   growthRecords;
   late final ValueNotifier<ProfileOverviewResource<PlanDashboard>> plans;
   late final ValueNotifier<CareStageSelectionState> careStage;
-  late final ValueNotifier<ProfileOverviewMutationState> growthMutation;
   late final ValueNotifier<RecordMutationState> recordMutation;
 
   final Map<ProfileOverviewResourceKey, Future<void>> _activeResourceLoads = {};
@@ -603,76 +576,6 @@ class ProfileOverviewController {
     });
   }
 
-  Future<bool> saveWaterRecord({required double amountMl}) {
-    final repository = waterRepository;
-    if (repository == null || amountMl <= 0 || amountMl > 10000) {
-      recordMutation.value = RecordMutationState(
-        error: ArgumentError.value(amountMl, 'amountMl'),
-      );
-      return Future<bool>.value(false);
-    }
-    return _saveRecord(() async {
-      await repository.createWaterRecord(
-        occurredAt: now(),
-        amountMl: amountMl,
-        idempotencyKey: _recordIdempotencyKey('water'),
-      );
-      await Future.wait<void>([
-        _requestResource(
-          ProfileOverviewResourceKey.waterRecords,
-          showLoading: false,
-          force: true,
-        ),
-        if (waterTrendRepository != null)
-          _requestResource(
-            ProfileOverviewResourceKey.waterTrends,
-            showLoading: false,
-            force: true,
-          ),
-      ]);
-    });
-  }
-
-  Future<bool> saveVitalRecord({
-    double? weightKg,
-    int? systolicMmhg,
-    int? diastolicMmhg,
-    int? heartRateBpm,
-    double? temperatureC,
-  }) {
-    final repository = vitalRepository;
-    final hasMeasurement =
-        weightKg != null ||
-        systolicMmhg != null ||
-        diastolicMmhg != null ||
-        heartRateBpm != null ||
-        temperatureC != null;
-    final hasCompletePressure =
-        (systolicMmhg == null) == (diastolicMmhg == null);
-    if (repository == null || !hasMeasurement || !hasCompletePressure) {
-      recordMutation.value = RecordMutationState(
-        error: ArgumentError('A complete confirmed vital is required.'),
-      );
-      return Future<bool>.value(false);
-    }
-    return _saveRecord(() async {
-      await repository.createVitalRecord(
-        measuredAt: now(),
-        weightKg: weightKg,
-        systolicMmhg: systolicMmhg,
-        diastolicMmhg: diastolicMmhg,
-        heartRateBpm: heartRateBpm,
-        temperatureC: temperatureC,
-        idempotencyKey: _recordIdempotencyKey('vital'),
-      );
-      await _requestResource(
-        ProfileOverviewResourceKey.vitals,
-        showLoading: false,
-        force: true,
-      );
-    });
-  }
-
   Future<bool> saveFeedingRecord({
     required DateTime startedAt,
     DateTime? endedAt,
@@ -870,74 +773,6 @@ class ProfileOverviewController {
     recordMutation.value = const RecordMutationState();
   }
 
-  Future<bool> saveGrowth({
-    double? weightKg,
-    double? heightCm,
-    double? headCm,
-    required MeasurementPosition measurementPosition,
-    required MeasurementContext measurementContext,
-  }) async {
-    if (_disposed || growthMutation.value.isSaving) return false;
-    final values = [weightKg, heightCm, headCm].whereType<double>().toList();
-    if (values.isEmpty || values.any((value) => value <= 0)) {
-      growthMutation.value = const ProfileOverviewMutationState.error(
-        'Enter a valid measurement.',
-      );
-      return false;
-    }
-
-    growthMutation.value = const ProfileOverviewMutationState.saving();
-    try {
-      final current = growthRecords.value.data ?? const <GrowthRecord>[];
-      final measuredAt = now();
-      final latest = _latestGrowthRecord(current);
-      final saved =
-          latest?.measuredAt != null &&
-              _sameLocalDay(latest!.measuredAt!, measuredAt)
-          ? await growthRepository.updateGrowthRecord(
-              recordId: latest.id,
-              weightKg: weightKg,
-              heightCm: heightCm,
-              headCm: headCm,
-              measurementPosition: measurementPosition,
-              measurementContext: measurementContext,
-            )
-          : await growthRepository.createGrowthRecord(
-              babyId: _recordsBabyId,
-              measuredAt: measuredAt,
-              weightKg: weightKg,
-              heightCm: heightCm,
-              headCm: headCm,
-              measurementPosition: measurementPosition,
-              measurementContext: measurementContext,
-              idempotencyKey:
-                  'profile-growth-${measuredAt.microsecondsSinceEpoch}',
-            );
-      if (_disposed) return false;
-      final next = _sortGrowthRecords([
-        saved,
-        ...current.where((record) => record.id != saved.id),
-      ]);
-      growthRecords.value = ProfileOverviewResource.data(next);
-      cache.growthRecords = OverviewCacheEntry(value: next, fetchedAt: now());
-      await _requestResource(
-        ProfileOverviewResourceKey.feedingSummary,
-        showLoading: false,
-        force: true,
-      );
-      growthMutation.value = const ProfileOverviewMutationState.success(
-        'Growth measurement saved.',
-      );
-      return true;
-    } catch (_) {
-      if (_disposed) return false;
-      growthMutation.value = const ProfileOverviewMutationState.error(
-        'The measurement could not be saved. Try again.',
-      );
-      return false;
-    }
-  }
-
   void _setLoading(ProfileOverviewResourceKey resource) {
     switch (resource) {
       case ProfileOverviewResourceKey.overview:
@@ -1046,33 +881,6 @@ class ProfileOverviewController {
     growthRecords.dispose();
     plans.dispose();
     careStage.dispose();
-    growthMutation.dispose();
     recordMutation.dispose();
   }
-}
-
-GrowthRecord? _latestGrowthRecord(List<GrowthRecord> records) {
-  if (records.isEmpty) return null;
-  return _sortGrowthRecords(records).first;
-}
-
-List<GrowthRecord> _sortGrowthRecords(Iterable<GrowthRecord> records) {
-  final values = List<GrowthRecord>.of(records);
-  values.sort((left, right) {
-    final leftTime = left.measuredAt;
-    final rightTime = right.measuredAt;
-    if (leftTime == null && rightTime == null) return 0;
-    if (leftTime == null) return 1;
-    if (rightTime == null) return -1;
-    return rightTime.compareTo(leftTime);
-  });
-  return values;
-}
-
-bool _sameLocalDay(DateTime left, DateTime right) {
-  final localLeft = left.toLocal();
-  final localRight = right.toLocal();
-  return localLeft.year == localRight.year &&
-      localLeft.month == localRight.month &&
-      localLeft.day == localRight.day;
 }
