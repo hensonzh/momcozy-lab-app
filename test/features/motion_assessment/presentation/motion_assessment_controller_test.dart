@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
@@ -126,6 +127,36 @@ void main() {
   });
 
   test(
+    'surfaces a native pose model startup failure with a useful cause',
+    () async {
+      final repository = _FakeRepository(immediateSession: _session());
+      final pose = _FakePosePlatform();
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: _FakeVoice(),
+      );
+
+      await controller.start();
+      pose.emitError(
+        PlatformException(
+          code: 'pose_model_initialization_failed',
+          message: 'Unable to open pose model asset',
+        ),
+      );
+      await _flush();
+
+      expect(controller.phase, MotionAssessmentPagePhase.failed);
+      expect(controller.errorMessage, contains('姿态模型加载失败'));
+      expect(controller.errorMessage, isNot(contains('网络')));
+
+      await controller.finish();
+    },
+  );
+
+  test(
     'links the source artifact and preserves rich completion evidence',
     () async {
       final repository = _FakeRepository(immediateSession: _session());
@@ -203,6 +234,41 @@ void main() {
       expect(find.textContaining('屏幕提示'), findsOneWidget);
     },
   );
+
+  testWidgets('shows live keypoint tracking as pose frames arrive', (
+    tester,
+  ) async {
+    final pose = _FakePosePlatform();
+    final controller = MotionAssessmentController(
+      target: 'forward_head',
+      locale: 'zh-CN',
+      repository: _FakeRepository(immediateSession: _session()),
+      posePlatform: pose,
+      voice: _FakeVoice(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MotionAssessmentPage(
+          controllerIdentity: 'pose-overlay',
+          controllerFactory: () => controller,
+          previewBuilder: (_) => const ColoredBox(color: Colors.black),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('正在启动人体关键点识别'), findsOneWidget);
+    expect(pose.startCalls, 1);
+
+    pose.emit(_acceptedSideObservation());
+    await tester.pump();
+    await tester.pump();
+    expect(controller.observation, isNotNull);
+
+    expect(find.byKey(const ValueKey('motion-pose-overlay')), findsOneWidget);
+    expect(find.textContaining('个关键点'), findsOneWidget);
+  });
 
   testWidgets(
     'replaces and disposes the controller when runtime identity changes',
@@ -346,6 +412,8 @@ class _FakePosePlatform implements MotionPosePlatform {
 
   void emit(MotionPoseObservation observation) =>
       _observations.add(observation);
+
+  void emitError(Object error) => _observations.addError(error);
 }
 
 class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {

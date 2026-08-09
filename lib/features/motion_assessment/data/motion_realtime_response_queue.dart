@@ -89,7 +89,10 @@ class MotionRealtimeResponseQueue {
           'output_modalities': ['audio'],
           'instructions': next.exactSpeech
               ? '请只说下面这句中文，不要添加其他内容：${next.instructions}'
-              : next.instructions,
+              : '默认使用简体中文回答；只有用户明确要求使用其他语言时才切换。'
+                    '不要因为口音、语气词或孤立的外语词切换语言。'
+                    '所有开场、动作指导、工具提示和结果保持同一语言。\n'
+                    '${next.instructions}',
         },
       });
     } catch (_) {
