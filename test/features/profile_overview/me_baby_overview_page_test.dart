@@ -1608,7 +1608,7 @@ void main() {
       },
     );
 
-    testWidgets('Pumping exposes separate date and exact-time controls', (
+    testWidgets('Pumping selects the date before the exact time', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
@@ -1622,15 +1622,21 @@ void main() {
         find.byKey(const ValueKey('record-pumping-start-date')),
         findsOneWidget,
       );
-      final timeButton = find.byKey(
-        const ValueKey('record-pumping-start-time'),
+      expect(
+        find.byKey(const ValueKey('record-pumping-start-time')),
+        findsNothing,
       );
-      expect(timeButton, findsOneWidget);
-      await tester.tap(timeButton);
+      await tester.tap(find.byKey(const ValueKey('record-pumping-start')));
       await tester.pumpAndSettle();
 
-      expect(find.byType(TimePickerDialog), findsOneWidget);
+      expect(find.byType(DatePickerDialog), findsOneWidget);
+      expect(find.byType(TimePickerDialog), findsNothing);
+
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
       expect(find.byType(DatePickerDialog), findsNothing);
+      expect(find.byType(TimePickerDialog), findsOneWidget);
     });
 
     testWidgets(
