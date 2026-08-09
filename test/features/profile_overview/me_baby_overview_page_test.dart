@@ -278,6 +278,22 @@ void main() {
         const ValueKey('me-current-stage-indicator'),
       );
       expect(indicator, findsOneWidget);
+      final label = find.descendant(
+        of: indicator,
+        matching: find.text('Postpartum'),
+      );
+      expect(label, findsOneWidget);
+      expect(
+        tester.getRect(label).center.dx,
+        closeTo(tester.getRect(indicator).center.dx, 0.1),
+      );
+      expect(
+        find.descendant(
+          of: indicator,
+          matching: find.text('Postpartum Recovery'),
+        ),
+        findsNothing,
+      );
       expect(
         find.descendant(
           of: indicator,
@@ -1222,7 +1238,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byKey(const ValueKey('baby-add-record-close')),
-          matching: find.byType(SvgPicture),
+          matching: find.byIcon(Icons.close_rounded),
         ),
         findsOneWidget,
       );
@@ -1309,6 +1325,17 @@ void main() {
 
       expect(
         find.byKey(const ValueKey('baby-add-record-sheet')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('record-sheet-header')), findsOneWidget);
+      final addRecordTitle = tester.widget<Text>(find.text('Add Record'));
+      expect(addRecordTitle.style?.fontSize, 24);
+      expect(addRecordTitle.style?.fontWeight, FontWeight.w900);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('baby-add-record-close')),
+          matching: find.byIcon(Icons.close_rounded),
+        ),
         findsOneWidget,
       );
       expect(find.byType(BackdropFilter), findsOneWidget);
@@ -1518,6 +1545,31 @@ void main() {
       expect(stagePill.color, const Color(0xfff2e9e6));
     });
 
+    testWidgets('Postpartum hero reveals the avatar head without a drag hint', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/me');
+
+      final hero = find.byKey(const ValueKey('me-stage-hero-postpartum'));
+      final avatar = find.byKey(const ValueKey('me-stage-avatar-postpartum'));
+      expect(
+        tester.getTopLeft(avatar).dy,
+        closeTo(tester.getTopLeft(hero).dy - 18, 0.1),
+      );
+      expect(
+        find.descendant(
+          of: hero,
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is Container &&
+                widget.constraints?.maxWidth == 40 &&
+                widget.constraints?.maxHeight == 4,
+          ),
+        ),
+        findsNothing,
+      );
+    });
+
     testWidgets('maternal stage tabs separate visual height from tap target', (
       tester,
     ) async {
@@ -1555,6 +1607,31 @@ void main() {
         expect(tester.getTopLeft(surface).dx, 38);
       },
     );
+
+    testWidgets('Pumping exposes separate date and exact-time controls', (
+      tester,
+    ) async {
+      await _pumpApp(tester, initialLocation: '/me');
+
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-add-record')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('record-pumping-start-date')),
+        findsOneWidget,
+      );
+      final timeButton = find.byKey(
+        const ValueKey('record-pumping-start-time'),
+      );
+      expect(timeButton, findsOneWidget);
+      await tester.tap(timeButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(TimePickerDialog), findsOneWidget);
+      expect(find.byType(DatePickerDialog), findsNothing);
+    });
 
     testWidgets(
       'Me opens the complete pumping form without extra record types',

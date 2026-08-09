@@ -1931,7 +1931,7 @@ class _BabyAddRecordSheet extends StatelessWidget {
         child: Container(
           key: const ValueKey('baby-add-record-sheet'),
           width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 96),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 96),
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -1948,37 +1948,13 @@ class _BabyAddRecordSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 13),
-              Row(
-                children: [
-                  const Expanded(
-                    child: Text(
-                      'Add Record',
-                      style: TextStyle(
-                        fontFamily: MomCozyTypography.displayFontFamily,
-                        color: _BabyOverviewColors.ink,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  IconButton.filledTonal(
-                    key: const ValueKey('baby-add-record-close'),
-                    tooltip: 'Close add record',
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      minimumSize: const Size.square(MomCozyTapTargets.minimum),
-                      padding: const EdgeInsets.all(7),
-                    ),
-                    icon: SvgPicture.asset(
-                      _MeBabyOverviewAssets.closeButton,
-                      width: 30,
-                      height: 30,
-                    ),
-                  ),
-                ],
+              _RecordSheetHeader(
+                title: 'Add Record',
+                closeKey: const ValueKey('baby-add-record-close'),
+                closeTooltip: 'Close add record',
+                onClose: () => Navigator.of(context).pop(),
               ),
-              const SizedBox(height: 7),
+              const SizedBox(height: 14),
               Flexible(
                 child: GridView.builder(
                   shrinkWrap: true,

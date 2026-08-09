@@ -127,10 +127,15 @@ class _MomStageWorkspace extends StatelessWidget {
             if (showAvatar)
               Positioned(
                 right: stage == MomLifeStage.pregnancy ? -28 : -18,
-                top: stage == MomLifeStage.pregnancy ? -16 : -30,
+                top: switch (stage) {
+                  MomLifeStage.pregnancy => -16,
+                  MomLifeStage.postpartum => -18,
+                  MomLifeStage.fertility => -30,
+                },
                 width: stage == MomLifeStage.pregnancy ? 218 : 210,
                 height: stage == MomLifeStage.pregnancy ? 290 : 304,
                 child: IgnorePointer(
+                  key: ValueKey('me-stage-avatar-${stage.wireValue}'),
                   child: _MomAvatarImage(
                     stage: stage,
                     fileId: data.overview.data?.mom?.avatarFileId,
@@ -233,22 +238,6 @@ class _MomStageHero extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (!expandedText)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 8,
-                    child: Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: const Color(0xffd8d8d8),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
           ),
