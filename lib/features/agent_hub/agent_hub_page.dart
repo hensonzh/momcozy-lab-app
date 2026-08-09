@@ -53,6 +53,7 @@ typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
 typedef AgentHubNewSessionHandler = FutureOr<void> Function();
+typedef AgentHubApplicationEventHandler = void Function(AgentStreamEvent event);
 typedef HospitalBagCartUpdateHandler =
     void Function(HospitalBagCartArtifactSeed seed);
 
@@ -224,6 +225,7 @@ class AgentHubPage extends StatefulWidget {
     this.ibclcConsultStore,
     this.supportTicketSubmitter,
     this.onArtifactAction,
+    this.onApplicationEvent,
     this.onHospitalBagCartUpdate,
     this.onHospitalBagCartContextRequired,
     this.onNewSession,
@@ -253,6 +255,7 @@ class AgentHubPage extends StatefulWidget {
   final IbclcConsultStore? ibclcConsultStore;
   final SupportTicketSubmitter? supportTicketSubmitter;
   final AgentArtifactActionHandler? onArtifactAction;
+  final AgentHubApplicationEventHandler? onApplicationEvent;
   final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
   final VoidCallback? onHospitalBagCartContextRequired;
   final AgentHubNewSessionHandler? onNewSession;
@@ -1897,6 +1900,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _handleRunStateUpdate(AgentStreamRunState nextState) {
     if (!mounted || !_state.isActive) return;
+    _forwardNewApplicationEvents(_state, nextState);
     _updateComposerFocusForRun(nextState);
     final shouldFollowLatest = _isNearLatest() || nextState.isActive;
     _formPresentationSession.registerLiveFormIds(
@@ -2604,13 +2608,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _applyActionResultEvents(List<AgentStreamEvent> events) {
     if (events.isEmpty) return;
+    final previousState = _state;
     var nextState = _state.phase == AgentStreamRunPhase.waitingForConfirmation
         ? _state.copyWith(phase: AgentStreamRunPhase.streaming)
         : _state;
     for (final event in events) {
       nextState = nextState.applyEvent(event);
     }
+    _forwardNewApplicationEvents(previousState, nextState);
     _setRunState(nextState);
+  }
+
+  void _forwardNewApplicationEvents(
+    AgentStreamRunState previous,
+    AgentStreamRunState next,
+  ) {
+    final handler = widget.onApplicationEvent;
+    if (handler == null || next.events.length <= previous.events.length) return;
+    for (final event in next.events.skip(previous.events.length)) {
+      handler(event);
+    }
   }
 
   @override

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
@@ -398,6 +399,27 @@ class MomCozyApiRuntime {
 
   MomCozySession get currentSession =>
       _currentSessionProvider?.call() ?? session;
+
+  void handleAgentApplicationEvent(AgentStreamEvent event) {
+    final resources = switch (event.type) {
+      'records.pumping.changed' => const <ProfileOverviewResourceKey>[
+        ProfileOverviewResourceKey.milkTrends,
+      ],
+      'records.feeding.changed' => const <ProfileOverviewResourceKey>[
+        ProfileOverviewResourceKey.feeding,
+        ProfileOverviewResourceKey.feedingSummary,
+      ],
+      'records.growth.changed' => const <ProfileOverviewResourceKey>[
+        ProfileOverviewResourceKey.growth,
+        ProfileOverviewResourceKey.feedingSummary,
+      ],
+      'records.diaper.changed' => const <ProfileOverviewResourceKey>[
+        ProfileOverviewResourceKey.diapers,
+      ],
+      _ => const <ProfileOverviewResourceKey>[],
+    };
+    profileOverviewCache.invalidate(resources);
+  }
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();

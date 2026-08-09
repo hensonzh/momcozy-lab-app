@@ -100,6 +100,37 @@ class ProfileOverviewCache {
     return this.ownerUserId == ownerUserId && this.babyId == babyId;
   }
 
+  void invalidate(Iterable<ProfileOverviewResourceKey> resources) {
+    for (final resource in resources) {
+      switch (resource) {
+        case ProfileOverviewResourceKey.overview:
+          overview = null;
+        case ProfileOverviewResourceKey.maternalCareOverview:
+          maternalCareOverview = null;
+        case ProfileOverviewResourceKey.feeding:
+          feedingRecords = null;
+        case ProfileOverviewResourceKey.feedingSummary:
+          feedingSummary = null;
+        case ProfileOverviewResourceKey.milkTrends:
+          milkTrends = null;
+        case ProfileOverviewResourceKey.waterRecords:
+          waterRecords = null;
+        case ProfileOverviewResourceKey.waterTrends:
+          waterTrends = null;
+        case ProfileOverviewResourceKey.vitals:
+          vitalRecords = null;
+        case ProfileOverviewResourceKey.sleep:
+          sleepRecords = null;
+        case ProfileOverviewResourceKey.diapers:
+          diaperRecords = null;
+        case ProfileOverviewResourceKey.growth:
+          growthRecords = null;
+        case ProfileOverviewResourceKey.plans:
+          planDashboard = null;
+      }
+    }
+  }
+
   void clear() {
     overview = null;
     maternalCareOverview = null;
