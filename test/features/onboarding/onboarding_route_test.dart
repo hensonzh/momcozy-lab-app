@@ -177,7 +177,7 @@ void main() {
     runtimeController.dispose();
   });
 
-  testWidgets('fertility skips empty details and explains photo use', (
+  testWidgets('fertility skips empty details and shows photo use inline', (
     tester,
   ) async {
     final transport = FixtureApiJsonTransportByPath(
@@ -242,6 +242,18 @@ void main() {
       findsOneWidget,
     );
     expect(find.widgetWithText(FilledButton, 'Upload a photo'), findsOneWidget);
+    expect(
+      find.widgetWithText(TextButton, 'How your photo is used'),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('onboarding-photo-privacy-note')),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('used only to create your avatar'),
+      findsOneWidget,
+    );
     expect(find.text('Take a photo'), findsNothing);
     expect(find.text('Choose from library'), findsNothing);
 
@@ -314,4 +326,117 @@ void main() {
     onboardingController.dispose();
     runtimeController.dispose();
   });
+
+  testWidgets(
+    'avatar review offers four generated choices and MomCozy original',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+      const candidateIds = [
+        '00000000-0000-4000-8000-000000000001',
+        '00000000-0000-4000-8000-000000000002',
+        '00000000-0000-4000-8000-000000000003',
+        '00000000-0000-4000-8000-000000000004',
+      ];
+      final runtimeController = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: FixtureApiJsonTransport({
+            'status': 'avatar_review',
+            'current_step': 'review',
+            'current_stage': 'postpartum',
+            'profile_confirmed': true,
+            'can_continue_with_default': true,
+            'avatar': {
+              'id': 'generation-id',
+              'stage': 'postpartum',
+              'status': 'succeeded',
+              'error_code': '',
+              'created_at': '2026-08-09T00:00:00Z',
+              'candidates': [
+                {
+                  'id': 'candidate-1',
+                  'file_id': candidateIds[0],
+                  'position': 1,
+                },
+                {
+                  'id': 'candidate-2',
+                  'file_id': candidateIds[1],
+                  'position': 2,
+                },
+                {
+                  'id': 'candidate-3',
+                  'file_id': candidateIds[2],
+                  'position': 3,
+                },
+                {
+                  'id': 'candidate-4',
+                  'file_id': candidateIds[3],
+                  'position': 4,
+                },
+              ],
+            },
+          }),
+          multipartTransport: FixtureApiMultipartTransport(const {}),
+          session: const MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: 'avatar-review-user',
+            babyId: '',
+            locale: 'en-US',
+            accessToken: 'access',
+          ),
+        ),
+      );
+      final onboardingController = OnboardingController(
+        runtimeController: runtimeController,
+      );
+      await onboardingController.load();
+      final router = createMomCozyRouter(
+        runtimeController: runtimeController,
+        onboardingController: onboardingController,
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(router: router, runtimeController: runtimeController),
+      );
+      await tester.pump();
+
+      expect(find.text('Choose your companion'), findsOneWidget);
+      for (var index = 1; index <= 4; index += 1) {
+        expect(
+          find.byKey(ValueKey('onboarding-avatar-candidate-$index')),
+          findsOneWidget,
+        );
+      }
+      expect(
+        find.byKey(const ValueKey('onboarding-avatar-default')),
+        findsOneWidget,
+      );
+      final confirm = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Continue with this avatar'),
+      );
+      expect(confirm.onPressed, isNull);
+
+      final secondCandidate = find.byKey(
+        const ValueKey('onboarding-avatar-candidate-2'),
+      );
+      await tester.ensureVisible(secondCandidate);
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(secondCandidate);
+      await tester.pump();
+      final enabledConfirm = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Continue with this avatar'),
+      );
+      expect(enabledConfirm.onPressed, isNotNull);
+
+      router.dispose();
+      onboardingController.dispose();
+      runtimeController.dispose();
+    },
+  );
 }

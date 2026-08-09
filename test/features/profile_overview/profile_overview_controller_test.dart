@@ -230,29 +230,6 @@ void main() {
     });
 
     test(
-      'stage changes publish saving and success without refetching',
-      () async {
-        final overviewRepository = _FakeProfileOverviewRepository();
-        final controller = _controller(overviewRepository: overviewRepository);
-        addTearDown(controller.dispose);
-        await controller.initialize();
-
-        final request = controller.updateCareStage(MomLifeStage.pregnancy);
-
-        expect(controller.careStage.value.isSaving, isTrue);
-        await request;
-        expect(controller.careStage.value.stage, MomLifeStage.pregnancy);
-        expect(controller.careStage.value.isSaving, isFalse);
-        expect(controller.careStage.value.error, isNull);
-        expect(overviewRepository.updatedStages, [MomLifeStage.pregnancy]);
-        expect(
-          controller.overview.value.data?.mom?.stage,
-          MomLifeStage.pregnancy,
-        );
-      },
-    );
-
-    test(
       'Baby saves a valid growth measurement and refreshes local state',
       () async {
         final records = _FakeRecordsRepository();
@@ -277,39 +254,6 @@ void main() {
           controller.growthMutation.value.phase,
           ProfileOverviewMutationPhase.success,
         );
-      },
-    );
-
-    test('selecting the current stage does not write again', () async {
-      final overviewRepository = _FakeProfileOverviewRepository();
-      final controller = _controller(overviewRepository: overviewRepository);
-      addTearDown(controller.dispose);
-      await controller.initialize();
-
-      final changed = await controller.updateCareStage(MomLifeStage.postpartum);
-
-      expect(changed, isTrue);
-      expect(overviewRepository.updatedStages, isEmpty);
-    });
-
-    test(
-      'failed stage changes keep the previous workspace and expose retry state',
-      () async {
-        final overviewRepository = _FakeProfileOverviewRepository(
-          updateError: StateError('offline'),
-        );
-        final controller = _controller(overviewRepository: overviewRepository);
-        addTearDown(controller.dispose);
-        await controller.initialize();
-
-        final changed = await controller.updateCareStage(
-          MomLifeStage.fertility,
-        );
-
-        expect(changed, isFalse);
-        expect(controller.careStage.value.stage, MomLifeStage.postpartum);
-        expect(controller.careStage.value.isSaving, isFalse);
-        expect(controller.careStage.value.error, isNotNull);
       },
     );
 
@@ -635,7 +579,6 @@ class _FakePlanRepository implements PlanRepository {
 
 class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
   _FakeProfileOverviewRepository({
-    this.updateError,
     this.fetchError,
     this.overview = const ProfileOverview(
       mom: MomProfileOverview(
@@ -646,24 +589,15 @@ class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
     ),
   });
 
-  final Object? updateError;
   final Object? fetchError;
   final ProfileOverview overview;
   var fetchCount = 0;
-  final List<MomLifeStage> updatedStages = [];
 
   @override
   Future<ProfileOverview> fetchOverview() async {
     fetchCount += 1;
     if (fetchError != null) throw fetchError!;
     return overview;
-  }
-
-  @override
-  Future<MomLifeStage> updateCareStage(MomLifeStage stage) async {
-    updatedStages.add(stage);
-    if (updateError != null) throw updateError!;
-    return stage;
   }
 
   @override

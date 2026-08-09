@@ -472,16 +472,38 @@ class _OnboardingPageState extends State<OnboardingPage> {
           onPressed: widget.controller.busy ? null : _showPortraitSourceSheet,
         ),
         const SizedBox(height: 10),
-        TextButton(
-          onPressed: widget.controller.busy
-              ? null
-              : widget.controller.completeWithDefaultAvatar,
-          child: const Text('Use the MomCozy character for now'),
+        const Padding(
+          key: ValueKey('onboarding-photo-privacy-note'),
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 1),
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: 16,
+                  color: MomCozyV3Colors.mutedText,
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Your photo is used only to create your avatar. It is deleted after a successful generation, or automatically within 24 hours.',
+                  style: TextStyle(
+                    color: MomCozyV3Colors.mutedText,
+                    fontSize: 12.5,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        TextButton.icon(
-          onPressed: _showPhotoPrivacy,
-          icon: const Icon(Icons.lock_outline_rounded, size: 18),
-          label: const Text('How your photo is used'),
+        const SizedBox(height: 4),
+        TextButton(
+          onPressed: widget.controller.busy ? null : _confirmDefaultAvatar,
+          child: const Text('Use the MomCozy character for now'),
         ),
       ],
     );
@@ -527,40 +549,29 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (source != null && mounted) await _choosePortrait(source);
   }
 
-  Future<void> _showPhotoPrivacy() {
-    return showModalBottomSheet<void>(
+  Future<void> _confirmDefaultAvatar() async {
+    final confirmed = await showDialog<bool>(
       context: context,
-      showDragHandle: true,
-      builder: (context) => const SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 0, 24, 28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.lock_outline_rounded,
-                    color: MomCozyV3Colors.brand,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'How your photo is used',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
-                  ),
-                ],
-              ),
-              SizedBox(height: 14),
-              Text(
-                'Your portrait is securely processed only to create this avatar. Our uploaded copy is deleted after success, or automatically within 24 hours.',
-                style: TextStyle(color: MomCozyV3Colors.mutedText, height: 1.5),
-              ),
-            ],
-          ),
+      builder: (context) => AlertDialog(
+        title: const Text('Continue with MomCozy character?'),
+        content: const Text(
+          'You can use the original character for your current stage instead of creating a personalized one.',
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Go back'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Continue'),
+          ),
+        ],
       ),
     );
+    if (confirmed == true && mounted) {
+      await widget.controller.completeWithDefaultAvatar();
+    }
   }
 
   Future<void> _choosePortrait(OnboardingPortraitSource source) async {
@@ -612,13 +623,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
         const SizedBox(height: 24),
         const Text(
-          'Creating your digital companion…',
+          'Creating four companions…',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 10),
         const Text(
-          'This usually takes about a minute. You can keep this screen open while we finish.',
+          'This can take a little while. Keep this screen open while we prepare four options for you.',
           textAlign: TextAlign.center,
           style: TextStyle(color: MomCozyV3Colors.mutedText, height: 1.45),
         ),
@@ -627,35 +638,59 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _reviewView(BuildContext context, OnboardingState state) {
-    final fileId = state.avatar?.outputFileId;
+    final candidates = state.avatar?.candidates ?? const [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const _StepPrompt(
-          title: 'How does she look?',
+          title: 'Choose your companion',
           reason:
-              'Reviewing it now helps make sure your companion feels right to you.',
+              'We created four interpretations so you can choose the one that feels most like you.',
         ),
         const SizedBox(height: 18),
-        Container(
-          height: 340,
-          decoration: BoxDecoration(
-            color: MomCozyV3Colors.roseTint,
-            borderRadius: BorderRadius.circular(28),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: candidates.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.78,
           ),
-          padding: const EdgeInsets.all(16),
-          child: fileId == null
-              ? _ReferenceAvatar(stage: state.stage)
-              : _GeneratedAvatar(fileId: fileId),
+          itemBuilder: (context, index) {
+            final candidate = candidates[index];
+            return _AvatarCandidateCard(
+              key: ValueKey(
+                'onboarding-avatar-candidate-${candidate.position}',
+              ),
+              candidate: candidate,
+              selected:
+                  widget.controller.selectedAvatarCandidateId == candidate.id,
+              onTap: widget.controller.busy
+                  ? null
+                  : () => widget.controller.selectAvatarCandidate(candidate.id),
+            );
+          },
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 12),
+        _DefaultAvatarChoiceCard(
+          key: const ValueKey('onboarding-avatar-default'),
+          stage: state.stage,
+          selected: widget.controller.defaultAvatarSelected,
+          onTap: widget.controller.busy
+              ? null
+              : widget.controller.selectDefaultAvatar,
+        ),
+        const SizedBox(height: 20),
         _errorText(controllerError: true),
         _PrimaryButton(
-          label: 'Use this avatar',
+          label: 'Continue with this avatar',
           loading: widget.controller.busy,
-          onPressed: widget.controller.busy
+          onPressed:
+              widget.controller.busy || !widget.controller.hasAvatarSelection
               ? null
-              : widget.controller.completeWithGeneratedAvatar,
+              : widget.controller.confirmAvatarSelection,
         ),
         const SizedBox(height: 10),
         OutlinedButton(
@@ -986,13 +1021,6 @@ class _ReferenceAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final asset = switch (stage) {
-      OnboardingCareStage.pregnancy =>
-        'assets/images/me_baby_overview/pregnancy_avatar.png',
-      OnboardingCareStage.postpartum =>
-        'assets/images/me_baby_overview/postpartum_avatar.png',
-      _ => 'assets/images/me_baby_overview/mom_avatar.png',
-    };
     return Container(
       height: compact ? 270 : 330,
       decoration: BoxDecoration(
@@ -1001,7 +1029,7 @@ class _ReferenceAvatar extends StatelessWidget {
       ),
       padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
       child: Image.asset(
-        asset,
+        _referenceAvatarAsset(stage),
         fit: BoxFit.contain,
         alignment: Alignment.bottomCenter,
         errorBuilder: (context, error, stackTrace) => const Icon(
@@ -1013,6 +1041,191 @@ class _ReferenceAvatar extends StatelessWidget {
     );
   }
 }
+
+class _AvatarCandidateCard extends StatelessWidget {
+  const _AvatarCandidateCard({
+    super.key,
+    required this.candidate,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final OnboardingAvatarCandidate candidate;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: 'Avatar option ${candidate.position}',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(22),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            decoration: BoxDecoration(
+              color: MomCozyV3Colors.roseTint,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: selected
+                    ? MomCozyV3Colors.brand
+                    : MomCozyV3Colors.divider,
+                width: selected ? 2.5 : 1,
+              ),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 10, 8, 30),
+                    child: _GeneratedAvatar(fileId: candidate.fileId),
+                  ),
+                ),
+                Positioned(
+                  left: 12,
+                  bottom: 9,
+                  child: Text(
+                    'Option ${candidate.position}',
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                if (selected)
+                  const Positioned(
+                    top: 9,
+                    right: 9,
+                    child: _AvatarSelectedMark(),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DefaultAvatarChoiceCard extends StatelessWidget {
+  const _DefaultAvatarChoiceCard({
+    super.key,
+    required this.stage,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final OnboardingCareStage? stage;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: 'Continue with the MomCozy character',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            constraints: const BoxConstraints(minHeight: 112),
+            padding: const EdgeInsets.fromLTRB(10, 8, 14, 8),
+            decoration: BoxDecoration(
+              color: MomCozyV3Colors.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: selected
+                    ? MomCozyV3Colors.brand
+                    : MomCozyV3Colors.divider,
+                width: selected ? 2.5 : 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 82,
+                  height: 96,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: ColoredBox(
+                      color: MomCozyV3Colors.roseTint,
+                      child: Image.asset(
+                        _referenceAvatarAsset(stage),
+                        fit: BoxFit.contain,
+                        alignment: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 13),
+                const Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'MomCozy original',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Continue with the character for your current stage',
+                        style: TextStyle(
+                          color: MomCozyV3Colors.mutedText,
+                          fontSize: 12.5,
+                          height: 1.25,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (selected) const _AvatarSelectedMark(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarSelectedMark extends StatelessWidget {
+  const _AvatarSelectedMark();
+
+  @override
+  Widget build(BuildContext context) {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyV3Colors.brand,
+        shape: BoxShape.circle,
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(4),
+        child: Icon(Icons.check_rounded, color: Colors.white, size: 16),
+      ),
+    );
+  }
+}
+
+String _referenceAvatarAsset(OnboardingCareStage? stage) => switch (stage) {
+  OnboardingCareStage.pregnancy =>
+    'assets/images/me_baby_overview/pregnancy_avatar.png',
+  OnboardingCareStage.postpartum =>
+    'assets/images/me_baby_overview/postpartum_avatar.png',
+  _ => 'assets/images/me_baby_overview/mom_avatar.png',
+};
 
 class _GeneratedAvatar extends StatefulWidget {
   const _GeneratedAvatar({required this.fileId});
@@ -1031,7 +1244,17 @@ class _GeneratedAvatarState extends State<_GeneratedAvatar> {
     super.didChangeDependencies();
     _load ??= MomCozyRuntimeScope.of(
       context,
-    ).mediaContentRepository.loadImage(widget.fileId);
+    ).mediaContentRepository.loadImageThumbnail(widget.fileId);
+  }
+
+  @override
+  void didUpdateWidget(covariant _GeneratedAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.fileId != widget.fileId) {
+      _load = MomCozyRuntimeScope.of(
+        context,
+      ).mediaContentRepository.loadImageThumbnail(widget.fileId);
+    }
   }
 
   @override
@@ -1089,10 +1312,17 @@ class _PrimaryButton extends StatelessWidget {
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 if (icon != null) ...[Icon(icon), const SizedBox(width: 8)],
-                Text(label),
+                Expanded(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                if (icon != null) const SizedBox(width: 32),
               ],
             ),
     );

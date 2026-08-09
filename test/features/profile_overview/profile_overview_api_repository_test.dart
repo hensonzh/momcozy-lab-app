@@ -165,32 +165,6 @@ void main() {
     });
 
     test(
-      'updates the current stage through the authenticated profile',
-      () async {
-        final transport = FixtureApiJsonTransportByPath(
-          const {},
-          writeResponsesByPath: const {
-            profileMeEndpoint: {
-              'user_id': 'user-001',
-              'current_care_stage': 'pregnancy',
-            },
-          },
-        );
-        final repository = ProfileOverviewApiRepository(
-          transport: transport,
-          babyId: 'infant-001',
-        );
-
-        final stage = await repository.updateCareStage(MomLifeStage.pregnancy);
-
-        expect(stage, MomLifeStage.pregnancy);
-        expect(transport.lastMethod, 'PUT');
-        expect(transport.lastPath, profileMeEndpoint);
-        expect(transport.lastBody, {'current_care_stage': 'pregnancy'});
-      },
-    );
-
-    test(
       'updates delivery type through the maternal profile contract',
       () async {
         final transport = FixtureApiJsonTransportByPath(

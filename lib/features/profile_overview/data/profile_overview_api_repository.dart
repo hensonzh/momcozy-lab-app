@@ -70,25 +70,6 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
   }
 
   @override
-  Future<MomLifeStage> updateCareStage(MomLifeStage stage) async {
-    final mutations = transport;
-    if (mutations is! ApiJsonMutationTransport) {
-      throw UnsupportedError('Profile updates require JSON mutation support.');
-    }
-    final response = await (mutations as ApiJsonMutationTransport).putJson(
-      profileMeEndpoint,
-      body: {'current_care_stage': stage.wireValue},
-    );
-    final saved = MomLifeStage.tryParse(response['current_care_stage']);
-    if (saved == null) {
-      throw const FormatException(
-        'Profile update response is missing current_care_stage.',
-      );
-    }
-    return saved;
-  }
-
-  @override
   Future<DeliveryType?> updateDeliveryType(DeliveryType? deliveryType) async {
     final mutations = transport;
     if (mutations is! ApiJsonMutationTransport) {

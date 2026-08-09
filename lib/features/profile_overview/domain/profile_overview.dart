@@ -4,8 +4,6 @@ import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_st
 abstract interface class ProfileOverviewRepository {
   Future<ProfileOverview> fetchOverview();
 
-  Future<MomLifeStage> updateCareStage(MomLifeStage stage);
-
   Future<DeliveryType?> updateDeliveryType(DeliveryType? deliveryType);
 }
 
