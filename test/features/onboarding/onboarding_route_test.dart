@@ -356,12 +356,11 @@ void main() {
 
     expect(find.text('About your pregnancy'), findsOneWidget);
     expect(find.text('3/4'), findsOneWidget);
-    expect(find.text('Expected due date'), findsOneWidget);
+    expect(find.text('Current pregnancy week *'), findsOneWidget);
     expect(find.text('Expected babies'), findsOneWidget);
-    expect(
-      find.textContaining('help us time pregnancy guidance'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('estimate your due date'), findsOneWidget);
+    expect(find.textContaining('latest scan'), findsOneWidget);
+    expect(find.text('Expected due date'), findsNothing);
     expect(find.text('Delivery date'), findsNothing);
 
     router.dispose();

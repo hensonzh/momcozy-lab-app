@@ -144,6 +144,55 @@ void main() {
       expect(find.text('84 days to go'), findsOneWidget);
     });
 
+    testWidgets('Custom mom avatar keeps its head below the hero boundary', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            profileResponse: const {
+              'user_id': 'profile-overview-user',
+              'display_name': 'Avery',
+              'current_care_stage': 'postpartum',
+              'actual_delivery_date': '2026-06-12',
+              'selected_avatar_file_id': '3d359f49-d269-48db-bef8-1f3fe6d8d09a',
+            },
+          ),
+        ),
+      );
+
+      final avatar = find.byKey(const ValueKey('me-stage-avatar-postpartum'));
+      final hero = find.byKey(const ValueKey('me-stage-hero-postpartum'));
+
+      expect(
+        tester.getRect(avatar).top,
+        greaterThanOrEqualTo(tester.getRect(hero).top),
+      );
+      expect(
+        find.descendant(
+          of: avatar,
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is Image &&
+                widget.image is AssetImage &&
+                (widget.image as AssetImage).assetName.endsWith(
+                  'postpartum_avatar.png',
+                ),
+          ),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: avatar,
+          matching: find.byKey(const ValueKey('mom-custom-avatar-placeholder')),
+        ),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('Me never labels an earlier milk trend as today', (
       tester,
     ) async {

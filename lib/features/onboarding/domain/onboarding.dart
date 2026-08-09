@@ -222,7 +222,7 @@ class OnboardingProfileDraft {
     required this.stage,
     this.displayName = '',
     this.age,
-    this.expectedDueDate,
+    this.currentGestationalWeek,
     this.expectedInfantCount = 1,
     this.deliveryDate,
     this.gestationalWeeks,
@@ -235,7 +235,7 @@ class OnboardingProfileDraft {
   OnboardingCareStage stage;
   String displayName;
   int? age;
-  DateTime? expectedDueDate;
+  int? currentGestationalWeek;
   int expectedInfantCount;
   DateTime? deliveryDate;
   int? gestationalWeeks;
@@ -264,7 +264,7 @@ class OnboardingProfileDraft {
       OnboardingCareStage.fertility => common,
       OnboardingCareStage.pregnancy => {
         ...common,
-        'expected_due_date': _date(expectedDueDate!),
+        'current_gestational_week': currentGestationalWeek!,
         'expected_infant_count': expectedInfantCount,
       },
       OnboardingCareStage.postpartum => {

@@ -23,6 +23,7 @@ class MediaContentRepository {
     this.headers = const {'X-Momcozy-Client': 'flutter'},
     this.maxImageBytes = 10 * 1024 * 1024,
     this.maxThumbnailBytes = 1024 * 1024,
+    this.maxCachedImages = 4,
     this.maxCachedThumbnails = 64,
   }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri),
        connector = connector ?? IoProductAssetHttpConnector();
@@ -34,15 +35,50 @@ class MediaContentRepository {
   final Map<String, String> headers;
   final int maxImageBytes;
   final int maxThumbnailBytes;
+  final int maxCachedImages;
   final int maxCachedThumbnails;
+  final Map<String, Future<Uint8List>> _imageLoads = {};
+  final Map<String, Uint8List> _imageBytes = {};
   final Map<String, Future<Uint8List>> _thumbnailLoads = {};
+  final Map<String, Uint8List> _thumbnailBytes = {};
 
   Future<Uint8List> loadImage(String fileId) {
-    return _loadImageVariant(
-      fileId: _validateFileId(fileId),
-      variant: 'content',
-      maxBytes: maxImageBytes,
-    );
+    final normalizedFileId = _validateFileId(fileId);
+    final cached = cachedImage(normalizedFileId);
+    if (cached != null) return Future.value(cached);
+    final existing = _imageLoads[normalizedFileId];
+    if (existing != null) return existing;
+
+    late final Future<Uint8List> load;
+    load =
+        _loadImageVariant(
+          fileId: normalizedFileId,
+          variant: 'content',
+          maxBytes: maxImageBytes,
+        ).then(
+          (bytes) {
+            if (identical(_imageLoads[normalizedFileId], load)) {
+              _imageLoads.remove(normalizedFileId);
+              _rememberImage(normalizedFileId, bytes);
+            }
+            return bytes;
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (identical(_imageLoads[normalizedFileId], load)) {
+              _imageLoads.remove(normalizedFileId);
+            }
+            Error.throwWithStackTrace(error, stackTrace);
+          },
+        );
+    _imageLoads[normalizedFileId] = load;
+    return load;
+  }
+
+  Uint8List? cachedImage(String fileId) {
+    final normalizedFileId = _validateFileId(fileId);
+    final bytes = _imageBytes.remove(normalizedFileId);
+    if (bytes != null) _imageBytes[normalizedFileId] = bytes;
+    return bytes;
   }
 
   Future<Uint8List> loadImageThumbnail(String fileId) {
@@ -57,19 +93,39 @@ class MediaContentRepository {
           variant: 'thumbnail',
           maxBytes: maxThumbnailBytes,
         ).then(
-          (bytes) => bytes,
+          (bytes) {
+            if (identical(_thumbnailLoads[normalizedFileId], load)) {
+              _thumbnailBytes[normalizedFileId] = bytes;
+            }
+            return bytes;
+          },
           onError: (Object error, StackTrace stackTrace) {
             if (identical(_thumbnailLoads[normalizedFileId], load)) {
               _thumbnailLoads.remove(normalizedFileId);
+              _thumbnailBytes.remove(normalizedFileId);
             }
             Error.throwWithStackTrace(error, stackTrace);
           },
         );
     _thumbnailLoads[normalizedFileId] = load;
     while (_thumbnailLoads.length > maxCachedThumbnails) {
-      _thumbnailLoads.remove(_thumbnailLoads.keys.first);
+      final evictedFileId = _thumbnailLoads.keys.first;
+      _thumbnailLoads.remove(evictedFileId);
+      _thumbnailBytes.remove(evictedFileId);
     }
     return load;
+  }
+
+  Uint8List? cachedImageThumbnail(String fileId) {
+    return _thumbnailBytes[_validateFileId(fileId)];
+  }
+
+  void _rememberImage(String fileId, Uint8List bytes) {
+    _imageBytes.remove(fileId);
+    _imageBytes[fileId] = bytes;
+    while (_imageBytes.length > maxCachedImages) {
+      _imageBytes.remove(_imageBytes.keys.first);
+    }
   }
 
   String _validateFileId(String fileId) {
