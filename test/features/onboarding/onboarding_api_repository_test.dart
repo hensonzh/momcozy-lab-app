@@ -44,6 +44,31 @@ void main() {
     expect(state.profileConfirmed, isFalse);
   });
 
+  test('preserves the avatar worker phase for truthful progress UI', () {
+    for (final (raw, expected) in const [
+      ('queued', OnboardingAvatarGenerationPhase.queued),
+      ('generating', OnboardingAvatarGenerationPhase.generating),
+    ]) {
+      final state = OnboardingState.fromMap({
+        'status': 'avatar_generating',
+        'current_step': 'generating',
+        'current_stage': 'postpartum',
+        'profile_confirmed': true,
+        'avatar': {
+          'id': 'generation-$raw',
+          'stage': 'postpartum',
+          'status': raw,
+          'error_code': '',
+          'created_at': '2026-08-09T00:00:00Z',
+          'candidates': <Object?>[],
+        },
+      });
+
+      expect(state.status, OnboardingStatus.avatarGenerating);
+      expect(state.avatar?.phase, expected);
+    }
+  });
+
   test('serializes one shared postpartum delivery and infant set', () async {
     final transport = FixtureApiJsonTransport(const {
       'status': 'avatar_required',

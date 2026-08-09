@@ -366,6 +366,87 @@ void main() {
   });
 
   testWidgets(
+    'avatar generation wait explains queued work on a narrow accessible layout',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+      final runtimeController = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: FixtureApiJsonTransport(const {
+            'status': 'avatar_generating',
+            'current_step': 'generating',
+            'current_stage': 'postpartum',
+            'profile_confirmed': true,
+            'can_continue_with_default': true,
+            'avatar': {
+              'id': 'generation-queued',
+              'stage': 'postpartum',
+              'status': 'queued',
+              'error_code': '',
+              'created_at': '2026-08-09T00:00:00Z',
+              'candidates': <Object?>[],
+            },
+          }),
+          multipartTransport: FixtureApiMultipartTransport(const {}),
+          session: const MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: 'avatar-generating-user',
+            babyId: '',
+            locale: 'en-US',
+            accessToken: 'access',
+          ),
+        ),
+      );
+      final onboardingController = OnboardingController(
+        runtimeController: runtimeController,
+      );
+      await onboardingController.load();
+      final router = createMomCozyRouter(
+        runtimeController: runtimeController,
+        onboardingController: onboardingController,
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(router: router, runtimeController: runtimeController),
+      );
+      await tester.pump();
+
+      expect(find.text('Your four options are on the way'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('onboarding-avatar-generation-recipe')),
+        findsOneWidget,
+      );
+      expect(find.text('Your photo'), findsOneWidget);
+      expect(find.text('MomCozy style'), findsOneWidget);
+      expect(find.text('4 options'), findsOneWidget);
+      expect(find.text('Photo uploaded'), findsOneWidget);
+      expect(find.text('Waiting to start'), findsOneWidget);
+      expect(find.text('Choose your favorite'), findsOneWidget);
+      expect(find.text('Creating four companions…'), findsNothing);
+
+      final waitNote = find.byKey(
+        const ValueKey('onboarding-avatar-generation-wait-note'),
+      );
+      await tester.ensureVisible(waitNote);
+      await tester.pump();
+      expect(
+        find.textContaining('generation continues in the cloud'),
+        findsOneWidget,
+      );
+
+      router.dispose();
+      onboardingController.dispose();
+      runtimeController.dispose();
+    },
+  );
+
+  testWidgets(
     'avatar review offers four generated choices and MomCozy original',
     (tester) async {
       tester.view.physicalSize = const Size(360, 800);
