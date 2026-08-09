@@ -69,6 +69,30 @@ void main() {
       expect(transport.lastQuery, isNull);
     });
 
+    test(
+      'accepts empty or missing display name as non-auth metadata',
+      () async {
+        for (final user in <Map<String, Object?>>[
+          {'id': 'user-001', 'display_name': ''},
+          {'id': 'user-001'},
+        ]) {
+          final response = _tokenResponse()..['user'] = user;
+          final repository = MomCozyAuthApiRepository(
+            transport: FixtureApiJsonTransport(response),
+          );
+
+          final tokens = await repository.inviteLogin(
+            inviteCode: 'MOMCOZY-BETA',
+            deviceId: 'flutter-device-001',
+          );
+
+          expect(tokens.accessToken, 'access-token-001');
+          expect(tokens.user.id, 'user-001');
+          expect(tokens.user.displayName, isEmpty);
+        }
+      },
+    );
+
     test('refresh sends refresh token in the body only', () async {
       final transport = FixtureApiJsonTransport(_tokenResponse());
       final repository = MomCozyAuthApiRepository(transport: transport);

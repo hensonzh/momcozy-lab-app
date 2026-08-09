@@ -205,6 +205,46 @@ void main() {
   });
 
   testWidgets(
+    'release-reset account with blank display name still authenticates',
+    (tester) async {
+      final response = _tokenResponse()
+        ..['user'] = {'id': 'release-reset-user-001', 'display_name': ''};
+      final transport = FixtureApiJsonTransport(response);
+      final runtime = MomCozyApiRuntime(
+        jsonTransport: transport,
+        userId: 'demo-user',
+        babyId: 'demo-baby',
+        locale: 'zh-CN',
+      );
+      final controller = MomCozyRuntimeController(runtime);
+      final store = MemoryMomCozySessionStore();
+      final router = _authRouter(
+        controller: controller,
+        store: store,
+        deviceId: 'flutter-device-001',
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+        'MCZ-RESET-0001',
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
+      await tester.pumpAndSettle();
+
+      final session = await store.readSession();
+      expect(session?.isAuthenticated, isTrue);
+      expect(session?.userId, 'release-reset-user-001');
+      expect(session?.accessToken, 'access-token-001');
+      expect(find.text('home'), findsOneWidget);
+      expect(find.byKey(const ValueKey('auth-error-text')), findsNothing);
+
+      controller.dispose();
+      router.dispose();
+    },
+  );
+
+  testWidgets(
     'successful invite auth reports a local session persistence failure',
     (tester) async {
       final transport = FixtureApiJsonTransport(_tokenResponse());
