@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
@@ -19,8 +20,11 @@ import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dar
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
 
@@ -201,6 +205,85 @@ void main() {
     expect(overviewController.identity, ProfileIdentity.mom);
     overviewController.dispose();
   });
+
+  test(
+    'agent record change events invalidate only dependent overview caches',
+    () {
+      final fetchedAt = DateTime(2026, 8, 10, 10);
+      final cache =
+          ProfileOverviewCache(
+              ownerUserId: 'user-fixture',
+              babyId: 'baby-fixture',
+            )
+            ..overview = OverviewCacheEntry(
+              value: const ProfileOverview(),
+              fetchedAt: fetchedAt,
+            )
+            ..feedingRecords = OverviewCacheEntry(
+              value: const <FeedingRecord>[],
+              fetchedAt: fetchedAt,
+            )
+            ..feedingSummary = OverviewCacheEntry(
+              value: _emptyFeedingSummary,
+              fetchedAt: fetchedAt,
+            )
+            ..milkTrends = OverviewCacheEntry(
+              value: <MilkTrendDay>[
+                MilkTrendDay(
+                  date: fetchedAt,
+                  measuredVolumeMl: 90,
+                  pumpingCount: 1,
+                  measuredPumpingCount: 1,
+                ),
+              ],
+              fetchedAt: fetchedAt,
+            )
+            ..growthRecords = OverviewCacheEntry(
+              value: const <GrowthRecord>[],
+              fetchedAt: fetchedAt,
+            )
+            ..diaperRecords = OverviewCacheEntry(
+              value: const <DiaperRecord>[],
+              fetchedAt: fetchedAt,
+            );
+      final runtime = MomCozyApiRuntime(
+        jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
+        userId: 'user-fixture',
+        babyId: 'baby-fixture',
+        locale: 'zh-CN',
+        profileOverviewCache: cache,
+      );
+
+      runtime.handleAgentApplicationEvent(
+        _recordChangedEvent('records.pumping.changed'),
+      );
+      expect(cache.milkTrends, isNull);
+      expect(cache.feedingRecords, isNotNull);
+
+      runtime.handleAgentApplicationEvent(
+        _recordChangedEvent('records.feeding.changed'),
+      );
+      expect(cache.feedingRecords, isNull);
+      expect(cache.feedingSummary, isNull);
+      expect(cache.growthRecords, isNotNull);
+
+      cache.feedingSummary = OverviewCacheEntry(
+        value: _emptyFeedingSummary,
+        fetchedAt: fetchedAt,
+      );
+      runtime.handleAgentApplicationEvent(
+        _recordChangedEvent('records.growth.changed'),
+      );
+      expect(cache.growthRecords, isNull);
+      expect(cache.feedingSummary, isNull);
+
+      runtime.handleAgentApplicationEvent(
+        _recordChangedEvent('records.diaper.changed'),
+      );
+      expect(cache.diaperRecords, isNull);
+      expect(cache.overview, isNotNull);
+    },
+  );
 
   test('runtime exposes an injected multipart transport lazily', () async {
     final multipart = FixtureApiMultipartTransport({
@@ -557,6 +640,56 @@ void main() {
     },
   );
 }
+
+AgentStreamEvent _recordChangedEvent(String type) {
+  return AgentStreamEvent({
+    'event_id': 'event-$type',
+    'type': type,
+    'thread_id': 'thread-record-change',
+    'run_id': 'run-record-change',
+    'sequence': 1,
+    'payload': {
+      'operation': 'created',
+      'record_id': 'record-001',
+      'source': 'agent_action',
+    },
+  });
+}
+
+const _emptyFeedingSummary = FeedingSummary(
+  days: 7,
+  timezone: 'Asia/Shanghai',
+  feedingCount: 0,
+  measuredVolumeCount: 0,
+  measuredVolumeMl: 0,
+  averageMeasuredVolumeMl: null,
+  feedingMethodCounts: <FeedingMethod, int>{},
+  milkSourceVolumesMl: <MilkSource, double>{},
+  latestFeedingAt: null,
+  completedDays: CompletedFeedingDays(
+    windowDays: 7,
+    recordedDays: 0,
+    measuredDays: 0,
+    averageVolumePerMeasuredDayMl: null,
+    averageFeedingsPerRecordedDay: null,
+    dailySeries: <FeedingTrendDay>[],
+  ),
+  comparison: MilkWindowComparison(
+    status: 'insufficient_data',
+    currentAverageVolumePerMeasuredDayMl: null,
+    previousAverageVolumePerMeasuredDayMl: null,
+    changePercent: null,
+    currentMeasuredDays: 0,
+    previousMeasuredDays: 0,
+    minimumMeasuredDays: 2,
+  ),
+  intakeEvaluationContext: IntakeEvaluationContext(
+    status: IntakeEvaluationStatus.insufficientData,
+    reasonCode: 'insufficient_data',
+    growthMeasurementDate: null,
+    chronologicalAgeDays: null,
+  ),
+);
 
 class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
   MomCozyVolumeUnit? value;

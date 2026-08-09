@@ -594,6 +594,53 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Agent Hub forwards a replay-safe record change application event once',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final applicationEvents = <AgentStreamEvent>[];
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            onApplicationEvent: applicationEvents.add,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '记录刚刚吸出的 90 毫升',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      final event = AgentStreamEvent(const {
+        'event_id': 'evt-pumping-record-changed',
+        'type': 'records.pumping.changed',
+        'thread_id': 'thread-pumping-record-changed',
+        'run_id': 'run-pumping-record-changed',
+        'sequence': 1,
+        'payload': {
+          'operation': 'created',
+          'record_id': 'pumping-record-001',
+          'resource_type': 'pumping_record',
+          'source': 'agent_action',
+        },
+      });
+      client.emit(0, event);
+      client.emit(0, event);
+      await tester.pump();
+      await tester.pump();
+
+      expect(applicationEvents.map((event) => event.type), [
+        'records.pumping.changed',
+      ]);
+    },
+  );
+
   testWidgets('Agent Hub keeps a textless failed artifact unpublished', (
     tester,
   ) async {

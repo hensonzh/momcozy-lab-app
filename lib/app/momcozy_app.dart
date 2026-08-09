@@ -1321,6 +1321,7 @@ Widget _buildDefaultAgentHubPage(
     productAssetRepository: runtime.productAssetRepository,
     ibclcConsultStore: runtime.ibclcConsultStore,
     supportTicketSubmitter: runtime.supportTicketRepository.submit,
+    onApplicationEvent: runtime.handleAgentApplicationEvent,
     onHospitalBagCartUpdate: (seed) {
       runtime.hospitalBagCartStore.ingestArtifact(seed);
     },
