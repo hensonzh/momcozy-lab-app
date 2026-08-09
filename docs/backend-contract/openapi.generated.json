@@ -1130,6 +1130,34 @@
         "title": "AgentThreadRead",
         "type": "object"
       },
+      "AvatarCandidateRead": {
+        "additionalProperties": false,
+        "properties": {
+          "file_id": {
+            "format": "uuid",
+            "title": "File Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "position": {
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Position",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "file_id",
+          "position"
+        ],
+        "title": "AvatarCandidateRead",
+        "type": "object"
+      },
       "AvatarGenerationCreate": {
         "additionalProperties": false,
         "properties": {
@@ -1148,6 +1176,13 @@
       "AvatarGenerationRead": {
         "additionalProperties": false,
         "properties": {
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/AvatarCandidateRead"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
           "completed_at": {
             "anyOf": [
               {
@@ -3424,7 +3459,7 @@
       "OnboardingComplete": {
         "additionalProperties": false,
         "properties": {
-          "avatar_generation_id": {
+          "avatar_candidate_id": {
             "anyOf": [
               {
                 "format": "uuid",
@@ -3434,7 +3469,7 @@
                 "type": "null"
               }
             ],
-            "title": "Avatar Generation Id"
+            "title": "Avatar Candidate Id"
           },
           "use_default_avatar": {
             "default": false,
@@ -5832,6 +5867,8 @@
       "TokenUser": {
         "properties": {
           "display_name": {
+            "maxLength": 120,
+            "minLength": 1,
             "title": "Display Name",
             "type": "string"
           },
