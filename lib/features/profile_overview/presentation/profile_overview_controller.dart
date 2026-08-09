@@ -96,6 +96,7 @@ class ProfileOverviewController {
     this.planRepository,
     required this.babyId,
     required this.identity,
+    required this.timezoneProvider,
     ProfileOverviewCache? cache,
     this.cachePolicy = const ProfileOverviewCachePolicy(),
     DateTime Function()? now,
@@ -120,6 +121,11 @@ class ProfileOverviewController {
               ? const ProfileOverviewResource.initial()
               : ProfileOverviewResource.data(this.cache.feedingRecords!.value),
         );
+    feedingSummary = ValueNotifier<ProfileOverviewResource<FeedingSummary>>(
+      this.cache.feedingSummary == null
+          ? const ProfileOverviewResource.initial()
+          : ProfileOverviewResource.data(this.cache.feedingSummary!.value),
+    );
     milkTrends = ValueNotifier<ProfileOverviewResource<List<MilkTrendDay>>>(
       this.cache.milkTrends == null
           ? const ProfileOverviewResource.initial()
@@ -198,6 +204,7 @@ class ProfileOverviewController {
   final PlanRepository? planRepository;
   final String babyId;
   final ProfileIdentity identity;
+  final Future<String> Function() timezoneProvider;
   final DateTime Function() now;
   final ProfileOverviewCache cache;
   final ProfileOverviewCachePolicy cachePolicy;
@@ -207,6 +214,8 @@ class ProfileOverviewController {
   maternalCareOverview;
   late final ValueNotifier<ProfileOverviewResource<List<FeedingRecord>>>
   feedingRecords;
+  late final ValueNotifier<ProfileOverviewResource<FeedingSummary>>
+  feedingSummary;
   late final ValueNotifier<ProfileOverviewResource<List<MilkTrendDay>>>
   milkTrends;
   late final ValueNotifier<ProfileOverviewResource<List<WaterIntakeRecord>>>
@@ -282,6 +291,7 @@ class ProfileOverviewController {
         ProfileOverviewResourceKey.maternalCareOverview,
       if (identity == ProfileIdentity.baby) ...{
         ProfileOverviewResourceKey.feeding,
+        ProfileOverviewResourceKey.feedingSummary,
         if (sleepRepository != null) ProfileOverviewResourceKey.sleep,
         if (diaperRepository != null) ProfileOverviewResourceKey.diapers,
         ProfileOverviewResourceKey.growth,
@@ -388,15 +398,32 @@ class ProfileOverviewController {
         );
       case ProfileOverviewResourceKey.feeding:
         final today = now();
-        final range = _currentWeekRange(today);
         await _load(
           feedingRecords,
-          feedingRepository.fetchFeedingRecordsRange(
-            start: range.start,
-            end: range.end,
+          feedingRepository.fetchFeedingRecords(
+            date: today,
             babyId: _recordsBabyId,
           ),
           onData: (value) => cache.feedingRecords = OverviewCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+        );
+      case ProfileOverviewResourceKey.feedingSummary:
+        await _load(
+          feedingSummary,
+          () async {
+            final timezone = (await timezoneProvider()).trim();
+            if (timezone.isEmpty) {
+              throw StateError('Device timezone is unavailable.');
+            }
+            return feedingRepository.fetchFeedingSummary(
+              babyId: _recordsBabyId,
+              days: 7,
+              timezone: timezone,
+            );
+          }(),
+          onData: (value) => cache.feedingSummary = OverviewCacheEntry(
             value: value,
             fetchedAt: now(),
           ),
@@ -582,14 +609,14 @@ class ProfileOverviewController {
   }
 
   Future<bool> savePumpingRecord({
-    required double amountMl,
-    required BreastSide breastSide,
+    required List<PumpingOutput> outputs,
+    int? durationSeconds,
   }) {
     return _saveRecord(() async {
       await pumpMilkRepository.createPumpMilkRecord(
         occurredAt: now(),
-        amountMl: amountMl,
-        breastSide: breastSide,
+        outputs: outputs,
+        durationSeconds: durationSeconds,
         idempotencyKey: _recordIdempotencyKey('pumping'),
       );
       await _requestResource(
@@ -671,22 +698,31 @@ class ProfileOverviewController {
   }
 
   Future<bool> saveFeedingRecord({
-    required String type,
-    required double amountMl,
+    required FeedingMethod feedingMethod,
+    required List<FeedingMilkComponent> milkComponents,
+    int? durationSeconds,
   }) {
     return _saveRecord(() async {
       await feedingRepository.createFeedingRecord(
         babyId: _recordsBabyId,
         occurredAt: now(),
-        type: type,
-        amountMl: amountMl,
+        feedingMethod: feedingMethod,
+        milkComponents: milkComponents,
+        durationSeconds: durationSeconds,
         idempotencyKey: _recordIdempotencyKey('feeding'),
       );
-      await _requestResource(
-        ProfileOverviewResourceKey.feeding,
-        showLoading: false,
-        force: true,
-      );
+      await Future.wait<void>([
+        _requestResource(
+          ProfileOverviewResourceKey.feeding,
+          showLoading: false,
+          force: true,
+        ),
+        _requestResource(
+          ProfileOverviewResourceKey.feedingSummary,
+          showLoading: false,
+          force: true,
+        ),
+      ]);
     });
   }
 
@@ -694,6 +730,8 @@ class ProfileOverviewController {
     double? weightKg,
     double? heightCm,
     double? headCm,
+    required MeasurementPosition measurementPosition,
+    required MeasurementContext measurementContext,
   }) {
     return _saveRecord(() async {
       await growthRepository.createGrowthRecord(
@@ -702,13 +740,22 @@ class ProfileOverviewController {
         weightKg: weightKg,
         heightCm: heightCm,
         headCm: headCm,
+        measurementPosition: measurementPosition,
+        measurementContext: measurementContext,
         idempotencyKey: _recordIdempotencyKey('growth'),
       );
-      await _requestResource(
-        ProfileOverviewResourceKey.growth,
-        showLoading: false,
-        force: true,
-      );
+      await Future.wait<void>([
+        _requestResource(
+          ProfileOverviewResourceKey.growth,
+          showLoading: false,
+          force: true,
+        ),
+        _requestResource(
+          ProfileOverviewResourceKey.feedingSummary,
+          showLoading: false,
+          force: true,
+        ),
+      ]);
     });
   }
 
@@ -838,6 +885,8 @@ class ProfileOverviewController {
     double? weightKg,
     double? heightCm,
     double? headCm,
+    required MeasurementPosition measurementPosition,
+    required MeasurementContext measurementContext,
   }) async {
     if (_disposed || growthMutation.value.isSaving) return false;
     final values = [weightKg, heightCm, headCm].whereType<double>().toList();
@@ -861,6 +910,8 @@ class ProfileOverviewController {
               weightKg: weightKg,
               heightCm: heightCm,
               headCm: headCm,
+              measurementPosition: measurementPosition,
+              measurementContext: measurementContext,
             )
           : await growthRepository.createGrowthRecord(
               babyId: _recordsBabyId,
@@ -868,6 +919,8 @@ class ProfileOverviewController {
               weightKg: weightKg,
               heightCm: heightCm,
               headCm: headCm,
+              measurementPosition: measurementPosition,
+              measurementContext: measurementContext,
               idempotencyKey:
                   'profile-growth-${measuredAt.microsecondsSinceEpoch}',
             );
@@ -878,6 +931,11 @@ class ProfileOverviewController {
       ]);
       growthRecords.value = ProfileOverviewResource.data(next);
       cache.growthRecords = OverviewCacheEntry(value: next, fetchedAt: now());
+      await _requestResource(
+        ProfileOverviewResourceKey.feedingSummary,
+        showLoading: false,
+        force: true,
+      );
       growthMutation.value = const ProfileOverviewMutationState.success(
         'Growth measurement saved.',
       );
@@ -904,6 +962,10 @@ class ProfileOverviewController {
       case ProfileOverviewResourceKey.feeding:
         feedingRecords.value = ProfileOverviewResource.loading(
           previous: feedingRecords.value.data,
+        );
+      case ProfileOverviewResourceKey.feedingSummary:
+        feedingSummary.value = ProfileOverviewResource.loading(
+          previous: feedingSummary.value.data,
         );
       case ProfileOverviewResourceKey.milkTrends:
         milkTrends.value = ProfileOverviewResource.loading(
@@ -946,6 +1008,8 @@ class ProfileOverviewController {
       ProfileOverviewResourceKey.maternalCareOverview =>
         cache.maternalCareOverview?.fetchedAt,
       ProfileOverviewResourceKey.feeding => cache.feedingRecords?.fetchedAt,
+      ProfileOverviewResourceKey.feedingSummary =>
+        cache.feedingSummary?.fetchedAt,
       ProfileOverviewResourceKey.milkTrends => cache.milkTrends?.fetchedAt,
       ProfileOverviewResourceKey.waterRecords => cache.waterRecords?.fetchedAt,
       ProfileOverviewResourceKey.waterTrends => cache.waterTrends?.fetchedAt,
@@ -965,6 +1029,7 @@ class ProfileOverviewController {
       ProfileOverviewResourceKey.maternalCareOverview =>
         cache.maternalCareOverview != null,
       ProfileOverviewResourceKey.feeding => cache.feedingRecords != null,
+      ProfileOverviewResourceKey.feedingSummary => cache.feedingSummary != null,
       ProfileOverviewResourceKey.milkTrends => cache.milkTrends != null,
       ProfileOverviewResourceKey.waterRecords => cache.waterRecords != null,
       ProfileOverviewResourceKey.waterTrends => cache.waterTrends != null,
@@ -982,6 +1047,7 @@ class ProfileOverviewController {
     overview.dispose();
     maternalCareOverview.dispose();
     feedingRecords.dispose();
+    feedingSummary.dispose();
     milkTrends.dispose();
     waterRecords.dispose();
     waterTrends.dispose();
@@ -994,15 +1060,6 @@ class ProfileOverviewController {
     growthMutation.dispose();
     recordMutation.dispose();
   }
-}
-
-({DateTime start, DateTime end}) _currentWeekRange(DateTime value) {
-  final start = DateTime(
-    value.year,
-    value.month,
-    value.day,
-  ).subtract(Duration(days: value.weekday - DateTime.monday));
-  return (start: start, end: start.add(const Duration(days: 7)));
 }
 
 GrowthRecord? _latestGrowthRecord(List<GrowthRecord> records) {

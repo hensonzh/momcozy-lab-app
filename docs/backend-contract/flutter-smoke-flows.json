@@ -72,13 +72,32 @@
         },
         {
           "method": "POST",
+          "path": "/v1/profile/infants",
+          "headers": ["${auth_header}", "${idempotency_header}"],
+          "body": {
+            "infant_name": "Smoke Baby",
+            "sex": "female",
+            "birth_date": "2026-01-01",
+            "birth_source": "independent"
+          },
+          "captures": {
+            "infant_id": "$.id"
+          }
+        },
+        {
+          "method": "POST",
           "path": "/v1/records/feeding",
           "headers": ["${auth_header}", "${idempotency_header}"],
           "body": {
+            "infant_id": "${infant_id}",
             "feed_time": "${iso_now}",
-            "feed_type": "bottle",
-            "feed_action": "fed",
-            "volume_ml": 60,
+            "feeding_method": "bottle",
+            "milk_components": [
+              {
+                "milk_source": "breast_milk",
+                "volume_ml": 60
+              }
+            ],
             "title": "Smoke feeding"
           }
         },
@@ -94,8 +113,17 @@
         },
         {
           "method": "GET",
-          "path": "/v1/records/feeding",
+          "path": "/v1/records/feeding?infant_id=${infant_id}",
           "headers": ["${auth_header}"]
+        },
+        {
+          "method": "GET",
+          "path": "/v1/records/feeding-summary?infant_id=${infant_id}&days=7&timezone=Asia%2FShanghai",
+          "headers": ["${auth_header}"],
+          "assertions": [
+            "unmeasured daily volume remains null rather than zero",
+            "WHO growth evidence is exposed only as intake_evaluation_context"
+          ]
         }
       ]
     },

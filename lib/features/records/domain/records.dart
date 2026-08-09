@@ -14,10 +14,16 @@ abstract interface class FeedingRecordsRepository {
   Future<FeedingRecord> createFeedingRecord({
     required String babyId,
     required DateTime occurredAt,
-    required String type,
-    double? amountMl,
+    required FeedingMethod feedingMethod,
+    required List<FeedingMilkComponent> milkComponents,
     int? durationSeconds,
     String? idempotencyKey,
+  });
+
+  Future<FeedingSummary> fetchFeedingSummary({
+    required String babyId,
+    required int days,
+    required String timezone,
   });
 }
 
@@ -31,8 +37,7 @@ abstract interface class PumpMilkRecordsRepository {
 
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
-    double? amountMl,
-    BreastSide? breastSide,
+    required List<PumpingOutput> outputs,
     int? durationSeconds,
     String? idempotencyKey,
   });
@@ -123,6 +128,8 @@ abstract interface class GrowthRecordsRepository {
     double? weightKg,
     double? heightCm,
     double? headCm,
+    required MeasurementPosition measurementPosition,
+    required MeasurementContext measurementContext,
     String? idempotencyKey,
   });
 
@@ -131,15 +138,16 @@ abstract interface class GrowthRecordsRepository {
     double? weightKg,
     double? heightCm,
     double? headCm,
+    MeasurementPosition? measurementPosition,
+    MeasurementContext? measurementContext,
   });
 }
 
 class FeedingRecord {
   const FeedingRecord({
     required this.id,
-    required this.type,
-    required this.amountMl,
-    this.action = '',
+    required this.feedingMethod,
+    required this.milkComponents,
     this.durationSeconds,
     this.infantId,
     this.occurredAt,
@@ -147,46 +155,117 @@ class FeedingRecord {
 
   final String id;
   final String? infantId;
-  final String type;
-  final String action;
-  final int? amountMl;
+  final FeedingMethod feedingMethod;
+  final List<FeedingMilkComponent> milkComponents;
   final int? durationSeconds;
   final DateTime? occurredAt;
+
+  double? get measuredVolumeMl {
+    final values = milkComponents
+        .map((component) => component.volumeMl)
+        .whereType<double>()
+        .toList(growable: false);
+    return values.isEmpty
+        ? null
+        : values.fold<double>(0, (sum, value) => sum + value);
+  }
+}
+
+enum FeedingMethod {
+  directBreastfeeding('direct_breastfeeding'),
+  bottle('bottle'),
+  cup('cup'),
+  syringe('syringe'),
+  tube('tube'),
+  other('other');
+
+  const FeedingMethod(this.apiValue);
+
+  final String apiValue;
+
+  static FeedingMethod? tryParse(Object? value) {
+    final normalized = value is String ? value.trim() : '';
+    for (final method in values) {
+      if (method.apiValue == normalized) return method;
+    }
+    return null;
+  }
+}
+
+enum MilkSource {
+  breastMilk('breast_milk'),
+  formula('formula'),
+  donorMilk('donor_milk'),
+  unknown('unknown');
+
+  const MilkSource(this.apiValue);
+
+  final String apiValue;
+
+  static MilkSource? tryParse(Object? value) {
+    final normalized = value is String ? value.trim() : '';
+    for (final source in values) {
+      if (source.apiValue == normalized) return source;
+    }
+    return null;
+  }
+}
+
+class FeedingMilkComponent {
+  const FeedingMilkComponent({required this.milkSource, this.volumeMl});
+
+  final MilkSource milkSource;
+  final double? volumeMl;
 }
 
 class PumpMilkRecord {
   const PumpMilkRecord({
     required this.id,
     this.pumpType = '',
-    this.breastSide,
-    this.amountMl,
+    this.outputs = const <PumpingOutput>[],
     this.durationSeconds,
     this.occurredAt,
   });
 
   final String id;
   final String pumpType;
-  final BreastSide? breastSide;
-  final int? amountMl;
+  final List<PumpingOutput> outputs;
   final int? durationSeconds;
   final DateTime? occurredAt;
+
+  double? get measuredVolumeMl {
+    final values = outputs
+        .map((output) => output.volumeMl)
+        .whereType<double>()
+        .toList(growable: false);
+    return values.isEmpty
+        ? null
+        : values.fold<double>(0, (sum, value) => sum + value);
+  }
 }
 
-enum BreastSide {
+enum PumpingSide {
   left,
   right,
-  both;
+  unassigned;
 
   String get apiValue => name;
 
-  static BreastSide? tryParse(Object? value) {
+  static PumpingSide? tryParse(Object? value) {
     return switch (value) {
-      'left' => BreastSide.left,
-      'right' => BreastSide.right,
-      'both' => BreastSide.both,
+      'left' => PumpingSide.left,
+      'right' => PumpingSide.right,
+      'unassigned' => PumpingSide.unassigned,
       _ => null,
     };
   }
+}
+
+class PumpingOutput {
+  const PumpingOutput({required this.breastSide, this.volumeMl});
+
+  final PumpingSide breastSide;
+  final double? volumeMl;
 }
 
 class WaterIntakeRecord {
@@ -338,13 +417,15 @@ class DiaperRecord {
 class MilkTrendDay {
   const MilkTrendDay({
     required this.date,
-    required this.pumpedMilkVolumeMl,
+    required this.measuredVolumeMl,
     required this.pumpingCount,
+    required this.measuredPumpingCount,
   });
 
   final DateTime date;
-  final double pumpedMilkVolumeMl;
+  final double? measuredVolumeMl;
   final int pumpingCount;
+  final int measuredPumpingCount;
 }
 
 class GrowthRecord {
@@ -354,6 +435,8 @@ class GrowthRecord {
     this.heightCm,
     this.headCm,
     this.measuredAt,
+    this.measurementPosition = MeasurementPosition.unknown,
+    this.measurementContext = MeasurementContext.unknown,
   });
 
   final String id;
@@ -361,6 +444,150 @@ class GrowthRecord {
   final double? heightCm;
   final double? headCm;
   final DateTime? measuredAt;
+  final MeasurementPosition measurementPosition;
+  final MeasurementContext measurementContext;
 
   double? get weightKg => weightGram == null ? null : weightGram! / 1000;
+}
+
+enum MeasurementPosition {
+  recumbent,
+  standing,
+  unknown;
+
+  String get apiValue => name;
+
+  static MeasurementPosition tryParse(Object? value) => switch (value) {
+    'recumbent' => MeasurementPosition.recumbent,
+    'standing' => MeasurementPosition.standing,
+    _ => MeasurementPosition.unknown,
+  };
+}
+
+enum MeasurementContext {
+  birth,
+  routine,
+  unknown;
+
+  String get apiValue => name;
+
+  static MeasurementContext tryParse(Object? value) => switch (value) {
+    'birth' => MeasurementContext.birth,
+    'routine' => MeasurementContext.routine,
+    _ => MeasurementContext.unknown,
+  };
+}
+
+class FeedingSummary {
+  const FeedingSummary({
+    required this.days,
+    required this.timezone,
+    required this.feedingCount,
+    required this.measuredVolumeCount,
+    required this.measuredVolumeMl,
+    required this.averageMeasuredVolumeMl,
+    required this.feedingMethodCounts,
+    required this.milkSourceVolumesMl,
+    required this.latestFeedingAt,
+    required this.completedDays,
+    required this.comparison,
+    required this.intakeEvaluationContext,
+  });
+
+  final int days;
+  final String timezone;
+  final int feedingCount;
+  final int measuredVolumeCount;
+  final double measuredVolumeMl;
+  final double? averageMeasuredVolumeMl;
+  final Map<FeedingMethod, int> feedingMethodCounts;
+  final Map<MilkSource, double> milkSourceVolumesMl;
+  final DateTime? latestFeedingAt;
+  final CompletedFeedingDays completedDays;
+  final MilkWindowComparison comparison;
+  final IntakeEvaluationContext intakeEvaluationContext;
+}
+
+class CompletedFeedingDays {
+  const CompletedFeedingDays({
+    required this.windowDays,
+    required this.recordedDays,
+    required this.measuredDays,
+    required this.averageVolumePerMeasuredDayMl,
+    required this.averageFeedingsPerRecordedDay,
+    required this.dailySeries,
+  });
+
+  final int windowDays;
+  final int recordedDays;
+  final int measuredDays;
+  final double? averageVolumePerMeasuredDayMl;
+  final double? averageFeedingsPerRecordedDay;
+  final List<FeedingTrendDay> dailySeries;
+}
+
+class FeedingTrendDay {
+  const FeedingTrendDay({
+    required this.date,
+    required this.measuredVolumeMl,
+    required this.feedingCount,
+    required this.measuredFeedingCount,
+  });
+
+  final DateTime date;
+  final double? measuredVolumeMl;
+  final int feedingCount;
+  final int measuredFeedingCount;
+}
+
+class MilkWindowComparison {
+  const MilkWindowComparison({
+    required this.status,
+    required this.currentAverageVolumePerMeasuredDayMl,
+    required this.previousAverageVolumePerMeasuredDayMl,
+    required this.changePercent,
+    required this.currentMeasuredDays,
+    required this.previousMeasuredDays,
+    required this.minimumMeasuredDays,
+  });
+
+  final String status;
+  final double? currentAverageVolumePerMeasuredDayMl;
+  final double? previousAverageVolumePerMeasuredDayMl;
+  final double? changePercent;
+  final int currentMeasuredDays;
+  final int previousMeasuredDays;
+  final int minimumMeasuredDays;
+}
+
+enum IntakeEvaluationStatus {
+  evidenceAvailable('evidence_available'),
+  insufficientData('insufficient_data'),
+  unsupported('unsupported'),
+  dependencyUnavailable('dependency_unavailable');
+
+  const IntakeEvaluationStatus(this.apiValue);
+
+  final String apiValue;
+
+  static IntakeEvaluationStatus tryParse(Object? value) {
+    for (final status in values) {
+      if (status.apiValue == value) return status;
+    }
+    return IntakeEvaluationStatus.insufficientData;
+  }
+}
+
+class IntakeEvaluationContext {
+  const IntakeEvaluationContext({
+    required this.status,
+    required this.reasonCode,
+    required this.growthMeasurementDate,
+    required this.chronologicalAgeDays,
+  });
+
+  final IntakeEvaluationStatus status;
+  final String? reasonCode;
+  final DateTime? growthMeasurementDate;
+  final int? chronologicalAgeDays;
 }

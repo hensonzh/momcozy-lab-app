@@ -117,7 +117,16 @@ void main() {
       () async {
         final records = _FakeRecordsRepository(
           feeding: const [
-            FeedingRecord(id: 'feed-001', type: 'bottle', amountMl: 80),
+            FeedingRecord(
+              id: 'feed-001',
+              feedingMethod: FeedingMethod.bottle,
+              milkComponents: [
+                FeedingMilkComponent(
+                  milkSource: MilkSource.breastMilk,
+                  volumeMl: 80,
+                ),
+              ],
+            ),
           ],
           sleep: [
             SleepRecord(
@@ -147,7 +156,11 @@ void main() {
         await controller.initialize();
 
         expect(controller.overview.value.phase, OverviewResourcePhase.data);
-        expect(controller.feedingRecords.value.data?.single.amountMl, 80);
+        expect(
+          controller.feedingRecords.value.data?.single.measuredVolumeMl,
+          80,
+        );
+        expect(controller.feedingSummary.value.data?.measuredVolumeMl, 175.5);
         expect(
           controller.sleepRecords.value.data?.single.durationSeconds,
           3600,
@@ -250,7 +263,11 @@ void main() {
         addTearDown(controller.dispose);
         await controller.initialize();
 
-        final saved = await controller.saveGrowth(weightKg: 6.4);
+        final saved = await controller.saveGrowth(
+          weightKg: 6.4,
+          measurementPosition: MeasurementPosition.recumbent,
+          measurementContext: MeasurementContext.routine,
+        );
 
         expect(saved, isTrue);
         expect(records.growthCreateCount, 1);
@@ -306,7 +323,11 @@ void main() {
         );
         addTearDown(controller.dispose);
 
-        final saved = await controller.saveGrowth(weightKg: 0);
+        final saved = await controller.saveGrowth(
+          weightKg: 0,
+          measurementPosition: MeasurementPosition.recumbent,
+          measurementContext: MeasurementContext.routine,
+        );
 
         expect(saved, isFalse);
         expect(records.growthCreateCount, 0);
@@ -336,7 +357,11 @@ void main() {
         addTearDown(controller.dispose);
         await controller.initialize();
 
-        final saved = await controller.saveGrowth(heightCm: 65);
+        final saved = await controller.saveGrowth(
+          heightCm: 65,
+          measurementPosition: MeasurementPosition.recumbent,
+          measurementContext: MeasurementContext.routine,
+        );
 
         expect(saved, isTrue);
         expect(records.growthCreateCount, 0);
@@ -385,8 +410,8 @@ void main() {
       await controller.initialize();
 
       expect(records.feedingBabyId, 'baby-001');
-      expect(records.feedingRangeStart, DateTime(2026, 7, 6));
-      expect(records.feedingRangeEnd, DateTime(2026, 7, 13));
+      expect(records.feedingDays, 1);
+      expect(records.feedingSummaryFetchCount, 1);
     });
 
     test(
@@ -405,7 +430,11 @@ void main() {
         addTearDown(controller.dispose);
 
         await controller.initialize();
-        await controller.saveGrowthRecord(weightKg: 6.2);
+        await controller.saveGrowthRecord(
+          weightKg: 6.2,
+          measurementPosition: MeasurementPosition.recumbent,
+          measurementContext: MeasurementContext.routine,
+        );
 
         expect(records.feedingBabyId, 'baby-resolved');
         expect(records.createdGrowthBabyId, 'baby-resolved');
@@ -419,13 +448,14 @@ void main() {
       await controller.initialize();
 
       final saved = await controller.savePumpingRecord(
-        amountMl: 95,
-        breastSide: BreastSide.left,
+        outputs: const [
+          PumpingOutput(breastSide: PumpingSide.left, volumeMl: 95),
+        ],
       );
 
       expect(saved, isTrue);
       expect(records.createdPumpingAmountMl, 95);
-      expect(records.createdPumpingBreastSide, BreastSide.left);
+      expect(records.createdPumpingOutputs.single.breastSide, PumpingSide.left);
       expect(records.milkTrendFetchCount, 2);
       expect(controller.recordMutation.value.isSaving, isFalse);
       expect(controller.recordMutation.value.error, isNull);
@@ -441,14 +471,17 @@ void main() {
       await controller.initialize();
 
       final saved = await controller.saveFeedingRecord(
-        type: 'bottle',
-        amountMl: 80,
+        feedingMethod: FeedingMethod.bottle,
+        milkComponents: const [
+          FeedingMilkComponent(milkSource: MilkSource.breastMilk, volumeMl: 80),
+        ],
       );
 
       expect(saved, isTrue);
       expect(records.createdFeedingBabyId, 'baby-001');
       expect(records.createdFeedingAmountMl, 80);
       expect(records.feedingFetchCount, 2);
+      expect(records.feedingSummaryFetchCount, 2);
     });
 
     test('saving a growth record refreshes growth data', () async {
@@ -460,12 +493,17 @@ void main() {
       addTearDown(controller.dispose);
       await controller.initialize();
 
-      final saved = await controller.saveGrowthRecord(weightKg: 6.3);
+      final saved = await controller.saveGrowthRecord(
+        weightKg: 6.3,
+        measurementPosition: MeasurementPosition.recumbent,
+        measurementContext: MeasurementContext.routine,
+      );
 
       expect(saved, isTrue);
       expect(records.createdGrowthBabyId, 'baby-001');
       expect(records.createdGrowthWeightKg, 6.3);
       expect(records.growthFetchCount, 2);
+      expect(records.feedingSummaryFetchCount, 2);
     });
 
     test('saving infant sleep and diaper records keeps infant scope', () async {
@@ -561,6 +599,7 @@ ProfileOverviewController _controller({
     babyId: 'baby-001',
     identity: identity,
     cache: cache,
+    timezoneProvider: () async => 'Asia/Shanghai',
     now: now ?? () => DateTime(2026, 7, 11, 10),
   );
 }
@@ -682,7 +721,8 @@ class _FakeRecordsRepository
   String? createdSleepBabyId;
   String? createdDiaperBabyId;
   double? createdPumpingAmountMl;
-  BreastSide? createdPumpingBreastSide;
+  List<PumpingOutput> createdPumpingOutputs = const [];
+  var feedingSummaryFetchCount = 0;
   double? createdWaterAmountMl;
   double? createdVitalWeightKg;
   int? createdVitalHeartRateBpm;
@@ -720,19 +760,33 @@ class _FakeRecordsRepository
   Future<FeedingRecord> createFeedingRecord({
     required String babyId,
     required DateTime occurredAt,
-    required String type,
-    double? amountMl,
+    required FeedingMethod feedingMethod,
+    required List<FeedingMilkComponent> milkComponents,
     int? durationSeconds,
     String? idempotencyKey,
   }) async {
     createdFeedingBabyId = babyId;
-    createdFeedingAmountMl = amountMl;
+    createdFeedingAmountMl = milkComponents
+        .map((component) => component.volumeMl)
+        .whereType<double>()
+        .fold<double>(0, (sum, value) => sum + value);
     return FeedingRecord(
       id: 'feeding-created',
-      type: type,
-      amountMl: amountMl?.round(),
+      feedingMethod: feedingMethod,
+      milkComponents: milkComponents,
+      durationSeconds: durationSeconds,
       occurredAt: occurredAt,
     );
+  }
+
+  @override
+  Future<FeedingSummary> fetchFeedingSummary({
+    required String babyId,
+    required int days,
+    required String timezone,
+  }) async {
+    feedingSummaryFetchCount += 1;
+    return _feedingSummary();
   }
 
   @override
@@ -749,19 +803,21 @@ class _FakeRecordsRepository
   @override
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
-    double? amountMl,
-    BreastSide? breastSide,
+    required List<PumpingOutput> outputs,
     int? durationSeconds,
     String? idempotencyKey,
   }) async {
-    createdPumpingAmountMl = amountMl;
-    createdPumpingBreastSide = breastSide;
+    createdPumpingAmountMl = outputs
+        .map((output) => output.volumeMl)
+        .whereType<double>()
+        .fold<double>(0, (sum, value) => sum + value);
+    createdPumpingOutputs = outputs;
     return PumpMilkRecord(
       id: 'pumping-created',
       pumpType: 'manual',
-      amountMl: amountMl?.round(),
+      outputs: outputs,
+      durationSeconds: durationSeconds,
       occurredAt: occurredAt,
-      breastSide: breastSide,
     );
   }
 
@@ -907,8 +963,9 @@ class _FakeRecordsRepository
     return [
       MilkTrendDay(
         date: DateTime(2026, 7, 11),
-        pumpedMilkVolumeMl: 120,
+        measuredVolumeMl: 120,
         pumpingCount: 2,
+        measuredPumpingCount: 2,
       ),
     ];
   }
@@ -929,6 +986,8 @@ class _FakeRecordsRepository
     double? weightKg,
     double? heightCm,
     double? headCm,
+    required MeasurementPosition measurementPosition,
+    required MeasurementContext measurementContext,
     String? idempotencyKey,
   }) async {
     growthCreateCount += 1;
@@ -943,6 +1002,8 @@ class _FakeRecordsRepository
       heightCm: heightCm,
       headCm: headCm,
       measuredAt: measuredAt,
+      measurementPosition: measurementPosition,
+      measurementContext: measurementContext,
     );
   }
 
@@ -952,6 +1013,8 @@ class _FakeRecordsRepository
     double? weightKg,
     double? heightCm,
     double? headCm,
+    MeasurementPosition? measurementPosition,
+    MeasurementContext? measurementContext,
   }) async {
     growthUpdateCount += 1;
     savedWeightKg = weightKg;
@@ -963,6 +1026,56 @@ class _FakeRecordsRepository
       heightCm: heightCm,
       headCm: headCm,
       measuredAt: DateTime(2026, 7, 11, 10),
+      measurementPosition: measurementPosition ?? MeasurementPosition.recumbent,
+      measurementContext: measurementContext ?? MeasurementContext.routine,
     );
   }
 }
+
+FeedingSummary _feedingSummary() => FeedingSummary(
+  days: 7,
+  timezone: 'Asia/Shanghai',
+  feedingCount: 3,
+  measuredVolumeCount: 2,
+  measuredVolumeMl: 175.5,
+  averageMeasuredVolumeMl: 87.75,
+  feedingMethodCounts: const {
+    FeedingMethod.bottle: 2,
+    FeedingMethod.directBreastfeeding: 1,
+  },
+  milkSourceVolumesMl: const {
+    MilkSource.breastMilk: 95.5,
+    MilkSource.formula: 80,
+  },
+  latestFeedingAt: DateTime.parse('2026-07-02T08:00:00Z'),
+  completedDays: CompletedFeedingDays(
+    windowDays: 1,
+    recordedDays: 0,
+    measuredDays: 0,
+    averageVolumePerMeasuredDayMl: null,
+    averageFeedingsPerRecordedDay: null,
+    dailySeries: [
+      FeedingTrendDay(
+        date: DateTime(2026, 7, 1),
+        measuredVolumeMl: null,
+        feedingCount: 0,
+        measuredFeedingCount: 0,
+      ),
+    ],
+  ),
+  comparison: const MilkWindowComparison(
+    status: 'insufficient_data',
+    currentAverageVolumePerMeasuredDayMl: null,
+    previousAverageVolumePerMeasuredDayMl: null,
+    changePercent: null,
+    currentMeasuredDays: 0,
+    previousMeasuredDays: 0,
+    minimumMeasuredDays: 5,
+  ),
+  intakeEvaluationContext: const IntakeEvaluationContext(
+    status: IntakeEvaluationStatus.insufficientData,
+    reasonCode: 'growth_record_missing',
+    growthMeasurementDate: null,
+    chronologicalAgeDays: null,
+  ),
+);

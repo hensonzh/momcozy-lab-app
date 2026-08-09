@@ -7,6 +7,7 @@ enum ProfileOverviewResourceKey {
   overview,
   maternalCareOverview,
   feeding,
+  feedingSummary,
   milkTrends,
   waterRecords,
   waterTrends,
@@ -33,6 +34,7 @@ class ProfileOverviewCachePolicy {
     this.overviewTtl = const Duration(minutes: 5),
     this.maternalCareOverviewTtl = const Duration(minutes: 2),
     this.feedingTtl = const Duration(seconds: 30),
+    this.feedingSummaryTtl = const Duration(seconds: 30),
     this.milkTrendsTtl = const Duration(minutes: 2),
     this.waterRecordsTtl = const Duration(seconds: 30),
     this.waterTrendsTtl = const Duration(minutes: 2),
@@ -46,6 +48,7 @@ class ProfileOverviewCachePolicy {
   final Duration overviewTtl;
   final Duration maternalCareOverviewTtl;
   final Duration feedingTtl;
+  final Duration feedingSummaryTtl;
   final Duration milkTrendsTtl;
   final Duration waterRecordsTtl;
   final Duration waterTrendsTtl;
@@ -61,6 +64,7 @@ class ProfileOverviewCachePolicy {
       ProfileOverviewResourceKey.maternalCareOverview =>
         maternalCareOverviewTtl,
       ProfileOverviewResourceKey.feeding => feedingTtl,
+      ProfileOverviewResourceKey.feedingSummary => feedingSummaryTtl,
       ProfileOverviewResourceKey.milkTrends => milkTrendsTtl,
       ProfileOverviewResourceKey.waterRecords => waterRecordsTtl,
       ProfileOverviewResourceKey.waterTrends => waterTrendsTtl,
@@ -82,6 +86,7 @@ class ProfileOverviewCache {
   OverviewCacheEntry<ProfileOverview>? overview;
   OverviewCacheEntry<MaternalCareOverview>? maternalCareOverview;
   OverviewCacheEntry<List<FeedingRecord>>? feedingRecords;
+  OverviewCacheEntry<FeedingSummary>? feedingSummary;
   OverviewCacheEntry<List<MilkTrendDay>>? milkTrends;
   OverviewCacheEntry<List<WaterIntakeRecord>>? waterRecords;
   OverviewCacheEntry<List<WaterTrendDay>>? waterTrends;
@@ -99,6 +104,7 @@ class ProfileOverviewCache {
     overview = null;
     maternalCareOverview = null;
     feedingRecords = null;
+    feedingSummary = null;
     milkTrends = null;
     waterRecords = null;
     waterTrends = null;

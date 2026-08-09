@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
@@ -58,6 +59,9 @@ const _defaultLocale = String.fromEnvironment(
   defaultValue: 'zh-CN',
 );
 
+Future<String> _deviceTimezone() async =>
+    (await FlutterTimezone.getLocalTimezone()).identifier;
+
 class MomCozyApiRuntime {
   MomCozyApiRuntime({
     required this.jsonTransport,
@@ -82,6 +86,7 @@ class MomCozyApiRuntime {
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
     DateTime Function()? now,
+    Future<String> Function()? timezoneProvider,
     this.supportsSessionAutoRefresh = false,
     this._currentSessionProvider,
     this.agentStreamUnauthorizedHandler,
@@ -115,7 +120,8 @@ class MomCozyApiRuntime {
                userId: session?.userId ?? userId ?? _defaultUserId,
              ),
            ),
-       now = now ?? DateTime.now {
+       now = now ?? DateTime.now,
+       timezoneProvider = timezoneProvider ?? _deviceTimezone {
     unawaited(this.hospitalBagCartStore.restore().then<void>((_) {}));
     this.ibclcConsultStore =
         ibclcConsultStore ??
@@ -359,6 +365,7 @@ class MomCozyApiRuntime {
   late final IbclcConsultStore ibclcConsultStore;
   late final ProfileOverviewCache profileOverviewCache;
   final DateTime Function() now;
+  final Future<String> Function() timezoneProvider;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
   final MomCozySession Function()? _currentSessionProvider;
@@ -521,6 +528,7 @@ class MomCozyApiRuntime {
             ),
       babyId: selectedBabyId,
       identity: initialIdentity,
+      timezoneProvider: timezoneProvider,
       now: now,
     );
   }

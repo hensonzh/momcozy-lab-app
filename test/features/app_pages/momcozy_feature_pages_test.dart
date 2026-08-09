@@ -2002,33 +2002,30 @@ MomCozyApiRuntime _appRuntime({
           },
           planListEndpoint: const <String, Object?>{'items': <Object?>[]},
           pumpMilkRecordsEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'pump_milk_list': <Object?>[
-                <String, Object?>{
-                  'pump_id': 7001,
-                  'pump_type': 0,
-                  'pump_source': 0,
-                  'pump_time': '2026-07-01T02:40:00Z',
-                  'pump_title': '晨间泵奶',
-                  'pump_milk_volum': 120,
-                },
-              ],
-            },
+            'items': <Object?>[
+              <String, Object?>{
+                'id': 'pumping-7001',
+                'pump_type': 'manual',
+                'pump_start_time': '2026-07-01T02:40:00Z',
+                'outputs': <Object?>[
+                  <String, Object?>{'breast_side': 'left', 'volume_ml': 120},
+                ],
+              },
+            ],
           },
           milkTrendsEndpoint: const <String, Object?>{
             'items': <Object?>[
               <String, Object?>{
                 'date': '2026-06-30',
-                'pumped_milk_volume_ml': 110,
+                'measured_volume_ml': 110,
                 'pumping_count': 2,
-                'measured_only': true,
+                'measured_pumping_count': 2,
               },
               <String, Object?>{
                 'date': '2026-07-01',
-                'pumped_milk_volume_ml': 120,
+                'measured_volume_ml': 120,
                 'pumping_count': 1,
-                'measured_only': true,
+                'measured_pumping_count': 1,
               },
             ],
             'days': 31,
@@ -2038,12 +2035,19 @@ MomCozyApiRuntime _appRuntime({
             'items': <Object?>[
               <String, Object?>{
                 'id': 'feeding-1001',
-                'feed_type': 'breast_milk',
-                'volume_ml': 80,
+                'infant_id': 'demo-baby-fixture',
+                'feeding_method': 'bottle',
+                'milk_components': <Object?>[
+                  <String, Object?>{
+                    'milk_source': 'breast_milk',
+                    'volume_ml': 80,
+                  },
+                ],
                 'feed_time': '2026-07-01T06:00:00Z',
               },
             ],
           },
+          feedingSummaryEndpoint: _appPageFeedingSummary(),
           growthRecordsEndpoint: const <String, Object?>{
             'items': <Object?>[
               <String, Object?>{
@@ -2051,6 +2055,8 @@ MomCozyApiRuntime _appRuntime({
                 'weight_kg': 6.2,
                 'height_cm': 64.5,
                 'head_cm': 42,
+                'measurement_position': 'recumbent',
+                'measurement_context': 'routine',
                 'measured_at': '2026-07-01T12:00:00Z',
               },
             ],
@@ -2058,6 +2064,8 @@ MomCozyApiRuntime _appRuntime({
             'weight_kg': 6.2,
             'height_cm': 64.5,
             'head_cm': 42,
+            'measurement_position': 'recumbent',
+            'measurement_context': 'routine',
             'measured_at': '2026-07-01T12:00:00Z',
           },
           '$growthRecordsEndpoint/growth-1001': const <String, Object?>{
@@ -2065,6 +2073,8 @@ MomCozyApiRuntime _appRuntime({
             'weight_kg': 6.2,
             'height_cm': 64.5,
             'head_cm': 42,
+            'measurement_position': 'recumbent',
+            'measurement_context': 'routine',
             'measured_at': '2026-07-01T12:00:00Z',
           },
           pumpWorkstateEndpoint: const <String, Object?>{
@@ -2107,8 +2117,59 @@ MomCozyApiRuntime _appRuntime({
     babyId: 'demo-baby-fixture',
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7),
+    timezoneProvider: () async => 'UTC',
   );
 }
+
+Map<String, Object?> _appPageFeedingSummary() => <String, Object?>{
+  'days': 7,
+  'timezone': 'UTC',
+  'feeding_count': 1,
+  'measured_volume_count': 1,
+  'measured_volume_ml': 80,
+  'average_measured_volume_ml': 80,
+  'feeding_method_counts': <String, Object?>{'bottle': 1},
+  'milk_source_volumes_ml': <String, Object?>{'breast_milk': 80},
+  'latest_feeding_at': '2026-07-01T06:00:00Z',
+  'completed_days': <String, Object?>{
+    'window_days': 6,
+    'recorded_days': 1,
+    'measured_days': 1,
+    'average_volume_per_measured_day_ml': 80,
+    'average_feedings_per_recorded_day': 1,
+    'daily_series': <Object?>[
+      for (final date in <String>[
+        '2026-06-25',
+        '2026-06-26',
+        '2026-06-27',
+        '2026-06-28',
+        '2026-06-29',
+        '2026-06-30',
+      ])
+        <String, Object?>{
+          'date': date,
+          'measured_volume_ml': date == '2026-06-30' ? 80 : null,
+          'feeding_count': date == '2026-06-30' ? 1 : 0,
+          'measured_feeding_count': date == '2026-06-30' ? 1 : 0,
+        },
+    ],
+  },
+  'comparison': <String, Object?>{
+    'status': 'insufficient_data',
+    'current_average_volume_per_measured_day_ml': 80,
+    'previous_average_volume_per_measured_day_ml': null,
+    'change_percent': null,
+    'current_measured_days': 1,
+    'previous_measured_days': 0,
+    'minimum_measured_days': 5,
+  },
+  'intake_evaluation_context': <String, Object?>{
+    'status': 'insufficient_data',
+    'reason_code': 'growth_record_missing',
+    'growth_measurement_date': null,
+    'chronological_age_days': null,
+  },
+};
 
 final _onePixelPng = base64Decode(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
