@@ -86,7 +86,7 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
       AvatarTaskStatus.completed => 'Your choice is now active',
       AvatarTaskStatus.hidden => '',
     };
-    final actionable = !completed;
+    final actionable = ready || failed;
 
     return Semantics(
       liveRegion: ready || failed || completed,

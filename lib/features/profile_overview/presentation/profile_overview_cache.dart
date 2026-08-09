@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
@@ -77,7 +78,7 @@ class ProfileOverviewCachePolicy {
   }
 }
 
-class ProfileOverviewCache {
+class ProfileOverviewCache extends ChangeNotifier {
   ProfileOverviewCache({required this.ownerUserId, required this.babyId});
 
   final String ownerUserId;
@@ -98,6 +99,11 @@ class ProfileOverviewCache {
 
   bool matches({required String ownerUserId, required String babyId}) {
     return this.ownerUserId == ownerUserId && this.babyId == babyId;
+  }
+
+  void invalidateOverview() {
+    overview = null;
+    notifyListeners();
   }
 
   void clear() {

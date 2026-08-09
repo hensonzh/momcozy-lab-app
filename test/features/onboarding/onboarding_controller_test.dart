@@ -122,13 +122,16 @@ void main() {
           ),
         ),
       );
+      var avatarActivationCount = 0;
       final controller = OnboardingController(
         runtimeController: runtimeController,
+        onAvatarActivated: () => avatarActivationCount += 1,
       );
 
       await controller.load();
 
       expect(controller.requiresOnboardingFor('avatar-review-user'), isFalse);
+      expect(avatarActivationCount, 0);
       expect(transport.postedBodies, isEmpty);
       expect(controller.hasAvatarSelection, isFalse);
 
@@ -140,6 +143,7 @@ void main() {
       expect(controller.hasAvatarSelection, isTrue);
       expect(controller.defaultAvatarSelected, isFalse);
       expect(await controller.confirmAvatarSelection(), isTrue);
+      expect(avatarActivationCount, 1);
       expect(transport.lastBody, {
         'avatar_candidate_id': 'candidate-2',
         'use_default_avatar': false,

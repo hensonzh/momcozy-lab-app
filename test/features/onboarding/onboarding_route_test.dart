@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -522,10 +524,17 @@ void main() {
         runtimeController: runtimeController,
       );
       await onboardingController.load();
+      var firstCandidateAttempts = 0;
       final router = createMomCozyRouter(
         initialLocation: '/onboarding',
         runtimeController: runtimeController,
         onboardingController: onboardingController,
+        avatarThumbnailLoader: (fileId) async {
+          if (fileId == candidateIds.first && firstCandidateAttempts++ == 0) {
+            throw StateError('thumbnail temporarily unavailable');
+          }
+          return _onePixelPng;
+        },
       );
 
       await tester.pumpWidget(
@@ -549,12 +558,27 @@ void main() {
       );
       expect(confirm.onPressed, isNull);
 
-      final secondCandidate = find.byKey(
-        const ValueKey('onboarding-avatar-candidate-2'),
+      final firstCandidate = find.byKey(
+        const ValueKey('onboarding-avatar-candidate-1'),
       );
-      await tester.ensureVisible(secondCandidate);
-      await tester.pump(const Duration(milliseconds: 300));
-      await tester.tap(secondCandidate);
+      await tester.ensureVisible(firstCandidate);
+      await tester.tap(firstCandidate);
+      await tester.pump();
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Continue with this avatar'),
+            )
+            .onPressed,
+        isNull,
+      );
+      final retryImage = find.byKey(
+        ValueKey('onboarding-avatar-image-retry-${candidateIds.first}'),
+      );
+      expect(retryImage, findsOneWidget);
+      await tester.tap(retryImage);
+      await tester.pumpAndSettle();
+      await tester.tap(firstCandidate);
       await tester.pump();
       final enabledConfirm = tester.widget<FilledButton>(
         find.widgetWithText(FilledButton, 'Continue with this avatar'),
@@ -573,9 +597,15 @@ void main() {
     final responses = <String, Map<String, Object?>>{
       onboardingMeEndpoint: _shellGeneratingState,
     };
+    final transport = FixtureApiJsonTransportByPath(
+      responses,
+      writeResponsesByPath: {
+        '$onboardingMeEndpoint/complete': _shellCompletedState,
+      },
+    );
     final runtimeController = MomCozyRuntimeController(
       MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransportByPath(responses),
+        jsonTransport: transport,
         multipartTransport: FixtureApiMultipartTransport(const {}),
         session: const MomCozySession(
           status: MomCozySessionStatus.authenticated,
@@ -593,11 +623,13 @@ void main() {
     final taskController = AvatarTaskController(
       onboardingController: onboardingController,
       pollInterval: const Duration(days: 1),
+      completionDisplayDuration: const Duration(minutes: 1),
     );
     final router = createMomCozyRouter(
       runtimeController: runtimeController,
       onboardingController: onboardingController,
       avatarTaskController: taskController,
+      avatarThumbnailLoader: (_) async => _onePixelPng,
       agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) =>
           const Center(child: Text('App content')),
     );
@@ -612,6 +644,15 @@ void main() {
     expect(find.byKey(const ValueKey('avatar-task-banner')), findsOneWidget);
     expect(find.text('Creating your digital companion'), findsOneWidget);
     expect(find.byKey(const ValueKey('bottom-nav-me')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('avatar-task-banner')));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('App content'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('onboarding-avatar-generation-waiting')),
+      findsNothing,
+    );
 
     responses[onboardingMeEndpoint] = _shellReviewState;
     await taskController.refresh();
@@ -629,7 +670,34 @@ void main() {
       find.byKey(const ValueKey('onboarding-avatar-back')),
       findsOneWidget,
     );
+    expect(find.text('5/5'), findsNothing);
     expect(find.byKey(const ValueKey('bottom-nav-me')), findsNothing);
+
+    final firstCandidate = find.byKey(
+      const ValueKey('onboarding-avatar-candidate-1'),
+    );
+    await tester.ensureVisible(firstCandidate);
+    await tester.tap(firstCandidate);
+    await tester.pump();
+    final confirm = find.widgetWithText(
+      FilledButton,
+      'Continue with this avatar',
+    );
+    await tester.ensureVisible(confirm);
+    await tester.tap(confirm);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(
+      find.byKey(const ValueKey('avatar-activation-success')),
+      findsOneWidget,
+    );
+    expect(find.text('Create your digital companion'), findsNothing);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('App content'), findsOneWidget);
+    expect(find.text('Your digital companion is set'), findsOneWidget);
 
     router.dispose();
     taskController.dispose();
@@ -693,3 +761,17 @@ const _shellReviewState = <String, Object?>{
     ],
   },
 };
+
+const _shellCompletedState = <String, Object?>{
+  'status': 'completed',
+  'current_step': 'done',
+  'current_stage': 'postpartum',
+  'profile_confirmed': true,
+  'can_enter_app': true,
+  'avatar_setup_completed': true,
+  'selected_avatar_file_id': '00000000-0000-4000-8000-000000000001',
+};
+
+final _onePixelPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+);

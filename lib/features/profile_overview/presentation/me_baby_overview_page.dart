@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_ca
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 
 part 'baby_overview_components.dart';
 part 'me_stage_components.dart';
@@ -56,6 +57,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   _BabyDetail? _babyDetail;
   MomCozyApiRuntime? _runtime;
   ProfileOverviewController? _overviewController;
+  ProfileOverviewCache? _overviewCache;
 
   @override
   void initState() {
@@ -101,6 +103,8 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
 
   void _attachOverviewController(MomCozyApiRuntime runtime) {
     _detachOverviewController();
+    _overviewCache = runtime.profileOverviewCache
+      ..addListener(_handleProfileOverviewInvalidated);
     final controller = runtime.createProfileOverviewController(
       initialIdentity: widget.identity,
     );
@@ -124,6 +128,8 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   }
 
   void _detachOverviewController() {
+    _overviewCache?.removeListener(_handleProfileOverviewInvalidated);
+    _overviewCache = null;
     final controller = _overviewController;
     if (controller == null) return;
     for (final resource in _overviewResources(controller)) {
@@ -131,6 +137,12 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     }
     controller.dispose();
     _overviewController = null;
+  }
+
+  void _handleProfileOverviewInvalidated() {
+    final controller = _overviewController;
+    if (!mounted || controller == null) return;
+    unawaited(controller.refresh());
   }
 
   Iterable<Listenable> _overviewResources(

@@ -13,6 +13,7 @@ class OnboardingController extends ChangeNotifier {
   OnboardingController({
     required this.runtimeController,
     this.onPrimaryInfantSelected,
+    this.onAvatarActivated,
     this.releasePolicy = const NoopOnboardingReleasePolicy(),
   }) {
     runtimeController.addListener(_handleRuntimeChanged);
@@ -21,6 +22,7 @@ class OnboardingController extends ChangeNotifier {
 
   final MomCozyRuntimeController runtimeController;
   final Future<void> Function(String infantId)? onPrimaryInfantSelected;
+  final VoidCallback? onAvatarActivated;
   final OnboardingReleasePolicy releasePolicy;
   OnboardingGatePhase _phase = OnboardingGatePhase.idle;
   OnboardingState? _state;
@@ -179,6 +181,12 @@ class OnboardingController extends ChangeNotifier {
       _phase = OnboardingGatePhase.ready;
     });
     if (!succeeded) return false;
+    try {
+      onAvatarActivated?.call();
+    } catch (_) {
+      // The server selection is authoritative; local projections can refresh
+      // again when their page is next opened.
+    }
     final infantId = _state?.primaryInfantId;
     if (infantId != null && infantId.isNotEmpty) {
       try {
