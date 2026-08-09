@@ -4737,15 +4737,16 @@
             "title": "Age",
             "type": "integer"
           },
+          "current_gestational_week": {
+            "maximum": 40.0,
+            "minimum": 1.0,
+            "title": "Current Gestational Week",
+            "type": "integer"
+          },
           "display_name": {
             "maxLength": 120,
             "minLength": 1,
             "title": "Display Name",
-            "type": "string"
-          },
-          "expected_due_date": {
-            "format": "date",
-            "title": "Expected Due Date",
             "type": "string"
           },
           "expected_infant_count": {
@@ -4765,7 +4766,7 @@
           "display_name",
           "age",
           "stage",
-          "expected_due_date"
+          "current_gestational_week"
         ],
         "title": "PregnancyOnboardingProfile",
         "type": "object"
