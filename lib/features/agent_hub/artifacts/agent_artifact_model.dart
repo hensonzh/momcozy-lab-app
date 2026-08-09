@@ -76,6 +76,7 @@ enum AgentArtifactPresentationKind {
   hospitalBagCard,
   hospitalBagCart,
   ibclcConsultCard,
+  motionAssessmentCard,
   richText,
   generic,
   unsupported,
