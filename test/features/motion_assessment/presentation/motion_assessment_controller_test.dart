@@ -16,7 +16,7 @@ import 'package:momcozy_flutter_app/features/motion_assessment/presentation/moti
 
 void main() {
   test(
-    'does not start camera or voice when closed while session is being created',
+    'starts local camera before session creation completes and never starts voice after close',
     () async {
       final createCompleter = Completer<MotionAssessmentSession>();
       final repository = _FakeRepository(createCompleter: createCompleter);
@@ -31,16 +31,46 @@ void main() {
       );
 
       final start = controller.start();
-      await _flush();
+      while (repository.createCalls == 0) {
+        await _flush();
+      }
       expect(repository.createCalls, 1);
+      expect(pose.startCalls, 1);
 
       await controller.finish();
       createCompleter.complete(_session());
       await start;
 
-      expect(pose.startCalls, 0);
+      expect(pose.startCalls, 1);
       expect(voice.connectCalls, 0);
       expect(repository.updatedStatuses, ['cancelled']);
+    },
+  );
+
+  test(
+    'keeps local camera and screen guidance when session creation fails',
+    () async {
+      final repository = _FakeRepository(
+        createError: StateError('backend unavailable'),
+      );
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+      );
+
+      await controller.start();
+
+      expect(pose.startCalls, 1);
+      expect(controller.phase, MotionAssessmentPagePhase.calibrating);
+      expect(controller.guidance, contains('屏幕提示'));
+      expect(voice.connectCalls, 0);
+
+      await controller.finish();
     },
   );
 
@@ -90,7 +120,7 @@ void main() {
 
     expect(pose.startCalls, 1);
     expect(controller.phase, MotionAssessmentPagePhase.calibrating);
-    expect(controller.guidance, contains('屏幕提示'));
+    expect(controller.voiceStatusMessage, contains('屏幕提示'));
 
     await controller.finish();
   });
@@ -139,6 +169,38 @@ void main() {
       );
       expect(completed.resultSummary?['analyzer_version'], isNotEmpty);
       expect(completed.resultSummary?['threshold_version'], isNotEmpty);
+    },
+  );
+
+  testWidgets(
+    'shows active local camera and realtime voice fallback on screen',
+    (tester) async {
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: _FakeRepository(immediateSession: _session()),
+        posePlatform: _FakePosePlatform(),
+        voice: _FakeVoice(connectError: StateError('voice unavailable')),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MotionAssessmentPage(
+            controllerIdentity: 'voice-fallback',
+            controllerFactory: () => controller,
+            previewBuilder: (_) => const ColoredBox(color: Colors.black),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.textContaining('相机已开启'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('motion-assessment-voice-status')),
+        findsOneWidget,
+      );
+      expect(find.textContaining('屏幕提示'), findsOneWidget);
     },
   );
 
@@ -210,10 +272,15 @@ MotionAssessmentSession _session() {
 }
 
 class _FakeRepository implements MotionAssessmentRepository {
-  _FakeRepository({this.createCompleter, this.immediateSession});
+  _FakeRepository({
+    this.createCompleter,
+    this.immediateSession,
+    this.createError,
+  });
 
   final Completer<MotionAssessmentSession>? createCompleter;
   final MotionAssessmentSession? immediateSession;
+  final Object? createError;
   int createCalls = 0;
   final List<String> createdSourceArtifactIds = [];
   final List<String> updatedStatuses = [];
@@ -229,6 +296,8 @@ class _FakeRepository implements MotionAssessmentRepository {
   }) {
     createCalls += 1;
     createdSourceArtifactIds.add(sourceArtifactId);
+    final error = createError;
+    if (error != null) return Future<MotionAssessmentSession>.error(error);
     return createCompleter?.future ?? Future.value(immediateSession!);
   }
 

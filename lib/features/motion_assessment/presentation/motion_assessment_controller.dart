@@ -56,6 +56,8 @@ class MotionAssessmentController extends ChangeNotifier {
   bool _disposed = false;
   bool _resultReported = false;
   bool _exitRequested = false;
+  bool _cameraStarted = false;
+  String? _voiceStatusMessage;
   int _contextSequence = 0;
   int _totalFrames = 0;
   int _acceptedFrames = 0;
@@ -77,6 +79,8 @@ class MotionAssessmentController extends ChangeNotifier {
   int get personCount => _observation?.poses.length ?? 0;
   MotionRealtimeVoicePhase get voicePhase => voice.phase;
   bool get exitRequested => _exitRequested;
+  bool get cameraStarted => _cameraStarted;
+  String? get voiceStatusMessage => _voiceStatusMessage;
 
   Future<void> start() async {
     if (_started || _closed) return;
@@ -85,51 +89,73 @@ class MotionAssessmentController extends ChangeNotifier {
     _voiceCommandSubscription = voice.commands.listen(
       (command) => unawaited(_handleVoiceCommand(command)),
     );
+    _guidance = '正在请求摄像头权限…';
+    notifyListeners();
     try {
       final cameraGranted = await posePlatform.requestCameraPermission();
       if (_closed) return;
       if (!cameraGranted) {
         throw StateError('需要摄像头权限才能进行动态姿态评估。');
       }
-      final createdSession = await repository.create(
-        target: target,
-        poseEngine: posePlatform.engineName,
-        sourceArtifactId: sourceArtifactId,
-        locale: locale,
-      );
-      if (_closed) {
-        await _cancelCreatedSession(createdSession);
-        return;
-      }
-      _session = createdSession;
       _poseSubscription = posePlatform.observations.listen(
         _onObservation,
         onError: _onPoseError,
       );
+      _guidance = '正在打开相机并加载端侧姿态识别…';
+      notifyListeners();
       await posePlatform.start();
       if (_closed) {
         await posePlatform.stop();
         return;
       }
+      _cameraStarted = true;
       _phase = MotionAssessmentPagePhase.calibrating;
       _guidance = '请后退一些，让全身完整进入画面';
       notifyListeners();
-      unawaited(
-        voice
-            .connect(assessmentId: _session!.id)
-            .then((_) => voice.speak('请后退一些，让全身完整进入画面'))
-            .catchError((Object _) {
-              if (_closed) return;
-              _guidance = '实时语音暂未连接，请根据屏幕提示调整站位';
-              notifyListeners();
-            }),
-      );
-      await _updateSession(status: 'active');
     } catch (error) {
       if (_closed) return;
+      _cameraStarted = false;
       _phase = MotionAssessmentPagePhase.failed;
       _errorMessage = _friendlyError(error);
       _guidance = _errorMessage!;
+      notifyListeners();
+      return;
+    }
+
+    late final MotionAssessmentSession createdSession;
+    try {
+      createdSession = await repository.create(
+        target: target,
+        poseEngine: posePlatform.engineName,
+        sourceArtifactId: sourceArtifactId,
+        locale: locale,
+      );
+    } catch (_) {
+      if (_closed) return;
+      _voiceStatusMessage = '实时语音暂不可用，本地评估仍可继续';
+      _guidance = '云端评估服务暂未连接，请根据屏幕提示继续调整站位';
+      notifyListeners();
+      return;
+    }
+    if (_closed) {
+      await _cancelCreatedSession(createdSession);
+      return;
+    }
+    _session = createdSession;
+    unawaited(_connectVoice(createdSession.id));
+    await _updateSession(status: 'active');
+  }
+
+  Future<void> _connectVoice(String assessmentId) async {
+    try {
+      await voice.connect(assessmentId: assessmentId);
+      if (_closed) return;
+      _voiceStatusMessage = null;
+      final instruction = _forwardHeadResult?.userMessage ?? _guidance;
+      await voice.speak(instruction);
+    } catch (_) {
+      if (_closed) return;
+      _voiceStatusMessage = '实时语音暂未连接，请根据屏幕提示继续';
       notifyListeners();
     }
   }
@@ -585,6 +611,7 @@ class MotionAssessmentController extends ChangeNotifier {
   Future<void> finish({bool completed = false}) async {
     if (_closed) return;
     _closed = true;
+    _cameraStarted = false;
     final poseStop = _stopPosePlatform();
     final voiceStop = voice.close();
     await _poseSubscription?.cancel();
@@ -638,11 +665,18 @@ class MotionAssessmentController extends ChangeNotifier {
   }
 
   void _onVoiceChanged() {
-    if (!_closed) notifyListeners();
+    if (_closed) return;
+    if (voice.isConnected) {
+      _voiceStatusMessage = null;
+    } else if (voice.phase == MotionRealtimeVoicePhase.failed) {
+      _voiceStatusMessage ??= '实时语音暂未连接，请根据屏幕提示继续';
+    }
+    notifyListeners();
   }
 
   void _onPoseError(Object error, StackTrace stackTrace) {
     if (_closed) return;
+    _cameraStarted = false;
     _phase = MotionAssessmentPagePhase.failed;
     _errorMessage = '端侧姿态识别暂时不可用，请退出后重试。';
     _guidance = _errorMessage!;

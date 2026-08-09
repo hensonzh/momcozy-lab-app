@@ -219,8 +219,33 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                 ),
               ],
             ),
+            if (controller.voiceStatusMessage case final message?) ...[
+              const SizedBox(height: 10),
+              Row(
+                key: const ValueKey('motion-assessment-voice-status'),
+                children: [
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: Colors.orangeAccent,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: const TextStyle(
+                        color: Colors.orangeAccent,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 10),
             Row(
+              key: const ValueKey('motion-assessment-camera-status'),
               children: [
                 const Icon(
                   Icons.lock_outline_rounded,
@@ -228,10 +253,12 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                   color: Colors.white70,
                 ),
                 const SizedBox(width: 6),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    '视频与人体关键点仅在本机实时处理',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                    controller.cameraStarted
+                        ? '相机已开启，视频与人体关键点仅在本机处理'
+                        : '正在启动本机相机…',
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ),
                 Text(
@@ -287,6 +314,7 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
   }
 
   String _voiceLabel() {
+    if (controller.voiceStatusMessage != null) return '语音未连接';
     return switch (controller.voicePhase.name) {
       'speaking' => '正在指导',
       'listening' => '正在聆听',
