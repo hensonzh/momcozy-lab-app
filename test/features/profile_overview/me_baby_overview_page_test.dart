@@ -96,6 +96,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Recovery data unavailable'), findsOneWidget);
+      expect(find.text('—'), findsNothing);
       expect(find.text('78'), findsNothing);
       expect(find.text('Body Assessment'), findsOneWidget);
       expect(find.text('Yoga'), findsOneWidget);
@@ -165,6 +166,32 @@ void main() {
 
       expect(find.text('No milk recorded today'), findsOneWidget);
       expect(find.text('190'), findsNothing);
+      expect(find.text('mL measured today'), findsNothing);
+    });
+
+    testWidgets('Me describes unmeasured milk without a dash metric', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            milkTrendItems: const [
+              {
+                'date': '2026-07-03',
+                'measured_volume_ml': null,
+                'pumping_count': 2,
+                'measured_pumping_count': 0,
+              },
+            ],
+          ),
+        ),
+      );
+
+      expect(find.text('Volume not measured'), findsOneWidget);
+      expect(find.text('2 pumping sessions'), findsOneWidget);
+      expect(find.text('—'), findsNothing);
       expect(find.text('mL measured today'), findsNothing);
     });
 
@@ -735,6 +762,34 @@ void main() {
       expect(find.text('No feeding data recorded today'), findsOneWidget);
     });
 
+    testWidgets('Baby sleep uses descriptive empty states instead of dashes', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(sleepItems: const []),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('baby-section-sleep')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No sleep recorded today'), findsOneWidget);
+      expect(
+        find.text('Add a sleep record to see today’s total.'),
+        findsOneWidget,
+      );
+      expect(find.text('— h'), findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('baby-sleep-summary-card')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No night sleep recorded'), findsOneWidget);
+      expect(find.text('— hours'), findsNothing);
+    });
+
     testWidgets('Baby expanded avatar clips the baked-in name', (tester) async {
       await _pumpApp(tester, initialLocation: '/baby');
 
@@ -909,6 +964,9 @@ void main() {
       );
       expect(find.text('OFFLINE'), findsOneWidget);
       expect(find.text('LIVE'), findsNothing);
+      expect(find.text('Sensor readings unavailable'), findsOneWidget);
+      expect(find.text('—°C'), findsNothing);
+      expect(find.text('—%'), findsNothing);
     });
 
     testWidgets('Baby main layout preserves the approved reference anchors', (
@@ -2094,6 +2152,34 @@ void main() {
       );
     });
 
+    testWidgets('Me unmeasured milk uses an explicit visual empty state', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(
+            milkTrendItems: const [
+              {
+                'date': '2026-07-03',
+                'measured_volume_ml': null,
+                'pumping_count': 2,
+                'measured_pumping_count': 0,
+              },
+            ],
+          ),
+        ),
+      );
+
+      await expectLater(
+        find.byType(Overlay).first,
+        matchesGoldenFile(
+          '../../goldens/me_baby_overview/me_unmeasured_milk_empty_state.png',
+        ),
+      );
+    });
+
     testWidgets('Me recovery matches the honest visual baseline', (
       tester,
     ) async {
@@ -2154,6 +2240,27 @@ void main() {
         find.byType(Scaffold).first,
         matchesGoldenFile(
           '../../goldens/me_baby_overview/baby_sleep_screen.png',
+        ),
+      );
+    });
+
+    testWidgets('Baby sleep empty state matches its visual baseline', (
+      tester,
+    ) async {
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        runtime: _runtime(
+          transport: _profileOverviewTransport(sleepItems: const []),
+        ),
+      );
+      await tester.tap(find.byKey(const ValueKey('baby-section-sleep')));
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byType(Scaffold).first,
+        matchesGoldenFile(
+          '../../goldens/me_baby_overview/baby_sleep_empty_state.png',
         ),
       );
     });
