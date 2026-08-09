@@ -460,7 +460,7 @@ void main() {
         final service = FakePumpSessionForegroundServicePlatform();
         const route = PendingNativeRoute(
           path: '/',
-          notifyJson: {'event': 'milk_analysis'},
+          notifyJson: {'event': 'task_reminder'},
           autoEndTeardown: true,
         );
 
@@ -468,7 +468,7 @@ void main() {
 
         expect((await service.consumePendingNavigate())?.toMap(), {
           'path': '/',
-          'notifyJson': {'event': 'milk_analysis'},
+          'notifyJson': {'event': 'task_reminder'},
           'autoEndTeardown': true,
         });
         expect(await service.consumePendingNavigate(), isNull);

@@ -166,7 +166,7 @@ void main() {
                 'requestPermission' => {'granted': true},
                 'consumePendingNavigate' => {
                   'path': '/',
-                  'notifyJson': {'event': 'milk_analysis'},
+                  'notifyJson': {'event': 'task_reminder'},
                   'autoEndTeardown': true,
                 },
                 'restoreSnapshot' => {
@@ -209,7 +209,7 @@ void main() {
         await service.enqueuePendingNavigate(
           const PendingNativeRoute(
             path: '/',
-            notifyJson: {'event': 'milk_analysis'},
+            notifyJson: {'event': 'task_reminder'},
             autoEndTeardown: true,
           ),
         );
@@ -243,7 +243,7 @@ void main() {
         );
         expect(route?.toMap(), {
           'path': '/',
-          'notifyJson': {'event': 'milk_analysis'},
+          'notifyJson': {'event': 'task_reminder'},
           'autoEndTeardown': true,
         });
         expect(restored?.paused, isTrue);

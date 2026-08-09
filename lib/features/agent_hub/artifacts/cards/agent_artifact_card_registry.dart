@@ -22,10 +22,6 @@ class AgentArtifactCardRegistry {
                 onAction: onAction,
               )
             : null,
-      AgentArtifactPresentationKind.milkPlanPreview => _MilkPlanPreviewCard(
-        card: card,
-        onAction: onAction,
-      ),
       AgentArtifactPresentationKind.hospitalBagCart => _HospitalBagCartCard(
         card: card,
         onAction: onAction,
@@ -42,14 +38,12 @@ class _ArtifactCardSurface extends StatelessWidget {
     required this.accent,
     required this.children,
     this.subtitle,
-    this.trailing,
   });
 
   final AgentArtifactCardView card;
   final IconData icon;
   final Color accent;
   final String? subtitle;
-  final Widget? trailing;
   final List<Widget> children;
 
   @override
@@ -112,18 +106,13 @@ class _ArtifactCardSurface extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (trailing != null) ...[
-                  const SizedBox(width: 8),
-                  trailing!,
-                ] else ...[
-                  const SizedBox(width: 8),
-                  Image.asset(
-                    MomCozyAssets.momcozyLogo,
-                    width: 68,
-                    height: 40,
-                    fit: BoxFit.contain,
-                  ),
-                ],
+                const SizedBox(width: 8),
+                Image.asset(
+                  MomCozyAssets.momcozyLogo,
+                  width: 68,
+                  height: 40,
+                  fit: BoxFit.contain,
+                ),
               ],
             ),
             if (children.isNotEmpty) ...[
@@ -437,67 +426,6 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
       ),
     );
   }
-}
-
-class _MilkPlanPreviewCard extends StatelessWidget {
-  const _MilkPlanPreviewCard({required this.card, this.onAction});
-
-  final AgentArtifactCardView card;
-  final ValueChanged<AgentArtifactActionView>? onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    final actions = card.actions
-        .where(_isAllowedLactationPlanAction)
-        .toList(growable: false);
-
-    return KeyedSubtree(
-      key: ValueKey('agent-artifact-milk-preview-${card.id}'),
-      child: _ArtifactCardSurface(
-        card: card,
-        icon: Icons.water_drop_outlined,
-        accent: MomCozyV3Colors.brand,
-        trailing: const _ArtifactTag(
-          label: '专属流程',
-          color: MomCozyV3Colors.brand,
-          background: MomCozyV3Colors.roseTint,
-        ),
-        children: [
-          const Text(
-            '计划内容请在专属泌乳计划流程中查看。Cozymate 不生成或编辑计划内容，只负责打开流程和管理状态。',
-            style: TextStyle(
-              color: MomCozyColors.mutedForeground,
-              height: 1.45,
-            ),
-          ),
-          if (actions.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (var index = 0; index < actions.length; index++)
-                  OutlinedButton.icon(
-                    key: ValueKey('agent-artifact-action-${card.id}-$index'),
-                    onPressed: onAction == null
-                        ? null
-                        : () => onAction!(actions[index]),
-                    icon: Icon(actions[index].icon, size: 18),
-                    label: Text(actions[index].label),
-                  ),
-              ],
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-bool _isAllowedLactationPlanAction(AgentArtifactActionView action) {
-  final label = action.label.trim();
-  if (RegExp(r'调整|编辑|生成|改写|目标|内容').hasMatch(label)) return false;
-  return RegExp(r'打开|查看|继续|状态|暂停|恢复|完成|取消').hasMatch(label);
 }
 
 class _HospitalBagCartCard extends StatelessWidget {

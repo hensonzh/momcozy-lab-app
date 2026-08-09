@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/features/plan/domain/plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/plan/presentation/plan_controller.dart';
 
@@ -20,7 +19,6 @@ class PlanPage extends StatefulWidget {
     this.onChat,
     this.onStartSession,
     this.onManualEdit,
-    this.changeStore,
   });
 
   final PlanRepository repository;
@@ -32,7 +30,6 @@ class PlanPage extends StatefulWidget {
   final VoidCallback? onChat;
   final VoidCallback? onStartSession;
   final VoidCallback? onManualEdit;
-  final PlanChangeStore? changeStore;
 
   @override
   State<PlanPage> createState() => _PlanPageState();
@@ -40,13 +37,11 @@ class PlanPage extends StatefulWidget {
 
 class _PlanPageState extends State<PlanPage> {
   late PlanController _controller;
-  int _lastPlanRevision = -1;
 
   @override
   void initState() {
     super.initState();
     _createController();
-    _attachChangeStore(widget.changeStore);
   }
 
   @override
@@ -57,17 +52,12 @@ class _PlanPageState extends State<PlanPage> {
       _controller.dispose();
       _createController();
     }
-    if (!identical(oldWidget.changeStore, widget.changeStore)) {
-      oldWidget.changeStore?.removeListener(_onPlanChange);
-      _attachChangeStore(widget.changeStore);
-    }
   }
 
   @override
   void dispose() {
     _controller.removeListener(_refresh);
     _controller.dispose();
-    widget.changeStore?.removeListener(_onPlanChange);
     super.dispose();
   }
 
@@ -81,22 +71,6 @@ class _PlanPageState extends State<PlanPage> {
 
   void _refresh() {
     if (mounted) setState(() {});
-  }
-
-  void _attachChangeStore(PlanChangeStore? store) {
-    if (store == null) return;
-    _lastPlanRevision = store.revision;
-    store.addListener(_onPlanChange);
-    unawaited(store.restore());
-    store.markViewed();
-  }
-
-  void _onPlanChange() {
-    final store = widget.changeStore;
-    if (store == null || store.revision == _lastPlanRevision) return;
-    _lastPlanRevision = store.revision;
-    store.markViewed();
-    unawaited(_controller.load());
   }
 
   Future<void> _openCalendar() async {

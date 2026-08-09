@@ -73,7 +73,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         ),
         repository: MomCozyRuntimeScope.of(context).planRepository,
         now: MomCozyRuntimeScope.of(context).now,
-        changeStore: MomCozyRuntimeScope.of(context).planChangeStore,
         onCreatePlan: () => context.go(
           '/',
           extra: const {
@@ -4319,7 +4318,6 @@ class _DeviceReminderActionSpec {
 
 const _deviceReminderActions = [
   _DeviceReminderActionSpec(key: 'task_reminder', label: '任务提醒'),
-  _DeviceReminderActionSpec(key: 'milk_analysis', label: '奶量分析'),
 ];
 
 class _DeviceSubpageHeader extends StatelessWidget {

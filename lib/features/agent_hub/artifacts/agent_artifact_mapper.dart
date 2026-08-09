@@ -242,12 +242,6 @@ AgentArtifactPresentationKind _presentationKind({
     return AgentArtifactPresentationKind.hospitalBagCart;
   }
   return switch (cardType ?? artifactType) {
-    'milk_analysis_card'
-        when cardJson.containsKey('sections') ||
-            cardJson.containsKey('headline') =>
-      AgentArtifactPresentationKind.milkAnalysisCard,
-    'milk_plan_card' => AgentArtifactPresentationKind.milkPlanCard,
-    'milk_plan_preview' => AgentArtifactPresentationKind.milkPlanPreview,
     'birth_journey_plan_card'
         when cardJson.containsKey('todo_plan') ||
             cardJson.containsKey('todoPlan') ||
@@ -284,8 +278,6 @@ Map<String, Object?> _directCardPayload(
   Map<String, Object?> payload,
 ) {
   return switch (artifactType) {
-    'milk_analysis_card' ||
-    'milk_plan_card' ||
     'birth_journey_plan_card' ||
     'birth_plan_card' ||
     'hospital_bag_card' ||
@@ -819,8 +811,6 @@ String _artifactSubject(String? type) {
   return switch (type) {
     'form' => '信息采集',
     'support_ticket' || 'support_ticket_draft' => '售后工单',
-    'milk_analysis_card' => '奶量分析',
-    'milk_plan_card' || 'milk_plan_preview' => '奶量计划',
     'birth_journey_plan_card' => '孕期计划',
     'birth_plan_card' => '分娩计划',
     'hospital_bag_card' || 'hospital_bag_cart' => '待产包',

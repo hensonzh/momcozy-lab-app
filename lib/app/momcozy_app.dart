@@ -748,9 +748,6 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                 iconSize: const Size.square(22),
                                 matchesPlanDesign: matchesPlanDesign,
                                 onTap: () {
-                                  MomCozyRuntimeScope.read(
-                                    context,
-                                  )?.planChangeStore.markViewed();
                                   context.go(_tabPaths[3]);
                                 },
                               ),
@@ -1331,9 +1328,6 @@ Widget _buildDefaultAgentHubPage(
     onHospitalBagCartContextRequired: () {
       final store = runtime.hospitalBagCartStore;
       store.activate(store.activeCartId);
-    },
-    onPlanChange: (change) {
-      runtime.planChangeStore.record(change);
     },
     onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
     onArtifactAction: (action) => unawaited(

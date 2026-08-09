@@ -41,8 +41,8 @@ final _agentStates = [
         'type': 'tool.started',
         'thread_id': 'thread-streaming-001',
         'run_id': 'run-streaming-001',
-        'tool_call_id': 'call-pump-summary',
-        'payload': {'tool_name': 'pump_session_summary_query'},
+        'tool_call_id': 'call-device-status',
+        'payload': {'tool_name': 'devices.pump_status.read'},
       });
       return AgentHubPage(
         state: AgentStreamRunState(
@@ -52,7 +52,7 @@ final _agentStates = [
           messageId: 'msg-streaming-001',
           textContent: '我正在读取今天的泵奶记录，并同步检查左右侧节奏。',
           events: [toolEvent],
-          toolEvents: {'call-pump-summary': toolEvent},
+          toolEvents: {'call-device-status': toolEvent},
         ),
       );
     },

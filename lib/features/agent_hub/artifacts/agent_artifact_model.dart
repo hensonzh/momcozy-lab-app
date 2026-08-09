@@ -71,9 +71,6 @@ Map<String, Object?> _canonicalFormValues(Map<String, Object?> values) {
 enum AgentArtifactPresentationKind {
   form,
   supportTicketDraft,
-  milkAnalysisCard,
-  milkPlanCard,
-  milkPlanPreview,
   birthJourneyPlanCard,
   birthPlanCard,
   hospitalBagCard,

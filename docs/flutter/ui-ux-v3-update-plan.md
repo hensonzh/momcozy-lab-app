@@ -287,7 +287,7 @@ lib/
 - 把 `MeBabyOverview` 私有颜色和文字样式映射到 V3 全局令牌。
 - 为 Plan/More 补全 `_tabPaths`、选中态、路由和语义；Plan 指向现有 `/schedule`。
 - 继续保留 Agent Hub 的 Offstage 会话状态；全 Tab 状态稳定后再评估统一有状态 Shell。
-- 复用现有 citation、artifact、action 和 `MilkPlanChangeStore`，新增标准化 UI 映射，不从聊天 Markdown 识别业务状态。
+- 复用现有 citation、artifact 和 action，新增标准化 UI 映射，不从聊天 Markdown 识别业务状态。
 - 给 Me/Baby 的数据卡建立统一 ViewState，逐个移除 473 ml、78/100、14.2 h 等示例常量。
 
 ## 10. 资产治理
@@ -426,7 +426,6 @@ lib/
 - Me 页面补齐头像显式入口、记录入口和真实设备连接入口；尚未上线的能力改为明确禁用态。
 - Plan 增加“日程 / 泌乳计划”双视图。日程继续复用原有 CRUD、提醒、记录和幂等逻辑；泌乳计划只读展示服务端状态，并通过 Cozymate 进入创建或状态管理。
 - Cozymate 统一产品命名，提供母婴健康咨询、日程管理、泌乳计划三类入口；健康引用支持来源和更新时间，日程/计划写操作卡展示对象、原值、新值、日期、时区和影响范围。
-- 旧 `milk_plan_card` 与 `milk_plan_preview` 已收敛为边界卡：不再展示由智能体生成或编辑的计划内容，只保留进入专属流程或管理状态的安全动作。
 - 已补充 Widget、行为和 Golden 回归，覆盖 360、390、430 logical px 的关键首屏。
 
 以下依赖外部合同，当前没有在客户端伪造：

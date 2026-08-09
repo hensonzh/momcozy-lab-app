@@ -36,6 +36,17 @@ void main() {
         AgentStreamEvent(
           readFixtureMap('agent_events/rich_text_artifact.json'),
         ),
+        AgentStreamEvent(const {
+          'type': 'action.confirmation_required',
+          'action_id': 'action-support-ticket-001',
+          'payload': {
+            'action_id': 'action-support-ticket-001',
+            'action_type': 'support.ticket.create',
+            'action_status': 'confirmation_required',
+            'target_type': 'support_ticket',
+            'target_id': 'ticket-draft-001',
+          },
+        }),
         AgentStreamEvent(readFixtureMap('agent_events/run_failed.json')),
       ];
       final types = events.map((event) => event.type).toSet();
@@ -174,8 +185,8 @@ void main() {
         'thread_id': 'thread-tool-001',
         'run_id': 'run-tool-001',
         'payload': {
-          'tool_call_id': 'call-pump-001',
-          'tool_name': 'pump_session_summary_query',
+          'tool_call_id': 'call-device-001',
+          'tool_name': 'devices.pump_status.read',
         },
       });
       final completed = AgentStreamEvent(const {
@@ -183,12 +194,12 @@ void main() {
         'thread_id': 'thread-tool-001',
         'run_id': 'run-tool-001',
         'payload': {
-          'tool_call_id': 'call-pump-001',
-          'tool_name': 'pump_session_summary_query',
+          'tool_call_id': 'call-device-001',
+          'tool_name': 'devices.pump_status.read',
         },
       });
 
-      expect(started.mergeKey, 'tool:call-pump-001');
+      expect(started.mergeKey, 'tool:call-device-001');
       expect(completed.mergeKey, started.mergeKey);
     });
 
@@ -222,7 +233,7 @@ void main() {
         'payload': {
           'role': 'assistant',
           'text':
-              '我先帮你看一下。\n{"service_skill_id":"milk-management","status":"service_skill_loaded"}',
+              '我先帮你看一下。\n{"service_skill_id":"birth-prep","status":"service_skill_loaded"}',
         },
       });
 

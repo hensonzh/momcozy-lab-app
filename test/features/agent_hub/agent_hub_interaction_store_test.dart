@@ -60,18 +60,13 @@ void main() {
       'type': 'artifact.created',
       'artifact_id': 'history-artifact',
       'payload': {
-        'artifact_type': 'milk_plan_preview',
+        'artifact_type': 'rich_text',
         'schema_version': 'v1',
         'artifact': {
           'id': 'history-artifact',
-          'artifact_type': 'milk_plan_preview',
+          'artifact_type': 'rich_text',
           'schema_version': 'v1',
-          'payload': {
-            'title': '历史奶量计划',
-            'tasks': [
-              {'title': '20:00 泵奶'},
-            ],
-          },
+          'payload': {'title': '历史说明', 'content': '历史结构化内容'},
         },
       },
     });

@@ -372,10 +372,10 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
             'run_id': 'run-workflow-reply-001',
             'payload': {
               'role': 'assistant',
-              'text': '宝宝最近 24 小时大约有几片湿尿布？',
+              'text': '我已经整理好孕期计划信息。',
               'workflow_reply': {
                 'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-                'workflow_type': 'milk_analysis',
+                'workflow_type': 'pregnancy_plan',
                 'revision': 6,
                 'step_token': 'opaque-step-token',
               },
@@ -387,7 +387,7 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
 
         expect(restored.workflowReply, {
           'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-          'workflow_type': 'milk_analysis',
+          'workflow_type': 'pregnancy_plan',
           'revision': 6,
           'step_token': 'opaque-step-token',
         });
