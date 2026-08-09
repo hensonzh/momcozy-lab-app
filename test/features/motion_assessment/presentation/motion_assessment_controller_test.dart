@@ -5,8 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/forward_head_analyzer.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_session.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pose.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_quality_gate.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_voice_command.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_controller.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_page.dart';
@@ -92,6 +95,53 @@ void main() {
     await controller.finish();
   });
 
+  test(
+    'links the source artifact and preserves rich completion evidence',
+    () async {
+      final repository = _FakeRepository(immediateSession: _session());
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        sourceArtifactId: 'artifact-motion-1',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+        forwardHeadAnalyzer: ForwardHeadAnalyzer(
+          minimumStableFor: Duration.zero,
+          minimumSamples: 1,
+        ),
+      );
+
+      await controller.start();
+      pose.emit(_acceptedSideObservation());
+      await _flush();
+      await _flush();
+
+      expect(repository.createdSourceArtifactIds, ['artifact-motion-1']);
+      expect(voice.latestContext?.assessmentId, 'assessment-1');
+      expect(voice.latestContext?.samplingState, 'completed');
+
+      await controller.finish(completed: true);
+
+      final completed = repository.updates.lastWhere(
+        (update) => update.status == 'completed',
+      );
+      expect(completed.resultSummary?['sample_count'], 1);
+      expect(completed.resultSummary?['sample_duration_ms'], 0);
+      expect(completed.resultSummary?['angle_dispersion_degrees'], 0.0);
+      expect(completed.resultSummary?['accepted_frame_ratio'], 1.0);
+      expect(
+        completed.resultSummary?['measurement_quality_score'],
+        isA<double>(),
+      );
+      expect(completed.resultSummary?['analyzer_version'], isNotEmpty);
+      expect(completed.resultSummary?['threshold_version'], isNotEmpty);
+    },
+  );
+
   testWidgets(
     'replaces and disposes the controller when runtime identity changes',
     (tester) async {
@@ -165,7 +215,10 @@ class _FakeRepository implements MotionAssessmentRepository {
   final Completer<MotionAssessmentSession>? createCompleter;
   final MotionAssessmentSession? immediateSession;
   int createCalls = 0;
+  final List<String> createdSourceArtifactIds = [];
   final List<String> updatedStatuses = [];
+  final List<({String status, Map<String, Object?>? resultSummary})> updates =
+      [];
 
   @override
   Future<MotionAssessmentSession> create({
@@ -175,6 +228,7 @@ class _FakeRepository implements MotionAssessmentRepository {
     String locale = 'zh-CN',
   }) {
     createCalls += 1;
+    createdSourceArtifactIds.add(sourceArtifactId);
     return createCompleter?.future ?? Future.value(immediateSession!);
   }
 
@@ -186,6 +240,7 @@ class _FakeRepository implements MotionAssessmentRepository {
     Map<String, Object?>? resultSummary,
   }) async {
     updatedStatuses.add(status);
+    updates.add((status: status, resultSummary: resultSummary));
     return _session();
   }
 }
@@ -219,6 +274,9 @@ class _FakePosePlatform implements MotionPosePlatform {
     stopCalls += 1;
     if (!stopCalled.isCompleted) stopCalled.complete();
   }
+
+  void emit(MotionPoseObservation observation) =>
+      _observations.add(observation);
 }
 
 class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
@@ -226,6 +284,7 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
 
   final Object? connectError;
   int connectCalls = 0;
+  MotionAssessmentContextSnapshot? latestContext;
 
   @override
   Stream<MotionVoiceCommand> get commands => const Stream.empty();
@@ -253,6 +312,11 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   ) async {}
 
   @override
+  void updateAssessmentContext(MotionAssessmentContextSnapshot snapshot) {
+    latestContext = snapshot;
+  }
+
+  @override
   Future<void> completeCommand(
     MotionVoiceCommand command, {
     required bool accepted,
@@ -262,4 +326,86 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
 
   @override
   Future<void> close() async {}
+}
+
+MotionPoseObservation _acceptedSideObservation() {
+  const reliable = MotionPoseLandmark(
+    x: 0.5,
+    y: 0.5,
+    z: 0,
+    visibility: 0.95,
+    presence: 0.95,
+  );
+  return MotionPoseObservation(
+    timestamp: const Duration(seconds: 1),
+    inputWidth: 1000,
+    inputHeight: 1000,
+    inferenceTime: const Duration(milliseconds: 20),
+    poses: [
+      MotionPose(
+        centerX: 0.5,
+        centerY: 0.5,
+        bodyScale: 0.8,
+        landmarks: {
+          MotionPoseLandmarkType.nose: const MotionPoseLandmark(
+            x: 0.5,
+            y: 0.08,
+            z: 0,
+            visibility: 0.95,
+            presence: 0.95,
+          ),
+          MotionPoseLandmarkType.leftEar: const MotionPoseLandmark(
+            x: 0.7,
+            y: 0.35,
+            z: 0,
+            visibility: 0.95,
+            presence: 0.95,
+          ),
+          MotionPoseLandmarkType.rightEar: const MotionPoseLandmark(
+            x: 0.7,
+            y: 0.35,
+            z: 0,
+            visibility: 0.9,
+            presence: 0.9,
+          ),
+          MotionPoseLandmarkType.leftShoulder: const MotionPoseLandmark(
+            x: 0.5,
+            y: 0.55,
+            z: 0,
+            visibility: 0.95,
+            presence: 0.95,
+          ),
+          MotionPoseLandmarkType.rightShoulder: const MotionPoseLandmark(
+            x: 0.51,
+            y: 0.55,
+            z: 0,
+            visibility: 0.9,
+            presence: 0.9,
+          ),
+          MotionPoseLandmarkType.leftHip: const MotionPoseLandmark(
+            x: 0.5,
+            y: 0.7,
+            z: 0,
+            visibility: 0.95,
+            presence: 0.95,
+          ),
+          MotionPoseLandmarkType.rightHip: const MotionPoseLandmark(
+            x: 0.51,
+            y: 0.7,
+            z: 0,
+            visibility: 0.9,
+            presence: 0.9,
+          ),
+          MotionPoseLandmarkType.leftKnee: reliable,
+          MotionPoseLandmarkType.leftAnkle: const MotionPoseLandmark(
+            x: 0.5,
+            y: 0.92,
+            z: 0,
+            visibility: 0.95,
+            presence: 0.95,
+          ),
+        },
+      ),
+    ],
+  );
 }

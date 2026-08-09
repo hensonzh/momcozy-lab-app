@@ -13,6 +13,30 @@ class MotionVoiceCommand {
   final String callId;
 }
 
+String? completedUserAudioItemIdFromServerEvent(Map<Object?, Object?> event) {
+  final eventType = event['type']?.toString();
+  if (eventType != 'conversation.item.added' &&
+      eventType != 'conversation.item.created' &&
+      eventType != 'conversation.item.done') {
+    return null;
+  }
+  final rawItem = event['item'];
+  if (rawItem is! Map ||
+      rawItem['type']?.toString() != 'message' ||
+      rawItem['role']?.toString() != 'user') {
+    return null;
+  }
+  final content = rawItem['content'];
+  if (content is! List ||
+      !content.any(
+        (part) => part is Map && part['type']?.toString() == 'input_audio',
+      )) {
+    return null;
+  }
+  final itemId = rawItem['id']?.toString().trim() ?? '';
+  return itemId.isEmpty ? null : itemId;
+}
+
 List<MotionVoiceCommand> motionVoiceCommandsFromServerEvent(
   Map<Object?, Object?> event,
 ) {

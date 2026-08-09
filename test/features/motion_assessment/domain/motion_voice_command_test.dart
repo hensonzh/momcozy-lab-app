@@ -46,4 +46,35 @@ void main() {
       isEmpty,
     );
   });
+
+  test('recognizes a completed user audio item for manual model response', () {
+    expect(
+      completedUserAudioItemIdFromServerEvent({
+        'type': 'conversation.item.done',
+        'item': {
+          'id': 'item-user-1',
+          'type': 'message',
+          'role': 'user',
+          'content': [
+            {'type': 'input_audio'},
+          ],
+        },
+      }),
+      'item-user-1',
+    );
+    expect(
+      completedUserAudioItemIdFromServerEvent({
+        'type': 'conversation.item.done',
+        'item': {
+          'id': 'item-assistant-1',
+          'type': 'message',
+          'role': 'assistant',
+          'content': [
+            {'type': 'output_audio'},
+          ],
+        },
+      }),
+      isNull,
+    );
+  });
 }
