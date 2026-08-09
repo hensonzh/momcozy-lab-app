@@ -223,6 +223,8 @@ void main() {
       final pumpingTransport = FixtureApiJsonTransport({
         'id': 'pumping-new',
         'pump_start_time': '2026-07-11T09:00:00Z',
+        'pump_end_time': '2026-07-11T09:20:00Z',
+        'is_post_feed_pumping': true,
         'pump_type': 'manual',
         'outputs': [
           {'breast_side': 'left', 'volume_ml': 45.5},
@@ -235,10 +237,12 @@ void main() {
 
       final pumping = await pumpingRepository.createPumpMilkRecord(
         occurredAt: DateTime.parse('2026-07-11T09:00:00Z'),
+        endedAt: DateTime.parse('2026-07-11T09:20:00Z'),
         outputs: const [
           PumpingOutput(breastSide: PumpingSide.left, volumeMl: 45.5),
           PumpingOutput(breastSide: PumpingSide.right, volumeMl: 64.5),
         ],
+        isPostFeedPumping: true,
         idempotencyKey: 'pumping-create-001',
       );
 
@@ -248,19 +252,23 @@ void main() {
       });
       expect(pumpingTransport.lastBody, {
         'pump_start_time': '2026-07-11T09:00:00.000Z',
+        'pump_end_time': '2026-07-11T09:20:00.000Z',
         'outputs': [
           {'breast_side': 'left', 'volume_ml': 45.5},
           {'breast_side': 'right', 'volume_ml': 64.5},
         ],
+        'is_post_feed_pumping': true,
         'pump_type': 'manual',
         'source': 'manual',
       });
       expect(pumping.measuredVolumeMl, 110);
       expect(pumping.outputs.last.breastSide, PumpingSide.right);
+      expect(pumping.endedAt, DateTime.parse('2026-07-11T09:20:00Z'));
+      expect(pumping.isPostFeedPumping, isTrue);
     });
 
     test(
-      'encodes direct breastfeeding with duration and unmeasured milk',
+      'encodes start-only direct breastfeeding with an optional side',
       () async {
         final transport = FixtureApiJsonTransport({
           'id': 'feeding-direct',
@@ -269,7 +277,7 @@ void main() {
           'milk_components': [
             {'milk_source': 'breast_milk', 'volume_ml': null},
           ],
-          'duration_seconds': 900,
+          'breast_side': 'left',
           'feed_time': '2026-07-11T10:00:00Z',
         });
 
@@ -281,7 +289,7 @@ void main() {
               milkComponents: const [
                 FeedingMilkComponent(milkSource: MilkSource.breastMilk),
               ],
-              durationSeconds: 900,
+              breastSide: FeedingBreastSide.left,
             );
 
         expect(transport.lastBody, {
@@ -291,9 +299,10 @@ void main() {
           'milk_components': [
             {'milk_source': 'breast_milk', 'volume_ml': null},
           ],
-          'duration_seconds': 900,
+          'breast_side': 'left',
         });
         expect(record.feedingMethod, FeedingMethod.directBreastfeeding);
+        expect(record.breastSide, FeedingBreastSide.left);
         expect(record.measuredVolumeMl, isNull);
       },
     );
@@ -478,6 +487,8 @@ void main() {
             'wetness': 'medium',
             'stool_color': 'gold',
             'stool_consistency': 'soft',
+            'wet_diaper_count': 7,
+            'bowel_movement_count': 3,
             'notes': '',
           },
         ],
@@ -500,6 +511,8 @@ void main() {
       expect(records.single.kind, DiaperKind.both);
       expect(records.single.wetness, DiaperWetness.medium);
       expect(records.single.stoolColor, 'gold');
+      expect(records.single.wetDiaperCount, 7);
+      expect(records.single.bowelMovementCount, 3);
 
       final createTransport = FixtureApiJsonTransport({
         'id': 'diaper-new',
@@ -509,6 +522,8 @@ void main() {
         'wetness': 'medium',
         'stool_color': 'gold',
         'stool_consistency': 'soft',
+        'wet_diaper_count': 7,
+        'bowel_movement_count': 3,
         'notes': '',
       });
       await RecordsApiRepository(transport: createTransport).createDiaperRecord(
@@ -518,6 +533,8 @@ void main() {
         wetness: DiaperWetness.medium,
         stoolColor: 'gold',
         stoolConsistency: 'soft',
+        wetDiaperCount: 7,
+        bowelMovementCount: 3,
         idempotencyKey: 'diaper-create-001',
       );
 
@@ -532,6 +549,8 @@ void main() {
         'wetness': 'medium',
         'stool_color': 'gold',
         'stool_consistency': 'soft',
+        'wet_diaper_count': 7,
+        'bowel_movement_count': 3,
         'notes': '',
         'source': 'manual',
       });
