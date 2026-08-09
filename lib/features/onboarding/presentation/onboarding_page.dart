@@ -11,6 +11,7 @@ import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_
 
 typedef OnboardingPortraitPicker =
     Future<OnboardingPortrait?> Function(OnboardingPortraitSource source);
+typedef OnboardingAvatarImageLoader = Future<Uint8List> Function(String fileId);
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({
@@ -19,12 +20,16 @@ class OnboardingPage extends StatefulWidget {
     this.pickPortrait,
     this.entryPath = '/',
     this.avatarTaskMode = false,
+    this.avatarThumbnailLoader,
+    this.onAvatarTaskCompleted,
   });
 
   final OnboardingController controller;
   final OnboardingPortraitPicker? pickPortrait;
   final String entryPath;
   final bool avatarTaskMode;
+  final OnboardingAvatarImageLoader? avatarThumbnailLoader;
+  final VoidCallback? onAvatarTaskCompleted;
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -38,6 +43,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   int _profileStep = 0;
   OnboardingProfileDraft? _draft;
   bool _editingConfirmedProfile = false;
+  bool _activatingAvatar = false;
+  bool _avatarReturnScheduled = false;
   String _validationMessage = '';
 
   @override
@@ -474,21 +481,27 @@ class _OnboardingPageState extends State<OnboardingPage> {
   };
 
   Widget _buildAvatarFlow(BuildContext context, OnboardingState state) {
+    if (widget.avatarTaskMode && _activatingAvatar && state.isCompleted) {
+      _scheduleAvatarTaskReturn();
+    }
     final totalSteps = _totalStepsForStage(state.stage);
     final canReturnToProfile =
         _draft != null && !state.canEnterApp && !widget.controller.busy;
     return Column(
       children: [
-        _OnboardingHeader(
-          step: totalSteps,
-          totalSteps: totalSteps,
-          backKey: const ValueKey('onboarding-avatar-back'),
-          onBack: widget.avatarTaskMode
-              ? _leaveAvatarTaskPage
-              : canReturnToProfile
-              ? _returnToProfileFlow
-              : null,
-        ),
+        if (widget.avatarTaskMode)
+          _AvatarTaskHeader(
+            onBack: widget.controller.busy || _activatingAvatar
+                ? null
+                : _leaveAvatarTaskPage,
+          )
+        else
+          _OnboardingHeader(
+            step: totalSteps,
+            totalSteps: totalSteps,
+            backKey: const ValueKey('onboarding-avatar-back'),
+            onBack: canReturnToProfile ? _returnToProfileFlow : null,
+          ),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
@@ -499,6 +512,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 state,
                 failed: true,
               ),
+              OnboardingStatus.completed =>
+                const _AvatarActivationSuccessView(),
               _ => _avatarChoiceView(state),
             },
           ),
@@ -643,10 +658,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
     );
     if (confirmed == true && mounted) {
-      final completed = await widget.controller.completeWithDefaultAvatar();
-      if (completed && mounted && widget.avatarTaskMode) {
-        _leaveAvatarTaskPage();
-      }
+      await _activateAvatar(widget.controller.completeWithDefaultAvatar);
     }
   }
 
@@ -717,13 +729,26 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (enterApp == true && mounted) context.go(widget.entryPath);
   }
 
-  void _leaveAvatarTaskPage() {
+  void _leaveAvatarTaskPage({bool showCompletion = false}) {
+    final onReturned = showCompletion ? widget.onAvatarTaskCompleted : null;
     final navigator = Navigator.of(context);
     if (navigator.canPop()) {
       context.pop();
     } else {
       context.go(widget.entryPath);
     }
+    if (onReturned != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => onReturned());
+    }
+  }
+
+  void _scheduleAvatarTaskReturn() {
+    if (_avatarReturnScheduled) return;
+    _avatarReturnScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _leaveAvatarTaskPage(showCompletion: true);
+    });
   }
 
   Widget _generatingView(OnboardingState state) {
@@ -734,6 +759,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _reviewView(BuildContext context, OnboardingState state) {
     final candidates = state.avatar?.candidates ?? const [];
+    final thumbnailLoader =
+        widget.avatarThumbnailLoader ??
+        MomCozyRuntimeScope.of(
+          context,
+        ).mediaContentRepository.loadImageThumbnail;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -760,9 +790,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 'onboarding-avatar-candidate-${candidate.position}',
               ),
               candidate: candidate,
+              loadThumbnail: thumbnailLoader,
               selected:
                   widget.controller.selectedAvatarCandidateId == candidate.id,
-              onTap: widget.controller.busy
+              onTap: widget.controller.busy || _activatingAvatar
                   ? null
                   : () => widget.controller.selectAvatarCandidate(candidate.id),
             );
@@ -773,7 +804,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           key: const ValueKey('onboarding-avatar-default'),
           stage: state.stage,
           selected: widget.controller.defaultAvatarSelected,
-          onTap: widget.controller.busy
+          onTap: widget.controller.busy || _activatingAvatar
               ? null
               : widget.controller.selectDefaultAvatar,
         ),
@@ -781,15 +812,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
         _errorText(controllerError: true),
         _PrimaryButton(
           label: 'Continue with this avatar',
-          loading: widget.controller.busy,
+          loading: widget.controller.busy || _activatingAvatar,
           onPressed:
-              widget.controller.busy || !widget.controller.hasAvatarSelection
+              widget.controller.busy ||
+                  _activatingAvatar ||
+                  !widget.controller.hasAvatarSelection
               ? null
               : _confirmAvatarSelection,
         ),
         const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: widget.controller.busy ? null : _showPortraitSourceSheet,
+          onPressed: widget.controller.busy || _activatingAvatar
+              ? null
+              : _showPortraitSourceSheet,
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(52),
           ),
@@ -800,10 +835,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _confirmAvatarSelection() async {
-    final completed = await widget.controller.confirmAvatarSelection();
-    if (completed && mounted && widget.avatarTaskMode) {
-      _leaveAvatarTaskPage();
+    await _activateAvatar(widget.controller.confirmAvatarSelection);
+  }
+
+  Future<void> _activateAvatar(Future<bool> Function() action) async {
+    if (_activatingAvatar) return;
+    setState(() => _activatingAvatar = true);
+    final completed = await action();
+    if (!mounted) return;
+    if (completed && widget.avatarTaskMode) {
+      _scheduleAvatarTaskReturn();
+      return;
     }
+    setState(() => _activatingAvatar = false);
   }
 
   Widget _errorText({bool controllerError = false}) {
@@ -924,6 +968,88 @@ class _OnboardingHeader extends StatelessWidget {
             style: const TextStyle(
               color: MomCozyV3Colors.mutedText,
               fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AvatarTaskHeader extends StatelessWidget {
+  const _AvatarTaskHeader({required this.onBack});
+
+  final VoidCallback? onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 10, 20, 8),
+      child: Row(
+        children: [
+          SizedBox.square(
+            dimension: 44,
+            child: IconButton(
+              key: const ValueKey('onboarding-avatar-back'),
+              tooltip: 'Back to the app',
+              onPressed: onBack,
+              icon: const Icon(Icons.arrow_back_rounded),
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Expanded(
+            child: Text(
+              'Digital companion',
+              style: TextStyle(
+                color: MomCozyV3Colors.ink,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AvatarActivationSuccessView extends StatelessWidget {
+  const _AvatarActivationSuccessView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      key: const ValueKey('avatar-activation-success'),
+      padding: const EdgeInsets.only(top: 72),
+      child: Column(
+        children: [
+          const CircleAvatar(
+            radius: 38,
+            backgroundColor: Color(0xffe8f5ea),
+            child: Icon(
+              Icons.check_rounded,
+              color: MomCozyV3Colors.success,
+              size: 42,
+            ),
+          ),
+          const SizedBox(height: 22),
+          const Text(
+            'Your digital companion is ready',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: MomCozyV3Colors.ink,
+              fontSize: 27,
+              height: 1.15,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Applying your choice and returning you to the app…',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: MomCozyV3Colors.mutedText,
+              height: 1.4,
             ),
           ),
         ],
@@ -1728,28 +1854,52 @@ class _ReferenceAvatar extends StatelessWidget {
   }
 }
 
-class _AvatarCandidateCard extends StatelessWidget {
+class _AvatarCandidateCard extends StatefulWidget {
   const _AvatarCandidateCard({
     super.key,
     required this.candidate,
+    required this.loadThumbnail,
     required this.selected,
     required this.onTap,
   });
 
   final OnboardingAvatarCandidate candidate;
+  final OnboardingAvatarImageLoader loadThumbnail;
   final bool selected;
   final VoidCallback? onTap;
 
   @override
+  State<_AvatarCandidateCard> createState() => _AvatarCandidateCardState();
+}
+
+class _AvatarCandidateCardState extends State<_AvatarCandidateCard> {
+  bool _imageReady = false;
+
+  @override
+  void didUpdateWidget(covariant _AvatarCandidateCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.candidate.fileId != widget.candidate.fileId) {
+      _imageReady = false;
+    }
+  }
+
+  void _handleImageReadyChanged(bool value) {
+    if (!mounted || _imageReady == value) return;
+    setState(() => _imageReady = value);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final enabled = _imageReady && widget.onTap != null;
     return Semantics(
       button: true,
-      selected: selected,
-      label: 'Avatar option ${candidate.position}',
+      enabled: enabled,
+      selected: widget.selected,
+      label: 'Avatar option ${widget.candidate.position}',
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onTap,
+          onTap: enabled ? widget.onTap : null,
           borderRadius: BorderRadius.circular(22),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 160),
@@ -1757,10 +1907,10 @@ class _AvatarCandidateCard extends StatelessWidget {
               color: MomCozyV3Colors.roseTint,
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: selected
+                color: widget.selected
                     ? MomCozyV3Colors.brand
                     : MomCozyV3Colors.divider,
-                width: selected ? 2.5 : 1,
+                width: widget.selected ? 2.5 : 1,
               ),
             ),
             clipBehavior: Clip.antiAlias,
@@ -1769,21 +1919,25 @@ class _AvatarCandidateCard extends StatelessWidget {
                 Positioned.fill(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(8, 10, 8, 30),
-                    child: _GeneratedAvatar(fileId: candidate.fileId),
+                    child: _GeneratedAvatar(
+                      fileId: widget.candidate.fileId,
+                      loadThumbnail: widget.loadThumbnail,
+                      onReadyChanged: _handleImageReadyChanged,
+                    ),
                   ),
                 ),
                 Positioned(
                   left: 12,
                   bottom: 9,
                   child: Text(
-                    'Option ${candidate.position}',
+                    'Option ${widget.candidate.position}',
                     style: const TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-                if (selected)
+                if (widget.selected)
                   const Positioned(
                     top: 9,
                     right: 9,
@@ -1914,9 +2068,15 @@ String _referenceAvatarAsset(OnboardingCareStage? stage) => switch (stage) {
 };
 
 class _GeneratedAvatar extends StatefulWidget {
-  const _GeneratedAvatar({required this.fileId});
+  const _GeneratedAvatar({
+    required this.fileId,
+    required this.loadThumbnail,
+    required this.onReadyChanged,
+  });
 
   final String fileId;
+  final OnboardingAvatarImageLoader loadThumbnail;
+  final ValueChanged<bool> onReadyChanged;
 
   @override
   State<_GeneratedAvatar> createState() => _GeneratedAvatarState();
@@ -1924,23 +2084,48 @@ class _GeneratedAvatar extends StatefulWidget {
 
 class _GeneratedAvatarState extends State<_GeneratedAvatar> {
   Future<Uint8List>? _load;
+  int _loadEpoch = 0;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _load ??= MomCozyRuntimeScope.of(
-      context,
-    ).mediaContentRepository.loadImageThumbnail(widget.fileId);
+    _load ??= _startLoad();
   }
 
   @override
   void didUpdateWidget(covariant _GeneratedAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.fileId != widget.fileId) {
-      _load = MomCozyRuntimeScope.of(
-        context,
-      ).mediaContentRepository.loadImageThumbnail(widget.fileId);
+    if (oldWidget.fileId != widget.fileId ||
+        oldWidget.loadThumbnail != widget.loadThumbnail) {
+      _load = _startLoad();
     }
+  }
+
+  Future<Uint8List> _startLoad() {
+    final epoch = ++_loadEpoch;
+    late final Future<Uint8List> load;
+    try {
+      load = widget.loadThumbnail(widget.fileId);
+    } catch (error, stackTrace) {
+      load = Future<Uint8List>.error(error, stackTrace);
+    }
+    load.then<void>(
+      (_) {
+        if (mounted && epoch == _loadEpoch) widget.onReadyChanged(true);
+      },
+      onError: (Object _) {
+        if (mounted && epoch == _loadEpoch) widget.onReadyChanged(false);
+      },
+    );
+    return load;
+  }
+
+  void _retry() {
+    widget.onReadyChanged(false);
+    final load = _startLoad();
+    setState(() {
+      _load = load;
+    });
   }
 
   @override
@@ -1956,8 +2141,24 @@ class _GeneratedAvatarState extends State<_GeneratedAvatar> {
           );
         }
         if (snapshot.hasError) {
-          return const Center(
-            child: Icon(Icons.broken_image_outlined, size: 52),
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.broken_image_outlined, size: 32),
+                TextButton(
+                  key: ValueKey(
+                    'onboarding-avatar-image-retry-${widget.fileId}',
+                  ),
+                  onPressed: _retry,
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(44, 40),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                  ),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
           );
         }
         return const Center(child: CircularProgressIndicator());

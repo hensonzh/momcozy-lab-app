@@ -85,6 +85,10 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
       ? OnboardingController(
           runtimeController: _runtimeController,
           onPrimaryInfantSelected: _runtimeController.selectBaby,
+          onAvatarActivated: () => _runtimeController
+              .runtime
+              .profileOverviewCache
+              .invalidateOverview(),
           releasePolicy: widget.onboardingReleasePolicy,
         )
       : null;
@@ -390,6 +394,7 @@ GoRouter createMomCozyRouter({
   MomCozyRuntimeController? runtimeController,
   OnboardingController? onboardingController,
   AvatarTaskController? avatarTaskController,
+  OnboardingAvatarImageLoader? avatarThumbnailLoader,
   MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
   MomCozyAuthDeviceIdStore authDeviceIdStore =
       const FlutterSecureMomCozyAuthDeviceIdStore(),
@@ -451,6 +456,7 @@ GoRouter createMomCozyRouter({
             controller: onboardingController,
             entryPath:
                 _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/',
+            avatarThumbnailLoader: avatarThumbnailLoader,
           ),
         ),
       if (runtimeController != null && onboardingController != null)
@@ -459,6 +465,10 @@ GoRouter createMomCozyRouter({
           builder: (context, state) => OnboardingPage(
             controller: onboardingController,
             avatarTaskMode: true,
+            entryPath:
+                _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/',
+            avatarThumbnailLoader: avatarThumbnailLoader,
+            onAvatarTaskCompleted: avatarTaskController?.showCompleted,
           ),
         ),
       ShellRoute(
@@ -587,6 +597,7 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
       AgentVoicePlaybackCoordinator();
   late bool _hasBuiltAgentHub = widget.location == '/';
   MomCozyApiRuntime? _warmedPlanRuntime;
+  bool _openingAvatarTask = false;
 
   @override
   void didChangeDependencies() {
@@ -644,7 +655,7 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
                 ),
                 child: AvatarTaskBanner(
                   controller: controller,
-                  onOpen: () => context.push('/avatar/review'),
+                  onOpen: () => unawaited(_openAvatarTask(context)),
                 ),
               ),
             Expanded(
@@ -665,6 +676,22 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
           ? null
           : MomCozyBottomNavigation(location: location),
     );
+  }
+
+  Future<void> _openAvatarTask(BuildContext context) async {
+    if (_openingAvatarTask) return;
+    _openingAvatarTask = true;
+    final origin = widget.uri?.toString() ?? widget.location;
+    try {
+      await context.push(
+        Uri(
+          path: '/avatar/review',
+          queryParameters: origin == '/' ? null : {'from': origin},
+        ).toString(),
+      );
+    } finally {
+      _openingAvatarTask = false;
+    }
   }
 
   Widget _buildContent(BuildContext context) {

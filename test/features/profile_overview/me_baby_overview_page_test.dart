@@ -264,6 +264,39 @@ void main() {
       expect(find.text('Couldn’t refresh. Showing saved data.'), findsNothing);
     });
 
+    testWidgets('Me refreshes its profile after avatar data is invalidated', (
+      tester,
+    ) async {
+      final transport = _profileOverviewTransport();
+      final cache = ProfileOverviewCache(
+        ownerUserId: 'profile-overview-user',
+        babyId: 'profile-overview-baby',
+      );
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        runtime: _runtime(transport: transport, profileOverviewCache: cache),
+      );
+      final initialReads = transport.getPaths
+          .where((path) => path == profileMeEndpoint)
+          .length;
+
+      transport.responsesByPath[profileMeEndpoint] = const {
+        'user_id': 'profile-overview-user',
+        'display_name': 'Updated Avery',
+        'current_care_stage': 'postpartum',
+        'actual_delivery_date': '2026-06-12',
+      };
+      cache.invalidateOverview();
+      await tester.pumpAndSettle();
+
+      expect(
+        transport.getPaths.where((path) => path == profileMeEndpoint).length,
+        initialReads + 1,
+      );
+      expect(cache.overview?.value.mom?.displayName, 'Updated Avery');
+    });
+
     testWidgets('Me shows the onboarding stage as a locked indicator', (
       tester,
     ) async {

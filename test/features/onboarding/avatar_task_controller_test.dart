@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_controller.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
@@ -54,6 +57,9 @@ void main() {
 
       onboardingController.selectAvatarCandidate('candidate-2');
       expect(await onboardingController.confirmAvatarSelection(), isTrue);
+      expect(taskController.status, AvatarTaskStatus.hidden);
+
+      taskController.showCompleted();
       expect(taskController.status, AvatarTaskStatus.completed);
 
       await Future<void>.delayed(Duration.zero);
@@ -120,6 +126,73 @@ void main() {
       runtimeController.dispose();
     },
   );
+
+  test('avatar task refresh is single-flight', () async {
+    final transport = _DelayedOnboardingTransport();
+    final runtimeController = MomCozyRuntimeController(
+      MomCozyApiRuntime(
+        jsonTransport: transport,
+        multipartTransport: FixtureApiMultipartTransport(const {}),
+        session: const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'single-flight-avatar-user',
+          babyId: '',
+          locale: 'en-US',
+          accessToken: 'access',
+        ),
+      ),
+    );
+    final onboardingController = OnboardingController(
+      runtimeController: runtimeController,
+    );
+    await onboardingController.load();
+    final taskController = AvatarTaskController(
+      onboardingController: onboardingController,
+      pollInterval: const Duration(days: 1),
+    );
+    final initialReads = transport.readCount;
+
+    final first = taskController.refresh();
+    final second = taskController.refresh();
+
+    await Future<void>.delayed(Duration.zero);
+    expect(transport.readCount, initialReads + 1);
+    transport.releaseRefresh();
+    await Future.wait([first, second]);
+    expect(transport.readCount, initialReads + 1);
+
+    taskController.dispose();
+    onboardingController.dispose();
+    runtimeController.dispose();
+  });
+}
+
+class _DelayedOnboardingTransport implements ApiJsonTransport {
+  final Completer<Map<String, Object?>> _refresh = Completer();
+  var readCount = 0;
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) {
+    readCount += 1;
+    if (readCount <= 2) return Future.value(_generatingState);
+    return _refresh.future;
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    throw UnsupportedError('No writes expected.');
+  }
+
+  void releaseRefresh() {
+    if (!_refresh.isCompleted) _refresh.complete(_reviewState);
+  }
 }
 
 const _generatingState = <String, Object?>{
