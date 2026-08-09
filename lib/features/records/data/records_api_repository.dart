@@ -94,6 +94,7 @@ class RecordsApiRepository
     required FeedingMethod feedingMethod,
     required List<FeedingMilkComponent> milkComponents,
     int? durationSeconds,
+    FeedingBreastSide? breastSide,
     String? idempotencyKey,
   }) async {
     final selectedBabyId = _requiredBabyId(babyId);
@@ -109,6 +110,7 @@ class RecordsApiRepository
           },
       ],
       'duration_seconds': durationSeconds,
+      'breast_side': breastSide?.apiValue,
     }..removeWhere((_, value) => value == null);
     final response = await transport.postJson(
       feedingRecordsEndpoint,
@@ -164,12 +166,15 @@ class RecordsApiRepository
   @override
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
+    DateTime? endedAt,
     required List<PumpingOutput> outputs,
     int? durationSeconds,
+    bool? isPostFeedPumping,
     String? idempotencyKey,
   }) async {
     final body = <String, Object?>{
       'pump_start_time': occurredAt.toUtc().toIso8601String(),
+      'pump_end_time': endedAt?.toUtc().toIso8601String(),
       'outputs': [
         for (final output in outputs)
           {
@@ -178,6 +183,7 @@ class RecordsApiRepository
           },
       ],
       'duration_seconds': durationSeconds,
+      'is_post_feed_pumping': isPostFeedPumping,
       'pump_type': 'manual',
       'source': 'manual',
     }..removeWhere((_, value) => value == null);
@@ -397,6 +403,8 @@ class RecordsApiRepository
     DiaperWetness? wetness,
     String? stoolColor,
     String? stoolConsistency,
+    int? wetDiaperCount,
+    int? bowelMovementCount,
     String notes = '',
     String? idempotencyKey,
   }) async {
@@ -409,6 +417,8 @@ class RecordsApiRepository
           'wetness': wetness?.apiValue,
           'stool_color': stoolColor?.trim(),
           'stool_consistency': stoolConsistency?.trim(),
+          'wet_diaper_count': wetDiaperCount,
+          'bowel_movement_count': bowelMovementCount,
           'notes': notes.trim(),
           'source': 'manual',
         }..removeWhere(
@@ -564,6 +574,9 @@ FeedingRecord _feedingRecord(Map<String, Object?> data) {
     feedingMethod: feedingMethod,
     milkComponents: _feedingMilkComponents(data['milk_components']),
     durationSeconds: _int(data['duration_seconds'] ?? data['durationSeconds']),
+    breastSide: FeedingBreastSide.tryParse(
+      data['breast_side'] ?? data['breastSide'],
+    ),
     occurredAt: _dateTime(data['feed_time']),
   );
 }
@@ -575,6 +588,10 @@ PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
     outputs: _pumpingOutputs(data['outputs']),
     durationSeconds: _int(data['duration_seconds']),
     occurredAt: _dateTime(data['pump_start_time']),
+    endedAt: _dateTime(data['pump_end_time']),
+    isPostFeedPumping: data['is_post_feed_pumping'] is bool
+        ? data['is_post_feed_pumping'] as bool
+        : null,
   );
 }
 
@@ -636,6 +653,10 @@ DiaperRecord _diaperRecord(Map<String, Object?> data) {
     stoolColor: _string(data['stool_color'] ?? data['stoolColor']),
     stoolConsistency: _string(
       data['stool_consistency'] ?? data['stoolConsistency'],
+    ),
+    wetDiaperCount: _int(data['wet_diaper_count'] ?? data['wetDiaperCount']),
+    bowelMovementCount: _int(
+      data['bowel_movement_count'] ?? data['bowelMovementCount'],
     ),
     notes: _string(data['notes']) ?? '',
   );
