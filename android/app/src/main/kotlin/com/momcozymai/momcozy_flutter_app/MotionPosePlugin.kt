@@ -192,13 +192,6 @@ private class MotionPosePlatformView(
     fun start() {
         if (started || disposed) return
         started = true
-        try {
-            poseLandmarker = createPoseLandmarker(previewView.context)
-        } catch (error: RuntimeException) {
-            started = false
-            emitError("pose_model_initialization_failed", error.message ?: "MediaPipe failed to initialize")
-            return
-        }
         val providerFuture = ProcessCameraProvider.getInstance(previewView.context)
         providerFuture.addListener(
             {
@@ -206,7 +199,8 @@ private class MotionPosePlatformView(
                 try {
                     val provider = providerFuture.get()
                     cameraProvider = provider
-                    bindCamera(provider)
+                    bindPreview(provider)
+                    initializePoseAnalysis(provider)
                 } catch (error: Exception) {
                     emitError("camera_start_failed", error.message ?: "Camera failed to start")
                 }
@@ -215,13 +209,50 @@ private class MotionPosePlatformView(
         )
     }
 
-    private fun bindCamera(provider: ProcessCameraProvider) {
-        val preview = Preview.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-            .build()
-            .also {
-            it.setSurfaceProvider(previewView.surfaceProvider)
+    private fun bindPreview(provider: ProcessCameraProvider) {
+        provider.unbindAll()
+        provider.bindToLifecycle(
+            activity as LifecycleOwner,
+            CameraSelector.DEFAULT_FRONT_CAMERA,
+            previewUseCase(),
+        )
+    }
+
+    private fun initializePoseAnalysis(provider: ProcessCameraProvider) {
+        analysisExecutor.execute analysis@{
+            val landmarker = try {
+                createPoseLandmarker(previewView.context)
+            } catch (error: RuntimeException) {
+                emitError(
+                    "pose_model_initialization_failed",
+                    error.message ?: "MediaPipe failed to initialize",
+                )
+                return@analysis
+            }
+            ContextCompat.getMainExecutor(previewView.context).execute main@{
+                if (!started || disposed) {
+                    landmarker.close()
+                    return@main
+                }
+                poseLandmarker = landmarker
+                try {
+                    bindCamera(provider)
+                } catch (error: Exception) {
+                    emitError("camera_start_failed", error.message ?: "Camera analysis failed to start")
+                }
+            }
         }
+    }
+
+    private fun previewUseCase(): Preview = Preview.Builder()
+        .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+        .build()
+        .also { preview ->
+            preview.setSurfaceProvider(previewView.surfaceProvider)
+        }
+
+    private fun bindCamera(provider: ProcessCameraProvider) {
+        val preview = previewUseCase()
         val analysis = ImageAnalysis.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_16_9)
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -247,15 +278,9 @@ private class MotionPosePlatformView(
         }
         lastSubmittedAtMs = now
         val rotationDegrees = imageProxy.imageInfo.rotationDegrees
-        val bitmap = Bitmap.createBitmap(
-            imageProxy.width,
-            imageProxy.height,
-            Bitmap.Config.ARGB_8888,
-        )
+        val bitmap: Bitmap
         try {
-            val buffer = imageProxy.planes[0].buffer
-            buffer.rewind()
-            bitmap.copyPixelsFromBuffer(buffer)
+            bitmap = rgbaBitmap(imageProxy)
         } finally {
             imageProxy.close()
         }
@@ -273,6 +298,29 @@ private class MotionPosePlatformView(
         )
         if (rotated !== bitmap) bitmap.recycle()
         poseLandmarker?.detectAsync(BitmapImageBuilder(rotated).build(), now)
+    }
+
+    private fun rgbaBitmap(imageProxy: ImageProxy): Bitmap {
+        val plane = imageProxy.planes[0]
+        val pixelStride = plane.pixelStride.coerceAtLeast(4)
+        val paddedWidth = (plane.rowStride / pixelStride).coerceAtLeast(imageProxy.width)
+        val padded = Bitmap.createBitmap(
+            paddedWidth,
+            imageProxy.height,
+            Bitmap.Config.ARGB_8888,
+        )
+        plane.buffer.rewind()
+        padded.copyPixelsFromBuffer(plane.buffer)
+        if (paddedWidth == imageProxy.width) return padded
+        val cropped = Bitmap.createBitmap(
+            padded,
+            0,
+            0,
+            imageProxy.width,
+            imageProxy.height,
+        )
+        padded.recycle()
+        return cropped
     }
 
     private fun createPoseLandmarker(context: Context): PoseLandmarker {
