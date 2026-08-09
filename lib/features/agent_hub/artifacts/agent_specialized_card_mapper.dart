@@ -47,7 +47,6 @@ AgentMotionAssessmentCardView? _motionAssessmentCard(
 ) {
   final nestedPayload = _map(raw['payload']);
   final source = <String, Object?>{...nestedPayload, ...raw};
-  final entry = _map(source['entry']);
   final privacy = _map(source['privacy']);
   final requestedTarget = _text(source['target']);
   if (requestedTarget != 'forward_head') return null;
@@ -62,16 +61,14 @@ AgentMotionAssessmentCardView? _motionAssessmentCard(
     },
   ).toString();
   return AgentMotionAssessmentCardView(
-    title: _text(source['title']).isEmpty ? '人体姿态动态评估' : _text(source['title']),
+    title: '人体姿态动态评估',
     target: target,
     sourceArtifactId: normalizedArtifactId,
     userGoal: _nonEmptyText(source['user_goal'] ?? source['userGoal']),
     description: _text(source['description']).isEmpty
         ? '按语音提示调整站位和动作，系统会实时检查取景质量。'
         : _text(source['description']),
-    startLabel: _text(entry['label']).isEmpty
-        ? '开始动态评估'
-        : _text(entry['label']),
+    startLabel: '开始评估',
     routeLocation: routeLocation,
     videoUploadEnabled:
         privacy['video_upload_enabled'] == true ||

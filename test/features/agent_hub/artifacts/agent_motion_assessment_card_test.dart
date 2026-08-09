@@ -15,9 +15,10 @@ void main() {
       AgentArtifactPresentationKind.motionAssessmentCard,
     );
     final data = card.specializedView as AgentMotionAssessmentCardView;
+    expect(data.title, '人体姿态动态评估');
     expect(data.target, 'forward_head');
     expect(data.sourceArtifactId, 'motion-1');
-    expect(data.startLabel, '开始动态评估');
+    expect(data.startLabel, '开始评估');
     expect(
       data.routeLocation,
       '/motion-assessment?target=forward_head&source_artifact_id=motion-1',
@@ -54,8 +55,12 @@ void main() {
       find.byKey(const ValueKey('agent-motion-assessment-card-motion-1')),
       findsOneWidget,
     );
-    expect(find.text('视频与关键点默认只在本机处理'), findsOneWidget);
-    await tester.tap(find.text('开始动态评估'));
+    expect(find.text('人体姿态动态评估'), findsOneWidget);
+    expect(find.text('实时取景与语音动作指导'), findsNothing);
+    expect(find.text('按语音提示侧身站立，系统会实时检查取景和动作。'), findsNothing);
+    expect(find.text('视频与关键点默认只在本机处理'), findsNothing);
+    expect(find.text('结果只反映当前画面，不替代医疗诊断。'), findsNothing);
+    await tester.tap(find.text('开始评估'));
     await tester.pump();
 
     expect(selected, isNotNull);
@@ -86,7 +91,7 @@ AgentStreamEvent _motionArtifactEvent({String target = 'forward_head'}) {
           'description': '按语音提示侧身站立，系统会实时检查取景和动作。',
           'entry': {
             'url': '/motion-assessment?target=$target',
-            'label': '开始动态评估',
+            'label': '开始评估',
           },
           'privacy': {
             'video_upload_enabled': false,
