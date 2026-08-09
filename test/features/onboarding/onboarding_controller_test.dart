@@ -65,4 +65,82 @@ void main() {
     controller.dispose();
     runtimeController.dispose();
   });
+
+  test(
+    'avatar review stays gated until one of four candidates is confirmed',
+    () async {
+      final transport = FixtureApiJsonTransportByPath(
+        const {
+          '/v1/onboarding/me': {
+            'status': 'avatar_review',
+            'current_step': 'review',
+            'current_stage': 'postpartum',
+            'profile_confirmed': true,
+            'can_continue_with_default': true,
+            'avatar': {
+              'id': 'generation-id',
+              'stage': 'postpartum',
+              'status': 'succeeded',
+              'error_code': '',
+              'created_at': '2026-08-09T00:00:00Z',
+              'candidates': [
+                {'id': 'candidate-1', 'file_id': 'file-1', 'position': 1},
+                {'id': 'candidate-2', 'file_id': 'file-2', 'position': 2},
+                {'id': 'candidate-3', 'file_id': 'file-3', 'position': 3},
+                {'id': 'candidate-4', 'file_id': 'file-4', 'position': 4},
+              ],
+            },
+          },
+        },
+        writeResponsesByPath: const {
+          '/v1/onboarding/me/complete': {
+            'status': 'completed',
+            'current_step': 'done',
+            'current_stage': 'postpartum',
+            'profile_confirmed': true,
+            'selected_avatar_file_id': 'file-2',
+          },
+        },
+      );
+      final runtimeController = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: transport,
+          multipartTransport: FixtureApiMultipartTransport(const {}),
+          session: const MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: 'avatar-review-user',
+            babyId: '',
+            locale: 'en-US',
+            accessToken: 'access',
+          ),
+        ),
+      );
+      final controller = OnboardingController(
+        runtimeController: runtimeController,
+      );
+
+      await controller.load();
+
+      expect(controller.requiresOnboardingFor('avatar-review-user'), isTrue);
+      expect(transport.postedBodies, isEmpty);
+      expect(controller.hasAvatarSelection, isFalse);
+
+      controller.selectDefaultAvatar();
+      expect(controller.defaultAvatarSelected, isTrue);
+      expect(controller.selectedAvatarCandidateId, isNull);
+
+      controller.selectAvatarCandidate('candidate-2');
+      expect(controller.hasAvatarSelection, isTrue);
+      expect(controller.defaultAvatarSelected, isFalse);
+      expect(await controller.confirmAvatarSelection(), isTrue);
+      expect(transport.lastBody, {
+        'avatar_candidate_id': 'candidate-2',
+        'use_default_avatar': false,
+      });
+      expect(controller.requiresOnboardingFor('avatar-review-user'), isFalse);
+
+      controller.dispose();
+      runtimeController.dispose();
+    },
+  );
 }
