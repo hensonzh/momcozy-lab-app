@@ -16,8 +16,12 @@ void main() {
     );
     final data = card.specializedView as AgentMotionAssessmentCardView;
     expect(data.target, 'forward_head');
+    expect(data.sourceArtifactId, 'motion-1');
     expect(data.startLabel, '开始动态评估');
-    expect(data.routeLocation, '/motion-assessment?target=forward_head');
+    expect(
+      data.routeLocation,
+      '/motion-assessment?target=forward_head&source_artifact_id=motion-1',
+    );
     expect(data.videoUploadEnabled, isFalse);
     expect(data.landmarkUploadEnabled, isFalse);
   });
@@ -56,7 +60,10 @@ void main() {
 
     expect(selected, isNotNull);
     expect(selected!.routePath, '/motion-assessment');
-    expect(selected!.value, '/motion-assessment?target=forward_head');
+    expect(
+      selected!.value,
+      '/motion-assessment?target=forward_head&source_artifact_id=motion-1',
+    );
     expect(selected!.kind, 'motion_assessment.open');
   });
 }

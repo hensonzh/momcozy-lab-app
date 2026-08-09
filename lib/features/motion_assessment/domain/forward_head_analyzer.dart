@@ -12,6 +12,9 @@ enum ForwardHeadFrameStatus {
   interrupted,
 }
 
+const forwardHeadAnalyzerVersion = 'forward_head_cva_v2';
+const forwardHeadThresholdVersion = 'cva_50deg_visual_tendency_v1';
+
 class ForwardHeadResult {
   const ForwardHeadResult({
     required this.metric,
@@ -19,7 +22,10 @@ class ForwardHeadResult {
     required this.classification,
     required this.userMessage,
     required this.sampleCount,
+    required this.sampleDuration,
     required this.side,
+    required this.angleDispersionDegrees,
+    required this.measurementQualityScore,
   });
 
   final String metric;
@@ -27,7 +33,10 @@ class ForwardHeadResult {
   final ForwardHeadClassification classification;
   final String userMessage;
   final int sampleCount;
+  final Duration sampleDuration;
   final String side;
+  final double angleDispersionDegrees;
+  final double measurementQualityScore;
 }
 
 /// Estimates the side-view craniovertebral angle from accepted local poses.
@@ -53,12 +62,30 @@ class ForwardHeadAnalyzer {
 
   final List<double> _angles = <double>[];
   final List<String> _sides = <String>[];
+  final List<double> _confidences = <double>[];
   Duration? _startedAt;
   Duration? _lastSampleAt;
   ForwardHeadFrameStatus _lastFrameStatus =
       ForwardHeadFrameStatus.insufficientLandmarks;
 
   ForwardHeadFrameStatus get lastFrameStatus => _lastFrameStatus;
+  int get sampleCount => _angles.length;
+  Duration get stableDuration => _startedAt == null || _lastSampleAt == null
+      ? Duration.zero
+      : _lastSampleAt! - _startedAt!;
+  double? get rollingMedianDegrees => _angles.isEmpty ? null : _median(_angles);
+  double? get angleDispersionDegrees =>
+      _angles.isEmpty ? null : _medianAbsoluteDeviation(_angles);
+  String? get dominantSide => _sides.isEmpty ? null : _dominantSide();
+  double get samplingProgress {
+    final sampleProgress = minimumSamples <= 0
+        ? 1.0
+        : _angles.length / minimumSamples;
+    final durationProgress = minimumStableFor.inMilliseconds <= 0
+        ? 1.0
+        : stableDuration.inMilliseconds / minimumStableFor.inMilliseconds;
+    return math.min(sampleProgress, durationProgress).clamp(0, 1).toDouble();
+  }
 
   ForwardHeadResult? add(
     MotionPose pose, {
@@ -104,16 +131,15 @@ class ForwardHeadAnalyzer {
     _lastFrameStatus = ForwardHeadFrameStatus.accepted;
     _angles.add(angle);
     _sides.add(sidePose.side);
+    _confidences.add(sidePose.confidence);
 
     if (_angles.length < minimumSamples ||
         at - _startedAt! < minimumStableFor) {
       return null;
     }
 
-    final sorted = List<double>.of(_angles)..sort();
-    final median = sorted.length.isOdd
-        ? sorted[sorted.length ~/ 2]
-        : (sorted[sorted.length ~/ 2 - 1] + sorted[sorted.length ~/ 2]) / 2;
+    final median = _median(_angles);
+    final dispersion = _medianAbsoluteDeviation(_angles);
     final classification = median < forwardTendencyBelowDegrees
         ? ForwardHeadClassification.forwardTendency
         : ForwardHeadClassification.neutralRange;
@@ -122,10 +148,13 @@ class ForwardHeadAnalyzer {
       valueDegrees: median,
       classification: classification,
       sampleCount: _angles.length,
+      sampleDuration: stableDuration,
       userMessage: classification == ForwardHeadClassification.forwardTendency
           ? '当前画面呈现头部前移倾向，建议结合更多角度与专业评估综合判断。'
           : '当前画面的头颈位置处于参考范围，请继续保持自然站姿。',
       side: _dominantSide(),
+      angleDispersionDegrees: dispersion,
+      measurementQualityScore: _measurementQualityScore(dispersion),
     );
   }
 
@@ -254,6 +283,39 @@ class ForwardHeadAnalyzer {
     return right > left ? 'right' : 'left';
   }
 
+  double _measurementQualityScore(double dispersion) {
+    final confidence = _confidences.isEmpty
+        ? 0.0
+        : _confidences.reduce((a, b) => a + b) / _confidences.length;
+    final dispersionScore = (1 - dispersion / 10).clamp(0, 1).toDouble();
+    final sampleScore = minimumSamples <= 0
+        ? 1.0
+        : (_angles.length / minimumSamples).clamp(0, 1).toDouble();
+    final durationScore = minimumStableFor.inMilliseconds <= 0
+        ? 1.0
+        : (stableDuration.inMilliseconds / minimumStableFor.inMilliseconds)
+              .clamp(0, 1)
+              .toDouble();
+    return (confidence * 0.45 +
+            dispersionScore * 0.25 +
+            sampleScore * 0.15 +
+            durationScore * 0.15)
+        .clamp(0, 1)
+        .toDouble();
+  }
+
+  double _median(List<double> values) {
+    final sorted = List<double>.of(values)..sort();
+    return sorted.length.isOdd
+        ? sorted[sorted.length ~/ 2]
+        : (sorted[sorted.length ~/ 2 - 1] + sorted[sorted.length ~/ 2]) / 2;
+  }
+
+  double _medianAbsoluteDeviation(List<double> values) {
+    final median = _median(values);
+    return _median(values.map((value) => (value - median).abs()).toList());
+  }
+
   void rejectFrame() {
     _reject(ForwardHeadFrameStatus.interrupted);
   }
@@ -271,6 +333,7 @@ class ForwardHeadAnalyzer {
   void _clearWindow() {
     _angles.clear();
     _sides.clear();
+    _confidences.clear();
     _startedAt = null;
     _lastSampleAt = null;
   }

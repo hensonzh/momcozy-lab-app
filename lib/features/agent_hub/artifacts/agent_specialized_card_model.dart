@@ -113,6 +113,7 @@ class AgentMotionAssessmentCardView extends AgentSpecializedArtifactView {
   const AgentMotionAssessmentCardView({
     required this.title,
     required this.target,
+    required this.sourceArtifactId,
     required this.description,
     required this.startLabel,
     required this.routeLocation,
@@ -125,6 +126,7 @@ class AgentMotionAssessmentCardView extends AgentSpecializedArtifactView {
   @override
   final String title;
   final String target;
+  final String sourceArtifactId;
   final String? userGoal;
   final String description;
   final String startLabel;

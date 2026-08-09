@@ -195,6 +195,8 @@ Widget _buildMotionAssessmentPage(BuildContext context, Uri? routeUri) {
   final target = supportedTargets.contains(requestedTarget)
       ? requestedTarget!
       : 'forward_head';
+  final sourceArtifactId =
+      routeUri?.queryParameters['source_artifact_id']?.trim() ?? '';
   return KeyedSubtree(
     key: const ValueKey('route-page-/motion-assessment'),
     child: MotionAssessmentPage(
@@ -204,9 +206,11 @@ Widget _buildMotionAssessmentPage(BuildContext context, Uri? routeUri) {
         runtime.currentSession.userId,
         runtime.currentSession.locale,
         target,
+        sourceArtifactId,
       ),
       controllerFactory: () => MotionAssessmentController(
         target: target,
+        sourceArtifactId: sourceArtifactId,
         locale: runtime.currentSession.locale,
         repository: runtime.motionAssessmentRepository,
         posePlatform: NativeMotionPosePlatform(),
