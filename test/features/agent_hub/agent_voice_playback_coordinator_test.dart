@@ -125,5 +125,47 @@ void main() {
       expect(notificationCancelled, isFalse);
       expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
     });
+
+    test(
+      'suspends current and future normal playback for an exclusive flow',
+      () {
+        final coordinator = AgentVoicePlaybackCoordinator();
+        var cancelled = false;
+
+        coordinator.request(
+          id: 'reply-1',
+          source: AgentVoicePlaybackSource.autoReply,
+          cancel: () => cancelled = true,
+        );
+
+        coordinator.suspend();
+
+        expect(cancelled, isTrue);
+        expect(coordinator.isSuspended, isTrue);
+        expect(coordinator.activeSource, isNull);
+        expect(
+          coordinator
+              .request(
+                id: 'late-reply',
+                source: AgentVoicePlaybackSource.autoReply,
+              )
+              .status,
+          AgentVoicePlaybackRequestStatus.rejected,
+        );
+
+        coordinator.resume();
+
+        expect(coordinator.isSuspended, isFalse);
+        expect(
+          coordinator
+              .request(
+                id: 'next-reply',
+                source: AgentVoicePlaybackSource.autoReply,
+              )
+              .status,
+          AgentVoicePlaybackRequestStatus.started,
+        );
+      },
+    );
   });
 }

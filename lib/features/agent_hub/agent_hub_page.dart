@@ -434,7 +434,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final coordinator = widget.voicePlaybackCoordinator;
     if (coordinator == null) return;
     _unsubscribeVoicePlaybackIdle = coordinator.subscribeIdle(() {
-      scheduleMicrotask(_tryRunPendingAutoVoiceReplay);
+      scheduleMicrotask(() {
+        if (!mounted) return;
+        if (coordinator.isSuspended) {
+          _pendingAutoVoiceReplay = null;
+          if (_voiceState.isPlaybackActive) {
+            _setVoiceState(_voiceState.cancelPlayback());
+          }
+          return;
+        }
+        _tryRunPendingAutoVoiceReplay();
+      });
     });
   }
 
@@ -1839,6 +1849,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!_interactionRestoreResolved ||
         !_isShowingFreshGreeting ||
         coordinator == null ||
+        coordinator.isSuspended ||
         player == null ||
         !_autoVoiceEnabled) {
       return;
@@ -2139,6 +2150,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final text = nextState.textContent.trim();
     final artifactText = _autoVoiceArtifactTextForState(nextState);
     final mediaNarrations = _autoVoiceMediaNarrationsForState(nextState);
+    if (coordinator?.isSuspended ?? false) {
+      _pendingAutoVoiceReplay = null;
+      return;
+    }
     if (coordinator == null ||
         player == null ||
         !_autoVoiceEnabled ||

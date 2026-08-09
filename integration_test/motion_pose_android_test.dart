@@ -42,7 +42,7 @@ void main() {
         const Duration(seconds: 20),
         onTimeout: () => throw TestFailure(
           'Camera permission dialog was not handled. Pre-grant CAMERA to the '
-          'staging package before running this device test.',
+          'selected flavor package before running this device test.',
         ),
       );
       expect(cameraGranted, isTrue);
