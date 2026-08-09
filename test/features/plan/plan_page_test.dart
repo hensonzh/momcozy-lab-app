@@ -114,10 +114,11 @@ void main() {
     expect(bodyStyle.height, 1.5);
 
     expect(tester.getTopLeft(find.text('My Plans')).dx, closeTo(19, 0.6));
-    expect(
-      tester.getCenter(find.byKey(const ValueKey('plan-header-calendar'))).dx,
-      closeTo(229.5, 0.6),
+    final titleRect = tester.getRect(find.text('My Plans'));
+    final calendarRect = tester.getRect(
+      find.byKey(const ValueKey('plan-header-calendar')),
     );
+    expect(calendarRect.left - titleRect.right, closeTo(16, 0.6));
     expect(
       tester.getCenter(find.byKey(const ValueKey('plan-header-all-plans'))).dx,
       closeTo(354, 0.6),

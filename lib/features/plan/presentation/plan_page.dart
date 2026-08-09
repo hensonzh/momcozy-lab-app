@@ -674,24 +674,24 @@ class _PlanHeader extends StatelessWidget {
           height: 48,
           child: Stack(
             children: [
-              const Positioned(
+              Positioned(
                 left: 19,
                 top: 0,
                 bottom: 0,
-                child: Center(
-                  child: Text('My Plans', style: _PlanText.pageTitle),
-                ),
-              ),
-              Positioned(
-                right: 138.5,
-                top: 2,
-                child: _HeaderAssetButton(
-                  key: const ValueKey('plan-header-calendar'),
-                  asset: calendarAsset,
-                  tooltip: 'Calendar',
-                  onTap: onOpenCalendar,
-                  width: 36,
-                  height: 36,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('My Plans', style: _PlanText.pageTitle),
+                    const SizedBox(width: 16),
+                    _HeaderAssetButton(
+                      key: const ValueKey('plan-header-calendar'),
+                      asset: calendarAsset,
+                      tooltip: 'Calendar',
+                      onTap: onOpenCalendar,
+                      width: 36,
+                      height: 36,
+                    ),
+                  ],
                 ),
               ),
               Positioned(
