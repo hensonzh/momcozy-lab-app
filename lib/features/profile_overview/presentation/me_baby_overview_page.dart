@@ -19,16 +19,7 @@ import 'package:momcozy_flutter_app/features/profile_overview/presentation/profi
 part 'baby_overview_components.dart';
 part 'me_stage_components.dart';
 
-enum _BabyDetail { feeding, diaper, sleep, weight, height, headCircumference }
-
-typedef _GrowthSave =
-    Future<bool> Function({
-      double? weightKg,
-      double? heightCm,
-      double? headCm,
-      required MeasurementPosition measurementPosition,
-      required MeasurementContext measurementContext,
-    });
+enum _BabyDetail { feeding, diaper, sleep }
 
 class MeBabyOverviewPage extends StatefulWidget {
   const MeBabyOverviewPage({
@@ -156,10 +147,8 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       controller.feedingSummary,
       controller.sleepRecords,
       controller.diaperRecords,
-      controller.growthRecords,
       controller.plans,
       controller.careStage,
-      controller.growthMutation,
       controller.recordMutation,
     ];
   }
@@ -305,14 +294,14 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       },
     );
     if (!mounted || kind == null) return;
-    await _openRecordComposer(initialKind: kind);
+    await _openRecordComposer(kind: kind);
   }
 
   Future<void> _showMomAddRecordSheet() async {
-    await _openRecordComposer(initialKind: _RecordKind.pumping);
+    await _openRecordComposer(kind: _RecordKind.pumping);
   }
 
-  Future<void> _openRecordComposer({_RecordKind? initialKind}) async {
+  Future<void> _openRecordComposer({required _RecordKind kind}) async {
     final controller = _overviewController;
     if (controller == null || controller.recordMutation.value.isSaving) return;
     controller.clearRecordMutationError();
@@ -324,11 +313,8 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       useRootNavigator: true,
       barrierLabel: 'Dismiss add record form',
       backgroundColor: _MeBabyOverviewColors.background,
-      builder: (sheetContext) => _RecordComposerSheet(
-        identity: widget.identity,
-        controller: controller,
-        initialKind: initialKind,
-      ),
+      builder: (sheetContext) =>
+          _RecordComposerSheet(controller: controller, kind: kind),
     );
     controller.clearRecordMutationError();
     if (!mounted || saved != true) return;
@@ -595,7 +581,6 @@ class _MeBabyOverviewData {
     required this.diaperRecords,
     required this.feedingRecords,
     required this.feedingSummary,
-    required this.growthRecords,
     required this.plans,
     required this.now,
   });
@@ -615,7 +600,6 @@ class _MeBabyOverviewData {
         diaperRecords: const ProfileOverviewResource.initial(),
         feedingRecords: const ProfileOverviewResource.initial(),
         feedingSummary: const ProfileOverviewResource.initial(),
-        growthRecords: const ProfileOverviewResource.initial(),
         plans: const ProfileOverviewResource.initial(),
         now: DateTime.now(),
       );
@@ -631,7 +615,6 @@ class _MeBabyOverviewData {
       diaperRecords: controller.diaperRecords.value,
       feedingRecords: controller.feedingRecords.value,
       feedingSummary: controller.feedingSummary.value,
-      growthRecords: controller.growthRecords.value,
       plans: controller.plans.value,
       now: controller.now(),
     );
@@ -647,7 +630,6 @@ class _MeBabyOverviewData {
   final ProfileOverviewResource<List<DiaperRecord>> diaperRecords;
   final ProfileOverviewResource<List<FeedingRecord>> feedingRecords;
   final ProfileOverviewResource<FeedingSummary> feedingSummary;
-  final ProfileOverviewResource<List<GrowthRecord>> growthRecords;
   final ProfileOverviewResource<PlanDashboard> plans;
   final DateTime now;
 
@@ -662,7 +644,6 @@ class _MeBabyOverviewData {
     diaperRecords,
     feedingRecords,
     feedingSummary,
-    growthRecords,
     plans,
   ].any((resource) => resource.hasError && resource.data != null);
 
@@ -863,27 +844,6 @@ class _MeBabyOverviewData {
     }, growable: false);
   }
 
-  GrowthRecord? get latestGrowth {
-    final values = orderedGrowthRecords;
-    if (values.isEmpty) return null;
-    return values.first;
-  }
-
-  List<GrowthRecord> get orderedGrowthRecords {
-    final values = List<GrowthRecord>.of(
-      growthRecords.data ?? const <GrowthRecord>[],
-    );
-    values.sort((left, right) {
-      final leftTime = left.measuredAt;
-      final rightTime = right.measuredAt;
-      if (leftTime == null && rightTime == null) return 0;
-      if (leftTime == null) return 1;
-      if (rightTime == null) return -1;
-      return rightTime.compareTo(leftTime);
-    });
-    return values;
-  }
-
   String get momAvatarSummary {
     final trend = todayMilkTrend;
     if (trend == null) return 'No milk data recorded today';
@@ -938,7 +898,7 @@ class _MeBabyOverviewHeader extends StatelessWidget {
     final label = !isMom
         ? 'Infant'
         : careStage.isResolved && careStage.stage != null
-        ? careStage.stage!.label
+        ? _stageIndicatorLabel(careStage.stage!)
         : careStage.isResolved
         ? 'Select Stage'
         : careStage.error != null
@@ -1101,38 +1061,20 @@ class _RefreshFailureBanner extends StatelessWidget {
   }
 }
 
-enum _RecordKind {
-  pumping,
-  feeding,
-  growth,
-  water,
-  weight,
-  vitals,
-  sleep,
-  diaper,
-}
+enum _RecordKind { pumping, feeding, growth, sleep, diaper }
 
 class _RecordComposerSheet extends StatefulWidget {
-  const _RecordComposerSheet({
-    required this.identity,
-    required this.controller,
-    this.initialKind,
-  });
+  const _RecordComposerSheet({required this.controller, required this.kind});
 
-  final ProfileIdentity identity;
   final ProfileOverviewController controller;
-  final _RecordKind? initialKind;
+  final _RecordKind kind;
 
   @override
   State<_RecordComposerSheet> createState() => _RecordComposerSheetState();
 }
 
 class _RecordComposerSheetState extends State<_RecordComposerSheet> {
-  late final _RecordKind _kind =
-      widget.initialKind ??
-      (widget.identity == ProfileIdentity.mom
-          ? _RecordKind.pumping
-          : _RecordKind.feeding);
+  late final _RecordKind _kind = widget.kind;
   late DateTime _startedAt;
   DateTime? _endedAt;
   late DateTime _measuredAt;
@@ -1140,20 +1082,11 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     for (final side in PumpingSide.values) side: TextEditingController(),
   };
   final _feedingAmountController = TextEditingController();
-  final _amountController = TextEditingController();
-  final _durationController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
-  final _headController = TextEditingController();
-  final _systolicController = TextEditingController();
-  final _diastolicController = TextEditingController();
-  final _heartRateController = TextEditingController();
-  final _temperatureController = TextEditingController();
-  final _stoolColorController = TextEditingController();
   final _stoolConsistencyController = TextEditingController();
   final _wetDiaperCountController = TextEditingController();
   final _bowelMovementCountController = TextEditingController();
-  final _notesController = TextEditingController();
   FeedingMethod _feedingMethod = FeedingMethod.bottle;
   MilkSource _milkSource = MilkSource.breastMilk;
   FeedingBreastSide? _feedingBreastSide;
@@ -1171,34 +1104,20 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
 
   @override
   void dispose() {
-    _amountController.dispose();
     for (final controller in _pumpingVolumeControllers.values) {
       controller.dispose();
     }
     _feedingAmountController.dispose();
-    _durationController.dispose();
     _weightController.dispose();
     _heightController.dispose();
-    _headController.dispose();
-    _systolicController.dispose();
-    _diastolicController.dispose();
-    _heartRateController.dispose();
-    _temperatureController.dispose();
-    _stoolColorController.dispose();
     _stoolConsistencyController.dispose();
     _wetDiaperCountController.dispose();
     _bowelMovementCountController.dispose();
-    _notesController.dispose();
     super.dispose();
   }
 
   double? _positiveNumber(TextEditingController controller) {
     final value = double.tryParse(controller.text.trim().replaceAll(',', '.'));
-    return value != null && value > 0 ? value : null;
-  }
-
-  int? _positiveInteger(TextEditingController controller) {
-    final value = int.tryParse(controller.text.trim());
     return value != null && value > 0 ? value : null;
   }
 
@@ -1218,9 +1137,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
 
   String get _title => switch (_kind) {
     _RecordKind.pumping => 'Log pumping session',
-    _RecordKind.water => 'Add water intake',
-    _RecordKind.weight => 'Add weight',
-    _RecordKind.vitals => 'Add vitals',
     _RecordKind.sleep => 'Add sleep record',
     _RecordKind.diaper => 'Add diaper record',
     _RecordKind.feeding => 'Add feeding record',
@@ -1299,54 +1215,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
           heightCm: height,
           measurementContext: _measurementContext ?? MeasurementContext.routine,
         );
-      case _RecordKind.water:
-        final amount = _positiveNumber(_amountController);
-        if (amount == null || amount > 10000) {
-          setState(
-            () => _validationError =
-                'Enter a water amount between 1 and 10,000 mL.',
-          );
-          return;
-        }
-        setState(() => _validationError = null);
-        saved = await widget.controller.saveWaterRecord(amountMl: amount);
-      case _RecordKind.weight:
-        final weight = _positiveNumber(_weightController);
-        if (weight == null || weight > 500) {
-          setState(
-            () => _validationError = 'Enter a weight between 0 and 500 kg.',
-          );
-          return;
-        }
-        setState(() => _validationError = null);
-        saved = await widget.controller.saveVitalRecord(weightKg: weight);
-      case _RecordKind.vitals:
-        final systolic = _positiveInteger(_systolicController);
-        final diastolic = _positiveInteger(_diastolicController);
-        final heartRate = _positiveInteger(_heartRateController);
-        final temperature = _positiveNumber(_temperatureController);
-        final bloodPressureIsPartial =
-            (systolic == null) != (diastolic == null);
-        final hasMeasurement =
-            systolic != null ||
-            diastolic != null ||
-            heartRate != null ||
-            temperature != null;
-        if (!hasMeasurement || bloodPressureIsPartial) {
-          setState(
-            () => _validationError = bloodPressureIsPartial
-                ? 'Enter both systolic and diastolic blood pressure.'
-                : 'Enter at least one confirmed vital measurement.',
-          );
-          return;
-        }
-        setState(() => _validationError = null);
-        saved = await widget.controller.saveVitalRecord(
-          systolicMmhg: systolic,
-          diastolicMmhg: diastolic,
-          heartRateBpm: heartRate,
-          temperatureC: temperature,
-        );
       case _RecordKind.sleep:
         if (_endedAt != null && !_endedAt!.isAfter(_startedAt)) {
           setState(
@@ -1404,7 +1272,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
         .fold<double>(0, (total, value) => total + value);
   }
 
-  Future<void> _pickDateTime({
+  Future<void> _pickDate({
     required DateTime initialValue,
     required ValueChanged<DateTime> onSelected,
   }) async {
@@ -1416,15 +1284,33 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
       lastDate: DateTime.now().add(const Duration(days: 1)),
     );
     if (!mounted || date == null) return;
+    final localValue = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      localInitial.hour,
+      localInitial.minute,
+      localInitial.second,
+      localInitial.millisecond,
+      localInitial.microsecond,
+    );
+    onSelected(initialValue.isUtc ? localValue.toUtc() : localValue);
+  }
+
+  Future<void> _pickTime({
+    required DateTime initialValue,
+    required ValueChanged<DateTime> onSelected,
+  }) async {
+    final localInitial = initialValue.toLocal();
     final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(localInitial),
     );
     if (!mounted || time == null) return;
     final localValue = DateTime(
-      date.year,
-      date.month,
-      date.day,
+      localInitial.year,
+      localInitial.month,
+      localInitial.day,
       time.hour,
       time.minute,
     );
@@ -1446,6 +1332,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
         return PopScope(
           canPop: !mutation.isSaving,
           child: Padding(
+            key: const ValueKey('record-composer-sheet'),
             padding: EdgeInsets.fromLTRB(
               20,
               0,
@@ -1457,26 +1344,11 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _title,
-                          style: const TextStyle(
-                            color: _MeBabyOverviewColors.ink,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: 'Close',
-                        onPressed: mutation.isSaving
-                            ? null
-                            : () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close_rounded),
-                      ),
-                    ],
+                  _RecordSheetHeader(
+                    title: _title,
+                    onClose: mutation.isSaving
+                        ? null
+                        : () => Navigator.of(context).pop(),
                   ),
                   const SizedBox(height: 14),
                   if (_kind == _RecordKind.growth)
@@ -1488,7 +1360,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'Measurement date',
                           value: _measuredAt,
                           enabled: !mutation.isSaving,
-                          onTap: () => _pickDateTime(
+                          onDateTap: () => _pickDate(
                             initialValue: _measuredAt,
                             onSelected: (value) =>
                                 setState(() => _measuredAt = value),
@@ -1537,62 +1409,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                         ),
                       ],
                     )
-                  else if (_kind == _RecordKind.weight)
-                    _RecordNumberField(
-                      fieldKey: const ValueKey('record-maternal-weight'),
-                      controller: _weightController,
-                      label: 'Measured weight',
-                      suffix: 'kg',
-                      enabled: !mutation.isSaving,
-                    )
-                  else if (_kind == _RecordKind.vitals)
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _RecordNumberField(
-                                fieldKey: const ValueKey(
-                                  'record-vital-systolic',
-                                ),
-                                controller: _systolicController,
-                                label: 'Systolic',
-                                suffix: 'mmHg',
-                                enabled: !mutation.isSaving,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _RecordNumberField(
-                                fieldKey: const ValueKey(
-                                  'record-vital-diastolic',
-                                ),
-                                controller: _diastolicController,
-                                label: 'Diastolic',
-                                suffix: 'mmHg',
-                                enabled: !mutation.isSaving,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        _RecordNumberField(
-                          fieldKey: const ValueKey('record-vital-heart-rate'),
-                          controller: _heartRateController,
-                          label: 'Heart rate',
-                          suffix: 'bpm',
-                          enabled: !mutation.isSaving,
-                        ),
-                        const SizedBox(height: 14),
-                        _RecordNumberField(
-                          fieldKey: const ValueKey('record-vital-temperature'),
-                          controller: _temperatureController,
-                          label: 'Temperature',
-                          suffix: '°C',
-                          enabled: !mutation.isSaving,
-                        ),
-                      ],
-                    )
                   else if (_kind == _RecordKind.sleep)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1602,7 +1418,12 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'Start time',
                           value: _startedAt,
                           enabled: !mutation.isSaving,
-                          onTap: () => _pickDateTime(
+                          onDateTap: () => _pickDate(
+                            initialValue: _startedAt,
+                            onSelected: (value) =>
+                                setState(() => _startedAt = value),
+                          ),
+                          onTimeTap: () => _pickTime(
                             initialValue: _startedAt,
                             onSelected: (value) =>
                                 setState(() => _startedAt = value),
@@ -1614,7 +1435,13 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'End time (optional)',
                           value: _endedAt,
                           enabled: !mutation.isSaving,
-                          onTap: () => _pickDateTime(
+                          onDateTap: () => _pickDate(
+                            initialValue:
+                                _endedAt ??
+                                _startedAt.add(const Duration(hours: 1)),
+                            onSelected: _setEndedAt,
+                          ),
+                          onTimeTap: () => _pickTime(
                             initialValue:
                                 _endedAt ??
                                 _startedAt.add(const Duration(hours: 1)),
@@ -1697,7 +1524,12 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'Start time',
                           value: _startedAt,
                           enabled: !mutation.isSaving,
-                          onTap: () => _pickDateTime(
+                          onDateTap: () => _pickDate(
+                            initialValue: _startedAt,
+                            onSelected: (value) =>
+                                setState(() => _startedAt = value),
+                          ),
+                          onTimeTap: () => _pickTime(
                             initialValue: _startedAt,
                             onSelected: (value) =>
                                 setState(() => _startedAt = value),
@@ -1709,7 +1541,13 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'End time (optional)',
                           value: _endedAt,
                           enabled: !mutation.isSaving,
-                          onTap: () => _pickDateTime(
+                          onDateTap: () => _pickDate(
+                            initialValue:
+                                _endedAt ??
+                                _startedAt.add(const Duration(minutes: 20)),
+                            onSelected: _setEndedAt,
+                          ),
+                          onTimeTap: () => _pickTime(
                             initialValue:
                                 _endedAt ??
                                 _startedAt.add(const Duration(minutes: 20)),
@@ -1779,7 +1617,12 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                               : 'Start time',
                           value: _startedAt,
                           enabled: !mutation.isSaving,
-                          onTap: () => _pickDateTime(
+                          onDateTap: () => _pickDate(
+                            initialValue: _startedAt,
+                            onSelected: (value) =>
+                                setState(() => _startedAt = value),
+                          ),
+                          onTimeTap: () => _pickTime(
                             initialValue: _startedAt,
                             onSelected: (value) =>
                                 setState(() => _startedAt = value),
@@ -1830,7 +1673,13 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                             label: 'End time (optional)',
                             value: _endedAt,
                             enabled: !mutation.isSaving,
-                            onTap: () => _pickDateTime(
+                            onDateTap: () => _pickDate(
+                              initialValue:
+                                  _endedAt ??
+                                  _startedAt.add(const Duration(minutes: 20)),
+                              onSelected: _setEndedAt,
+                            ),
+                            onTimeTap: () => _pickTime(
                               initialValue:
                                   _endedAt ??
                                   _startedAt.add(const Duration(minutes: 20)),
@@ -1904,14 +1753,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           ),
                         ],
                       ],
-                    )
-                  else
-                    _RecordNumberField(
-                      fieldKey: const ValueKey('record-water-amount'),
-                      controller: _amountController,
-                      label: 'Water amount',
-                      suffix: 'mL',
-                      enabled: !mutation.isSaving,
                     ),
                   if (_validationError != null || mutation.error != null) ...[
                     const SizedBox(height: 12),
@@ -1976,6 +1817,45 @@ String _formatRecordNumber(double value) {
       : value.toStringAsFixed(1);
 }
 
+class _RecordSheetHeader extends StatelessWidget {
+  const _RecordSheetHeader({
+    required this.title,
+    required this.onClose,
+    this.closeKey,
+    this.closeTooltip = 'Close',
+  });
+
+  final String title;
+  final VoidCallback? onClose;
+  final Key? closeKey;
+  final String closeTooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      key: const ValueKey('record-sheet-header'),
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: _MeBabyOverviewColors.ink,
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        IconButton(
+          key: closeKey,
+          tooltip: closeTooltip,
+          onPressed: onClose,
+          icon: const Icon(Icons.close_rounded),
+        ),
+      ],
+    );
+  }
+}
+
 class _RecordNumberField extends StatelessWidget {
   const _RecordNumberField({
     required this.fieldKey,
@@ -2024,15 +1904,17 @@ class _RecordDateTimeField extends StatelessWidget {
     required this.label,
     required this.value,
     required this.enabled,
-    required this.onTap,
+    required this.onDateTap,
+    this.onTimeTap,
     this.onClear,
   });
 
-  final Key fieldKey;
+  final ValueKey<String> fieldKey;
   final String label;
   final DateTime? value;
   final bool enabled;
-  final VoidCallback onTap;
+  final VoidCallback onDateTap;
+  final VoidCallback? onTimeTap;
   final VoidCallback? onClear;
 
   @override
@@ -2048,7 +1930,7 @@ class _RecordDateTimeField extends StatelessWidget {
       child: InkWell(
         key: fieldKey,
         borderRadius: BorderRadius.circular(18),
-        onTap: enabled ? onTap : null,
+        onTap: enabled ? onTimeTap ?? onDateTap : null,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 11, 8, 11),
           child: Row(
@@ -2068,6 +1950,8 @@ class _RecordDateTimeField extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       valueLabel,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: _MeBabyOverviewColors.ink,
                         fontSize: 16,
@@ -2077,17 +1961,46 @@ class _RecordDateTimeField extends StatelessWidget {
                   ],
                 ),
               ),
-              if (onClear != null)
-                IconButton(
-                  tooltip: 'Clear $label',
-                  onPressed: enabled ? onClear : null,
-                  icon: const Icon(Icons.close_rounded),
-                )
-              else
-                const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Icon(Icons.calendar_today_outlined, size: 20),
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    key: ValueKey('${fieldKey.value}-date'),
+                    tooltip: 'Select date for $label',
+                    onPressed: enabled ? onDateTap : null,
+                    constraints: const BoxConstraints.tightFor(
+                      width: MomCozyTapTargets.minimum,
+                      height: MomCozyTapTargets.minimum,
+                    ),
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(Icons.calendar_today_outlined, size: 20),
+                  ),
+                  if (onTimeTap != null)
+                    IconButton(
+                      key: ValueKey('${fieldKey.value}-time'),
+                      tooltip: 'Select time for $label',
+                      onPressed: enabled ? onTimeTap : null,
+                      constraints: const BoxConstraints.tightFor(
+                        width: MomCozyTapTargets.minimum,
+                        height: MomCozyTapTargets.minimum,
+                      ),
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(Icons.schedule_rounded, size: 21),
+                    ),
+                  if (onClear != null)
+                    IconButton(
+                      key: ValueKey('${fieldKey.value}-clear'),
+                      tooltip: 'Clear $label',
+                      onPressed: enabled ? onClear : null,
+                      constraints: const BoxConstraints.tightFor(
+                        width: MomCozyTapTargets.minimum,
+                        height: MomCozyTapTargets.minimum,
+                      ),
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                ],
+              ),
             ],
           ),
         ),
@@ -2158,6 +2071,10 @@ class _AddRecordButton extends StatelessWidget {
       ),
     );
   }
+}
+
+String _stageIndicatorLabel(MomLifeStage stage) {
+  return stage == MomLifeStage.postpartum ? 'Postpartum' : stage.label;
 }
 
 class _MomCozyWordmark extends StatelessWidget {
@@ -3547,7 +3464,6 @@ abstract final class _MeBabyOverviewAssets {
   static const babyIcon = '$_babyIconRoot/baby.svg';
   static const bottleWineIcon = '$_babyIconRoot/bottle-wine.svg';
   static const circleXIcon = '$_babyIconRoot/circle-x.svg';
-  static const closeButton = '$_babyIconRoot/close-button.svg';
   static const clockIcon = '$_babyIconRoot/clock.svg';
   static const dropletIcon = '$_babyIconRoot/droplet.svg';
   static const moonIcon = '$_babyIconRoot/moon.svg';

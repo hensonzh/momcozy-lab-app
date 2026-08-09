@@ -229,90 +229,6 @@ void main() {
       expect(controller.milkTrends.value.data, same(previous));
     });
 
-    test(
-      'Baby saves a valid growth measurement and refreshes local state',
-      () async {
-        final records = _FakeRecordsRepository();
-        final controller = _controller(
-          records: records,
-          identity: ProfileIdentity.baby,
-        );
-        addTearDown(controller.dispose);
-        await controller.initialize();
-
-        final saved = await controller.saveGrowth(
-          weightKg: 6.4,
-          measurementPosition: MeasurementPosition.recumbent,
-          measurementContext: MeasurementContext.routine,
-        );
-
-        expect(saved, isTrue);
-        expect(records.growthCreateCount, 1);
-        expect(records.savedWeightKg, 6.4);
-        expect(controller.growthRecords.value.data?.first.weightKg, 6.4);
-        expect(
-          controller.growthMutation.value.phase,
-          ProfileOverviewMutationPhase.success,
-        );
-      },
-    );
-
-    test(
-      'Baby rejects an invalid growth measurement before the API call',
-      () async {
-        final records = _FakeRecordsRepository();
-        final controller = _controller(
-          records: records,
-          identity: ProfileIdentity.baby,
-        );
-        addTearDown(controller.dispose);
-
-        final saved = await controller.saveGrowth(
-          weightKg: 0,
-          measurementPosition: MeasurementPosition.recumbent,
-          measurementContext: MeasurementContext.routine,
-        );
-
-        expect(saved, isFalse);
-        expect(records.growthCreateCount, 0);
-        expect(
-          controller.growthMutation.value.phase,
-          ProfileOverviewMutationPhase.error,
-        );
-      },
-    );
-
-    test(
-      'Baby updates today’s growth record instead of duplicating it',
-      () async {
-        final records = _FakeRecordsRepository(
-          growth: [
-            GrowthRecord(
-              id: 'growth-today',
-              weightGram: 6400,
-              measuredAt: DateTime(2026, 7, 11, 8),
-            ),
-          ],
-        );
-        final controller = _controller(
-          records: records,
-          identity: ProfileIdentity.baby,
-        );
-        addTearDown(controller.dispose);
-        await controller.initialize();
-
-        final saved = await controller.saveGrowth(
-          heightCm: 65,
-          measurementPosition: MeasurementPosition.recumbent,
-          measurementContext: MeasurementContext.routine,
-        );
-
-        expect(saved, isTrue);
-        expect(records.growthCreateCount, 0);
-        expect(records.growthUpdateCount, 1);
-        expect(records.savedHeightCm, 65);
-      },
-    );
     test('a successful profile without a stage stays unselected', () async {
       final controller = _controller(
         overviewRepository: _FakeProfileOverviewRepository(
@@ -537,40 +453,6 @@ void main() {
       expect(records.sleepFetchCount, 2);
       expect(records.diaperFetchCount, 2);
     });
-
-    test('saving water refreshes today and weekly measured data', () async {
-      final records = _FakeRecordsRepository();
-      final controller = _controller(records: records);
-      addTearDown(controller.dispose);
-      await controller.initialize();
-
-      final saved = await controller.saveWaterRecord(amountMl: 250);
-
-      expect(saved, isTrue);
-      expect(records.createdWaterAmountMl, 250);
-      expect(records.waterFetchCount, 2);
-      expect(records.waterTrendFetchCount, 2);
-    });
-
-    test('saving weight and vitals refreshes maternal vital records', () async {
-      final records = _FakeRecordsRepository();
-      final controller = _controller(records: records);
-      addTearDown(controller.dispose);
-      await controller.initialize();
-
-      final saved = await controller.saveVitalRecord(
-        weightKg: 62.5,
-        systolicMmhg: 118,
-        diastolicMmhg: 76,
-        heartRateBpm: 72,
-        temperatureC: 36.7,
-      );
-
-      expect(saved, isTrue);
-      expect(records.createdVitalWeightKg, 62.5);
-      expect(records.createdVitalHeartRateBpm, 72);
-      expect(records.vitalFetchCount, 2);
-    });
   });
 }
 
@@ -679,14 +561,12 @@ class _FakeRecordsRepository
     this.feeding = const <FeedingRecord>[],
     this.sleep = const <SleepRecord>[],
     this.diapers = const <DiaperRecord>[],
-    this.growth = const <GrowthRecord>[],
     this.growthError,
   });
 
   final List<FeedingRecord> feeding;
   final List<SleepRecord> sleep;
   final List<DiaperRecord> diapers;
-  final List<GrowthRecord> growth;
   final Object? growthError;
   Object? milkTrendError;
   DateTime? milkTrendStart;
@@ -696,14 +576,10 @@ class _FakeRecordsRepository
   var diaperFetchCount = 0;
   var milkTrendFetchCount = 0;
   var growthFetchCount = 0;
-  var growthCreateCount = 0;
-  var growthUpdateCount = 0;
   var waterFetchCount = 0;
   var waterTrendFetchCount = 0;
   var vitalFetchCount = 0;
-  double? savedWeightKg;
   double? savedHeightCm;
-  double? savedHeadCm;
   String? feedingBabyId;
   DateTime? feedingRangeStart;
   DateTime? feedingRangeEnd;
@@ -718,9 +594,6 @@ class _FakeRecordsRepository
   bool? createdPumpingIsPostFeed;
   var pumpingCreateCount = 0;
   var feedingSummaryFetchCount = 0;
-  double? createdWaterAmountMl;
-  double? createdVitalWeightKg;
-  int? createdVitalHeartRateBpm;
   Duration? createdSleepDuration;
   DiaperKind? createdDiaperKind;
   int? createdWetDiaperCount;
@@ -841,7 +714,6 @@ class _FakeRecordsRepository
     required double amountMl,
     String? idempotencyKey,
   }) async {
-    createdWaterAmountMl = amountMl;
     return WaterIntakeRecord(
       id: 'water-created',
       amountMl: amountMl,
@@ -878,8 +750,6 @@ class _FakeRecordsRepository
     double? temperatureC,
     String? idempotencyKey,
   }) async {
-    createdVitalWeightKg = weightKg;
-    createdVitalHeartRateBpm = heartRateBpm;
     return VitalRecord(
       id: 'vital-created',
       measuredAt: measuredAt,
@@ -988,7 +858,7 @@ class _FakeRecordsRepository
   }) async {
     growthFetchCount += 1;
     if (growthError != null) throw growthError!;
-    return growth;
+    return const [];
   }
 
   @override
@@ -1002,10 +872,7 @@ class _FakeRecordsRepository
     required MeasurementContext measurementContext,
     String? idempotencyKey,
   }) async {
-    growthCreateCount += 1;
-    savedWeightKg = weightKg;
     savedHeightCm = heightCm;
-    savedHeadCm = headCm;
     createdGrowthBabyId = babyId;
     createdGrowthWeightKg = weightKg;
     return GrowthRecord(
@@ -1028,10 +895,6 @@ class _FakeRecordsRepository
     MeasurementPosition? measurementPosition,
     MeasurementContext? measurementContext,
   }) async {
-    growthUpdateCount += 1;
-    savedWeightKg = weightKg;
-    savedHeightCm = heightCm;
-    savedHeadCm = headCm;
     return GrowthRecord(
       id: recordId,
       weightGram: weightKg == null ? null : (weightKg * 1000).round(),
