@@ -17,7 +17,10 @@ void main() {
       maxSignificantDifferenceRatio: 0.05,
       // Product-approved simplification: the Service chat action and the
       // duplicate assistant card no longer follow the original 0806 export.
+      // The calendar action is also intentionally grouped with the page title.
       ignoredRegions: [
+        _ImageRect(134, 0, 50, 70),
+        _ImageRect(204, 0, 50, 70),
         _ImageRect(12, 514, 366, 109),
         _ImageRect(12, 1024, 366, 104),
       ],
@@ -51,6 +54,8 @@ void main() {
       comparisonHeight: 683,
       maxMeanAbsoluteError: 6.5,
       maxSignificantDifferenceRatio: 0.05,
+      // Product-approved header grouping places Calendar beside "My Plans".
+      ignoredRegions: [_ImageRect(134, 0, 50, 66), _ImageRect(204, 0, 50, 66)],
       regions: [
         _AlignmentRegion('header', _ImageRect(0, 0, 390, 66)),
         _AlignmentRegion('plan controls', _ImageRect(12, 70, 366, 128)),
@@ -185,6 +190,7 @@ void main() {
       renderedPath: 'test/goldens/plan/empty_design_2x.png',
       renderedRect: _ImageRect(0, 22, 390, 48),
       maxMeanAbsoluteError: 8,
+      ignoredRegions: [_ImageRect(134, 0, 50, 48), _ImageRect(204, 0, 50, 48)],
     ),
     _ComponentAlignmentCase(
       name: 'multi-category header',
@@ -192,6 +198,7 @@ void main() {
       renderedPath: 'test/goldens/plan/multi_category_design_2x.png',
       renderedRect: _ImageRect(0, 18, 390, 48),
       maxMeanAbsoluteError: 8,
+      ignoredRegions: [_ImageRect(134, 0, 50, 48), _ImageRect(204, 0, 50, 48)],
     ),
     _ComponentAlignmentCase(
       name: 'single-category header',
@@ -243,6 +250,11 @@ void main() {
         interpolation: image.Interpolation.cubic,
       );
       final rendered = _crop(_decode(componentCase.renderedPath), rect);
+      _maskApprovedDifferences(
+        reference,
+        rendered,
+        componentCase.ignoredRegions,
+      );
       final difference = _measurePerceptualDifference(reference, rendered);
       expect(
         difference.meanAbsoluteError,
@@ -451,6 +463,7 @@ class _ComponentAlignmentCase {
     required this.renderedPath,
     required this.renderedRect,
     required this.maxMeanAbsoluteError,
+    this.ignoredRegions = const [],
   });
 
   final String name;
@@ -458,6 +471,7 @@ class _ComponentAlignmentCase {
   final String renderedPath;
   final _ImageRect renderedRect;
   final double maxMeanAbsoluteError;
+  final List<_ImageRect> ignoredRegions;
 }
 
 class _ImageDifference {
