@@ -236,51 +236,33 @@ void main() {
       expect(find.text('Couldn’t refresh. Showing saved data.'), findsNothing);
     });
 
-    testWidgets('Me saves a stage before switching to its workspace', (
+    testWidgets('Me shows the onboarding stage as a locked indicator', (
       tester,
     ) async {
-      final transport = _profileOverviewTransport(
-        writeResponse: const {
-          'user_id': 'profile-overview-user',
-          'current_care_stage': 'pregnancy',
-        },
-      );
+      final transport = _profileOverviewTransport();
       await _pumpApp(
         tester,
         initialLocation: '/me',
         runtime: _runtime(transport: transport),
       );
 
-      await tester.tap(find.byKey(const ValueKey('me-current-stage-selector')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Select Current Stage'), findsOneWidget);
+      final indicator = find.byKey(
+        const ValueKey('me-current-stage-indicator'),
+      );
+      expect(indicator, findsOneWidget);
       expect(
-        find.byKey(const ValueKey('me-stage-option-postpartum')),
-        findsOneWidget,
-      );
-      await expectLater(
-        find.byType(Overlay).first,
-        matchesGoldenFile('../../goldens/me_baby_overview/stage_selector.png'),
+        find.descendant(
+          of: indicator,
+          matching: find.byIcon(Icons.keyboard_arrow_down_rounded),
+        ),
+        findsNothing,
       );
 
-      await tester.tap(find.byKey(const ValueKey('me-stage-option-pregnancy')));
+      await tester.tap(indicator);
       await tester.pumpAndSettle();
 
       expect(find.text('Select Current Stage'), findsNothing);
-      expect(find.text('Pregnancy'), findsWidgets);
-      expect(
-        find.byKey(const ValueKey('me-stage-workspace-pregnancy')),
-        findsOneWidget,
-      );
-      expect(find.text('Prenatal'), findsWidgets);
-      expect(find.text('Today’s Milestones'), findsOneWidget);
-      expect(find.text('78'), findsNothing);
-      expect(transport.lastBody, {'current_care_stage': 'pregnancy'});
-      expect(transport.postedBodies.single, {
-        'current_care_stage': 'pregnancy',
-      });
-      expect(transport.getPaths, contains(maternalCareOverviewEndpoint));
+      expect(transport.postedBodies, isEmpty);
     });
 
     testWidgets('Fertility matches the cycle design without invented data', (
@@ -434,7 +416,7 @@ void main() {
       expect(find.text('About 56 days to go'), findsOneWidget);
     });
 
-    testWidgets('Me asks for a stage when the profile has no stage evidence', (
+    testWidgets('Me does not offer a manual selector when stage is missing', (
       tester,
     ) async {
       await _pumpApp(
@@ -451,53 +433,9 @@ void main() {
       );
 
       expect(find.text('Select Stage'), findsOneWidget);
-      expect(find.text('Choose your current stage'), findsOneWidget);
+      expect(find.text('Complete onboarding to continue'), findsOneWidget);
       expect(find.text('Postpartum Recovery'), findsNothing);
-
-      await tester.tap(find.byKey(const ValueKey('me-stage-choose')));
-      await tester.pumpAndSettle();
-      expect(find.text('Select Current Stage'), findsOneWidget);
-    });
-
-    testWidgets('Me keeps the old workspace when a stage save fails', (
-      tester,
-    ) async {
-      final transport = _profileOverviewTransport(
-        writeResponse: const {
-          'http_status': 503,
-          'status_text': 'Unavailable',
-          'body': {
-            'error': {
-              'code': 'dependency_failed',
-              'message': 'Profile unavailable',
-            },
-          },
-        },
-      );
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(transport: transport),
-      );
-
-      await tester.tap(find.byKey(const ValueKey('me-current-stage-selector')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('me-stage-option-fertility')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Select Current Stage'), findsOneWidget);
-      expect(find.text('Couldn’t change stage. Try again.'), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.byKey(const ValueKey('me-current-stage-selector')),
-          matching: find.text('Postpartum Recovery'),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('me-stage-workspace-fertility')),
-        findsNothing,
-      );
+      expect(find.byKey(const ValueKey('me-stage-choose')), findsNothing);
     });
 
     testWidgets('Baby header does not expose the maternal stage selector', (
@@ -507,7 +445,7 @@ void main() {
 
       expect(find.text('momcozy'), findsOneWidget);
       expect(
-        find.byKey(const ValueKey('me-current-stage-selector')),
+        find.byKey(const ValueKey('me-current-stage-indicator')),
         findsNothing,
       );
       expect(
@@ -593,60 +531,6 @@ void main() {
       expect(find.text('Mia'), findsNothing);
       expect(transport.lastPath, growthRecordsEndpoint);
       expect(transport.lastQuery?['infant_id'], 'profile-overview-baby-2');
-    });
-
-    testWidgets(
-      'stage selector fits a compact screen and closes without saving',
-      (tester) async {
-        final transport = _profileOverviewTransport();
-        await _pumpApp(
-          tester,
-          initialLocation: '/me',
-          viewportSize: const Size(360, 640),
-          runtime: _runtime(transport: transport),
-        );
-
-        await tester.tap(
-          find.byKey(const ValueKey('me-current-stage-selector')),
-        );
-        await tester.pumpAndSettle();
-
-        expect(find.text('Select Current Stage'), findsOneWidget);
-        expect(
-          find.byKey(const ValueKey('me-stage-option-fertility')),
-          findsOneWidget,
-        );
-        expect(
-          find.byKey(const ValueKey('me-stage-option-postpartum')),
-          findsOneWidget,
-        );
-        expect(tester.takeException(), isNull);
-
-        await tester.tap(find.byKey(const ValueKey('me-stage-selector-close')));
-        await tester.pumpAndSettle();
-
-        expect(find.text('Select Current Stage'), findsNothing);
-        expect(transport.postedBodies, isEmpty);
-      },
-    );
-
-    testWidgets('stage selector is edge-to-edge and exposes a drag handle', (
-      tester,
-    ) async {
-      await _pumpApp(tester, initialLocation: '/me');
-
-      await tester.tap(find.byKey(const ValueKey('me-current-stage-selector')));
-      await tester.pumpAndSettle();
-
-      final sheet = tester.getRect(
-        find.byKey(const ValueKey('me-stage-selector-card')),
-      );
-      expect(sheet.left, 0);
-      expect(sheet.right, 430);
-      expect(
-        find.byKey(const ValueKey('me-stage-selector-drag-handle')),
-        findsOneWidget,
-      );
     });
 
     testWidgets(
@@ -1548,7 +1432,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final stagePill = tester.widget<Material>(
-        find.byKey(const ValueKey('me-current-stage-selector')),
+        find.byKey(const ValueKey('me-current-stage-indicator')),
       );
       expect(stagePill.color, const Color(0xfff2e9e6));
     });
@@ -2069,7 +1953,7 @@ void main() {
 
         expect(
           find.descendant(
-            of: find.byKey(const ValueKey('me-current-stage-selector')),
+            of: find.byKey(const ValueKey('me-current-stage-indicator')),
             matching: find.byType(FittedBox),
           ),
           findsNothing,
