@@ -455,6 +455,35 @@ void main() {
       expect(find.text('Infant'), findsOneWidget);
     });
 
+    testWidgets('Baby header matches the Me header geometry', (tester) async {
+      await _pumpApp(tester, initialLocation: '/baby');
+
+      final babyWordmark = tester.getRect(find.text('momcozy'));
+      final babyIndicator = tester.getRect(
+        find.byKey(const ValueKey('baby-current-profile-indicator')),
+      );
+      final babyBell = tester.getRect(
+        find.byKey(const ValueKey('me-baby-overview-notification')),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-me')));
+      await tester.pumpAndSettle();
+
+      expect(tester.getRect(find.text('momcozy')), babyWordmark);
+      expect(
+        tester.getRect(
+          find.byKey(const ValueKey('me-current-stage-indicator')),
+        ),
+        babyIndicator,
+      );
+      expect(
+        tester.getRect(
+          find.byKey(const ValueKey('me-baby-overview-notification')),
+        ),
+        babyBell,
+      );
+    });
+
     testWidgets('Notification bell opens the real owner inbox', (tester) async {
       final transport = _profileOverviewTransport();
       await _pumpApp(
@@ -481,7 +510,7 @@ void main() {
       expect(find.byKey(const ValueKey('route-page-/baby')), findsOneWidget);
     });
 
-    testWidgets('Infant selector switches the visible baby and record scope', (
+    testWidgets('Infant indicator stays static when multiple babies exist', (
       tester,
     ) async {
       final transport = _profileOverviewTransport(
@@ -505,32 +534,28 @@ void main() {
       );
 
       expect(find.text('Mia'), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('baby-profile-selector')));
+      final indicator = find.byKey(
+        const ValueKey('baby-current-profile-indicator'),
+      );
+      expect(indicator, findsOneWidget);
+      final semantics = tester.widget<Semantics>(indicator).properties;
+      expect(semantics.button, isFalse);
+      expect(semantics.enabled, isFalse);
+      expect(
+        find.descendant(
+          of: indicator,
+          matching: find.byIcon(Icons.keyboard_arrow_down_rounded),
+        ),
+        findsNothing,
+      );
+      expect(find.byKey(const ValueKey('baby-profile-selector')), findsNothing);
+
+      await tester.tap(indicator);
       await tester.pumpAndSettle();
 
-      expect(find.text('Select Infant'), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('baby-profile-option-profile-overview-baby')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(
-          const ValueKey('baby-profile-option-profile-overview-baby-2'),
-        ),
-        findsOneWidget,
-      );
-
-      await tester.tap(
-        find.byKey(
-          const ValueKey('baby-profile-option-profile-overview-baby-2'),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Noah'), findsOneWidget);
-      expect(find.text('Mia'), findsNothing);
-      expect(transport.lastPath, growthRecordsEndpoint);
-      expect(transport.lastQuery?['infant_id'], 'profile-overview-baby-2');
+      expect(find.text('Select Infant'), findsNothing);
+      expect(find.text('Mia'), findsOneWidget);
+      expect(find.text('Noah'), findsNothing);
     });
 
     testWidgets(
@@ -922,7 +947,7 @@ void main() {
         tester.getRect(find.byKey(const ValueKey('baby-monitor-camera-card'))),
         const Rect.fromLTWH(16, 335, 398, 241),
       );
-      expect(tester.getRect(find.text('momcozy')).top, closeTo(55, 1));
+      expect(tester.getRect(find.text('momcozy')).top, closeTo(46.5, 1));
       expect(
         tester.getRect(find.byKey(const ValueKey('bottom-nav-agent'))).top,
         closeTo(829, 4),
@@ -1130,8 +1155,14 @@ void main() {
         tester.widget<Text>(find.text('12 weeks 4 days')).style?.fontFamily,
         'Figtree',
       );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('me-baby-overview-notification')),
+          matching: find.byIcon(Icons.notifications_none_rounded),
+        ),
+        findsOneWidget,
+      );
       for (final key in const [
-        'me-baby-overview-notification',
         'baby-section-monitor',
         'baby-section-sleep',
         'baby-section-feeding',
