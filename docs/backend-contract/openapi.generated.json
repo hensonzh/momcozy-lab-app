@@ -1695,11 +1695,17 @@
         "additionalProperties": false,
         "properties": {
           "days": {
-            "default": 0,
-            "maximum": 6.0,
-            "minimum": 0.0,
-            "title": "Days",
-            "type": "integer"
+            "anyOf": [
+              {
+                "maximum": 6.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days"
           },
           "weeks": {
             "maximum": 45.0,
@@ -4051,14 +4057,7 @@
             "type": "string"
           },
           "delivery_gestational_age": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/DeliveryGestationalAge"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/DeliveryGestationalAge"
           },
           "delivery_type": {
             "anyOf": [
@@ -4107,6 +4106,7 @@
           "age",
           "stage",
           "delivery_date",
+          "delivery_gestational_age",
           "infant_count",
           "infants"
         ],

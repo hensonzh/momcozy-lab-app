@@ -56,6 +56,12 @@ void main() {
   testWidgets('postpartum path collects delivery and one shared infant set', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(360, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
     final transport = FixtureApiJsonTransportByPath(
       const {
         '/v1/onboarding/me': {
@@ -122,12 +128,18 @@ void main() {
     await tester.tap(basicsContinue);
     await tester.pumpAndSettle();
 
-    expect(find.text('When did you give birth?'), findsOneWidget);
+    expect(find.text('Tell us about your delivery'), findsOneWidget);
     expect(find.text('3/5'), findsOneWidget);
     expect(find.text('Delivery date'), findsOneWidget);
-    expect(find.text('Pregnancy weeks (optional)'), findsOneWidget);
+    expect(find.text('Gestational age at delivery'), findsOneWidget);
+    expect(find.text('Weeks *'), findsOneWidget);
+    expect(find.text('Days'), findsOneWidget);
     expect(
-      find.textContaining('time recovery and baby guidance'),
+      find.textContaining('personalize your postpartum recovery'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('How far along the pregnancy was at delivery'),
       findsOneWidget,
     );
     expect(find.text('Delivery method (optional)'), findsNothing);
@@ -137,9 +149,26 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey('onboarding-postpartum-delivery-continue')),
+    final deliveryContinue = find.byKey(
+      const ValueKey('onboarding-postpartum-delivery-continue'),
     );
+    await tester.ensureVisible(deliveryContinue);
+    await tester.tap(deliveryContinue);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tell us about your delivery'), findsOneWidget);
+    expect(
+      find.text('Enter how many weeks pregnant you were at delivery.'),
+      findsOneWidget,
+    );
+    expect(find.text('How was your delivery?'), findsNothing);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('onboarding-gestational-weeks')),
+      '39',
+    );
+    await tester.ensureVisible(deliveryContinue);
+    await tester.tap(deliveryContinue);
     await tester.pumpAndSettle();
 
     expect(find.text('How was your delivery?'), findsOneWidget);
@@ -164,13 +193,22 @@ void main() {
       'display_name': 'Mia',
       'age': 32,
       'delivery_date': isA<String>(),
-      'delivery_gestational_age': null,
+      'delivery_gestational_age': {'weeks': 39},
       'delivery_type': null,
       'infant_count': 1,
       'infants': [
         {'nickname': '', 'sex': null},
       ],
     });
+
+    final avatarBack = find.byKey(const ValueKey('onboarding-avatar-back'));
+    expect(avatarBack, findsOneWidget);
+    await tester.tap(avatarBack);
+    await tester.pumpAndSettle();
+
+    expect(find.text('How was your delivery?'), findsOneWidget);
+    expect(find.text('4/5'), findsOneWidget);
+    expect(find.text('Create your digital companion'), findsNothing);
 
     router.dispose();
     onboardingController.dispose();

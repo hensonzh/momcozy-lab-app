@@ -203,7 +203,7 @@ class OnboardingProfileDraft {
     this.expectedInfantCount = 1,
     this.deliveryDate,
     this.gestationalWeeks,
-    this.gestationalDays = 0,
+    this.gestationalDays,
     this.deliveryType,
     this.infantCount = 1,
     List<OnboardingInfantDraft>? infants,
@@ -216,7 +216,7 @@ class OnboardingProfileDraft {
   int expectedInfantCount;
   DateTime? deliveryDate;
   int? gestationalWeeks;
-  int gestationalDays;
+  int? gestationalDays;
   String? deliveryType;
   int infantCount;
   final List<OnboardingInfantDraft> infants;
@@ -247,9 +247,10 @@ class OnboardingProfileDraft {
       OnboardingCareStage.postpartum => {
         ...common,
         'delivery_date': _date(deliveryDate!),
-        'delivery_gestational_age': gestationalWeeks == null
-            ? null
-            : {'weeks': gestationalWeeks, 'days': gestationalDays},
+        'delivery_gestational_age': {
+          'weeks': gestationalWeeks!,
+          if (gestationalDays != null) 'days': gestationalDays,
+        },
         'delivery_type': deliveryType,
         'infant_count': infantCount,
         'infants': infants.map((infant) => infant.toMap()).toList(),
