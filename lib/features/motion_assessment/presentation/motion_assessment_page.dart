@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
-import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pose.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_controller.dart';
-import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_preview_transform.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_pose_overlay.dart';
 
 class MotionAssessmentPage extends StatefulWidget {
   const MotionAssessmentPage({
@@ -83,12 +82,12 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
               children: [
                 widget.previewBuilder?.call(context) ??
                     const MotionPosePreview(),
-                IgnorePointer(
-                  child: CustomPaint(
-                    painter: _MotionSkeletonPainter(controller.observation),
-                  ),
+                MotionPoseOverlay(
+                  key: const ValueKey('motion-pose-overlay'),
+                  observation: controller.observation,
                 ),
                 _topBar(context),
+                _trackingStatus(),
                 _framingGuide(),
                 _bottomPanel(context),
               ],
@@ -177,6 +176,64 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                   ? Colors.orangeAccent
                   : Colors.white.withValues(alpha: 0.72),
               width: blocked ? 3 : 1.5,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _trackingStatus() {
+    final observation = controller.observation;
+    final poses = observation?.poses ?? const [];
+    final landmarkCount = poses.length == 1
+        ? poses.single.landmarks.values
+              .where((landmark) => landmark.isReliable(minimumConfidence: 0.5))
+              .length
+        : 0;
+    final failed = controller.phase == MotionAssessmentPagePhase.failed;
+    final multiplePeople = poses.length > 1;
+    final label = failed
+        ? '关键点识别未启动'
+        : observation == null
+        ? '正在启动人体关键点识别'
+        : poses.isEmpty
+        ? '正在扫描人体'
+        : multiplePeople
+        ? '实时追踪 ${poses.length} 人'
+        : '实时追踪 · $landmarkCount 个关键点';
+    final accent = failed || multiplePeople
+        ? Colors.orangeAccent
+        : const Color(0xff51e1d2);
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 62),
+        child: IgnorePointer(
+          child: DecoratedBox(
+            key: const ValueKey('motion-pose-tracking-status'),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.62),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: accent.withValues(alpha: 0.72)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.motion_photos_on_rounded, size: 15, color: accent),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -334,83 +391,5 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     await controller.finish(completed: true);
     if (!context.mounted) return;
     context.canPop() ? context.pop() : context.go('/');
-  }
-}
-
-class _MotionSkeletonPainter extends CustomPainter {
-  const _MotionSkeletonPainter(this.observation);
-
-  final MotionPoseObservation? observation;
-
-  static const _connections =
-      <(MotionPoseLandmarkType, MotionPoseLandmarkType)>[
-        (
-          MotionPoseLandmarkType.leftShoulder,
-          MotionPoseLandmarkType.rightShoulder,
-        ),
-        (MotionPoseLandmarkType.leftShoulder, MotionPoseLandmarkType.leftElbow),
-        (MotionPoseLandmarkType.leftElbow, MotionPoseLandmarkType.leftWrist),
-        (
-          MotionPoseLandmarkType.rightShoulder,
-          MotionPoseLandmarkType.rightElbow,
-        ),
-        (MotionPoseLandmarkType.rightElbow, MotionPoseLandmarkType.rightWrist),
-        (MotionPoseLandmarkType.leftShoulder, MotionPoseLandmarkType.leftHip),
-        (MotionPoseLandmarkType.rightShoulder, MotionPoseLandmarkType.rightHip),
-        (MotionPoseLandmarkType.leftHip, MotionPoseLandmarkType.rightHip),
-        (MotionPoseLandmarkType.leftHip, MotionPoseLandmarkType.leftKnee),
-        (MotionPoseLandmarkType.leftKnee, MotionPoseLandmarkType.leftAnkle),
-        (MotionPoseLandmarkType.rightHip, MotionPoseLandmarkType.rightKnee),
-        (MotionPoseLandmarkType.rightKnee, MotionPoseLandmarkType.rightAnkle),
-      ];
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final poses = observation?.poses ?? const <MotionPose>[];
-    final frame = observation;
-    final transform = MotionPreviewTransform.aspectFill(
-      inputWidth: frame?.inputWidth ?? 1,
-      inputHeight: frame?.inputHeight ?? 1,
-      viewport: size,
-    );
-    final line = Paint()
-      ..color = poses.length > 1
-          ? Colors.orangeAccent.withValues(alpha: 0.9)
-          : const Color(0xffff8eb7).withValues(alpha: 0.9)
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke;
-    final point = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-    for (final pose in poses) {
-      for (final connection in _connections) {
-        final start = pose.landmark(connection.$1);
-        final end = pose.landmark(connection.$2);
-        if (start == null ||
-            end == null ||
-            !start.isReliable() ||
-            !end.isReliable()) {
-          continue;
-        }
-        canvas.drawLine(
-          transform.project(Offset(start.x, start.y)),
-          transform.project(Offset(end.x, end.y)),
-          line,
-        );
-      }
-      for (final landmark in pose.landmarks.values) {
-        if (!landmark.isReliable()) continue;
-        canvas.drawCircle(
-          transform.project(Offset(landmark.x, landmark.y)),
-          3.5,
-          point,
-        );
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _MotionSkeletonPainter oldDelegate) {
-    return oldDelegate.observation != observation;
   }
 }
