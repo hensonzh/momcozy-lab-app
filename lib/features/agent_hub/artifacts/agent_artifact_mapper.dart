@@ -146,6 +146,11 @@ class AgentArtifactMapper {
       artifactId: artifactId,
       consultIdFallbackArtifactId: explicitArtifactId ?? '',
     );
+    if (presentationKind ==
+            AgentArtifactPresentationKind.motionAssessmentCard &&
+        specializedView == null) {
+      return null;
+    }
     final explicitTitle = _firstNonEmpty([
       _stringField(richText, 'title'),
       _stringField(form, 'title'),
@@ -260,6 +265,8 @@ AgentArtifactPresentationKind _presentationKind({
       AgentArtifactPresentationKind.hospitalBagCard,
     'ibclc_consult' ||
     'ibclc_consult_card' => AgentArtifactPresentationKind.ibclcConsultCard,
+    'motion_assessment_card' =>
+      AgentArtifactPresentationKind.motionAssessmentCard,
     'rich_text' => AgentArtifactPresentationKind.richText,
     _ => AgentArtifactPresentationKind.generic,
   };
@@ -282,7 +289,8 @@ Map<String, Object?> _directCardPayload(
     'birth_plan_card' ||
     'hospital_bag_card' ||
     'ibclc_consult' ||
-    'ibclc_consult_card' => payload,
+    'ibclc_consult_card' ||
+    'motion_assessment_card' => payload,
     _ => const <String, Object?>{},
   };
 }

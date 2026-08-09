@@ -1,7 +1,57 @@
+import java.net.URI
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val motionPoseModelUrl =
+    "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task"
+val motionPoseModelSha256 =
+    "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a"
+val motionPoseModelDirectory = layout.buildDirectory.dir("generated/motionPoseModels")
+val prepareMotionPoseModel by tasks.registering {
+    val outputFile = motionPoseModelDirectory.map {
+        it.file("pose_landmarker_lite.task")
+    }
+    inputs.property("modelUrl", motionPoseModelUrl)
+    inputs.property("modelSha256", motionPoseModelSha256)
+    outputs.file(outputFile)
+    doLast {
+        val target = outputFile.get().asFile
+        target.parentFile.mkdirs()
+        if (!target.exists() || target.sha256() != motionPoseModelSha256) {
+            val staged = target.resolveSibling("${target.name}.download")
+            URI(motionPoseModelUrl).toURL().openStream().use { input ->
+                staged.outputStream().use { output -> input.copyTo(output) }
+            }
+            check(staged.sha256() == motionPoseModelSha256) {
+                "MediaPipe pose model checksum mismatch"
+            }
+            Files.move(
+                staged.toPath(),
+                target.toPath(),
+                StandardCopyOption.REPLACE_EXISTING,
+            )
+        }
+    }
+}
+
+fun java.io.File.sha256(): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    inputStream().use { input ->
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+        while (true) {
+            val count = input.read(buffer)
+            if (count < 0) break
+            digest.update(buffer, 0, count)
+        }
+    }
+    return digest.digest().joinToString("") { "%02x".format(it) }
 }
 
 val releaseStoreFilePath = System.getenv("MOMCOZY_FLUTTER_RELEASE_STORE_FILE")?.trim()
@@ -72,6 +122,8 @@ android {
             }
         }
     }
+
+    sourceSets.getByName("main").assets.srcDir(motionPoseModelDirectory.get().asFile)
 }
 
 kotlin {
@@ -82,4 +134,16 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+tasks.named("preBuild").configure {
+    dependsOn(prepareMotionPoseModel)
+}
+
+dependencies {
+    val cameraXVersion = "1.4.2"
+    implementation("androidx.camera:camera-camera2:$cameraXVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraXVersion")
+    implementation("androidx.camera:camera-view:$cameraXVersion")
+    implementation("com.google.mediapipe:tasks-vision:0.10.29")
 }

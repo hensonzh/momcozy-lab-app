@@ -17,6 +17,10 @@ import 'package:momcozy_flutter_app/features/media/presentation/product_asset_im
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
 import 'package:momcozy_flutter_app/features/more/presentation/more_profile_page.dart';
 import 'package:momcozy_flutter_app/features/notifications/presentation/notifications_page.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_controller.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_page.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/plan/presentation/plan_page.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
@@ -172,6 +176,7 @@ class MomCozyFeaturePage extends StatelessWidget {
         routeUri: routeUri,
         routeExtra: routeExtra,
       ),
+      '/motion-assessment' => _buildMotionAssessmentPage(context, routeUri),
       _ => _NotFoundPage(
         path: path,
         title: title,
@@ -181,6 +186,34 @@ class MomCozyFeaturePage extends StatelessWidget {
       ),
     };
   }
+}
+
+Widget _buildMotionAssessmentPage(BuildContext context, Uri? routeUri) {
+  final runtime = MomCozyRuntimeScope.of(context);
+  const supportedTargets = {'forward_head'};
+  final requestedTarget = routeUri?.queryParameters['target'];
+  final target = supportedTargets.contains(requestedTarget)
+      ? requestedTarget!
+      : 'forward_head';
+  return KeyedSubtree(
+    key: const ValueKey('route-page-/motion-assessment'),
+    child: MotionAssessmentPage(
+      key: const ValueKey('motion-assessment-page'),
+      controllerIdentity: (
+        runtime,
+        runtime.currentSession.userId,
+        runtime.currentSession.locale,
+        target,
+      ),
+      controllerFactory: () => MotionAssessmentController(
+        target: target,
+        locale: runtime.currentSession.locale,
+        repository: runtime.motionAssessmentRepository,
+        posePlatform: NativeMotionPosePlatform(),
+        voice: MotionRealtimeVoice(signaling: runtime.motionVoiceSignaling),
+      ),
+    ),
+  );
 }
 
 class _ActionTile extends StatelessWidget {
