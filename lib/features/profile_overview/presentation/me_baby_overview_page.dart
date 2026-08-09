@@ -977,10 +977,11 @@ class _MeBabyOverviewData {
   String get momAvatarSummary {
     final trend = todayMilkTrend;
     if (trend == null) return 'No milk data recorded today';
-    if (trend.measuredVolumeMl == null) {
+    final measuredVolume = trend.measuredVolumeMl;
+    if (measuredVolume == null) {
       return '${trend.pumpingCount} ${trend.pumpingCount == 1 ? 'session' : 'sessions'} · volume not measured';
     }
-    return '${_formatNumber(trend.measuredVolumeMl)} mL recorded today';
+    return '${_formatNumber(measuredVolume)} mL recorded today';
   }
 
   String get babyAvatarSummary {
@@ -999,8 +1000,7 @@ String _formatBabyAge(int? ageDays) {
   return '$weeks ${weeks == 1 ? 'week' : 'weeks'} $days ${days == 1 ? 'day' : 'days'}';
 }
 
-String _formatNumber(num? value) {
-  if (value == null) return '—';
+String _formatNumber(num value) {
   final number = value.toDouble();
   return number == number.roundToDouble()
       ? number.round().toString()
@@ -2984,6 +2984,7 @@ class _MeLactationContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final trends = data.recentMilkTrends;
     final latest = data.todayMilkTrend;
+    final measuredVolume = latest?.measuredVolumeMl;
     final isLoading =
         data.milkTrends.phase == OverviewResourcePhase.initial ||
         data.milkTrends.phase == OverviewResourcePhase.loading;
@@ -3031,23 +3032,55 @@ class _MeLactationContent extends StatelessWidget {
                   ),
                 ],
               ),
-              Wrap(
-                spacing: 8,
-                crossAxisAlignment: WrapCrossAlignment.end,
-                children: [
-                  Text(
-                    _formatNumber(latest.measuredVolumeMl),
-                    style: _MeBabyOverviewText.heroMetric,
+              if (measuredVolume != null)
+                Wrap(
+                  spacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.end,
+                  children: [
+                    Text(
+                      _formatNumber(measuredVolume),
+                      style: _MeBabyOverviewText.heroMetric,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 7),
+                      child: Text(
+                        'mL measured today',
+                        style: _MeBabyOverviewText.metricSuffix,
+                      ),
+                    ),
+                  ],
+                )
+              else
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: _MeBabyOverviewColors.pill,
+                    borderRadius: BorderRadius.all(Radius.circular(16)),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 7),
-                    child: Text(
-                      'mL measured today',
-                      style: _MeBabyOverviewText.metricSuffix,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: _MeBabyOverviewColors.wine,
+                          size: 20,
+                        ),
+                        SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'Volume not measured',
+                            style: TextStyle(
+                              color: _MeBabyOverviewColors.ink,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
               const SizedBox(height: 10),
               Row(
                 children: [

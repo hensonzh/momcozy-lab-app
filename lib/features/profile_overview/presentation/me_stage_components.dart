@@ -1113,13 +1113,10 @@ class _RecoveryStatusCard extends StatelessWidget {
                 child: CustomPaint(
                   painter: _EmptyRecoveryRingPainter(),
                   child: Center(
-                    child: Text(
-                      '—',
-                      style: TextStyle(
-                        color: _MeBabyOverviewColors.mutedText,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w900,
-                      ),
+                    child: Icon(
+                      Icons.favorite_border_rounded,
+                      color: _MeBabyOverviewColors.mutedText,
+                      size: 28,
                     ),
                   ),
                 ),
