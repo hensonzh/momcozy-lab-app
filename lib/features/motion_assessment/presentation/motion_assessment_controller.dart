@@ -5,6 +5,7 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_asses
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/forward_head_analyzer.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_session.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pose.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_quality_gate.dart';
@@ -23,6 +24,7 @@ enum MotionAssessmentPagePhase {
 class MotionAssessmentController extends ChangeNotifier {
   MotionAssessmentController({
     required this.target,
+    this.sourceArtifactId = '',
     required this.locale,
     required this.repository,
     required this.posePlatform,
@@ -33,6 +35,7 @@ class MotionAssessmentController extends ChangeNotifier {
        forwardHeadAnalyzer = forwardHeadAnalyzer ?? ForwardHeadAnalyzer();
 
   final String target;
+  final String sourceArtifactId;
   final String locale;
   final MotionAssessmentRepository repository;
   final MotionPosePlatform posePlatform;
@@ -53,6 +56,17 @@ class MotionAssessmentController extends ChangeNotifier {
   bool _disposed = false;
   bool _resultReported = false;
   bool _exitRequested = false;
+  int _contextSequence = 0;
+  int _totalFrames = 0;
+  int _acceptedFrames = 0;
+  int _multiplePeopleCount = 0;
+  int _targetChangedCount = 0;
+  int _framingAdjustmentCount = 0;
+  final Set<int> _reportedSamplingMilestones = <int>{};
+  bool _sideViewPromptEmitted = false;
+  Duration? _firstObservationAt;
+  MotionAssessmentContextSnapshot? _latestContext;
+  Map<String, Object?>? _latestResultSummary;
 
   MotionAssessmentPagePhase get phase => _phase;
   MotionAssessmentSession? get session => _session;
@@ -80,6 +94,7 @@ class MotionAssessmentController extends ChangeNotifier {
       final createdSession = await repository.create(
         target: target,
         poseEngine: posePlatform.engineName,
+        sourceArtifactId: sourceArtifactId,
         locale: locale,
       );
       if (_closed) {
@@ -122,6 +137,8 @@ class MotionAssessmentController extends ChangeNotifier {
   void _onObservation(MotionPoseObservation observation) {
     if (_closed || _phase == MotionAssessmentPagePhase.completed) return;
     _observation = observation;
+    _firstObservationAt ??= observation.timestamp;
+    _totalFrames += 1;
     final decision = qualityGate.evaluate(observation);
     switch (decision.phase) {
       case MotionQualityPhase.calibrating:
@@ -148,50 +165,291 @@ class MotionAssessmentController extends ChangeNotifier {
         _phase = MotionAssessmentPagePhase.targetChanged;
         _guidance = '检测对象可能已变化，请确认后重新校准';
     }
-    notifyListeners();
-
     final directive = decision.directive;
-    if (directive != null) unawaited(_handleDirective(directive));
+    if (directive != null) {
+      _recordDirective(directive);
+    }
+
+    ForwardHeadResult? readyResult;
     if (!decision.acceptFrame || decision.target == null) {
       if (target == 'forward_head' && !_resultReported) {
         forwardHeadAnalyzer.rejectFrame();
       }
-      return;
-    }
-    if (target == 'forward_head' && !_resultReported) {
-      final result = forwardHeadAnalyzer.add(
+    } else if (target == 'forward_head' && !_resultReported) {
+      _acceptedFrames += 1;
+      readyResult = forwardHeadAnalyzer.add(
         decision.target!,
         at: observation.timestamp,
         inputWidth: observation.inputWidth,
         inputHeight: observation.inputHeight,
       );
-      if (result != null) {
+      if (readyResult != null) {
         _resultReported = true;
-        _forwardHeadResult = result;
-        _guidance = result.userMessage;
-        notifyListeners();
-        unawaited(_reportForwardHeadResult(result));
+        _forwardHeadResult = readyResult;
+        _guidance = readyResult.userMessage;
       } else if (forwardHeadAnalyzer.lastFrameStatus ==
           ForwardHeadFrameStatus.needsSideView) {
         _guidance = '请转为自然侧身，让两侧肩部在画面中尽量重合';
-        notifyListeners();
       }
     }
+
+    final snapshot = _buildContextSnapshot(observation, decision);
+    _latestContext = snapshot;
+    voice.updateAssessmentContext(snapshot);
+    _emitSamplingMilestone(snapshot);
+    if (forwardHeadAnalyzer.lastFrameStatus ==
+            ForwardHeadFrameStatus.needsSideView &&
+        !_sideViewPromptEmitted) {
+      _sideViewPromptEmitted = true;
+      unawaited(
+        voice.sendClientEvent('side_view_required', {
+          'required_view': 'side',
+          'context': snapshot.toJson(),
+        }),
+      );
+      unawaited(voice.speak('请自然侧身，让两侧肩部在画面中尽量重合。'));
+    }
+    notifyListeners();
+    if (directive != null) unawaited(_handleDirective(directive));
+    if (readyResult != null) unawaited(_reportForwardHeadResult(readyResult));
+  }
+
+  void _recordDirective(MotionGuidanceDirective directive) {
+    switch (directive) {
+      case MotionGuidanceDirective.adjustFraming:
+        _framingAdjustmentCount += 1;
+      case MotionGuidanceDirective.askOthersToLeave:
+        _multiplePeopleCount += 1;
+      case MotionGuidanceDirective.confirmRecalibration:
+        _targetChangedCount += 1;
+      case MotionGuidanceDirective.singlePersonReady:
+      case MotionGuidanceDirective.assessmentResumed:
+        break;
+    }
+  }
+
+  MotionAssessmentContextSnapshot _buildContextSnapshot(
+    MotionPoseObservation observation,
+    MotionQualityDecision decision,
+  ) {
+    final personCount = observation.poses.length;
+    final fullBodyVisible =
+        personCount == 1 && decision.phase != MotionQualityPhase.framing;
+    final frameStatus = forwardHeadAnalyzer.lastFrameStatus;
+    final result = _forwardHeadResult;
+    final samplingProgress = result == null
+        ? forwardHeadAnalyzer.samplingProgress
+        : 1.0;
+    final missingRegions = <String>[
+      if (personCount == 0) 'person',
+      if (personCount == 1 && decision.phase == MotionQualityPhase.framing)
+        ..._missingBodyRegions(observation.poses.single),
+    ];
+    final rejectionReasons = <String>[
+      if (personCount == 0) 'no_person',
+      if (personCount > 1) 'multiple_people',
+      if (decision.phase == MotionQualityPhase.framing) 'incomplete_framing',
+      if (decision.phase == MotionQualityPhase.targetChanged) 'target_changed',
+      if (frameStatus == ForwardHeadFrameStatus.needsSideView)
+        'side_view_required',
+      if (frameStatus == ForwardHeadFrameStatus.insufficientLandmarks &&
+          decision.acceptFrame)
+        'insufficient_landmark_confidence',
+      if (frameStatus == ForwardHeadFrameStatus.invalidFrameSize)
+        'invalid_frame_size',
+    ];
+    final detectedView =
+        result != null ||
+            (frameStatus == ForwardHeadFrameStatus.accepted &&
+                forwardHeadAnalyzer.sampleCount > 0)
+        ? 'side'
+        : frameStatus == ForwardHeadFrameStatus.needsSideView
+        ? 'front_or_oblique'
+        : 'unknown';
+    final samplingState = result != null
+        ? 'completed'
+        : rejectionReasons.isNotEmpty
+        ? 'blocked'
+        : decision.acceptFrame
+        ? 'collecting'
+        : 'calibrating';
+    final recommended = _recommendedAction(
+      decision: decision,
+      frameStatus: frameStatus,
+      resultReady: result != null,
+      personCount: personCount,
+    );
+    final startedAt = _firstObservationAt ?? observation.timestamp;
+    return MotionAssessmentContextSnapshot(
+      assessmentId: _session?.id ?? '',
+      sequence: ++_contextSequence,
+      observedAtMs: observation.timestamp.inMilliseconds,
+      target: target,
+      phase: result != null ? 'result_ready' : _assessmentPhaseValue(_phase),
+      elapsedMs: (observation.timestamp - startedAt).inMilliseconds
+          .clamp(0, 1 << 31)
+          .toInt(),
+      personCount: personCount,
+      targetLocked:
+          decision.target != null || decision.phase == MotionQualityPhase.ready,
+      continuity: _continuityValue(decision.phase),
+      fullBodyVisible: fullBodyVisible,
+      missingRegions: missingRegions,
+      distance: fullBodyVisible
+          ? 'acceptable'
+          : decision.phase == MotionQualityPhase.framing
+          ? 'too_close_or_cropped'
+          : 'unknown',
+      requiredView: target == 'forward_head' ? 'side' : 'guided',
+      detectedView: detectedView,
+      detectedSide:
+          result?.side ?? forwardHeadAnalyzer.dominantSide ?? 'unknown',
+      alignmentQuality: detectedView == 'side'
+          ? 'accepted'
+          : frameStatus == ForwardHeadFrameStatus.needsSideView
+          ? 'adjustment_required'
+          : 'unknown',
+      samplingState: samplingState,
+      validSamples: result?.sampleCount ?? forwardHeadAnalyzer.sampleCount,
+      requiredSamples: forwardHeadAnalyzer.minimumSamples,
+      stableDurationMs:
+          result?.sampleDuration.inMilliseconds ??
+          forwardHeadAnalyzer.stableDuration.inMilliseconds,
+      requiredDurationMs: forwardHeadAnalyzer.minimumStableFor.inMilliseconds,
+      samplingProgress: samplingProgress,
+      rejectionReasons: rejectionReasons,
+      measurementStatus: result != null
+          ? 'final'
+          : forwardHeadAnalyzer.sampleCount > 0
+          ? 'provisional'
+          : 'unavailable',
+      metric: 'craniovertebral_angle',
+      rollingMedian:
+          result?.valueDegrees ?? forwardHeadAnalyzer.rollingMedianDegrees,
+      dispersion:
+          result?.angleDispersionDegrees ??
+          forwardHeadAnalyzer.angleDispersionDegrees,
+      unit: 'degrees',
+      measurementQualityScore: result?.measurementQualityScore,
+      multiplePeople: personCount > 1,
+      targetChanged: decision.phase == MotionQualityPhase.targetChanged,
+      discomfortReported: false,
+      recommendedAction: recommended.action,
+      guidanceReason: recommended.reason,
+    );
+  }
+
+  List<String> _missingBodyRegions(MotionPose pose) {
+    bool unreliable(MotionPoseLandmarkType type) {
+      return !(pose.landmark(type)?.isReliable(minimumConfidence: 0.45) ??
+          false);
+    }
+
+    return <String>[
+      if (unreliable(MotionPoseLandmarkType.nose)) 'head',
+      if (unreliable(MotionPoseLandmarkType.leftShoulder) &&
+          unreliable(MotionPoseLandmarkType.rightShoulder))
+        'shoulders',
+      if (unreliable(MotionPoseLandmarkType.leftHip) &&
+          unreliable(MotionPoseLandmarkType.rightHip))
+        'hips',
+      if (unreliable(MotionPoseLandmarkType.leftKnee) &&
+          unreliable(MotionPoseLandmarkType.rightKnee))
+        'knees',
+      if (unreliable(MotionPoseLandmarkType.leftAnkle) &&
+          unreliable(MotionPoseLandmarkType.rightAnkle))
+        'feet',
+    ];
+  }
+
+  ({String action, String reason}) _recommendedAction({
+    required MotionQualityDecision decision,
+    required ForwardHeadFrameStatus frameStatus,
+    required bool resultReady,
+    required int personCount,
+  }) {
+    if (resultReady) {
+      return (action: 'review_result', reason: 'measurement_complete');
+    }
+    if (personCount > 1) {
+      return (action: 'ask_others_to_leave', reason: 'multiple_people');
+    }
+    if (personCount == 0) {
+      return (action: 'enter_frame', reason: 'no_person');
+    }
+    if (decision.phase == MotionQualityPhase.targetChanged) {
+      return (action: 'confirm_recalibration', reason: 'target_changed');
+    }
+    if (decision.phase == MotionQualityPhase.framing) {
+      return (action: 'step_back', reason: 'full_body_not_visible');
+    }
+    if (frameStatus == ForwardHeadFrameStatus.needsSideView) {
+      return (action: 'turn_sideways', reason: 'side_view_required');
+    }
+    if (decision.acceptFrame) {
+      return (action: 'hold_still', reason: 'stable_samples_needed');
+    }
+    return (action: 'hold_position', reason: 'quality_gate_calibrating');
+  }
+
+  String _assessmentPhaseValue(MotionAssessmentPagePhase value) {
+    return switch (value) {
+      MotionAssessmentPagePhase.preparing => 'preparing',
+      MotionAssessmentPagePhase.calibrating => 'calibrating',
+      MotionAssessmentPagePhase.assessing => 'sampling',
+      MotionAssessmentPagePhase.pausedMultiplePeople =>
+        'paused_multiple_people',
+      MotionAssessmentPagePhase.targetChanged => 'target_changed',
+      MotionAssessmentPagePhase.completed => 'completed',
+      MotionAssessmentPagePhase.failed => 'failed',
+    };
+  }
+
+  String _continuityValue(MotionQualityPhase value) {
+    return switch (value) {
+      MotionQualityPhase.ready => 'continuous',
+      MotionQualityPhase.reacquiring => 'reacquiring',
+      MotionQualityPhase.targetChanged => 'target_changed',
+      MotionQualityPhase.checkingMultiplePeople ||
+      MotionQualityPhase.pausedMultiplePeople => 'interrupted_multiple_people',
+      MotionQualityPhase.calibrating ||
+      MotionQualityPhase.framing => 'calibrating',
+    };
+  }
+
+  void _emitSamplingMilestone(MotionAssessmentContextSnapshot snapshot) {
+    if (snapshot.samplingState != 'collecting') return;
+    final percent = (snapshot.samplingProgress * 100).floor();
+    for (final milestone in const [25, 50, 75]) {
+      if (percent >= milestone && _reportedSamplingMilestones.add(milestone)) {
+        unawaited(
+          voice.sendClientEvent('sampling_progress', {
+            'milestone_percent': milestone,
+            'context': snapshot.toJson(),
+          }),
+        );
+      }
+    }
+  }
+
+  Map<String, Object?> _withLatestContext(Map<String, Object?> payload) {
+    final context = _latestContext;
+    return {...payload, if (context != null) 'context': context.toJson()};
   }
 
   Future<void> _handleDirective(MotionGuidanceDirective directive) async {
     switch (directive) {
       case MotionGuidanceDirective.adjustFraming:
-        await voice.sendClientEvent('framing_incomplete', {
-          'person_count': 1,
-          'accept_pose_frames': false,
-        });
+        await voice.sendClientEvent(
+          'framing_incomplete',
+          _withLatestContext({'person_count': 1, 'accept_pose_frames': false}),
+        );
         await voice.speak('请后退一些，让头部到双脚完整进入画面。');
       case MotionGuidanceDirective.singlePersonReady:
-        await voice.sendClientEvent('single_person_stable', {
-          'person_count': 1,
-          'target': target,
-        });
+        await voice.sendClientEvent(
+          'single_person_stable',
+          _withLatestContext({'person_count': 1, 'target': target}),
+        );
         await voice.speak(
           target == 'forward_head'
               ? '取景完成。请自然侧身，双脚站稳，目视前方，不要刻意挺直。'
@@ -199,23 +457,27 @@ class MotionAssessmentController extends ChangeNotifier {
         );
       case MotionGuidanceDirective.askOthersToLeave:
         await _updateSession(status: 'paused', pauseReason: 'multiple_people');
-        await voice.sendClientEvent('multiple_people', {
-          'person_count': personCount,
-          'accept_pose_frames': false,
-        });
+        await voice.sendClientEvent(
+          'multiple_people',
+          _withLatestContext({
+            'person_count': personCount,
+            'accept_pose_frames': false,
+          }),
+        );
         await voice.speak('检测到多人入镜，请让非评估人员离开镜头', interrupt: true);
       case MotionGuidanceDirective.assessmentResumed:
         await _updateSession(status: 'active');
-        await voice.sendClientEvent('single_person_stable', {
-          'person_count': 1,
-          'resumed': true,
-        });
+        await voice.sendClientEvent(
+          'single_person_stable',
+          _withLatestContext({'person_count': 1, 'resumed': true}),
+        );
         await voice.speak('已确认只有一位评估对象，我们继续。');
       case MotionGuidanceDirective.confirmRecalibration:
         await _updateSession(status: 'paused', pauseReason: 'target_changed');
-        await voice.sendClientEvent('target_changed', {
-          'accept_pose_frames': false,
-        });
+        await voice.sendClientEvent(
+          'target_changed',
+          _withLatestContext({'accept_pose_frames': false}),
+        );
         await voice.speak('检测对象可能已变化，请在屏幕上确认重新校准。', interrupt: true);
     }
   }
@@ -225,6 +487,9 @@ class MotionAssessmentController extends ChangeNotifier {
     forwardHeadAnalyzer.reset();
     _resultReported = false;
     _forwardHeadResult = null;
+    _latestResultSummary = null;
+    _reportedSamplingMilestones.clear();
+    _sideViewPromptEmitted = false;
     _phase = MotionAssessmentPagePhase.calibrating;
     _guidance = '请保持单人入镜，正在重新校准…';
     notifyListeners();
@@ -268,20 +533,53 @@ class MotionAssessmentController extends ChangeNotifier {
   }
 
   Future<void> _reportForwardHeadResult(ForwardHeadResult result) async {
-    final classification = _classificationValue(result.classification);
-    final summary = <String, Object?>{
+    final summary = _forwardHeadSummary(result);
+    _latestResultSummary = Map<String, Object?>.unmodifiable(summary);
+    final context = _latestContext;
+    await voice.sendClientEvent('assessment_metric_ready', {
+      ...summary,
+      if (context != null) 'context': context.toJson(),
+    });
+    await voice.speak(result.userMessage);
+    await _updateSession(status: 'active', resultSummary: summary);
+  }
+
+  Map<String, Object?> _forwardHeadSummary(ForwardHeadResult result) {
+    final acceptedFrameRatio = _totalFrames == 0
+        ? 0.0
+        : _acceptedFrames / _totalFrames;
+    final measurementQualityScore =
+        (result.measurementQualityScore * 0.85 + acceptedFrameRatio * 0.15)
+            .clamp(0, 1)
+            .toDouble();
+    return <String, Object?>{
       'metric': result.metric,
       'value': double.parse(result.valueDegrees.toStringAsFixed(1)),
       'unit': 'degrees',
-      'classification': classification,
-      'confidence': 0.8,
-      'sample_duration_ms': 2000,
+      'classification': _classificationValue(result.classification),
+      'sample_count': result.sampleCount,
+      'sample_duration_ms': result.sampleDuration.inMilliseconds,
       'side': result.side,
       'frame_quality': 'accepted',
+      'angle_dispersion_degrees': double.parse(
+        result.angleDispersionDegrees.toStringAsFixed(2),
+      ),
+      'accepted_frame_ratio': double.parse(
+        acceptedFrameRatio.toStringAsFixed(3),
+      ),
+      'measurement_quality_score': double.parse(
+        measurementQualityScore.toStringAsFixed(3),
+      ),
+      'multiple_people_count': _multiplePeopleCount,
+      'target_changed_count': _targetChangedCount,
+      'framing_adjustment_count': _framingAdjustmentCount,
+      'pose_model_version':
+          posePlatform.engineName == 'mediapipe_pose_landmarker'
+          ? 'pose_landmarker_lite.task'
+          : 'vision_human_body_pose',
+      'analyzer_version': forwardHeadAnalyzerVersion,
+      'threshold_version': forwardHeadThresholdVersion,
     };
-    await voice.sendClientEvent('assessment_metric_ready', summary);
-    await voice.speak(result.userMessage);
-    await _updateSession(status: 'active', resultSummary: summary);
   }
 
   Future<void> finish({bool completed = false}) async {
@@ -301,18 +599,7 @@ class MotionAssessmentController extends ChangeNotifier {
         await repository.update(
           assessmentId: session.id,
           status: completed ? 'completed' : 'cancelled',
-          resultSummary: _forwardHeadResult == null
-              ? null
-              : {
-                  'metric': _forwardHeadResult!.metric,
-                  'value': double.parse(
-                    _forwardHeadResult!.valueDegrees.toStringAsFixed(1),
-                  ),
-                  'unit': 'degrees',
-                  'classification': _classificationValue(
-                    _forwardHeadResult!.classification,
-                  ),
-                },
+          resultSummary: _latestResultSummary,
         );
       } catch (_) {
         // Closing the private camera is more important than a final status sync.

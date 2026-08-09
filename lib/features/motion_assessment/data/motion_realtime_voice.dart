@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_response_queue.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_voice_signaling.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_voice_command.dart';
 
 enum MotionRealtimeVoicePhase {
@@ -25,6 +26,7 @@ abstract interface class MotionRealtimeVoiceClient implements Listenable {
 
   Future<void> connect({required String assessmentId});
   Future<void> speak(String instruction, {bool interrupt = false});
+  void updateAssessmentContext(MotionAssessmentContextSnapshot snapshot);
   Future<void> sendClientEvent(String eventType, Map<String, Object?> payload);
   Future<void> completeCommand(
     MotionVoiceCommand command, {
@@ -50,6 +52,9 @@ class MotionRealtimeVoice extends ChangeNotifier
   final StreamController<MotionVoiceCommand> _commands =
       StreamController<MotionVoiceCommand>.broadcast();
   final Set<String> _handledCommandCallIds = {};
+  final Set<String> _handledUserAudioItemIds = {};
+  MotionAssessmentContextSnapshot? _latestAssessmentContext;
+  DateTime? _latestAssessmentContextReceivedAt;
   int _connectionGeneration = 0;
   bool _closed = false;
   bool _disposed = false;
@@ -174,6 +179,13 @@ class MotionRealtimeVoice extends ChangeNotifier
   }
 
   @override
+  void updateAssessmentContext(MotionAssessmentContextSnapshot snapshot) {
+    if (_disposed || _closed) return;
+    _latestAssessmentContext = snapshot;
+    _latestAssessmentContextReceivedAt = DateTime.now();
+  }
+
+  @override
   Future<void> sendClientEvent(
     String eventType,
     Map<String, Object?> payload,
@@ -234,6 +246,22 @@ class MotionRealtimeVoice extends ChangeNotifier
       final event = Map<Object?, Object?>.from(decoded);
       final type = decoded['type']?.toString() ?? '';
       unawaited(_responseQueue?.handleServerEvent(event));
+      if (type == 'input_audio_buffer.speech_started') {
+        unawaited(_responseQueue?.interrupt());
+      }
+      final userAudioItemId = completedUserAudioItemIdFromServerEvent(event);
+      if (userAudioItemId != null &&
+          _handledUserAudioItemIds.add(userAudioItemId)) {
+        final snapshot = _latestAssessmentContext;
+        final receivedAt = _latestAssessmentContextReceivedAt;
+        final contextAgeMs = receivedAt == null
+            ? 0
+            : DateTime.now().difference(receivedAt).inMilliseconds;
+        final instructions =
+            snapshot?.toRealtimeInstructions(contextAgeMs: contextAgeMs) ??
+            '请简短回答用户刚才的问题。当前没有新鲜的端侧姿态语义快照，因此不要猜测用户姿态；请提示用户保持单人全身入镜，等待本地质量门重新确认。';
+        unawaited(_responseQueue?.enqueueModelTurn(instructions));
+      }
       if (type == 'response.audio.delta' ||
           type == 'response.output_audio.delta') {
         _setPhase(MotionRealtimeVoicePhase.speaking);
