@@ -19,6 +19,7 @@ class _MomAvatarImage extends StatefulWidget {
 
 class _MomAvatarImageState extends State<_MomAvatarImage> {
   Future<Uint8List>? _load;
+  Uint8List? _initialBytes;
 
   @override
   void didChangeDependencies() {
@@ -34,11 +35,16 @@ class _MomAvatarImageState extends State<_MomAvatarImage> {
 
   void _startLoad() {
     final fileId = widget.fileId?.trim();
-    _load = fileId == null || fileId.isEmpty
-        ? null
-        : MomCozyRuntimeScope.of(
-            context,
-          ).mediaContentRepository.loadImage(fileId);
+    if (fileId == null || fileId.isEmpty) {
+      _initialBytes = null;
+      _load = null;
+      return;
+    }
+    final repository = MomCozyRuntimeScope.of(context).mediaContentRepository;
+    _initialBytes =
+        repository.cachedImage(fileId) ??
+        repository.cachedImageThumbnail(fileId);
+    _load = repository.loadImage(fileId);
   }
 
   @override
@@ -47,9 +53,14 @@ class _MomAvatarImageState extends State<_MomAvatarImage> {
     if (load == null) return _defaultAvatar();
     return FutureBuilder<Uint8List>(
       future: load,
+      initialData: _initialBytes,
       builder: (context, snapshot) {
         final bytes = snapshot.data;
-        if (bytes == null) return _defaultAvatar();
+        if (bytes == null) {
+          return const _CustomAvatarPlaceholder(
+            key: ValueKey('mom-custom-avatar-placeholder'),
+          );
+        }
         return Image.memory(
           bytes,
           fit: widget.fit,
@@ -67,6 +78,21 @@ class _MomAvatarImageState extends State<_MomAvatarImage> {
       MomLifeStage.fertility => _MeBabyOverviewAssets.momAvatar,
     };
     return Image.asset(asset, fit: widget.fit, alignment: widget.alignment);
+  }
+}
+
+class _CustomAvatarPlaceholder extends StatelessWidget {
+  const _CustomAvatarPlaceholder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Icon(
+        Icons.person_outline_rounded,
+        size: 88,
+        color: Color(0x24932C4A),
+      ),
+    );
   }
 }
 
@@ -88,6 +114,18 @@ class _MomStageWorkspace extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showAvatar = MediaQuery.textScalerOf(context).scale(1) <= 1.35;
+    final avatarFileId = data.overview.data?.mom?.avatarFileId;
+    final hasCustomAvatar = avatarFileId?.trim().isNotEmpty == true;
+    final defaultAvatarTop = switch (stage) {
+      MomLifeStage.pregnancy => -16.0,
+      MomLifeStage.postpartum => -18.0,
+      MomLifeStage.fertility => -30.0,
+    };
+    final defaultAvatarHeight = stage == MomLifeStage.pregnancy ? 290.0 : 304.0;
+    final avatarTop = hasCustomAvatar ? 4.0 : defaultAvatarTop;
+    final avatarHeight = hasCustomAvatar
+        ? defaultAvatarTop + defaultAvatarHeight - avatarTop
+        : defaultAvatarHeight;
     return Column(
       key: ValueKey('me-stage-workspace-${stage.wireValue}'),
       children: [
@@ -127,18 +165,14 @@ class _MomStageWorkspace extends StatelessWidget {
             if (showAvatar)
               Positioned(
                 right: stage == MomLifeStage.pregnancy ? -28 : -18,
-                top: switch (stage) {
-                  MomLifeStage.pregnancy => -16,
-                  MomLifeStage.postpartum => -18,
-                  MomLifeStage.fertility => -30,
-                },
+                top: avatarTop,
                 width: stage == MomLifeStage.pregnancy ? 218 : 210,
-                height: stage == MomLifeStage.pregnancy ? 290 : 304,
+                height: avatarHeight,
                 child: IgnorePointer(
                   key: ValueKey('me-stage-avatar-${stage.wireValue}'),
                   child: _MomAvatarImage(
                     stage: stage,
-                    fileId: data.overview.data?.mom?.avatarFileId,
+                    fileId: avatarFileId,
                     alignment: Alignment.bottomCenter,
                     fit: BoxFit.contain,
                   ),

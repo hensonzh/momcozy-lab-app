@@ -34,6 +34,31 @@ void main() {
     expect(connector.maxBytes, 10 * 1024 * 1024);
   });
 
+  test('deduplicates and exposes a loaded full image synchronously', () async {
+    const fileId = '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518';
+    final connector = _FakeBinaryConnector(
+      ProductAssetHttpResponse(
+        statusCode: 200,
+        statusText: 'OK',
+        contentType: 'image/png',
+        body: Uint8List.fromList([1, 2, 3]),
+      ),
+    );
+    final repository = MediaContentRepository(
+      baseUri: Uri.parse('https://api.example.com'),
+      connector: connector,
+    );
+
+    final first = repository.loadImage(fileId);
+    final concurrent = repository.loadImage(fileId);
+
+    expect(identical(first, concurrent), isTrue);
+    expect(await first, [1, 2, 3]);
+    expect(repository.cachedImage(fileId), [1, 2, 3]);
+    expect(await repository.loadImage(fileId), [1, 2, 3]);
+    expect(connector.requestCount, 1);
+  });
+
   test('loads and caches the bounded thumbnail variant by file id', () async {
     final connector = _FakeBinaryConnector(
       ProductAssetHttpResponse(
@@ -58,6 +83,10 @@ void main() {
 
     expect(identical(first, second), isTrue);
     expect(await first, [4, 5, 6]);
+    expect(
+      repository.cachedImageThumbnail('0ea4b76d-2bc4-4ab8-91b7-3b24df53c518'),
+      [4, 5, 6],
+    );
     expect(connector.requestCount, 1);
     expect(
       connector.uri.path,

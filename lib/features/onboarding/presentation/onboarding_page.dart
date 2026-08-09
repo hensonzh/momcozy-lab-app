@@ -230,7 +230,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         const _StepPrompt(
           title: 'About your pregnancy',
           reason:
-              'Your due date and baby count help us time pregnancy guidance and prepare the right plan.',
+              'Your current pregnancy week and baby count help us estimate your due date, time guidance, and prepare the right plan.',
         ),
         const SizedBox(height: 24),
         ..._pregnancyFields(context, draft),
@@ -250,24 +250,35 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingProfileDraft draft,
   ) {
     return [
-      _DateField(
-        label: 'Expected due date',
-        value: draft.expectedDueDate,
-        onTap: () async {
-          final today = DateUtils.dateOnly(DateTime.now());
-          final firstDate = today.subtract(const Duration(days: 42));
-          final lastDate = today.add(const Duration(days: 321));
-          final selected = await showDatePicker(
-            context: context,
-            initialDate:
-                draft.expectedDueDate ?? today.add(const Duration(days: 120)),
-            firstDate: firstDate,
-            lastDate: lastDate,
-          );
-          if (selected != null) {
-            setState(() => draft.expectedDueDate = selected);
-          }
-        },
+      const Text(
+        'Current gestational age',
+        style: TextStyle(
+          color: MomCozyV3Colors.ink,
+          fontSize: 15,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      const SizedBox(height: 6),
+      const _FieldHint(
+        text:
+            'Choose the pregnancy week confirmed by your clinician or shown on your latest scan.',
+      ),
+      const SizedBox(height: 12),
+      DropdownButtonFormField<int>(
+        key: const ValueKey('onboarding-current-gestational-week'),
+        initialValue: draft.currentGestationalWeek,
+        isExpanded: true,
+        menuMaxHeight: 320,
+        decoration: const InputDecoration(
+          labelText: 'Current pregnancy week *',
+        ),
+        hint: const Text('Select week'),
+        items: [
+          for (var week = 1; week <= 40; week++)
+            DropdownMenuItem(value: week, child: Text('Week $week')),
+        ],
+        onChanged: (value) =>
+            setState(() => draft.currentGestationalWeek = value),
       ),
       const SizedBox(height: 16),
       _CountField(
@@ -438,8 +449,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _submitProfile() async {
     final draft = _draft!;
     if (draft.stage == OnboardingCareStage.pregnancy &&
-        draft.expectedDueDate == null) {
-      setState(() => _validationMessage = 'Choose your expected due date.');
+        draft.currentGestationalWeek == null) {
+      setState(
+        () => _validationMessage = 'Choose your current pregnancy week.',
+      );
+      return;
+    }
+    if (draft.stage == OnboardingCareStage.pregnancy &&
+        (draft.currentGestationalWeek! < 1 ||
+            draft.currentGestationalWeek! > 40)) {
+      setState(
+        () => _validationMessage = 'Pregnancy week must be between 1 and 40.',
+      );
       return;
     }
     if (draft.stage == OnboardingCareStage.postpartum &&
