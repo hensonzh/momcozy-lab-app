@@ -128,6 +128,102 @@ void main() {
       runtimeController.dispose();
     },
   );
+
+  test(
+    'accepted avatar generation marks onboarding release complete',
+    () async {
+      final transport = _RecordingTransport(
+        {
+          onboardingMeEndpoint: const {
+            'status': 'avatar_generating',
+            'current_step': 'generating',
+            'current_stage': 'postpartum',
+            'profile_confirmed': true,
+            'can_enter_app': true,
+            'avatar_setup_completed': false,
+            'avatar': {
+              'id': 'generation-id',
+              'stage': 'postpartum',
+              'status': 'queued',
+              'error_code': '',
+              'created_at': '2026-08-09T00:00:00Z',
+              'candidates': <Object?>[],
+            },
+          },
+        },
+        writeResponsesByPath: {
+          onboardingReleaseResetEndpoint: const {
+            'status': 'already_reset',
+            'release_id': '1.0.0+27',
+            'deleted_file_count': 0,
+            'object_cleanup_queued': false,
+          },
+        },
+      );
+      final policy = _FakeReleasePolicy(requiresReset: true);
+      final runtimeController = _runtimeController(transport);
+      final controller = OnboardingController(
+        runtimeController: runtimeController,
+        releasePolicy: policy,
+      );
+
+      await _waitFor(() => controller.phase == OnboardingGatePhase.ready);
+
+      expect(policy.completedUsers, ['release-user']);
+      expect(controller.requiresOnboardingFor('release-user'), isFalse);
+      controller.dispose();
+      runtimeController.dispose();
+    },
+  );
+
+  test(
+    'local completion marker failure does not revoke cloud app entry',
+    () async {
+      final transport = _RecordingTransport(
+        {
+          onboardingMeEndpoint: const {
+            'status': 'avatar_generating',
+            'current_step': 'generating',
+            'current_stage': 'postpartum',
+            'profile_confirmed': true,
+            'can_enter_app': true,
+            'avatar_setup_completed': false,
+            'avatar': {
+              'id': 'generation-id',
+              'stage': 'postpartum',
+              'status': 'queued',
+              'error_code': '',
+              'created_at': '2026-08-09T00:00:00Z',
+              'candidates': <Object?>[],
+            },
+          },
+        },
+        writeResponsesByPath: {
+          onboardingReleaseResetEndpoint: const {
+            'status': 'already_reset',
+            'release_id': '1.0.0+27',
+            'deleted_file_count': 0,
+            'object_cleanup_queued': false,
+          },
+        },
+      );
+      final runtimeController = _runtimeController(transport);
+      final controller = OnboardingController(
+        runtimeController: runtimeController,
+        releasePolicy: _FakeReleasePolicy(
+          requiresReset: true,
+          throwOnMarkCompleted: true,
+        ),
+      );
+
+      await _waitFor(() => controller.phase == OnboardingGatePhase.ready);
+
+      expect(controller.requiresOnboardingFor('release-user'), isFalse);
+      expect(controller.state?.canEnterApp, isTrue);
+      controller.dispose();
+      runtimeController.dispose();
+    },
+  );
 }
 
 MomCozyRuntimeController _runtimeController(ApiJsonTransport transport) {
@@ -170,9 +266,13 @@ class _RecordingTransport extends FixtureApiJsonTransportByPath {
 }
 
 class _FakeReleasePolicy implements OnboardingReleasePolicy {
-  _FakeReleasePolicy({required this.requiresReset});
+  _FakeReleasePolicy({
+    required this.requiresReset,
+    this.throwOnMarkCompleted = false,
+  });
 
   bool requiresReset;
+  final bool throwOnMarkCompleted;
   final List<String> completedUsers = [];
 
   @override
@@ -180,6 +280,7 @@ class _FakeReleasePolicy implements OnboardingReleasePolicy {
 
   @override
   Future<void> markCompletedFor(String userId) async {
+    if (throwOnMarkCompleted) throw StateError('secure storage unavailable');
     completedUsers.add(userId);
     requiresReset = false;
   }

@@ -27,7 +27,6 @@ class OnboardingController extends ChangeNotifier {
   String? _loadedUserId;
   String _errorMessage = '';
   bool _busy = false;
-  Timer? _pollTimer;
   bool _disposed = false;
   String? _resetUserId;
   String? _resetReleaseId;
@@ -50,7 +49,7 @@ class OnboardingController extends ChangeNotifier {
       _loadedUserId == userId && _phase == OnboardingGatePhase.ready;
 
   bool requiresOnboardingFor(String userId) =>
-      isResolvedFor(userId) && !(_state?.isCompleted ?? false);
+      isResolvedFor(userId) && !(_state?.canEnterApp ?? false);
 
   OnboardingApiRepository get _repository {
     final runtime = runtimeController.runtime;
@@ -63,7 +62,6 @@ class OnboardingController extends ChangeNotifier {
   void _handleRuntimeChanged() {
     final session = runtimeController.currentSession;
     if (!session.isAuthenticated) {
-      _pollTimer?.cancel();
       _clearResetTracking();
       _loadedUserId = null;
       _state = null;
@@ -74,6 +72,12 @@ class OnboardingController extends ChangeNotifier {
     }
     if (_loadedUserId != null && _loadedUserId != session.userId) {
       _clearResetTracking();
+      _loadedUserId = null;
+      _state = null;
+      _clearAvatarSelection();
+      _phase = OnboardingGatePhase.idle;
+      _errorMessage = '';
+      _notify();
     }
     if (_loadedUserId == session.userId && _phase != OnboardingGatePhase.idle) {
       return;
@@ -97,17 +101,16 @@ class OnboardingController extends ChangeNotifier {
       if (runtimeController.currentSession.userId != userId) return;
       final next = await repository.fetchState();
       if (runtimeController.currentSession.userId != userId) return;
-      if (next.isCompleted && await releasePolicy.requiresResetFor(userId)) {
-        await releasePolicy.markCompletedFor(userId);
-      }
+      await _markReleaseCompletedIfNeeded(userId, next);
       _applyState(next);
       _phase = OnboardingGatePhase.ready;
       _errorMessage = '';
-      _schedulePollIfNeeded();
     } catch (error) {
       if (runtimeController.currentSession.userId != userId) return;
-      _phase = OnboardingGatePhase.failure;
       _errorMessage = _messageFor(error);
+      _phase = silent && _state != null
+          ? OnboardingGatePhase.ready
+          : OnboardingGatePhase.failure;
     }
     _notify();
   }
@@ -122,8 +125,12 @@ class OnboardingController extends ChangeNotifier {
   Future<bool> uploadAndGenerate(OnboardingPortrait portrait) async {
     return _run(() async {
       final fileId = await _repository.uploadPortrait(portrait);
-      _applyState(await _repository.generateAvatar(fileId));
-      _schedulePollIfNeeded();
+      final next = await _repository.generateAvatar(fileId);
+      await _markReleaseCompletedIfNeeded(
+        runtimeController.currentSession.userId,
+        next,
+      );
+      _applyState(next);
     });
   }
 
@@ -167,7 +174,7 @@ class OnboardingController extends ChangeNotifier {
     final userId = runtimeController.currentSession.userId;
     final succeeded = await _run(() async {
       final next = await action();
-      if (next.isCompleted) await releasePolicy.markCompletedFor(userId);
+      await _markReleaseCompletedIfNeeded(userId, next);
       _applyState(next);
       _phase = OnboardingGatePhase.ready;
     });
@@ -225,6 +232,21 @@ class OnboardingController extends ChangeNotifier {
     _resetInFlightUserId = null;
   }
 
+  Future<void> _markReleaseCompletedIfNeeded(
+    String userId,
+    OnboardingState next,
+  ) async {
+    if (!next.canEnterApp) return;
+    try {
+      if (await releasePolicy.requiresResetFor(userId)) {
+        await releasePolicy.markCompletedFor(userId);
+      }
+    } catch (_) {
+      // Cloud onboarding state is authoritative. A failed local marker can
+      // retry on the next load without blocking an already accepted job.
+    }
+  }
+
   void _applyState(OnboardingState next) {
     final previousGenerationId = _state?.avatar?.id;
     _state = next;
@@ -267,14 +289,6 @@ class OnboardingController extends ChangeNotifier {
     _notify();
   }
 
-  void _schedulePollIfNeeded() {
-    _pollTimer?.cancel();
-    if (_state?.status != OnboardingStatus.avatarGenerating) return;
-    _pollTimer = Timer(const Duration(seconds: 2), () async {
-      await load(silent: true);
-    });
-  }
-
   String _messageFor(Object error) {
     if (error is ApiHttpException) {
       return error.errorMessage ?? 'We could not save that. Please try again.';
@@ -290,7 +304,6 @@ class OnboardingController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
-    _pollTimer?.cancel();
     runtimeController.removeListener(_handleRuntimeChanged);
     super.dispose();
   }

@@ -162,6 +162,8 @@ class OnboardingState {
   const OnboardingState({
     required this.status,
     required this.profileConfirmed,
+    this.canEnterApp = false,
+    this.avatarSetupCompleted = false,
     this.stage,
     this.canContinueWithDefault = false,
     this.primaryInfantId,
@@ -171,9 +173,15 @@ class OnboardingState {
 
   factory OnboardingState.fromMap(Map<String, Object?> map) {
     final avatar = map['avatar'];
+    final status = _status(_string(map['status']));
     return OnboardingState(
-      status: _status(_string(map['status'])),
+      status: status,
       profileConfirmed: map['profile_confirmed'] == true,
+      canEnterApp:
+          map['can_enter_app'] == true || status == OnboardingStatus.completed,
+      avatarSetupCompleted:
+          map['avatar_setup_completed'] == true ||
+          status == OnboardingStatus.completed,
       stage: _stage(_nullableString(map['current_stage'])),
       canContinueWithDefault: map['can_continue_with_default'] == true,
       primaryInfantId: _nullableString(map['primary_infant_id']),
@@ -188,13 +196,16 @@ class OnboardingState {
 
   final OnboardingStatus status;
   final bool profileConfirmed;
+  final bool canEnterApp;
+  final bool avatarSetupCompleted;
   final OnboardingCareStage? stage;
   final bool canContinueWithDefault;
   final String? primaryInfantId;
   final String? selectedAvatarFileId;
   final OnboardingAvatarGeneration? avatar;
 
-  bool get isCompleted => status == OnboardingStatus.completed;
+  bool get isCompleted =>
+      avatarSetupCompleted || status == OnboardingStatus.completed;
 }
 
 class OnboardingInfantDraft {

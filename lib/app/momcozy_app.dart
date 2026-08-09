@@ -25,6 +25,8 @@ import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_page.dart';
+import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_banner.dart';
+import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_controller.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -69,7 +71,8 @@ class MomCozyFlutterApp extends StatefulWidget {
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
 }
 
-class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
+class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
+    with WidgetsBindingObserver {
   late final MomCozyRuntimeController _runtimeController =
       widget.runtimeController ??
       MomCozyRuntimeController(
@@ -85,11 +88,16 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
           releasePolicy: widget.onboardingReleasePolicy,
         )
       : null;
+  late final AvatarTaskController? _avatarTaskController =
+      _onboardingController == null
+      ? null
+      : AvatarTaskController(onboardingController: _onboardingController);
   late final GoRouter _router =
       widget.router ??
       createMomCozyRouter(
         runtimeController: _runtimeController,
         onboardingController: _onboardingController,
+        avatarTaskController: _avatarTaskController,
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
         lastInviteCodeStore: widget.lastInviteCodeStore,
@@ -105,6 +113,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _runtimeController.enableSessionAutoRefresh(widget.sessionStore);
     _activeRouteSub = _routeIntentPlatform.activeRoutes.listen(
       _handlePendingNativeRoute,
@@ -114,15 +123,22 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     unawaited(_activeRouteSub?.cancel());
     if (_ownsRouteIntentPlatform) {
       final platform = _routeIntentPlatform;
       if (platform is AndroidRouteIntentPlatform) unawaited(platform.dispose());
     }
+    _avatarTaskController?.dispose();
     _onboardingController?.dispose();
     if (_ownsRuntimeController) _runtimeController.dispose();
     if (_ownsRouter) _router.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _avatarTaskController?.setForeground(state == AppLifecycleState.resumed);
   }
 
   Future<void> _consumePendingNativeRoute() async {
@@ -373,6 +389,7 @@ GoRouter createMomCozyRouter({
   String initialLocation = '/',
   MomCozyRuntimeController? runtimeController,
   OnboardingController? onboardingController,
+  AvatarTaskController? avatarTaskController,
   MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
   MomCozyAuthDeviceIdStore authDeviceIdStore =
       const FlutterSecureMomCozyAuthDeviceIdStore(),
@@ -430,8 +447,19 @@ GoRouter createMomCozyRouter({
       if (runtimeController != null && onboardingController != null)
         GoRoute(
           path: '/onboarding',
-          builder: (context, state) =>
-              OnboardingPage(controller: onboardingController),
+          builder: (context, state) => OnboardingPage(
+            controller: onboardingController,
+            entryPath:
+                _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/',
+          ),
+        ),
+      if (runtimeController != null && onboardingController != null)
+        GoRoute(
+          path: '/avatar/review',
+          builder: (context, state) => OnboardingPage(
+            controller: onboardingController,
+            avatarTaskMode: true,
+          ),
         ),
       ShellRoute(
         builder: (context, state, child) {
@@ -444,6 +472,7 @@ GoRouter createMomCozyRouter({
               uri: state.uri,
               extra: state.extra,
               agentHubBuilder: resolvedAgentHubBuilder,
+              avatarTaskController: avatarTaskController,
               child: child,
             ),
           );
@@ -494,6 +523,10 @@ String? _onboardingRedirect(
     ).toString();
   }
   if (isOnboarding) {
+    if (onboardingController.state?.canEnterApp == true &&
+        onboardingController.state?.isCompleted == false) {
+      return null;
+    }
     return _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/';
   }
   return null;
@@ -535,6 +568,7 @@ class MomCozyRouteShell extends StatefulWidget {
     this.uri,
     this.extra,
     this.agentHubBuilder,
+    this.avatarTaskController,
   });
 
   final String location;
@@ -542,6 +576,7 @@ class MomCozyRouteShell extends StatefulWidget {
   final Uri? uri;
   final Object? extra;
   final MomCozyAgentHubBuilder? agentHubBuilder;
+  final AvatarTaskController? avatarTaskController;
 
   @override
   State<MomCozyRouteShell> createState() => _MomCozyRouteShellState();
@@ -600,14 +635,30 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
       backgroundColor: MomCozyColors.background,
       body: SafeArea(
         bottom: hideNavigation,
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: MomCozyLayout.maxAppWidth,
+        child: Column(
+          children: [
+            if (widget.avatarTaskController case final controller?)
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: MomCozyLayout.maxAppWidth,
+                ),
+                child: AvatarTaskBanner(
+                  controller: controller,
+                  onOpen: () => context.push('/avatar/review'),
+                ),
+              ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: MomCozyLayout.maxAppWidth,
+                  ),
+                  child: content,
+                ),
+              ),
             ),
-            child: content,
-          ),
+          ],
         ),
       ),
       bottomNavigationBar: hideNavigation
