@@ -375,8 +375,8 @@ void main() {
 
         await controller.initialize();
         await controller.saveGrowthRecord(
+          measuredAt: DateTime.utc(2026, 7, 11),
           weightKg: 6.2,
-          measurementPosition: MeasurementPosition.recumbent,
           measurementContext: MeasurementContext.routine,
         );
 
@@ -392,18 +392,48 @@ void main() {
       await controller.initialize();
 
       final saved = await controller.savePumpingRecord(
-        outputs: const [
-          PumpingOutput(breastSide: PumpingSide.left, volumeMl: 95),
-        ],
+        startedAt: DateTime.utc(2026, 7, 11, 8),
+        endedAt: DateTime.utc(2026, 7, 11, 8, 20),
+        leftVolumeMl: 95,
+        rightVolumeMl: 42.5,
+        isPostFeedPumping: true,
       );
 
       expect(saved, isTrue);
-      expect(records.createdPumpingAmountMl, 95);
-      expect(records.createdPumpingOutputs.single.breastSide, PumpingSide.left);
+      expect(records.createdPumpingAmountMl, 137.5);
+      expect(records.createdPumpingOutputs, hasLength(2));
+      expect(records.createdPumpingEndedAt, DateTime.utc(2026, 7, 11, 8, 20));
+      expect(records.createdPumpingIsPostFeed, isTrue);
       expect(records.milkTrendFetchCount, 2);
       expect(controller.recordMutation.value.isSaving, isFalse);
       expect(controller.recordMutation.value.error, isNull);
     });
+
+    test(
+      'pumping requires both measured sides and a forward interval',
+      () async {
+        final records = _FakeRecordsRepository();
+        final controller = _controller(records: records);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final missingRight = await controller.savePumpingRecord(
+          startedAt: DateTime.utc(2026, 7, 11, 8),
+          leftVolumeMl: 95,
+          rightVolumeMl: 0,
+        );
+        final invalidInterval = await controller.savePumpingRecord(
+          startedAt: DateTime.utc(2026, 7, 11, 8),
+          endedAt: DateTime.utc(2026, 7, 11, 7, 59),
+          leftVolumeMl: 95,
+          rightVolumeMl: 42,
+        );
+
+        expect(missingRight, isFalse);
+        expect(invalidInterval, isFalse);
+        expect(records.pumpingCreateCount, 0);
+      },
+    );
 
     test('saving a feeding record keeps the current infant scope', () async {
       final records = _FakeRecordsRepository();
@@ -415,10 +445,10 @@ void main() {
       await controller.initialize();
 
       final saved = await controller.saveFeedingRecord(
+        startedAt: DateTime.utc(2026, 7, 11, 9),
         feedingMethod: FeedingMethod.bottle,
-        milkComponents: const [
-          FeedingMilkComponent(milkSource: MilkSource.breastMilk, volumeMl: 80),
-        ],
+        milkSource: MilkSource.breastMilk,
+        amountMl: 80,
       );
 
       expect(saved, isTrue);
@@ -426,6 +456,30 @@ void main() {
       expect(records.createdFeedingAmountMl, 80);
       expect(records.feedingFetchCount, 2);
       expect(records.feedingSummaryFetchCount, 2);
+    });
+
+    test('feeding rejects missing bottle amount and reversed time', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(
+        records: records,
+        identity: ProfileIdentity.baby,
+      );
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      final missingAmount = await controller.saveFeedingRecord(
+        startedAt: DateTime.utc(2026, 7, 11, 9),
+        feedingMethod: FeedingMethod.bottle,
+      );
+      final reversedTime = await controller.saveFeedingRecord(
+        startedAt: DateTime.utc(2026, 7, 11, 9),
+        endedAt: DateTime.utc(2026, 7, 11, 8, 59),
+        feedingMethod: FeedingMethod.directBreastfeeding,
+      );
+
+      expect(missingAmount, isFalse);
+      expect(reversedTime, isFalse);
+      expect(records.createdFeedingBabyId, isNull);
     });
 
     test('saving a growth record refreshes growth data', () async {
@@ -438,14 +492,16 @@ void main() {
       await controller.initialize();
 
       final saved = await controller.saveGrowthRecord(
+        measuredAt: DateTime.utc(2026, 7, 11, 10),
         weightKg: 6.3,
-        measurementPosition: MeasurementPosition.recumbent,
+        heightCm: 64,
         measurementContext: MeasurementContext.routine,
       );
 
       expect(saved, isTrue);
       expect(records.createdGrowthBabyId, 'baby-001');
       expect(records.createdGrowthWeightKg, 6.3);
+      expect(records.savedHeightCm, 64);
       expect(records.growthFetchCount, 2);
       expect(records.feedingSummaryFetchCount, 2);
     });
@@ -460,13 +516,13 @@ void main() {
       await controller.initialize();
 
       final sleepSaved = await controller.saveSleepRecord(
-        durationMinutes: 45,
+        startedAt: DateTime.utc(2026, 7, 11, 11),
+        endedAt: DateTime.utc(2026, 7, 11, 11, 45),
         kind: SleepKind.nap,
       );
       final diaperSaved = await controller.saveDiaperRecord(
-        kind: DiaperKind.both,
-        wetness: DiaperWetness.medium,
-        stoolColor: 'gold',
+        wetDiaperCount: 7,
+        bowelMovementCount: 3,
         stoolConsistency: 'soft',
       );
 
@@ -476,6 +532,8 @@ void main() {
       expect(records.createdSleepDuration, const Duration(minutes: 45));
       expect(records.createdDiaperBabyId, 'baby-001');
       expect(records.createdDiaperKind, DiaperKind.both);
+      expect(records.createdWetDiaperCount, 7);
+      expect(records.createdBowelMovementCount, 3);
       expect(records.sleepFetchCount, 2);
       expect(records.diaperFetchCount, 2);
     });
@@ -656,12 +714,17 @@ class _FakeRecordsRepository
   String? createdDiaperBabyId;
   double? createdPumpingAmountMl;
   List<PumpingOutput> createdPumpingOutputs = const [];
+  DateTime? createdPumpingEndedAt;
+  bool? createdPumpingIsPostFeed;
+  var pumpingCreateCount = 0;
   var feedingSummaryFetchCount = 0;
   double? createdWaterAmountMl;
   double? createdVitalWeightKg;
   int? createdVitalHeartRateBpm;
   Duration? createdSleepDuration;
   DiaperKind? createdDiaperKind;
+  int? createdWetDiaperCount;
+  int? createdBowelMovementCount;
   String? createdGrowthBabyId;
   double? createdGrowthWeightKg;
 
@@ -697,6 +760,7 @@ class _FakeRecordsRepository
     required FeedingMethod feedingMethod,
     required List<FeedingMilkComponent> milkComponents,
     int? durationSeconds,
+    FeedingBreastSide? breastSide,
     String? idempotencyKey,
   }) async {
     createdFeedingBabyId = babyId;
@@ -709,6 +773,7 @@ class _FakeRecordsRepository
       feedingMethod: feedingMethod,
       milkComponents: milkComponents,
       durationSeconds: durationSeconds,
+      breastSide: breastSide,
       occurredAt: occurredAt,
     );
   }
@@ -737,21 +802,28 @@ class _FakeRecordsRepository
   @override
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
+    DateTime? endedAt,
     required List<PumpingOutput> outputs,
     int? durationSeconds,
+    bool? isPostFeedPumping,
     String? idempotencyKey,
   }) async {
+    pumpingCreateCount += 1;
     createdPumpingAmountMl = outputs
         .map((output) => output.volumeMl)
         .whereType<double>()
         .fold<double>(0, (sum, value) => sum + value);
     createdPumpingOutputs = outputs;
+    createdPumpingEndedAt = endedAt;
+    createdPumpingIsPostFeed = isPostFeedPumping;
     return PumpMilkRecord(
       id: 'pumping-created',
       pumpType: 'manual',
       outputs: outputs,
       durationSeconds: durationSeconds,
       occurredAt: occurredAt,
+      endedAt: endedAt,
+      isPostFeedPumping: isPostFeedPumping,
     );
   }
 
@@ -866,11 +938,15 @@ class _FakeRecordsRepository
     DiaperWetness? wetness,
     String? stoolColor,
     String? stoolConsistency,
+    int? wetDiaperCount,
+    int? bowelMovementCount,
     String notes = '',
     String? idempotencyKey,
   }) async {
     createdDiaperBabyId = babyId;
     createdDiaperKind = kind;
+    createdWetDiaperCount = wetDiaperCount;
+    createdBowelMovementCount = bowelMovementCount;
     return DiaperRecord(
       id: 'diaper-created',
       infantId: babyId,
@@ -879,6 +955,8 @@ class _FakeRecordsRepository
       wetness: wetness,
       stoolColor: stoolColor,
       stoolConsistency: stoolConsistency,
+      wetDiaperCount: wetDiaperCount,
+      bowelMovementCount: bowelMovementCount,
       notes: notes,
     );
   }

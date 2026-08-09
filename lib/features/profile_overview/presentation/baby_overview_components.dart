@@ -1502,13 +1502,6 @@ class _BabyDetailPage extends StatelessWidget {
 }
 
 extension on _BabyDetail {
-  bool get isGrowth => switch (this) {
-    _BabyDetail.weight ||
-    _BabyDetail.height ||
-    _BabyDetail.headCircumference => true,
-    _ => false,
-  };
-
   String get id => switch (this) {
     _BabyDetail.feeding => 'feeding',
     _BabyDetail.diaper => 'diaper',
@@ -2288,17 +2281,10 @@ class _BabyAddRecordSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = const [
-      (_BabyDetail.sleep, 'Sleep', _MeBabyOverviewAssets.moonStarIcon, true),
-      (_BabyDetail.feeding, 'Feeding', _MeBabyOverviewAssets.babyIcon, true),
-      (_BabyDetail.diaper, 'Diaper', _MeBabyOverviewAssets.babyIcon, true),
-      (_BabyDetail.weight, 'Weight', _MeBabyOverviewAssets.weightIcon, true),
-      (_BabyDetail.height, 'Height', _MeBabyOverviewAssets.rulerIcon, true),
-      (
-        _BabyDetail.headCircumference,
-        'Head Circ.',
-        _MeBabyOverviewAssets.rulerIcon,
-        true,
-      ),
+      (_RecordKind.feeding, 'Feeding', _MeBabyOverviewAssets.babyIcon, true),
+      (_RecordKind.growth, 'Growth', _MeBabyOverviewAssets.rulerIcon, true),
+      (_RecordKind.sleep, 'Sleep', _MeBabyOverviewAssets.moonStarIcon, true),
+      (_RecordKind.diaper, 'Diaper', _MeBabyOverviewAssets.babyIcon, true),
     ];
     final scaledLabelHeight = MediaQuery.textScalerOf(context).scale(16);
     final childAspectRatio = scaledLabelHeight > 22 ? 1.1 : 1.58;
@@ -2380,7 +2366,7 @@ class _BabyAddRecordSheet extends StatelessWidget {
                       button: true,
                       enabled: enabled,
                       child: Material(
-                        key: ValueKey('baby-add-record-${option.$1.id}'),
+                        key: ValueKey('baby-add-record-${option.$1.name}'),
                         color: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),

@@ -260,7 +260,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   }
 
   Future<void> _showBabyAddRecordSheet() async {
-    final detail = await showGeneralDialog<_BabyDetail>(
+    final kind = await showGeneralDialog<_RecordKind>(
       context: context,
       useRootNavigator: true,
       barrierDismissible: true,
@@ -304,109 +304,15 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
         );
       },
     );
-    if (!mounted || detail == null) return;
-    if (detail == _BabyDetail.feeding ||
-        detail == _BabyDetail.sleep ||
-        detail == _BabyDetail.diaper) {
-      _openBabyDetail(detail);
-      await _openRecordComposer(
-        initialKind: switch (detail) {
-          _BabyDetail.sleep => _RecordKind.sleep,
-          _BabyDetail.diaper => _RecordKind.diaper,
-          _BabyDetail.feeding => _RecordKind.feeding,
-          _ => null,
-        },
-      );
-      return;
-    }
-    if (!detail.isGrowth) return;
-    _openBabyDetail(detail);
-    await WidgetsBinding.instance.endOfFrame;
-    if (!mounted) return;
-    final controller = _overviewController;
-    if (controller == null) return;
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useRootNavigator: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.38),
-      builder: (context) => _GrowthRecordSheet(
-        detail: detail,
-        data: _MeBabyOverviewData.fromController(controller),
-        onSave: controller.saveGrowth,
-        mutation: controller.growthMutation,
-      ),
-    );
+    if (!mounted || kind == null) return;
+    await _openRecordComposer(initialKind: kind);
   }
 
   Future<void> _showMomAddRecordSheet() async {
-    final choice = await showGeneralDialog<_MomRecordChoice>(
-      context: context,
-      useRootNavigator: true,
-      barrierDismissible: true,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black.withValues(alpha: 0.28),
-      transitionDuration: const Duration(milliseconds: 220),
-      pageBuilder: (dialogContext, _, _) {
-        return Material(
-          type: MaterialType.transparency,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Semantics(
-                  label: 'Dismiss add record sheet',
-                  button: true,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => Navigator.of(dialogContext).pop(),
-                    child: BackdropFilter(
-                      filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                      child: const SizedBox.expand(),
-                    ),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: const _MomAddRecordSheet(),
-              ),
-            ],
-          ),
-        );
-      },
-      transitionBuilder: (context, animation, _, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-        child: child,
-      ),
-    );
-    if (!mounted || choice == null) return;
-    switch (choice) {
-      case _MomRecordChoice.pumpingLeft:
-        await _openRecordComposer(
-          initialKind: _RecordKind.pumping,
-          initialBreastSide: PumpingSide.left,
-        );
-      case _MomRecordChoice.pumpingRight:
-        await _openRecordComposer(
-          initialKind: _RecordKind.pumping,
-          initialBreastSide: PumpingSide.right,
-        );
-      case _MomRecordChoice.water:
-        await _openRecordComposer(initialKind: _RecordKind.water);
-      case _MomRecordChoice.weight:
-        await _openRecordComposer(initialKind: _RecordKind.weight);
-      case _MomRecordChoice.vitals:
-        await _openRecordComposer(initialKind: _RecordKind.vitals);
-      case _MomRecordChoice.sleep:
-        return;
-    }
+    await _openRecordComposer(initialKind: _RecordKind.pumping);
   }
 
-  Future<void> _openRecordComposer({
-    _RecordKind? initialKind,
-    PumpingSide? initialBreastSide,
-  }) async {
+  Future<void> _openRecordComposer({_RecordKind? initialKind}) async {
     final controller = _overviewController;
     if (controller == null || controller.recordMutation.value.isSaving) return;
     controller.clearRecordMutationError();
@@ -422,7 +328,6 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
         identity: widget.identity,
         controller: controller,
         initialKind: initialKind,
-        initialBreastSide: initialBreastSide,
       ),
     );
     controller.clearRecordMutationError();
@@ -921,18 +826,23 @@ class _MeBabyOverviewData {
         .toList(growable: false);
   }
 
-  int get todayWetDiapers => todayDiapers
-      .where(
-        (record) => const {'wet', 'mixed'}.contains(record.type.toLowerCase()),
-      )
-      .length;
+  int get todayWetDiapers {
+    final latestAggregate = todayDiapers
+        .map((record) => record.wetDiaperCount)
+        .whereType<int>()
+        .firstOrNull;
+    return latestAggregate ??
+        todayDiapers.where((record) => record.includesWet).length;
+  }
 
-  int get todayDirtyDiapers => todayDiapers
-      .where(
-        (record) =>
-            const {'dirty', 'mixed'}.contains(record.type.toLowerCase()),
-      )
-      .length;
+  int get todayDirtyDiapers {
+    final latestAggregate = todayDiapers
+        .map((record) => record.bowelMovementCount)
+        .whereType<int>()
+        .firstOrNull;
+    return latestAggregate ??
+        todayDiapers.where((record) => record.includesDirty).length;
+  }
 
   List<({DateTime date, int count})> get weeklyDiaperDays {
     final today = now.toLocal();
@@ -1191,206 +1101,6 @@ class _RefreshFailureBanner extends StatelessWidget {
   }
 }
 
-enum _MomRecordChoice {
-  pumpingLeft,
-  pumpingRight,
-  sleep,
-  weight,
-  water,
-  vitals,
-}
-
-class _MomAddRecordSheet extends StatelessWidget {
-  const _MomAddRecordSheet();
-
-  @override
-  Widget build(BuildContext context) {
-    final options = [
-      (
-        _MomRecordChoice.pumpingLeft,
-        'pumping-left',
-        'Pumping (Left)',
-        Icons.cancel_outlined,
-        true,
-      ),
-      (
-        _MomRecordChoice.pumpingRight,
-        'pumping-right',
-        'Pumping (Right)',
-        Icons.cancel_outlined,
-        true,
-      ),
-      (_MomRecordChoice.sleep, 'sleep', 'Sleep', Icons.bedtime_outlined, false),
-      (
-        _MomRecordChoice.weight,
-        'weight',
-        'Weight',
-        Icons.monitor_weight_outlined,
-        true,
-      ),
-      (
-        _MomRecordChoice.water,
-        'water-intake',
-        'Water Intake',
-        Icons.water_drop_outlined,
-        true,
-      ),
-      (
-        _MomRecordChoice.vitals,
-        'vitals',
-        'Vitals',
-        Icons.monitor_heart_outlined,
-        true,
-      ),
-    ];
-    final scaledLabelHeight = MediaQuery.textScalerOf(context).scale(16);
-    final childAspectRatio = scaledLabelHeight > 22 ? 1.25 : 1.58;
-    return SafeArea(
-      top: false,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
-        ),
-        child: Container(
-          key: const ValueKey('mom-add-record-sheet'),
-          width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 72),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: _MeBabyOverviewColors.line,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-              const SizedBox(height: 13),
-              Row(
-                children: [
-                  const Expanded(
-                    child: Text(
-                      'Add Record',
-                      style: TextStyle(
-                        color: _MeBabyOverviewColors.ink,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                  IconButton.filledTonal(
-                    key: const ValueKey('mom-add-record-close'),
-                    tooltip: 'Close add record',
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: IconButton.styleFrom(
-                      backgroundColor: _MeBabyOverviewColors.pill,
-                      foregroundColor: _MeBabyOverviewColors.wine,
-                      shape: const CircleBorder(),
-                      minimumSize: const Size.square(MomCozyTapTargets.minimum),
-                    ),
-                    icon: const Icon(Icons.close_rounded),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 7),
-              Flexible(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: childAspectRatio,
-                  ),
-                  itemCount: options.length,
-                  itemBuilder: (context, index) {
-                    final option = options[index];
-                    return Semantics(
-                      key: ValueKey('mom-add-record-${option.$2}'),
-                      label: option.$3,
-                      hint: option.$5 ? 'Add record' : 'Coming soon',
-                      button: true,
-                      enabled: option.$5,
-                      excludeSemantics: true,
-                      child: Material(
-                        color: option.$5
-                            ? Colors.white
-                            : _MeBabyOverviewColors.pill.withValues(alpha: 0.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(
-                            color: _MeBabyOverviewColors.line,
-                          ),
-                        ),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          onTap: option.$5
-                              ? () => Navigator.of(context).pop(option.$1)
-                              : null,
-                          child: Opacity(
-                            opacity: option.$5 ? 1 : 0.58,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                DecoratedBox(
-                                  decoration: const BoxDecoration(
-                                    color: _MeBabyOverviewColors.pill,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(13),
-                                    child: Icon(
-                                      option.$4,
-                                      color: _MeBabyOverviewColors.wine,
-                                      size: 26,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 7),
-                                Text(
-                                  option.$3,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: _MeBabyOverviewColors.ink,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                if (!option.$5) ...[
-                                  const SizedBox(height: 1),
-                                  const Text(
-                                    'Coming soon',
-                                    style: TextStyle(
-                                      color: _MeBabyOverviewColors.wine,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 enum _RecordKind {
   pumping,
   feeding,
@@ -1407,34 +1117,29 @@ class _RecordComposerSheet extends StatefulWidget {
     required this.identity,
     required this.controller,
     this.initialKind,
-    this.initialBreastSide,
   });
 
   final ProfileIdentity identity;
   final ProfileOverviewController controller;
   final _RecordKind? initialKind;
-  final PumpingSide? initialBreastSide;
 
   @override
   State<_RecordComposerSheet> createState() => _RecordComposerSheetState();
 }
 
 class _RecordComposerSheetState extends State<_RecordComposerSheet> {
-  late _RecordKind _kind =
+  late final _RecordKind _kind =
       widget.initialKind ??
       (widget.identity == ProfileIdentity.mom
           ? _RecordKind.pumping
           : _RecordKind.feeding);
-  late final Set<PumpingSide> _pumpingSides = {
-    widget.initialBreastSide ?? PumpingSide.left,
-  };
+  late DateTime _startedAt;
+  DateTime? _endedAt;
+  late DateTime _measuredAt;
   final Map<PumpingSide, TextEditingController> _pumpingVolumeControllers = {
     for (final side in PumpingSide.values) side: TextEditingController(),
   };
-  final Map<MilkSource, TextEditingController> _feedingVolumeControllers = {
-    for (final source in MilkSource.values) source: TextEditingController(),
-  };
-  Set<MilkSource> _milkSources = {MilkSource.breastMilk};
+  final _feedingAmountController = TextEditingController();
   final _amountController = TextEditingController();
   final _durationController = TextEditingController();
   final _weightController = TextEditingController();
@@ -1446,14 +1151,23 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
   final _temperatureController = TextEditingController();
   final _stoolColorController = TextEditingController();
   final _stoolConsistencyController = TextEditingController();
+  final _wetDiaperCountController = TextEditingController();
+  final _bowelMovementCountController = TextEditingController();
   final _notesController = TextEditingController();
   FeedingMethod _feedingMethod = FeedingMethod.bottle;
-  MeasurementPosition? _measurementPosition;
-  MeasurementContext? _measurementContext;
+  MilkSource _milkSource = MilkSource.breastMilk;
+  FeedingBreastSide? _feedingBreastSide;
+  bool _isPostFeedPumping = false;
+  MeasurementContext? _measurementContext = MeasurementContext.routine;
   SleepKind _sleepKind = SleepKind.nap;
-  DiaperKind _diaperKind = DiaperKind.wet;
-  DiaperWetness _diaperWetness = DiaperWetness.medium;
   String? _validationError;
+
+  @override
+  void initState() {
+    super.initState();
+    _startedAt = widget.controller.now();
+    _measuredAt = _startedAt;
+  }
 
   @override
   void dispose() {
@@ -1461,9 +1175,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     for (final controller in _pumpingVolumeControllers.values) {
       controller.dispose();
     }
-    for (final controller in _feedingVolumeControllers.values) {
-      controller.dispose();
-    }
+    _feedingAmountController.dispose();
     _durationController.dispose();
     _weightController.dispose();
     _heightController.dispose();
@@ -1474,6 +1186,8 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     _temperatureController.dispose();
     _stoolColorController.dispose();
     _stoolConsistencyController.dispose();
+    _wetDiaperCountController.dispose();
+    _bowelMovementCountController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -1488,54 +1202,15 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     return value != null && value > 0 ? value : null;
   }
 
-  ({double? value, bool valid}) _optionalNonNegativeNumber(
-    TextEditingController controller,
-  ) {
-    final text = controller.text.trim().replaceAll(',', '.');
-    if (text.isEmpty) return (value: null, valid: true);
-    final value = double.tryParse(text);
-    return (value: value, valid: value != null && value >= 0);
-  }
-
   void _selectFeedingMethod(FeedingMethod method) {
     setState(() {
       _feedingMethod = method;
       if (method == FeedingMethod.directBreastfeeding) {
-        _milkSources = {MilkSource.breastMilk};
-      }
-      _validationError = null;
-    });
-  }
-
-  void _toggleMilkSource(MilkSource source, bool selected) {
-    if (_feedingMethod == FeedingMethod.directBreastfeeding) return;
-    setState(() {
-      if (selected) {
-        _milkSources = source == MilkSource.unknown
-            ? {MilkSource.unknown}
-            : ({..._milkSources}
-                ..remove(MilkSource.unknown)
-                ..add(source));
-      } else if (_milkSources.length > 1) {
-        _milkSources = {..._milkSources}..remove(source);
-      }
-      _validationError = null;
-    });
-  }
-
-  void _togglePumpingSide(PumpingSide side, bool selected) {
-    setState(() {
-      if (selected) {
-        final nextSides = side == PumpingSide.unassigned
-            ? const {PumpingSide.unassigned}
-            : ({..._pumpingSides}
-                ..remove(PumpingSide.unassigned)
-                ..add(side));
-        _pumpingSides
-          ..clear()
-          ..addAll(nextSides);
-      } else if (_pumpingSides.length > 1) {
-        _pumpingSides.remove(side);
+        _milkSource = MilkSource.breastMilk;
+        _feedingAmountController.clear();
+      } else {
+        _feedingBreastSide = null;
+        _endedAt = null;
       }
       _validationError = null;
     });
@@ -1546,9 +1221,10 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     _RecordKind.water => 'Add water intake',
     _RecordKind.weight => 'Add weight',
     _RecordKind.vitals => 'Add vitals',
-    _RecordKind.sleep => 'Add sleep',
-    _RecordKind.diaper => 'Add diaper change',
-    _RecordKind.feeding || _RecordKind.growth => 'Add baby record',
+    _RecordKind.sleep => 'Add sleep record',
+    _RecordKind.diaper => 'Add diaper record',
+    _RecordKind.feeding => 'Add feeding record',
+    _RecordKind.growth => 'Add growth record',
   };
 
   Future<void> _save() async {
@@ -1556,87 +1232,72 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     bool saved;
     switch (_kind) {
       case _RecordKind.pumping:
-        final outputs = <PumpingOutput>[];
-        var volumesAreValid = true;
-        for (final side in _pumpingSides) {
-          final parsed = _optionalNonNegativeNumber(
-            _pumpingVolumeControllers[side]!,
-          );
-          volumesAreValid = volumesAreValid && parsed.valid;
-          outputs.add(PumpingOutput(breastSide: side, volumeMl: parsed.value));
-        }
-        final durationMinutes = _positiveInteger(_durationController);
-        if (!volumesAreValid ||
-            (outputs.every((output) => output.volumeMl == null) &&
-                durationMinutes == null)) {
+        final leftVolume = _positiveNumber(
+          _pumpingVolumeControllers[PumpingSide.left]!,
+        );
+        final rightVolume = _positiveNumber(
+          _pumpingVolumeControllers[PumpingSide.right]!,
+        );
+        if (leftVolume == null || rightVolume == null) {
           setState(
             () => _validationError =
-                'Enter a non-negative output for at least one side or a duration.',
+                'Enter the measured milk amount for both left and right.',
+          );
+          return;
+        }
+        if (_endedAt != null && !_endedAt!.isAfter(_startedAt)) {
+          setState(
+            () => _validationError = 'End time must be after start time.',
           );
           return;
         }
         setState(() => _validationError = null);
         saved = await widget.controller.savePumpingRecord(
-          outputs: outputs,
-          durationSeconds: durationMinutes == null
-              ? null
-              : durationMinutes * 60,
+          startedAt: _startedAt,
+          endedAt: _endedAt,
+          leftVolumeMl: leftVolume,
+          rightVolumeMl: rightVolume,
+          isPostFeedPumping: _isPostFeedPumping,
         );
       case _RecordKind.feeding:
-        final components = <FeedingMilkComponent>[];
-        var volumesAreValid = true;
-        for (final source in _milkSources) {
-          final parsed = _optionalNonNegativeNumber(
-            _feedingVolumeControllers[source]!,
-          );
-          volumesAreValid = volumesAreValid && parsed.valid;
-          components.add(
-            FeedingMilkComponent(milkSource: source, volumeMl: parsed.value),
-          );
+        final isDirect = _feedingMethod == FeedingMethod.directBreastfeeding;
+        final amount = isDirect
+            ? null
+            : _positiveNumber(_feedingAmountController);
+        if (!isDirect && amount == null) {
+          setState(() => _validationError = 'Enter the bottle feeding amount.');
+          return;
         }
-        final durationMinutes = _positiveInteger(_durationController);
-        if (!volumesAreValid ||
-            (components.every((component) => component.volumeMl == null) &&
-                durationMinutes == null)) {
+        if (isDirect && _endedAt != null && !_endedAt!.isAfter(_startedAt)) {
           setState(
-            () => _validationError =
-                'Enter a non-negative measured amount or a feeding duration.',
+            () => _validationError = 'End time must be after start time.',
           );
           return;
         }
         setState(() => _validationError = null);
         saved = await widget.controller.saveFeedingRecord(
+          startedAt: _startedAt,
+          endedAt: isDirect ? _endedAt : null,
           feedingMethod: _feedingMethod,
-          milkComponents: components,
-          durationSeconds: durationMinutes == null
-              ? null
-              : durationMinutes * 60,
+          milkSource: isDirect ? MilkSource.breastMilk : _milkSource,
+          amountMl: amount,
+          breastSide: isDirect ? _feedingBreastSide : null,
         );
       case _RecordKind.growth:
         final weight = _positiveNumber(_weightController);
         final height = _positiveNumber(_heightController);
-        final head = _positiveNumber(_headController);
-        if (weight == null && height == null && head == null) {
+        if (weight == null) {
           setState(
-            () => _validationError =
-                'Enter at least one confirmed growth measurement.',
-          );
-          return;
-        }
-        if (_measurementPosition == null || _measurementContext == null) {
-          setState(
-            () => _validationError =
-                'Select how and why this growth measurement was taken.',
+            () => _validationError = 'Enter the baby\'s measured weight.',
           );
           return;
         }
         setState(() => _validationError = null);
         saved = await widget.controller.saveGrowthRecord(
+          measuredAt: _measuredAt,
           weightKg: weight,
           heightCm: height,
-          headCm: head,
-          measurementPosition: _measurementPosition!,
-          measurementContext: _measurementContext!,
+          measurementContext: _measurementContext ?? MeasurementContext.routine,
         );
       case _RecordKind.water:
         final amount = _positiveNumber(_amountController);
@@ -1687,35 +1348,35 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
           temperatureC: temperature,
         );
       case _RecordKind.sleep:
-        final durationMinutes = _positiveInteger(_durationController);
-        if (durationMinutes == null || durationMinutes > 1440) {
+        if (_endedAt != null && !_endedAt!.isAfter(_startedAt)) {
           setState(
-            () => _validationError =
-                'Enter a sleep duration between 1 and 1,440 minutes.',
+            () => _validationError = 'End time must be after start time.',
           );
           return;
         }
         setState(() => _validationError = null);
         saved = await widget.controller.saveSleepRecord(
-          durationMinutes: durationMinutes,
+          startedAt: _startedAt,
+          endedAt: _endedAt,
           kind: _sleepKind,
         );
       case _RecordKind.diaper:
+        final wetCount = _optionalNonNegativeInteger(_wetDiaperCountController);
+        final bowelCount = _optionalNonNegativeInteger(
+          _bowelMovementCountController,
+        );
+        if (!wetCount.valid || !bowelCount.valid) {
+          setState(
+            () => _validationError =
+                'Enter whole-number counts between 0 and 100.',
+          );
+          return;
+        }
         setState(() => _validationError = null);
-        final includesWet =
-            _diaperKind == DiaperKind.wet || _diaperKind == DiaperKind.both;
-        final includesDirty =
-            _diaperKind == DiaperKind.dirty || _diaperKind == DiaperKind.both;
         saved = await widget.controller.saveDiaperRecord(
-          kind: _diaperKind,
-          wetness: includesWet ? _diaperWetness : null,
-          stoolColor: includesDirty
-              ? _optionalText(_stoolColorController)
-              : null,
-          stoolConsistency: includesDirty
-              ? _optionalText(_stoolConsistencyController)
-              : null,
-          notes: _notesController.text.trim(),
+          wetDiaperCount: wetCount.value,
+          bowelMovementCount: bowelCount.value,
+          stoolConsistency: _optionalText(_stoolConsistencyController),
         );
     }
     if (!mounted || !saved) return;
@@ -1727,9 +1388,58 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     return value.isEmpty ? null : value;
   }
 
+  ({int? value, bool valid}) _optionalNonNegativeInteger(
+    TextEditingController controller,
+  ) {
+    final text = controller.text.trim();
+    if (text.isEmpty) return (value: null, valid: true);
+    final value = int.tryParse(text);
+    return (value: value, valid: value != null && value >= 0 && value <= 100);
+  }
+
+  double get _pumpingTotalMl {
+    return [PumpingSide.left, PumpingSide.right]
+        .map((side) => _positiveNumber(_pumpingVolumeControllers[side]!))
+        .whereType<double>()
+        .fold<double>(0, (total, value) => total + value);
+  }
+
+  Future<void> _pickDateTime({
+    required DateTime initialValue,
+    required ValueChanged<DateTime> onSelected,
+  }) async {
+    final localInitial = initialValue.toLocal();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: localInitial,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now().add(const Duration(days: 1)),
+    );
+    if (!mounted || date == null) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(localInitial),
+    );
+    if (!mounted || time == null) return;
+    final localValue = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+    onSelected(initialValue.isUtc ? localValue.toUtc() : localValue);
+  }
+
+  void _setEndedAt(DateTime? value) {
+    setState(() {
+      _endedAt = value;
+      _validationError = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isMom = widget.identity == ProfileIdentity.mom;
     return ValueListenableBuilder<RecordMutationState>(
       valueListenable: widget.controller.recordMutation,
       builder: (context, mutation, _) {
@@ -1769,81 +1479,36 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                     ],
                   ),
                   const SizedBox(height: 14),
-                  if (!isMom) ...[
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SegmentedButton<_RecordKind>(
-                        segments: const [
-                          ButtonSegment(
-                            value: _RecordKind.feeding,
-                            icon: Icon(Icons.restaurant_outlined),
-                            label: Text('Feeding'),
-                          ),
-                          ButtonSegment(
-                            value: _RecordKind.growth,
-                            icon: Icon(Icons.monitor_weight_outlined),
-                            label: Text('Growth'),
-                          ),
-                          ButtonSegment(
-                            value: _RecordKind.sleep,
-                            icon: Icon(Icons.bedtime_outlined),
-                            label: Text('Sleep'),
-                          ),
-                          ButtonSegment(
-                            value: _RecordKind.diaper,
-                            icon: Icon(Icons.baby_changing_station_outlined),
-                            label: Text('Diaper'),
-                          ),
-                        ],
-                        selected: {_kind},
-                        onSelectionChanged: mutation.isSaving
-                            ? null
-                            : (selection) {
-                                setState(() {
-                                  _kind = selection.single;
-                                  _validationError = null;
-                                });
-                                widget.controller.clearRecordMutationError();
-                              },
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
                   if (_kind == _RecordKind.growth)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _GrowthRecordFields(
-                          weightController: _weightController,
-                          heightController: _heightController,
-                          headController: _headController,
+                        _RecordDateTimeField(
+                          fieldKey: const ValueKey('record-growth-date'),
+                          label: 'Measurement date',
+                          value: _measuredAt,
+                          enabled: !mutation.isSaving,
+                          onTap: () => _pickDateTime(
+                            initialValue: _measuredAt,
+                            onSelected: (value) =>
+                                setState(() => _measuredAt = value),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        _RecordNumberField(
+                          fieldKey: const ValueKey('record-growth-weight'),
+                          controller: _weightController,
+                          label: 'Weight',
+                          suffix: 'kg',
                           enabled: !mutation.isSaving,
                         ),
-                        const SizedBox(height: 18),
-                        const Text(
-                          'Measurement position',
-                          style: _MeBabyOverviewText.supporting,
-                        ),
-                        const SizedBox(height: 8),
-                        SegmentedButton<MeasurementPosition>(
-                          key: const ValueKey('record-growth-position'),
-                          segments: const [
-                            ButtonSegment(
-                              value: MeasurementPosition.recumbent,
-                              label: Text('Lying down'),
-                            ),
-                            ButtonSegment(
-                              value: MeasurementPosition.standing,
-                              label: Text('Standing'),
-                            ),
-                          ],
-                          selected: {?_measurementPosition},
-                          emptySelectionAllowed: true,
-                          onSelectionChanged: mutation.isSaving
-                              ? null
-                              : (selection) => setState(
-                                  () => _measurementPosition = selection.single,
-                                ),
+                        const SizedBox(height: 14),
+                        _RecordNumberField(
+                          fieldKey: const ValueKey('record-growth-height'),
+                          controller: _heightController,
+                          label: 'Length (optional)',
+                          suffix: 'cm',
+                          enabled: !mutation.isSaving,
                         ),
                         const SizedBox(height: 18),
                         const Text(
@@ -1864,7 +1529,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                             ),
                           ],
                           selected: {?_measurementContext},
-                          emptySelectionAllowed: true,
                           onSelectionChanged: mutation.isSaving
                               ? null
                               : (selection) => setState(
@@ -1933,6 +1597,34 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        _RecordDateTimeField(
+                          fieldKey: const ValueKey('record-sleep-start'),
+                          label: 'Start time',
+                          value: _startedAt,
+                          enabled: !mutation.isSaving,
+                          onTap: () => _pickDateTime(
+                            initialValue: _startedAt,
+                            onSelected: (value) =>
+                                setState(() => _startedAt = value),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        _RecordDateTimeField(
+                          fieldKey: const ValueKey('record-sleep-end'),
+                          label: 'End time (optional)',
+                          value: _endedAt,
+                          enabled: !mutation.isSaving,
+                          onTap: () => _pickDateTime(
+                            initialValue:
+                                _endedAt ??
+                                _startedAt.add(const Duration(hours: 1)),
+                            onSelected: _setEndedAt,
+                          ),
+                          onClear: _endedAt == null
+                              ? null
+                              : () => _setEndedAt(null),
+                        ),
+                        const SizedBox(height: 18),
                         const Text(
                           'Sleep type',
                           style: _MeBabyOverviewText.supporting,
@@ -1961,104 +1653,37 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                                   () => _sleepKind = selection.single,
                                 ),
                         ),
-                        const SizedBox(height: 18),
-                        _RecordNumberField(
-                          fieldKey: const ValueKey('record-sleep-duration'),
-                          controller: _durationController,
-                          label: 'Duration',
-                          suffix: 'minutes',
-                          enabled: !mutation.isSaving,
-                        ),
                       ],
                     )
                   else if (_kind == _RecordKind.diaper)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Change type',
-                          style: _MeBabyOverviewText.supporting,
+                        _RecordNumberField(
+                          fieldKey: const ValueKey('record-diaper-wet-count'),
+                          controller: _wetDiaperCountController,
+                          label: 'Wet diapers in the last 24 hours (optional)',
+                          suffix: 'times',
+                          enabled: !mutation.isSaving,
+                          decimal: false,
                         ),
-                        const SizedBox(height: 8),
-                        SegmentedButton<DiaperKind>(
-                          key: const ValueKey('record-diaper-kind'),
-                          segments: const [
-                            ButtonSegment(
-                              value: DiaperKind.wet,
-                              label: Text('Wet'),
-                            ),
-                            ButtonSegment(
-                              value: DiaperKind.dirty,
-                              label: Text('Dirty'),
-                            ),
-                            ButtonSegment(
-                              value: DiaperKind.both,
-                              label: Text('Both'),
-                            ),
-                          ],
-                          selected: {_diaperKind},
-                          onSelectionChanged: mutation.isSaving
-                              ? null
-                              : (selection) => setState(
-                                  () => _diaperKind = selection.single,
-                                ),
+                        const SizedBox(height: 14),
+                        _RecordNumberField(
+                          fieldKey: const ValueKey('record-diaper-bowel-count'),
+                          controller: _bowelMovementCountController,
+                          label:
+                              'Bowel movements in the last 24 hours (optional)',
+                          suffix: 'times',
+                          enabled: !mutation.isSaving,
+                          decimal: false,
                         ),
-                        if (_diaperKind != DiaperKind.dirty) ...[
-                          const SizedBox(height: 18),
-                          const Text(
-                            'Wetness',
-                            style: _MeBabyOverviewText.supporting,
-                          ),
-                          const SizedBox(height: 8),
-                          SegmentedButton<DiaperWetness>(
-                            key: const ValueKey('record-diaper-wetness'),
-                            segments: const [
-                              ButtonSegment(
-                                value: DiaperWetness.light,
-                                label: Text('Light'),
-                              ),
-                              ButtonSegment(
-                                value: DiaperWetness.medium,
-                                label: Text('Medium'),
-                              ),
-                              ButtonSegment(
-                                value: DiaperWetness.heavy,
-                                label: Text('Heavy'),
-                              ),
-                            ],
-                            selected: {_diaperWetness},
-                            onSelectionChanged: mutation.isSaving
-                                ? null
-                                : (selection) => setState(
-                                    () => _diaperWetness = selection.single,
-                                  ),
-                          ),
-                        ],
-                        if (_diaperKind != DiaperKind.wet) ...[
-                          const SizedBox(height: 14),
-                          _RecordTextField(
-                            fieldKey: const ValueKey(
-                              'record-diaper-stool-color',
-                            ),
-                            controller: _stoolColorController,
-                            label: 'Stool color (optional)',
-                            enabled: !mutation.isSaving,
-                          ),
-                          const SizedBox(height: 14),
-                          _RecordTextField(
-                            fieldKey: const ValueKey(
-                              'record-diaper-stool-consistency',
-                            ),
-                            controller: _stoolConsistencyController,
-                            label: 'Consistency (optional)',
-                            enabled: !mutation.isSaving,
-                          ),
-                        ],
                         const SizedBox(height: 14),
                         _RecordTextField(
-                          fieldKey: const ValueKey('record-diaper-notes'),
-                          controller: _notesController,
-                          label: 'Notes (optional)',
+                          fieldKey: const ValueKey(
+                            'record-diaper-stool-consistency',
+                          ),
+                          controller: _stoolConsistencyController,
+                          label: 'Stool consistency (optional)',
                           enabled: !mutation.isSaving,
                         ),
                       ],
@@ -2067,47 +1692,79 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Pumping outputs',
-                          style: _MeBabyOverviewText.supporting,
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          children: [
-                            for (final side in PumpingSide.values)
-                              FilterChip(
-                                key: ValueKey(
-                                  'record-pumping-side-${side.apiValue}',
-                                ),
-                                label: Text(_pumpingSideLabel(side)),
-                                selected: _pumpingSides.contains(side),
-                                onSelected: mutation.isSaving
-                                    ? null
-                                    : (selected) =>
-                                          _togglePumpingSide(side, selected),
-                              ),
-                          ],
-                        ),
-                        for (final side in _pumpingSides) ...[
-                          const SizedBox(height: 14),
-                          _RecordNumberField(
-                            fieldKey: ValueKey(
-                              'record-pumping-${side.apiValue}-amount',
-                            ),
-                            controller: _pumpingVolumeControllers[side]!,
-                            label: '${_pumpingSideLabel(side)} measured milk',
-                            suffix: 'mL',
-                            enabled: !mutation.isSaving,
+                        _RecordDateTimeField(
+                          fieldKey: const ValueKey('record-pumping-start'),
+                          label: 'Start time',
+                          value: _startedAt,
+                          enabled: !mutation.isSaving,
+                          onTap: () => _pickDateTime(
+                            initialValue: _startedAt,
+                            onSelected: (value) =>
+                                setState(() => _startedAt = value),
                           ),
-                        ],
+                        ),
+                        const SizedBox(height: 14),
+                        _RecordDateTimeField(
+                          fieldKey: const ValueKey('record-pumping-end'),
+                          label: 'End time (optional)',
+                          value: _endedAt,
+                          enabled: !mutation.isSaving,
+                          onTap: () => _pickDateTime(
+                            initialValue:
+                                _endedAt ??
+                                _startedAt.add(const Duration(minutes: 20)),
+                            onSelected: _setEndedAt,
+                          ),
+                          onClear: _endedAt == null
+                              ? null
+                              : () => _setEndedAt(null),
+                        ),
                         const SizedBox(height: 14),
                         _RecordNumberField(
-                          fieldKey: const ValueKey('record-pumping-duration'),
-                          controller: _durationController,
-                          label: 'Duration (optional)',
-                          suffix: 'minutes',
+                          fieldKey: const ValueKey(
+                            'record-pumping-left-amount',
+                          ),
+                          controller:
+                              _pumpingVolumeControllers[PumpingSide.left]!,
+                          label: 'Left milk amount',
+                          suffix: 'mL',
                           enabled: !mutation.isSaving,
+                          onChanged: (_) => setState(() {}),
+                        ),
+                        const SizedBox(height: 14),
+                        _RecordNumberField(
+                          fieldKey: const ValueKey(
+                            'record-pumping-right-amount',
+                          ),
+                          controller:
+                              _pumpingVolumeControllers[PumpingSide.right]!,
+                          label: 'Right milk amount',
+                          suffix: 'mL',
+                          enabled: !mutation.isSaving,
+                          onChanged: (_) => setState(() {}),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '${_formatRecordNumber(_pumpingTotalMl)} mL total',
+                          style: const TextStyle(
+                            color: _MeBabyOverviewColors.wine,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        CheckboxListTile(
+                          key: const ValueKey('record-pumping-post-feed'),
+                          contentPadding: EdgeInsets.zero,
+                          value: _isPostFeedPumping,
+                          onChanged: mutation.isSaving
+                              ? null
+                              : (value) => setState(
+                                  () => _isPostFeedPumping = value ?? false,
+                                ),
+                          title: const Text('Pumping after direct feeding'),
+                          subtitle: const Text('Optional'),
+                          controlAffinity: ListTileControlAffinity.leading,
                         ),
                       ],
                     )
@@ -2115,75 +1772,137 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        DropdownButtonFormField<FeedingMethod>(
-                          key: const ValueKey('record-feeding-method'),
-                          initialValue: _feedingMethod,
-                          decoration: const InputDecoration(
-                            labelText: 'Feeding method',
-                            border: OutlineInputBorder(),
+                        _RecordDateTimeField(
+                          fieldKey: const ValueKey('record-feeding-start'),
+                          label: _feedingMethod == FeedingMethod.bottle
+                              ? 'Feeding time'
+                              : 'Start time',
+                          value: _startedAt,
+                          enabled: !mutation.isSaving,
+                          onTap: () => _pickDateTime(
+                            initialValue: _startedAt,
+                            onSelected: (value) =>
+                                setState(() => _startedAt = value),
                           ),
-                          items: [
-                            for (final method in FeedingMethod.values)
-                              DropdownMenuItem(
-                                value: method,
-                                child: Text(_feedingMethodLabel(method)),
-                              ),
-                          ],
-                          onChanged: mutation.isSaving
-                              ? null
-                              : (method) {
-                                  if (method != null) {
-                                    _selectFeedingMethod(method);
-                                  }
-                                },
                         ),
                         const SizedBox(height: 18),
                         const Text(
-                          'Milk sources',
+                          'Feeding method',
                           style: _MeBabyOverviewText.supporting,
                         ),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
                           children: [
-                            for (final source in MilkSource.values)
-                              FilterChip(
-                                key: ValueKey(
-                                  'record-feeding-source-${source.apiValue}',
-                                ),
-                                label: Text(_milkSourceLabel(source)),
-                                selected: _milkSources.contains(source),
-                                onSelected:
-                                    mutation.isSaving ||
-                                        _feedingMethod ==
-                                            FeedingMethod.directBreastfeeding
-                                    ? null
-                                    : (selected) =>
-                                          _toggleMilkSource(source, selected),
+                            ChoiceChip(
+                              key: const ValueKey(
+                                'record-feeding-method-direct',
                               ),
+                              label: const Text('Direct breastfeeding'),
+                              selected:
+                                  _feedingMethod ==
+                                  FeedingMethod.directBreastfeeding,
+                              onSelected: mutation.isSaving
+                                  ? null
+                                  : (_) => _selectFeedingMethod(
+                                      FeedingMethod.directBreastfeeding,
+                                    ),
+                            ),
+                            ChoiceChip(
+                              key: const ValueKey(
+                                'record-feeding-method-bottle',
+                              ),
+                              label: const Text('Bottle'),
+                              selected: _feedingMethod == FeedingMethod.bottle,
+                              onSelected: mutation.isSaving
+                                  ? null
+                                  : (_) => _selectFeedingMethod(
+                                      FeedingMethod.bottle,
+                                    ),
+                            ),
                           ],
                         ),
-                        for (final source in _milkSources) ...[
+                        if (_feedingMethod ==
+                            FeedingMethod.directBreastfeeding) ...[
+                          const SizedBox(height: 14),
+                          _RecordDateTimeField(
+                            fieldKey: const ValueKey('record-feeding-end'),
+                            label: 'End time (optional)',
+                            value: _endedAt,
+                            enabled: !mutation.isSaving,
+                            onTap: () => _pickDateTime(
+                              initialValue:
+                                  _endedAt ??
+                                  _startedAt.add(const Duration(minutes: 20)),
+                              onSelected: _setEndedAt,
+                            ),
+                            onClear: _endedAt == null
+                                ? null
+                                : () => _setEndedAt(null),
+                          ),
+                          const SizedBox(height: 18),
+                          const Text(
+                            'Breast side (optional)',
+                            style: _MeBabyOverviewText.supporting,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              for (final side in FeedingBreastSide.values)
+                                ChoiceChip(
+                                  key: ValueKey(
+                                    'record-feeding-side-${side.apiValue}',
+                                  ),
+                                  label: Text(_feedingBreastSideLabel(side)),
+                                  selected: _feedingBreastSide == side,
+                                  onSelected: mutation.isSaving
+                                      ? null
+                                      : (selected) => setState(
+                                          () => _feedingBreastSide = selected
+                                              ? side
+                                              : null,
+                                        ),
+                                ),
+                            ],
+                          ),
+                        ] else ...[
+                          const SizedBox(height: 18),
+                          const Text(
+                            'Milk type',
+                            style: _MeBabyOverviewText.supporting,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              for (final source in const [
+                                MilkSource.breastMilk,
+                                MilkSource.formula,
+                              ])
+                                ChoiceChip(
+                                  key: ValueKey(
+                                    'record-feeding-source-${source.apiValue}',
+                                  ),
+                                  label: Text(_milkSourceLabel(source)),
+                                  selected: _milkSource == source,
+                                  onSelected: mutation.isSaving
+                                      ? null
+                                      : (_) => setState(
+                                          () => _milkSource = source,
+                                        ),
+                                ),
+                            ],
+                          ),
                           const SizedBox(height: 14),
                           _RecordNumberField(
-                            fieldKey: ValueKey(
-                              'record-feeding-${source.apiValue}-amount',
-                            ),
-                            controller: _feedingVolumeControllers[source]!,
-                            label:
-                                '${_milkSourceLabel(source)} amount (optional)',
+                            fieldKey: const ValueKey('record-feeding-amount'),
+                            controller: _feedingAmountController,
+                            label: 'Feeding amount',
                             suffix: 'mL',
                             enabled: !mutation.isSaving,
                           ),
                         ],
-                        const SizedBox(height: 14),
-                        _RecordNumberField(
-                          fieldKey: const ValueKey('record-feeding-duration'),
-                          controller: _durationController,
-                          label: 'Duration (optional)',
-                          suffix: 'minutes',
-                          enabled: !mutation.isSaving,
-                        ),
                       ],
                     )
                   else
@@ -2238,21 +1957,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
   }
 }
 
-String _pumpingSideLabel(PumpingSide side) => switch (side) {
-  PumpingSide.left => 'Left',
-  PumpingSide.right => 'Right',
-  PumpingSide.unassigned => 'Not separated',
-};
-
-String _feedingMethodLabel(FeedingMethod method) => switch (method) {
-  FeedingMethod.directBreastfeeding => 'Direct breastfeeding',
-  FeedingMethod.bottle => 'Bottle',
-  FeedingMethod.cup => 'Cup',
-  FeedingMethod.syringe => 'Syringe',
-  FeedingMethod.tube => 'Tube',
-  FeedingMethod.other => 'Other',
-};
-
 String _milkSourceLabel(MilkSource source) => switch (source) {
   MilkSource.breastMilk => 'Breast milk',
   MilkSource.formula => 'Formula',
@@ -2260,49 +1964,16 @@ String _milkSourceLabel(MilkSource source) => switch (source) {
   MilkSource.unknown => 'Unknown',
 };
 
-class _GrowthRecordFields extends StatelessWidget {
-  const _GrowthRecordFields({
-    required this.weightController,
-    required this.heightController,
-    required this.headController,
-    required this.enabled,
-  });
+String _feedingBreastSideLabel(FeedingBreastSide side) => switch (side) {
+  FeedingBreastSide.left => 'Left',
+  FeedingBreastSide.right => 'Right',
+  FeedingBreastSide.both => 'Both',
+};
 
-  final TextEditingController weightController;
-  final TextEditingController heightController;
-  final TextEditingController headController;
-  final bool enabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _RecordNumberField(
-          fieldKey: const ValueKey('record-growth-weight'),
-          controller: weightController,
-          label: 'Weight',
-          suffix: 'kg',
-          enabled: enabled,
-        ),
-        const SizedBox(height: 14),
-        _RecordNumberField(
-          fieldKey: const ValueKey('record-growth-height'),
-          controller: heightController,
-          label: 'Height',
-          suffix: 'cm',
-          enabled: enabled,
-        ),
-        const SizedBox(height: 14),
-        _RecordNumberField(
-          fieldKey: const ValueKey('record-growth-head'),
-          controller: headController,
-          label: 'Head circumference',
-          suffix: 'cm',
-          enabled: enabled,
-        ),
-      ],
-    );
-  }
+String _formatRecordNumber(double value) {
+  return value == value.roundToDouble()
+      ? value.toStringAsFixed(0)
+      : value.toStringAsFixed(1);
 }
 
 class _RecordNumberField extends StatelessWidget {
@@ -2312,6 +1983,8 @@ class _RecordNumberField extends StatelessWidget {
     required this.label,
     required this.suffix,
     required this.enabled,
+    this.decimal = true,
+    this.onChanged,
   });
 
   final Key fieldKey;
@@ -2319,6 +1992,8 @@ class _RecordNumberField extends StatelessWidget {
   final String label;
   final String suffix;
   final bool enabled;
+  final bool decimal;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -2326,8 +2001,9 @@ class _RecordNumberField extends StatelessWidget {
       key: fieldKey,
       controller: controller,
       enabled: enabled,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      keyboardType: TextInputType.numberWithOptions(decimal: decimal),
       textInputAction: TextInputAction.done,
+      onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         suffixText: suffix,
@@ -2336,6 +2012,84 @@ class _RecordNumberField extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
+
+class _RecordDateTimeField extends StatelessWidget {
+  const _RecordDateTimeField({
+    required this.fieldKey,
+    required this.label,
+    required this.value,
+    required this.enabled,
+    required this.onTap,
+    this.onClear,
+  });
+
+  final Key fieldKey;
+  final String label;
+  final DateTime? value;
+  final bool enabled;
+  final VoidCallback onTap;
+  final VoidCallback? onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    final localValue = value?.toLocal();
+    final material = MaterialLocalizations.of(context);
+    final valueLabel = localValue == null
+        ? 'Not set'
+        : '${material.formatMediumDate(localValue)} · ${material.formatTimeOfDay(TimeOfDay.fromDateTime(localValue))}';
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        key: fieldKey,
+        borderRadius: BorderRadius.circular(18),
+        onTap: enabled ? onTap : null,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 11, 8, 11),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        color: _MeBabyOverviewColors.mutedText,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      valueLabel,
+                      style: const TextStyle(
+                        color: _MeBabyOverviewColors.ink,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (onClear != null)
+                IconButton(
+                  tooltip: 'Clear $label',
+                  onPressed: enabled ? onClear : null,
+                  icon: const Icon(Icons.close_rounded),
+                )
+              else
+                const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Icon(Icons.calendar_today_outlined, size: 20),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -3801,7 +3555,6 @@ abstract final class _MeBabyOverviewAssets {
   static const moreButton = '$_babyIconRoot/more-button.svg';
   static const plusIcon = '$_babyIconRoot/plus.svg';
   static const rulerIcon = '$_babyIconRoot/ruler.svg';
-  static const weightIcon = '$_babyIconRoot/weight.svg';
 }
 
 abstract final class _MeBabyOverviewColors {

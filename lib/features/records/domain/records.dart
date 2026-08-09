@@ -17,6 +17,7 @@ abstract interface class FeedingRecordsRepository {
     required FeedingMethod feedingMethod,
     required List<FeedingMilkComponent> milkComponents,
     int? durationSeconds,
+    FeedingBreastSide? breastSide,
     String? idempotencyKey,
   });
 
@@ -37,8 +38,10 @@ abstract interface class PumpMilkRecordsRepository {
 
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
+    DateTime? endedAt,
     required List<PumpingOutput> outputs,
     int? durationSeconds,
+    bool? isPostFeedPumping,
     String? idempotencyKey,
   });
 }
@@ -105,6 +108,8 @@ abstract interface class DiaperRecordsRepository {
     DiaperWetness? wetness,
     String? stoolColor,
     String? stoolConsistency,
+    int? wetDiaperCount,
+    int? bowelMovementCount,
     String notes = '',
     String? idempotencyKey,
   });
@@ -149,6 +154,7 @@ class FeedingRecord {
     required this.feedingMethod,
     required this.milkComponents,
     this.durationSeconds,
+    this.breastSide,
     this.infantId,
     this.occurredAt,
   });
@@ -158,6 +164,7 @@ class FeedingRecord {
   final FeedingMethod feedingMethod;
   final List<FeedingMilkComponent> milkComponents;
   final int? durationSeconds;
+  final FeedingBreastSide? breastSide;
   final DateTime? occurredAt;
 
   double? get measuredVolumeMl {
@@ -211,6 +218,23 @@ enum MilkSource {
   }
 }
 
+enum FeedingBreastSide {
+  left,
+  right,
+  both;
+
+  String get apiValue => name;
+
+  static FeedingBreastSide? tryParse(Object? value) {
+    return switch (value) {
+      'left' => FeedingBreastSide.left,
+      'right' => FeedingBreastSide.right,
+      'both' => FeedingBreastSide.both,
+      _ => null,
+    };
+  }
+}
+
 class FeedingMilkComponent {
   const FeedingMilkComponent({required this.milkSource, this.volumeMl});
 
@@ -225,6 +249,8 @@ class PumpMilkRecord {
     this.outputs = const <PumpingOutput>[],
     this.durationSeconds,
     this.occurredAt,
+    this.endedAt,
+    this.isPostFeedPumping,
   });
 
   final String id;
@@ -232,6 +258,8 @@ class PumpMilkRecord {
   final List<PumpingOutput> outputs;
   final int? durationSeconds;
   final DateTime? occurredAt;
+  final DateTime? endedAt;
+  final bool? isPostFeedPumping;
 
   double? get measuredVolumeMl {
     final values = outputs
@@ -396,6 +424,8 @@ class DiaperRecord {
     this.wetness,
     this.stoolColor,
     this.stoolConsistency,
+    this.wetDiaperCount,
+    this.bowelMovementCount,
     this.notes = '',
   });
 
@@ -406,6 +436,8 @@ class DiaperRecord {
   final DiaperWetness? wetness;
   final String? stoolColor;
   final String? stoolConsistency;
+  final int? wetDiaperCount;
+  final int? bowelMovementCount;
   final String notes;
 
   String get type => kind == DiaperKind.both ? 'mixed' : kind.apiValue;

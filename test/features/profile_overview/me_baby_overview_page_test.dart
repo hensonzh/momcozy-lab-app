@@ -1065,46 +1065,6 @@ void main() {
       );
     });
 
-    testWidgets('Baby growth detail presents recorded trend and deltas', (
-      tester,
-    ) async {
-      await _pumpApp(tester, initialLocation: '/baby');
-
-      await _openGrowthDetail(tester, 'weight');
-
-      expect(find.byKey(const ValueKey('baby-detail-weight')), findsOneWidget);
-      expect(find.text('Baby Weight'), findsOneWidget);
-      expect(find.text('Weight Trend'), findsOneWidget);
-      expect(find.text('Reference band unavailable'), findsOneWidget);
-      expect(find.text('+0.4 kg'), findsOneWidget);
-      expect(find.text('Baseline'), findsOneWidget);
-      expect(find.text('P55 (Normal)'), findsNothing);
-    });
-
-    testWidgets('Baby growth layout preserves the approved card geometry', (
-      tester,
-    ) async {
-      await _pumpApp(
-        tester,
-        initialLocation: '/baby',
-        viewportSize: const Size(390, 844),
-      );
-      await _openGrowthDetail(tester, 'weight');
-
-      expect(
-        tester.getRect(find.byKey(const ValueKey('baby-growth-current-card'))),
-        const Rect.fromLTWH(16, 95, 358, 100),
-      );
-      expect(
-        tester.getRect(find.byKey(const ValueKey('baby-growth-trend-card'))),
-        const Rect.fromLTWH(16, 211, 358, 195),
-      );
-      expect(
-        tester.getRect(find.byKey(const ValueKey('baby-growth-history-card'))),
-        const Rect.fromLTWH(16, 422, 358, 251),
-      );
-    });
-
     testWidgets('Baby detail chrome preserves the approved source geometry', (
       tester,
     ) async {
@@ -1249,14 +1209,7 @@ void main() {
         find.byKey(const ValueKey('me-baby-overview-add-record')),
       );
       await tester.pumpAndSettle();
-      for (final detail in const [
-        'sleep',
-        'feeding',
-        'diaper',
-        'weight',
-        'height',
-        'head-circumference',
-      ]) {
+      for (final detail in const ['feeding', 'growth', 'sleep', 'diaper']) {
         expect(
           find.descendant(
             of: find.byKey(ValueKey('baby-add-record-$detail')),
@@ -1276,19 +1229,15 @@ void main() {
 
       await tester.tap(find.byKey(const ValueKey('baby-add-record-feeding')));
       await tester.pumpAndSettle();
-      for (final key in const [
-        'baby-detail-back-feeding',
-        'baby-detail-more-disabled',
-      ]) {
-        expect(
-          find.descendant(
-            of: find.byKey(ValueKey(key)),
-            matching: find.byType(SvgPicture),
-          ),
-          findsOneWidget,
-          reason: key,
-        );
-      }
+      expect(find.text('Add feeding record'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('record-feeding-method-direct')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('record-feeding-method-bottle')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Baby core flows remain usable at 200 percent text scale', (
@@ -1346,21 +1295,9 @@ void main() {
         expect(find.byKey(ValueKey('baby-detail-$detail')), findsOneWidget);
         expect(tester.takeException(), isNull, reason: detail);
       }
-
-      for (final detail in const ['weight', 'height', 'head-circumference']) {
-        await _pumpApp(
-          tester,
-          initialLocation: '/baby',
-          viewportSize: const Size(360, 800),
-          textScaleFactor: 2,
-        );
-        await _openGrowthDetail(tester, detail);
-        expect(find.byKey(ValueKey('baby-detail-$detail')), findsOneWidget);
-        expect(tester.takeException(), isNull, reason: detail);
-      }
     });
 
-    testWidgets('Baby add sheet exposes six records and real growth details', (
+    testWidgets('Baby add sheet exposes the four supported record groups', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/baby');
@@ -1375,56 +1312,96 @@ void main() {
         findsOneWidget,
       );
       expect(find.byType(BackdropFilter), findsOneWidget);
-      for (final label in const [
-        'Sleep',
-        'Feeding',
-        'Diaper',
-        'Weight',
-        'Height',
-        'Head Circ.',
-      ]) {
+      for (final label in const ['Feeding', 'Growth', 'Sleep', 'Diaper']) {
         expect(find.text(label), findsWidgets);
       }
-      for (final detail in const ['sleep', 'diaper']) {
-        final tile = find.byKey(ValueKey('baby-add-record-$detail'));
+      for (final kind in const ['feeding', 'growth', 'sleep', 'diaper']) {
+        final tile = find.byKey(ValueKey('baby-add-record-$kind'));
         final inkWell = tester.widget<InkWell>(
           find.descendant(of: tile, matching: find.byType(InkWell)),
         );
-        expect(inkWell.onTap, isNotNull, reason: detail);
+        expect(inkWell.onTap, isNotNull, reason: kind);
         expect(
           find.descendant(of: tile, matching: find.text('Coming soon')),
           findsNothing,
-          reason: detail,
+          reason: kind,
         );
       }
+      expect(find.text('Weight'), findsNothing);
+      expect(find.text('Height'), findsNothing);
+      expect(find.text('Head Circ.'), findsNothing);
 
-      await tester.tap(find.byKey(const ValueKey('baby-add-record-weight')));
+      await tester.tap(find.byKey(const ValueKey('baby-add-record-growth')));
       await tester.pumpAndSettle();
 
+      expect(find.text('Add growth record'), findsOneWidget);
+      expect(find.byKey(const ValueKey('record-growth-date')), findsOneWidget);
       expect(
-        find.byKey(const ValueKey('baby-growth-editor-weight')),
+        find.byKey(const ValueKey('record-growth-weight')),
         findsOneWidget,
       );
-      expect(find.byKey(const ValueKey('baby-detail-weight')), findsOneWidget);
-      expect(find.text('Baby Weight'), findsOneWidget);
-      expect(find.text('6.2 kg'), findsWidgets);
-      expect(find.text('Weight Trend'), findsOneWidget);
-      expect(find.text('Recent History'), findsOneWidget);
-      expect(find.text('P55 (Normal)'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('record-growth-height')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('record-growth-head')), findsNothing);
 
       await tester.enterText(
-        find.byKey(const ValueKey('baby-growth-value-input')),
+        find.byKey(const ValueKey('record-growth-weight')),
         '6.4',
       );
-      await tester.tap(find.byKey(const ValueKey('baby-growth-save')));
+      await tester.enterText(
+        find.byKey(const ValueKey('record-growth-height')),
+        '65',
+      );
+      await tester.tap(find.byKey(const ValueKey('record-save')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Record saved'), findsOneWidget);
+    });
+
+    testWidgets('record forms stay usable on narrow screens with large text', (
+      tester,
+    ) async {
+      for (final form in const [
+        ('feeding', 'record-feeding-start'),
+        ('growth', 'record-growth-date'),
+        ('sleep', 'record-sleep-start'),
+        ('diaper', 'record-diaper-wet-count'),
+      ]) {
+        await _pumpApp(
+          tester,
+          initialLocation: '/baby',
+          viewportSize: const Size(360, 800),
+          textScaleFactor: 2,
+        );
+        await tester.tap(
+          find.byKey(const ValueKey('me-baby-overview-add-record')),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(ValueKey('baby-add-record-${form.$1}')));
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(ValueKey(form.$2)), findsOneWidget);
+        expect(tester.takeException(), isNull, reason: form.$1);
+      }
+
+      await _pumpApp(
+        tester,
+        initialLocation: '/me',
+        viewportSize: const Size(360, 800),
+        textScaleFactor: 2,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('me-baby-overview-add-record')),
+      );
       await tester.pumpAndSettle();
 
       expect(
-        find.byKey(const ValueKey('baby-growth-editor-weight')),
-        findsNothing,
+        find.byKey(const ValueKey('record-pumping-left-amount')),
+        findsOneWidget,
       );
-      expect(find.text('6.4 kg'), findsWidgets);
-      expect(find.text('Growth measurement saved.'), findsOneWidget);
+      expect(tester.takeException(), isNull, reason: 'pumping');
     });
 
     testWidgets('Baby saves a manual sleep record from the add sheet', (
@@ -1444,14 +1421,9 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('baby-add-record-sleep')));
       await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const ValueKey('record-sleep-duration')),
-        findsOneWidget,
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('record-sleep-duration')),
-        '60',
-      );
+      expect(find.byKey(const ValueKey('record-sleep-start')), findsOneWidget);
+      expect(find.byKey(const ValueKey('record-sleep-end')), findsOneWidget);
+      expect(find.byKey(const ValueKey('record-sleep-duration')), findsNothing);
       await tester.tap(find.byKey(const ValueKey('record-save')));
       await tester.pumpAndSettle();
 
@@ -1460,12 +1432,8 @@ void main() {
       final sleepWrite = transport.postedBodies.last;
       expect(sleepWrite['infant_id'], 'profile-overview-baby');
       expect(sleepWrite['sleep_kind'], 'nap');
-      expect(
-        DateTime.parse(
-          sleepWrite['ended_at']! as String,
-        ).difference(DateTime.parse(sleepWrite['started_at']! as String)),
-        const Duration(minutes: 60),
-      );
+      expect(sleepWrite['started_at'], '2026-07-03T00:00:00.000Z');
+      expect(sleepWrite, isNot(contains('ended_at')));
     });
 
     testWidgets(
@@ -1573,183 +1541,96 @@ void main() {
       },
     );
 
-    testWidgets('avatar and supported record actions stay available', (
-      tester,
-    ) async {
-      final transport = _profileOverviewTransport();
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(transport: transport),
-      );
+    testWidgets(
+      'Me opens the complete pumping form without extra record types',
+      (tester) async {
+        final transport = _profileOverviewTransport();
+        await _pumpApp(
+          tester,
+          initialLocation: '/me',
+          runtime: _runtime(transport: transport),
+        );
 
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-open-avatar')),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
-        findsOneWidget,
-      );
+        await tester.tap(
+          find.byKey(const ValueKey('me-baby-overview-open-avatar')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
+          findsOneWidget,
+        );
 
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-close-avatar')),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
-        findsNothing,
-      );
+        await tester.tap(
+          find.byKey(const ValueKey('me-baby-overview-close-avatar')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
+          findsNothing,
+        );
 
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-add-record')),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('mom-add-record-sheet')),
-        findsOneWidget,
-      );
-      for (final label in const [
-        'Pumping (Left)',
-        'Pumping (Right)',
-        'Sleep',
-        'Weight',
-        'Water Intake',
-        'Vitals',
-      ]) {
-        expect(find.text(label), findsOneWidget);
-      }
+        await tester.tap(
+          find.byKey(const ValueKey('me-baby-overview-add-record')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Log pumping session'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('mom-add-record-sheet')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('record-pumping-start')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('record-pumping-end')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('record-pumping-left-amount')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('record-pumping-right-amount')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('record-pumping-post-feed')),
+          findsOneWidget,
+        );
+        expect(find.text('Water Intake'), findsNothing);
+        expect(find.text('Vitals'), findsNothing);
+        expect(find.text('Weight'), findsNothing);
 
-      await tester.tap(
-        find.byKey(const ValueKey('mom-add-record-pumping-left')),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('Log pumping session'), findsOneWidget);
+        await tester.enterText(
+          find.byKey(const ValueKey('record-pumping-left-amount')),
+          '95',
+        );
+        await tester.enterText(
+          find.byKey(const ValueKey('record-pumping-right-amount')),
+          '42.5',
+        );
+        await tester.pump();
+        expect(find.text('137.5 mL total'), findsOneWidget);
+        await tester.tap(
+          find.byKey(const ValueKey('record-pumping-post-feed')),
+        );
+        await tester.tap(find.byKey(const ValueKey('record-save')));
+        await tester.pumpAndSettle();
 
-      await tester.enterText(
-        find.byKey(const ValueKey('record-pumping-left-amount')),
-        '95',
-      );
-      await tester.tap(find.byKey(const ValueKey('record-pumping-side-right')));
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('record-pumping-right-amount')),
-        '42.5',
-      );
-      await tester.tap(find.byKey(const ValueKey('record-save')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Record saved'), findsOneWidget);
-      expect(transport.postedBodies.last, {
-        'pump_start_time': '2026-07-03T00:00:00.000Z',
-        'outputs': [
-          {'breast_side': 'left', 'volume_ml': 95.0},
-          {'breast_side': 'right', 'volume_ml': 42.5},
-        ],
-        'pump_type': 'manual',
-        'source': 'manual',
-      });
-    });
-
-    testWidgets('Me saves water, weight, and vital records from real forms', (
-      tester,
-    ) async {
-      final transport = _profileOverviewTransport();
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(transport: transport),
-      );
-
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-add-record')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.byKey(const ValueKey('mom-add-record-water-intake')),
-      );
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('record-water-amount')),
-        '300',
-      );
-      await tester.tap(find.byKey(const ValueKey('record-save')));
-      await tester.pumpAndSettle();
-      expect(transport.postedBodies.last, containsPair('amount_ml', 300.0));
-      await tester.pump(const Duration(seconds: 5));
-      await tester.pumpAndSettle();
-
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-add-record')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('mom-add-record-weight')));
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('record-maternal-weight')),
-        '62.5',
-      );
-      await tester.tap(find.byKey(const ValueKey('record-save')));
-      await tester.pumpAndSettle();
-      expect(transport.postedBodies.last, containsPair('weight_kg', 62.5));
-      await tester.pump(const Duration(seconds: 5));
-      await tester.pumpAndSettle();
-
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-add-record')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('mom-add-record-vitals')));
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('record-vital-systolic')),
-        '118',
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('record-vital-diastolic')),
-        '76',
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('record-vital-heart-rate')),
-        '72',
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('record-vital-temperature')),
-        '36.7',
-      );
-      await tester.tap(find.byKey(const ValueKey('record-save')));
-      await tester.pumpAndSettle();
-      expect(transport.postedBodies.last, containsPair('systolic_mmhg', 118));
-      expect(transport.postedBodies.last, containsPair('diastolic_mmhg', 76));
-      expect(transport.postedBodies.last, containsPair('heart_rate_bpm', 72));
-      expect(transport.postedBodies.last, containsPair('temperature_c', 36.7));
-    });
-
-    testWidgets('Me exposes maternal sleep as a disabled future capability', (
-      tester,
-    ) async {
-      await _pumpApp(tester, initialLocation: '/me');
-
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-add-record')),
-      );
-      await tester.pumpAndSettle();
-
-      final sleep = find.byKey(const ValueKey('mom-add-record-sleep'));
-      expect(tester.widget<Semantics>(sleep).properties.enabled, isFalse);
-      expect(
-        find.descendant(of: sleep, matching: find.text('Coming soon')),
-        findsOneWidget,
-      );
-
-      await tester.tap(sleep);
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('mom-add-record-sheet')),
-        findsOneWidget,
-      );
-      expect(find.byKey(const ValueKey('record-sleep-duration')), findsNothing);
-    });
+        expect(find.text('Record saved'), findsOneWidget);
+        expect(transport.postedBodies.last, {
+          'pump_start_time': '2026-07-03T00:00:00.000Z',
+          'outputs': [
+            {'breast_side': 'left', 'volume_ml': 95.0},
+            {'breast_side': 'right', 'volume_ml': 42.5},
+          ],
+          'is_post_feed_pumping': true,
+          'pump_type': 'manual',
+          'source': 'manual',
+        });
+      },
+    );
 
     testWidgets('Baby saves feeding records in the current infant scope', (
       tester,
@@ -1767,19 +1648,18 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('baby-add-record-feeding')));
       await tester.pumpAndSettle();
-      expect(find.text('Add baby record'), findsOneWidget);
+      expect(find.text('Add feeding record'), findsOneWidget);
+      expect(find.text('Direct breastfeeding'), findsOneWidget);
+      expect(find.text('Bottle'), findsOneWidget);
+      expect(find.text('Cup'), findsNothing);
 
-      await tester.enterText(
-        find.byKey(const ValueKey('record-feeding-breast_milk-amount')),
-        '75',
-      );
       await tester.tap(
         find.byKey(const ValueKey('record-feeding-source-formula')),
       );
       await tester.pumpAndSettle();
       await tester.enterText(
-        find.byKey(const ValueKey('record-feeding-formula-amount')),
-        '25.5',
+        find.byKey(const ValueKey('record-feeding-amount')),
+        '95.5',
       );
       await tester.tap(find.byKey(const ValueKey('record-save')));
       await tester.pumpAndSettle();
@@ -1789,49 +1669,56 @@ void main() {
         'feed_time': '2026-07-03T00:00:00.000Z',
         'feeding_method': 'bottle',
         'milk_components': [
-          {'milk_source': 'breast_milk', 'volume_ml': 75.0},
-          {'milk_source': 'formula', 'volume_ml': 25.5},
+          {'milk_source': 'formula', 'volume_ml': 95.5},
         ],
       });
     });
 
-    testWidgets('Baby saves duration-only direct breastfeeding honestly', (
-      tester,
-    ) async {
-      final transport = _profileOverviewTransport();
-      await _pumpApp(
-        tester,
-        initialLocation: '/baby',
-        runtime: _runtime(transport: transport),
-      );
+    testWidgets(
+      'Baby saves start-only direct breastfeeding with optional side',
+      (tester) async {
+        final transport = _profileOverviewTransport();
+        await _pumpApp(
+          tester,
+          initialLocation: '/baby',
+          runtime: _runtime(transport: transport),
+        );
 
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-add-record')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('baby-add-record-feeding')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('record-feeding-method')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Direct breastfeeding').last);
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('record-feeding-duration')),
-        '15',
-      );
-      await tester.tap(find.byKey(const ValueKey('record-save')));
-      await tester.pumpAndSettle();
+        await tester.tap(
+          find.byKey(const ValueKey('me-baby-overview-add-record')),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('baby-add-record-feeding')));
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.byKey(const ValueKey('record-feeding-method-direct')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('record-feeding-start')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('record-feeding-end')),
+          findsOneWidget,
+        );
+        await tester.tap(
+          find.byKey(const ValueKey('record-feeding-side-left')),
+        );
+        await tester.tap(find.byKey(const ValueKey('record-save')));
+        await tester.pumpAndSettle();
 
-      expect(transport.postedBodies.last, {
-        'infant_id': 'profile-overview-baby',
-        'feed_time': '2026-07-03T00:00:00.000Z',
-        'feeding_method': 'direct_breastfeeding',
-        'milk_components': [
-          {'milk_source': 'breast_milk', 'volume_ml': null},
-        ],
-        'duration_seconds': 900,
-      });
-    });
+        expect(transport.postedBodies.last, {
+          'infant_id': 'profile-overview-baby',
+          'feed_time': '2026-07-03T00:00:00.000Z',
+          'feeding_method': 'direct_breastfeeding',
+          'milk_components': [
+            {'milk_source': 'breast_milk', 'volume_ml': null},
+          ],
+          'breast_side': 'left',
+        });
+      },
+    );
 
     testWidgets('Baby renders and saves confirmed sleep and diaper records', (
       tester,
@@ -1855,6 +1742,8 @@ void main() {
             'wetness': 'medium',
             'stool_color': 'gold',
             'stool_consistency': 'soft',
+            'wet_diaper_count': 7,
+            'bowel_movement_count': 3,
             'notes': '',
           },
         ],
@@ -1873,8 +1762,8 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('baby-section-diaper')));
       await tester.pumpAndSettle();
       expect(find.text('1 change'), findsOneWidget);
-      expect(find.text('1 Wet'), findsOneWidget);
-      expect(find.text('1 Dirty'), findsOneWidget);
+      expect(find.text('7 Wet'), findsOneWidget);
+      expect(find.text('3 Dirty'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('baby-detail-back-diaper')));
       await tester.pumpAndSettle();
 
@@ -1884,16 +1773,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('baby-add-record-sleep')));
       await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('record-sleep-duration')),
-        '45',
-      );
       await tester.tap(find.byKey(const ValueKey('record-save')));
       await tester.pumpAndSettle();
       expect(transport.postedBodies.last, {
         'infant_id': 'profile-overview-baby',
-        'started_at': '2026-07-02T23:15:00.000Z',
-        'ended_at': '2026-07-03T00:00:00.000Z',
+        'started_at': '2026-07-03T00:00:00.000Z',
         'sleep_kind': 'nap',
         'source': 'manual',
       });
@@ -1909,13 +1793,27 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('baby-add-record-diaper')));
       await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('record-diaper-wet-count')),
+        '7',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('record-diaper-bowel-count')),
+        '3',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('record-diaper-stool-consistency')),
+        'soft',
+      );
       await tester.tap(find.byKey(const ValueKey('record-save')));
       await tester.pumpAndSettle();
       expect(transport.postedBodies.last, {
         'infant_id': 'profile-overview-baby',
         'changed_at': '2026-07-03T00:00:00.000Z',
-        'diaper_kind': 'wet',
-        'wetness': 'medium',
+        'diaper_kind': 'both',
+        'wet_diaper_count': 7,
+        'bowel_movement_count': 3,
+        'stool_consistency': 'soft',
         'notes': '',
         'source': 'manual',
       });
@@ -2323,28 +2221,6 @@ void main() {
         ),
       );
     });
-
-    for (final detail in const [
-      ('weight', 'baby_weight_detail.png'),
-      ('height', 'baby_height_detail.png'),
-      ('head-circumference', 'baby_head_circ_detail.png'),
-    ]) {
-      testWidgets('Baby ${detail.$1} detail matches its visual baseline', (
-        tester,
-      ) async {
-        await _pumpApp(
-          tester,
-          initialLocation: '/baby',
-          viewportSize: const Size(390, 844),
-        );
-        await _openGrowthDetail(tester, detail.$1);
-
-        await expectLater(
-          find.byType(Scaffold).first,
-          matchesGoldenFile('../../goldens/me_baby_overview/${detail.$2}'),
-        );
-      });
-    }
 
     testWidgets('Baby add record sheet matches its visual baseline', (
       tester,
@@ -2916,16 +2792,6 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
       },
     },
   );
-}
-
-Future<void> _openGrowthDetail(WidgetTester tester, String detailId) async {
-  await tester.tap(find.byKey(const ValueKey('me-baby-overview-add-record')));
-  await tester.pumpAndSettle();
-  await tester.tap(find.byKey(ValueKey('baby-add-record-$detailId')));
-  await tester.pumpAndSettle();
-  expect(find.byKey(ValueKey('baby-growth-editor-$detailId')), findsOneWidget);
-  await tester.tap(find.byKey(const ValueKey('baby-growth-editor-close')));
-  await tester.pumpAndSettle();
 }
 
 MomCozyApiRuntime _emptyRuntime() {

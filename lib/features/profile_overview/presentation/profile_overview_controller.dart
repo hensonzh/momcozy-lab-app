@@ -564,14 +564,35 @@ class ProfileOverviewController {
   }
 
   Future<bool> savePumpingRecord({
-    required List<PumpingOutput> outputs,
-    int? durationSeconds,
+    required DateTime startedAt,
+    DateTime? endedAt,
+    required double leftVolumeMl,
+    required double rightVolumeMl,
+    bool isPostFeedPumping = false,
   }) {
+    final hasValidVolumes =
+        leftVolumeMl > 0 &&
+        leftVolumeMl <= 2000 &&
+        rightVolumeMl > 0 &&
+        rightVolumeMl <= 2000;
+    final hasValidInterval = endedAt == null || endedAt.isAfter(startedAt);
+    if (!hasValidVolumes || !hasValidInterval) {
+      recordMutation.value = RecordMutationState(
+        error: ArgumentError(
+          'Both milk amounts and a valid time range are required.',
+        ),
+      );
+      return Future<bool>.value(false);
+    }
     return _saveRecord(() async {
       await pumpMilkRepository.createPumpMilkRecord(
-        occurredAt: now(),
-        outputs: outputs,
-        durationSeconds: durationSeconds,
+        occurredAt: startedAt,
+        endedAt: endedAt,
+        outputs: [
+          PumpingOutput(breastSide: PumpingSide.left, volumeMl: leftVolumeMl),
+          PumpingOutput(breastSide: PumpingSide.right, volumeMl: rightVolumeMl),
+        ],
+        isPostFeedPumping: isPostFeedPumping,
         idempotencyKey: _recordIdempotencyKey('pumping'),
       );
       await _requestResource(
@@ -653,17 +674,50 @@ class ProfileOverviewController {
   }
 
   Future<bool> saveFeedingRecord({
+    required DateTime startedAt,
+    DateTime? endedAt,
     required FeedingMethod feedingMethod,
-    required List<FeedingMilkComponent> milkComponents,
-    int? durationSeconds,
+    MilkSource milkSource = MilkSource.breastMilk,
+    double? amountMl,
+    FeedingBreastSide? breastSide,
   }) {
+    final isDirect = feedingMethod == FeedingMethod.directBreastfeeding;
+    final isBottle = feedingMethod == FeedingMethod.bottle;
+    final isSupportedSource =
+        milkSource == MilkSource.breastMilk || milkSource == MilkSource.formula;
+    final hasValidInterval = endedAt == null || endedAt.isAfter(startedAt);
+    final isValid =
+        hasValidInterval &&
+        ((isDirect &&
+                milkSource == MilkSource.breastMilk &&
+                amountMl == null) ||
+            (isBottle &&
+                isSupportedSource &&
+                amountMl != null &&
+                amountMl > 0 &&
+                amountMl <= 2000 &&
+                breastSide == null));
+    if (!isValid) {
+      recordMutation.value = RecordMutationState(
+        error: ArgumentError('Feeding details are incomplete or invalid.'),
+      );
+      return Future<bool>.value(false);
+    }
     return _saveRecord(() async {
       await feedingRepository.createFeedingRecord(
         babyId: _recordsBabyId,
-        occurredAt: now(),
+        occurredAt: startedAt,
         feedingMethod: feedingMethod,
-        milkComponents: milkComponents,
-        durationSeconds: durationSeconds,
+        milkComponents: [
+          FeedingMilkComponent(
+            milkSource: milkSource,
+            volumeMl: isBottle ? amountMl : null,
+          ),
+        ],
+        durationSeconds: isDirect && endedAt != null
+            ? endedAt.difference(startedAt).inSeconds
+            : null,
+        breastSide: isDirect ? breastSide : null,
         idempotencyKey: _recordIdempotencyKey('feeding'),
       );
       await Future.wait<void>([
@@ -682,20 +736,26 @@ class ProfileOverviewController {
   }
 
   Future<bool> saveGrowthRecord({
-    double? weightKg,
+    required DateTime measuredAt,
+    required double weightKg,
     double? heightCm,
-    double? headCm,
-    required MeasurementPosition measurementPosition,
     required MeasurementContext measurementContext,
   }) {
+    if (weightKg <= 0 ||
+        weightKg > 500 ||
+        (heightCm != null && (heightCm <= 0 || heightCm > 300))) {
+      recordMutation.value = RecordMutationState(
+        error: ArgumentError('Growth measurements are invalid.'),
+      );
+      return Future<bool>.value(false);
+    }
     return _saveRecord(() async {
       await growthRepository.createGrowthRecord(
         babyId: _recordsBabyId,
-        measuredAt: now(),
+        measuredAt: measuredAt,
         weightKg: weightKg,
         heightCm: heightCm,
-        headCm: headCm,
-        measurementPosition: measurementPosition,
+        measurementPosition: MeasurementPosition.recumbent,
         measurementContext: measurementContext,
         idempotencyKey: _recordIdempotencyKey('growth'),
       );
@@ -715,21 +775,22 @@ class ProfileOverviewController {
   }
 
   Future<bool> saveSleepRecord({
-    required int durationMinutes,
+    required DateTime startedAt,
+    DateTime? endedAt,
     required SleepKind kind,
   }) {
     final repository = sleepRepository;
-    if (repository == null || durationMinutes <= 0 || durationMinutes > 1440) {
+    if (repository == null ||
+        (endedAt != null && !endedAt.isAfter(startedAt))) {
       recordMutation.value = RecordMutationState(
-        error: ArgumentError.value(durationMinutes, 'durationMinutes'),
+        error: ArgumentError('Sleep end must be after its start.'),
       );
       return Future<bool>.value(false);
     }
     return _saveRecord(() async {
-      final endedAt = now();
       await repository.createSleepRecord(
         babyId: _recordsBabyId,
-        startedAt: endedAt.subtract(Duration(minutes: durationMinutes)),
+        startedAt: startedAt,
         endedAt: endedAt,
         kind: kind,
         idempotencyKey: _recordIdempotencyKey('sleep'),
@@ -743,36 +804,38 @@ class ProfileOverviewController {
   }
 
   Future<bool> saveDiaperRecord({
-    required DiaperKind kind,
-    DiaperWetness? wetness,
-    String? stoolColor,
+    int? wetDiaperCount,
+    int? bowelMovementCount,
     String? stoolConsistency,
-    String notes = '',
   }) {
     final repository = diaperRepository;
-    final hasStoolObservation =
-        stoolColor?.trim().isNotEmpty == true ||
-        stoolConsistency?.trim().isNotEmpty == true;
-    final observationsMatch = switch (kind) {
-      DiaperKind.wet => !hasStoolObservation,
-      DiaperKind.dirty => wetness == null,
-      DiaperKind.both => true,
-    };
-    if (repository == null || !observationsMatch) {
+    final countsAreValid = [
+      wetDiaperCount,
+      bowelMovementCount,
+    ].every((count) => count == null || (count >= 0 && count <= 100));
+    if (repository == null || !countsAreValid) {
       recordMutation.value = RecordMutationState(
-        error: ArgumentError('Diaper observations do not match the type.'),
+        error: ArgumentError('Diaper counts must be between 0 and 100.'),
       );
       return Future<bool>.value(false);
     }
+    final hasWet = (wetDiaperCount ?? 0) > 0;
+    final hasDirty =
+        (bowelMovementCount ?? 0) > 0 ||
+        stoolConsistency?.trim().isNotEmpty == true;
+    final kind = hasWet && hasDirty
+        ? DiaperKind.both
+        : hasDirty
+        ? DiaperKind.dirty
+        : DiaperKind.wet;
     return _saveRecord(() async {
       await repository.createDiaperRecord(
         babyId: _recordsBabyId,
         changedAt: now(),
         kind: kind,
-        wetness: wetness,
-        stoolColor: stoolColor,
         stoolConsistency: stoolConsistency,
-        notes: notes,
+        wetDiaperCount: wetDiaperCount,
+        bowelMovementCount: bowelMovementCount,
         idempotencyKey: _recordIdempotencyKey('diaper'),
       );
       await _requestResource(
