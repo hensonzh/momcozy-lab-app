@@ -1309,20 +1309,27 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     onSelected(initialValue.isUtc ? localValue.toUtc() : localValue);
   }
 
-  Future<void> _pickTime({
+  Future<void> _pickDateTime({
     required DateTime initialValue,
     required ValueChanged<DateTime> onSelected,
   }) async {
     final localInitial = initialValue.toLocal();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: localInitial,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now().add(const Duration(days: 1)),
+    );
+    if (!mounted || date == null) return;
     final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(localInitial),
     );
     if (!mounted || time == null) return;
     final localValue = DateTime(
-      localInitial.year,
-      localInitial.month,
-      localInitial.day,
+      date.year,
+      date.month,
+      date.day,
       time.hour,
       time.minute,
     );
@@ -1372,7 +1379,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'Measurement date',
                           value: _measuredAt,
                           enabled: !mutation.isSaving,
-                          onDateTap: () => _pickDate(
+                          onTap: () => _pickDate(
                             initialValue: _measuredAt,
                             onSelected: (value) =>
                                 setState(() => _measuredAt = value),
@@ -1430,12 +1437,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'Start time',
                           value: _startedAt,
                           enabled: !mutation.isSaving,
-                          onDateTap: () => _pickDate(
-                            initialValue: _startedAt,
-                            onSelected: (value) =>
-                                setState(() => _startedAt = value),
-                          ),
-                          onTimeTap: () => _pickTime(
+                          onTap: () => _pickDateTime(
                             initialValue: _startedAt,
                             onSelected: (value) =>
                                 setState(() => _startedAt = value),
@@ -1447,13 +1449,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'End time (optional)',
                           value: _endedAt,
                           enabled: !mutation.isSaving,
-                          onDateTap: () => _pickDate(
-                            initialValue:
-                                _endedAt ??
-                                _startedAt.add(const Duration(hours: 1)),
-                            onSelected: _setEndedAt,
-                          ),
-                          onTimeTap: () => _pickTime(
+                          onTap: () => _pickDateTime(
                             initialValue:
                                 _endedAt ??
                                 _startedAt.add(const Duration(hours: 1)),
@@ -1536,12 +1532,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'Start time',
                           value: _startedAt,
                           enabled: !mutation.isSaving,
-                          onDateTap: () => _pickDate(
-                            initialValue: _startedAt,
-                            onSelected: (value) =>
-                                setState(() => _startedAt = value),
-                          ),
-                          onTimeTap: () => _pickTime(
+                          onTap: () => _pickDateTime(
                             initialValue: _startedAt,
                             onSelected: (value) =>
                                 setState(() => _startedAt = value),
@@ -1553,13 +1544,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                           label: 'End time (optional)',
                           value: _endedAt,
                           enabled: !mutation.isSaving,
-                          onDateTap: () => _pickDate(
-                            initialValue:
-                                _endedAt ??
-                                _startedAt.add(const Duration(minutes: 20)),
-                            onSelected: _setEndedAt,
-                          ),
-                          onTimeTap: () => _pickTime(
+                          onTap: () => _pickDateTime(
                             initialValue:
                                 _endedAt ??
                                 _startedAt.add(const Duration(minutes: 20)),
@@ -1629,12 +1614,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                               : 'Start time',
                           value: _startedAt,
                           enabled: !mutation.isSaving,
-                          onDateTap: () => _pickDate(
-                            initialValue: _startedAt,
-                            onSelected: (value) =>
-                                setState(() => _startedAt = value),
-                          ),
-                          onTimeTap: () => _pickTime(
+                          onTap: () => _pickDateTime(
                             initialValue: _startedAt,
                             onSelected: (value) =>
                                 setState(() => _startedAt = value),
@@ -1685,13 +1665,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                             label: 'End time (optional)',
                             value: _endedAt,
                             enabled: !mutation.isSaving,
-                            onDateTap: () => _pickDate(
-                              initialValue:
-                                  _endedAt ??
-                                  _startedAt.add(const Duration(minutes: 20)),
-                              onSelected: _setEndedAt,
-                            ),
-                            onTimeTap: () => _pickTime(
+                            onTap: () => _pickDateTime(
                               initialValue:
                                   _endedAt ??
                                   _startedAt.add(const Duration(minutes: 20)),
@@ -1916,8 +1890,7 @@ class _RecordDateTimeField extends StatelessWidget {
     required this.label,
     required this.value,
     required this.enabled,
-    required this.onDateTap,
-    this.onTimeTap,
+    required this.onTap,
     this.onClear,
   });
 
@@ -1925,8 +1898,7 @@ class _RecordDateTimeField extends StatelessWidget {
   final String label;
   final DateTime? value;
   final bool enabled;
-  final VoidCallback onDateTap;
-  final VoidCallback? onTimeTap;
+  final VoidCallback onTap;
   final VoidCallback? onClear;
 
   @override
@@ -1942,7 +1914,7 @@ class _RecordDateTimeField extends StatelessWidget {
       child: InkWell(
         key: fieldKey,
         borderRadius: BorderRadius.circular(18),
-        onTap: enabled ? onTimeTap ?? onDateTap : null,
+        onTap: enabled ? onTap : null,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 11, 8, 11),
           child: Row(
@@ -1973,45 +1945,23 @@ class _RecordDateTimeField extends StatelessWidget {
                   ],
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    key: ValueKey('${fieldKey.value}-date'),
-                    tooltip: 'Select date for $label',
-                    onPressed: enabled ? onDateTap : null,
-                    constraints: const BoxConstraints.tightFor(
-                      width: MomCozyTapTargets.minimum,
-                      height: MomCozyTapTargets.minimum,
-                    ),
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.calendar_today_outlined, size: 20),
-                  ),
-                  if (onTimeTap != null)
-                    IconButton(
-                      key: ValueKey('${fieldKey.value}-time'),
-                      tooltip: 'Select time for $label',
-                      onPressed: enabled ? onTimeTap : null,
-                      constraints: const BoxConstraints.tightFor(
-                        width: MomCozyTapTargets.minimum,
-                        height: MomCozyTapTargets.minimum,
-                      ),
-                      padding: EdgeInsets.zero,
-                      icon: const Icon(Icons.schedule_rounded, size: 21),
-                    ),
-                  if (onClear != null)
-                    IconButton(
-                      key: ValueKey('${fieldKey.value}-clear'),
-                      tooltip: 'Clear $label',
-                      onPressed: enabled ? onClear : null,
-                      constraints: const BoxConstraints.tightFor(
-                        width: MomCozyTapTargets.minimum,
-                        height: MomCozyTapTargets.minimum,
-                      ),
-                      padding: EdgeInsets.zero,
-                      icon: const Icon(Icons.close_rounded),
-                    ),
-                ],
+              IconButton(
+                key: ValueKey(
+                  '${fieldKey.value}-${onClear == null ? 'date' : 'clear'}',
+                ),
+                tooltip: onClear == null ? 'Edit $label' : 'Clear $label',
+                onPressed: enabled ? onClear ?? onTap : null,
+                constraints: const BoxConstraints.tightFor(
+                  width: MomCozyTapTargets.minimum,
+                  height: MomCozyTapTargets.minimum,
+                ),
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  onClear == null
+                      ? Icons.calendar_today_outlined
+                      : Icons.close_rounded,
+                  size: onClear == null ? 20 : 21,
+                ),
               ),
             ],
           ),
