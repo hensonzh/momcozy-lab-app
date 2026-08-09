@@ -28,6 +28,8 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/notifications/data/notifications_api_repository.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_voice_signaling.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
@@ -399,6 +401,8 @@ class MomCozyApiRuntime {
   MomCozySession get currentSession =>
       _currentSessionProvider?.call() ?? session;
 
+  Uri get apiBaseUri => Uri.parse(_defaultApiBaseUrl);
+
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();
   }
@@ -479,6 +483,18 @@ class MomCozyApiRuntime {
 
   NotificationsApiRepository get notificationsRepository {
     return NotificationsApiRepository(transport: jsonTransport);
+  }
+
+  MotionAssessmentApiRepository get motionAssessmentRepository {
+    return MotionAssessmentApiRepository(transport: jsonTransport);
+  }
+
+  MotionVoiceSignaling get motionVoiceSignaling {
+    return MotionVoiceSignaling(
+      baseUri: apiBaseUri,
+      tokenProvider: () => currentSession.accessToken,
+      onUnauthorized: agentStreamUnauthorizedHandler,
+    );
   }
 
   BodyProfileApiRepository get bodyProfileRepository {

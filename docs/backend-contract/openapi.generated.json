@@ -1722,6 +1722,19 @@
       },
       "DiaperRecordCreate": {
         "properties": {
+          "bowel_movement_count": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bowel Movement Count"
+          },
           "changed_at": {
             "format": "date-time",
             "title": "Changed At",
@@ -1791,6 +1804,19 @@
             ],
             "title": "Stool Consistency"
           },
+          "wet_diaper_count": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wet Diaper Count"
+          },
           "wetness": {
             "anyOf": [
               {
@@ -1834,6 +1860,17 @@
       },
       "DiaperRecordRead": {
         "properties": {
+          "bowel_movement_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bowel Movement Count"
+          },
           "changed_at": {
             "format": "date-time",
             "title": "Changed At",
@@ -1883,6 +1920,17 @@
               }
             ],
             "title": "Stool Consistency"
+          },
+          "wet_diaper_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wet Diaper Count"
           },
           "wetness": {
             "anyOf": [
@@ -1974,6 +2022,22 @@
       },
       "FeedingRecordCreate": {
         "properties": {
+          "breast_side": {
+            "anyOf": [
+              {
+                "enum": [
+                  "left",
+                  "right",
+                  "both"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breast Side"
+          },
           "duration_seconds": {
             "anyOf": [
               {
@@ -2069,6 +2133,22 @@
       },
       "FeedingRecordRead": {
         "properties": {
+          "breast_side": {
+            "anyOf": [
+              {
+                "enum": [
+                  "left",
+                  "right",
+                  "both"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breast Side"
+          },
           "duration_seconds": {
             "anyOf": [
               {
@@ -3271,6 +3351,168 @@
           "minimum_measured_days"
         ],
         "title": "MilkWindowComparisonRead",
+        "type": "object"
+      },
+      "MotionAssessmentCreate": {
+        "properties": {
+          "locale": {
+            "default": "zh-CN",
+            "maxLength": 16,
+            "minLength": 2,
+            "title": "Locale",
+            "type": "string"
+          },
+          "pose_engine": {
+            "default": "mediapipe_pose_landmarker",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Pose Engine",
+            "type": "string"
+          },
+          "source_artifact_id": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Source Artifact Id",
+            "type": "string"
+          },
+          "target": {
+            "const": "forward_head",
+            "default": "forward_head",
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "title": "MotionAssessmentCreate",
+        "type": "object"
+      },
+      "MotionAssessmentPrivacy": {
+        "properties": {
+          "landmark_upload_enabled": {
+            "title": "Landmark Upload Enabled",
+            "type": "boolean"
+          },
+          "video_upload_enabled": {
+            "title": "Video Upload Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "video_upload_enabled",
+          "landmark_upload_enabled"
+        ],
+        "title": "MotionAssessmentPrivacy",
+        "type": "object"
+      },
+      "MotionAssessmentRead": {
+        "properties": {
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "locale": {
+            "title": "Locale",
+            "type": "string"
+          },
+          "pause_reason": {
+            "title": "Pause Reason",
+            "type": "string"
+          },
+          "pose_engine": {
+            "title": "Pose Engine",
+            "type": "string"
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/MotionAssessmentPrivacy"
+          },
+          "result_summary": {
+            "additionalProperties": true,
+            "title": "Result Summary",
+            "type": "object"
+          },
+          "source_artifact_id": {
+            "title": "Source Artifact Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "target",
+          "status",
+          "source_artifact_id",
+          "locale",
+          "pose_engine",
+          "privacy",
+          "pause_reason",
+          "result_summary",
+          "created_at",
+          "updated_at",
+          "completed_at"
+        ],
+        "title": "MotionAssessmentRead",
+        "type": "object"
+      },
+      "MotionAssessmentUpdate": {
+        "properties": {
+          "pause_reason": {
+            "default": "",
+            "maxLength": 64,
+            "title": "Pause Reason",
+            "type": "string"
+          },
+          "result_summary": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result Summary"
+          },
+          "status": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "MotionAssessmentUpdate",
         "type": "object"
       },
       "NotificationListResponse": {
@@ -5258,6 +5500,17 @@
             ],
             "title": "Duration Seconds"
           },
+          "is_post_feed_pumping": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Post Feed Pumping"
+          },
           "outputs": {
             "items": {
               "$ref": "#/components/schemas/PumpingOutputWrite"
@@ -5373,12 +5626,35 @@
             "title": "Id",
             "type": "string"
           },
+          "is_post_feed_pumping": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Post Feed Pumping"
+          },
           "outputs": {
             "items": {
               "$ref": "#/components/schemas/PumpingOutputRead"
             },
             "title": "Outputs",
             "type": "array"
+          },
+          "pump_end_time": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pump End Time"
           },
           "pump_start_time": {
             "format": "date-time",
@@ -9828,6 +10104,238 @@
           "monitoring"
         ],
         "x-momcozy-owner": "platform",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/motion-assessments": {
+      "post": {
+        "operationId": "create_motion_assessment_v1_motion_assessments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MotionAssessmentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MotionAssessmentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Motion Assessment",
+        "tags": [
+          "motion-assessments"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "motion-assessment",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/motion-assessments/{assessment_id}": {
+      "get": {
+        "operationId": "get_motion_assessment_v1_motion_assessments__assessment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MotionAssessmentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Motion Assessment",
+        "tags": [
+          "motion-assessments"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "motion-assessment",
+        "x-momcozy-stability": "stable"
+      },
+      "patch": {
+        "operationId": "update_motion_assessment_v1_motion_assessments__assessment_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MotionAssessmentUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MotionAssessmentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Motion Assessment",
+        "tags": [
+          "motion-assessments"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "motion-assessment",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/motion-assessments/{assessment_id}/voice-sessions": {
+      "post": {
+        "operationId": "create_motion_voice_session_v1_motion_assessments__assessment_id__voice_sessions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/sdp": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/sdp": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Realtime WebRTC SDP answer"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Motion Voice Session",
+        "tags": [
+          "motion-assessments"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "motion-assessment",
         "x-momcozy-stability": "stable"
       }
     },

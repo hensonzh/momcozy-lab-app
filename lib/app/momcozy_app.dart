@@ -1594,6 +1594,14 @@ const momCozyRoutes = [
     accent: Color(0xff6b6da8),
     priority: 'P1',
   ),
+  MomCozyRouteConfig(
+    path: '/motion-assessment',
+    title: '动态姿态评估',
+    summary: '端侧人体关键点识别与独立实时语音动作指导。',
+    icon: Icons.accessibility_new_rounded,
+    accent: Color(0xff8c4768),
+    priority: 'P0',
+  ),
 ];
 
 const _routesWithoutBottomNavigation = {
@@ -1602,6 +1610,7 @@ const _routesWithoutBottomNavigation = {
   '/hospital-bag-cart',
   '/ibclc-chat.html',
   '/media-viewer',
+  '/motion-assessment',
   '/more',
   '/more/body-profile',
   '/more/body-profile/edit',

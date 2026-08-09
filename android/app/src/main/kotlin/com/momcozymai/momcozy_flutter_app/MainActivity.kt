@@ -37,6 +37,7 @@ class MainActivity : FlutterActivity() {
     private lateinit var voicePcmPlayerChannel: MethodChannel
     private lateinit var pumpAgentUploadHandler: PumpAgentUploadChannelHandler
     private lateinit var pumpAgentBackgroundRunner: PumpAgentBackgroundRunner
+    private lateinit var motionPosePlugin: MotionPosePlugin
     private var scanCallback: ScanCallback? = null
     private val gatts = mutableMapOf<String, BluetoothGatt>()
     private val connectResults = mutableMapOf<String, MethodChannel.Result>()
@@ -87,6 +88,7 @@ class MainActivity : FlutterActivity() {
             )
         }
         pumpAgentUploadChannel.setMethodCallHandler(pumpAgentUploadHandler::handle)
+        motionPosePlugin = MotionPosePlugin(this, flutterEngine)
         handleLaunchNavigationIntent(intent)
     }
 
@@ -176,6 +178,9 @@ class MainActivity : FlutterActivity() {
         if (::voicePcmPlayerChannel.isInitialized) {
             voicePcmPlayerChannel.setMethodCallHandler(null)
         }
+        if (::motionPosePlugin.isInitialized) {
+            motionPosePlugin.dispose()
+        }
         voiceAudioHandler.post {
             stopVoicePcmPlayback()
             voiceAudioThread.quitSafely()
@@ -203,6 +208,13 @@ class MainActivity : FlutterActivity() {
                     mapOf("granted" to hasNotificationPermission())
                 )
                 pendingNotificationPermissionResult = null
+            }
+            else -> {
+                if (::motionPosePlugin.isInitialized &&
+                    motionPosePlugin.handlePermissionResult(requestCode)
+                ) {
+                    return
+                }
             }
         }
     }

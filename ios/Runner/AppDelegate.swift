@@ -17,5 +17,10 @@ import UIKit
     ) {
       VoicePcmPlayerPlugin.register(with: registrar)
     }
+    if let registrar = engineBridge.pluginRegistry.registrar(
+      forPlugin: "MomcozyMotionPosePlugin"
+    ) {
+      MotionPosePlugin.register(with: registrar)
+    }
   }
 }

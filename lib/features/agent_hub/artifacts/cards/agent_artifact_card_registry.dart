@@ -22,12 +22,111 @@ class AgentArtifactCardRegistry {
                 onAction: onAction,
               )
             : null,
+      AgentArtifactPresentationKind.motionAssessmentCard =>
+        card.specializedView is AgentMotionAssessmentCardView
+            ? _MotionAssessmentCard(
+                key: ValueKey('agent-motion-assessment-card-${card.id}'),
+                card: card,
+                data: card.specializedView! as AgentMotionAssessmentCardView,
+                onAction: onAction,
+              )
+            : null,
       AgentArtifactPresentationKind.hospitalBagCart => _HospitalBagCartCard(
         card: card,
         onAction: onAction,
       ),
       _ => null,
     };
+  }
+}
+
+class _MotionAssessmentCard extends StatelessWidget {
+  const _MotionAssessmentCard({
+    super.key,
+    required this.card,
+    required this.data,
+    this.onAction,
+  });
+
+  final AgentArtifactCardView card;
+  final AgentMotionAssessmentCardView data;
+  final ValueChanged<AgentArtifactActionView>? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final localOnly = !data.videoUploadEnabled && !data.landmarkUploadEnabled;
+    return _ArtifactCardSurface(
+      card: card,
+      icon: Icons.accessibility_new_rounded,
+      accent: const Color(0xff8c4768),
+      subtitle: '实时取景与语音动作指导',
+      children: [
+        Text(
+          data.description,
+          style: textTheme.bodyMedium?.copyWith(
+            color: const Color(0xff604c58),
+            height: 1.45,
+          ),
+        ),
+        const SizedBox(height: 12),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: const Color(0xfff8f1f5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.verified_user_outlined,
+                  size: 19,
+                  color: Color(0xff8c4768),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    localOnly ? '视频与关键点默认只在本机处理' : '请查看本次评估的数据授权范围',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: const Color(0xff604c58),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          data.disclaimer,
+          style: textTheme.bodySmall?.copyWith(
+            color: const Color(0xff8b7581),
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: 14),
+        FilledButton.icon(
+          onPressed: () {
+            final uri = Uri.tryParse(data.routeLocation);
+            onAction?.call(
+              AgentArtifactActionView(
+                label: data.startLabel,
+                icon: Icons.videocam_outlined,
+                kind: 'motion_assessment.open',
+                value: data.routeLocation,
+                routePath: uri?.path.isNotEmpty == true
+                    ? uri!.path
+                    : '/motion-assessment',
+              ),
+            );
+          },
+          icon: const Icon(Icons.videocam_outlined),
+          label: Text(data.startLabel),
+        ),
+      ],
+    );
   }
 }
 
