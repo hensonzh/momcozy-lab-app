@@ -67,7 +67,7 @@ void main() {
   );
 
   test(
-    'observes model responses created by VAD before sending local guidance',
+    'observes an already-active server response before local guidance',
     () async {
       final events = <Map<String, Object?>>[];
       final queue = MotionRealtimeResponseQueue(
@@ -83,6 +83,48 @@ void main() {
         'response': {'status': 'completed'},
       });
       expect(events.single['type'], 'response.create');
+    },
+  );
+
+  test('creates a model turn with the latest semantic snapshot', () async {
+    final events = <Map<String, Object?>>[];
+    final queue = MotionRealtimeResponseQueue(
+      sendEvent: (event) async => events.add(event),
+    );
+
+    await queue.enqueueModelTurn(
+      '基于最新端侧快照回答。motion_assessment.context.v2 sequence=18',
+    );
+
+    expect(events, hasLength(1));
+    expect(
+      _instructions(events.single),
+      contains('motion_assessment.context.v2'),
+    );
+    expect(_instructions(events.single), isNot(contains('请只说下面这句')));
+  });
+
+  test(
+    'user speech cancels the active response without adding speech',
+    () async {
+      final events = <Map<String, Object?>>[];
+      final queue = MotionRealtimeResponseQueue(
+        sendEvent: (event) async => events.add(event),
+      );
+
+      await queue.enqueueModelTurn('回答用户');
+      await queue.interrupt();
+      await queue.interrupt();
+
+      expect(events.map((event) => event['type']), [
+        'response.create',
+        'response.cancel',
+      ]);
+      await queue.handleServerEvent({
+        'type': 'response.done',
+        'response': {'status': 'cancelled'},
+      });
+      expect(events, hasLength(2));
     },
   );
 }

@@ -35,12 +35,16 @@ AgentSpecializedArtifactView? mapAgentSpecializedCard({
     ),
     AgentArtifactPresentationKind.motionAssessmentCard => _motionAssessmentCard(
       cardJson.isNotEmpty ? cardJson : payload,
+      artifactId,
     ),
     _ => null,
   };
 }
 
-AgentMotionAssessmentCardView? _motionAssessmentCard(Map<String, Object?> raw) {
+AgentMotionAssessmentCardView? _motionAssessmentCard(
+  Map<String, Object?> raw,
+  String artifactId,
+) {
   final nestedPayload = _map(raw['payload']);
   final source = <String, Object?>{...nestedPayload, ...raw};
   final entry = _map(source['entry']);
@@ -48,10 +52,19 @@ AgentMotionAssessmentCardView? _motionAssessmentCard(Map<String, Object?> raw) {
   final requestedTarget = _text(source['target']);
   if (requestedTarget != 'forward_head') return null;
   final target = requestedTarget;
-  final routeLocation = '/motion-assessment?target=$target';
+  final normalizedArtifactId = artifactId.trim();
+  final routeLocation = Uri(
+    path: '/motion-assessment',
+    queryParameters: {
+      'target': target,
+      if (normalizedArtifactId.isNotEmpty)
+        'source_artifact_id': normalizedArtifactId,
+    },
+  ).toString();
   return AgentMotionAssessmentCardView(
     title: _text(source['title']).isEmpty ? '人体姿态动态评估' : _text(source['title']),
     target: target,
+    sourceArtifactId: normalizedArtifactId,
     userGoal: _nonEmptyText(source['user_goal'] ?? source['userGoal']),
     description: _text(source['description']).isEmpty
         ? '按语音提示调整站位和动作，系统会实时检查取景质量。'
