@@ -9,6 +9,7 @@ import android.graphics.Matrix
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
@@ -151,6 +152,7 @@ class MotionPosePlugin(
     }
 
     private fun emitError(code: String, message: String) {
+        Log.e(TAG, "$code: $message")
         mainHandler.post { eventSink?.error(code, message, null) }
     }
 
@@ -163,6 +165,7 @@ class MotionPosePlugin(
         const val EVENT_CHANNEL = "com.momcozymai.motion_pose/events"
         const val VIEW_TYPE = "com.momcozymai.motion_pose/preview"
         const val REQUEST_MOTION_PERMISSIONS = 44021
+        private const val TAG = "MotionPosePlugin"
         private val CAMERA_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
         )

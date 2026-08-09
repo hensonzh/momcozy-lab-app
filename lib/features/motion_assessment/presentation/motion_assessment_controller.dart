@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
@@ -674,13 +675,30 @@ class MotionAssessmentController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _onPoseError(Object error, StackTrace stackTrace) {
+  void _onPoseError(Object error, StackTrace _) {
     if (_closed) return;
+    debugPrint('Motion pose stream failed: $error');
     _cameraStarted = false;
     _phase = MotionAssessmentPagePhase.failed;
-    _errorMessage = '端侧姿态识别暂时不可用，请退出后重试。';
+    _errorMessage = _friendlyPoseError(error);
     _guidance = _errorMessage!;
     notifyListeners();
+  }
+
+  String _friendlyPoseError(Object error) {
+    if (error case PlatformException(code: final code)) {
+      return switch (code) {
+        'pose_model_initialization_failed' => '端侧姿态模型加载失败，请退出后重试。',
+        'pose_inference_failed' => '端侧姿态识别运行异常，请退出后重试。',
+        'camera_start_failed' => '前置摄像头启动失败，请检查相机是否被其他应用占用。',
+        'permission_denied' => '请允许摄像头权限后重试。',
+        _ => '端侧姿态识别暂时不可用，请退出后重试。',
+      };
+    }
+    if (error is MissingPluginException) {
+      return '当前安装版本未包含端侧姿态识别组件，请更新 App 后重试。';
+    }
+    return '端侧姿态识别暂时不可用，请退出后重试。';
   }
 
   Future<void> _cancelCreatedSession(
