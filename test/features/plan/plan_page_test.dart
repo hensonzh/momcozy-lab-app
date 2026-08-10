@@ -359,7 +359,69 @@ void main() {
     expect(find.text('Start'), findsNothing);
   });
 
-  testWidgets('renders the supplied multi-category weekly plan structure', (
+  testWidgets(
+    'generated plan overview keeps the week range beside Select Day',
+    (tester) async {
+      final today = DateTime(2026, 8, 19);
+      final repository = _RecordingPlanRepository(
+        _upcomingPlanDashboard(today),
+      );
+      await _pumpPlanPage(
+        tester,
+        dashboard: repository.dashboard,
+        repository: repository,
+        now: today,
+      );
+
+      expect(find.text('15-Day Supply Plan'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('plan-period-day-selected')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('plan-period-week')), findsNothing);
+      expect(find.text('Week'), findsNothing);
+
+      final selectDay = tester.getRect(find.text('Select Day'));
+      final weekRange = tester.getRect(
+        find.byKey(const ValueKey('plan-week-range')),
+      );
+      expect(weekRange.center.dy, closeTo(selectDay.center.dy, 0.6));
+      expect(weekRange.right, closeTo(372, 0.6));
+      expect(find.text('Aug 17 - Aug 23'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Next week'));
+      await tester.pumpAndSettle();
+      expect(repository.requestedDays.last, DateTime(2026, 8, 26));
+      expect(find.text('Aug 24 - Aug 30'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'plan details remove the duplicate menu and align edit to the right',
+    (tester) async {
+      final today = DateTime(2026, 8, 19);
+      await _pumpPlanPage(
+        tester,
+        dashboard: _upcomingPlanDashboard(today),
+        now: today,
+      );
+      final overviewActionRight = tester
+          .getRect(find.byKey(const ValueKey('plan-header-all-plans')))
+          .right;
+
+      await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('15-Day Supply Plan'), findsOneWidget);
+      expect(find.byKey(const ValueKey('plan-single-all-plans')), findsNothing);
+      final edit = tester.getRect(
+        find.byKey(const ValueKey('plan-single-edit')),
+      );
+      expect(edit.right, closeTo(overviewActionRight, 0.6));
+    },
+  );
+
+  testWidgets('renders the supplied multi-category daily plan structure', (
     tester,
   ) async {
     var startCount = 0;
@@ -384,9 +446,10 @@ void main() {
     expect(find.text('Yoga'), findsOneWidget);
     expect(find.text('Pelvic Floor'), findsOneWidget);
     expect(find.text('Day'), findsOneWidget);
-    expect(find.text('Week'), findsOneWidget);
+    expect(find.byKey(const ValueKey('plan-period-week')), findsNothing);
     expect(find.text('Month'), findsOneWidget);
-    expect(find.text('This Week'), findsNWidgets(2));
+    expect(find.text('Select Day'), findsOneWidget);
+    expect(find.text('This Week'), findsOneWidget);
     expect(find.text('Today'), findsOneWidget);
     expect(find.text('8:00 AM'), findsOneWidget);
     expect(find.text('Completed'), findsOneWidget);
@@ -401,7 +464,7 @@ void main() {
     expect(startCount, 1);
 
     expect(
-      find.byKey(const ValueKey('plan-period-week-selected')),
+      find.byKey(const ValueKey('plan-period-day-selected')),
       findsOneWidget,
     );
     _expectRect(
@@ -419,52 +482,6 @@ void main() {
       const ValueKey('plan-period-selector'),
       const Rect.fromLTWH(18, 122, 354, 38),
     );
-    _expectRect(
-      tester,
-      const ValueKey('plan-week-range'),
-      const Rect.fromLTWH(18, 164, 354, 32),
-    );
-    _expectRect(
-      tester,
-      const ValueKey('plan-week-calendar'),
-      const Rect.fromLTWH(18, 205, 354, 80),
-    );
-    _expectRect(
-      tester,
-      const ValueKey('plan-session-one'),
-      const Rect.fromLTWH(18, 329, 354, 59),
-      tolerance: 1,
-    );
-    _expectRect(
-      tester,
-      const ValueKey('plan-session-two'),
-      const Rect.fromLTWH(18, 396, 354, 59),
-      tolerance: 1,
-    );
-    _expectRect(
-      tester,
-      const ValueKey('plan-session-three'),
-      const Rect.fromLTWH(18, 463, 354, 59),
-      tolerance: 1,
-    );
-    _expectRect(
-      tester,
-      const ValueKey('plan-week-summary'),
-      const Rect.fromLTWH(18, 569, 354, 94),
-      tolerance: 1,
-    );
-    _expectRect(
-      tester,
-      const ValueKey('plan-monthly-calendar-section'),
-      const Rect.fromLTWH(18, 679, 354, 23.4),
-      tolerance: 1,
-    );
-    await tester.tap(find.byKey(const ValueKey('plan-period-day')));
-    await tester.pump();
-    expect(
-      find.byKey(const ValueKey('plan-period-day-selected')),
-      findsOneWidget,
-    );
     await tester.tap(find.byKey(const ValueKey('plan-period-month')));
     await tester.pump();
     expect(
@@ -479,12 +496,12 @@ void main() {
 
     await tester.drag(find.byType(ListView), const Offset(0, 1000));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('plan-period-week')));
+    await tester.tap(find.byKey(const ValueKey('plan-period-day')));
     await tester.pump();
     await tester.drag(find.byType(ListView), const Offset(0, -520));
     await tester.pumpAndSettle();
     expect(find.text('3 of 5 sessions completed'), findsOneWidget);
-    expect(find.text('Monthly Calendar'), findsOneWidget);
+    expect(find.byKey(const ValueKey('plan-monthly-calendar')), findsNothing);
 
     expect(find.text('日程'), findsNothing);
     expect(find.text('泌乳计划'), findsNothing);
@@ -501,17 +518,15 @@ void main() {
       now: now,
     );
 
-    await tester.tap(find.byKey(const ValueKey('plan-period-day')));
-    await tester.pump();
     expect(find.byKey(const ValueKey('plan-day-content')), findsOneWidget);
-    expect(find.byKey(const ValueKey('plan-week-summary')), findsNothing);
+    expect(find.byKey(const ValueKey('plan-week-summary')), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('plan-period-month')));
     await tester.pump();
     expect(find.byKey(const ValueKey('plan-month-content')), findsOneWidget);
     expect(find.byKey(const ValueKey('plan-monthly-calendar')), findsOneWidget);
 
-    await tester.tap(find.byKey(const ValueKey('plan-period-week')));
+    await tester.tap(find.byKey(const ValueKey('plan-period-day')));
     await tester.pump();
     await tester.tap(find.text('Yoga'));
     await tester.pump();
@@ -564,7 +579,7 @@ void main() {
     expect(find.text('Recovery yoga'), findsOneWidget);
   });
 
-  testWidgets('week and month date cells reload the selected Plan day', (
+  testWidgets('day and month date cells reload the selected Plan day', (
     tester,
   ) async {
     final repository = _RecordingPlanRepository(_multiCategoryDashboard(now));
@@ -683,14 +698,12 @@ void main() {
   ) async {
     var backCount = 0;
     var editCount = 0;
-    var allPlansCount = 0;
     var startCount = 0;
     await _pumpPlanPage(
       tester,
       dashboard: _singlePlanDashboard(now),
       now: now,
       onBackToPlans: () => backCount += 1,
-      onOpenAllPlans: () => allPlansCount += 1,
       onStartSession: () => startCount += 1,
       onManualEdit: () => editCount += 1,
     );
@@ -731,7 +744,6 @@ void main() {
       dashboard: _singlePlanDashboard(now),
       now: now,
       onBackToPlans: () => backCount += 1,
-      onOpenAllPlans: () => allPlansCount += 1,
       onStartSession: () => startCount += 1,
       onManualEdit: () => editCount += 1,
       viewportSize: const Size(390, 1100),
@@ -788,10 +800,9 @@ void main() {
       tolerance: 1,
     );
     await tester.tap(find.byKey(const ValueKey('plan-single-edit')));
-    await tester.tap(find.byKey(const ValueKey('plan-single-all-plans')));
+    expect(find.byKey(const ValueKey('plan-single-all-plans')), findsNothing);
     await tester.tap(find.text('Start'));
     expect(editCount, 1);
-    expect(allPlansCount, 1);
     expect(startCount, 1);
 
     await tester.drag(find.byType(ListView), const Offset(0, -650));

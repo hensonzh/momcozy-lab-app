@@ -186,7 +186,6 @@ class _PlanPageState extends State<PlanPage> {
                 selectedDay: state.weekOf,
                 today: widget.now(),
                 onBackToPlans: _backToOverview,
-                onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
                 onSelectDay: _controller.selectDay,
                 onStartSession: widget.onStartSession,
                 onAdjustWithAi: widget.onChat,
@@ -523,31 +522,33 @@ class _MultiPlanView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
           ] else ...[
-            const SizedBox(height: 4),
-            _WeekRangeRow(
-              selectedDay: selectedDay,
-              onPrevious: () => onBrowseWeek(-1),
-              onNext: () => onBrowseWeek(1),
-            ),
             const SizedBox(height: 9),
-            SizedBox(
+            Column(
               key: const ValueKey('plan-week-calendar'),
-              height: 80,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    period == PlanPeriod.day ? 'Select Day' : 'This Week',
-                    style: _PlanText.sectionTitle,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 32,
+                  child: Row(
+                    children: [
+                      const Text('Select Day', style: _PlanText.sectionTitle),
+                      const Spacer(),
+                      _WeekRangeRow(
+                        selectedDay: selectedDay,
+                        onPrevious: () => onBrowseWeek(-1),
+                        onNext: () => onBrowseWeek(1),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 5.6),
-                  _PlanWeekStrip(
-                    selectedDay: selectedDay,
-                    scheduledDateKeys: scheduledDateKeys,
-                    onSelectDay: onSelectDay,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 5.6),
+                _PlanWeekStrip(
+                  selectedDay: selectedDay,
+                  scheduledDateKeys: scheduledDateKeys,
+                  onSelectDay: onSelectDay,
+                ),
+              ],
             ),
             const SizedBox(height: 13),
           ],
@@ -576,34 +577,18 @@ class _MultiPlanView extends StatelessWidget {
             ),
             if (index != visibleSessions.length - 1) const SizedBox(height: 8),
           ],
-          if (period == PlanPeriod.week) ...[
-            if (hasWeeklyProgress) ...[
-              const SizedBox(height: 16),
-              const Text('This Week', style: _PlanText.sectionTitle),
-              const SizedBox(height: 7.6),
-              _WeekSummaryCard(
-                completed: completed,
-                total: total,
-                onTap: () => _showWeekDetails(
-                  context,
-                  plan: selectedPlan,
-                  sessions: dashboard.sessionsFor(selectedPlan.id),
-                ),
-              ),
-            ],
+          if (period == PlanPeriod.day && hasWeeklyProgress) ...[
             const SizedBox(height: 16),
-            const SizedBox(
-              key: ValueKey('plan-monthly-calendar-section'),
-              height: 23.4,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text('Monthly Calendar', style: _PlanText.sectionTitle),
+            const Text('This Week', style: _PlanText.sectionTitle),
+            const SizedBox(height: 7.6),
+            _WeekSummaryCard(
+              completed: completed,
+              total: total,
+              onTap: () => _showWeekDetails(
+                context,
+                plan: selectedPlan,
+                sessions: dashboard.sessionsFor(selectedPlan.id),
               ),
-            ),
-            const SizedBox(height: 12),
-            _MonthlyCalendar(
-              selectedDay: selectedDay,
-              onSelectDay: onSelectDay,
             ),
           ],
         ],
@@ -619,7 +604,6 @@ class _SinglePlanView extends StatelessWidget {
     required this.selectedDay,
     required this.today,
     this.onBackToPlans,
-    this.onOpenAllPlans,
     this.onSelectDay,
     this.onStartSession,
     this.onAdjustWithAi,
@@ -631,7 +615,6 @@ class _SinglePlanView extends StatelessWidget {
   final DateTime selectedDay;
   final DateTime today;
   final VoidCallback? onBackToPlans;
-  final VoidCallback? onOpenAllPlans;
   final ValueChanged<DateTime>? onSelectDay;
   final VoidCallback? onStartSession;
   final VoidCallback? onAdjustWithAi;
@@ -653,7 +636,6 @@ class _SinglePlanView extends StatelessWidget {
             title: plan.title,
             onBack: onBackToPlans,
             onEdit: onManualEdit,
-            onOpenAllPlans: onOpenAllPlans,
           ),
           const SizedBox(height: 18),
           _MilestoneCard(plan: plan, selectedDay: selectedDay),
@@ -781,17 +763,11 @@ class _PlanHeader extends StatelessWidget {
 }
 
 class _SinglePlanHeader extends StatelessWidget {
-  const _SinglePlanHeader({
-    required this.title,
-    this.onBack,
-    this.onEdit,
-    this.onOpenAllPlans,
-  });
+  const _SinglePlanHeader({required this.title, this.onBack, this.onEdit});
 
   final String title;
   final VoidCallback? onBack;
   final VoidCallback? onEdit;
-  final VoidCallback? onOpenAllPlans;
 
   @override
   Widget build(BuildContext context) {
@@ -824,7 +800,7 @@ class _SinglePlanHeader extends StatelessWidget {
               ),
               Positioned(
                 left: 64,
-                right: 102,
+                right: 64,
                 top: 0,
                 bottom: 0,
                 child: Center(
@@ -837,7 +813,7 @@ class _SinglePlanHeader extends StatelessWidget {
                 ),
               ),
               Positioned(
-                right: 58,
+                right: 14,
                 top: 0,
                 child: _HeaderAssetButton(
                   key: const ValueKey('plan-single-edit'),
@@ -846,18 +822,6 @@ class _SinglePlanHeader extends StatelessWidget {
                   onTap: onEdit,
                   width: 20,
                   height: 20,
-                ),
-              ),
-              Positioned(
-                right: 14,
-                top: 0,
-                child: _HeaderAssetButton(
-                  key: const ValueKey('plan-single-all-plans'),
-                  asset: MomCozyAssets.planAllPlans,
-                  tooltip: 'All plans',
-                  onTap: onOpenAllPlans,
-                  width: 36,
-                  height: 19,
                 ),
               ),
             ],
@@ -1535,13 +1499,6 @@ class _PeriodSelector extends StatelessWidget {
             label: 'Day',
             width: 51,
             selected: selected == PlanPeriod.day,
-            onTap: onSelect,
-          ),
-          _PeriodChip(
-            period: PlanPeriod.week,
-            label: 'Week',
-            width: 58,
-            selected: selected == PlanPeriod.week,
             onTap: onSelect,
           ),
           _PeriodChip(
