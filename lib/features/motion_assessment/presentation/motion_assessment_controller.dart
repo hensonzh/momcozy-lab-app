@@ -52,6 +52,7 @@ class MotionAssessmentController extends ChangeNotifier {
   StreamSubscription<MotionVoiceCommand>? _voiceCommandSubscription;
   String _guidance = '正在准备端侧姿态识别…';
   String? _errorMessage;
+  String? _poseDiagnosticMessage;
   bool _started = false;
   bool _closed = false;
   bool _disposed = false;
@@ -77,6 +78,7 @@ class MotionAssessmentController extends ChangeNotifier {
   ForwardHeadResult? get forwardHeadResult => _forwardHeadResult;
   String get guidance => _guidance;
   String? get errorMessage => _errorMessage;
+  String? get poseDiagnosticMessage => _poseDiagnosticMessage;
   int get personCount => _observation?.poses.length ?? 0;
   MotionRealtimeVoicePhase get voicePhase => voice.phase;
   bool get exitRequested => _exitRequested;
@@ -115,9 +117,11 @@ class MotionAssessmentController extends ChangeNotifier {
       notifyListeners();
     } catch (error) {
       if (_closed) return;
+      await _stopPoseAfterFailure();
       _cameraStarted = false;
       _phase = MotionAssessmentPagePhase.failed;
-      _errorMessage = _friendlyError(error);
+      _errorMessage = _friendlyPoseError(error);
+      _poseDiagnosticMessage = _poseDiagnosticFor(error);
       _guidance = _errorMessage!;
       notifyListeners();
       return;
@@ -686,11 +690,20 @@ class MotionAssessmentController extends ChangeNotifier {
   void _onPoseError(Object error, StackTrace _) {
     if (_closed) return;
     debugPrint('Motion pose stream failed: $error');
+    unawaited(_stopPoseAfterFailure());
     _cameraStarted = false;
     _phase = MotionAssessmentPagePhase.failed;
     _errorMessage = _friendlyPoseError(error);
+    _poseDiagnosticMessage = _poseDiagnosticFor(error);
     _guidance = _errorMessage!;
     notifyListeners();
+  }
+
+  Future<void> _stopPoseAfterFailure() async {
+    final subscription = _poseSubscription;
+    _poseSubscription = null;
+    await subscription?.cancel();
+    await _stopPosePlatform();
   }
 
   String _friendlyPoseError(Object error) {
@@ -698,6 +711,9 @@ class MotionAssessmentController extends ChangeNotifier {
       return switch (code) {
         'pose_model_initialization_failed' => '端侧姿态模型加载失败，请退出后重试。',
         'pose_inference_failed' => '端侧姿态识别运行异常，请退出后重试。',
+        'pose_start_timeout' => '端侧姿态模型启动超时，请退出后重试。',
+        'pose_event_stream_closed' => '端侧姿态识别连接中断，请退出后重试。',
+        'camera_start_cancelled' => '端侧姿态识别启动已取消。',
         'camera_start_failed' => '前置摄像头启动失败，请检查相机是否被其他应用占用。',
         'permission_denied' => '请允许摄像头权限后重试。',
         _ => '端侧姿态识别暂时不可用，请退出后重试。',
@@ -706,7 +722,40 @@ class MotionAssessmentController extends ChangeNotifier {
     if (error is MissingPluginException) {
       return '当前安装版本未包含端侧姿态识别组件，请更新 App 后重试。';
     }
+    if (error.toString().contains('摄像头权限')) {
+      return '请允许摄像头权限后重试。';
+    }
     return '端侧姿态识别暂时不可用，请退出后重试。';
+  }
+
+  String? _poseDiagnosticFor(Object error) {
+    if (error is! PlatformException) return null;
+    final parts = <String>[error.code];
+    final message = _compactDiagnosticValue(error.message);
+    if (message != null) parts.add(message);
+    final details = error.details;
+    if (details is Map) {
+      final exception = _compactDiagnosticValue(details['exception']);
+      if (exception != null) parts.add(exception);
+      final build = _compactDiagnosticValue(details['build']);
+      if (build != null) parts.add('build $build');
+      final abis = details['abis'];
+      if (abis is Iterable) {
+        final abiText = _compactDiagnosticValue(abis.join(', '));
+        if (abiText != null) parts.add('ABI $abiText');
+      }
+    }
+    return parts.join(' · ');
+  }
+
+  String? _compactDiagnosticValue(Object? value) {
+    if (value == null) return null;
+    final compact = value.toString().replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (compact.isEmpty) return null;
+    const maxLength = 160;
+    return compact.length <= maxLength
+        ? compact
+        : '${compact.substring(0, maxLength - 1)}…';
   }
 
   Future<void> _cancelCreatedSession(
@@ -720,12 +769,6 @@ class MotionAssessmentController extends ChangeNotifier {
     } catch (_) {
       // A page closed during creation must not restart local resources.
     }
-  }
-
-  String _friendlyError(Object error) {
-    final text = error.toString();
-    if (text.contains('摄像头权限')) return '请允许摄像头权限后重试。';
-    return '动态评估启动失败，请检查网络和权限后重试。';
   }
 
   String _classificationValue(ForwardHeadClassification classification) {

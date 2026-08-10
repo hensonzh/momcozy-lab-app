@@ -12,7 +12,7 @@ make flutter-release-gate
 node scripts/check-flutter-android-packaging.mjs
 node scripts/check-flutter-security-privacy.mjs
 flutter pub get
-dart format --set-exit-if-changed lib test tool
+dart format --set-exit-if-changed lib test integration_test tool
 flutter analyze
 flutter test
 dart run tool/staging_smoke.dart
@@ -23,6 +23,18 @@ flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 `tool/staging_smoke.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
 
 `scripts/build-flutter-android-apk.mjs` 在构建 release APK 前会执行 `flutter clean` 和 `flutter pub get`，避免分发包复用上一源码版本的 AOT 快照。debug 构建仍保留增量构建以缩短本地开发反馈时间。
+
+## 动态姿态 Release 真机门禁
+
+动态姿态相关改动在 ARM64 Android 设备或模拟器上额外执行 release 集成测试。默认门禁只有在端侧模型明确发出 `model_ready`，并连续取得 3 帧相机推理结果后才通过：
+
+```bash
+cd android
+./gradlew app:clean app:connectedStagingReleaseAndroidTest --no-build-cache \
+  -Ptarget="$(pwd)/../integration_test/motion_pose_android_test.dart"
+```
+
+测试 instrumentation 会在启动前授予 CAMERA。若设备摄像头画面包含单人全身，可在命令末尾追加 `-Pdart-defines=TU9USU9OX1BPU0VfUkVRVUlSRV9QRVJTT049dHJ1ZQ==`，启用严格门禁：连续 3 帧都必须识别到 33 个关键点。该值是 `MOTION_POSE_REQUIRE_PERSON=true` 的 Base64 编码。测试使用干净构建的 release/R8 产物，避免 Gradle 增量任务复用普通 App 入口的原生库，并专门防止仅在 debug 包正常、release 包因混淆而无法加载 MediaPipe 的回归。
 
 ## 内测构建与发布
 

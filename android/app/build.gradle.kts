@@ -63,6 +63,9 @@ val hasReleaseSigning =
         !releaseStorePassword.isNullOrEmpty() &&
         !releaseKeyAlias.isNullOrEmpty() &&
         !releaseKeyPassword.isNullOrEmpty()
+val runsFlutterIntegrationTest = providers.gradleProperty("target").map { target ->
+    target.replace('\\', '/').contains("/integration_test/")
+}.orElse(false)
 
 android {
     namespace = "com.momcozymai.momcozy_flutter_app"
@@ -84,6 +87,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -120,8 +124,15 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
+            proguardFiles("proguard-rules.pro")
+            if (runsFlutterIntegrationTest.get()) {
+                proguardFiles("proguard-integration-test-target-rules.pro")
+            }
+            testProguardFiles("proguard-android-test-rules.pro")
         }
     }
+
+    testBuildType = "release"
 
     sourceSets.getByName("main").assets.srcDir(motionPoseModelDirectory.get().asFile)
 }
@@ -146,4 +157,8 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:$cameraXVersion")
     implementation("androidx.camera:camera-view:$cameraXVersion")
     implementation("com.google.mediapipe:tasks-vision:0.10.29")
+    androidTestImplementation(project(":integration_test"))
+    if (runsFlutterIntegrationTest.get()) {
+        add("releaseImplementation", project(":integration_test"))
+    }
 }

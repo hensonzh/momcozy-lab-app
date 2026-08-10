@@ -56,6 +56,61 @@ matches(
   "Flutter staging flavor keeps a staging suffix",
 );
 contains(
+  "android/app/build.gradle.kts",
+  'proguardFiles("proguard-rules.pro")',
+  "Flutter release builds load app-owned R8 compatibility rules",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "com.google.mediapipe.framework.ProtoUtil$SerializedMessage",
+  "Release R8 rules preserve MediaPipe's JNI-reflected message wrapper",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "java.lang.String typeName;",
+  "Release R8 rules preserve MediaPipe's JNI-reflected typeName field",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "byte[] value;",
+  "Release R8 rules preserve MediaPipe's JNI-reflected value field",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "public static com.google.mediapipe.framework.Packet create(long);",
+  "Release R8 rules preserve MediaPipe's JNI packet factory",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "-keep interface com.google.mediapipe.framework.PacketListCallback { *; }",
+  "Release R8 rules preserve MediaPipe's JNI callback interface",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "implements com.google.mediapipe.framework.PacketListCallback",
+  "Release R8 rules preserve MediaPipe's JNI callback implementations",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "extends com.google.protobuf.GeneratedMessageLite",
+  "Release R8 rules preserve Protobuf Lite generated fields",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "com.google.common.flogger.FluentLogger",
+  "Release R8 rules preserve Flogger's enclosing-class stack contract",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "com.google.common.flogger.util.CallerFinder",
+  "Release R8 rules preserve Flogger's caller finder",
+);
+contains(
+  "android/app/proguard-rules.pro",
+  "com.google.common.flogger.backend.system.StackBasedCallerFinder",
+  "Release R8 rules preserve Flogger's stack-based caller finder",
+);
+contains(
   "android/app/src/local/res/values/strings.xml",
   "<string name=\"app_name\">Momcozy Lab</string>",
   "Flutter local label matches current unified branding",

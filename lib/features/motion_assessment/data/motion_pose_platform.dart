@@ -25,16 +25,22 @@ class NativeMotionPosePlatform implements MotionPosePlatform {
   NativeMotionPosePlatform({
     MethodChannel? methodChannel,
     EventChannel? eventChannel,
+    @visibleForTesting Stream<Object?>? nativeEvents,
   }) : _methodChannel =
            methodChannel ??
            const MethodChannel('com.momcozymai.motion_pose/control'),
-       _eventChannel =
-           eventChannel ??
-           const EventChannel('com.momcozymai.motion_pose/events');
+       _nativeEvents =
+           nativeEvents ??
+           (eventChannel ??
+                   const EventChannel('com.momcozymai.motion_pose/events'))
+               .receiveBroadcastStream();
 
   final MethodChannel _methodChannel;
-  final EventChannel _eventChannel;
+  final Stream<Object?> _nativeEvents;
   Stream<MotionPoseObservation>? _observations;
+  Future<void>? _pendingStart;
+  Completer<bool>? _pendingReady;
+  bool _ready = false;
 
   @override
   String get engineName => defaultTargetPlatform == TargetPlatform.iOS
@@ -43,9 +49,9 @@ class NativeMotionPosePlatform implements MotionPosePlatform {
 
   @override
   Stream<MotionPoseObservation> get observations =>
-      _observations ??= _eventChannel.receiveBroadcastStream().map(
-        motionPoseObservationFromNative,
-      );
+      _observations ??= _nativeEvents
+          .where(_isPoseObservationEvent)
+          .map(motionPoseObservationFromNative);
 
   @override
   Future<bool> requestCameraPermission() async {
@@ -54,10 +60,79 @@ class NativeMotionPosePlatform implements MotionPosePlatform {
   }
 
   @override
-  Future<void> start() => _methodChannel.invokeMethod<void>('start');
+  Future<void> start() {
+    if (_ready) return Future<void>.value();
+    return _pendingStart ??= _startAndWaitForModel().whenComplete(() {
+      _pendingStart = null;
+    });
+  }
 
   @override
-  Future<void> stop() => _methodChannel.invokeMethod<void>('stop');
+  Future<void> stop() async {
+    _ready = false;
+    final pendingReady = _pendingReady;
+    if (pendingReady != null && !pendingReady.isCompleted) {
+      pendingReady.complete(false);
+    }
+    await _methodChannel.invokeMethod<void>('stop');
+  }
+
+  Future<void> _startAndWaitForModel() async {
+    final ready = Completer<bool>();
+    _pendingReady = ready;
+    late final StreamSubscription<Object?> subscription;
+    subscription = _nativeEvents.listen(
+      (event) {
+        if (_nativeEventType(event) == 'model_ready' && !ready.isCompleted) {
+          ready.complete(true);
+        }
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        if (!ready.isCompleted) ready.completeError(error, stackTrace);
+      },
+      onDone: () {
+        if (!ready.isCompleted) {
+          ready.completeError(
+            PlatformException(
+              code: 'pose_event_stream_closed',
+              message: 'Motion pose event stream closed before model startup',
+            ),
+          );
+        }
+      },
+    );
+    try {
+      await _methodChannel.invokeMethod<void>('start');
+      final becameReady = await ready.future.timeout(
+        const Duration(seconds: 20),
+        onTimeout: () => throw PlatformException(
+          code: 'pose_start_timeout',
+          message: 'Motion pose model did not become ready within 20 seconds',
+        ),
+      );
+      if (!becameReady) {
+        throw PlatformException(
+          code: 'camera_start_cancelled',
+          message: 'Motion pose startup was cancelled',
+        );
+      }
+      _ready = true;
+    } finally {
+      if (identical(_pendingReady, ready)) _pendingReady = null;
+      await subscription.cancel();
+    }
+  }
+}
+
+bool _isPoseObservationEvent(Object? event) {
+  final type = _nativeEventType(event);
+  return type == null || type == 'observation';
+}
+
+String? _nativeEventType(Object? event) {
+  if (event is! Map) return null;
+  final type = event['event'];
+  return type is String ? type : null;
 }
 
 class MotionPosePreview extends StatelessWidget {

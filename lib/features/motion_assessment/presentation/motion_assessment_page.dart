@@ -300,6 +300,19 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                 ],
               ),
             ],
+            if (controller.phase == MotionAssessmentPagePhase.failed &&
+                controller.poseDiagnosticMessage != null) ...[
+              const SizedBox(height: 8),
+              SelectableText(
+                '诊断信息：${controller.poseDiagnosticMessage!}',
+                key: const ValueKey('motion-assessment-pose-diagnostic'),
+                style: const TextStyle(
+                  color: Colors.white60,
+                  fontSize: 11,
+                  height: 1.35,
+                ),
+              ),
+            ],
             const SizedBox(height: 10),
             Row(
               key: const ValueKey('motion-assessment-camera-status'),

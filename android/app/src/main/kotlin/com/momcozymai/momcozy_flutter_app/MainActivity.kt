@@ -26,6 +26,7 @@ import android.os.SystemClock
 import android.provider.Settings
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.util.Locale
@@ -57,6 +58,7 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        registerIntegrationTestPluginIfRequested(flutterEngine)
         mmcBleChannel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             MMC_BLE_CHANNEL
@@ -90,6 +92,17 @@ class MainActivity : FlutterActivity() {
         pumpAgentUploadChannel.setMethodCallHandler(pumpAgentUploadHandler::handle)
         motionPosePlugin = MotionPosePlugin(this, flutterEngine)
         handleLaunchNavigationIntent(intent)
+    }
+
+    private fun registerIntegrationTestPluginIfRequested(flutterEngine: FlutterEngine) {
+        if (!intent.getBooleanExtra(INTEGRATION_TEST_INTENT_EXTRA, false)) return
+        val pluginClass = runCatching {
+            Class.forName(INTEGRATION_TEST_PLUGIN_CLASS).asSubclass(FlutterPlugin::class.java)
+        }.getOrNull() ?: return
+        if (flutterEngine.plugins.has(pluginClass)) return
+        val plugin = runCatching { pluginClass.getDeclaredConstructor().newInstance() }
+            .getOrNull() ?: return
+        flutterEngine.plugins.add(plugin)
     }
 
     private fun handleMmcBleCall(call: MethodCall, result: MethodChannel.Result) {
@@ -1074,6 +1087,10 @@ class MainActivity : FlutterActivity() {
         private const val VOICE_PCM_FINISH_MIN_DRAIN_MS = 160L
         private const val VOICE_PCM_FINISH_DRAIN_SLACK_MS = 1200L
         private const val VOICE_PCM_FINISH_MAX_DRAIN_MS = 30000L
+        private const val INTEGRATION_TEST_INTENT_EXTRA =
+            "momcozy.flutter.extra.INTEGRATION_TEST"
+        private const val INTEGRATION_TEST_PLUGIN_CLASS =
+            "dev.flutter.plugins.integration_test.IntegrationTestPlugin"
         private const val REQUEST_BLE_PERMISSIONS = 4101
         private const val REQUEST_NOTIFICATION_PERMISSION = 4102
         const val EXTRA_NAV_PATH = "momcozy.flutter.extra.NAV_PATH"
