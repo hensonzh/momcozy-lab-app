@@ -96,6 +96,34 @@ class ProfileOverviewCache extends ChangeNotifier {
   OverviewCacheEntry<List<DiaperRecord>>? diaperRecords;
   OverviewCacheEntry<List<GrowthRecord>>? growthRecords;
   OverviewCacheEntry<PlanDashboard>? planDashboard;
+  bool _hasAvatarOverride = false;
+  String? _activeAvatarFileId;
+
+  /// Publishes the just-confirmed avatar before the profile projection catches
+  /// up. A `null` value is intentional and means the default avatar was chosen.
+  void activateAvatar(String? fileId) {
+    _hasAvatarOverride = true;
+    _activeAvatarFileId = _normalizeFileId(fileId);
+    overview = null;
+    notifyListeners();
+  }
+
+  String? resolveAvatarFileId(String? serverFileId) {
+    return _hasAvatarOverride
+        ? _activeAvatarFileId
+        : _normalizeFileId(serverFileId);
+  }
+
+  /// Drops the optimistic projection only after the server returns the same
+  /// selection. A stale response is never allowed to replace fresh UI state.
+  void reconcileAvatarFileId(String? serverFileId) {
+    if (!_hasAvatarOverride ||
+        _normalizeFileId(serverFileId) != _activeAvatarFileId) {
+      return;
+    }
+    _hasAvatarOverride = false;
+    _activeAvatarFileId = null;
+  }
 
   bool matches({required String ownerUserId, required String babyId}) {
     return this.ownerUserId == ownerUserId && this.babyId == babyId;
@@ -152,5 +180,12 @@ class ProfileOverviewCache extends ChangeNotifier {
     diaperRecords = null;
     growthRecords = null;
     planDashboard = null;
+    _hasAvatarOverride = false;
+    _activeAvatarFileId = null;
+  }
+
+  String? _normalizeFileId(String? fileId) {
+    final normalized = fileId?.trim();
+    return normalized == null || normalized.isEmpty ? null : normalized;
   }
 }

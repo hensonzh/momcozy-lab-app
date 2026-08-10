@@ -85,10 +85,10 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
       ? OnboardingController(
           runtimeController: _runtimeController,
           onPrimaryInfantSelected: _runtimeController.selectBaby,
-          onAvatarActivated: () => _runtimeController
+          onAvatarActivated: (fileId) => _runtimeController
               .runtime
               .profileOverviewCache
-              .invalidateOverview(),
+              .activateAvatar(fileId),
           releasePolicy: widget.onboardingReleasePolicy,
         )
       : null;

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
@@ -87,7 +88,6 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                   observation: controller.observation,
                 ),
                 _topBar(context),
-                _trackingStatus(),
                 _framingGuide(),
                 _bottomPanel(context),
               ],
@@ -142,11 +142,12 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                           ? Colors.orangeAccent
                           : Colors.white,
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 5),
                     Text(
                       _voiceLabel(),
                       style: const TextStyle(
                         color: Colors.white,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -164,76 +165,19 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     final blocked =
         controller.phase == MotionAssessmentPagePhase.pausedMultiplePeople ||
         controller.phase == MotionAssessmentPagePhase.targetChanged;
-    return Center(
+    return Align(
+      alignment: const Alignment(0, -0.1),
       child: FractionallySizedBox(
-        widthFactor: 0.72,
-        heightFactor: 0.68,
+        widthFactor: 0.68,
+        heightFactor: 0.48,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(120),
+            borderRadius: BorderRadius.circular(96),
             border: Border.all(
               color: blocked
                   ? Colors.orangeAccent
                   : Colors.white.withValues(alpha: 0.72),
               width: blocked ? 3 : 1.5,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _trackingStatus() {
-    final observation = controller.observation;
-    final poses = observation?.poses ?? const [];
-    final landmarkCount = poses.length == 1
-        ? poses.single.landmarks.values
-              .where((landmark) => landmark.isReliable(minimumConfidence: 0.5))
-              .length
-        : 0;
-    final failed = controller.phase == MotionAssessmentPagePhase.failed;
-    final multiplePeople = poses.length > 1;
-    final label = failed
-        ? '关键点识别未启动'
-        : observation == null
-        ? '正在启动人体关键点识别'
-        : poses.isEmpty
-        ? '正在扫描人体'
-        : multiplePeople
-        ? '实时追踪 ${poses.length} 人'
-        : '实时追踪 · $landmarkCount 个关键点';
-    final accent = failed || multiplePeople
-        ? Colors.orangeAccent
-        : const Color(0xff51e1d2);
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 62),
-        child: IgnorePointer(
-          child: DecoratedBox(
-            key: const ValueKey('motion-pose-tracking-status'),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.62),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: accent.withValues(alpha: 0.72)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.motion_photos_on_rounded, size: 15, color: accent),
-                  const SizedBox(width: 6),
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ),
@@ -301,7 +245,8 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
               ),
             ],
             if (controller.phase == MotionAssessmentPagePhase.failed &&
-                controller.poseDiagnosticMessage != null) ...[
+                controller.poseDiagnosticMessage != null &&
+                kDebugMode) ...[
               const SizedBox(height: 8),
               SelectableText(
                 '诊断信息：${controller.poseDiagnosticMessage!}',
@@ -313,35 +258,20 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                 ),
               ),
             ],
-            const SizedBox(height: 10),
-            Row(
-              key: const ValueKey('motion-assessment-camera-status'),
-              children: [
-                const Icon(
-                  Icons.lock_outline_rounded,
-                  size: 16,
-                  color: Colors.white70,
+            if (controller.phase == MotionAssessmentPagePhase.assessing &&
+                result == null) ...[
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  key: const ValueKey('motion-assessment-sampling-progress'),
+                  value: controller.samplingProgress,
+                  minHeight: 5,
+                  backgroundColor: Colors.white12,
+                  color: const Color(0xff51e1d2),
                 ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    controller.cameraStarted
-                        ? '相机已开启，视频与人体关键点仅在本机处理'
-                        : '正在启动本机相机…',
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
-                  ),
-                ),
-                Text(
-                  '${controller.personCount} 人',
-                  style: TextStyle(
-                    color: controller.personCount > 1
-                        ? Colors.orangeAccent
-                        : Colors.white70,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
             if (controller.phase ==
                 MotionAssessmentPagePhase.targetChanged) ...[
               const SizedBox(height: 12),
@@ -352,14 +282,6 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
             ],
             if (result != null) ...[
               const SizedBox(height: 12),
-              Text(
-                '当前画面参考角度 ${result.valueDegrees.toStringAsFixed(1)}°',
-                style: const TextStyle(
-                  color: Color(0xffffc9dc),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 10),
               FilledButton.icon(
                 onPressed: () => unawaited(_complete(context)),
                 icon: const Icon(Icons.check_rounded),
@@ -384,13 +306,19 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
   }
 
   String _voiceLabel() {
+    if (controller.voicePhase.name == 'reconnecting') return '重新连接…';
     if (controller.voiceStatusMessage != null) return '语音未连接';
+    final provider = controller.voiceProviderName == 'openai_realtime'
+        ? 'OpenAI · '
+        : '';
     return switch (controller.voicePhase.name) {
-      'speaking' => '正在指导',
-      'listening' => '正在聆听',
+      'speaking' when !controller.hasRemoteVoiceAudio => '音频连接中…',
+      'speaking' => '$provider指导中',
+      'listening' => '$provider聆听中',
       'failed' => '语音未连接',
       'closed' => '语音已关闭',
-      _ => '连接语音…',
+      'reconnecting' => '重新连接…',
+      _ => '连接实时语音…',
     };
   }
 

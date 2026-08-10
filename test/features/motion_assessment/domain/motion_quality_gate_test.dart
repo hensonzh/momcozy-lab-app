@@ -61,32 +61,37 @@ void main() {
     },
   );
 
-  test('requires a complete body before calibration can finish', () {
+  test('accepts head, shoulder and hip framing without legs or feet', () {
     final gate = MotionQualityGate(
       singlePersonStableFor: const Duration(seconds: 1),
     );
 
+    final calibrating = gate.evaluate(
+      _observation(0, [
+        _pose(centerX: 0.5, includeKnee: false, includeAnkle: false),
+      ]),
+    );
+    expect(calibrating.phase, MotionQualityPhase.calibrating);
+    expect(calibrating.acceptFrame, isFalse);
+
+    final ready = gate.evaluate(
+      _observation(1000, [
+        _pose(centerX: 0.5, includeKnee: false, includeAnkle: false),
+      ]),
+    );
+    expect(ready.phase, MotionQualityPhase.ready);
+    expect(ready.acceptFrame, isTrue);
+  });
+
+  test('requires the assessment head-to-hip region before calibration', () {
+    final gate = MotionQualityGate(singlePersonStableFor: Duration.zero);
+
     final framing = gate.evaluate(
-      _observation(0, [_pose(centerX: 0.5, includeAnkle: false)]),
+      _observation(0, [_pose(centerX: 0.5, includeHip: false)]),
     );
     expect(framing.phase, MotionQualityPhase.framing);
     expect(framing.acceptFrame, isFalse);
     expect(framing.directive, MotionGuidanceDirective.adjustFraming);
-
-    final stillFraming = gate.evaluate(
-      _observation(1200, [_pose(centerX: 0.5, includeAnkle: false)]),
-    );
-    expect(stillFraming.acceptFrame, isFalse);
-    expect(stillFraming.directive, isNull);
-
-    expect(
-      gate.evaluate(_observation(1300, [_pose(centerX: 0.5)])).acceptFrame,
-      isFalse,
-    );
-    expect(
-      gate.evaluate(_observation(2300, [_pose(centerX: 0.5)])).acceptFrame,
-      isTrue,
-    );
   });
 
   test('drops frames immediately and pauses after multiple people persist', () {
@@ -188,11 +193,20 @@ MotionPoseObservation _observation(int milliseconds, List<MotionPose> poses) {
 MotionPose _pose({
   required double centerX,
   double bodyScale = 0.5,
+  bool includeHip = true,
+  bool includeKnee = true,
   bool includeAnkle = true,
 }) {
-  const reliable = MotionPoseLandmark(
-    x: 0.5,
-    y: 0.5,
+  final shoulder = MotionPoseLandmark(
+    x: centerX,
+    y: 0.3,
+    z: 0,
+    visibility: 0.95,
+    presence: 0.95,
+  );
+  final hip = MotionPoseLandmark(
+    x: centerX,
+    y: 0.3 + bodyScale * 0.5,
     z: 0,
     visibility: 0.95,
     presence: 0.95,
@@ -209,12 +223,19 @@ MotionPose _pose({
         visibility: 0.95,
         presence: 0.95,
       ),
-      MotionPoseLandmarkType.leftShoulder: reliable,
-      MotionPoseLandmarkType.leftHip: reliable,
-      MotionPoseLandmarkType.leftKnee: reliable,
+      MotionPoseLandmarkType.leftShoulder: shoulder,
+      if (includeHip) MotionPoseLandmarkType.leftHip: hip,
+      if (includeKnee)
+        MotionPoseLandmarkType.leftKnee: MotionPoseLandmark(
+          x: centerX,
+          y: 0.72,
+          z: 0,
+          visibility: 0.95,
+          presence: 0.95,
+        ),
       if (includeAnkle)
-        MotionPoseLandmarkType.leftAnkle: const MotionPoseLandmark(
-          x: 0.5,
+        MotionPoseLandmarkType.leftAnkle: MotionPoseLandmark(
+          x: centerX,
           y: 0.92,
           z: 0,
           visibility: 0.95,

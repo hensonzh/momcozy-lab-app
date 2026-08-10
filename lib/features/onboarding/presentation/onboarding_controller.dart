@@ -22,7 +22,7 @@ class OnboardingController extends ChangeNotifier {
 
   final MomCozyRuntimeController runtimeController;
   final Future<void> Function(String infantId)? onPrimaryInfantSelected;
-  final VoidCallback? onAvatarActivated;
+  final ValueChanged<String?>? onAvatarActivated;
   final OnboardingReleasePolicy releasePolicy;
   OnboardingGatePhase _phase = OnboardingGatePhase.idle;
   OnboardingState? _state;
@@ -181,12 +181,6 @@ class OnboardingController extends ChangeNotifier {
       _phase = OnboardingGatePhase.ready;
     });
     if (!succeeded) return false;
-    try {
-      onAvatarActivated?.call();
-    } catch (_) {
-      // The server selection is authoritative; local projections can refresh
-      // again when their page is next opened.
-    }
     final infantId = _state?.primaryInfantId;
     if (infantId != null && infantId.isNotEmpty) {
       try {
@@ -195,6 +189,14 @@ class OnboardingController extends ChangeNotifier {
         // Completion is authoritative on the server; baby selection can recover
         // from the returned primary id on the next session refresh.
       }
+    }
+    try {
+      // Baby selection can replace the account runtime and its scoped caches,
+      // so publish the avatar only after that transition has completed.
+      onAvatarActivated?.call(_state?.selectedAvatarFileId);
+    } catch (_) {
+      // The server selection is authoritative; local projections can refresh
+      // again when their page is next opened.
     }
     _notify();
     return true;

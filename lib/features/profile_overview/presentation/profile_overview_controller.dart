@@ -321,6 +321,7 @@ class ProfileOverviewController {
           overview,
           profileOverviewRepository.fetchOverview(),
           onData: (value) {
+            cache.reconcileAvatarFileId(value.mom?.avatarFileId);
             cache.overview = OverviewCacheEntry(value: value, fetchedAt: now());
             final resolvedBabyId = value.baby?.id?.trim();
             if (resolvedBabyId?.isNotEmpty == true) {

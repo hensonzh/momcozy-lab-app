@@ -142,6 +142,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   void _handleProfileOverviewInvalidated() {
     final controller = _overviewController;
     if (!mounted || controller == null) return;
+    setState(() {});
     unawaited(controller.refresh());
   }
 
@@ -346,7 +347,10 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
 
   @override
   Widget build(BuildContext context) {
-    final data = _MeBabyOverviewData.fromController(_overviewController);
+    final data = _MeBabyOverviewData.fromController(
+      _overviewController,
+      cache: _overviewCache,
+    );
     if (widget.identity == ProfileIdentity.baby &&
         widget.path == '/baby/development') {
       return _BabyDevelopmentPage(
@@ -595,11 +599,13 @@ class _MeBabyOverviewData {
     required this.feedingSummary,
     required this.plans,
     required this.now,
+    this.activeAvatarFileId,
   });
 
   factory _MeBabyOverviewData.fromController(
-    ProfileOverviewController? controller,
-  ) {
+    ProfileOverviewController? controller, {
+    ProfileOverviewCache? cache,
+  }) {
     if (controller == null) {
       return _MeBabyOverviewData(
         overview: const ProfileOverviewResource.initial(),
@@ -629,6 +635,9 @@ class _MeBabyOverviewData {
       feedingSummary: controller.feedingSummary.value,
       plans: controller.plans.value,
       now: controller.now(),
+      activeAvatarFileId: cache?.resolveAvatarFileId(
+        controller.overview.value.data?.mom?.avatarFileId,
+      ),
     );
   }
 
@@ -644,6 +653,7 @@ class _MeBabyOverviewData {
   final ProfileOverviewResource<FeedingSummary> feedingSummary;
   final ProfileOverviewResource<PlanDashboard> plans;
   final DateTime now;
+  final String? activeAvatarFileId;
 
   bool get hasStaleRefreshFailure => [
     overview,
@@ -2097,7 +2107,7 @@ class _ProfileHero extends StatelessWidget {
             ? _MomAvatarImage(
                 stage:
                     data.overview.data?.mom?.stage ?? MomLifeStage.postpartum,
-                fileId: data.overview.data?.mom?.avatarFileId,
+                fileId: data.activeAvatarFileId,
                 alignment: Alignment.bottomCenter,
                 fit: BoxFit.contain,
               )

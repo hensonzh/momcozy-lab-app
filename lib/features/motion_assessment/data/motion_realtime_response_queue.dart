@@ -14,10 +14,16 @@ class MotionRealtimeResponseQueue {
   bool _cancelSent = false;
   bool _closed = false;
 
-  Future<void> enqueue(String instruction, {bool interrupt = false}) {
+  Future<void> enqueue(
+    String instruction, {
+    bool interrupt = false,
+    bool exact = false,
+  }) {
     return _serialize(() async {
       if (_closed || instruction.trim().isEmpty) return;
-      final speech = _PendingResponse.exactSpeech(instruction.trim());
+      final speech = exact
+          ? _PendingResponse.exactSpeech(instruction.trim())
+          : _PendingResponse.naturalGuidance(instruction.trim());
       if (interrupt) {
         _pending
           ..clear()
@@ -26,6 +32,7 @@ class MotionRealtimeResponseQueue {
           if (!_cancelSent) {
             _cancelSent = true;
             await sendEvent({'type': 'response.cancel'});
+            await sendEvent({'type': 'output_audio_buffer.clear'});
           }
           return;
         }
@@ -51,6 +58,7 @@ class MotionRealtimeResponseQueue {
       if (_responseActive && !_cancelSent) {
         _cancelSent = true;
         await sendEvent({'type': 'response.cancel'});
+        await sendEvent({'type': 'output_audio_buffer.clear'});
       }
     });
   }
@@ -89,10 +97,13 @@ class MotionRealtimeResponseQueue {
           'output_modalities': ['audio'],
           'instructions': next.exactSpeech
               ? '请只说下面这句中文，不要添加其他内容：${next.instructions}'
-              : '默认使用简体中文回答；只有用户明确要求使用其他语言时才切换。'
+              : next.modelTurn
+              ? '默认使用简体中文回答；只有用户明确要求使用其他语言时才切换。'
                     '不要因为口音、语气词或孤立的外语词切换语言。'
                     '所有开场、动作指导、工具提示和结果保持同一语言。\n'
-                    '${next.instructions}',
+                    '${next.instructions}'
+              : '请用自然、简短的中文表达下面这条过程指导。保持事实和动作要求不变，'
+                    '不要逐字朗读提示词，不要添加诊断或新的要求：${next.instructions}',
         },
       });
     } catch (_) {
@@ -109,14 +120,22 @@ class MotionRealtimeResponseQueue {
 }
 
 class _PendingResponse {
-  const _PendingResponse._(this.instructions, {required this.exactSpeech});
+  const _PendingResponse._(
+    this.instructions, {
+    required this.exactSpeech,
+    required this.modelTurn,
+  });
 
   const _PendingResponse.exactSpeech(String instructions)
-    : this._(instructions, exactSpeech: true);
+    : this._(instructions, exactSpeech: true, modelTurn: false);
+
+  const _PendingResponse.naturalGuidance(String instructions)
+    : this._(instructions, exactSpeech: false, modelTurn: false);
 
   const _PendingResponse.modelTurn(String instructions)
-    : this._(instructions, exactSpeech: false);
+    : this._(instructions, exactSpeech: false, modelTurn: true);
 
   final String instructions;
   final bool exactSpeech;
+  final bool modelTurn;
 }

@@ -4,6 +4,18 @@ import 'dart:io';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart';
 
+class MotionVoiceSignalingAnswer {
+  const MotionVoiceSignalingAnswer({
+    required this.answerSdp,
+    required this.provider,
+    required this.sessionId,
+  });
+
+  final String answerSdp;
+  final String provider;
+  final String sessionId;
+}
+
 class MotionVoiceSignaling {
   MotionVoiceSignaling({
     required Uri baseUri,
@@ -18,7 +30,7 @@ class MotionVoiceSignaling {
   final Future<bool> Function()? onUnauthorized;
   final HttpClient _httpClient;
 
-  Future<String> createAnswer({
+  Future<MotionVoiceSignalingAnswer> createAnswer({
     required String assessmentId,
     required String offerSdp,
   }) async {
@@ -46,7 +58,15 @@ class MotionVoiceSignaling {
     if (!body.trimLeft().startsWith('v=0')) {
       throw const FormatException('Realtime voice returned invalid SDP.');
     }
-    return body;
+    return MotionVoiceSignalingAnswer(
+      answerSdp: body,
+      provider:
+          response.headers.value('X-MomCozy-Motion-Voice-Provider')?.trim() ??
+          '',
+      sessionId:
+          response.headers.value('X-MomCozy-Motion-Voice-Session')?.trim() ??
+          '',
+    );
   }
 
   Future<HttpClientResponse> _post({

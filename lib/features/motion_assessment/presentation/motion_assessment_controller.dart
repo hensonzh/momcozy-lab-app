@@ -71,6 +71,9 @@ class MotionAssessmentController extends ChangeNotifier {
   Duration? _firstObservationAt;
   MotionAssessmentContextSnapshot? _latestContext;
   Map<String, Object?>? _latestResultSummary;
+  String? _voiceAssessmentId;
+  bool _voiceConnectInProgress = false;
+  bool _voiceRecoveryUsed = false;
 
   MotionAssessmentPagePhase get phase => _phase;
   MotionAssessmentSession? get session => _session;
@@ -84,6 +87,10 @@ class MotionAssessmentController extends ChangeNotifier {
   bool get exitRequested => _exitRequested;
   bool get cameraStarted => _cameraStarted;
   String? get voiceStatusMessage => _voiceStatusMessage;
+  String get voiceProviderName => voice.providerName;
+  bool get hasRemoteVoiceAudio => voice.hasRemoteAudioTrack;
+  double get samplingProgress =>
+      _forwardHeadResult == null ? forwardHeadAnalyzer.samplingProgress : 1;
 
   Future<void> start() async {
     if (_started || _closed) return;
@@ -113,7 +120,7 @@ class MotionAssessmentController extends ChangeNotifier {
       }
       _cameraStarted = true;
       _phase = MotionAssessmentPagePhase.calibrating;
-      _guidance = '请后退一些，让全身完整进入画面';
+      _guidance = '请让头部、肩部和髋部进入画面';
       notifyListeners();
     } catch (error) {
       if (_closed) return;
@@ -152,16 +159,28 @@ class MotionAssessmentController extends ChangeNotifier {
   }
 
   Future<void> _connectVoice(String assessmentId) async {
+    if (_voiceConnectInProgress || _closed) return;
+    _voiceAssessmentId = assessmentId;
+    _voiceConnectInProgress = true;
     try {
-      await voice.connect(assessmentId: assessmentId);
-      if (_closed) return;
-      _voiceStatusMessage = null;
-      final instruction = _forwardHeadResult?.userMessage ?? _guidance;
-      await voice.speak(instruction);
-    } catch (_) {
-      if (_closed) return;
-      _voiceStatusMessage = '实时语音暂未连接，请根据屏幕提示继续';
-      notifyListeners();
+      for (var attempt = 0; attempt < 2 && !_closed; attempt += 1) {
+        try {
+          await voice.connect(assessmentId: assessmentId);
+          if (_closed) return;
+          _voiceStatusMessage = null;
+          final instruction = _forwardHeadResult?.userMessage ?? _guidance;
+          await voice.speak(instruction);
+          return;
+        } catch (_) {
+          if (_closed) return;
+          _voiceStatusMessage = attempt == 0
+              ? 'OpenAI 实时语音正在重新连接，请先根据屏幕提示继续'
+              : 'OpenAI 实时语音暂未连接，请根据屏幕提示继续';
+          notifyListeners();
+        }
+      }
+    } finally {
+      _voiceConnectInProgress = false;
     }
   }
 
@@ -178,16 +197,16 @@ class MotionAssessmentController extends ChangeNotifier {
       case MotionQualityPhase.checkingMultiplePeople:
         _phase = MotionAssessmentPagePhase.calibrating;
         _guidance = decision.phase == MotionQualityPhase.framing
-            ? '请后退一些，让头部到双脚完整进入画面'
+            ? '请调整距离，让头部、肩部和髋部进入画面'
             : observation.poses.isEmpty
-            ? '请站到镜头前，让全身完整入镜'
+            ? '请站到镜头前，让头部到髋部入镜'
             : observation.poses.length > 1
             ? '检测到多人，正在确认…'
             : '保持站位，正在校准评估对象…';
       case MotionQualityPhase.ready:
         _phase = MotionAssessmentPagePhase.assessing;
         _guidance = target == 'forward_head'
-            ? '请自然侧身，双脚站稳并目视前方'
+            ? '请自然侧身，站稳并目视前方'
             : '取景已就绪，请按语音提示完成动作';
       case MotionQualityPhase.pausedMultiplePeople:
         _phase = MotionAssessmentPagePhase.pausedMultiplePeople;
@@ -266,7 +285,7 @@ class MotionAssessmentController extends ChangeNotifier {
     MotionQualityDecision decision,
   ) {
     final personCount = observation.poses.length;
-    final fullBodyVisible =
+    final assessmentRegionVisible =
         personCount == 1 && decision.phase != MotionQualityPhase.framing;
     final frameStatus = forwardHeadAnalyzer.lastFrameStatus;
     final result = _forwardHeadResult;
@@ -276,7 +295,7 @@ class MotionAssessmentController extends ChangeNotifier {
     final missingRegions = <String>[
       if (personCount == 0) 'person',
       if (personCount == 1 && decision.phase == MotionQualityPhase.framing)
-        ..._missingBodyRegions(observation.poses.single),
+        ..._missingAssessmentRegions(observation.poses.single),
     ];
     final rejectionReasons = <String>[
       if (personCount == 0) 'no_person',
@@ -326,9 +345,9 @@ class MotionAssessmentController extends ChangeNotifier {
       targetLocked:
           decision.target != null || decision.phase == MotionQualityPhase.ready,
       continuity: _continuityValue(decision.phase),
-      fullBodyVisible: fullBodyVisible,
+      assessmentRegionVisible: assessmentRegionVisible,
       missingRegions: missingRegions,
-      distance: fullBodyVisible
+      distance: assessmentRegionVisible
           ? 'acceptable'
           : decision.phase == MotionQualityPhase.framing
           ? 'too_close_or_cropped'
@@ -372,26 +391,28 @@ class MotionAssessmentController extends ChangeNotifier {
     );
   }
 
-  List<String> _missingBodyRegions(MotionPose pose) {
-    bool unreliable(MotionPoseLandmarkType type) {
-      return !(pose.landmark(type)?.isReliable(minimumConfidence: 0.45) ??
-          false);
+  List<String> _missingAssessmentRegions(MotionPose pose) {
+    bool unavailable(MotionPoseLandmarkType type) {
+      final landmark = pose.landmark(type);
+      return landmark == null ||
+          !landmark.isReliable(minimumConfidence: 0.45) ||
+          landmark.x < 0.02 ||
+          landmark.x > 0.98 ||
+          landmark.y < 0.02 ||
+          landmark.y > 0.98;
     }
 
     return <String>[
-      if (unreliable(MotionPoseLandmarkType.nose)) 'head',
-      if (unreliable(MotionPoseLandmarkType.leftShoulder) &&
-          unreliable(MotionPoseLandmarkType.rightShoulder))
+      if (unavailable(MotionPoseLandmarkType.nose) &&
+          unavailable(MotionPoseLandmarkType.leftEar) &&
+          unavailable(MotionPoseLandmarkType.rightEar))
+        'head',
+      if (unavailable(MotionPoseLandmarkType.leftShoulder) &&
+          unavailable(MotionPoseLandmarkType.rightShoulder))
         'shoulders',
-      if (unreliable(MotionPoseLandmarkType.leftHip) &&
-          unreliable(MotionPoseLandmarkType.rightHip))
+      if (unavailable(MotionPoseLandmarkType.leftHip) &&
+          unavailable(MotionPoseLandmarkType.rightHip))
         'hips',
-      if (unreliable(MotionPoseLandmarkType.leftKnee) &&
-          unreliable(MotionPoseLandmarkType.rightKnee))
-        'knees',
-      if (unreliable(MotionPoseLandmarkType.leftAnkle) &&
-          unreliable(MotionPoseLandmarkType.rightAnkle))
-        'feet',
     ];
   }
 
@@ -414,7 +435,10 @@ class MotionAssessmentController extends ChangeNotifier {
       return (action: 'confirm_recalibration', reason: 'target_changed');
     }
     if (decision.phase == MotionQualityPhase.framing) {
-      return (action: 'step_back', reason: 'full_body_not_visible');
+      return (
+        action: 'adjust_framing',
+        reason: 'assessment_region_not_visible',
+      );
     }
     if (frameStatus == ForwardHeadFrameStatus.needsSideView) {
       return (action: 'turn_sideways', reason: 'side_view_required');
@@ -477,13 +501,13 @@ class MotionAssessmentController extends ChangeNotifier {
           'person_not_detected',
           _withLatestContext({'person_count': 0, 'accept_pose_frames': false}),
         );
-        await voice.speak('请站到镜头前，并让全身完整进入画面。');
+        await voice.speak('请站到镜头前，让头部、肩部和髋部进入画面。');
       case MotionGuidanceDirective.adjustFraming:
         await voice.sendClientEvent(
           'framing_incomplete',
           _withLatestContext({'person_count': 1, 'accept_pose_frames': false}),
         );
-        await voice.speak('请后退一些，让头部到双脚完整进入画面。');
+        await voice.speak('请调整距离，让头部、肩部和髋部进入画面。');
       case MotionGuidanceDirective.singlePersonReady:
         await voice.sendClientEvent(
           'single_person_stable',
@@ -491,7 +515,7 @@ class MotionAssessmentController extends ChangeNotifier {
         );
         await voice.speak(
           target == 'forward_head'
-              ? '取景完成。请自然侧身，双脚站稳，目视前方，不要刻意挺直。'
+              ? '取景完成。请自然侧身，站稳，目视前方，不要刻意挺直。'
               : '取景完成，请保持安全距离，按提示完成动作。',
         );
       case MotionGuidanceDirective.askOthersToLeave:
@@ -503,7 +527,7 @@ class MotionAssessmentController extends ChangeNotifier {
             'accept_pose_frames': false,
           }),
         );
-        await voice.speak('检测到多人入镜，请让非评估人员离开镜头', interrupt: true);
+        await voice.speak('检测到多人入镜，请让非评估人员离开镜头', interrupt: true, exact: true);
       case MotionGuidanceDirective.assessmentResumed:
         await _updateSession(status: 'active');
         await voice.sendClientEvent(
@@ -517,7 +541,11 @@ class MotionAssessmentController extends ChangeNotifier {
           'target_changed',
           _withLatestContext({'accept_pose_frames': false}),
         );
-        await voice.speak('检测对象可能已变化，请在屏幕上确认重新校准。', interrupt: true);
+        await voice.speak(
+          '检测对象可能已变化，请在屏幕上确认重新校准。',
+          interrupt: true,
+          exact: true,
+        );
     }
   }
 
@@ -543,7 +571,7 @@ class MotionAssessmentController extends ChangeNotifier {
           await voice.completeCommand(
             command,
             accepted: false,
-            message: '当前无需重新校准，我们继续保持单人完整入镜。',
+            message: '当前无需重新校准，请继续保持单人且头部到髋部入镜。',
           );
           return;
         }
@@ -551,7 +579,7 @@ class MotionAssessmentController extends ChangeNotifier {
         await voice.completeCommand(
           command,
           accepted: true,
-          message: '已确认是你，请保持单人完整入镜，正在重新校准。',
+          message: '已确认是你，请保持单人且头部到髋部入镜，正在重新校准。',
         );
       case MotionVoiceCommandType.repeatInstruction:
         await voice.completeCommand(
@@ -681,8 +709,17 @@ class MotionAssessmentController extends ChangeNotifier {
     if (_closed) return;
     if (voice.isConnected) {
       _voiceStatusMessage = null;
+    } else if (voice.phase == MotionRealtimeVoicePhase.reconnecting) {
+      _voiceStatusMessage = 'OpenAI 实时语音正在重新连接，请先根据屏幕提示继续';
     } else if (voice.phase == MotionRealtimeVoicePhase.failed) {
-      _voiceStatusMessage ??= '实时语音暂未连接，请根据屏幕提示继续';
+      _voiceStatusMessage = 'OpenAI 实时语音暂未连接，请根据屏幕提示继续';
+      final assessmentId = _voiceAssessmentId;
+      if (!_voiceConnectInProgress &&
+          !_voiceRecoveryUsed &&
+          assessmentId != null) {
+        _voiceRecoveryUsed = true;
+        unawaited(_connectVoice(assessmentId));
+      }
     }
     notifyListeners();
   }

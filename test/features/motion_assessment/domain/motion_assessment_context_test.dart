@@ -13,7 +13,7 @@ void main() {
       personCount: 1,
       targetLocked: true,
       continuity: 'continuous',
-      fullBodyVisible: true,
+      assessmentRegionVisible: true,
       missingRegions: const [],
       distance: 'acceptable',
       requiredView: 'side',
@@ -40,7 +40,11 @@ void main() {
     );
 
     final json = snapshot.toJson();
-    expect(json['schema_version'], 'motion_assessment.context.v2');
+    expect(json['schema_version'], 'motion_assessment.context.v3');
+    final framing = json['framing']! as Map;
+    expect(framing['assessment_region_visible'], isTrue);
+    expect(framing['required_regions'], ['head', 'shoulders', 'hips']);
+    expect(framing, isNot(contains('full_body_visible')));
     expect((json['sampling']! as Map)['progress'], 0.75);
     expect((json['measurement']! as Map)['rolling_median'], 48.1);
     expect(snapshot.toRealtimeInstructions(), contains('本地质量门是权威来源'));

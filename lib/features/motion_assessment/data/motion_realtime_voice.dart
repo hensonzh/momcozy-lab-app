@@ -24,10 +24,17 @@ enum MotionRealtimeVoicePhase {
 abstract interface class MotionRealtimeVoiceClient implements Listenable {
   MotionRealtimeVoicePhase get phase;
   bool get isConnected;
+  bool get hasRemoteAudioTrack;
+  String get providerName;
+  String? get failureCode;
   Stream<MotionVoiceCommand> get commands;
 
   Future<void> connect({required String assessmentId});
-  Future<void> speak(String instruction, {bool interrupt = false});
+  Future<void> speak(
+    String instruction, {
+    bool interrupt = false,
+    bool exact = false,
+  });
   void updateAssessmentContext(MotionAssessmentContextSnapshot snapshot);
   Future<void> sendClientEvent(String eventType, Map<String, Object?> payload);
   Future<void> completeCommand(
@@ -50,6 +57,7 @@ class MotionRealtimeVoice extends ChangeNotifier
   RTCPeerConnection? _peerConnection;
   RTCDataChannel? _dataChannel;
   MediaStream? _microphoneStream;
+  MediaStream? _remoteAudioStream;
   MotionRealtimeResponseQueue? _responseQueue;
   MotionRealtimeSessionGate? _sessionGate;
   final MotionRealtimePlaybackTracker _playbackTracker =
@@ -64,6 +72,10 @@ class MotionRealtimeVoice extends ChangeNotifier
   bool _closed = false;
   bool _disposed = false;
   Future<void>? _terminalCleanup;
+  Timer? _disconnectTimer;
+  String _providerName = '';
+  String? _failureCode;
+  bool _remoteAudioTrackReady = false;
 
   @override
   MotionRealtimeVoicePhase get phase => _phase;
@@ -71,6 +83,14 @@ class MotionRealtimeVoice extends ChangeNotifier
   bool get isConnected =>
       _phase == MotionRealtimeVoicePhase.listening ||
       _phase == MotionRealtimeVoicePhase.speaking;
+  @override
+  bool get hasRemoteAudioTrack =>
+      _remoteAudioTrackReady ||
+      _remoteAudioStream?.getAudioTracks().isNotEmpty == true;
+  @override
+  String get providerName => _providerName;
+  @override
+  String? get failureCode => _failureCode;
   @override
   Stream<MotionVoiceCommand> get commands => _commands.stream;
 
@@ -83,7 +103,9 @@ class MotionRealtimeVoice extends ChangeNotifier
     if (pendingCleanup != null) await pendingCleanup;
     if (_disposed || _closed) return;
     final generation = ++_connectionGeneration;
+    _failureCode = null;
     _setPhase(MotionRealtimeVoicePhase.requestingPermission);
+    var failureStage = 'microphone_permission';
     try {
       final stream = await navigator.mediaDevices.getUserMedia({
         'audio': {
@@ -99,6 +121,7 @@ class MotionRealtimeVoice extends ChangeNotifier
       }
       _microphoneStream = stream;
       _setPhase(MotionRealtimeVoicePhase.connecting);
+      failureStage = 'peer_connection';
       final sessionGate = MotionRealtimeSessionGate();
       _sessionGate = sessionGate;
       final peer = await createPeerConnection({
@@ -122,13 +145,21 @@ class MotionRealtimeVoice extends ChangeNotifier
         if (!_isActive(generation)) return;
         switch (state) {
           case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
+            _disconnectTimer?.cancel();
+            _disconnectTimer = null;
             if (sessionGate.isReady) {
               _setPhase(MotionRealtimeVoicePhase.listening);
             }
           case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
             _setPhase(MotionRealtimeVoicePhase.reconnecting);
+            _disconnectTimer?.cancel();
+            _disconnectTimer = Timer(const Duration(seconds: 2), () {
+              _failureCode = 'connection_lost';
+              _scheduleTerminalFailure(generation);
+            });
           case RTCPeerConnectionState.RTCPeerConnectionStateFailed:
           case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
+            _failureCode = 'connection_closed';
             sessionGate.fail(
               StateError('Realtime WebRTC connection closed before ready.'),
             );
@@ -139,7 +170,7 @@ class MotionRealtimeVoice extends ChangeNotifier
       };
       peer.onTrack = (event) {
         if (event.track.kind == 'audio') {
-          unawaited(Helper.setSpeakerphoneOnButPreferBluetooth());
+          unawaited(_configureRemoteAudio(event));
         }
       };
       final channel = await peer.createDataChannel(
@@ -169,17 +200,20 @@ class MotionRealtimeVoice extends ChangeNotifier
       if (offerSdp == null || offerSdp.isEmpty) {
         throw StateError('WebRTC did not produce a local SDP offer.');
       }
-      final answerSdp = await signaling.createAnswer(
+      failureStage = 'signaling';
+      final answer = await signaling.createAnswer(
         assessmentId: assessmentId,
         offerSdp: offerSdp,
       );
       if (!_isActive(generation)) return;
+      _providerName = answer.provider;
       await peer.setRemoteDescription(
-        RTCSessionDescription(answerSdp, 'answer'),
+        RTCSessionDescription(answer.answerSdp, 'answer'),
       );
       if (channel.state == RTCDataChannelState.RTCDataChannelOpen) {
         sessionGate.markDataChannelOpen();
       }
+      failureStage = 'session_startup';
       await sessionGate.ready.timeout(const Duration(seconds: 8));
       if (!_isActive(generation)) return;
       _responseQueue = MotionRealtimeResponseQueue(
@@ -195,8 +229,13 @@ class MotionRealtimeVoice extends ChangeNotifier
           'context': snapshot.toJson(),
         });
       }
-    } catch (_) {
+    } catch (error) {
       if (_isActive(generation)) {
+        _failureCode = failureStage;
+        debugPrint(
+          'Motion Realtime voice failed at $failureStage '
+          '(${error.runtimeType}).',
+        );
         _setPhase(MotionRealtimeVoicePhase.failed);
         await _closeResources();
       }
@@ -205,10 +244,18 @@ class MotionRealtimeVoice extends ChangeNotifier
   }
 
   @override
-  Future<void> speak(String instruction, {bool interrupt = false}) async {
+  Future<void> speak(
+    String instruction, {
+    bool interrupt = false,
+    bool exact = false,
+  }) async {
     if (!isConnected) return;
     try {
-      await _responseQueue?.enqueue(instruction, interrupt: interrupt);
+      await _responseQueue?.enqueue(
+        instruction,
+        interrupt: interrupt,
+        exact: exact,
+      );
     } catch (_) {
       _scheduleTerminalFailure(_connectionGeneration);
     }
@@ -310,7 +357,7 @@ class MotionRealtimeVoice extends ChangeNotifier
             : DateTime.now().difference(receivedAt).inMilliseconds;
         final instructions =
             snapshot?.toRealtimeInstructions(contextAgeMs: contextAgeMs) ??
-            '请简短回答用户刚才的问题。当前没有新鲜的端侧姿态语义快照，因此不要猜测用户姿态；请提示用户保持单人全身入镜，等待本地质量门重新确认。';
+            '请简短回答用户刚才的问题。当前没有新鲜的端侧姿态语义快照，因此不要猜测用户姿态；请提示用户保持单人且头部、肩部和髋部入镜，等待本地质量门重新确认。';
         unawaited(_enqueueModelTurn(instructions, generation));
       }
       final playbackTransition = _playbackTracker.handleEventType(type);
@@ -380,6 +427,19 @@ class MotionRealtimeVoice extends ChangeNotifier
     );
   }
 
+  Future<void> _configureRemoteAudio(RTCTrackEvent event) async {
+    event.track.enabled = true;
+    _remoteAudioTrackReady = true;
+    if (event.streams.isNotEmpty) _remoteAudioStream = event.streams.first;
+    try {
+      await Helper.setVolume(1, event.track);
+      await Helper.setSpeakerphoneOnButPreferBluetooth();
+    } catch (_) {
+      // The WebRTC engine still owns playout; routing can recover on the next
+      // platform audio-device change.
+    }
+  }
+
   @override
   Future<void> close() async {
     if (_closed) return;
@@ -390,6 +450,8 @@ class MotionRealtimeVoice extends ChangeNotifier
   }
 
   Future<void> _closeResources() async {
+    _disconnectTimer?.cancel();
+    _disconnectTimer = null;
     final channel = _dataChannel;
     final peer = _peerConnection;
     final stream = _microphoneStream;
@@ -398,6 +460,8 @@ class MotionRealtimeVoice extends ChangeNotifier
     _dataChannel = null;
     _peerConnection = null;
     _microphoneStream = null;
+    _remoteAudioStream = null;
+    _remoteAudioTrackReady = false;
     _responseQueue = null;
     _sessionGate = null;
     _playbackTracker.reset();
@@ -421,13 +485,13 @@ class MotionRealtimeVoice extends ChangeNotifier
 
   void _scheduleTerminalFailure(int generation) {
     if (!_isActive(generation) || _terminalCleanup != null) return;
-    _setPhase(MotionRealtimeVoicePhase.failed);
     _connectionGeneration += 1;
     late final Future<void> cleanup;
     cleanup = _closeResources().whenComplete(() {
       if (identical(_terminalCleanup, cleanup)) _terminalCleanup = null;
     });
     _terminalCleanup = cleanup;
+    _setPhase(MotionRealtimeVoicePhase.failed);
   }
 
   Future<void> _disposeStream(MediaStream stream) async {

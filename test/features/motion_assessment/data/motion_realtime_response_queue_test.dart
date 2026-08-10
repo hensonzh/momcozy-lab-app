@@ -50,6 +50,7 @@ void main() {
       expect(events.map((event) => event['type']), [
         'response.create',
         'response.cancel',
+        'output_audio_buffer.clear',
       ]);
 
       await queue.handleServerEvent({
@@ -60,6 +61,7 @@ void main() {
       expect(events.map((event) => event['type']), [
         'response.create',
         'response.cancel',
+        'output_audio_buffer.clear',
         'response.create',
       ]);
       expect(_instructions(events.last), contains('紧急提示'));
@@ -93,13 +95,13 @@ void main() {
     );
 
     await queue.enqueueModelTurn(
-      '基于最新端侧快照回答。motion_assessment.context.v2 sequence=18',
+      '基于最新端侧快照回答。motion_assessment.context.v3 sequence=18',
     );
 
     expect(events, hasLength(1));
     expect(
       _instructions(events.single),
-      contains('motion_assessment.context.v2'),
+      contains('motion_assessment.context.v3'),
     );
     expect(_instructions(events.single), contains('默认使用简体中文'));
     expect(_instructions(events.single), contains('用户明确要求'));
@@ -121,14 +123,27 @@ void main() {
       expect(events.map((event) => event['type']), [
         'response.create',
         'response.cancel',
+        'output_audio_buffer.clear',
       ]);
       await queue.handleServerEvent({
         'type': 'response.done',
         'response': {'status': 'cancelled'},
       });
-      expect(events, hasLength(2));
+      expect(events, hasLength(3));
     },
   );
+
+  test('normal guidance is phrased naturally instead of exact TTS', () async {
+    final events = <Map<String, Object?>>[];
+    final queue = MotionRealtimeResponseQueue(
+      sendEvent: (event) async => events.add(event),
+    );
+
+    await queue.enqueue('请自然侧身并目视前方');
+
+    expect(_instructions(events.single), contains('自然、简短'));
+    expect(_instructions(events.single), isNot(contains('请只说下面这句')));
+  });
 
   test(
     'releases the active slot when response.create cannot be sent',

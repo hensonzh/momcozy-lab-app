@@ -86,6 +86,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
+    MediaContentRepository? mediaContentRepository,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
     DateTime Function()? now,
@@ -151,6 +152,7 @@ class MomCozyApiRuntime {
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
     _hasInjectedAgentVoicePlaybackPlayer = agentVoicePlaybackPlayer != null;
     _productAssetRepository = productAssetRepository;
+    _mediaContentRepository = mediaContentRepository;
     _hasInjectedProductAssetRepository = productAssetRepository != null;
     _volumeUnitPreferenceStore = volumeUnitPreferenceStore;
     _blePlatform = blePlatform;
@@ -170,6 +172,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
+    MediaContentRepository? mediaContentRepository,
     String? userId,
     String? babyId,
     String? locale,
@@ -194,6 +197,7 @@ class MomCozyApiRuntime {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
+      mediaContentRepository: mediaContentRepository,
     );
   }
 
@@ -210,6 +214,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
+    MediaContentRepository? mediaContentRepository,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
@@ -295,6 +300,7 @@ class MomCozyApiRuntime {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
+      mediaContentRepository: mediaContentRepository,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
@@ -780,6 +786,9 @@ class MomCozyRuntimeController extends ChangeNotifier {
     final volumeUnitPreferenceStore = sameAuthenticatedAccount
         ? _runtime.volumeUnitPreferenceStore
         : null;
+    final mediaContentRepository = sameAuthenticatedAccount
+        ? _runtime._mediaContentRepository
+        : null;
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
         session,
@@ -793,6 +802,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
         hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
         profileOverviewCache: profileOverviewCache,
+        mediaContentRepository: mediaContentRepository,
         volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       );
     }
@@ -808,6 +818,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
+      mediaContentRepository: mediaContentRepository,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       sessionStore: store,
       sessionProvider: () => _currentSession,

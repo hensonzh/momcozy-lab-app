@@ -599,8 +599,14 @@ void main() {
         refreshToken: 'session-refresh',
       );
       final store = MemoryMomCozySessionStore(session);
+      final mediaContentRepository = MediaContentRepository(
+        baseUri: Uri.parse('http://127.0.0.1:8769'),
+      );
       final controller = MomCozyRuntimeController(
-        MomCozyApiRuntime.fromSession(session),
+        MomCozyApiRuntime.fromSession(
+          session,
+          mediaContentRepository: mediaContentRepository,
+        ),
       );
       controller.enableSessionAutoRefresh(store);
 
@@ -609,6 +615,10 @@ void main() {
       expect(controller.currentSession.babyId, 'baby-two');
       expect(controller.runtime.currentSession.babyId, 'baby-two');
       expect((await store.readSession())?.babyId, 'baby-two');
+      expect(
+        controller.runtime.mediaContentRepository,
+        same(mediaContentRepository),
+      );
       controller.dispose();
     },
   );
