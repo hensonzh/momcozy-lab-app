@@ -36,26 +36,67 @@ class CarePlan {
     required this.category,
     required this.title,
     required this.summary,
-    this.weekNumber = 1,
-    this.totalWeeks = 8,
-    this.sessionsPerDay = 5,
-    this.dailyTargetVolumeMl = 600,
-    this.todayVolumeMl = 0,
-    this.weeklyTargetVolumeMl = 4200,
-    this.weeklyVolumeMl = 0,
+    this.weekNumber,
+    this.totalWeeks,
+    this.sessionsPerDay,
+    this.dailyTargetVolumeMl,
+    this.todayVolumeMl,
+    this.weeklyTargetVolumeMl,
+    this.weeklyVolumeMl,
+    this.startDate,
+    this.endDate,
+    this.durationDays,
+    this.goal,
+    this.basisMode,
+    this.pumpingSessionsPerDay,
+    this.breastfeedingAnchorsPerDay,
   });
 
   final String id;
   final PlanCategory category;
   final String title;
   final String summary;
-  final int weekNumber;
-  final int totalWeeks;
-  final int sessionsPerDay;
-  final int dailyTargetVolumeMl;
-  final int todayVolumeMl;
-  final int weeklyTargetVolumeMl;
-  final int weeklyVolumeMl;
+  final int? weekNumber;
+  final int? totalWeeks;
+  final int? sessionsPerDay;
+  final int? dailyTargetVolumeMl;
+  final int? todayVolumeMl;
+  final int? weeklyTargetVolumeMl;
+  final int? weeklyVolumeMl;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final int? durationDays;
+  final String? goal;
+  final String? basisMode;
+  final int? pumpingSessionsPerDay;
+  final int? breastfeedingAnchorsPerDay;
+
+  bool get hasVolumeProgress =>
+      dailyTargetVolumeMl != null &&
+      todayVolumeMl != null &&
+      weeklyTargetVolumeMl != null &&
+      weeklyVolumeMl != null;
+
+  String? get goalLabel => switch (goal) {
+    'increase_supply' => 'Increase Supply',
+    'maintain_supply' => 'Maintain Supply',
+    'reduce_supply' => 'Reduce Supply',
+    _ => null,
+  };
+
+  int? dayNumberOn(DateTime selectedDay) {
+    final start = startDate;
+    final duration = durationDays;
+    if (start == null || duration == null || duration <= 0) return null;
+    final normalizedStart = DateTime.utc(start.year, start.month, start.day);
+    final normalizedSelected = DateTime.utc(
+      selectedDay.year,
+      selectedDay.month,
+      selectedDay.day,
+    );
+    final day = normalizedSelected.difference(normalizedStart).inDays + 1;
+    return day.clamp(1, duration);
+  }
 }
 
 @immutable

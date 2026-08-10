@@ -120,6 +120,60 @@ void main() {
     },
   );
 
+  test(
+    'maps lactation-plan v1 without inventing week or volume metrics',
+    () async {
+      final transport = FixtureApiJsonTransportByPath({
+        planListEndpoint: const {
+          'items': [
+            {
+              'id': 'plan-v1',
+              'plan_type': 'lactation',
+              'title': '15 天追奶计划',
+              'summary': 'Gradual schedule',
+              'status': 'active',
+              'payload': {
+                'schema_version': 'lactation-plan.v1',
+                'goal': 'increase_supply',
+                'start_date': '2026-08-11',
+                'end_date': '2026-08-25',
+                'duration_days': 15,
+                'basis': {'mode': 'history_analysis'},
+                'preferences': {
+                  'target_daily_pattern': {
+                    'pumping_sessions': 6,
+                    'breastfeeding_anchors': 1,
+                  },
+                },
+              },
+            },
+          ],
+        },
+        planSessionListEndpoint: const {'items': <Object?>[]},
+      });
+
+      final dashboard = await PlanApiRepository(
+        transport: transport,
+      ).fetchDashboard(weekOf: DateTime(2026, 8, 11));
+      final plan = dashboard.plans.single;
+
+      expect(plan.startDate, DateTime(2026, 8, 11));
+      expect(plan.endDate, DateTime(2026, 8, 25));
+      expect(plan.durationDays, 15);
+      expect(plan.goal, 'increase_supply');
+      expect(plan.basisMode, 'history_analysis');
+      expect(plan.pumpingSessionsPerDay, 6);
+      expect(plan.breastfeedingAnchorsPerDay, 1);
+      expect(plan.sessionsPerDay, 7);
+      expect(plan.weekNumber, isNull);
+      expect(plan.totalWeeks, isNull);
+      expect(plan.dailyTargetVolumeMl, isNull);
+      expect(plan.todayVolumeMl, isNull);
+      expect(plan.weeklyTargetVolumeMl, isNull);
+      expect(plan.weeklyVolumeMl, isNull);
+    },
+  );
+
   test('coalesces duplicate dashboard loads for the same day', () async {
     final transport = _DeferredPlanApiTransport();
     final repository = PlanApiRepository(transport: transport);
@@ -251,6 +305,23 @@ void main() {
       title: 'Updated session',
       scheduledAt: DateTime(2026, 10, 22, 10),
     );
+
+    expect(repository.snapshotFor(weekOf: selectedDay), isNull);
+  });
+
+  test('explicit invalidation clears the dashboard snapshot', () async {
+    final selectedDay = DateTime(2026, 10, 22);
+    final repository = PlanApiRepository(
+      transport: FixtureApiJsonTransportByPath({
+        planListEndpoint: const {'items': <Object?>[]},
+        planSessionListEndpoint: const {'items': <Object?>[]},
+      }),
+    );
+
+    await repository.fetchDashboard(weekOf: selectedDay);
+    expect(repository.snapshotFor(weekOf: selectedDay), isNotNull);
+
+    repository.invalidate();
 
     expect(repository.snapshotFor(weekOf: selectedDay), isNull);
   });
