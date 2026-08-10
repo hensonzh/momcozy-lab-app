@@ -152,12 +152,12 @@ void main() {
 
     expect(voice.connectCalls, 1);
     expect(voice.guidanceRequests.first.type, 'assessment_started');
-    expect(voice.guidanceRequests.first.awaitPlaybackStart, isTrue);
+    expect(voice.guidanceRequests.first.awaitPlaybackCompletion, isTrue);
     await controller.finish();
   });
 
   test(
-    'does not sample pose frames until first Realtime audio starts',
+    'does not sample pose frames until first Realtime guidance completes',
     () async {
       final firstAudio = Completer<void>();
       final pose = _FakePosePlatform();
@@ -192,6 +192,50 @@ void main() {
   );
 
   test(
+    'starts sampling only after the spoken capture countdown completes',
+    () async {
+      final countdown = Completer<void>();
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice()
+        ..guidanceCompleters['capture_countdown'] = countdown;
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: _FakeRepository(immediateSession: _session()),
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+        forwardHeadAnalyzer: ForwardHeadAnalyzer(
+          minimumStableFor: Duration.zero,
+          minimumSamples: 1,
+        ),
+      );
+
+      await controller.start();
+      pose.emit(_acceptedSideObservation());
+      await _flush();
+
+      expect(controller.phase, MotionAssessmentPagePhase.readyCountdown);
+      expect(controller.samplingProgress, 0);
+      expect(voice.guidanceRequests.last.type, 'capture_countdown');
+      expect(voice.guidanceRequests.last.awaitPlaybackCompletion, isTrue);
+
+      countdown.complete();
+      await _flush();
+      pose.emit(
+        _acceptedSideObservation(timestamp: const Duration(seconds: 5)),
+      );
+      await _flush();
+
+      expect(
+        voice.guidanceRequests.map((request) => request.type),
+        contains('change_orientation'),
+      );
+      await controller.finish();
+    },
+  );
+
+  test(
     'converts live pose changes into Realtime-owned guidance turns',
     () async {
       final repository = _FakeRepository(immediateSession: _session());
@@ -206,6 +250,7 @@ void main() {
         qualityGate: MotionQualityGate(
           singlePersonStableFor: Duration.zero,
           multiplePeopleStableFor: Duration.zero,
+          personMissingStableFor: Duration.zero,
         ),
       );
 
@@ -237,9 +282,12 @@ void main() {
         containsAll([
           'assessment_started',
           'person_not_detected',
-          'single_person_stable',
           'multiple_people',
         ]),
+      );
+      expect(
+        voice.sentEvents.map((event) => event.type),
+        contains('single_person_stable'),
       );
       expect(voice.latestContext?.personCount, 2);
       expect(voice.latestContext?.recommendedAction, 'ask_others_to_leave');
@@ -331,11 +379,12 @@ void main() {
           minimumStableFor: Duration.zero,
           minimumSamples: 1,
         ),
+        captureCountdown: Duration.zero,
       );
 
       await controller.start();
       voice.latestAudioItemId = 'before-review';
-      pose.emit(_acceptedSideObservation());
+      pose.emit(_acceptedSideObservation(side: 'right'));
       while (!voice.guidanceRequests.any(
         (request) => request.type == 'change_orientation',
       )) {
@@ -450,6 +499,34 @@ void main() {
   );
 
   test(
+    'the explicit end action safely cancels an in-progress assessment',
+    () async {
+      final repository = _FakeRepository(immediateSession: _session());
+      final pose = _FakePosePlatform();
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: _FakeVoice(),
+      );
+
+      await controller.start();
+      expect(controller.canEnd, isTrue);
+
+      await controller.finish();
+
+      expect(controller.exitRequested, isTrue);
+      expect(controller.canEnd, isFalse);
+      expect(
+        repository.finalizations.single.outcome,
+        MotionAssessmentOutcome.cancelled,
+      );
+      expect(pose.stopCalls, greaterThanOrEqualTo(1));
+    },
+  );
+
+  test(
     'does not replace an ambiguously staged completion with a failed finalization',
     () async {
       final repository = _FakeRepository(
@@ -469,10 +546,11 @@ void main() {
           minimumStableFor: Duration.zero,
           minimumSamples: 1,
         ),
+        captureCountdown: Duration.zero,
       );
 
       await controller.start();
-      pose.emit(_acceptedSideObservation());
+      pose.emit(_acceptedSideObservation(side: 'right'));
       while (!voice.guidanceRequests.any(
         (request) => request.type == 'change_orientation',
       )) {
@@ -508,7 +586,7 @@ void main() {
   );
 
   testWidgets(
-    'keeps the assessment hands-free without fallback text or controls',
+    'keeps guidance hands-free while exposing one explicit end control',
     (tester) async {
       final controller = MotionAssessmentController(
         target: 'forward_head',
@@ -532,6 +610,11 @@ void main() {
 
       expect(find.byType(FilledButton), findsNothing);
       expect(find.byType(IconButton), findsNothing);
+      expect(
+        find.byKey(const ValueKey('motion-assessment-end')),
+        findsOneWidget,
+      );
+      expect(find.text('结束评估'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('motion-assessment-guidance')),
         findsNothing,
@@ -803,6 +886,7 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
 
   final Object? connectError;
   Completer<void>? firstGuidanceCompleter;
+  final Map<String, Completer<void>> guidanceCompleters = {};
   VoidCallback? beforeConnect;
   int connectCalls = 0;
   MotionAssessmentContextSnapshot? latestContext;
@@ -874,9 +958,10 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
       awaitPlaybackStart: awaitPlaybackStart,
       awaitPlaybackCompletion: awaitPlaybackCompletion,
     ));
-    if (awaitPlaybackStart) {
+    if (awaitPlaybackStart || awaitPlaybackCompletion) {
       await firstGuidanceCompleter?.future;
       firstGuidanceCompleter = null;
+      await guidanceCompleters[eventType]?.future;
     }
   }
 
@@ -918,7 +1003,12 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   void emitCommand(MotionVoiceCommand command) => _commands.add(command);
 }
 
-MotionPoseObservation _acceptedSideObservation() {
+MotionPoseObservation _acceptedSideObservation({
+  String side = 'left',
+  Duration timestamp = const Duration(seconds: 1),
+}) {
+  final leftConfidence = side == 'left' ? 0.95 : 0.9;
+  final rightConfidence = side == 'right' ? 0.95 : 0.9;
   const reliable = MotionPoseLandmark(
     x: 0.5,
     y: 0.5,
@@ -927,7 +1017,7 @@ MotionPoseObservation _acceptedSideObservation() {
     presence: 0.95,
   );
   return MotionPoseObservation(
-    timestamp: const Duration(seconds: 1),
+    timestamp: timestamp,
     inputWidth: 1000,
     inputHeight: 1000,
     inferenceTime: const Duration(milliseconds: 20),
@@ -951,40 +1041,40 @@ MotionPoseObservation _acceptedSideObservation() {
             visibility: 0.95,
             presence: 0.95,
           ),
-          MotionPoseLandmarkType.rightEar: const MotionPoseLandmark(
+          MotionPoseLandmarkType.rightEar: MotionPoseLandmark(
             x: 0.7,
             y: 0.35,
             z: 0,
-            visibility: 0.9,
-            presence: 0.9,
+            visibility: rightConfidence,
+            presence: rightConfidence,
           ),
-          MotionPoseLandmarkType.leftShoulder: const MotionPoseLandmark(
+          MotionPoseLandmarkType.leftShoulder: MotionPoseLandmark(
             x: 0.5,
             y: 0.55,
             z: 0,
-            visibility: 0.95,
-            presence: 0.95,
+            visibility: leftConfidence,
+            presence: leftConfidence,
           ),
-          MotionPoseLandmarkType.rightShoulder: const MotionPoseLandmark(
+          MotionPoseLandmarkType.rightShoulder: MotionPoseLandmark(
             x: 0.51,
             y: 0.55,
             z: 0,
-            visibility: 0.9,
-            presence: 0.9,
+            visibility: rightConfidence,
+            presence: rightConfidence,
           ),
-          MotionPoseLandmarkType.leftHip: const MotionPoseLandmark(
+          MotionPoseLandmarkType.leftHip: MotionPoseLandmark(
             x: 0.5,
             y: 0.7,
             z: 0,
-            visibility: 0.95,
-            presence: 0.95,
+            visibility: leftConfidence,
+            presence: leftConfidence,
           ),
-          MotionPoseLandmarkType.rightHip: const MotionPoseLandmark(
+          MotionPoseLandmarkType.rightHip: MotionPoseLandmark(
             x: 0.51,
             y: 0.7,
             z: 0,
-            visibility: 0.9,
-            presence: 0.9,
+            visibility: rightConfidence,
+            presence: rightConfidence,
           ),
           MotionPoseLandmarkType.leftKnee: reliable,
           MotionPoseLandmarkType.leftAnkle: const MotionPoseLandmark(

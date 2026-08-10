@@ -295,9 +295,8 @@ class MotionRealtimeVoice extends ChangeNotifier
       _playbackStarted = started;
       _playbackCompleted = completed;
     }
-    final protectsFinishHandshake =
-        normalizedEventType == 'assessment_review_ready';
-    if (protectsFinishHandshake) {
+    final protectsPlayback = awaitPlaybackCompletion;
+    if (protectsPlayback) {
       _protectedPlaybackEventType = normalizedEventType;
     }
     try {
@@ -306,6 +305,8 @@ class MotionRealtimeVoice extends ChangeNotifier
       if (!published) return;
       await _responseQueue?.enqueueModelTurn(
         _guidanceTurnInstructions(normalizedEventType),
+        coalesceKey: _guidanceCoalesceKey(normalizedEventType),
+        interruptActive: _interruptsStaleGuidance(normalizedEventType),
       );
       if (started != null) {
         await started.future.timeout(const Duration(seconds: 10));
@@ -319,7 +320,7 @@ class MotionRealtimeVoice extends ChangeNotifier
     } finally {
       if (identical(_playbackStarted, started)) _playbackStarted = null;
       if (identical(_playbackCompleted, completed)) _playbackCompleted = null;
-      if (protectsFinishHandshake &&
+      if (protectsPlayback &&
           _protectedPlaybackEventType == normalizedEventType) {
         _protectedPlaybackEventType = null;
       }
@@ -447,6 +448,12 @@ class MotionRealtimeVoice extends ChangeNotifier
 
   String _guidanceTurnInstructions(String eventType) {
     return switch (eventType) {
+      'capture_countdown' =>
+        '端侧已确认当前画面可以开始采样。只用一句短句让用户站稳，然后清楚地说“三、二、一，开始”。'
+            '必须说完倒计时，不要添加其他动作或结果。',
+      'opposite_side_required' =>
+        '端侧确认用户仍是上一段的方向。请亲切地说明需要转到另一侧，站稳并目视前方；'
+            '不要声称第二段已完成。',
       'assessment_review_ready' =>
         '客户端已完成两段采集与质量复核。请用一句自然中文说明采集已完成，并明确询问用户：'
             '“你想结束本次评估，还是继续评估？”说完后等待用户新的语音回复，不要自行结束。',
@@ -460,6 +467,30 @@ class MotionRealtimeVoice extends ChangeNotifier
             '主动给出一句简短、自然、可立即执行的中文语音指导。一次只说一个动作；端侧质量门和状态机结论是权威，'
             '不要要求用户触碰屏幕，不要要求腿脚完整入镜。',
     };
+  }
+
+  String? _guidanceCoalesceKey(String eventType) {
+    return switch (eventType) {
+      'assessment_started' ||
+      'assessment_review_ready' ||
+      'assessment_finalizing' ||
+      'safety_stop' => null,
+      _ => 'assessment-guidance',
+    };
+  }
+
+  bool _interruptsStaleGuidance(String eventType) {
+    return const {
+      'person_not_detected',
+      'framing_incomplete',
+      'multiple_people',
+      'target_changed',
+      'side_view_required',
+      'capture_countdown',
+      'change_orientation',
+      'opposite_side_required',
+      'assessment_resumed_after_reconnect',
+    }.contains(eventType);
   }
 
   void _handleServerEvent(

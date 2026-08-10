@@ -159,11 +159,13 @@ void main() {
     },
   );
 
-  test('restarts the stable window after a rejected frame', () {
+  test('keeps useful samples across a brief rejected frame', () {
     final analyzer = ForwardHeadAnalyzer(
       minimumStableFor: const Duration(seconds: 2),
       minimumSamples: 3,
-      maximumSampleGap: const Duration(milliseconds: 1100),
+      samplingWindow: const Duration(seconds: 4),
+      interruptionGracePeriod: const Duration(milliseconds: 1500),
+      minimumAcceptedRatio: 0.7,
     );
     final pose = _sidePose(
       earX: 0.70,
@@ -190,28 +192,101 @@ void main() {
       ),
       isNull,
     );
-    analyzer.rejectFrame();
-
-    for (final second in [3, 4]) {
-      expect(
-        analyzer.add(
-          pose,
-          at: Duration(seconds: second),
-          inputWidth: 1000,
-          inputHeight: 1000,
-        ),
-        isNull,
-      );
-    }
+    analyzer.rejectFrame(at: const Duration(milliseconds: 1500));
     final result = analyzer.add(
       pose,
-      at: const Duration(seconds: 5),
+      at: const Duration(seconds: 2),
       inputWidth: 1000,
       inputHeight: 1000,
     );
 
     expect(result, isNotNull);
     expect(result!.sampleCount, 3);
+    expect(analyzer.acceptedRatio, 0.75);
+  });
+
+  test(
+    'restarts only after an interruption persists beyond the grace period',
+    () {
+      final analyzer = ForwardHeadAnalyzer(
+        minimumStableFor: const Duration(seconds: 2),
+        minimumSamples: 3,
+        samplingWindow: const Duration(seconds: 4),
+        interruptionGracePeriod: const Duration(seconds: 1),
+      );
+      final pose = _sidePose(
+        earX: 0.70,
+        earY: 0.40,
+        shoulderX: 0.50,
+        shoulderY: 0.60,
+      );
+
+      analyzer.add(
+        pose,
+        at: Duration.zero,
+        inputWidth: 1000,
+        inputHeight: 1000,
+      );
+      analyzer.add(
+        pose,
+        at: const Duration(milliseconds: 500),
+        inputWidth: 1000,
+        inputHeight: 1000,
+      );
+      analyzer.rejectFrame(at: const Duration(milliseconds: 750));
+      analyzer.rejectFrame(at: const Duration(seconds: 2));
+
+      expect(analyzer.sampleCount, 0);
+      expect(analyzer.samplingProgress, 0);
+
+      for (final milliseconds in [2500, 3500]) {
+        expect(
+          analyzer.add(
+            pose,
+            at: Duration(milliseconds: milliseconds),
+            inputWidth: 1000,
+            inputHeight: 1000,
+          ),
+          isNull,
+        );
+      }
+      final result = analyzer.add(
+        pose,
+        at: const Duration(milliseconds: 4500),
+        inputWidth: 1000,
+        inputHeight: 1000,
+      );
+      expect(result, isNotNull);
+      expect(result!.sampleCount, 3);
+    },
+  );
+
+  test('sampling progress never moves backwards during one rolling window', () {
+    final analyzer = ForwardHeadAnalyzer(
+      minimumStableFor: const Duration(seconds: 2),
+      minimumSamples: 3,
+      samplingWindow: const Duration(seconds: 4),
+      interruptionGracePeriod: const Duration(seconds: 1),
+      minimumAcceptedRatio: 0.7,
+    );
+    final pose = _sidePose(
+      earX: 0.70,
+      earY: 0.40,
+      shoulderX: 0.50,
+      shoulderY: 0.60,
+    );
+
+    analyzer.add(pose, at: Duration.zero, inputWidth: 1000, inputHeight: 1000);
+    analyzer.add(
+      pose,
+      at: const Duration(seconds: 1),
+      inputWidth: 1000,
+      inputHeight: 1000,
+    );
+    final beforeInterruption = analyzer.samplingProgress;
+    analyzer.rejectFrame(at: const Duration(milliseconds: 1250));
+
+    expect(analyzer.samplingProgress, greaterThanOrEqualTo(beforeInterruption));
   });
 }
 

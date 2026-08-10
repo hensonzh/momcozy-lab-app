@@ -18,6 +18,7 @@ enum MotionAssessmentPagePhase {
   preparing,
   greeting,
   calibrating,
+  readyCountdown,
   capturingSegment,
   changingOrientation,
   capturingValidationSegment,
@@ -41,6 +42,7 @@ class MotionAssessmentController extends ChangeNotifier {
     required this.voice,
     this.prepareRealtimeAudio,
     this.voiceRetryDelay = const Duration(milliseconds: 500),
+    this.captureCountdown = const Duration(seconds: 3),
     MotionQualityGate? qualityGate,
     ForwardHeadAnalyzer? forwardHeadAnalyzer,
     MotionAssessmentWorkflow? workflow,
@@ -56,6 +58,7 @@ class MotionAssessmentController extends ChangeNotifier {
   final MotionRealtimeVoiceClient voice;
   final Future<void> Function()? prepareRealtimeAudio;
   final Duration voiceRetryDelay;
+  final Duration captureCountdown;
   final MotionQualityGate qualityGate;
   final ForwardHeadAnalyzer forwardHeadAnalyzer;
   final MotionAssessmentWorkflow workflow;
@@ -81,8 +84,11 @@ class MotionAssessmentController extends ChangeNotifier {
   int _multiplePeopleCount = 0;
   int _targetChangedCount = 0;
   int _framingAdjustmentCount = 0;
-  final Set<int> _reportedSamplingMilestones = <int>{};
   bool _sideViewPromptEmitted = false;
+  bool _oppositeSidePromptEmitted = false;
+  bool _orientationGuidanceCompleted = false;
+  bool _captureCountdownInProgress = false;
+  int _captureCountdownGeneration = 0;
   Duration? _firstObservationAt;
   Duration? _lastObservationAt;
   MotionAssessmentContextSnapshot? _latestContext;
@@ -115,6 +121,12 @@ class MotionAssessmentController extends ChangeNotifier {
   bool get completedSuccessfully => _completedSuccessfully;
   String? get completedAssessmentId => _completedAssessmentId;
   bool get canRetry => _phase == MotionAssessmentPagePhase.failed;
+  bool get canEnd =>
+      _started &&
+      !_closed &&
+      !_terminalizationInProgress &&
+      _phase != MotionAssessmentPagePhase.completed &&
+      _phase != MotionAssessmentPagePhase.failed;
   double get samplingProgress {
     if (_forwardHeadResult != null) return 1;
     final completed = workflow.segmentResults.length;
@@ -218,7 +230,7 @@ class MotionAssessmentController extends ChangeNotifier {
               'legs_or_feet_required': false,
               'required_segments': workflow.requiredSegments,
             }),
-            awaitPlaybackStart: true,
+            awaitPlaybackCompletion: true,
           );
           if (_closed) return false;
           workflow.beginCalibration();
@@ -276,11 +288,16 @@ class MotionAssessmentController extends ChangeNotifier {
               ? '检测到多人，正在确认…'
               : '保持站位，正在校准评估对象…';
         case MotionQualityPhase.ready:
-          if (workflow.phase == MotionAssessmentWorkflowPhase.calibrating) {
-            workflow.beginCapture();
+          final targetPose = decision.target;
+          if (targetPose != null &&
+              (workflow.phase == MotionAssessmentWorkflowPhase.calibrating ||
+                  workflow.phase ==
+                      MotionAssessmentWorkflowPhase.changingOrientation)) {
+            _prepareCaptureReadiness(targetPose, observation);
+          } else {
+            _syncPagePhaseFromWorkflow();
+            _guidance = '请自然侧身，站稳并目视前方';
           }
-          _syncPagePhaseFromWorkflow();
-          _guidance = '请自然侧身，站稳并目视前方';
         case MotionQualityPhase.pausedMultiplePeople:
           _phase = MotionAssessmentPagePhase.pausedMultiplePeople;
           _guidance = '检测到多人，请让非评估人员离开镜头';
@@ -299,15 +316,18 @@ class MotionAssessmentController extends ChangeNotifier {
         workflow.phase ==
             MotionAssessmentWorkflowPhase.capturingValidationSegment;
     if (samplingActive && (!decision.acceptFrame || decision.target == null)) {
-      forwardHeadAnalyzer.rejectFrame();
+      forwardHeadAnalyzer.rejectFrame(at: observation.timestamp);
     } else if (samplingActive && target == 'forward_head') {
-      _acceptedFrames += 1;
       readyResult = forwardHeadAnalyzer.add(
         decision.target!,
         at: observation.timestamp,
         inputWidth: observation.inputWidth,
         inputHeight: observation.inputHeight,
       );
+      if (forwardHeadAnalyzer.lastFrameStatus ==
+          ForwardHeadFrameStatus.accepted) {
+        _acceptedFrames += 1;
+      }
       if (readyResult == null &&
           forwardHeadAnalyzer.lastFrameStatus ==
               ForwardHeadFrameStatus.needsSideView) {
@@ -318,8 +338,7 @@ class MotionAssessmentController extends ChangeNotifier {
     final snapshot = _buildContextSnapshot(observation, decision);
     _latestContext = snapshot;
     voice.updateAssessmentContext(snapshot);
-    _emitSamplingMilestone(snapshot);
-    if (samplingActive &&
+    if (captureLifecycle &&
         forwardHeadAnalyzer.lastFrameStatus ==
             ForwardHeadFrameStatus.needsSideView &&
         !_sideViewPromptEmitted) {
@@ -342,21 +361,183 @@ class MotionAssessmentController extends ChangeNotifier {
   bool _isCaptureLifecycle(MotionAssessmentWorkflowPhase phase) {
     return phase == MotionAssessmentWorkflowPhase.calibrating ||
         phase == MotionAssessmentWorkflowPhase.capturingSegment ||
+        phase == MotionAssessmentWorkflowPhase.changingOrientation ||
         phase == MotionAssessmentWorkflowPhase.capturingValidationSegment;
+  }
+
+  void _prepareCaptureReadiness(
+    MotionPose pose,
+    MotionPoseObservation observation,
+  ) {
+    if (_captureCountdownInProgress) return;
+    if (workflow.phase == MotionAssessmentWorkflowPhase.changingOrientation &&
+        !_orientationGuidanceCompleted) {
+      _phase = MotionAssessmentPagePhase.changingOrientation;
+      return;
+    }
+    final inspection = forwardHeadAnalyzer.inspect(
+      pose,
+      inputWidth: observation.inputWidth,
+      inputHeight: observation.inputHeight,
+    );
+    if (!inspection.accepted) {
+      _phase =
+          workflow.phase == MotionAssessmentWorkflowPhase.changingOrientation
+          ? MotionAssessmentPagePhase.changingOrientation
+          : MotionAssessmentPagePhase.calibrating;
+      if (inspection.status == ForwardHeadFrameStatus.needsSideView) {
+        _guidance = '请自然侧身，站稳并目视前方';
+      }
+      return;
+    }
+    final validation =
+        workflow.phase == MotionAssessmentWorkflowPhase.changingOrientation;
+    final expectedSide = workflow.expectedValidationSide;
+    if (validation && expectedSide != null && inspection.side != expectedSide) {
+      _phase = MotionAssessmentPagePhase.changingOrientation;
+      _guidance = '请转到另一侧，站稳并目视前方';
+      _emitOppositeSideRequired(inspection.side);
+      return;
+    }
+    _oppositeSidePromptEmitted = false;
+    if (captureCountdown == Duration.zero) {
+      _beginCaptureAfterCountdown(validation: validation);
+      return;
+    }
+    _captureCountdownInProgress = true;
+    final generation = ++_captureCountdownGeneration;
+    _phase = MotionAssessmentPagePhase.readyCountdown;
+    _guidance = '准备开始采样';
+    _notify();
+    unawaited(
+      _runCaptureCountdown(
+        generation: generation,
+        validation: validation,
+        expectedSide: expectedSide,
+      ),
+    );
+  }
+
+  Future<void> _runCaptureCountdown({
+    required int generation,
+    required bool validation,
+    required String? expectedSide,
+  }) async {
+    try {
+      await voice.requestGuidance(
+        'capture_countdown',
+        _withLatestContext({
+          'countdown_seconds': captureCountdown.inSeconds,
+          'segment_index': workflow.segmentResults.length + 1,
+          'expected_side': ?expectedSide,
+          'dedupe_key':
+              'capture_countdown_${workflow.segmentResults.length + 1}_$generation',
+        }),
+        interrupt: true,
+        awaitPlaybackCompletion: true,
+      );
+      if (_closed || generation != _captureCountdownGeneration) return;
+      if (!_captureReadinessStillValid(
+        validation: validation,
+        expectedSide: expectedSide,
+      )) {
+        _captureCountdownInProgress = false;
+        _phase = validation
+            ? MotionAssessmentPagePhase.changingOrientation
+            : MotionAssessmentPagePhase.calibrating;
+        _notify();
+        return;
+      }
+      _beginCaptureAfterCountdown(validation: validation);
+    } catch (_) {
+      if (_closed || generation != _captureCountdownGeneration) return;
+      _captureCountdownInProgress = false;
+      await _fail(
+        failureCode: 'capture_countdown_failed',
+        message: '实时语音倒计时中断，请重试。',
+      );
+    }
+  }
+
+  bool _captureReadinessStillValid({
+    required bool validation,
+    required String? expectedSide,
+  }) {
+    final decision = _lastQualityDecision;
+    final observation = _observation;
+    final pose = decision?.target;
+    if (decision?.phase != MotionQualityPhase.ready ||
+        observation == null ||
+        pose == null) {
+      return false;
+    }
+    final inspection = forwardHeadAnalyzer.inspect(
+      pose,
+      inputWidth: observation.inputWidth,
+      inputHeight: observation.inputHeight,
+    );
+    if (!inspection.accepted) return false;
+    return !validation ||
+        expectedSide == null ||
+        inspection.side == expectedSide;
+  }
+
+  void _beginCaptureAfterCountdown({required bool validation}) {
+    _captureCountdownInProgress = false;
+    if (validation) {
+      workflow.orientationInstructionCompleted();
+    } else {
+      workflow.beginCapture();
+    }
+    _syncPagePhaseFromWorkflow();
+    _guidance = validation ? '正在采集另一侧验证段' : '正在采集，请自然站稳';
+    _refreshLatestContext();
+    _notify();
+  }
+
+  void _emitOppositeSideRequired(String? detectedSide) {
+    if (_oppositeSidePromptEmitted) return;
+    _oppositeSidePromptEmitted = true;
+    unawaited(
+      voice.requestGuidance(
+        'opposite_side_required',
+        _withLatestContext({
+          'previous_side': workflow.segmentResults.isEmpty
+              ? null
+              : workflow.segmentResults.last.side,
+          'detected_side': detectedSide ?? 'unknown',
+          'expected_side': workflow.expectedValidationSide,
+          'segment_index': workflow.segmentResults.length + 1,
+          'dedupe_key': 'opposite_side_${workflow.segmentResults.length + 1}',
+        }),
+        interrupt: true,
+      ),
+    );
   }
 
   void _completeSegment(ForwardHeadResult result) {
     final decision = workflow.completeSegment(result);
     _syncPagePhaseFromWorkflow();
-    _reportedSamplingMilestones.clear();
     _sideViewPromptEmitted = false;
+    _oppositeSidePromptEmitted = false;
     if (decision.action ==
         MotionAssessmentWorkflowAction.requestOrientationChange) {
       forwardHeadAnalyzer.reset();
+      _orientationGuidanceCompleted = false;
       _refreshLatestContext();
-      _guidance = '第一段采集完成，正在引导你转换方向';
+      _guidance = decision.code == 'opposite_side_required'
+          ? '仍是原来的方向，请转到另一侧'
+          : '第一段采集完成，正在引导你转换方向';
       _notify();
-      unawaited(_prepareValidationSegment(result));
+      final previous = workflow.segmentResults.isEmpty
+          ? result
+          : workflow.segmentResults.last;
+      unawaited(
+        _prepareValidationSegment(
+          previous,
+          oppositeSideRequired: decision.code == 'opposite_side_required',
+        ),
+      );
       return;
     }
     if (decision.action ==
@@ -379,23 +560,30 @@ class MotionAssessmentController extends ChangeNotifier {
     }
   }
 
-  Future<void> _prepareValidationSegment(ForwardHeadResult result) async {
+  Future<void> _prepareValidationSegment(
+    ForwardHeadResult result, {
+    bool oppositeSideRequired = false,
+  }) async {
     try {
       await voice.requestGuidance(
-        'change_orientation',
+        oppositeSideRequired ? 'opposite_side_required' : 'change_orientation',
         _withLatestContext({
           'completed_segment': workflow.segmentResults.length,
           'next_segment': workflow.segmentResults.length + 1,
           'previous_side': result.side,
-          'dedupe_key': 'change_orientation_${workflow.segmentResults.length}',
+          'expected_side': workflow.expectedValidationSide,
+          'dedupe_key': oppositeSideRequired
+              ? 'opposite_side_${workflow.segmentResults.length + 1}'
+              : 'change_orientation_${workflow.segmentResults.length}',
         }),
+        interrupt: true,
         awaitPlaybackCompletion: true,
       );
       if (_closed) return;
-      workflow.orientationInstructionCompleted();
+      _orientationGuidanceCompleted = true;
       _syncPagePhaseFromWorkflow();
       _refreshLatestContext();
-      _guidance = '请保持新的侧身方向，正在采集验证段';
+      _guidance = '请保持另一侧方向，准备开始验证段';
       _notify();
     } catch (_) {
       await _fail(
@@ -499,7 +687,11 @@ class MotionAssessmentController extends ChangeNotifier {
         ? 'review_ready'
         : rejectionReasons.isNotEmpty
         ? 'blocked'
-        : decision.acceptFrame && _isCaptureLifecycle(workflow.phase)
+        : decision.acceptFrame &&
+              (workflow.phase ==
+                      MotionAssessmentWorkflowPhase.capturingSegment ||
+                  workflow.phase ==
+                      MotionAssessmentWorkflowPhase.capturingValidationSegment)
         ? 'collecting'
         : 'calibrating';
     final recommended = _recommendedAction(
@@ -661,25 +853,6 @@ class MotionAssessmentController extends ChangeNotifier {
     };
   }
 
-  void _emitSamplingMilestone(MotionAssessmentContextSnapshot snapshot) {
-    if (snapshot.samplingState != 'collecting') return;
-    final segmentProgress = forwardHeadAnalyzer.samplingProgress;
-    final percent = (segmentProgress * 100).floor();
-    for (final milestone in const [25, 50, 75]) {
-      if (percent >= milestone && _reportedSamplingMilestones.add(milestone)) {
-        final segmentIndex = workflow.segmentResults.length + 1;
-        unawaited(
-          voice.requestGuidance('sampling_progress', {
-            'milestone_percent': milestone,
-            'segment_index': segmentIndex,
-            'dedupe_key': 'segment_${segmentIndex}_progress_$milestone',
-            'context': snapshot.toJson(),
-          }),
-        );
-      }
-    }
-  }
-
   Map<String, Object?> _withLatestContext(Map<String, Object?> payload) {
     final context = _latestContext;
     return {...payload, if (context != null) 'context': context.toJson()};
@@ -707,11 +880,12 @@ class MotionAssessmentController extends ChangeNotifier {
           }),
         );
       case MotionGuidanceDirective.singlePersonReady:
-        await voice.requestGuidance(
+        await voice.sendClientEvent(
           'single_person_stable',
           _withLatestContext({
             'person_count': 1,
             'target': target,
+            'requires_voice_response': false,
             'dedupe_key': 'single_person_stable',
           }),
         );
@@ -754,8 +928,10 @@ class MotionAssessmentController extends ChangeNotifier {
     forwardHeadAnalyzer.reset();
     _forwardHeadResult = null;
     _latestResultSummary = null;
-    _reportedSamplingMilestones.clear();
     _sideViewPromptEmitted = false;
+    _oppositeSidePromptEmitted = false;
+    _captureCountdownGeneration += 1;
+    _captureCountdownInProgress = false;
     _syncPagePhaseFromWorkflow();
     _guidance = '请保持单人入镜，正在重新校准…';
     _notify();
@@ -879,8 +1055,10 @@ class MotionAssessmentController extends ChangeNotifier {
     forwardHeadAnalyzer.reset();
     _forwardHeadResult = null;
     _latestResultSummary = null;
-    _reportedSamplingMilestones.clear();
     _sideViewPromptEmitted = false;
+    _oppositeSidePromptEmitted = false;
+    _captureCountdownGeneration += 1;
+    _captureCountdownInProgress = false;
     _syncPagePhaseFromWorkflow();
     _refreshLatestContext();
     _guidance = '继续评估，请自然侧身并保持稳定';

@@ -249,6 +249,7 @@ class AgentHubPage extends StatefulWidget {
       milliseconds: 750,
     ),
     this.externalConversationRefreshAttempts = 20,
+    this.externalConversationRefreshUntilFound = false,
   });
 
   final Object? stateCacheKey;
@@ -283,6 +284,7 @@ class AgentHubPage extends StatefulWidget {
   final String? externalConversationRefreshKey;
   final Duration externalConversationRefreshInterval;
   final int externalConversationRefreshAttempts;
+  final bool externalConversationRefreshUntilFound;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -379,6 +381,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   int _lastHandledIbclcCompletionRevision = 0;
   int _externalConversationRefreshGeneration = 0;
   String? _consumedExternalConversationRefreshKey;
+  bool _externalConversationRefreshPending = false;
 
   @override
   void initState() {
@@ -870,7 +873,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final key = widget.externalConversationRefreshKey?.trim() ?? '';
     if (key.isEmpty ||
         widget.conversationRepository == null ||
-        widget.externalConversationRefreshAttempts <= 0 ||
+        (!widget.externalConversationRefreshUntilFound &&
+            widget.externalConversationRefreshAttempts <= 0) ||
         _consumedExternalConversationRefreshKey == key) {
       return;
     }
@@ -880,6 +884,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       if (!mounted || generation != _externalConversationRefreshGeneration) {
         return;
       }
+      setState(() => _externalConversationRefreshPending = true);
       unawaited(_pollForExternalConversationUpdate(generation));
     });
   }
@@ -892,16 +897,20 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (repository == null ||
         sourceThreadId == null ||
         sourceThreadId.isEmpty) {
+      _setExternalConversationRefreshPending(false);
       return;
     }
-    for (
-      var attempt = 0;
-      attempt < widget.externalConversationRefreshAttempts;
-      attempt += 1
-    ) {
+    var attempt = 0;
+    while (widget.externalConversationRefreshUntilFound ||
+        attempt < widget.externalConversationRefreshAttempts) {
       if (attempt > 0 &&
           widget.externalConversationRefreshInterval > Duration.zero) {
-        await Future<void>.delayed(widget.externalConversationRefreshInterval);
+        final multiplier = 1 << (attempt - 1).clamp(0, 5);
+        await Future<void>.delayed(
+          widget.externalConversationRefreshInterval * multiplier,
+        );
+      } else if (attempt > 0) {
+        await Future<void>.delayed(Duration.zero);
       }
       if (!mounted || generation != _externalConversationRefreshGeneration) {
         return;
@@ -910,6 +919,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           ?.trim();
       final activeRunId = _state.runId?.trim() ?? '';
       if (activeThreadId != sourceThreadId || activeRunId != sourceRunId) {
+        _setExternalConversationRefreshPending(false);
         return;
       }
       try {
@@ -921,25 +931,34 @@ class _AgentHubPageState extends State<AgentHubPage> {
         if (history.thread.id != sourceThreadId ||
             nextRunId.isEmpty ||
             nextRunId == sourceRunId) {
+          attempt += 1;
           continue;
         }
-        await _adoptExternalConversationHistory(history);
-        return;
+        final adopted = await _adoptExternalConversationHistory(history);
+        if (adopted) return;
       } catch (_) {
         // The durable backend job may not have created its Agent run yet.
       }
+      attempt += 1;
     }
+    _setExternalConversationRefreshPending(false);
   }
 
-  Future<void> _adoptExternalConversationHistory(
+  void _setExternalConversationRefreshPending(bool value) {
+    if (!mounted || _externalConversationRefreshPending == value) return;
+    setState(() => _externalConversationRefreshPending = value);
+  }
+
+  Future<bool> _adoptExternalConversationHistory(
     AgentConversationHistory history,
   ) async {
     if (!mounted || _isVisibleReplyRunning || _isSessionMutationPending) {
-      return;
+      return false;
     }
     widget.voicePlaybackCoordinator?.cancel();
     _cancelRunSubscription();
     setState(() {
+      _externalConversationRefreshPending = false;
       _historyMessages = history.messages
           .map(_historyMessageFromConversation)
           .toList(growable: true);
@@ -963,9 +982,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
         history.currentState.runId?.trim().isNotEmpty == true &&
         widget.runner != null) {
       await _resumeCurrentRun(preserveActionState: true);
-      return;
+      return true;
     }
     _maybeStartAutoVoicePlayback(history.currentState);
+    return true;
   }
 
   void _updateLatestButtonVisibility() {
@@ -2867,6 +2887,44 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   );
                 },
               ),
+              if (_externalConversationRefreshPending)
+                Container(
+                  key: const ValueKey('motion-feedback-pending'),
+                  width: double.infinity,
+                  margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xfffff1f4),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xffffd5df)),
+                  ),
+                  child: const Row(
+                    children: [
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: MomCozyColors.primary,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          '正在生成本次体态评估反馈…',
+                          style: TextStyle(
+                            color: MomCozyColors.foreground,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {

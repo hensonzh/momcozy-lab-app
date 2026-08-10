@@ -4,7 +4,7 @@ import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_qua
 
 void main() {
   test('emits one enter-frame directive until a person returns', () {
-    final gate = MotionQualityGate();
+    final gate = MotionQualityGate(personMissingStableFor: Duration.zero);
 
     final first = gate.evaluate(_observation(0, const []));
     final repeated = gate.evaluate(_observation(66, const []));
@@ -84,7 +84,10 @@ void main() {
   });
 
   test('requires the assessment head-to-hip region before calibration', () {
-    final gate = MotionQualityGate(singlePersonStableFor: Duration.zero);
+    final gate = MotionQualityGate(
+      singlePersonStableFor: Duration.zero,
+      framingIssueStableFor: Duration.zero,
+    );
 
     final framing = gate.evaluate(
       _observation(0, [_pose(centerX: 0.5, includeHip: false)]),
@@ -139,7 +142,7 @@ void main() {
   });
 
   test('does not silently switch to a different person after target loss', () {
-    final gate = _readyGate();
+    final gate = _readyGate(targetMismatchStableFor: Duration.zero);
 
     gate.evaluate(_observation(1200, const []));
     gate.evaluate(_observation(2200, const []));
@@ -170,12 +173,58 @@ void main() {
     expect(recalibrated.phase, MotionQualityPhase.ready);
     expect(recalibrated.acceptFrame, isTrue);
   });
+
+  test('uses hysteresis before declaring that the tracked person changed', () {
+    final gate = _readyGate(
+      targetMismatchStableFor: const Duration(milliseconds: 800),
+    );
+    final different = _pose(centerX: 0.12, bodyScale: 0.32);
+
+    final transient = gate.evaluate(_observation(1100, [different]));
+    expect(transient.phase, MotionQualityPhase.reacquiring);
+    expect(transient.directive, isNull);
+
+    final recovered = gate.evaluate(_observation(1400, [_pose(centerX: 0.5)]));
+    expect(recovered.phase, MotionQualityPhase.ready);
+    expect(recovered.acceptFrame, isTrue);
+
+    gate.evaluate(_observation(1600, [different]));
+    final changed = gate.evaluate(_observation(2400, [different]));
+    expect(changed.phase, MotionQualityPhase.targetChanged);
+    expect(changed.directive, MotionGuidanceDirective.confirmRecalibration);
+  });
+
+  test(
+    'brief framing loss pauses frames without emitting corrective chatter',
+    () {
+      final gate = _readyGate(
+        framingIssueStableFor: const Duration(milliseconds: 600),
+      );
+      final cropped = _pose(centerX: 0.5, includeHip: false);
+
+      final transient = gate.evaluate(_observation(1100, [cropped]));
+      expect(transient.phase, MotionQualityPhase.reacquiring);
+      expect(transient.acceptFrame, isFalse);
+      expect(transient.directive, isNull);
+
+      final recovered = gate.evaluate(
+        _observation(1400, [_pose(centerX: 0.5)]),
+      );
+      expect(recovered.phase, MotionQualityPhase.ready);
+      expect(recovered.acceptFrame, isTrue);
+    },
+  );
 }
 
-MotionQualityGate _readyGate() {
+MotionQualityGate _readyGate({
+  Duration targetMismatchStableFor = const Duration(milliseconds: 800),
+  Duration framingIssueStableFor = const Duration(milliseconds: 600),
+}) {
   final gate = MotionQualityGate(
     singlePersonStableFor: const Duration(seconds: 1),
     multiplePeopleStableFor: const Duration(milliseconds: 400),
+    targetMismatchStableFor: targetMismatchStableFor,
+    framingIssueStableFor: framingIssueStableFor,
   );
   gate.evaluate(_observation(0, [_pose(centerX: 0.5)]));
   gate.evaluate(_observation(1000, [_pose(centerX: 0.5)]));

@@ -138,14 +138,37 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child: Row(
           children: [
-            const Text(
-              '头颈姿态动态评估',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
+            const Expanded(
+              child: Text(
+                '头颈姿态动态评估',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: 8),
+            TextButton(
+              key: const ValueKey('motion-assessment-end'),
+              onPressed: controller.canEnd
+                  ? () => unawaited(controller.finish())
+                  : null,
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                disabledForegroundColor: Colors.white38,
+                backgroundColor: Colors.black.withValues(alpha: 0.36),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 9,
+                ),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text('结束评估'),
+            ),
+            const SizedBox(width: 8),
             AnimatedContainer(
               key: const ValueKey('motion-assessment-voice-status'),
               duration: const Duration(milliseconds: 220),
