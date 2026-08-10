@@ -24,6 +24,29 @@ enum MotionRealtimeVoicePhase {
   closed,
 }
 
+enum MotionRealtimeGuidanceFailure {
+  busy,
+  interruptedByUser,
+  playbackStartTimeout,
+  playbackCompletionTimeout,
+}
+
+class MotionRealtimeGuidanceException implements Exception {
+  const MotionRealtimeGuidanceException({
+    required this.eventType,
+    required this.failure,
+  });
+
+  final String eventType;
+  final MotionRealtimeGuidanceFailure failure;
+
+  bool get isRecoverable => true;
+
+  @override
+  String toString() =>
+      'MotionRealtimeGuidanceException($eventType, ${failure.name})';
+}
+
 abstract interface class MotionRealtimeVoiceClient implements Listenable {
   MotionRealtimeVoicePhase get phase;
   bool get isConnected;
@@ -89,6 +112,7 @@ class MotionRealtimeVoice extends ChangeNotifier
   final Set<String> _visualClientEventIds = {};
   final MotionAssessmentEventGate _eventGate = MotionAssessmentEventGate();
   Future<void> _inputOperations = Future<void>.value();
+  Future<void> _guidanceOperations = Future<void>.value();
   MotionAssessmentContextSnapshot? _latestAssessmentContext;
   DateTime? _latestAssessmentContextReceivedAt;
   MotionAssessmentEventFactory? _eventFactory;
@@ -104,7 +128,6 @@ class MotionRealtimeVoice extends ChangeNotifier
   bool _audioSessionActive = false;
   Completer<void>? _playbackStarted;
   Completer<void>? _playbackCompleted;
-  String? _protectedPlaybackEventType;
   int _visualEventSequence = 0;
 
   @override
@@ -198,7 +221,7 @@ class MotionRealtimeVoice extends ChangeNotifier
           case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
             _setPhase(MotionRealtimeVoicePhase.reconnecting);
             _disconnectTimer?.cancel();
-            _disconnectTimer = Timer(const Duration(seconds: 2), () {
+            _disconnectTimer = Timer(const Duration(seconds: 8), () {
               _failureCode = 'connection_lost';
               _scheduleTerminalFailure(generation);
             });
@@ -292,6 +315,39 @@ class MotionRealtimeVoice extends ChangeNotifier
     bool interrupt = false,
     bool awaitPlaybackStart = false,
     bool awaitPlaybackCompletion = false,
+  }) {
+    final waitsForPlayback = awaitPlaybackStart || awaitPlaybackCompletion;
+    if (!waitsForPlayback) {
+      return _requestGuidance(
+        eventType,
+        payload,
+        interrupt: interrupt,
+        awaitPlaybackStart: awaitPlaybackStart,
+        awaitPlaybackCompletion: awaitPlaybackCompletion,
+      );
+    }
+    final result = _guidanceOperations.then(
+      (_) => _requestGuidance(
+        eventType,
+        payload,
+        interrupt: interrupt,
+        awaitPlaybackStart: awaitPlaybackStart,
+        awaitPlaybackCompletion: awaitPlaybackCompletion,
+      ),
+    );
+    _guidanceOperations = result.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return result;
+  }
+
+  Future<void> _requestGuidance(
+    String eventType,
+    Map<String, Object?> payload, {
+    required bool interrupt,
+    required bool awaitPlaybackStart,
+    required bool awaitPlaybackCompletion,
   }) async {
     if (!isConnected) {
       throw StateError('Realtime voice is not connected.');
@@ -299,43 +355,90 @@ class MotionRealtimeVoice extends ChangeNotifier
     final normalizedEventType = eventType.trim();
     if (normalizedEventType.isEmpty) return;
     final shouldWaitForStart = awaitPlaybackStart || awaitPlaybackCompletion;
-    final started = shouldWaitForStart ? Completer<void>() : null;
-    final completed = awaitPlaybackCompletion ? Completer<void>() : null;
-    if (started != null) {
-      if (_playbackStarted != null || _playbackCompleted != null) {
-        throw StateError('Another Realtime guidance turn is awaiting audio.');
-      }
-      _playbackStarted = started;
-      _playbackCompleted = completed;
-    }
-    final protectsPlayback = awaitPlaybackCompletion;
-    if (protectsPlayback) {
-      _protectedPlaybackEventType = normalizedEventType;
-    }
-    try {
-      if (interrupt) await _responseQueue?.interrupt();
-      final published = await _publishClientEvent(normalizedEventType, payload);
-      if (!published) return;
-      await _responseQueue?.enqueueModelTurn(
-        _guidanceTurnInstructions(normalizedEventType),
-        coalesceKey: _guidanceCoalesceKey(normalizedEventType),
-        interruptActive: _interruptsStaleGuidance(normalizedEventType),
-      );
+    final maximumAttempts = shouldWaitForStart ? 2 : 1;
+    var eventPublished = false;
+    for (var attempt = 0; attempt < maximumAttempts; attempt += 1) {
+      final started = shouldWaitForStart ? Completer<void>() : null;
+      final completed = awaitPlaybackCompletion ? Completer<void>() : null;
       if (started != null) {
-        await started.future.timeout(const Duration(seconds: 10));
+        if (_playbackStarted != null || _playbackCompleted != null) {
+          throw MotionRealtimeGuidanceException(
+            eventType: normalizedEventType,
+            failure: MotionRealtimeGuidanceFailure.busy,
+          );
+        }
+        _playbackStarted = started;
+        _playbackCompleted = completed;
       }
-      if (completed != null) {
-        await completed.future.timeout(const Duration(seconds: 20));
-      }
-    } catch (_) {
-      _scheduleTerminalFailure(_connectionGeneration);
-      rethrow;
-    } finally {
-      if (identical(_playbackStarted, started)) _playbackStarted = null;
-      if (identical(_playbackCompleted, completed)) _playbackCompleted = null;
-      if (protectsPlayback &&
-          _protectedPlaybackEventType == normalizedEventType) {
-        _protectedPlaybackEventType = null;
+      try {
+        if (interrupt || attempt > 0) await _responseQueue?.interrupt();
+        if (!eventPublished) {
+          final published = await _publishClientEvent(
+            normalizedEventType,
+            payload,
+          );
+          if (!published) return;
+          eventPublished = true;
+        }
+        await _responseQueue?.enqueueModelTurn(
+          _guidanceTurnInstructions(normalizedEventType),
+          coalesceKey: _guidanceCoalesceKey(normalizedEventType),
+          interruptActive: _interruptsStaleGuidance(normalizedEventType),
+        );
+        if (started != null) {
+          await started.future.timeout(const Duration(seconds: 10));
+        }
+        if (completed != null) {
+          await completed.future.timeout(const Duration(seconds: 20));
+        }
+        return;
+      } on TimeoutException {
+        final playbackStarted = started?.isCompleted == true;
+        final failure = playbackStarted
+            ? MotionRealtimeGuidanceFailure.playbackCompletionTimeout
+            : MotionRealtimeGuidanceFailure.playbackStartTimeout;
+        debugPrint(
+          'Motion Realtime guidance ${failure.name}: '
+          '$normalizedEventType (attempt ${attempt + 1}).',
+        );
+        if (playbackStarted) {
+          // Guidance prompts are intentionally short. If audio started but the
+          // WebRTC drain event is lost, stop any stale buffer and keep the
+          // healthy session instead of reporting a connection failure.
+          try {
+            await _responseQueue?.interrupt();
+          } catch (_) {
+            if (!_transportIsUsable) {
+              _scheduleTerminalFailure(_connectionGeneration);
+            }
+          }
+          return;
+        }
+        if (attempt + 1 >= maximumAttempts || !isConnected) {
+          throw MotionRealtimeGuidanceException(
+            eventType: normalizedEventType,
+            failure: failure,
+          );
+        }
+      } on MotionRealtimeGuidanceException catch (error) {
+        if (error.failure == MotionRealtimeGuidanceFailure.interruptedByUser &&
+            normalizedEventType != 'capture_countdown') {
+          // Barge-in is expected with Semantic VAD. Non-countdown guidance can
+          // yield to the user's turn; countdown remains synchronized with
+          // capture and must be retried after the user finishes speaking.
+          return;
+        }
+        rethrow;
+      } catch (_) {
+        if (!_transportIsUsable) {
+          _scheduleTerminalFailure(_connectionGeneration);
+        }
+        rethrow;
+      } finally {
+        if (identical(_playbackStarted, started)) _playbackStarted = null;
+        if (identical(_playbackCompleted, completed)) {
+          _playbackCompleted = null;
+        }
       }
     }
   }
@@ -494,8 +597,9 @@ class MotionRealtimeVoice extends ChangeNotifier
   String _guidanceTurnInstructions(String eventType) {
     return switch (eventType) {
       'assessment_started' =>
-        '这是通用体态评估的新会话。先自然介绍当前开放的三个项目：头前伸倾向、高低肩倾向、躯干侧倾；'
-            '说明可以选择一个或多个，然后明确询问用户想评估哪些项目。此时不要引导站位，也不要自行选择。',
+        '这是通用体态评估的新会话。简洁介绍当前开放的三个项目，并给出四种容易理解的选择：'
+            '头颈专项（头前伸）、正面体态（高低肩加躯干侧倾）、完整三项，或自选一个或多个；'
+            '然后明确询问用户选择哪一种。此时不要引导站位，也不要自行选择，未开放项目不要说成可选。',
       'capture_countdown' =>
         '端侧已确认当前画面可以开始采样。只用一句短句让用户站稳，然后清楚地说“三、二、一，开始”。'
             '必须说完倒计时，不要添加其他动作或结果。',
@@ -525,7 +629,8 @@ class MotionRealtimeVoice extends ChangeNotifier
       'command_rejected' => '客户端拒绝了不符合当前状态或语音轮次的命令。请依据最新事件继续当前步骤，不要声称评估已结束。',
       _ =>
         '最新客户端语义事件为 $eventType。请只依据刚收到的 motion_assessment.event.v4 facts，'
-            '主动给出一句简短、自然、可立即执行的中文语音指导。一次只说一个动作；端侧质量门和状态机结论是权威，'
+            '只说一句简短、自然、可立即执行的中文语音指导，一次只说一个动作。不要解释原因、复述检测状态、重复鼓励或预告后续动作；'
+            '端侧质量门和状态机结论是权威，'
             '不要要求用户触碰屏幕，不要要求腿脚完整入镜。',
     };
   }
@@ -573,8 +678,13 @@ class MotionRealtimeVoice extends ChangeNotifier
       sessionGate.handleServerEvent(event);
       unawaited(_handleResponseQueueEvent(event, generation));
       if (type == 'input_audio_buffer.speech_started' &&
-          _protectedPlaybackEventType == null) {
-        unawaited(_interruptResponseQueue(generation));
+          (_playbackStarted != null || _playbackCompleted != null)) {
+        _failPlaybackWaiters(
+          MotionRealtimeGuidanceException(
+            eventType: 'active_guidance',
+            failure: MotionRealtimeGuidanceFailure.interruptedByUser,
+          ),
+        );
       }
       final userAudioItemId = completedUserAudioItemIdFromServerEvent(event);
       if (userAudioItemId != null &&
@@ -606,7 +716,7 @@ class MotionRealtimeVoice extends ChangeNotifier
           break;
       }
       if (type == 'error' && !isVisualError) {
-        _scheduleTerminalFailure(generation);
+        _logServerError(event);
       }
       for (final request in motionVisualSnapshotRequestsFromServerEvent(
         event,
@@ -726,7 +836,10 @@ class MotionRealtimeVoice extends ChangeNotifier
         contextId: normalizedTurnId.isEmpty ? null : normalizedTurnId,
       );
     } catch (_) {
-      if (_isActive(generation)) _scheduleTerminalFailure(generation);
+      visualContextCoordinator?.recordTransportFailure(disableForSession: true);
+      if (_isActive(generation) && !_transportIsUsable) {
+        _scheduleTerminalFailure(generation);
+      }
     }
   }
 
@@ -814,14 +927,6 @@ class MotionRealtimeVoice extends ChangeNotifier
   ) async {
     try {
       await _responseQueue?.handleServerEvent(event);
-    } catch (_) {
-      _scheduleTerminalFailure(generation);
-    }
-  }
-
-  Future<void> _interruptResponseQueue(int generation) async {
-    try {
-      await _responseQueue?.interrupt();
     } catch (_) {
       _scheduleTerminalFailure(generation);
     }
@@ -945,6 +1050,26 @@ class MotionRealtimeVoice extends ChangeNotifier
       throw StateError('Realtime data channel is not open.');
     }
     await channel!.send(RTCDataChannelMessage(jsonEncode(event)));
+  }
+
+  bool get _transportIsUsable =>
+      !_disposed &&
+      !_closed &&
+      _dataChannel?.state == RTCDataChannelState.RTCDataChannelOpen;
+
+  void _logServerError(Map<Object?, Object?> event) {
+    final rawError = event['error'];
+    final error = rawError is Map
+        ? Map<Object?, Object?>.from(rawError)
+        : const <Object?, Object?>{};
+    final code = error['code']?.toString() ?? 'unknown';
+    final type = error['type']?.toString() ?? 'unknown';
+    final clientEventId =
+        error['event_id']?.toString() ?? event['event_id']?.toString() ?? '';
+    debugPrint(
+      'Motion Realtime server event error: type=$type code=$code '
+      'client_event_id=${clientEventId.isEmpty ? 'none' : clientEventId}.',
+    );
   }
 
   Future<T> _serializeInput<T>(Future<T> Function() operation) {

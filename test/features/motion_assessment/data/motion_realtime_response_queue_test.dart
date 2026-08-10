@@ -250,6 +250,39 @@ void main() {
       expect(_instructions(events.single), contains('重试后的提示'));
     },
   );
+
+  test(
+    'continues after a stale response.cancel receives a safe server error',
+    () async {
+      final events = <Map<String, Object?>>[];
+      final queue = MotionRealtimeResponseQueue(
+        sendEvent: (event) async => events.add(event),
+      );
+
+      await queue.enqueue('正在播放的提示');
+      await queue.enqueue('下一条提示', interrupt: true);
+
+      final cancel = events.singleWhere(
+        (event) => event['type'] == 'response.cancel',
+      );
+      expect(cancel['event_id'], isA<String>());
+
+      await queue.handleServerEvent({
+        'type': 'error',
+        'error': {
+          'event_id': cancel['event_id'],
+          'code': 'response_cancel_not_active',
+          'message': 'There is no active response to cancel.',
+        },
+      });
+
+      final creates = events
+          .where((event) => event['type'] == 'response.create')
+          .toList();
+      expect(creates, hasLength(2));
+      expect(_instructions(creates.last), contains('下一条提示'));
+    },
+  );
 }
 
 String _instructions(Map<String, Object?> event) {

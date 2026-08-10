@@ -83,9 +83,16 @@ void main() {
       expect(repository.planUpdates.last.confirmed, isTrue);
       expect(controller.assessmentPlan.confirmed, isTrue);
       expect(controller.phase, MotionAssessmentPagePhase.calibrating);
+      expect(controller.framingGuide, MotionAssessmentFramingGuide.forwardHead);
       expect(
         voice.guidanceRequests.map((request) => request.type),
         contains('assessment_plan_confirmed'),
+      );
+      expect(
+        voice.guidanceRequests
+            .lastWhere((request) => request.type == 'assessment_plan_confirmed')
+            .interrupt,
+        isTrue,
       );
       await controller.finish();
     },
@@ -142,6 +149,11 @@ void main() {
       );
       await _flush();
 
+      expect(
+        controller.framingGuide,
+        MotionAssessmentFramingGuide.frontalCombined,
+      );
+
       voice.latestAudioItemId = 'before-front-review';
       pose.emit(_acceptedFrontObservation());
       while (controller.phase !=
@@ -175,6 +187,67 @@ void main() {
       expect(finalization.processSummary['required_segments'], 1);
     },
   );
+
+  test('uses a project-specific guide for each frontal assessment', () async {
+    final cases =
+        <({MotionAssessmentTarget target, MotionAssessmentFramingGuide guide})>[
+          (
+            target: MotionAssessmentTarget.shoulderHeightAsymmetry,
+            guide: MotionAssessmentFramingGuide.shoulderHeight,
+          ),
+          (
+            target: MotionAssessmentTarget.trunkLateralLean,
+            guide: MotionAssessmentFramingGuide.trunkLateralLean,
+          ),
+        ];
+
+    for (final testCase in cases) {
+      final repository = _FakeRepository(
+        immediateSession: _session(target: 'posture_screen'),
+      );
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'posture_screen',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: _FakePosePlatform(),
+        voice: voice,
+      );
+
+      await controller.start();
+      voice.emitCommand(
+        MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'replace-${testCase.target.wireValue}',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.replace,
+            targets: [testCase.target],
+            expectedRevision: 0,
+          ),
+        ),
+      );
+      await _flush();
+      voice.emitCommand(
+        MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'confirm-${testCase.target.wireValue}',
+          planMutation: const MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.confirm,
+            targets: [],
+            expectedRevision: 1,
+          ),
+        ),
+      );
+      await _flush();
+
+      expect(
+        controller.framingGuide,
+        testCase.guide,
+        reason: testCase.target.wireValue,
+      );
+      await controller.finish();
+    }
+  });
 
   test(
     'announces every transition across two side views and one front view',
@@ -494,6 +567,55 @@ void main() {
   );
 
   test(
+    'retries capture guidance without failing a healthy Realtime session',
+    () async {
+      final repository = _FakeRepository(immediateSession: _session());
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice()
+        ..guidanceErrors['capture_countdown'] = [
+          const MotionRealtimeGuidanceException(
+            eventType: 'capture_countdown',
+            failure: MotionRealtimeGuidanceFailure.playbackStartTimeout,
+          ),
+        ];
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+      );
+
+      await controller.start();
+      pose.emit(_acceptedSideObservation());
+      await _flush();
+      await _flush();
+
+      expect(controller.phase, MotionAssessmentPagePhase.calibrating);
+      expect(controller.voiceReady, isTrue);
+      expect(repository.finalizations, isEmpty);
+
+      pose.emit(
+        _acceptedSideObservation(timestamp: const Duration(seconds: 2)),
+      );
+      await _flush();
+      await _flush();
+
+      expect(
+        voice.guidanceRequests.where(
+          (request) => request.type == 'capture_countdown',
+        ),
+        hasLength(2),
+      );
+      expect(controller.phase, MotionAssessmentPagePhase.capturingSegment);
+      expect(repository.finalizations, isEmpty);
+
+      await controller.finish();
+    },
+  );
+
+  test(
     'converts live pose changes into Realtime-owned guidance turns',
     () async {
       final repository = _FakeRepository(immediateSession: _session());
@@ -711,6 +833,12 @@ void main() {
         voice.guidanceRequests.map((request) => request.type),
         contains('assessment_review_ready'),
       );
+      expect(
+        voice.guidanceRequests
+            .lastWhere((request) => request.type == 'assessment_finalizing')
+            .interrupt,
+        isTrue,
+      );
     },
   );
 
@@ -881,11 +1009,15 @@ void main() {
         find.byKey(const ValueKey('motion-assessment-voice-status')),
         findsOneWidget,
       );
+      expect(
+        find.byKey(const ValueKey('motion-framing-guide-forward-head')),
+        findsOneWidget,
+      );
     },
   );
 
   testWidgets(
-    'requires an explicit per-session choice before enabling cloud key frames',
+    'enables sparse visual assistance by default when it is supported',
     (tester) async {
       final pose = _FakePosePlatform();
       final repository = _FakeRepository(immediateSession: _session());
@@ -912,15 +1044,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('开启视觉辅助吗？'), findsOneWidget);
-      expect(find.textContaining('不会上传连续视频'), findsOneWidget);
-      expect(pose.startCalls, 0);
-
-      await tester.tap(
-        find.byKey(const ValueKey('motion-visual-consent-enable')),
-      );
-      await tester.pumpAndSettle();
-
+      expect(find.text('开启视觉辅助吗？'), findsNothing);
       expect(pose.startCalls, 1);
       expect(repository.createdKeyFrameUploadEnabled, [true]);
     },
@@ -1255,6 +1379,7 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   final Object? connectError;
   Completer<void>? firstGuidanceCompleter;
   final Map<String, Completer<void>> guidanceCompleters = {};
+  final Map<String, List<Object>> guidanceErrors = {};
   VoidCallback? beforeConnect;
   int connectCalls = 0;
   MotionAssessmentContextSnapshot? latestContext;
@@ -1326,6 +1451,10 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
       awaitPlaybackStart: awaitPlaybackStart,
       awaitPlaybackCompletion: awaitPlaybackCompletion,
     ));
+    final errors = guidanceErrors[eventType];
+    if (errors != null && errors.isNotEmpty) {
+      throw errors.removeAt(0);
+    }
     if (awaitPlaybackStart || awaitPlaybackCompletion) {
       await firstGuidanceCompleter?.future;
       firstGuidanceCompleter = null;
