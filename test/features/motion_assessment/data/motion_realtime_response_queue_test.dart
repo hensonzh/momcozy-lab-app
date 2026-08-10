@@ -129,6 +129,29 @@ void main() {
       expect(events, hasLength(2));
     },
   );
+
+  test(
+    'releases the active slot when response.create cannot be sent',
+    () async {
+      final events = <Map<String, Object?>>[];
+      var failNext = true;
+      final queue = MotionRealtimeResponseQueue(
+        sendEvent: (event) async {
+          if (failNext) {
+            failNext = false;
+            throw StateError('data channel closed');
+          }
+          events.add(event);
+        },
+      );
+
+      await expectLater(queue.enqueue('发送失败的提示'), throwsStateError);
+      await queue.enqueue('重试后的提示');
+
+      expect(events, hasLength(1));
+      expect(_instructions(events.single), contains('重试后的提示'));
+    },
+  );
 }
 
 String _instructions(Map<String, Object?> event) {

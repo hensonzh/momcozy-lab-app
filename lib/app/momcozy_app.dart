@@ -600,6 +600,14 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   bool _openingAvatarTask = false;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.location == '/motion-assessment') {
+      _voicePlaybackCoordinator.suspend();
+    }
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final runtime = MomCozyRuntimeScope.of(context);
@@ -624,6 +632,16 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.location == '/' && widget.location != '/') {
       FocusManager.instance.primaryFocus?.unfocus();
+    }
+    final wasMotionAssessment = oldWidget.location == '/motion-assessment';
+    final isMotionAssessment = widget.location == '/motion-assessment';
+    if (!wasMotionAssessment && isMotionAssessment) {
+      // The assessment owns its own full-duplex Realtime voice session. The
+      // Agent Hub remains mounted offstage, so suspend both current and future
+      // normal Agent playback until this focused flow has ended.
+      _voicePlaybackCoordinator.suspend();
+    } else if (wasMotionAssessment && !isMotionAssessment) {
+      _voicePlaybackCoordinator.resume();
     }
     if (widget.location == '/') {
       _hasBuiltAgentHub = true;

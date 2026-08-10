@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_playback_tracker.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_response_queue.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_session_gate.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_voice_signaling.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_voice_command.dart';
@@ -49,6 +51,9 @@ class MotionRealtimeVoice extends ChangeNotifier
   RTCDataChannel? _dataChannel;
   MediaStream? _microphoneStream;
   MotionRealtimeResponseQueue? _responseQueue;
+  MotionRealtimeSessionGate? _sessionGate;
+  final MotionRealtimePlaybackTracker _playbackTracker =
+      MotionRealtimePlaybackTracker();
   final StreamController<MotionVoiceCommand> _commands =
       StreamController<MotionVoiceCommand>.broadcast();
   final Set<String> _handledCommandCallIds = {};
@@ -94,6 +99,8 @@ class MotionRealtimeVoice extends ChangeNotifier
       }
       _microphoneStream = stream;
       _setPhase(MotionRealtimeVoicePhase.connecting);
+      final sessionGate = MotionRealtimeSessionGate();
+      _sessionGate = sessionGate;
       final peer = await createPeerConnection({
         'sdpSemantics': 'unified-plan',
         'bundlePolicy': 'max-bundle',
@@ -106,17 +113,25 @@ class MotionRealtimeVoice extends ChangeNotifier
         return;
       }
       for (final track in stream.getAudioTracks()) {
+        // Negotiate the microphone track with the initial offer, but do not
+        // transmit user audio before OpenAI confirms the model session.
+        track.enabled = false;
         await peer.addTrack(track, stream);
       }
       peer.onConnectionState = (state) {
         if (!_isActive(generation)) return;
         switch (state) {
           case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
-            _setPhase(MotionRealtimeVoicePhase.listening);
+            if (sessionGate.isReady) {
+              _setPhase(MotionRealtimeVoicePhase.listening);
+            }
           case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
             _setPhase(MotionRealtimeVoicePhase.reconnecting);
           case RTCPeerConnectionState.RTCPeerConnectionStateFailed:
           case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
+            sessionGate.fail(
+              StateError('Realtime WebRTC connection closed before ready.'),
+            );
             _scheduleTerminalFailure(generation);
           default:
             break;
@@ -131,19 +146,20 @@ class MotionRealtimeVoice extends ChangeNotifier
         'oai-events',
         RTCDataChannelInit()..ordered = true,
       );
-      final dataChannelReady = Completer<void>();
       _dataChannel = channel;
-      _responseQueue = MotionRealtimeResponseQueue(
-        sendEvent: _sendRealtimeEvent,
-      );
       channel.onDataChannelState = (state) {
         if (!_isActive(generation)) return;
         if (state == RTCDataChannelState.RTCDataChannelOpen) {
-          if (!dataChannelReady.isCompleted) dataChannelReady.complete();
-          _setPhase(MotionRealtimeVoicePhase.listening);
+          sessionGate.markDataChannelOpen();
+        } else if (state == RTCDataChannelState.RTCDataChannelClosed) {
+          sessionGate.fail(
+            StateError('Realtime data channel closed before model startup.'),
+          );
+          _scheduleTerminalFailure(generation);
         }
       };
-      channel.onMessage = (message) => _handleServerEvent(message, generation);
+      channel.onMessage = (message) =>
+          _handleServerEvent(message, generation, sessionGate);
 
       final offer = await peer.createOffer({'offerToReceiveAudio': true});
       await peer.setLocalDescription(offer);
@@ -161,8 +177,23 @@ class MotionRealtimeVoice extends ChangeNotifier
       await peer.setRemoteDescription(
         RTCSessionDescription(answerSdp, 'answer'),
       );
-      if (channel.state != RTCDataChannelState.RTCDataChannelOpen) {
-        await dataChannelReady.future.timeout(const Duration(seconds: 8));
+      if (channel.state == RTCDataChannelState.RTCDataChannelOpen) {
+        sessionGate.markDataChannelOpen();
+      }
+      await sessionGate.ready.timeout(const Duration(seconds: 8));
+      if (!_isActive(generation)) return;
+      _responseQueue = MotionRealtimeResponseQueue(
+        sendEvent: _sendRealtimeEvent,
+      );
+      for (final track in stream.getAudioTracks()) {
+        track.enabled = true;
+      }
+      _setPhase(MotionRealtimeVoicePhase.listening);
+      final snapshot = _latestAssessmentContext;
+      if (snapshot != null) {
+        await sendClientEvent('assessment_context_sync', {
+          'context': snapshot.toJson(),
+        });
       }
     } catch (_) {
       if (_isActive(generation)) {
@@ -175,7 +206,12 @@ class MotionRealtimeVoice extends ChangeNotifier
 
   @override
   Future<void> speak(String instruction, {bool interrupt = false}) async {
-    await _responseQueue?.enqueue(instruction, interrupt: interrupt);
+    if (!isConnected) return;
+    try {
+      await _responseQueue?.enqueue(instruction, interrupt: interrupt);
+    } catch (_) {
+      _scheduleTerminalFailure(_connectionGeneration);
+    }
   }
 
   @override
@@ -190,6 +226,7 @@ class MotionRealtimeVoice extends ChangeNotifier
     String eventType,
     Map<String, Object?> payload,
   ) async {
+    if (!isConnected) return;
     final channel = _dataChannel;
     if (channel?.state != RTCDataChannelState.RTCDataChannelOpen) return;
     final content = jsonEncode({
@@ -197,20 +234,24 @@ class MotionRealtimeVoice extends ChangeNotifier
       'payload': payload,
       'source': 'on_device_pose_gate',
     });
-    await channel!.send(
-      RTCDataChannelMessage(
-        jsonEncode({
-          'type': 'conversation.item.create',
-          'item': {
-            'type': 'message',
-            'role': 'user',
-            'content': [
-              {'type': 'input_text', 'text': '[客户端姿态事件]$content'},
-            ],
-          },
-        }),
-      ),
-    );
+    try {
+      await channel!.send(
+        RTCDataChannelMessage(
+          jsonEncode({
+            'type': 'conversation.item.create',
+            'item': {
+              'type': 'message',
+              'role': 'user',
+              'content': [
+                {'type': 'input_text', 'text': '[客户端姿态事件]$content'},
+              ],
+            },
+          }),
+        ),
+      );
+    } catch (_) {
+      _scheduleTerminalFailure(_connectionGeneration);
+    }
   }
 
   @override
@@ -220,24 +261,33 @@ class MotionRealtimeVoice extends ChangeNotifier
     required String message,
     bool speakResult = true,
   }) async {
+    if (!isConnected) return;
     final channel = _dataChannel;
     if (channel?.state != RTCDataChannelState.RTCDataChannelOpen) return;
-    await channel!.send(
-      RTCDataChannelMessage(
-        jsonEncode({
-          'type': 'conversation.item.create',
-          'item': {
-            'type': 'function_call_output',
-            'call_id': command.callId,
-            'output': jsonEncode({'accepted': accepted, 'message': message}),
-          },
-        }),
-      ),
-    );
-    if (speakResult && message.isNotEmpty) await speak(message);
+    try {
+      await channel!.send(
+        RTCDataChannelMessage(
+          jsonEncode({
+            'type': 'conversation.item.create',
+            'item': {
+              'type': 'function_call_output',
+              'call_id': command.callId,
+              'output': jsonEncode({'accepted': accepted, 'message': message}),
+            },
+          }),
+        ),
+      );
+      if (speakResult && message.isNotEmpty) await speak(message);
+    } catch (_) {
+      _scheduleTerminalFailure(_connectionGeneration);
+    }
   }
 
-  void _handleServerEvent(RTCDataChannelMessage message, int generation) {
+  void _handleServerEvent(
+    RTCDataChannelMessage message,
+    int generation,
+    MotionRealtimeSessionGate sessionGate,
+  ) {
     if (!_isActive(generation)) return;
     if (message.isBinary) return;
     try {
@@ -245,9 +295,10 @@ class MotionRealtimeVoice extends ChangeNotifier
       if (decoded is! Map) return;
       final event = Map<Object?, Object?>.from(decoded);
       final type = decoded['type']?.toString() ?? '';
-      unawaited(_responseQueue?.handleServerEvent(event));
+      sessionGate.handleServerEvent(event);
+      unawaited(_handleResponseQueueEvent(event, generation));
       if (type == 'input_audio_buffer.speech_started') {
-        unawaited(_responseQueue?.interrupt());
+        unawaited(_interruptResponseQueue(generation));
       }
       final userAudioItemId = completedUserAudioItemIdFromServerEvent(event);
       if (userAudioItemId != null &&
@@ -260,16 +311,18 @@ class MotionRealtimeVoice extends ChangeNotifier
         final instructions =
             snapshot?.toRealtimeInstructions(contextAgeMs: contextAgeMs) ??
             '请简短回答用户刚才的问题。当前没有新鲜的端侧姿态语义快照，因此不要猜测用户姿态；请提示用户保持单人全身入镜，等待本地质量门重新确认。';
-        unawaited(_responseQueue?.enqueueModelTurn(instructions));
+        unawaited(_enqueueModelTurn(instructions, generation));
       }
-      if (type == 'response.audio.delta' ||
-          type == 'response.output_audio.delta') {
-        _setPhase(MotionRealtimeVoicePhase.speaking);
-      } else if (type == 'response.done' ||
-          type == 'response.audio.done' ||
-          type == 'response.output_audio.done') {
-        _setPhase(MotionRealtimeVoicePhase.listening);
-      } else if (type == 'error') {
+      final playbackTransition = _playbackTracker.handleEventType(type);
+      switch (playbackTransition) {
+        case MotionRealtimePlaybackTransition.speaking:
+          _setPhase(MotionRealtimeVoicePhase.speaking);
+        case MotionRealtimePlaybackTransition.listening:
+          _setPhase(MotionRealtimeVoicePhase.listening);
+        case null:
+          break;
+      }
+      if (type == 'error') {
         _scheduleTerminalFailure(generation);
       }
       for (final command in motionVoiceCommandsFromServerEvent(event)) {
@@ -279,6 +332,33 @@ class MotionRealtimeVoice extends ChangeNotifier
       }
     } on FormatException {
       return;
+    }
+  }
+
+  Future<void> _handleResponseQueueEvent(
+    Map<Object?, Object?> event,
+    int generation,
+  ) async {
+    try {
+      await _responseQueue?.handleServerEvent(event);
+    } catch (_) {
+      _scheduleTerminalFailure(generation);
+    }
+  }
+
+  Future<void> _interruptResponseQueue(int generation) async {
+    try {
+      await _responseQueue?.interrupt();
+    } catch (_) {
+      _scheduleTerminalFailure(generation);
+    }
+  }
+
+  Future<void> _enqueueModelTurn(String instructions, int generation) async {
+    try {
+      await _responseQueue?.enqueueModelTurn(instructions);
+    } catch (_) {
+      _scheduleTerminalFailure(generation);
     }
   }
 
@@ -314,10 +394,14 @@ class MotionRealtimeVoice extends ChangeNotifier
     final peer = _peerConnection;
     final stream = _microphoneStream;
     final responseQueue = _responseQueue;
+    final sessionGate = _sessionGate;
     _dataChannel = null;
     _peerConnection = null;
     _microphoneStream = null;
     _responseQueue = null;
+    _sessionGate = null;
+    _playbackTracker.reset();
+    sessionGate?.fail(StateError('Realtime voice connection was closed.'));
     if (stream != null) await _disposeStream(stream);
     await responseQueue?.close();
     if (channel != null) await channel.close();
@@ -329,7 +413,9 @@ class MotionRealtimeVoice extends ChangeNotifier
 
   Future<void> _sendRealtimeEvent(Map<String, Object?> event) async {
     final channel = _dataChannel;
-    if (channel?.state != RTCDataChannelState.RTCDataChannelOpen) return;
+    if (channel?.state != RTCDataChannelState.RTCDataChannelOpen) {
+      throw StateError('Realtime data channel is not open.');
+    }
     await channel!.send(RTCDataChannelMessage(jsonEncode(event)));
   }
 

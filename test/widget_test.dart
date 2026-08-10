@@ -306,6 +306,74 @@ void main() {
     },
   );
 
+  testWidgets('route shell hands voice ownership to motion assessment', (
+    tester,
+  ) async {
+    final runtime = _authenticatedRuntime();
+    var location = '/';
+    var requestedPlayback = false;
+    var cancelCount = 0;
+    StateSetter? updateShell;
+    AgentVoicePlaybackCoordinator? shellCoordinator;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MomCozyRuntimeScope(
+          apiRuntime: runtime,
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              updateShell = setState;
+              return MomCozyRouteShell(
+                location: location,
+                child: const SizedBox(key: ValueKey('focused-flow')),
+                agentHubBuilder:
+                    (context, uri, extra, voicePlaybackCoordinator) {
+                      shellCoordinator = voicePlaybackCoordinator;
+                      if (!requestedPlayback) {
+                        requestedPlayback = true;
+                        voicePlaybackCoordinator.request(
+                          id: 'normal-agent-voice',
+                          source: AgentVoicePlaybackSource.autoReply,
+                          cancel: () => cancelCount += 1,
+                        );
+                      }
+                      return const SizedBox(
+                        key: ValueKey('agent-hub-voice-owner'),
+                      );
+                    },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(shellCoordinator?.activeSource, AgentVoicePlaybackSource.autoReply);
+    expect(cancelCount, 0);
+
+    updateShell!(() => location = '/motion-assessment');
+    await tester.pump();
+
+    expect(cancelCount, 1);
+    expect(shellCoordinator?.isSuspended, isTrue);
+    expect(shellCoordinator?.activeSource, isNull);
+    expect(
+      shellCoordinator
+          ?.request(
+            id: 'late-normal-agent-voice',
+            source: AgentVoicePlaybackSource.autoReply,
+          )
+          .status,
+      AgentVoicePlaybackRequestStatus.rejected,
+    );
+
+    updateShell!(() => location = '/');
+    await tester.pump();
+
+    expect(shellCoordinator?.isSuspended, isFalse);
+  });
+
   testWidgets('route shell clears Agent composer focus across bottom tabs', (
     tester,
   ) async {
