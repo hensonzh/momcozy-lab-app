@@ -16,6 +16,7 @@ void main() {
       await controller.load();
 
       expect(controller.state.surface, PlanSurface.overview);
+      expect(controller.state.period, PlanPeriod.day);
       controller.openPlanDetails('plan-1');
       expect(controller.state.surface, PlanSurface.detail);
       controller.showOverview();
