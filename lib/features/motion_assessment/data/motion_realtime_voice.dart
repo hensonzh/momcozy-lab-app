@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_audio_session.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_context_publisher.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_playback_tracker.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_response_queue.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_session_gate.dart';
@@ -35,6 +37,13 @@ abstract interface class MotionRealtimeVoiceClient implements Listenable {
     bool interrupt = false,
     bool exact = false,
   });
+  Future<void> requestGuidance(
+    String eventType,
+    Map<String, Object?> payload, {
+    bool interrupt = false,
+    bool awaitPlaybackStart = false,
+    bool awaitPlaybackCompletion = false,
+  });
   void updateAssessmentContext(MotionAssessmentContextSnapshot snapshot);
   Future<void> sendClientEvent(String eventType, Map<String, Object?> payload);
   Future<void> completeCommand(
@@ -49,9 +58,19 @@ abstract interface class MotionRealtimeVoiceClient implements Listenable {
 
 class MotionRealtimeVoice extends ChangeNotifier
     implements MotionRealtimeVoiceClient {
-  MotionRealtimeVoice({required this.signaling});
+  MotionRealtimeVoice({
+    required this.signaling,
+    MotionRealtimeAudioSession? audioSession,
+  }) : audioSession = audioSession ?? WebRtcMotionRealtimeAudioSession() {
+    _contextPublisher = MotionRealtimeContextPublisher(
+      publish: (snapshot) =>
+          sendClientEvent('assessment_context_sync', {'context': snapshot}),
+    );
+  }
 
   final MotionVoiceSignaling signaling;
+  final MotionRealtimeAudioSession audioSession;
+  late final MotionRealtimeContextPublisher _contextPublisher;
 
   MotionRealtimeVoicePhase _phase = MotionRealtimeVoicePhase.idle;
   RTCPeerConnection? _peerConnection;
@@ -76,6 +95,9 @@ class MotionRealtimeVoice extends ChangeNotifier
   String _providerName = '';
   String? _failureCode;
   bool _remoteAudioTrackReady = false;
+  bool _audioSessionActive = false;
+  Completer<void>? _playbackStarted;
+  Completer<void>? _playbackCompleted;
 
   @override
   MotionRealtimeVoicePhase get phase => _phase;
@@ -102,11 +124,21 @@ class MotionRealtimeVoice extends ChangeNotifier
     final pendingCleanup = _terminalCleanup;
     if (pendingCleanup != null) await pendingCleanup;
     if (_disposed || _closed) return;
+    if (_peerConnection != null ||
+        _dataChannel != null ||
+        _microphoneStream != null) {
+      _connectionGeneration += 1;
+      await _closeResources();
+      if (_disposed || _closed) return;
+    }
     final generation = ++_connectionGeneration;
     _failureCode = null;
     _setPhase(MotionRealtimeVoicePhase.requestingPermission);
-    var failureStage = 'microphone_permission';
+    var failureStage = 'audio_session';
     try {
+      _audioSessionActive = true;
+      await audioSession.activate();
+      failureStage = 'microphone_permission';
       final stream = await navigator.mediaDevices.getUserMedia({
         'audio': {
           'echoCancellation': true,
@@ -147,7 +179,8 @@ class MotionRealtimeVoice extends ChangeNotifier
           case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
             _disconnectTimer?.cancel();
             _disconnectTimer = null;
-            if (sessionGate.isReady) {
+            sessionGate.markPeerConnected();
+            if (sessionGate.isReady && _responseQueue != null) {
               _setPhase(MotionRealtimeVoicePhase.listening);
             }
           case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
@@ -170,7 +203,7 @@ class MotionRealtimeVoice extends ChangeNotifier
       };
       peer.onTrack = (event) {
         if (event.track.kind == 'audio') {
-          unawaited(_configureRemoteAudio(event));
+          unawaited(_configureRemoteAudio(event, generation, sessionGate));
         }
       };
       final channel = await peer.createDataChannel(
@@ -214,7 +247,7 @@ class MotionRealtimeVoice extends ChangeNotifier
         sessionGate.markDataChannelOpen();
       }
       failureStage = 'session_startup';
-      await sessionGate.ready.timeout(const Duration(seconds: 8));
+      await sessionGate.ready.timeout(const Duration(seconds: 10));
       if (!_isActive(generation)) return;
       _responseQueue = MotionRealtimeResponseQueue(
         sendEvent: _sendRealtimeEvent,
@@ -244,6 +277,50 @@ class MotionRealtimeVoice extends ChangeNotifier
   }
 
   @override
+  Future<void> requestGuidance(
+    String eventType,
+    Map<String, Object?> payload, {
+    bool interrupt = false,
+    bool awaitPlaybackStart = false,
+    bool awaitPlaybackCompletion = false,
+  }) async {
+    if (!isConnected) {
+      throw StateError('Realtime voice is not connected.');
+    }
+    final normalizedEventType = eventType.trim();
+    if (normalizedEventType.isEmpty) return;
+    final shouldWaitForStart = awaitPlaybackStart || awaitPlaybackCompletion;
+    final started = shouldWaitForStart ? Completer<void>() : null;
+    final completed = awaitPlaybackCompletion ? Completer<void>() : null;
+    if (started != null) {
+      if (_playbackStarted != null || _playbackCompleted != null) {
+        throw StateError('Another Realtime guidance turn is awaiting audio.');
+      }
+      _playbackStarted = started;
+      _playbackCompleted = completed;
+    }
+    try {
+      if (interrupt) await _responseQueue?.interrupt();
+      await sendClientEvent(normalizedEventType, payload);
+      await _responseQueue?.enqueueModelTurn(
+        _guidanceTurnInstructions(normalizedEventType),
+      );
+      if (started != null) {
+        await started.future.timeout(const Duration(seconds: 10));
+      }
+      if (completed != null) {
+        await completed.future.timeout(const Duration(seconds: 20));
+      }
+    } catch (_) {
+      _scheduleTerminalFailure(_connectionGeneration);
+      rethrow;
+    } finally {
+      if (identical(_playbackStarted, started)) _playbackStarted = null;
+      if (identical(_playbackCompleted, completed)) _playbackCompleted = null;
+    }
+  }
+
+  @override
   Future<void> speak(
     String instruction, {
     bool interrupt = false,
@@ -266,6 +343,7 @@ class MotionRealtimeVoice extends ChangeNotifier
     if (_disposed || _closed) return;
     _latestAssessmentContext = snapshot;
     _latestAssessmentContextReceivedAt = DateTime.now();
+    if (isConnected) _contextPublisher.add(snapshot.toJson());
   }
 
   @override
@@ -330,6 +408,16 @@ class MotionRealtimeVoice extends ChangeNotifier
     }
   }
 
+  String _guidanceTurnInstructions(String eventType) {
+    if (eventType == 'assessment_completed') {
+      return '最新客户端事件为 assessment_completed。只用一句简短中文告知用户：'
+          '本次采集已经完成，接下来由主智能体解读结果。不要在这里诊断或展开结果。';
+    }
+    return '最新客户端姿态事件为 $eventType。请依据刚收到的事件与最新的 '
+        'motion_assessment.context.v3 快照，主动给出一句简短、自然、可立即执行的中文语音指导。'
+        '一次只说一个动作；本地质量门和状态机结论是权威，不要要求用户触碰屏幕，不要要求腿脚完整入镜。';
+  }
+
   void _handleServerEvent(
     RTCDataChannelMessage message,
     int generation,
@@ -363,8 +451,17 @@ class MotionRealtimeVoice extends ChangeNotifier
       final playbackTransition = _playbackTracker.handleEventType(type);
       switch (playbackTransition) {
         case MotionRealtimePlaybackTransition.speaking:
+          final started = _playbackStarted;
+          if (started != null && !started.isCompleted) started.complete();
           _setPhase(MotionRealtimeVoicePhase.speaking);
         case MotionRealtimePlaybackTransition.listening:
+          final started = _playbackStarted;
+          final completed = _playbackCompleted;
+          if (started?.isCompleted == true &&
+              completed != null &&
+              !completed.isCompleted) {
+            completed.complete();
+          }
           _setPhase(MotionRealtimeVoicePhase.listening);
         case null:
           break;
@@ -427,7 +524,11 @@ class MotionRealtimeVoice extends ChangeNotifier
     );
   }
 
-  Future<void> _configureRemoteAudio(RTCTrackEvent event) async {
+  Future<void> _configureRemoteAudio(
+    RTCTrackEvent event,
+    int generation,
+    MotionRealtimeSessionGate sessionGate,
+  ) async {
     event.track.enabled = true;
     _remoteAudioTrackReady = true;
     if (event.streams.isNotEmpty) _remoteAudioStream = event.streams.first;
@@ -438,6 +539,7 @@ class MotionRealtimeVoice extends ChangeNotifier
       // The WebRTC engine still owns playout; routing can recover on the next
       // platform audio-device change.
     }
+    if (_isActive(generation)) sessionGate.markRemoteAudioTrackReady();
   }
 
   @override
@@ -445,6 +547,7 @@ class MotionRealtimeVoice extends ChangeNotifier
     if (_closed) return;
     _closed = true;
     _connectionGeneration += 1;
+    await _contextPublisher.close();
     await _closeResources();
     _setPhase(MotionRealtimeVoicePhase.closed);
   }
@@ -457,6 +560,7 @@ class MotionRealtimeVoice extends ChangeNotifier
     final stream = _microphoneStream;
     final responseQueue = _responseQueue;
     final sessionGate = _sessionGate;
+    final deactivateAudioSession = _audioSessionActive;
     _dataChannel = null;
     _peerConnection = null;
     _microphoneStream = null;
@@ -464,7 +568,11 @@ class MotionRealtimeVoice extends ChangeNotifier
     _remoteAudioTrackReady = false;
     _responseQueue = null;
     _sessionGate = null;
+    _audioSessionActive = false;
     _playbackTracker.reset();
+    _failPlaybackWaiters(
+      StateError('Realtime voice connection was closed during playback.'),
+    );
     sessionGate?.fail(StateError('Realtime voice connection was closed.'));
     if (stream != null) await _disposeStream(stream);
     await responseQueue?.close();
@@ -472,6 +580,25 @@ class MotionRealtimeVoice extends ChangeNotifier
     if (peer != null) {
       await peer.close();
       await peer.dispose();
+    }
+    if (deactivateAudioSession) {
+      try {
+        await audioSession.deactivate();
+      } catch (_) {
+        // Native audio focus release remains best effort during teardown.
+      }
+    }
+  }
+
+  void _failPlaybackWaiters(Object error) {
+    final started = _playbackStarted;
+    final completed = _playbackCompleted;
+    final playbackHadStarted = started?.isCompleted == true;
+    if (started != null && !started.isCompleted) started.completeError(error);
+    if (completed != null && !completed.isCompleted && playbackHadStarted) {
+      completed.completeError(error);
+    } else if (completed != null && !completed.isCompleted) {
+      completed.complete();
     }
   }
 
@@ -517,6 +644,7 @@ class MotionRealtimeVoice extends ChangeNotifier
     _disposed = true;
     _closed = true;
     _connectionGeneration += 1;
+    unawaited(_contextPublisher.close());
     unawaited(_closeResources());
     unawaited(_commands.close());
     super.dispose();

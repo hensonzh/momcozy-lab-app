@@ -1,14 +1,21 @@
 import 'dart:async';
 
-/// Treats a Realtime connection as usable only after both the WebRTC data
-/// channel and the model-side session are confirmed.
+/// Treats a Realtime connection as usable only after signaling, transport,
+/// model startup and the remote audio path are all confirmed.
 class MotionRealtimeSessionGate {
   final Completer<Object?> _settled = Completer<Object?>();
   bool _dataChannelOpen = false;
+  bool _peerConnected = false;
+  bool _remoteAudioTrackReady = false;
   bool _sessionCreated = false;
   Object? _failure;
 
-  bool get isReady => _failure == null && _dataChannelOpen && _sessionCreated;
+  bool get isReady =>
+      _failure == null &&
+      _dataChannelOpen &&
+      _peerConnected &&
+      _remoteAudioTrackReady &&
+      _sessionCreated;
 
   Object? get failure => _failure;
 
@@ -20,6 +27,18 @@ class MotionRealtimeSessionGate {
   void markDataChannelOpen() {
     if (_settled.isCompleted) return;
     _dataChannelOpen = true;
+    _completeIfReady();
+  }
+
+  void markPeerConnected() {
+    if (_settled.isCompleted) return;
+    _peerConnected = true;
+    _completeIfReady();
+  }
+
+  void markRemoteAudioTrackReady() {
+    if (_settled.isCompleted) return;
+    _remoteAudioTrackReady = true;
     _completeIfReady();
   }
 

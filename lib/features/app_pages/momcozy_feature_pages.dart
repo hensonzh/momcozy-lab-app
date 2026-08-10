@@ -215,6 +215,7 @@ Widget _buildMotionAssessmentPage(BuildContext context, Uri? routeUri) {
         repository: runtime.motionAssessmentRepository,
         posePlatform: NativeMotionPosePlatform(),
         voice: MotionRealtimeVoice(signaling: runtime.motionVoiceSignaling),
+        prepareRealtimeAudio: runtime.agentVoicePlaybackPlayer.stop,
       ),
     ),
   );

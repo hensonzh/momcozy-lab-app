@@ -2650,6 +2650,35 @@ void main() {
     expect(client.requests, hasLength(1));
   });
 
+  testWidgets(
+    'Agent Hub starts hidden motion-result feedback without a fake user bubble',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            initialAutoRunRequest: const AgentHubAutoRunRequest(
+              requestMessage: '请读取刚完成的体态评估并给出简短反馈。',
+              idempotencyKey: 'motion-assessment-feedback:assessment-1',
+              metadata: {
+                'source': 'motion_assessment_completion',
+                'assessment_id': 'assessment-1',
+              },
+            ),
+          ),
+        ),
+      );
+      await _pumpUntil(tester, () => client.requests.isNotEmpty);
+
+      expect(client.requests, hasLength(1));
+      expect(client.requests.single.idempotencyKey, endsWith('assessment-1'));
+      expect(client.requests.single.metadata['assessment_id'], 'assessment-1');
+      expect(find.text('请读取刚完成的体态评估并给出简短反馈。'), findsNothing);
+    },
+  );
+
   testWidgets('Agent Hub starts auto voice playback after finished reply', (
     tester,
   ) async {

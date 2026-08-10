@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
@@ -165,6 +167,34 @@ void main() {
               .status,
           AgentVoicePlaybackRequestStatus.started,
         );
+      },
+    );
+
+    test(
+      'waits until active playback is drained for an exclusive flow',
+      () async {
+        final coordinator = AgentVoicePlaybackCoordinator();
+        final cancelled = Completer<void>();
+
+        coordinator.request(
+          id: 'reply-1',
+          source: AgentVoicePlaybackSource.autoReply,
+          cancel: () => cancelled.future,
+        );
+
+        var drained = false;
+        final suspend = coordinator.suspendAndDrain().then(
+          (_) => drained = true,
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        expect(coordinator.isSuspended, isTrue);
+        expect(coordinator.activeSource, isNull);
+        expect(drained, isFalse);
+
+        cancelled.complete();
+        await suspend;
+        expect(drained, isTrue);
       },
     );
   });

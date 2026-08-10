@@ -140,19 +140,21 @@ AgentConversationHistory _buildConversationHistory({
   for (final message in messages) {
     if (identical(message, latestAssistant)) continue;
     final messageRunId = message.runId;
-    historyMessages.add(
-      AgentConversationMessage(
-        role: message.role,
-        content: message.content,
-        images: message.images,
-        files: message.files,
-        runState:
-            message.role == AgentConversationMessageRole.assistant &&
-                message.runId != null
-            ? statesByRun[message.runId]
-            : null,
-      ),
-    );
+    if (!message.hiddenAutomation) {
+      historyMessages.add(
+        AgentConversationMessage(
+          role: message.role,
+          content: message.content,
+          images: message.images,
+          files: message.files,
+          runState:
+              message.role == AgentConversationMessageRole.assistant &&
+                  message.runId != null
+              ? statesByRun[message.runId]
+              : null,
+        ),
+      );
+    }
     if (message.role == AgentConversationMessageRole.user &&
         messageRunId != null &&
         messageRunId != latestRunId &&
@@ -228,6 +230,10 @@ _ConversationWireMessage? _wireMessageFromValue(Object? value) {
     return null;
   }
   final runId = _string(map['run_id']).trim();
+  final clientContext = contentMap['client_context'];
+  final source = clientContext is Map
+      ? _string(clientContext['source']).trim()
+      : '';
   return _ConversationWireMessage(
     id: id,
     runId: runId.isEmpty ? null : runId,
@@ -235,6 +241,9 @@ _ConversationWireMessage? _wireMessageFromValue(Object? value) {
     content: text,
     images: images,
     files: files,
+    hiddenAutomation:
+        role == AgentConversationMessageRole.user &&
+        source == 'motion_assessment_completion',
   );
 }
 
@@ -313,6 +322,7 @@ class _ConversationWireMessage {
     required this.content,
     required this.images,
     required this.files,
+    this.hiddenAutomation = false,
   });
 
   final String id;
@@ -321,4 +331,5 @@ class _ConversationWireMessage {
   final String content;
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
+  final bool hiddenAutomation;
 }

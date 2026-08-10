@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 enum AgentVoicePhase { idle, playing, cancelled, error }
@@ -118,7 +119,7 @@ class AgentVoicePlaybackHandle {
 
   void finish() {
     if (!isCurrent) return;
-    _coordinator._finishActive(runCancel: false);
+    unawaited(_coordinator._finishActive(runCancel: false));
   }
 
   bool cancel() {
@@ -143,7 +144,7 @@ class AgentVoicePlaybackCoordinator {
   AgentVoicePlaybackRequestResult request({
     required String id,
     required AgentVoicePlaybackSource source,
-    void Function()? cancel,
+    FutureOr<void> Function()? cancel,
     int? priority,
   }) {
     final playbackId = id.trim();
@@ -163,7 +164,7 @@ class AgentVoicePlaybackCoordinator {
           activeSource: current.source,
         );
       }
-      _finishActive(runCancel: true, notifyIdle: false);
+      unawaited(_finishActive(runCancel: true, notifyIdle: false));
     }
 
     _nextToken += 1;
@@ -184,9 +185,12 @@ class AgentVoicePlaybackCoordinator {
   }
 
   void suspend() {
-    if (_suspended) return;
-    _suspended = true;
-    cancel();
+    unawaited(suspendAndDrain());
+  }
+
+  Future<void> suspendAndDrain() async {
+    if (!_suspended) _suspended = true;
+    await _finishActive(runCancel: true);
   }
 
   void resume() {
@@ -202,7 +206,7 @@ class AgentVoicePlaybackCoordinator {
     if (current == null) return false;
     if (handle != null && handle.token != current.token) return false;
     if (preserveSources.contains(current.source)) return false;
-    _finishActive(runCancel: true);
+    unawaited(_finishActive(runCancel: true));
     return true;
   }
 
@@ -213,11 +217,20 @@ class AgentVoicePlaybackCoordinator {
     };
   }
 
-  void _finishActive({required bool runCancel, bool notifyIdle = true}) {
+  Future<void> _finishActive({
+    required bool runCancel,
+    bool notifyIdle = true,
+  }) async {
     final current = _active;
     if (current == null) return;
     _active = null;
-    if (runCancel) current.cancel?.call();
+    if (runCancel && current.cancel != null) {
+      try {
+        await current.cancel!.call();
+      } catch (_) {
+        // Exclusive flows still proceed after best-effort playback teardown.
+      }
+    }
     if (notifyIdle) {
       for (final listener in [..._idleListeners]) {
         listener();
@@ -239,7 +252,7 @@ class _ActiveAgentVoicePlayback {
   final AgentVoicePlaybackSource source;
   final int token;
   final int priority;
-  final void Function()? cancel;
+  final FutureOr<void> Function()? cancel;
 }
 
 int _sourcePriority(AgentVoicePlaybackSource source) {

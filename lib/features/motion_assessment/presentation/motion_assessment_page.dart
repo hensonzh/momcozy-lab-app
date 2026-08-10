@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
@@ -66,6 +65,27 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     _voiceExitScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      final assessmentId = controller.completedAssessmentId;
+      if (controller.completedSuccessfully && assessmentId != null) {
+        context.go(
+          '/',
+          extra: {
+            'agentAutoRun': {
+              'requestMessage':
+                  '[系统流程触发] 用户刚完成体态评估。请调用 '
+                  'motion_assessment_result.read 读取最新权威聚合结果，'
+                  '用简短、易懂、非诊断的中文主动反馈结果，并给出一到两个安全建议。'
+                  '评估 ID：$assessmentId',
+              'idempotencyKey': 'motion-assessment-feedback:$assessmentId',
+              'metadata': {
+                'source': 'motion_assessment_completion',
+                'assessment_id': assessmentId,
+              },
+            },
+          },
+        );
+        return;
+      }
       context.canPop() ? context.pop() : context.go('/');
     });
   }
@@ -87,9 +107,11 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                   key: const ValueKey('motion-pose-overlay'),
                   observation: controller.observation,
                 ),
-                _topBar(context),
+                _topBar(),
                 _framingGuide(),
-                _bottomPanel(context),
+                if (controller.phase == MotionAssessmentPagePhase.assessing &&
+                    controller.forwardHeadResult == null)
+                  _samplingProgress(),
               ],
             ),
           ),
@@ -98,20 +120,13 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     );
   }
 
-  Widget _topBar(BuildContext context) {
+  Widget _topBar() {
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child: Row(
           children: [
-            IconButton.filledTonal(
-              key: const ValueKey('motion-assessment-close'),
-              onPressed: () => unawaited(_close(context)),
-              icon: const Icon(Icons.close_rounded),
-              tooltip: '退出评估',
-            ),
-            const SizedBox(width: 8),
             const Text(
               '动态姿态评估',
               style: TextStyle(
@@ -120,39 +135,23 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
               ),
             ),
             const Spacer(),
-            DecoratedBox(
+            AnimatedContainer(
+              key: const ValueKey('motion-assessment-voice-status'),
+              duration: const Duration(milliseconds: 220),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.58),
-                borderRadius: BorderRadius.circular(20),
+                color: controller.voicePhase.name == 'failed'
+                    ? Colors.orange.withValues(alpha: 0.82)
+                    : const Color(0xff7c2944).withValues(alpha: 0.88),
+                shape: BoxShape.circle,
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      controller.voicePhase.name == 'speaking'
-                          ? Icons.graphic_eq_rounded
-                          : Icons.mic_rounded,
-                      size: 17,
-                      color: controller.voicePhase.name == 'failed'
-                          ? Colors.orangeAccent
-                          : Colors.white,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      _voiceLabel(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
+              width: 40,
+              height: 40,
+              child: Icon(
+                controller.voicePhase.name == 'speaking'
+                    ? Icons.graphic_eq_rounded
+                    : Icons.mic_rounded,
+                size: 20,
+                color: Colors.white,
               ),
             ),
           ],
@@ -185,152 +184,22 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     );
   }
 
-  Widget _bottomPanel(BuildContext context) {
-    final result = controller.forwardHeadResult;
+  Widget _samplingProgress() {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xff20171c).withValues(alpha: 0.92),
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: Colors.white24),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                _statusIcon(),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    controller.guidance,
-                    key: const ValueKey('motion-assessment-guidance'),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      height: 1.35,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            if (controller.voiceStatusMessage case final message?) ...[
-              const SizedBox(height: 10),
-              Row(
-                key: const ValueKey('motion-assessment-voice-status'),
-                children: [
-                  const Icon(
-                    Icons.info_outline_rounded,
-                    size: 16,
-                    color: Colors.orangeAccent,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      message,
-                      style: const TextStyle(
-                        color: Colors.orangeAccent,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-            if (controller.phase == MotionAssessmentPagePhase.failed &&
-                controller.poseDiagnosticMessage != null &&
-                kDebugMode) ...[
-              const SizedBox(height: 8),
-              SelectableText(
-                '诊断信息：${controller.poseDiagnosticMessage!}',
-                key: const ValueKey('motion-assessment-pose-diagnostic'),
-                style: const TextStyle(
-                  color: Colors.white60,
-                  fontSize: 11,
-                  height: 1.35,
-                ),
-              ),
-            ],
-            if (controller.phase == MotionAssessmentPagePhase.assessing &&
-                result == null) ...[
-              const SizedBox(height: 12),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  key: const ValueKey('motion-assessment-sampling-progress'),
-                  value: controller.samplingProgress,
-                  minHeight: 5,
-                  backgroundColor: Colors.white12,
-                  color: const Color(0xff51e1d2),
-                ),
-              ),
-            ],
-            if (controller.phase ==
-                MotionAssessmentPagePhase.targetChanged) ...[
-              const SizedBox(height: 12),
-              FilledButton(
-                onPressed: () => unawaited(controller.confirmRecalibration()),
-                child: const Text('确认是我，重新校准'),
-              ),
-            ],
-            if (result != null) ...[
-              const SizedBox(height: 12),
-              FilledButton.icon(
-                onPressed: () => unawaited(_complete(context)),
-                icon: const Icon(Icons.check_rounded),
-                label: const Text('完成评估'),
-              ),
-            ],
-          ],
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(36, 0, 36, 28),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            key: const ValueKey('motion-assessment-sampling-progress'),
+            value: controller.samplingProgress,
+            minHeight: 5,
+            backgroundColor: Colors.black38,
+            color: const Color(0xff51e1d2),
+          ),
         ),
       ),
     );
-  }
-
-  Widget _statusIcon() {
-    final icon = switch (controller.phase) {
-      MotionAssessmentPagePhase.pausedMultiplePeople => Icons.groups_rounded,
-      MotionAssessmentPagePhase.targetChanged => Icons.person_search_rounded,
-      MotionAssessmentPagePhase.assessing => Icons.accessibility_new_rounded,
-      MotionAssessmentPagePhase.failed => Icons.error_outline_rounded,
-      _ => Icons.center_focus_strong_rounded,
-    };
-    return Icon(icon, color: Colors.white, size: 28);
-  }
-
-  String _voiceLabel() {
-    if (controller.voicePhase.name == 'reconnecting') return '重新连接…';
-    if (controller.voiceStatusMessage != null) return '语音未连接';
-    final provider = controller.voiceProviderName == 'openai_realtime'
-        ? 'OpenAI · '
-        : '';
-    return switch (controller.voicePhase.name) {
-      'speaking' when !controller.hasRemoteVoiceAudio => '音频连接中…',
-      'speaking' => '$provider指导中',
-      'listening' => '$provider聆听中',
-      'failed' => '语音未连接',
-      'closed' => '语音已关闭',
-      'reconnecting' => '重新连接…',
-      _ => '连接实时语音…',
-    };
-  }
-
-  Future<void> _close(BuildContext context) async {
-    await controller.finish();
-    if (!context.mounted) return;
-    context.canPop() ? context.pop() : context.go('/');
-  }
-
-  Future<void> _complete(BuildContext context) async {
-    await controller.finish(completed: true);
-    if (!context.mounted) return;
-    context.canPop() ? context.pop() : context.go('/');
   }
 }
