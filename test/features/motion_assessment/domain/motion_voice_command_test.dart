@@ -26,15 +26,14 @@ void main() {
   );
 
   test('supports argument completion events and rejects unknown commands', () {
-    expect(
-      motionVoiceCommandsFromServerEvent({
-        'type': 'response.function_call_arguments.done',
-        'name': 'motion_client_command',
-        'call_id': 'call-2',
-        'arguments': '{"command":"stop_assessment"}',
-      }).single.type,
-      MotionVoiceCommandType.stopAssessment,
-    );
+    final stop = motionVoiceCommandsFromServerEvent({
+      'type': 'response.function_call_arguments.done',
+      'name': 'motion_client_command',
+      'call_id': 'call-2',
+      'arguments': '{"command":"stop_assessment","reason":"discomfort"}',
+    }).single;
+    expect(stop.type, MotionVoiceCommandType.stopAssessment);
+    expect(stop.reason, 'discomfort');
 
     expect(
       motionVoiceCommandsFromServerEvent({

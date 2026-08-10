@@ -7,10 +7,15 @@ enum MotionVoiceCommandType {
 }
 
 class MotionVoiceCommand {
-  const MotionVoiceCommand({required this.type, required this.callId});
+  const MotionVoiceCommand({
+    required this.type,
+    required this.callId,
+    this.reason,
+  });
 
   final MotionVoiceCommandType type;
   final String callId;
+  final String? reason;
 }
 
 String? completedUserAudioItemIdFromServerEvent(Map<Object?, Object?> event) {
@@ -82,7 +87,18 @@ MotionVoiceCommand? _commandFromFunctionCall(Map<Object?, Object?> item) {
     'stop_assessment' => MotionVoiceCommandType.stopAssessment,
     _ => null,
   };
+  final rawReason = decoded['reason']?.toString();
+  final reason =
+      const {
+        'user_requested',
+        'discomfort',
+        'pain',
+        'dizziness',
+        'other',
+      }.contains(rawReason)
+      ? rawReason
+      : null;
   return command == null
       ? null
-      : MotionVoiceCommand(type: command, callId: callId);
+      : MotionVoiceCommand(type: command, callId: callId, reason: reason);
 }

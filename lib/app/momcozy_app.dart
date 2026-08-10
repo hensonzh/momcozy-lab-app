@@ -603,7 +603,7 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   void initState() {
     super.initState();
     if (widget.location == '/motion-assessment') {
-      _voicePlaybackCoordinator.suspend();
+      unawaited(_voicePlaybackCoordinator.suspendAndDrain());
     }
   }
 
@@ -639,7 +639,7 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
       // The assessment owns its own full-duplex Realtime voice session. The
       // Agent Hub remains mounted offstage, so suspend both current and future
       // normal Agent playback until this focused flow has ended.
-      _voicePlaybackCoordinator.suspend();
+      unawaited(_voicePlaybackCoordinator.suspendAndDrain());
     } else if (wasMotionAssessment && !isMotionAssessment) {
       _voicePlaybackCoordinator.resume();
     }
@@ -1435,6 +1435,24 @@ Widget _buildDefaultAgentHubPage(
     ),
     initialComposerText: _agentPrefillFromRoute(uri, extra),
     initialAutoSend: _agentAutoSendFromRoute(uri, extra),
+    initialAutoRunRequest: _agentAutoRunFromRoute(extra),
+  );
+}
+
+AgentHubAutoRunRequest? _agentAutoRunFromRoute(Object? extra) {
+  final extraMap = extra is Map ? extra : null;
+  final rawRequest = extraMap?['agentAutoRun'];
+  if (rawRequest is! Map) return null;
+  final requestMessage = rawRequest['requestMessage']?.toString().trim() ?? '';
+  final idempotencyKey = rawRequest['idempotencyKey']?.toString().trim() ?? '';
+  if (requestMessage.isEmpty || idempotencyKey.isEmpty) return null;
+  final rawMetadata = rawRequest['metadata'];
+  return AgentHubAutoRunRequest(
+    requestMessage: requestMessage,
+    idempotencyKey: idempotencyKey,
+    metadata: rawMetadata is Map
+        ? Map<String, Object?>.from(rawMetadata)
+        : const <String, Object?>{},
   );
 }
 

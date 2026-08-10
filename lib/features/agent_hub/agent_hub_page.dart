@@ -200,6 +200,18 @@ class _AgentHubInteractionState {
       const <String, AgentArtifactFormSubmission>{};
 }
 
+class AgentHubAutoRunRequest {
+  const AgentHubAutoRunRequest({
+    required this.requestMessage,
+    required this.idempotencyKey,
+    this.metadata = const <String, Object?>{},
+  });
+
+  final String requestMessage;
+  final String idempotencyKey;
+  final Map<String, Object?> metadata;
+}
+
 class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
     super.key,
@@ -231,6 +243,7 @@ class AgentHubPage extends StatefulWidget {
     this.onNewSession,
     this.initialComposerText,
     this.initialAutoSend = false,
+    this.initialAutoRunRequest,
   });
 
   final Object? stateCacheKey;
@@ -261,6 +274,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
   final bool initialAutoSend;
+  final AgentHubAutoRunRequest? initialAutoRunRequest;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -348,6 +362,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       AgentMediaVoiceNarrationIndex.fromEvents(const []);
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
+  String? _consumedInitialAutoRunKey;
+  bool _initialAutoRunInFlight = false;
   bool _dismissComposerKeyboardOnRunAccepted = false;
   String _greeting = agentHubDefaultGreeting;
   AgentHubGreetingProfile? _profile;
@@ -392,6 +408,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
     } else if (oldWidget.initialAutoSend != widget.initialAutoSend &&
         _interactionRestoreResolved) {
       _scheduleInitialAutoSendIfNeeded();
+    }
+    if (oldWidget.initialAutoRunRequest?.idempotencyKey !=
+            widget.initialAutoRunRequest?.idempotencyKey &&
+        _interactionRestoreResolved) {
+      _scheduleInitialAutoRunIfNeeded();
     }
     if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
       _syncVoicePlaybackIdleSubscription();
@@ -608,6 +629,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _interactionRestoreResolved = true;
       _applyInitialComposerText();
       _scheduleInitialAutoSendIfNeeded();
+      _scheduleInitialAutoRunIfNeeded();
       _scheduleInitialInteractionPostFrame();
       return;
     }
@@ -635,6 +657,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     _applyInitialComposerText();
     _scheduleInitialAutoSendIfNeeded();
+    _scheduleInitialAutoRunIfNeeded();
     if (shouldRestore) _persistInteractionState();
     _scheduleInitialInteractionPostFrame(scrollToLatest: shouldRestore);
   }
@@ -795,6 +818,33 @@ class _AgentHubPageState extends State<AgentHubPage> {
         return;
       }
       unawaited(_sendMessage());
+    });
+  }
+
+  void _scheduleInitialAutoRunIfNeeded() {
+    final request = widget.initialAutoRunRequest;
+    final key = request?.idempotencyKey.trim() ?? '';
+    if (request == null ||
+        key.isEmpty ||
+        request.requestMessage.trim().isEmpty ||
+        widget.runner == null ||
+        _initialAutoRunInFlight ||
+        _consumedInitialAutoRunKey == key) {
+      return;
+    }
+    _initialAutoRunInFlight = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final accepted = await _sendSyntheticUserMessage(
+        requestMessage: request.requestMessage,
+        optimisticContent: '',
+        metadata: request.metadata,
+        idempotencyKey: key,
+        awaitServerRunSignal: true,
+      );
+      if (!mounted) return;
+      _initialAutoRunInFlight = false;
+      if (accepted) _consumedInitialAutoRunKey = key;
     });
   }
 
@@ -1199,12 +1249,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
       if (archivedAssistantMessage != null) {
         _historyMessages.add(archivedAssistantMessage);
       }
-      _historyMessages.add(
-        AgentHubHistoryMessage(
-          role: AgentHubHistoryRole.user,
-          content: optimisticContent,
-        ),
-      );
+      if (optimisticContent.trim().isNotEmpty) {
+        _historyMessages.add(
+          AgentHubHistoryMessage(
+            role: AgentHubHistoryRole.user,
+            content: optimisticContent,
+          ),
+        );
+      }
       _attachedImages.clear();
       _attachedFiles.clear();
       _pendingAutoVoiceReplay = null;
@@ -1861,7 +1913,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final result = coordinator.request(
       id: _agentDefaultGreetingPlaybackId,
       source: AgentVoicePlaybackSource.greeting,
-      cancel: () => unawaited(player.stop().catchError((Object _) {})),
+      cancel: () => player.stop().catchError((Object _) {}),
     );
     final handle = result.handle;
     if (!mounted ||
@@ -2169,7 +2221,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final playbackId = _autoVoicePlaybackId(nextState);
     final isNewPlayback = _activeAutoVoicePlaybackId != playbackId;
     if (isNewPlayback) {
-      _cancelActiveAutoVoiceSession();
+      unawaited(_cancelActiveAutoVoiceSession());
       _activeAutoVoicePlaybackId = playbackId;
       _autoVoiceAppendedText = '';
       _autoVoiceHasSubmittedContent = false;
@@ -2392,12 +2444,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _autoVoiceSession?.finish();
   }
 
-  void _cancelActiveAutoVoiceSession() {
+  Future<void> _cancelActiveAutoVoiceSession() async {
     final session = _autoVoiceSession;
     _autoVoiceSession = null;
     _autoVoiceSessionFinished = false;
     if (session != null) {
-      unawaited(session.cancel().catchError((Object _) {}));
+      await session.cancel().catchError((Object _) {});
     }
     if (mounted &&
         _voiceState.isPlaybackActive &&
@@ -2407,7 +2459,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _resetAutoVoiceProgress() {
-    _cancelActiveAutoVoiceSession();
+    unawaited(_cancelActiveAutoVoiceSession());
     _activeAutoVoicePlaybackId = null;
     _autoVoiceAppendedText = '';
     _autoVoiceHasSubmittedContent = false;

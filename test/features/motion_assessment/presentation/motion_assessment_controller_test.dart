@@ -49,7 +49,7 @@ void main() {
   );
 
   test(
-    'keeps local camera and screen guidance when session creation fails',
+    'closes the camera when cloud session creation fails because voice is required',
     () async {
       final repository = _FakeRepository(
         createError: StateError('backend unavailable'),
@@ -67,11 +67,10 @@ void main() {
       await controller.start();
 
       expect(pose.startCalls, 1);
-      expect(controller.phase, MotionAssessmentPagePhase.calibrating);
-      expect(controller.guidance, contains('屏幕提示'));
+      expect(controller.exitRequested, isTrue);
+      expect(controller.phase, MotionAssessmentPagePhase.completed);
       expect(voice.connectCalls, 0);
-
-      await controller.finish();
+      expect(pose.stopCalls, greaterThanOrEqualTo(1));
     },
   );
 
@@ -104,30 +103,95 @@ void main() {
     },
   );
 
-  test('keeps camera assessment running when realtime voice fails', () async {
+  test(
+    'retries then closes the camera when required realtime voice fails',
+    () async {
+      final repository = _FakeRepository(immediateSession: _session());
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice(connectError: StateError('voice unavailable'));
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+        voiceRetryDelay: Duration.zero,
+      );
+
+      await controller.start();
+      await _flush();
+
+      expect(voice.connectCalls, 2);
+      expect(controller.exitRequested, isTrue);
+      expect(controller.phase, MotionAssessmentPagePhase.completed);
+      expect(pose.stopCalls, greaterThanOrEqualTo(1));
+    },
+  );
+
+  test('drains normal agent audio before opening realtime voice', () async {
     final repository = _FakeRepository(immediateSession: _session());
     final pose = _FakePosePlatform();
-    final voice = _FakeVoice(connectError: StateError('voice unavailable'));
+    final voice = _FakeVoice();
+    var agentAudioDrained = false;
     final controller = MotionAssessmentController(
       target: 'forward_head',
       locale: 'zh-CN',
       repository: repository,
       posePlatform: pose,
       voice: voice,
+      prepareRealtimeAudio: () async {
+        agentAudioDrained = true;
+      },
     );
+    voice.beforeConnect = () {
+      expect(agentAudioDrained, isTrue);
+    };
 
     await controller.start();
-    await _flush();
 
-    expect(pose.startCalls, 1);
-    expect(controller.phase, MotionAssessmentPagePhase.calibrating);
-    expect(controller.voiceStatusMessage, contains('屏幕提示'));
-
+    expect(voice.connectCalls, 1);
+    expect(voice.guidanceRequests.first.type, 'assessment_started');
+    expect(voice.guidanceRequests.first.awaitPlaybackStart, isTrue);
     await controller.finish();
   });
 
   test(
-    'converts live pose changes into spoken guidance and semantic events',
+    'does not sample pose frames until first Realtime audio starts',
+    () async {
+      final firstAudio = Completer<void>();
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice()..firstGuidanceCompleter = firstAudio;
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: _FakeRepository(immediateSession: _session()),
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+      );
+
+      final start = controller.start();
+      while (voice.guidanceRequests.isEmpty) {
+        await _flush();
+      }
+      pose.emit(_acceptedSideObservation());
+      await _flush();
+      expect(controller.voiceReady, isFalse);
+      expect(voice.latestContext, isNull);
+
+      firstAudio.complete();
+      await start;
+      pose.emit(_acceptedSideObservation());
+      await _flush();
+      expect(controller.voiceReady, isTrue);
+      expect(voice.latestContext, isNotNull);
+
+      await controller.finish();
+    },
+  );
+
+  test(
+    'converts live pose changes into Realtime-owned guidance turns',
     () async {
       final repository = _FakeRepository(immediateSession: _session());
       final pose = _FakePosePlatform();
@@ -166,12 +230,11 @@ void main() {
       await _flush();
       await _flush();
 
-      expect(voice.spokenInstructions, contains(contains('站到镜头前')));
-      expect(voice.spokenInstructions, contains(contains('自然侧身')));
-      expect(voice.spokenInstructions, contains(contains('非评估人员')));
+      expect(voice.spokenInstructions, isEmpty);
       expect(
-        voice.sentEvents.map((event) => event.type),
+        voice.guidanceRequests.map((event) => event.type),
         containsAll([
+          'assessment_started',
           'person_not_detected',
           'single_person_stable',
           'multiple_people',
@@ -271,14 +334,13 @@ void main() {
 
       await controller.start();
       pose.emit(_acceptedSideObservation());
-      await _flush();
-      await _flush();
+      while (!controller.exitRequested) {
+        await _flush();
+      }
 
       expect(repository.createdSourceArtifactIds, ['artifact-motion-1']);
       expect(voice.latestContext?.assessmentId, 'assessment-1');
       expect(voice.latestContext?.samplingState, 'completed');
-
-      await controller.finish(completed: true);
 
       final completed = repository.updates.lastWhere(
         (update) => update.status == 'completed',
@@ -293,18 +355,24 @@ void main() {
       );
       expect(completed.resultSummary?['analyzer_version'], isNotEmpty);
       expect(completed.resultSummary?['threshold_version'], isNotEmpty);
+      expect(controller.completedSuccessfully, isTrue);
+      expect(controller.completedAssessmentId, 'assessment-1');
+      expect(
+        voice.guidanceRequests.map((request) => request.type),
+        contains('assessment_completed'),
+      );
     },
   );
 
   testWidgets(
-    'shows realtime voice fallback without dense camera diagnostics',
+    'keeps the assessment hands-free without fallback text or controls',
     (tester) async {
       final controller = MotionAssessmentController(
         target: 'forward_head',
         locale: 'zh-CN',
         repository: _FakeRepository(immediateSession: _session()),
         posePlatform: _FakePosePlatform(),
-        voice: _FakeVoice(connectError: StateError('voice unavailable')),
+        voice: _FakeVoice(),
       );
 
       await tester.pumpWidget(
@@ -319,15 +387,16 @@ void main() {
       await tester.pump();
       await tester.pump();
 
+      expect(find.byType(FilledButton), findsNothing);
+      expect(find.byType(IconButton), findsNothing);
       expect(
-        find.byKey(const ValueKey('motion-assessment-camera-status')),
+        find.byKey(const ValueKey('motion-assessment-guidance')),
         findsNothing,
       );
       expect(
         find.byKey(const ValueKey('motion-assessment-voice-status')),
         findsOneWidget,
       );
-      expect(find.textContaining('屏幕提示'), findsOneWidget);
     },
   );
 
@@ -369,7 +438,7 @@ void main() {
     expect(find.textContaining('个关键点'), findsNothing);
     expect(
       find.byKey(const ValueKey('motion-assessment-guidance')),
-      findsOneWidget,
+      findsNothing,
     );
   });
 
@@ -526,16 +595,31 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   _FakeVoice({this.connectError});
 
   final Object? connectError;
+  Completer<void>? firstGuidanceCompleter;
+  VoidCallback? beforeConnect;
   int connectCalls = 0;
   MotionAssessmentContextSnapshot? latestContext;
   final List<String> spokenInstructions = [];
   final List<({String type, Map<String, Object?> payload})> sentEvents = [];
+  final List<
+    ({
+      String type,
+      Map<String, Object?> payload,
+      bool interrupt,
+      bool awaitPlaybackStart,
+      bool awaitPlaybackCompletion,
+    })
+  >
+  guidanceRequests = [];
+  MotionRealtimeVoicePhase _phase = MotionRealtimeVoicePhase.idle;
 
   @override
   Stream<MotionVoiceCommand> get commands => const Stream.empty();
 
   @override
-  bool get isConnected => false;
+  bool get isConnected =>
+      _phase == MotionRealtimeVoicePhase.listening ||
+      _phase == MotionRealtimeVoicePhase.speaking;
 
   @override
   bool get hasRemoteAudioTrack => true;
@@ -547,13 +631,41 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   String? get failureCode => connectError == null ? null : 'signaling';
 
   @override
-  MotionRealtimeVoicePhase get phase => MotionRealtimeVoicePhase.idle;
+  MotionRealtimeVoicePhase get phase => _phase;
 
   @override
   Future<void> connect({required String assessmentId}) async {
     connectCalls += 1;
+    beforeConnect?.call();
     final error = connectError;
-    if (error != null) throw error;
+    if (error != null) {
+      _phase = MotionRealtimeVoicePhase.failed;
+      notifyListeners();
+      throw error;
+    }
+    _phase = MotionRealtimeVoicePhase.listening;
+    notifyListeners();
+  }
+
+  @override
+  Future<void> requestGuidance(
+    String eventType,
+    Map<String, Object?> payload, {
+    bool interrupt = false,
+    bool awaitPlaybackStart = false,
+    bool awaitPlaybackCompletion = false,
+  }) async {
+    guidanceRequests.add((
+      type: eventType,
+      payload: payload,
+      interrupt: interrupt,
+      awaitPlaybackStart: awaitPlaybackStart,
+      awaitPlaybackCompletion: awaitPlaybackCompletion,
+    ));
+    if (awaitPlaybackStart) {
+      await firstGuidanceCompleter?.future;
+      firstGuidanceCompleter = null;
+    }
   }
 
   @override
@@ -587,7 +699,9 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   }) async {}
 
   @override
-  Future<void> close() async {}
+  Future<void> close() async {
+    _phase = MotionRealtimeVoicePhase.closed;
+  }
 }
 
 MotionPoseObservation _acceptedSideObservation() {

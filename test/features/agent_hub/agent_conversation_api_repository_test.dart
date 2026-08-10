@@ -289,6 +289,59 @@ void main() {
     expect(history.messages[1].role, AgentConversationMessageRole.assistant);
     expect(history.messages[1].runState?.artifactEvents, isNotEmpty);
   });
+
+  test(
+    'hides motion assessment automation prompts when restoring history',
+    () async {
+      final transport = FixtureApiJsonTransport({
+        'thread': {
+          'id': 'thread-motion-feedback',
+          'title': '体态评估反馈',
+          'status': 'active',
+          'metadata': <String, Object?>{},
+          'created_at': '2026-08-10T08:00:00Z',
+          'updated_at': '2026-08-10T08:01:00Z',
+        },
+        'items': [
+          {
+            'id': 'message-motion-automation',
+            'run_id': 'run-motion-feedback',
+            'role': 'user',
+            'message_type': 'text',
+            'content': {
+              'text': '[系统流程触发] 请读取最新体态评估结果。',
+              'attachments': <Object?>[],
+              'client_context': {'source': 'motion_assessment_completion'},
+            },
+            'status': 'completed',
+            'sequence': 1,
+            'created_at': '2026-08-10T08:00:00Z',
+          },
+          {
+            'id': 'message-motion-feedback',
+            'run_id': 'run-motion-feedback',
+            'role': 'assistant',
+            'message_type': 'text',
+            'content': {'text': '你的头前伸角度处于轻度范围。'},
+            'status': 'completed',
+            'sequence': 2,
+            'created_at': '2026-08-10T08:01:00Z',
+          },
+        ],
+        'events': <Object?>[],
+        'next_before_sequence': null,
+      });
+      final repository = AgentConversationApiRepository(transport: transport);
+
+      final history = await repository.loadConversation(
+        'thread-motion-feedback',
+      );
+
+      expect(history.messages, isEmpty);
+      expect(history.currentState.textContent, '你的头前伸角度处于轻度范围。');
+      expect(history.currentState.hasCompletedAssistantMessage, isTrue);
+    },
+  );
 }
 
 Map<String, Object?> _message({
