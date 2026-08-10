@@ -220,30 +220,30 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     final (key, alignment, widthFactor, heightFactor, radius) = switch (guide) {
       MotionAssessmentFramingGuide.forwardHead => (
         const ValueKey('motion-framing-guide-forward-head'),
-        const Alignment(0, -0.08),
-        0.56,
-        0.54,
+        Alignment.center,
+        0.64,
+        0.62,
         112.0,
       ),
       MotionAssessmentFramingGuide.shoulderHeight => (
         const ValueKey('motion-framing-guide-shoulder-height'),
-        const Alignment(0, -0.08),
+        Alignment.center,
         0.82,
-        0.44,
+        0.62,
         44.0,
       ),
       MotionAssessmentFramingGuide.trunkLateralLean => (
         const ValueKey('motion-framing-guide-trunk-lean'),
         const Alignment(0, -0.02),
         0.72,
-        0.58,
+        0.62,
         52.0,
       ),
       MotionAssessmentFramingGuide.frontalCombined => (
         const ValueKey('motion-framing-guide-front-combined'),
         const Alignment(0, -0.02),
         0.82,
-        0.55,
+        0.62,
         44.0,
       ),
       MotionAssessmentFramingGuide.neutral => (
@@ -367,9 +367,15 @@ class _MotionFramingGuidePainter extends CustomPainter {
     switch (guide) {
       case MotionAssessmentFramingGuide.shoulderHeight:
         final shoulderY = size.height * 0.32;
+        final hipY = size.height * 0.72;
         canvas.drawLine(
           Offset(size.width * 0.18, shoulderY),
           Offset(size.width * 0.82, shoulderY),
+          paint,
+        );
+        canvas.drawLine(
+          Offset(size.width * 0.28, hipY),
+          Offset(size.width * 0.72, hipY),
           paint,
         );
         break;
@@ -382,21 +388,37 @@ class _MotionFramingGuidePainter extends CustomPainter {
         break;
       case MotionAssessmentFramingGuide.frontalCombined:
         final shoulderY = size.height * 0.32;
+        final hipY = size.height * 0.72;
         canvas.drawLine(
           Offset(size.width * 0.18, shoulderY),
           Offset(size.width * 0.82, shoulderY),
           paint,
         );
         canvas.drawLine(
-          Offset(size.width * 0.5, size.height * 0.22),
-          Offset(size.width * 0.5, size.height * 0.78),
+          Offset(size.width * 0.28, hipY),
+          Offset(size.width * 0.72, hipY),
+          paint,
+        );
+        canvas.drawLine(
+          Offset(size.width * 0.5, size.height * 0.2),
+          Offset(size.width * 0.5, size.height * 0.82),
           paint,
         );
         break;
       case MotionAssessmentFramingGuide.forwardHead:
         canvas.drawLine(
-          Offset(size.width * 0.5, size.height * 0.22),
-          Offset(size.width * 0.5, size.height * 0.78),
+          Offset(size.width * 0.5, size.height * 0.18),
+          Offset(size.width * 0.5, size.height * 0.82),
+          paint,
+        );
+        canvas.drawLine(
+          Offset(size.width * 0.34, size.height * 0.48),
+          Offset(size.width * 0.66, size.height * 0.48),
+          paint,
+        );
+        canvas.drawLine(
+          Offset(size.width * 0.39, size.height * 0.76),
+          Offset(size.width * 0.61, size.height * 0.76),
           paint,
         );
         break;

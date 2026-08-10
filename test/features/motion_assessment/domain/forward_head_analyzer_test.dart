@@ -78,6 +78,29 @@ void main() {
     expect(result.valueDegrees, closeTo(45, 0.2));
   });
 
+  test('accepts a reliable near side when far-side landmarks are absent', () {
+    final analyzer = ForwardHeadAnalyzer(
+      minimumStableFor: Duration.zero,
+      minimumSamples: 1,
+    );
+
+    final result = analyzer.add(
+      _sidePose(
+        earX: 0.7,
+        earY: 0.4,
+        shoulderX: 0.5,
+        shoulderY: 0.6,
+        includeFarSideLandmarks: false,
+      ),
+      at: Duration.zero,
+      inputWidth: 1000,
+      inputHeight: 1000,
+    );
+
+    expect(result, isNotNull);
+    expect(result!.side, 'left');
+  });
+
   test('rejects frames when side landmarks are not sufficiently visible', () {
     final analyzer = ForwardHeadAnalyzer(
       minimumStableFor: Duration.zero,
@@ -288,6 +311,102 @@ void main() {
 
     expect(analyzer.samplingProgress, greaterThanOrEqualTo(beforeInterruption));
   });
+
+  test(
+    'production sampling tolerates realistic side confidence and brief dropouts',
+    () {
+      final analyzer = ForwardHeadAnalyzer();
+      ForwardHeadResult? result;
+
+      for (var index = 0; index < 25; index += 1) {
+        final nearConfidence = const {6, 7, 15}.contains(index) ? 0.35 : 0.55;
+        result =
+            analyzer.add(
+              _sidePose(
+                earX: 0.70,
+                earY: 0.40,
+                shoulderX: 0.50,
+                shoulderY: 0.60,
+                visibility: nearConfidence,
+                farSideVisibility: 0.3,
+              ),
+              at: Duration(milliseconds: index * 200),
+              inputWidth: 1000,
+              inputHeight: 1000,
+            ) ??
+            result;
+      }
+
+      expect(result, isNotNull);
+      expect(result!.sampleCount, greaterThanOrEqualTo(20));
+      expect(analyzer.acceptedRatio, greaterThanOrEqualTo(0.6));
+    },
+  );
+
+  test('a short two-second loss pauses instead of erasing useful samples', () {
+    final analyzer = ForwardHeadAnalyzer(
+      minimumLandmarkConfidence: 0.5,
+      minimumStableFor: const Duration(seconds: 4),
+      minimumSamples: 20,
+      samplingWindow: const Duration(seconds: 10),
+      minimumAcceptedRatio: 0.6,
+    );
+    final pose = _sidePose(
+      earX: 0.70,
+      earY: 0.40,
+      shoulderX: 0.50,
+      shoulderY: 0.60,
+      visibility: 0.55,
+      farSideVisibility: 0.3,
+    );
+
+    for (var index = 0; index < 10; index += 1) {
+      analyzer.add(
+        pose,
+        at: Duration(milliseconds: index * 200),
+        inputWidth: 1000,
+        inputHeight: 1000,
+      );
+    }
+    for (var index = 10; index < 22; index += 1) {
+      analyzer.rejectFrame(at: Duration(milliseconds: index * 200));
+    }
+    ForwardHeadResult? result;
+    for (var index = 22; index < 32; index += 1) {
+      result =
+          analyzer.add(
+            pose,
+            at: Duration(milliseconds: index * 200),
+            inputWidth: 1000,
+            inputHeight: 1000,
+          ) ??
+          result;
+    }
+
+    expect(result, isNotNull);
+    expect(result!.sampleCount, 20);
+  });
+
+  test('reports the exact side region that prevents capture', () {
+    final analyzer = ForwardHeadAnalyzer();
+
+    final inspection = analyzer.inspect(
+      _sidePose(
+        earX: 0.70,
+        earY: 0.40,
+        shoulderX: 0.50,
+        shoulderY: 0.60,
+        visibility: 0.8,
+        nearEarVisibility: 0.3,
+        farSideVisibility: 0.3,
+      ),
+      inputWidth: 1000,
+      inputHeight: 1000,
+    );
+
+    expect(inspection.status, ForwardHeadFrameStatus.insufficientLandmarks);
+    expect(inspection.missingRegions, contains('ear'));
+  });
 }
 
 MotionPose _sidePose({
@@ -296,7 +415,10 @@ MotionPose _sidePose({
   required double shoulderX,
   required double shoulderY,
   double visibility = 0.95,
+  double? nearEarVisibility,
+  double? farSideVisibility,
   bool includeReliableRightSide = false,
+  bool includeFarSideLandmarks = true,
   double rightShoulderX = 0.50,
   double rightHipX = 0.50,
 }) {
@@ -309,8 +431,8 @@ MotionPose _sidePose({
         x: earX,
         y: earY,
         z: 0,
-        visibility: visibility,
-        presence: visibility,
+        visibility: nearEarVisibility ?? visibility,
+        presence: nearEarVisibility ?? visibility,
       ),
       MotionPoseLandmarkType.leftShoulder: MotionPoseLandmark(
         x: shoulderX,
@@ -326,27 +448,31 @@ MotionPose _sidePose({
         visibility: visibility,
         presence: visibility,
       ),
-      ...{
-        MotionPoseLandmarkType.rightEar: const MotionPoseLandmark(
+      if (includeFarSideLandmarks) ...{
+        MotionPoseLandmarkType.rightEar: MotionPoseLandmark(
           x: 0.3,
           y: 0.4,
           z: 0,
-          visibility: 0.95,
-          presence: 0.95,
+          visibility: farSideVisibility ?? 0.95,
+          presence: farSideVisibility ?? 0.95,
         ),
         MotionPoseLandmarkType.rightShoulder: MotionPoseLandmark(
           x: rightShoulderX,
           y: 0.6,
           z: 0,
-          visibility: 0.95,
-          presence: 0.95,
+          visibility: farSideVisibility ?? 0.95,
+          presence: farSideVisibility ?? 0.95,
         ),
         MotionPoseLandmarkType.rightHip: MotionPoseLandmark(
           x: rightHipX,
           y: 0.85,
           z: 0,
-          visibility: includeReliableRightSide ? 0.95 : visibility,
-          presence: includeReliableRightSide ? 0.95 : visibility,
+          visibility: includeReliableRightSide
+              ? 0.95
+              : farSideVisibility ?? visibility,
+          presence: includeReliableRightSide
+              ? 0.95
+              : farSideVisibility ?? visibility,
         ),
       },
     },

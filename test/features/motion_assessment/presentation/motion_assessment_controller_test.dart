@@ -677,6 +677,116 @@ void main() {
   );
 
   test(
+    'reports a persistently missing side ear instead of silently restarting capture',
+    () async {
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: _FakeRepository(immediateSession: _session()),
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+      );
+
+      await controller.start();
+      pose.emit(
+        _acceptedSideObservation(
+          timestamp: const Duration(seconds: 1),
+          earConfidence: 0.35,
+        ),
+      );
+      await _flush();
+      pose.emit(
+        _acceptedSideObservation(
+          timestamp: const Duration(seconds: 2),
+          earConfidence: 0.35,
+        ),
+      );
+      await _flush();
+
+      final prompt = voice.guidanceRequests.lastWhere(
+        (request) => request.type == 'framing_incomplete',
+      );
+      expect(prompt.payload['missing_regions'], ['ear']);
+      expect(prompt.payload['recommended_action'], 'adjust_side_profile');
+      expect(voice.latestContext?.missingRegions, ['ear']);
+      expect(voice.latestContext?.samplingState, 'blocked');
+
+      await controller.finish();
+    },
+  );
+
+  test(
+    'reports the exact missing hip during a shoulder-height capture',
+    () async {
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'posture_screen',
+        locale: 'zh-CN',
+        repository: _FakeRepository(
+          immediateSession: _session(target: 'posture_screen'),
+        ),
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+      );
+
+      await controller.start();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'replace-shoulder',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.replace,
+            targets: [MotionAssessmentTarget.shoulderHeightAsymmetry],
+            expectedRevision: 0,
+          ),
+        ),
+      );
+      await _flush();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'confirm-shoulder',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.confirm,
+            targets: [],
+            expectedRevision: 1,
+          ),
+        ),
+      );
+      await _flush();
+
+      pose.emit(
+        _acceptedFrontObservation(
+          timestamp: const Duration(seconds: 1),
+          rightHipConfidence: 0.35,
+        ),
+      );
+      await _flush();
+      pose.emit(
+        _acceptedFrontObservation(
+          timestamp: const Duration(seconds: 2),
+          rightHipConfidence: 0.35,
+        ),
+      );
+      await _flush();
+
+      final prompt = voice.guidanceRequests.lastWhere(
+        (request) => request.type == 'framing_incomplete',
+      );
+      expect(prompt.payload['missing_regions'], ['right_hip']);
+      expect(prompt.payload['recommended_action'], 'step_back_include_hips');
+      expect(voice.latestContext?.missingRegions, ['right_hip']);
+
+      await controller.finish();
+    },
+  );
+
+  test(
     'surfaces a native pose model startup failure with a useful cause',
     () async {
       final repository = _FakeRepository(immediateSession: _session());
@@ -1157,6 +1267,11 @@ void main() {
     expect(controller.observation, isNotNull);
 
     expect(find.byKey(const ValueKey('motion-pose-overlay')), findsOneWidget);
+    final guide = tester.widget<FractionallySizedBox>(
+      find.byKey(const ValueKey('motion-framing-guide-forward-head')),
+    );
+    expect(guide.widthFactor, greaterThanOrEqualTo(0.64));
+    expect(guide.heightFactor, greaterThanOrEqualTo(0.62));
     expect(find.textContaining('个关键点'), findsNothing);
     expect(
       find.byKey(const ValueKey('motion-assessment-guidance')),
@@ -1504,6 +1619,7 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
 MotionPoseObservation _acceptedSideObservation({
   String side = 'left',
   Duration timestamp = const Duration(seconds: 1),
+  double? earConfidence,
 }) {
   final leftConfidence = side == 'left' ? 0.95 : 0.9;
   final rightConfidence = side == 'right' ? 0.95 : 0.9;
@@ -1532,19 +1648,19 @@ MotionPoseObservation _acceptedSideObservation({
             visibility: 0.95,
             presence: 0.95,
           ),
-          MotionPoseLandmarkType.leftEar: const MotionPoseLandmark(
+          MotionPoseLandmarkType.leftEar: MotionPoseLandmark(
             x: 0.7,
             y: 0.35,
             z: 0,
-            visibility: 0.95,
-            presence: 0.95,
+            visibility: earConfidence ?? 0.95,
+            presence: earConfidence ?? 0.95,
           ),
           MotionPoseLandmarkType.rightEar: MotionPoseLandmark(
             x: 0.7,
             y: 0.35,
             z: 0,
-            visibility: rightConfidence,
-            presence: rightConfidence,
+            visibility: earConfidence ?? rightConfidence,
+            presence: earConfidence ?? rightConfidence,
           ),
           MotionPoseLandmarkType.leftShoulder: MotionPoseLandmark(
             x: 0.5,
@@ -1590,6 +1706,7 @@ MotionPoseObservation _acceptedSideObservation({
 
 MotionPoseObservation _acceptedFrontObservation({
   Duration timestamp = const Duration(seconds: 1),
+  double rightHipConfidence = 0.95,
 }) {
   const confidence = 0.95;
   MotionPoseLandmark point(double x, double y) => MotionPoseLandmark(
@@ -1614,7 +1731,13 @@ MotionPoseObservation _acceptedFrontObservation({
           MotionPoseLandmarkType.leftShoulder: point(0.28, 0.43),
           MotionPoseLandmarkType.rightShoulder: point(0.72, 0.50),
           MotionPoseLandmarkType.leftHip: point(0.42, 0.78),
-          MotionPoseLandmarkType.rightHip: point(0.58, 0.78),
+          MotionPoseLandmarkType.rightHip: MotionPoseLandmark(
+            x: 0.58,
+            y: 0.78,
+            z: 0,
+            visibility: rightHipConfidence,
+            presence: rightHipConfidence,
+          ),
         },
       ),
     ],

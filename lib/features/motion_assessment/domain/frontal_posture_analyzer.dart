@@ -14,7 +14,19 @@ enum FrontalPostureFrameStatus {
   interrupted,
 }
 
-const frontalPostureAnalyzerVersion = 'frontal_posture_v1';
+class FrontalPostureFrameInspection {
+  const FrontalPostureFrameInspection({
+    required this.status,
+    this.missingRegions = const [],
+  });
+
+  final FrontalPostureFrameStatus status;
+  final List<String> missingRegions;
+
+  bool get accepted => status == FrontalPostureFrameStatus.accepted;
+}
+
+const frontalPostureAnalyzerVersion = 'frontal_posture_v2';
 const frontalPostureThresholdVersion = 'frontal_visual_tendency_v1';
 
 class FrontalPostureResult {
@@ -47,12 +59,12 @@ class FrontalPostureResult {
 
 class FrontalPostureAnalyzer {
   FrontalPostureAnalyzer({
-    this.minimumStableFor = const Duration(seconds: 6),
-    this.minimumSamples = 30,
-    this.minimumLandmarkConfidence = 0.65,
-    this.minimumAcceptedRatio = 0.7,
-    this.samplingWindow = const Duration(seconds: 8),
-    this.interruptionGracePeriod = const Duration(seconds: 2),
+    this.minimumStableFor = const Duration(seconds: 4),
+    this.minimumSamples = 20,
+    this.minimumLandmarkConfidence = 0.5,
+    this.minimumAcceptedRatio = 0.6,
+    this.samplingWindow = const Duration(seconds: 10),
+    this.interruptionGracePeriod = const Duration(seconds: 4),
     this.minimumShoulderSpanToTorsoRatio = 0.65,
     this.shoulderAsymmetryThresholdDegrees = 3,
     this.trunkLeanThresholdDegrees = 4,
@@ -74,14 +86,24 @@ class FrontalPostureAnalyzer {
   double _maximumProgress = 0;
   FrontalPostureFrameStatus _lastFrameStatus =
       FrontalPostureFrameStatus.insufficientLandmarks;
+  FrontalPostureFrameInspection _lastInspection =
+      const FrontalPostureFrameInspection(
+        status: FrontalPostureFrameStatus.insufficientLandmarks,
+      );
 
   FrontalPostureFrameStatus get lastFrameStatus => _lastFrameStatus;
+  FrontalPostureFrameInspection get lastInspection => _lastInspection;
   int get sampleCount => _window.where((sample) => sample.accepted).length;
   int get observedFrameCount => _window.length;
   double get acceptedRatio =>
       _window.isEmpty ? 0 : sampleCount / _window.length;
-  Duration get stableDuration =>
-      _window.length < 2 ? Duration.zero : _window.last.at - _window.first.at;
+  Duration get stableDuration {
+    final accepted = _window.where((sample) => sample.accepted).toList();
+    return accepted.length < 2
+        ? Duration.zero
+        : accepted.last.at - accepted.first.at;
+  }
+
   double get samplingProgress {
     final samples = minimumSamples <= 0 ? 1.0 : sampleCount / minimumSamples;
     final duration = minimumStableFor.inMilliseconds <= 0
@@ -99,13 +121,30 @@ class FrontalPostureAnalyzer {
     MotionPose pose, {
     required int inputWidth,
     required int inputHeight,
+  }) => inspectDetails(
+    pose,
+    inputWidth: inputWidth,
+    inputHeight: inputHeight,
+  ).status;
+
+  FrontalPostureFrameInspection inspectDetails(
+    MotionPose pose, {
+    required int inputWidth,
+    required int inputHeight,
   }) {
     if (inputWidth <= 0 || inputHeight <= 0) {
-      return _lastFrameStatus = FrontalPostureFrameStatus.invalidFrameSize;
+      return _recordInspection(FrontalPostureFrameStatus.invalidFrameSize);
+    }
+    final missingRegions = _missingRegions(pose);
+    if (missingRegions.isNotEmpty) {
+      return _recordInspection(
+        FrontalPostureFrameStatus.insufficientLandmarks,
+        missingRegions: missingRegions,
+      );
     }
     final points = _points(pose);
     if (points == null) {
-      return _lastFrameStatus = FrontalPostureFrameStatus.insufficientLandmarks;
+      return _recordInspection(FrontalPostureFrameStatus.insufficientLandmarks);
     }
     final shoulderSpan = _distance(
       points.leftShoulder,
@@ -128,12 +167,12 @@ class FrontalPostureAnalyzer {
             )) /
         2;
     if (torso < 1) {
-      return _lastFrameStatus = FrontalPostureFrameStatus.insufficientLandmarks;
+      return _recordInspection(FrontalPostureFrameStatus.insufficientLandmarks);
     }
     if (shoulderSpan / torso < minimumShoulderSpanToTorsoRatio) {
-      return _lastFrameStatus = FrontalPostureFrameStatus.needsFrontView;
+      return _recordInspection(FrontalPostureFrameStatus.needsFrontView);
     }
-    return _lastFrameStatus = FrontalPostureFrameStatus.accepted;
+    return _recordInspection(FrontalPostureFrameStatus.accepted);
   }
 
   FrontalPostureResult? add(
@@ -142,13 +181,13 @@ class FrontalPostureAnalyzer {
     required int inputWidth,
     required int inputHeight,
   }) {
-    final status = inspect(
+    final inspection = inspectDetails(
       pose,
       inputWidth: inputWidth,
       inputHeight: inputHeight,
     );
-    if (status != FrontalPostureFrameStatus.accepted) {
-      _reject(at, status);
+    if (!inspection.accepted) {
+      _reject(at, inspection.status, inspection: inspection);
       return null;
     }
     final points = _points(pose)!;
@@ -247,20 +286,31 @@ class FrontalPostureAnalyzer {
     _invalidSince = null;
     _maximumProgress = 0;
     _lastFrameStatus = FrontalPostureFrameStatus.insufficientLandmarks;
+    _lastInspection = const FrontalPostureFrameInspection(
+      status: FrontalPostureFrameStatus.insufficientLandmarks,
+    );
   }
 
-  void _reject(Duration at, FrontalPostureFrameStatus status) {
+  void _reject(
+    Duration at,
+    FrontalPostureFrameStatus status, {
+    FrontalPostureFrameInspection? inspection,
+  }) {
+    final rejectionInspection =
+        inspection ?? FrontalPostureFrameInspection(status: status);
     _prepare(at);
     _invalidSince ??= at;
     _window.add(_FrontalSample.rejected(at));
     _lastObservationAt = at;
     _lastFrameStatus = status;
+    _lastInspection = rejectionInspection;
     _prune(at);
     if (at - _invalidSince! >= interruptionGracePeriod) {
       reset();
       _lastObservationAt = at;
       _invalidSince = at;
       _lastFrameStatus = status;
+      _lastInspection = rejectionInspection;
     }
   }
 
@@ -291,6 +341,32 @@ class FrontalPostureAnalyzer {
       return null;
     }
     return _FrontalPoints(leftShoulder!, rightShoulder!, leftHip!, rightHip!);
+  }
+
+  List<String> _missingRegions(MotionPose pose) {
+    bool unavailable(MotionPoseLandmarkType type) {
+      final point = pose.landmark(type);
+      return point == null ||
+          !point.isReliable(minimumConfidence: minimumLandmarkConfidence);
+    }
+
+    return <String>[
+      if (unavailable(MotionPoseLandmarkType.leftShoulder)) 'left_shoulder',
+      if (unavailable(MotionPoseLandmarkType.rightShoulder)) 'right_shoulder',
+      if (unavailable(MotionPoseLandmarkType.leftHip)) 'left_hip',
+      if (unavailable(MotionPoseLandmarkType.rightHip)) 'right_hip',
+    ];
+  }
+
+  FrontalPostureFrameInspection _recordInspection(
+    FrontalPostureFrameStatus status, {
+    List<String> missingRegions = const [],
+  }) {
+    _lastFrameStatus = status;
+    return _lastInspection = FrontalPostureFrameInspection(
+      status: status,
+      missingRegions: List.unmodifiable(missingRegions),
+    );
   }
 
   double _distance(

@@ -114,6 +114,27 @@ class MotionVisualContextCoordinator {
     );
   }
 
+  /// Starts best-effort event capture without putting camera work on the
+  /// semantic event or voice-response critical path.
+  void scheduleEventCapture({
+    required String eventType,
+    required String eventId,
+    required MotionAssessmentContextSnapshot? context,
+    required int contextAgeMs,
+    required Future<void> Function(MotionVisualContext visual) onCaptured,
+  }) {
+    final operation =
+        captureForEvent(
+          eventType: eventType,
+          eventId: eventId,
+          context: context,
+          contextAgeMs: contextAgeMs,
+        ).then<void>((visual) async {
+          if (visual != null) await onCaptured(visual);
+        });
+    unawaited(operation.catchError((Object _, StackTrace _) {}));
+  }
+
   Future<MotionVisualContext?> captureOnDemand({
     required MotionVisualSnapshotReason reason,
     required String? userAudioItemId,
