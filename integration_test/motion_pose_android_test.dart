@@ -84,12 +84,21 @@ void main() {
         const Duration(seconds: 20),
       );
       final observation = captured.last;
+      final keyFrame = await platform.captureKeyFrame().timeout(
+        const Duration(seconds: 3),
+      );
       await tester.pump();
 
       expect(observation.inputWidth, greaterThan(0));
       expect(observation.inputHeight, greaterThan(0));
       expect(observation.inferenceTime, greaterThanOrEqualTo(Duration.zero));
       expect(captured.map((frame) => frame.timestamp).toSet(), hasLength(3));
+      expect(keyFrame.mimeType, 'image/jpeg');
+      expect(keyFrame.width, lessThanOrEqualTo(448));
+      expect(keyFrame.height, greaterThan(0));
+      expect(keyFrame.bytes.lengthInBytes, lessThanOrEqualTo(120 * 1024));
+      expect(keyFrame.bytes.take(2), [0xff, 0xd8]);
+      expect(keyFrame.bytes.skip(keyFrame.bytes.length - 2), [0xff, 0xd9]);
       if (requireDetectedPerson) {
         expect(observation.poses, isNotEmpty);
         expect(

@@ -6,17 +6,21 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_controller.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_pose_overlay.dart';
 
+typedef MotionVisualConsentPrompt = Future<bool> Function(BuildContext context);
+
 class MotionAssessmentPage extends StatefulWidget {
   const MotionAssessmentPage({
     super.key,
     required this.controllerIdentity,
     required this.controllerFactory,
     this.previewBuilder,
+    this.visualConsentPrompt,
   });
 
   final Object controllerIdentity;
   final MotionAssessmentController Function() controllerFactory;
   final WidgetBuilder? previewBuilder;
+  final MotionVisualConsentPrompt? visualConsentPrompt;
 
   @override
   State<MotionAssessmentPage> createState() => _MotionAssessmentPageState();
@@ -56,8 +60,55 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
 
   void _scheduleStart() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) unawaited(controller.start());
+      if (mounted) unawaited(_startController());
     });
+  }
+
+  Future<void> _startController() async {
+    final startingController = controller;
+    var visualEnabled = false;
+    if (startingController.supportsVisualContext) {
+      visualEnabled =
+          await (widget.visualConsentPrompt?.call(context) ??
+              _showVisualConsentPrompt());
+    }
+    if (!mounted || !identical(startingController, controller)) return;
+    await startingController.start(keyFrameUploadEnabled: visualEnabled);
+  }
+
+  Future<bool> _showVisualConsentPrompt() async {
+    return await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (dialogContext) => AlertDialog(
+            backgroundColor: const Color(0xfffff8f6),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            title: const Text('开启视觉辅助吗？'),
+            content: const Text(
+              '为了更自然地回答“我这样站对吗”等问题，可以在关键时刻把少量压缩画面发送给本次云端实时语音会话。\n\n'
+              '不会上传连续视频或姿态关键点，Momcozy 后端也不会落盘保存这些关键帧。只使用端侧识别，评估也能正常完成。',
+              style: TextStyle(height: 1.5),
+            ),
+            actions: [
+              TextButton(
+                key: const ValueKey('motion-visual-consent-local-only'),
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: const Text('仅用端侧识别'),
+              ),
+              FilledButton(
+                key: const ValueKey('motion-visual-consent-enable'),
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xff7c2944),
+                ),
+                child: const Text('开启视觉辅助'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   void _handleControllerSignal() {
@@ -138,9 +189,9 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child: Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
-                '头颈姿态动态评估',
+                controller.target == 'posture_screen' ? '体态动态评估' : '头颈姿态动态评估',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

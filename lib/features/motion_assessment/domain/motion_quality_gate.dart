@@ -225,6 +225,12 @@ class MotionQualityGate {
     }
   }
 
+  /// Starts a new trusted calibration window after the workflow explicitly
+  /// asks the same user to turn or change view.
+  void beginPlannedRecalibration() {
+    _resetForCalibration();
+  }
+
   bool _matchesTarget(MotionPose candidate, MotionPose target) {
     final candidateSignature = _assessmentSignature(candidate);
     final targetSignature = _assessmentSignature(target);

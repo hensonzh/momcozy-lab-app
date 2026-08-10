@@ -19,6 +19,18 @@ class AgentConversationSummary {
 
 enum AgentConversationMessageRole { user, assistant }
 
+const _agentSystemFlowTriggerPrefix = '[系统流程触发]';
+const _motionAssessmentCompletionPrompts = {'用户刚完成体态动态评估', '用户刚完成头颈姿态动态评估'};
+
+bool isMotionAssessmentCompletionPrompt(String value) {
+  final normalized = value.trimLeft();
+  if (!normalized.startsWith(_agentSystemFlowTriggerPrefix)) return false;
+  final body = normalized
+      .substring(_agentSystemFlowTriggerPrefix.length)
+      .trimLeft();
+  return _motionAssessmentCompletionPrompts.any(body.startsWith);
+}
+
 class AgentConversationMessage {
   const AgentConversationMessage({
     required this.role,

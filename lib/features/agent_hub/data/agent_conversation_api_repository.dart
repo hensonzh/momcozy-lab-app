@@ -243,7 +243,8 @@ _ConversationWireMessage? _wireMessageFromValue(Object? value) {
     files: files,
     hiddenAutomation:
         role == AgentConversationMessageRole.user &&
-        source == 'motion_assessment_completion',
+        (source == 'motion_assessment_completion' ||
+            isMotionAssessmentCompletionPrompt(text)),
   );
 }
 

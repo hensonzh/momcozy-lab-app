@@ -9,11 +9,13 @@ class MotionVoiceSignalingAnswer {
     required this.answerSdp,
     required this.provider,
     required this.sessionId,
+    required this.visualContextEnabled,
   });
 
   final String answerSdp;
   final String provider;
   final String sessionId;
+  final bool visualContextEnabled;
 }
 
 class MotionVoiceSignaling {
@@ -66,6 +68,9 @@ class MotionVoiceSignaling {
       sessionId:
           response.headers.value('X-MomCozy-Motion-Voice-Session')?.trim() ??
           '',
+      visualContextEnabled: motionVisualContextEnabledFromHeader(
+        response.headers.value('X-MomCozy-Motion-Visual-Context'),
+      ),
     );
   }
 
@@ -97,4 +102,8 @@ class MotionVoiceSignaling {
           : baseUri.queryParameters,
     );
   }
+}
+
+bool motionVisualContextEnabledFromHeader(String? value) {
+  return value?.trim().toLowerCase() == 'enabled';
 }

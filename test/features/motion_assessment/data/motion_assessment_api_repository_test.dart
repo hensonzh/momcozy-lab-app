@@ -4,6 +4,44 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_asses
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_finalization.dart';
 
 void main() {
+  test('persists only the explicit per-session key frame consent', () async {
+    final transport = _FakeTransport();
+    final repository = MotionAssessmentApiRepository(transport: transport);
+
+    final session = await repository.create(
+      target: 'posture_screen',
+      poseEngine: 'mediapipe_pose_landmarker',
+      keyFrameUploadEnabled: true,
+    );
+
+    expect(transport.lastPostPath, '/v1/motion-assessments');
+    expect(transport.lastPostBody?['keyframe_upload_enabled'], isTrue);
+    expect(transport.lastPostBody, isNot(contains('video_upload_enabled')));
+    expect(session.keyFrameUploadEnabled, isTrue);
+  });
+
+  test('updates a voice-selected plan with optimistic concurrency', () async {
+    final transport = _FakeTransport();
+    final repository = MotionAssessmentApiRepository(transport: transport);
+
+    final session = await repository.updatePlan(
+      assessmentId: 'assessment-1',
+      targets: const ['forward_head', 'trunk_lateral_lean'],
+      expectedRevision: 3,
+      confirmed: true,
+    );
+
+    expect(transport.lastPutPath, '/v1/motion-assessments/assessment-1/plan');
+    expect(transport.lastPutBody, {
+      'targets': ['forward_head', 'trunk_lateral_lean'],
+      'expected_revision': 3,
+      'confirmed': true,
+    });
+    expect(session.requestedTargets, ['forward_head', 'trunk_lateral_lean']);
+    expect(session.planRevision, 4);
+    expect(session.planConfirmed, isTrue);
+  });
+
   test(
     'status-only updates omit result_summary so the server preserves it',
     () async {
@@ -68,6 +106,8 @@ void main() {
 }
 
 class _FakeTransport implements ApiJsonTransport, ApiJsonMutationTransport {
+  Map<String, Object?>? lastPostBody;
+  String? lastPostPath;
   Map<String, Object?>? lastPatchBody;
   Map<String, Object?>? lastPutBody;
   String? lastPutPath;
@@ -106,7 +146,23 @@ class _FakeTransport implements ApiJsonTransport, ApiJsonMutationTransport {
     String path, {
     Map<String, Object?> body = const {},
     Map<String, String> headers = const {},
-  }) => throw UnimplementedError();
+  }) async {
+    lastPostPath = path;
+    lastPostBody = Map.of(body);
+    return {
+      'id': 'assessment-1',
+      'target': body['target'],
+      'status': 'ready',
+      'pose_engine': body['pose_engine'],
+      'privacy': {
+        'video_upload_enabled': false,
+        'landmark_upload_enabled': false,
+        'keyframe_upload_enabled': body['keyframe_upload_enabled'],
+      },
+      'pause_reason': '',
+      'result_summary': const <String, Object?>{},
+    };
+  }
 
   @override
   Future<Map<String, Object?>> putJson(
@@ -117,6 +173,23 @@ class _FakeTransport implements ApiJsonTransport, ApiJsonMutationTransport {
     putCalls += 1;
     lastPutPath = path;
     lastPutBody = Map.of(body);
+    if (path.endsWith('/plan')) {
+      return {
+        'id': 'assessment-1',
+        'target': 'posture_screen',
+        'status': 'ready',
+        'pose_engine': 'mediapipe_pose_landmarker',
+        'privacy': {
+          'video_upload_enabled': false,
+          'landmark_upload_enabled': false,
+        },
+        'pause_reason': '',
+        'result_summary': const <String, Object?>{},
+        'requested_targets': body['targets'],
+        'plan_revision': (body['expected_revision'] as int) + 1,
+        'plan_confirmed': body['confirmed'],
+      };
+    }
     if (putFailuresRemaining > 0) {
       putFailuresRemaining -= 1;
       throw StateError('network unavailable');

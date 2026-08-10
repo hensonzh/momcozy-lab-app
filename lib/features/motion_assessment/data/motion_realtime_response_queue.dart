@@ -4,6 +4,10 @@ import 'dart:collection';
 typedef MotionRealtimeEventSender =
     Future<void> Function(Map<String, Object?> event);
 
+const _cozyMateIdentityInstructions =
+    '你始终以 CozyMate 的同一身份回应用户，延续 App 主对话中温和、自然、直接的语气。'
+    '不要自称独立教练，也不要提及内部模型、智能体分工、角色切换或结果交接。';
+
 class MotionRealtimeResponseQueue {
   MotionRealtimeResponseQueue({required this.sendEvent});
 
@@ -128,20 +132,22 @@ class MotionRealtimeResponseQueue {
     _responseActive = true;
     _activeContextId = next.contextId;
     _activeCoalesceKey = next.coalesceKey;
+    final responseInstructions = next.exactSpeech
+        ? '请只说下面这句中文，不要添加其他内容：${next.instructions}'
+        : next.modelTurn
+        ? '默认使用简体中文回答；只有用户明确要求使用其他语言时才切换。'
+              '不要因为口音、语气词或孤立的外语词切换语言。'
+              '所有开场、动作指导、工具提示和结果保持同一语言。\n'
+              '${next.instructions}'
+        : '请用自然、简短的中文表达下面这条过程指导。保持事实和动作要求不变，'
+              '不要逐字朗读提示词，不要添加诊断或新的要求：${next.instructions}';
     try {
       await sendEvent({
         'type': 'response.create',
         'response': {
           'output_modalities': ['audio'],
-          'instructions': next.exactSpeech
-              ? '请只说下面这句中文，不要添加其他内容：${next.instructions}'
-              : next.modelTurn
-              ? '默认使用简体中文回答；只有用户明确要求使用其他语言时才切换。'
-                    '不要因为口音、语气词或孤立的外语词切换语言。'
-                    '所有开场、动作指导、工具提示和结果保持同一语言。\n'
-                    '${next.instructions}'
-              : '请用自然、简短的中文表达下面这条过程指导。保持事实和动作要求不变，'
-                    '不要逐字朗读提示词，不要添加诊断或新的要求：${next.instructions}',
+          'instructions':
+              '$_cozyMateIdentityInstructions\n$responseInstructions',
         },
       });
     } catch (_) {

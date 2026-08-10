@@ -6,9 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_visual_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/forward_head_analyzer.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/frontal_posture_analyzer.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_finalization.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_capability.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_plan.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_session.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pose.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_quality_gate.dart';
@@ -17,6 +21,260 @@ import 'package:momcozy_flutter_app/features/motion_assessment/presentation/moti
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_page.dart';
 
 void main() {
+  test(
+    'keeps a posture screen in voice selection until a versioned plan is confirmed',
+    () async {
+      final repository = _FakeRepository(
+        immediateSession: _session(target: 'posture_screen'),
+      );
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'posture_screen',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: _FakePosePlatform(),
+        voice: voice,
+      );
+
+      await controller.start();
+
+      expect(controller.phase, MotionAssessmentPagePhase.selectingAssessments);
+      expect(controller.assessmentPlan.confirmed, isFalse);
+      expect(
+        voice.guidanceRequests.first.payload['capabilities'],
+        isA<List<Object?>>(),
+      );
+
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'plan-replace',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.replace,
+            targets: [
+              MotionAssessmentTarget.forwardHead,
+              MotionAssessmentTarget.trunkLateralLean,
+            ],
+            expectedRevision: 0,
+          ),
+        ),
+      );
+      await _flush();
+
+      expect(repository.planUpdates, hasLength(1));
+      expect(repository.planUpdates.single.confirmed, isFalse);
+      expect(controller.phase, MotionAssessmentPagePhase.selectingAssessments);
+      expect(controller.assessmentPlan.revision, 1);
+
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'plan-confirm',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.confirm,
+            targets: [],
+            expectedRevision: 1,
+          ),
+        ),
+      );
+      await _flush();
+
+      expect(repository.planUpdates, hasLength(2));
+      expect(repository.planUpdates.last.confirmed, isTrue);
+      expect(controller.assessmentPlan.confirmed, isTrue);
+      expect(controller.phase, MotionAssessmentPagePhase.calibrating);
+      expect(
+        voice.guidanceRequests.map((request) => request.type),
+        contains('assessment_plan_confirmed'),
+      );
+      await controller.finish();
+    },
+  );
+
+  test(
+    'completes one grouped frontal step for shoulder and trunk screening',
+    () async {
+      final repository = _FakeRepository(
+        immediateSession: _session(target: 'posture_screen'),
+      );
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'posture_screen',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+        frontalPostureAnalyzer: FrontalPostureAnalyzer(
+          minimumStableFor: Duration.zero,
+          minimumSamples: 1,
+        ),
+        captureCountdown: Duration.zero,
+      );
+
+      await controller.start();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'front-plan',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.replace,
+            targets: [
+              MotionAssessmentTarget.shoulderHeightAsymmetry,
+              MotionAssessmentTarget.trunkLateralLean,
+            ],
+            expectedRevision: 0,
+          ),
+        ),
+      );
+      await _flush();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'front-confirm',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.confirm,
+            targets: [],
+            expectedRevision: 1,
+          ),
+        ),
+      );
+      await _flush();
+
+      voice.latestAudioItemId = 'before-front-review';
+      pose.emit(_acceptedFrontObservation());
+      while (controller.phase !=
+          MotionAssessmentPagePhase.awaitingFinishConfirmation) {
+        await _flush();
+      }
+
+      voice.latestAudioItemId = 'finish-front-review';
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.confirmFinish,
+          callId: 'finish-front',
+          userAudioItemId: 'finish-front-review',
+        ),
+      );
+      while (!controller.exitRequested) {
+        await _flush();
+      }
+
+      final finalization = repository.finalizations.single;
+      expect(finalization.resultSummary['requested_targets'], [
+        'shoulder_height_asymmetry',
+        'trunk_lateral_lean',
+      ]);
+      expect(finalization.resultSummary['segment_count'], 1);
+      final results = finalization.resultSummary['target_results']! as List;
+      expect(
+        results.map((item) => (item as Map)['target']),
+        containsAll(['shoulder_height_asymmetry', 'trunk_lateral_lean']),
+      );
+      expect(finalization.processSummary['required_segments'], 1);
+    },
+  );
+
+  test(
+    'announces every transition across two side views and one front view',
+    () async {
+      final repository = _FakeRepository(
+        immediateSession: _session(target: 'posture_screen'),
+      );
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'posture_screen',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+        forwardHeadAnalyzer: ForwardHeadAnalyzer(
+          minimumStableFor: Duration.zero,
+          minimumSamples: 1,
+        ),
+        frontalPostureAnalyzer: FrontalPostureAnalyzer(
+          minimumStableFor: Duration.zero,
+          minimumSamples: 1,
+        ),
+        captureCountdown: Duration.zero,
+      );
+
+      await controller.start();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'mixed-plan',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.replace,
+            targets: [
+              MotionAssessmentTarget.forwardHead,
+              MotionAssessmentTarget.trunkLateralLean,
+            ],
+            expectedRevision: 0,
+          ),
+        ),
+      );
+      await _flush();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'mixed-confirm',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.confirm,
+            targets: [],
+            expectedRevision: 1,
+          ),
+        ),
+      );
+      await _flush();
+
+      pose.emit(_acceptedSideObservation(side: 'right'));
+      while (!voice.guidanceRequests.any(
+        (request) => request.type == 'change_orientation',
+      )) {
+        await _flush();
+      }
+      pose.emit(
+        _acceptedSideObservation(
+          side: 'left',
+          timestamp: const Duration(seconds: 2),
+        ),
+      );
+      while (!voice.guidanceRequests.any(
+        (request) => request.type == 'front_view_required',
+      )) {
+        await _flush();
+      }
+      pose.emit(
+        _acceptedFrontObservation(timestamp: const Duration(seconds: 3)),
+      );
+      while (controller.phase !=
+          MotionAssessmentPagePhase.awaitingFinishConfirmation) {
+        await _flush();
+      }
+
+      final transitionTypes = voice.guidanceRequests
+          .map((request) => request.type)
+          .toList();
+      expect(
+        transitionTypes,
+        containsAllInOrder([
+          'assessment_started',
+          'assessment_plan_updated',
+          'assessment_plan_confirmed',
+          'change_orientation',
+          'front_view_required',
+          'assessment_review_ready',
+        ]),
+      );
+      expect(controller.samplingProgress, 1);
+      await controller.finish();
+    },
+  );
+
   test(
     'starts local camera before session creation completes and never starts voice after close',
     () async {
@@ -626,6 +884,80 @@ void main() {
     },
   );
 
+  testWidgets(
+    'requires an explicit per-session choice before enabling cloud key frames',
+    (tester) async {
+      final pose = _FakePosePlatform();
+      final repository = _FakeRepository(immediateSession: _session());
+      final visualContext = MotionVisualContextCoordinator(
+        captureKeyFrame: () => throw StateError('not requested in this test'),
+      );
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: _FakeVoice(),
+        visualContextCoordinator: visualContext,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MotionAssessmentPage(
+            controllerIdentity: 'visual-consent',
+            controllerFactory: () => controller,
+            previewBuilder: (_) => const ColoredBox(color: Colors.black),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('开启视觉辅助吗？'), findsOneWidget);
+      expect(find.textContaining('不会上传连续视频'), findsOneWidget);
+      expect(pose.startCalls, 0);
+
+      await tester.tap(
+        find.byKey(const ValueKey('motion-visual-consent-enable')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(pose.startCalls, 1);
+      expect(repository.createdKeyFrameUploadEnabled, [true]);
+    },
+  );
+
+  testWidgets('local-only consent choice keeps key-frame upload disabled', (
+    tester,
+  ) async {
+    final repository = _FakeRepository(immediateSession: _session());
+    final visualContext = MotionVisualContextCoordinator(
+      captureKeyFrame: () => throw StateError('must stay local-only'),
+    );
+    final controller = MotionAssessmentController(
+      target: 'forward_head',
+      locale: 'zh-CN',
+      repository: repository,
+      posePlatform: _FakePosePlatform(),
+      voice: _FakeVoice(),
+      visualContextCoordinator: visualContext,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MotionAssessmentPage(
+          controllerIdentity: 'local-only-consent',
+          controllerFactory: () => controller,
+          visualConsentPrompt: (_) async => false,
+          previewBuilder: (_) => const ColoredBox(color: Colors.black),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(repository.createdKeyFrameUploadEnabled, [false]);
+    expect(visualContext.isEnabled, isFalse);
+  });
+
   testWidgets('shows retry and exit controls only after terminal failure', (
     tester,
   ) async {
@@ -762,16 +1094,20 @@ void main() {
 
 Future<void> _flush() => Future<void>.delayed(Duration.zero);
 
-MotionAssessmentSession _session() {
-  return const MotionAssessmentSession(
+MotionAssessmentSession _session({String target = 'forward_head'}) {
+  return MotionAssessmentSession(
     id: 'assessment-1',
-    target: 'forward_head',
+    target: target,
     status: 'ready',
     poseEngine: 'mediapipe_pose_landmarker',
     videoUploadEnabled: false,
     landmarkUploadEnabled: false,
     pauseReason: '',
     resultSummary: {},
+    requestedTargets: target == 'forward_head'
+        ? const ['forward_head']
+        : const [],
+    planConfirmed: target == 'forward_head',
   );
 }
 
@@ -789,11 +1125,14 @@ class _FakeRepository implements MotionAssessmentRepository {
   final Object? stageError;
   int createCalls = 0;
   final List<String> createdSourceArtifactIds = [];
+  final List<bool> createdKeyFrameUploadEnabled = [];
   final List<String> updatedStatuses = [];
   final List<({String status, Map<String, Object?>? resultSummary})> updates =
       [];
   final List<MotionAssessmentFinalization> stagedFinalizations = [];
   final List<MotionAssessmentFinalization> finalizations = [];
+  final List<({List<String> targets, int expectedRevision, bool confirmed})>
+  planUpdates = [];
 
   @override
   Future<MotionAssessmentSession> create({
@@ -801,9 +1140,11 @@ class _FakeRepository implements MotionAssessmentRepository {
     required String poseEngine,
     String sourceArtifactId = '',
     String locale = 'zh-CN',
+    bool keyFrameUploadEnabled = false,
   }) {
     createCalls += 1;
     createdSourceArtifactIds.add(sourceArtifactId);
+    createdKeyFrameUploadEnabled.add(keyFrameUploadEnabled);
     final error = createError;
     if (error != null) return Future<MotionAssessmentSession>.error(error);
     return createCompleter?.future ?? Future.value(immediateSession!);
@@ -819,6 +1160,33 @@ class _FakeRepository implements MotionAssessmentRepository {
     updatedStatuses.add(status);
     updates.add((status: status, resultSummary: resultSummary));
     return _session();
+  }
+
+  @override
+  Future<MotionAssessmentSession> updatePlan({
+    required String assessmentId,
+    required List<String> targets,
+    required int expectedRevision,
+    required bool confirmed,
+  }) async {
+    planUpdates.add((
+      targets: List.of(targets),
+      expectedRevision: expectedRevision,
+      confirmed: confirmed,
+    ));
+    return MotionAssessmentSession(
+      id: assessmentId,
+      target: 'posture_screen',
+      status: 'active',
+      poseEngine: 'mediapipe_pose_landmarker',
+      videoUploadEnabled: false,
+      landmarkUploadEnabled: false,
+      pauseReason: '',
+      resultSummary: const {},
+      requestedTargets: List.of(targets),
+      planRevision: expectedRevision + 1,
+      planConfirmed: confirmed,
+    );
   }
 
   @override
@@ -992,6 +1360,7 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
     MotionVoiceCommand command, {
     required bool accepted,
     required String message,
+    Map<String, Object?> details = const {},
     bool speakResult = true,
   }) async {}
 
@@ -1084,6 +1453,39 @@ MotionPoseObservation _acceptedSideObservation({
             visibility: 0.95,
             presence: 0.95,
           ),
+        },
+      ),
+    ],
+  );
+}
+
+MotionPoseObservation _acceptedFrontObservation({
+  Duration timestamp = const Duration(seconds: 1),
+}) {
+  const confidence = 0.95;
+  MotionPoseLandmark point(double x, double y) => MotionPoseLandmark(
+    x: x,
+    y: y,
+    z: 0,
+    visibility: confidence,
+    presence: confidence,
+  );
+  return MotionPoseObservation(
+    timestamp: timestamp,
+    inputWidth: 1000,
+    inputHeight: 1000,
+    inferenceTime: const Duration(milliseconds: 20),
+    poses: [
+      MotionPose(
+        centerX: 0.5,
+        centerY: 0.5,
+        bodyScale: 0.8,
+        landmarks: {
+          MotionPoseLandmarkType.nose: point(0.5, 0.12),
+          MotionPoseLandmarkType.leftShoulder: point(0.28, 0.43),
+          MotionPoseLandmarkType.rightShoulder: point(0.72, 0.50),
+          MotionPoseLandmarkType.leftHip: point(0.42, 0.78),
+          MotionPoseLandmarkType.rightHip: point(0.58, 0.78),
         },
       ),
     ],

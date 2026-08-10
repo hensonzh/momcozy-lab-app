@@ -19,6 +19,7 @@ import 'package:momcozy_flutter_app/features/more/presentation/more_profile_page
 import 'package:momcozy_flutter_app/features/notifications/presentation/notifications_page.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_visual_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_controller.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_page.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
@@ -190,12 +191,12 @@ class MomCozyFeaturePage extends StatelessWidget {
 
 Widget _buildMotionAssessmentPage(BuildContext context, Uri? routeUri) {
   final runtime = MomCozyRuntimeScope.of(context);
-  const supportedTargets = {'forward_head'};
+  const supportedTargets = {'posture_screen', 'forward_head'};
   final requestedTarget = routeUri?.queryParameters['target'];
   if (requestedTarget != null && !supportedTargets.contains(requestedTarget)) {
     return const _UnsupportedMotionAssessmentPage();
   }
-  final target = requestedTarget ?? 'forward_head';
+  final target = requestedTarget ?? 'posture_screen';
   final sourceArtifactId =
       routeUri?.queryParameters['source_artifact_id']?.trim() ?? '';
   return KeyedSubtree(
@@ -209,15 +210,25 @@ Widget _buildMotionAssessmentPage(BuildContext context, Uri? routeUri) {
         target,
         sourceArtifactId,
       ),
-      controllerFactory: () => MotionAssessmentController(
-        target: target,
-        sourceArtifactId: sourceArtifactId,
-        locale: runtime.currentSession.locale,
-        repository: runtime.motionAssessmentRepository,
-        posePlatform: NativeMotionPosePlatform(),
-        voice: MotionRealtimeVoice(signaling: runtime.motionVoiceSignaling),
-        prepareRealtimeAudio: runtime.agentVoicePlaybackPlayer.stop,
-      ),
+      controllerFactory: () {
+        final posePlatform = NativeMotionPosePlatform();
+        final visualContext = MotionVisualContextCoordinator(
+          captureKeyFrame: posePlatform.captureKeyFrame,
+        );
+        return MotionAssessmentController(
+          target: target,
+          sourceArtifactId: sourceArtifactId,
+          locale: runtime.currentSession.locale,
+          repository: runtime.motionAssessmentRepository,
+          posePlatform: posePlatform,
+          voice: MotionRealtimeVoice(
+            signaling: runtime.motionVoiceSignaling,
+            visualContextCoordinator: visualContext,
+          ),
+          visualContextCoordinator: visualContext,
+          prepareRealtimeAudio: runtime.agentVoicePlaybackPlayer.stop,
+        );
+      },
     ),
   );
 }
@@ -250,7 +261,7 @@ class _UnsupportedMotionAssessmentPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '当前仅支持头颈姿态动态评估。',
+                  '该评估类型尚未通过端侧能力验证。',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: MomCozyColors.mutedForeground,

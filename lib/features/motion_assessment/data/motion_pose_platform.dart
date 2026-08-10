@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +20,34 @@ abstract interface class MotionPosePlatform {
   Future<void> stop();
 }
 
-class NativeMotionPosePlatform implements MotionPosePlatform {
+/// Optional camera capability used by the Realtime visual-assistance layer.
+///
+/// Pose inference remains the source of truth. Implementations capture only a
+/// single, bounded analysis frame when explicitly requested.
+abstract interface class MotionKeyFrameCapturePlatform {
+  Future<MotionPoseKeyFrame> captureKeyFrame();
+}
+
+class MotionPoseKeyFrame {
+  const MotionPoseKeyFrame({
+    required this.id,
+    required this.bytes,
+    required this.mimeType,
+    required this.capturedAtMs,
+    required this.width,
+    required this.height,
+  });
+
+  final String id;
+  final Uint8List bytes;
+  final String mimeType;
+  final int capturedAtMs;
+  final int width;
+  final int height;
+}
+
+class NativeMotionPosePlatform
+    implements MotionPosePlatform, MotionKeyFrameCapturePlatform {
   NativeMotionPosePlatform({
     MethodChannel? methodChannel,
     EventChannel? eventChannel,
@@ -77,6 +103,24 @@ class NativeMotionPosePlatform implements MotionPosePlatform {
     await _methodChannel.invokeMethod<void>('stop');
   }
 
+  @override
+  Future<MotionPoseKeyFrame> captureKeyFrame() async {
+    final raw = await _methodChannel
+        .invokeMethod<Object?>('captureKeyFrame', const {
+          'max_width': 448,
+          'jpeg_quality': 60,
+          'max_bytes': 122880,
+        })
+        .timeout(
+          const Duration(milliseconds: 1800),
+          onTimeout: () => throw PlatformException(
+            code: 'key_frame_timeout',
+            message: 'No camera analysis frame was available in time.',
+          ),
+        );
+    return motionPoseKeyFrameFromNative(raw);
+  }
+
   Future<void> _startAndWaitForModel() async {
     final ready = Completer<bool>();
     _pendingReady = ready;
@@ -122,6 +166,35 @@ class NativeMotionPosePlatform implements MotionPosePlatform {
       await subscription.cancel();
     }
   }
+}
+
+@visibleForTesting
+MotionPoseKeyFrame motionPoseKeyFrameFromNative(Object? raw) {
+  if (raw is! Map) {
+    throw const FormatException('Invalid native pose key frame.');
+  }
+  final map = Map<Object?, Object?>.from(raw);
+  final rawBytes = map['bytes'];
+  final bytes = switch (rawBytes) {
+    Uint8List value => value,
+    List<int> value => Uint8List.fromList(value),
+    _ => throw const FormatException('Pose key frame has no JPEG bytes.'),
+  };
+  final id = map['id']?.toString().trim() ?? '';
+  final mimeType = map['mime_type']?.toString().trim().toLowerCase() ?? '';
+  final width = _positiveInt(map['width']);
+  final height = _positiveInt(map['height']);
+  if (id.isEmpty || mimeType != 'image/jpeg' || bytes.isEmpty) {
+    throw const FormatException('Pose key frame metadata is invalid.');
+  }
+  return MotionPoseKeyFrame(
+    id: id,
+    bytes: bytes,
+    mimeType: mimeType,
+    capturedAtMs: _int(map['captured_at_ms']),
+    width: width,
+    height: height,
+  );
 }
 
 bool _isPoseObservationEvent(Object? event) {

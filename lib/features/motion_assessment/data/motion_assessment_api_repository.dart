@@ -8,6 +8,7 @@ abstract interface class MotionAssessmentRepository {
     required String poseEngine,
     String sourceArtifactId = '',
     String locale = 'zh-CN',
+    bool keyFrameUploadEnabled = false,
   });
 
   Future<MotionAssessmentSession> update({
@@ -15,6 +16,13 @@ abstract interface class MotionAssessmentRepository {
     required String status,
     String pauseReason = '',
     Map<String, Object?>? resultSummary,
+  });
+
+  Future<MotionAssessmentSession> updatePlan({
+    required String assessmentId,
+    required List<String> targets,
+    required int expectedRevision,
+    required bool confirmed,
   });
 
   Future<void> stageFinalization(MotionAssessmentFinalization finalization);
@@ -41,6 +49,7 @@ class MotionAssessmentApiRepository implements MotionAssessmentRepository {
     required String poseEngine,
     String sourceArtifactId = '',
     String locale = 'zh-CN',
+    bool keyFrameUploadEnabled = false,
   }) async {
     final json = await transport.postJson(
       '/v1/motion-assessments',
@@ -49,6 +58,7 @@ class MotionAssessmentApiRepository implements MotionAssessmentRepository {
         'pose_engine': poseEngine,
         'source_artifact_id': sourceArtifactId,
         'locale': locale,
+        'keyframe_upload_enabled': keyFrameUploadEnabled,
       },
     );
     return MotionAssessmentSession.fromJson(json);
@@ -72,6 +82,28 @@ class MotionAssessmentApiRepository implements MotionAssessmentRepository {
     if (resultSummary != null) body['result_summary'] = resultSummary;
     final json = await (mutationTransport as ApiJsonMutationTransport)
         .patchJson('/v1/motion-assessments/$assessmentId', body: body);
+    return MotionAssessmentSession.fromJson(json);
+  }
+
+  @override
+  Future<MotionAssessmentSession> updatePlan({
+    required String assessmentId,
+    required List<String> targets,
+    required int expectedRevision,
+    required bool confirmed,
+  }) async {
+    final mutationTransport = transport;
+    if (mutationTransport is! ApiJsonMutationTransport) {
+      throw StateError('Motion assessment plans require mutation transport.');
+    }
+    final json = await (mutationTransport as ApiJsonMutationTransport).putJson(
+      '/v1/motion-assessments/$assessmentId/plan',
+      body: {
+        'targets': List<String>.unmodifiable(targets),
+        'expected_revision': expectedRevision,
+        'confirmed': confirmed,
+      },
+    );
     return MotionAssessmentSession.fromJson(json);
   }
 

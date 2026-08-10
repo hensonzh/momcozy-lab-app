@@ -79,6 +79,43 @@ void main() {
       const Duration(milliseconds: 100),
     );
   });
+
+  test(
+    'captures a bounded JPEG key frame through the native channel',
+    () async {
+      const methodChannel = MethodChannel('motion-pose-key-frame-test');
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(methodChannel, (call) async {
+            expect(call.method, 'captureKeyFrame');
+            expect(call.arguments, {
+              'max_width': 448,
+              'jpeg_quality': 60,
+              'max_bytes': 122880,
+            });
+            return {
+              'id': 'frame-123',
+              'bytes': Uint8List.fromList(const [0xff, 0xd8, 0xff, 0xd9]),
+              'mime_type': 'image/jpeg',
+              'captured_at_ms': 123,
+              'width': 448,
+              'height': 252,
+            };
+          });
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(methodChannel, null);
+      });
+      final platform = NativeMotionPosePlatform(methodChannel: methodChannel);
+
+      final frame = await platform.captureKeyFrame();
+
+      expect(frame.id, 'frame-123');
+      expect(frame.mimeType, 'image/jpeg');
+      expect(frame.bytes, Uint8List.fromList(const [0xff, 0xd8, 0xff, 0xd9]));
+      expect(frame.width, 448);
+      expect(frame.height, 252);
+    },
+  );
 }
 
 Future<void> _flush() => Future<void>.delayed(Duration.zero);

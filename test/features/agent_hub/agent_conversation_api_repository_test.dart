@@ -309,9 +309,10 @@ void main() {
             'role': 'user',
             'message_type': 'text',
             'content': {
-              'text': '[系统流程触发] 请读取最新体态评估结果。',
+              'text':
+                  '[系统流程触发] 用户刚完成体态动态评估。请调用 '
+                  'motion_assessment_result.read 读取权威聚合结果。',
               'attachments': <Object?>[],
-              'client_context': {'source': 'motion_assessment_completion'},
             },
             'status': 'completed',
             'sequence': 1,

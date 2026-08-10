@@ -1180,6 +1180,36 @@ void main() {
     },
   );
 
+  testWidgets('Agent Hub hides a persisted motion assessment system trigger', (
+    tester,
+  ) async {
+    final store = _MemoryAgentHubInteractionStateStore(
+      const AgentHubInteractionSnapshot(
+        runState: AgentStreamRunState(
+          phase: AgentStreamRunPhase.finished,
+          threadId: 'thread-motion-feedback',
+          textContent: '你的头颈姿态评估反馈已经生成。',
+        ),
+        historyMessages: [
+          AgentHubHistorySnapshot(
+            role: 'user',
+            content:
+                '[系统流程触发]用户刚完成体态动态评估。请调用 '
+                'motion_assessment_result.read。',
+          ),
+        ],
+      ),
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.textContaining('[系统流程触发]'), findsNothing);
+    expect(find.text('你的头颈姿态评估反馈已经生成。', findRichText: true), findsOneWidget);
+    expect(store.snapshot?.historyMessages, isEmpty);
+  });
+
   testWidgets(
     'Agent Hub applies cold-start auto-send after restoring the thread',
     (tester) async {

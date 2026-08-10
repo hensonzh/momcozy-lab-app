@@ -35,6 +35,24 @@ void main() {
     );
   });
 
+  test(
+    'maps the generic posture screen entry without narrowing it to neck',
+    () {
+      final card = AgentArtifactMapper.cardFromEvent(
+        _motionArtifactEvent(target: 'posture_screen'),
+      )!;
+      final data = card.specializedView as AgentMotionAssessmentCardView;
+
+      expect(data.title, '体态动态评估');
+      expect(data.target, 'posture_screen');
+      expect(
+        data.routeLocation,
+        '/motion-assessment?target=posture_screen&source_artifact_id=motion-1',
+      );
+      expect(data.description, contains('语音选择评估项目'));
+    },
+  );
+
   testWidgets('motion assessment card emits only its dedicated route action', (
     tester,
   ) async {
@@ -104,7 +122,8 @@ AgentStreamEvent _motionArtifactEvent({String target = 'forward_head'}) {
           'title': '肩颈前倾动态评估',
           'target': target,
           'user_goal': '看看我是否有肩颈前倾',
-          'description': '按语音提示侧身站立，系统会实时检查取景和动作。',
+          if (target == 'forward_head')
+            'description': '按语音提示侧身站立，系统会实时检查取景和动作。',
           'entry': {
             'url': '/motion-assessment?target=$target',
             'label': '开始评估',
