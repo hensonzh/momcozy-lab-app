@@ -127,6 +127,64 @@ void main() {
   });
 
   test(
+    'converts live pose changes into spoken guidance and semantic events',
+    () async {
+      final repository = _FakeRepository(immediateSession: _session());
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(
+          singlePersonStableFor: Duration.zero,
+          multiplePeopleStableFor: Duration.zero,
+        ),
+      );
+
+      await controller.start();
+      await _flush();
+
+      pose.emit(_poseObservation(Duration.zero, const []));
+      await _flush();
+      pose.emit(_acceptedSideObservation());
+      await _flush();
+      final tracked = _acceptedSideObservation().poses.single;
+      pose.emit(
+        _poseObservation(const Duration(seconds: 2), [
+          tracked,
+          MotionPose(
+            centerX: 0.82,
+            centerY: tracked.centerY,
+            bodyScale: tracked.bodyScale,
+            landmarks: tracked.landmarks,
+          ),
+        ]),
+      );
+      await _flush();
+      await _flush();
+
+      expect(voice.spokenInstructions, contains(contains('站到镜头前')));
+      expect(voice.spokenInstructions, contains(contains('自然侧身')));
+      expect(voice.spokenInstructions, contains(contains('非评估人员')));
+      expect(
+        voice.sentEvents.map((event) => event.type),
+        containsAll([
+          'person_not_detected',
+          'single_person_stable',
+          'multiple_people',
+        ]),
+      );
+      expect(voice.latestContext?.personCount, 2);
+      expect(voice.latestContext?.recommendedAction, 'ask_others_to_leave');
+
+      await controller.finish();
+    },
+  );
+
+  test(
     'surfaces a native pose model startup failure with a useful cause',
     () async {
       final repository = _FakeRepository(immediateSession: _session());
@@ -422,6 +480,8 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   final Object? connectError;
   int connectCalls = 0;
   MotionAssessmentContextSnapshot? latestContext;
+  final List<String> spokenInstructions = [];
+  final List<({String type, Map<String, Object?> payload})> sentEvents = [];
 
   @override
   Stream<MotionVoiceCommand> get commands => const Stream.empty();
@@ -440,13 +500,17 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   }
 
   @override
-  Future<void> speak(String instruction, {bool interrupt = false}) async {}
+  Future<void> speak(String instruction, {bool interrupt = false}) async {
+    spokenInstructions.add(instruction);
+  }
 
   @override
   Future<void> sendClientEvent(
     String eventType,
     Map<String, Object?> payload,
-  ) async {}
+  ) async {
+    sentEvents.add((type: eventType, payload: payload));
+  }
 
   @override
   void updateAssessmentContext(MotionAssessmentContextSnapshot snapshot) {
@@ -544,5 +608,18 @@ MotionPoseObservation _acceptedSideObservation() {
         },
       ),
     ],
+  );
+}
+
+MotionPoseObservation _poseObservation(
+  Duration timestamp,
+  List<MotionPose> poses,
+) {
+  return MotionPoseObservation(
+    timestamp: timestamp,
+    inputWidth: 1000,
+    inputHeight: 1000,
+    inferenceTime: const Duration(milliseconds: 20),
+    poses: poses,
   );
 }
