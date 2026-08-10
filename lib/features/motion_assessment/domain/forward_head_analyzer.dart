@@ -45,8 +45,8 @@ class ForwardHeadResult {
 /// a clinical diagnosis.
 class ForwardHeadAnalyzer {
   ForwardHeadAnalyzer({
-    this.minimumStableFor = const Duration(seconds: 2),
-    this.minimumSamples = 12,
+    this.minimumStableFor = const Duration(seconds: 5),
+    this.minimumSamples = 30,
     this.minimumLandmarkConfidence = 0.65,
     this.forwardTendencyBelowDegrees = 50,
     this.maximumSampleGap = const Duration(milliseconds: 350),

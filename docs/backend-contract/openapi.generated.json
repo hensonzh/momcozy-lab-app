@@ -3387,6 +3387,70 @@
         "title": "MotionAssessmentCreate",
         "type": "object"
       },
+      "MotionAssessmentFinalizationCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "client_revision": {
+            "default": 1,
+            "maximum": 1000000000.0,
+            "minimum": 1.0,
+            "title": "Client Revision",
+            "type": "integer"
+          },
+          "failure_code": {
+            "default": "",
+            "maxLength": 64,
+            "title": "Failure Code",
+            "type": "string"
+          },
+          "finalization_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Finalization Id",
+            "type": "string"
+          },
+          "outcome": {
+            "enum": [
+              "completed",
+              "cancelled",
+              "failed"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "process_summary": {
+            "additionalProperties": true,
+            "title": "Process Summary",
+            "type": "object"
+          },
+          "result_summary": {
+            "additionalProperties": true,
+            "title": "Result Summary",
+            "type": "object"
+          },
+          "safety_events": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "maxItems": 16,
+            "title": "Safety Events",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "motion_assessment.finalization.v1",
+            "default": "motion_assessment.finalization.v1",
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "finalization_id",
+          "outcome"
+        ],
+        "title": "MotionAssessmentFinalizationCreate",
+        "type": "object"
+      },
       "MotionAssessmentPrivacy": {
         "properties": {
           "landmark_upload_enabled": {
@@ -3407,6 +3471,10 @@
       },
       "MotionAssessmentRead": {
         "properties": {
+          "client_revision": {
+            "title": "Client Revision",
+            "type": "integer"
+          },
           "completed_at": {
             "anyOf": [
               {
@@ -3423,6 +3491,26 @@
             "format": "date-time",
             "title": "Created At",
             "type": "string"
+          },
+          "failure_code": {
+            "title": "Failure Code",
+            "type": "string"
+          },
+          "finalization_id": {
+            "title": "Finalization Id",
+            "type": "string"
+          },
+          "finalized_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finalized At"
           },
           "id": {
             "format": "uuid",
@@ -3444,10 +3532,23 @@
           "privacy": {
             "$ref": "#/components/schemas/MotionAssessmentPrivacy"
           },
+          "process_summary": {
+            "additionalProperties": true,
+            "title": "Process Summary",
+            "type": "object"
+          },
           "result_summary": {
             "additionalProperties": true,
             "title": "Result Summary",
             "type": "object"
+          },
+          "safety_events": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Safety Events",
+            "type": "array"
           },
           "source_artifact_id": {
             "title": "Source Artifact Id",
@@ -3479,7 +3580,13 @@
           "result_summary",
           "created_at",
           "updated_at",
-          "completed_at"
+          "completed_at",
+          "finalization_id",
+          "process_summary",
+          "safety_events",
+          "client_revision",
+          "failure_code",
+          "finalized_at"
         ],
         "title": "MotionAssessmentRead",
         "type": "object"
@@ -10269,6 +10376,70 @@
           }
         ],
         "summary": "Update Motion Assessment",
+        "tags": [
+          "motion-assessments"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "motion-assessment",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/motion-assessments/{assessment_id}/finalization": {
+      "put": {
+        "operationId": "finalize_motion_assessment_v1_motion_assessments__assessment_id__finalization_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MotionAssessmentFinalizationCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MotionAssessmentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Finalize Motion Assessment",
         "tags": [
           "motion-assessments"
         ],

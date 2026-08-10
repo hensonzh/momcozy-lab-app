@@ -7,15 +7,24 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/forward_head_analyzer.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_finalization.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_session.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_workflow.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pose.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_quality_gate.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_voice_command.dart';
 
 enum MotionAssessmentPagePhase {
   preparing,
+  greeting,
   calibrating,
-  assessing,
+  capturingSegment,
+  changingOrientation,
+  capturingValidationSegment,
+  qualityReview,
+  reviewReady,
+  awaitingFinishConfirmation,
+  finalizing,
   pausedMultiplePeople,
   targetChanged,
   completed,
@@ -34,8 +43,10 @@ class MotionAssessmentController extends ChangeNotifier {
     this.voiceRetryDelay = const Duration(milliseconds: 500),
     MotionQualityGate? qualityGate,
     ForwardHeadAnalyzer? forwardHeadAnalyzer,
+    MotionAssessmentWorkflow? workflow,
   }) : qualityGate = qualityGate ?? MotionQualityGate(),
-       forwardHeadAnalyzer = forwardHeadAnalyzer ?? ForwardHeadAnalyzer();
+       forwardHeadAnalyzer = forwardHeadAnalyzer ?? ForwardHeadAnalyzer(),
+       workflow = workflow ?? MotionAssessmentWorkflow();
 
   final String target;
   final String sourceArtifactId;
@@ -47,6 +58,7 @@ class MotionAssessmentController extends ChangeNotifier {
   final Duration voiceRetryDelay;
   final MotionQualityGate qualityGate;
   final ForwardHeadAnalyzer forwardHeadAnalyzer;
+  final MotionAssessmentWorkflow workflow;
 
   MotionAssessmentPagePhase _phase = MotionAssessmentPagePhase.preparing;
   MotionAssessmentSession? _session;
@@ -60,7 +72,6 @@ class MotionAssessmentController extends ChangeNotifier {
   bool _started = false;
   bool _closed = false;
   bool _disposed = false;
-  bool _resultReported = false;
   bool _exitRequested = false;
   bool _cameraStarted = false;
   String? _voiceStatusMessage;
@@ -73,14 +84,16 @@ class MotionAssessmentController extends ChangeNotifier {
   final Set<int> _reportedSamplingMilestones = <int>{};
   bool _sideViewPromptEmitted = false;
   Duration? _firstObservationAt;
+  Duration? _lastObservationAt;
   MotionAssessmentContextSnapshot? _latestContext;
+  MotionQualityDecision? _lastQualityDecision;
   Map<String, Object?>? _latestResultSummary;
   String? _voiceAssessmentId;
   bool _voiceConnectInProgress = false;
   bool _voiceReady = false;
   bool _voiceEverReady = false;
   int _voiceRecoveryCycles = 0;
-  bool _completionInProgress = false;
+  bool _terminalizationInProgress = false;
   bool _completedSuccessfully = false;
   String? _completedAssessmentId;
 
@@ -101,8 +114,15 @@ class MotionAssessmentController extends ChangeNotifier {
   bool get voiceReady => _voiceReady;
   bool get completedSuccessfully => _completedSuccessfully;
   String? get completedAssessmentId => _completedAssessmentId;
-  double get samplingProgress =>
-      _forwardHeadResult == null ? forwardHeadAnalyzer.samplingProgress : 1;
+  bool get canRetry => _phase == MotionAssessmentPagePhase.failed;
+  double get samplingProgress {
+    if (_forwardHeadResult != null) return 1;
+    final completed = workflow.segmentResults.length;
+    return ((completed + forwardHeadAnalyzer.samplingProgress) /
+            workflow.requiredSegments)
+        .clamp(0, 1)
+        .toDouble();
+  }
 
   Future<void> start() async {
     if (_started || _closed) return;
@@ -112,37 +132,34 @@ class MotionAssessmentController extends ChangeNotifier {
       (command) => unawaited(_handleVoiceCommand(command)),
     );
     _guidance = '正在请求摄像头权限…';
-    notifyListeners();
+    _notify();
     try {
       final cameraGranted = await posePlatform.requestCameraPermission();
       if (_closed) return;
       if (!cameraGranted) {
-        throw StateError('需要摄像头权限才能进行动态姿态评估。');
+        throw StateError('需要摄像头权限才能进行头颈姿态动态评估。');
       }
       _poseSubscription = posePlatform.observations.listen(
         _onObservation,
         onError: _onPoseError,
       );
       _guidance = '正在打开相机并加载端侧姿态识别…';
-      notifyListeners();
+      _notify();
       await posePlatform.start();
       if (_closed) {
-        await posePlatform.stop();
+        await _stopPosePlatform();
         return;
       }
       _cameraStarted = true;
       _phase = MotionAssessmentPagePhase.calibrating;
       _guidance = '请让头部、肩部和髋部进入画面';
-      notifyListeners();
+      _notify();
     } catch (error) {
-      if (_closed) return;
-      await _stopPoseAfterFailure();
-      _cameraStarted = false;
-      _phase = MotionAssessmentPagePhase.failed;
-      _errorMessage = _friendlyPoseError(error);
-      _poseDiagnosticMessage = _poseDiagnosticFor(error);
-      _guidance = _errorMessage!;
-      notifyListeners();
+      await _fail(
+        failureCode: 'pose_start_failed',
+        message: _friendlyPoseError(error),
+        diagnostic: _poseDiagnosticFor(error),
+      );
       return;
     }
 
@@ -155,10 +172,10 @@ class MotionAssessmentController extends ChangeNotifier {
         locale: locale,
       );
     } catch (_) {
-      if (_closed) return;
-      _voiceStatusMessage = '实时评估服务未连接';
-      _exitRequested = true;
-      await finish();
+      await _fail(
+        failureCode: 'session_create_failed',
+        message: '实时评估服务暂时不可用，请重试。',
+      );
       return;
     }
     if (_closed) {
@@ -167,6 +184,9 @@ class MotionAssessmentController extends ChangeNotifier {
     }
     _session = createdSession;
     await _updateSession(status: 'active');
+    workflow.beginGreeting();
+    _phase = MotionAssessmentPagePhase.greeting;
+    _notify();
     await _connectVoice(createdSession.id);
   }
 
@@ -196,25 +216,30 @@ class MotionAssessmentController extends ChangeNotifier {
               'target': target,
               'required_regions': const ['head', 'shoulders', 'hips'],
               'legs_or_feet_required': false,
+              'required_segments': workflow.requiredSegments,
             }),
             awaitPlaybackStart: true,
           );
           if (_closed) return false;
+          workflow.beginCalibration();
+          _phase = MotionAssessmentPagePhase.calibrating;
           _voiceReady = true;
           _voiceEverReady = true;
-          notifyListeners();
+          _notify();
           return true;
         } catch (_) {
           if (_closed) return false;
           _voiceStatusMessage = attempt == 0
               ? 'OpenAI 实时语音正在重新连接'
               : 'OpenAI 实时语音未连接';
-          notifyListeners();
+          _notify();
         }
       }
       if (!_closed) {
-        _exitRequested = true;
-        await finish();
+        await _fail(
+          failureCode: 'realtime_unavailable',
+          message: 'OpenAI 实时语音暂时无法连接，请重试。',
+        );
       }
       return false;
     } finally {
@@ -223,51 +248,59 @@ class MotionAssessmentController extends ChangeNotifier {
   }
 
   void _onObservation(MotionPoseObservation observation) {
-    if (_closed || _phase == MotionAssessmentPagePhase.completed) return;
+    if (_closed || workflow.isTerminal) return;
     _observation = observation;
     if (!_voiceReady) {
-      notifyListeners();
+      _notify();
       return;
     }
     _firstObservationAt ??= observation.timestamp;
+    _lastObservationAt = observation.timestamp;
     _totalFrames += 1;
     final decision = qualityGate.evaluate(observation);
-    switch (decision.phase) {
-      case MotionQualityPhase.calibrating:
-      case MotionQualityPhase.framing:
-      case MotionQualityPhase.reacquiring:
-      case MotionQualityPhase.checkingMultiplePeople:
-        _phase = MotionAssessmentPagePhase.calibrating;
-        _guidance = decision.phase == MotionQualityPhase.framing
-            ? '请调整距离，让头部、肩部和髋部进入画面'
-            : observation.poses.isEmpty
-            ? '请站到镜头前，让头部到髋部入镜'
-            : observation.poses.length > 1
-            ? '检测到多人，正在确认…'
-            : '保持站位，正在校准评估对象…';
-      case MotionQualityPhase.ready:
-        _phase = MotionAssessmentPagePhase.assessing;
-        _guidance = target == 'forward_head'
-            ? '请自然侧身，站稳并目视前方'
-            : '取景已就绪，请按语音提示完成动作';
-      case MotionQualityPhase.pausedMultiplePeople:
-        _phase = MotionAssessmentPagePhase.pausedMultiplePeople;
-        _guidance = '检测到多人，请让非评估人员离开镜头';
-      case MotionQualityPhase.targetChanged:
-        _phase = MotionAssessmentPagePhase.targetChanged;
-        _guidance = '检测对象可能已变化，请确认后重新校准';
-    }
-    final directive = decision.directive;
-    if (directive != null) {
-      _recordDirective(directive);
+    _lastQualityDecision = decision;
+    final captureLifecycle = _isCaptureLifecycle(workflow.phase);
+
+    if (captureLifecycle) {
+      switch (decision.phase) {
+        case MotionQualityPhase.calibrating:
+        case MotionQualityPhase.framing:
+        case MotionQualityPhase.reacquiring:
+        case MotionQualityPhase.checkingMultiplePeople:
+          _phase = MotionAssessmentPagePhase.calibrating;
+          _guidance = decision.phase == MotionQualityPhase.framing
+              ? '请调整距离，让头部、肩部和髋部进入画面'
+              : observation.poses.isEmpty
+              ? '请站到镜头前，让头部到髋部入镜'
+              : observation.poses.length > 1
+              ? '检测到多人，正在确认…'
+              : '保持站位，正在校准评估对象…';
+        case MotionQualityPhase.ready:
+          if (workflow.phase == MotionAssessmentWorkflowPhase.calibrating) {
+            workflow.beginCapture();
+          }
+          _syncPagePhaseFromWorkflow();
+          _guidance = '请自然侧身，站稳并目视前方';
+        case MotionQualityPhase.pausedMultiplePeople:
+          _phase = MotionAssessmentPagePhase.pausedMultiplePeople;
+          _guidance = '检测到多人，请让非评估人员离开镜头';
+        case MotionQualityPhase.targetChanged:
+          _phase = MotionAssessmentPagePhase.targetChanged;
+          _guidance = '检测对象可能已变化，请通过语音确认后重新校准';
+      }
     }
 
+    final directive = decision.directive;
+    if (directive != null) _recordDirective(directive);
+
     ForwardHeadResult? readyResult;
-    if (!decision.acceptFrame || decision.target == null) {
-      if (target == 'forward_head' && !_resultReported) {
-        forwardHeadAnalyzer.rejectFrame();
-      }
-    } else if (target == 'forward_head' && !_resultReported) {
+    final samplingActive =
+        workflow.phase == MotionAssessmentWorkflowPhase.capturingSegment ||
+        workflow.phase ==
+            MotionAssessmentWorkflowPhase.capturingValidationSegment;
+    if (samplingActive && (!decision.acceptFrame || decision.target == null)) {
+      forwardHeadAnalyzer.rejectFrame();
+    } else if (samplingActive && target == 'forward_head') {
       _acceptedFrames += 1;
       readyResult = forwardHeadAnalyzer.add(
         decision.target!,
@@ -275,12 +308,9 @@ class MotionAssessmentController extends ChangeNotifier {
         inputWidth: observation.inputWidth,
         inputHeight: observation.inputHeight,
       );
-      if (readyResult != null) {
-        _resultReported = true;
-        _forwardHeadResult = readyResult;
-        _guidance = readyResult.userMessage;
-      } else if (forwardHeadAnalyzer.lastFrameStatus ==
-          ForwardHeadFrameStatus.needsSideView) {
+      if (readyResult == null &&
+          forwardHeadAnalyzer.lastFrameStatus ==
+              ForwardHeadFrameStatus.needsSideView) {
         _guidance = '请转为自然侧身，让两侧肩部在画面中尽量重合';
       }
     }
@@ -289,20 +319,129 @@ class MotionAssessmentController extends ChangeNotifier {
     _latestContext = snapshot;
     voice.updateAssessmentContext(snapshot);
     _emitSamplingMilestone(snapshot);
-    if (forwardHeadAnalyzer.lastFrameStatus ==
+    if (samplingActive &&
+        forwardHeadAnalyzer.lastFrameStatus ==
             ForwardHeadFrameStatus.needsSideView &&
         !_sideViewPromptEmitted) {
       _sideViewPromptEmitted = true;
       unawaited(
         voice.requestGuidance('side_view_required', {
           'required_view': 'side',
+          'segment_index': workflow.segmentResults.length + 1,
+          'dedupe_key':
+              'side_view_segment_${workflow.segmentResults.length + 1}',
           'context': snapshot.toJson(),
         }),
       );
     }
-    notifyListeners();
+    _notify();
     if (directive != null) unawaited(_handleDirective(directive));
-    if (readyResult != null) unawaited(_reportForwardHeadResult(readyResult));
+    if (readyResult != null) _completeSegment(readyResult);
+  }
+
+  bool _isCaptureLifecycle(MotionAssessmentWorkflowPhase phase) {
+    return phase == MotionAssessmentWorkflowPhase.calibrating ||
+        phase == MotionAssessmentWorkflowPhase.capturingSegment ||
+        phase == MotionAssessmentWorkflowPhase.capturingValidationSegment;
+  }
+
+  void _completeSegment(ForwardHeadResult result) {
+    final decision = workflow.completeSegment(result);
+    _syncPagePhaseFromWorkflow();
+    _reportedSamplingMilestones.clear();
+    _sideViewPromptEmitted = false;
+    if (decision.action ==
+        MotionAssessmentWorkflowAction.requestOrientationChange) {
+      forwardHeadAnalyzer.reset();
+      _refreshLatestContext();
+      _guidance = '第一段采集完成，正在引导你转换方向';
+      _notify();
+      unawaited(_prepareValidationSegment(result));
+      return;
+    }
+    if (decision.action ==
+        MotionAssessmentWorkflowAction.requestFinishConfirmation) {
+      final aggregate = workflow.aggregateResult();
+      if (aggregate == null) {
+        unawaited(
+          _fail(failureCode: 'aggregate_unavailable', message: '评估结果整理失败，请重试。'),
+        );
+        return;
+      }
+      _forwardHeadResult = aggregate;
+      _latestResultSummary = Map<String, Object?>.unmodifiable(
+        _forwardHeadSummary(aggregate),
+      );
+      _refreshLatestContext();
+      _guidance = '采集完成，正在复核结果';
+      _notify();
+      unawaited(_requestFinishConfirmation());
+    }
+  }
+
+  Future<void> _prepareValidationSegment(ForwardHeadResult result) async {
+    try {
+      await voice.requestGuidance(
+        'change_orientation',
+        _withLatestContext({
+          'completed_segment': workflow.segmentResults.length,
+          'next_segment': workflow.segmentResults.length + 1,
+          'previous_side': result.side,
+          'dedupe_key': 'change_orientation_${workflow.segmentResults.length}',
+        }),
+        awaitPlaybackCompletion: true,
+      );
+      if (_closed) return;
+      workflow.orientationInstructionCompleted();
+      _syncPagePhaseFromWorkflow();
+      _refreshLatestContext();
+      _guidance = '请保持新的侧身方向，正在采集验证段';
+      _notify();
+    } catch (_) {
+      await _fail(
+        failureCode: 'realtime_guidance_failed',
+        message: '实时语音指导中断，请重试。',
+      );
+    }
+  }
+
+  Future<void> _requestFinishConfirmation() async {
+    _phase = MotionAssessmentPagePhase.reviewReady;
+    _notify();
+    try {
+      await voice.requestGuidance(
+        'assessment_review_ready',
+        _withLatestContext({
+          ...?_latestResultSummary,
+          'required_user_decision': const ['finish', 'continue'],
+          'dedupe_key': 'assessment_review_ready',
+        }),
+        interrupt: true,
+        awaitPlaybackCompletion: true,
+      );
+      if (_closed) return;
+      workflow.finishPromptCompleted(
+        latestUserAudioItemId: voice.latestCompletedUserAudioItemId,
+      );
+      _syncPagePhaseFromWorkflow();
+      _refreshLatestContext();
+      _guidance = '请直接说“结束”或“继续评估”';
+      _notify();
+    } catch (_) {
+      await _fail(
+        failureCode: 'finish_prompt_failed',
+        message: '结束确认语音播放失败，请重试。',
+      );
+    }
+  }
+
+  void _refreshLatestContext() {
+    final observation = _observation;
+    final decision = _lastQualityDecision;
+    if (observation == null || decision == null) return;
+    final snapshot = _buildContextSnapshot(observation, decision);
+    _latestContext = snapshot;
+    voice.updateAssessmentContext(snapshot);
   }
 
   void _recordDirective(MotionGuidanceDirective directive) {
@@ -330,9 +469,6 @@ class MotionAssessmentController extends ChangeNotifier {
         personCount == 1 && decision.phase != MotionQualityPhase.framing;
     final frameStatus = forwardHeadAnalyzer.lastFrameStatus;
     final result = _forwardHeadResult;
-    final samplingProgress = result == null
-        ? forwardHeadAnalyzer.samplingProgress
-        : 1.0;
     final missingRegions = <String>[
       if (personCount == 0) 'person',
       if (personCount == 1 && decision.phase == MotionQualityPhase.framing)
@@ -360,10 +496,10 @@ class MotionAssessmentController extends ChangeNotifier {
         ? 'front_or_oblique'
         : 'unknown';
     final samplingState = result != null
-        ? 'completed'
+        ? 'review_ready'
         : rejectionReasons.isNotEmpty
         ? 'blocked'
-        : decision.acceptFrame
+        : decision.acceptFrame && _isCaptureLifecycle(workflow.phase)
         ? 'collecting'
         : 'calibrating';
     final recommended = _recommendedAction(
@@ -378,7 +514,7 @@ class MotionAssessmentController extends ChangeNotifier {
       sequence: ++_contextSequence,
       observedAtMs: observation.timestamp.inMilliseconds,
       target: target,
-      phase: result != null ? 'result_ready' : _assessmentPhaseValue(_phase),
+      phase: _workflowPhaseValue(workflow.phase),
       elapsedMs: (observation.timestamp - startedAt).inMilliseconds
           .clamp(0, 1 << 31)
           .toInt(),
@@ -393,7 +529,7 @@ class MotionAssessmentController extends ChangeNotifier {
           : decision.phase == MotionQualityPhase.framing
           ? 'too_close_or_cropped'
           : 'unknown',
-      requiredView: target == 'forward_head' ? 'side' : 'guided',
+      requiredView: 'side',
       detectedView: detectedView,
       detectedSide:
           result?.side ?? forwardHeadAnalyzer.dominantSide ?? 'unknown',
@@ -412,7 +548,7 @@ class MotionAssessmentController extends ChangeNotifier {
       samplingProgress: samplingProgress,
       rejectionReasons: rejectionReasons,
       measurementStatus: result != null
-          ? 'final'
+          ? 'aggregate_ready'
           : forwardHeadAnalyzer.sampleCount > 0
           ? 'provisional'
           : 'unavailable',
@@ -426,7 +562,7 @@ class MotionAssessmentController extends ChangeNotifier {
       measurementQualityScore: result?.measurementQualityScore,
       multiplePeople: personCount > 1,
       targetChanged: decision.phase == MotionQualityPhase.targetChanged,
-      discomfortReported: false,
+      discomfortReported: workflow.safetyEvents.isNotEmpty,
       recommendedAction: recommended.action,
       guidanceReason: recommended.reason,
     );
@@ -464,7 +600,10 @@ class MotionAssessmentController extends ChangeNotifier {
     required int personCount,
   }) {
     if (resultReady) {
-      return (action: 'review_result', reason: 'measurement_complete');
+      return (
+        action: 'await_finish_confirmation',
+        reason: 'aggregate_review_ready',
+      );
     }
     if (personCount > 1) {
       return (action: 'ask_others_to_leave', reason: 'multiple_people');
@@ -490,16 +629,23 @@ class MotionAssessmentController extends ChangeNotifier {
     return (action: 'hold_position', reason: 'quality_gate_calibrating');
   }
 
-  String _assessmentPhaseValue(MotionAssessmentPagePhase value) {
+  String _workflowPhaseValue(MotionAssessmentWorkflowPhase value) {
     return switch (value) {
-      MotionAssessmentPagePhase.preparing => 'preparing',
-      MotionAssessmentPagePhase.calibrating => 'calibrating',
-      MotionAssessmentPagePhase.assessing => 'sampling',
-      MotionAssessmentPagePhase.pausedMultiplePeople =>
-        'paused_multiple_people',
-      MotionAssessmentPagePhase.targetChanged => 'target_changed',
-      MotionAssessmentPagePhase.completed => 'completed',
-      MotionAssessmentPagePhase.failed => 'failed',
+      MotionAssessmentWorkflowPhase.preparing => 'preparing',
+      MotionAssessmentWorkflowPhase.greeting => 'greeting',
+      MotionAssessmentWorkflowPhase.calibrating => 'calibrating',
+      MotionAssessmentWorkflowPhase.capturingSegment => 'capturing_segment',
+      MotionAssessmentWorkflowPhase.changingOrientation =>
+        'changing_orientation',
+      MotionAssessmentWorkflowPhase.capturingValidationSegment =>
+        'capturing_validation_segment',
+      MotionAssessmentWorkflowPhase.qualityReview => 'quality_review',
+      MotionAssessmentWorkflowPhase.reviewReady => 'review_ready',
+      MotionAssessmentWorkflowPhase.awaitingFinishConfirmation =>
+        'awaiting_finish_confirmation',
+      MotionAssessmentWorkflowPhase.finalizing => 'finalizing',
+      MotionAssessmentWorkflowPhase.completed => 'completed',
+      MotionAssessmentWorkflowPhase.failed => 'failed',
     };
   }
 
@@ -517,12 +663,16 @@ class MotionAssessmentController extends ChangeNotifier {
 
   void _emitSamplingMilestone(MotionAssessmentContextSnapshot snapshot) {
     if (snapshot.samplingState != 'collecting') return;
-    final percent = (snapshot.samplingProgress * 100).floor();
+    final segmentProgress = forwardHeadAnalyzer.samplingProgress;
+    final percent = (segmentProgress * 100).floor();
     for (final milestone in const [25, 50, 75]) {
       if (percent >= milestone && _reportedSamplingMilestones.add(milestone)) {
+        final segmentIndex = workflow.segmentResults.length + 1;
         unawaited(
           voice.requestGuidance('sampling_progress', {
             'milestone_percent': milestone,
+            'segment_index': segmentIndex,
+            'dedupe_key': 'segment_${segmentIndex}_progress_$milestone',
             'context': snapshot.toJson(),
           }),
         );
@@ -536,21 +686,34 @@ class MotionAssessmentController extends ChangeNotifier {
   }
 
   Future<void> _handleDirective(MotionGuidanceDirective directive) async {
+    if (_closed) return;
     switch (directive) {
       case MotionGuidanceDirective.enterFrame:
         await voice.requestGuidance(
           'person_not_detected',
-          _withLatestContext({'person_count': 0, 'accept_pose_frames': false}),
+          _withLatestContext({
+            'person_count': 0,
+            'accept_pose_frames': false,
+            'dedupe_key': 'person_not_detected',
+          }),
         );
       case MotionGuidanceDirective.adjustFraming:
         await voice.requestGuidance(
           'framing_incomplete',
-          _withLatestContext({'person_count': 1, 'accept_pose_frames': false}),
+          _withLatestContext({
+            'person_count': 1,
+            'accept_pose_frames': false,
+            'dedupe_key': 'framing_incomplete',
+          }),
         );
       case MotionGuidanceDirective.singlePersonReady:
         await voice.requestGuidance(
           'single_person_stable',
-          _withLatestContext({'person_count': 1, 'target': target}),
+          _withLatestContext({
+            'person_count': 1,
+            'target': target,
+            'dedupe_key': 'single_person_stable',
+          }),
         );
       case MotionGuidanceDirective.askOthersToLeave:
         await _updateSession(status: 'paused', pauseReason: 'multiple_people');
@@ -559,6 +722,7 @@ class MotionAssessmentController extends ChangeNotifier {
           _withLatestContext({
             'person_count': personCount,
             'accept_pose_frames': false,
+            'dedupe_key': 'multiple_people',
           }),
           interrupt: true,
         );
@@ -566,13 +730,20 @@ class MotionAssessmentController extends ChangeNotifier {
         await _updateSession(status: 'active');
         await voice.requestGuidance(
           'single_person_stable',
-          _withLatestContext({'person_count': 1, 'resumed': true}),
+          _withLatestContext({
+            'person_count': 1,
+            'resumed': true,
+            'dedupe_key': 'assessment_resumed',
+          }),
         );
       case MotionGuidanceDirective.confirmRecalibration:
         await _updateSession(status: 'paused', pauseReason: 'target_changed');
         await voice.requestGuidance(
           'target_changed',
-          _withLatestContext({'accept_pose_frames': false}),
+          _withLatestContext({
+            'accept_pose_frames': false,
+            'dedupe_key': 'target_changed',
+          }),
           interrupt: true,
         );
     }
@@ -581,14 +752,13 @@ class MotionAssessmentController extends ChangeNotifier {
   Future<void> confirmRecalibration() async {
     qualityGate.confirmRecalibration();
     forwardHeadAnalyzer.reset();
-    _resultReported = false;
     _forwardHeadResult = null;
     _latestResultSummary = null;
     _reportedSamplingMilestones.clear();
     _sideViewPromptEmitted = false;
-    _phase = MotionAssessmentPagePhase.calibrating;
+    _syncPagePhaseFromWorkflow();
     _guidance = '请保持单人入镜，正在重新校准…';
-    notifyListeners();
+    _notify();
     await _updateSession(status: 'active');
   }
 
@@ -597,16 +767,7 @@ class MotionAssessmentController extends ChangeNotifier {
     switch (command.type) {
       case MotionVoiceCommandType.confirmRecalibration:
         if (_phase != MotionAssessmentPagePhase.targetChanged) {
-          await voice.completeCommand(
-            command,
-            accepted: false,
-            message: 'recalibration_not_required',
-            speakResult: false,
-          );
-          await voice.requestGuidance(
-            'recalibration_not_required',
-            _withLatestContext({'accepted': false}),
-          );
+          await _rejectCommand(command, 'recalibration_not_required');
           return;
         }
         await confirmRecalibration();
@@ -635,34 +796,95 @@ class MotionAssessmentController extends ChangeNotifier {
         await voice.completeCommand(
           command,
           accepted: true,
-          message: '评估已停止',
+          message: 'assessment_stopping',
           speakResult: false,
         );
-        _exitRequested = true;
-        await finish();
+        final reason = command.reason ?? 'user_requested';
+        if (_isSafetyReason(reason)) {
+          workflow.stopForSafety(reason);
+          _syncPagePhaseFromWorkflow();
+          try {
+            await voice.requestGuidance(
+              'safety_stop',
+              _withLatestContext({
+                'reason': reason,
+                'requires_voice_response': true,
+              }),
+              interrupt: true,
+              awaitPlaybackCompletion: true,
+            );
+          } catch (_) {
+            // Safety teardown must not depend on a final audio acknowledgement.
+          }
+        } else {
+          workflow.cancel();
+        }
+        await _finalizeCancelled();
+      case MotionVoiceCommandType.continueAssessment:
+      case MotionVoiceCommandType.confirmFinish:
+        final decision = workflow.handleCommand(command);
+        if (!decision.accepted) {
+          await _rejectCommand(command, decision.code);
+          return;
+        }
+        await voice.completeCommand(
+          command,
+          accepted: true,
+          message:
+              decision.action == MotionAssessmentWorkflowAction.continueCapture
+              ? 'assessment_continuing'
+              : 'finish_confirmed',
+          speakResult: false,
+        );
+        if (decision.action == MotionAssessmentWorkflowAction.continueCapture) {
+          _resetCaptureCycle();
+          await voice.requestGuidance(
+            'assessment_continued',
+            _withLatestContext({
+              'continue_count': workflow.continueCount,
+              'dedupe_key': 'continue_${workflow.continueCount}',
+            }),
+            awaitPlaybackStart: true,
+          );
+          return;
+        }
+        await _finalizeCompleted();
     }
   }
 
-  Future<void> _reportForwardHeadResult(ForwardHeadResult result) async {
-    if (_closed || _completionInProgress) return;
-    _completionInProgress = true;
-    final summary = _forwardHeadSummary(result);
-    _latestResultSummary = Map<String, Object?>.unmodifiable(summary);
-    final context = _latestContext;
-    try {
-      await voice.requestGuidance(
-        'assessment_completed',
-        {...summary, if (context != null) 'context': context.toJson()},
-        interrupt: true,
-        awaitPlaybackCompletion: true,
-      );
-    } catch (_) {
-      // The authoritative aggregate is still completed and handed to the main
-      // Agent when the final Realtime acknowledgement cannot be played.
-    }
-    await finish(completed: true);
-    _exitRequested = true;
-    if (!_disposed) notifyListeners();
+  Future<void> _rejectCommand(MotionVoiceCommand command, String reason) async {
+    await voice.completeCommand(
+      command,
+      accepted: false,
+      message: reason,
+      speakResult: false,
+    );
+    await voice.requestGuidance(
+      'command_rejected',
+      _withLatestContext({'reason': reason, 'accepted': false}),
+    );
+  }
+
+  bool _isSafetyReason(String reason) {
+    return const {
+      'discomfort',
+      'pain',
+      'dizziness',
+      'numbness',
+      'breathing_difficulty',
+    }.contains(reason);
+  }
+
+  void _resetCaptureCycle() {
+    forwardHeadAnalyzer.reset();
+    _forwardHeadResult = null;
+    _latestResultSummary = null;
+    _reportedSamplingMilestones.clear();
+    _sideViewPromptEmitted = false;
+    _syncPagePhaseFromWorkflow();
+    _refreshLatestContext();
+    _guidance = '继续评估，请自然侧身并保持稳定';
+    _notify();
   }
 
   Map<String, Object?> _forwardHeadSummary(ForwardHeadResult result) {
@@ -680,6 +902,12 @@ class MotionAssessmentController extends ChangeNotifier {
       'classification': _classificationValue(result.classification),
       'sample_count': result.sampleCount,
       'sample_duration_ms': result.sampleDuration.inMilliseconds,
+      'segment_count': workflow.segmentResults.length,
+      'segments': workflow.segmentResults
+          .asMap()
+          .entries
+          .map((entry) => _segmentSummary(entry.key + 1, entry.value))
+          .toList(growable: false),
       'side': result.side,
       'frame_quality': 'accepted',
       'angle_dispersion_degrees': double.parse(
@@ -691,9 +919,6 @@ class MotionAssessmentController extends ChangeNotifier {
       'measurement_quality_score': double.parse(
         measurementQualityScore.toStringAsFixed(3),
       ),
-      'multiple_people_count': _multiplePeopleCount,
-      'target_changed_count': _targetChangedCount,
-      'framing_adjustment_count': _framingAdjustmentCount,
       'pose_model_version':
           posePlatform.engineName == 'mediapipe_pose_landmarker'
           ? 'pose_landmarker_lite.task'
@@ -703,10 +928,223 @@ class MotionAssessmentController extends ChangeNotifier {
     };
   }
 
+  Map<String, Object?> _segmentSummary(int index, ForwardHeadResult result) {
+    return <String, Object?>{
+      'index': index,
+      'value': double.parse(result.valueDegrees.toStringAsFixed(1)),
+      'unit': 'degrees',
+      'classification': _classificationValue(result.classification),
+      'sample_count': result.sampleCount,
+      'sample_duration_ms': result.sampleDuration.inMilliseconds,
+      'side': result.side,
+      'angle_dispersion_degrees': double.parse(
+        result.angleDispersionDegrees.toStringAsFixed(2),
+      ),
+      'measurement_quality_score': double.parse(
+        result.measurementQualityScore.toStringAsFixed(3),
+      ),
+    };
+  }
+
+  Map<String, Object?> _processSummary({required bool finishConfirmed}) {
+    final first = _firstObservationAt;
+    final last = _lastObservationAt;
+    final elapsed = first == null || last == null
+        ? 0
+        : (last - first).inMilliseconds.clamp(0, 1 << 31).toInt();
+    return <String, Object?>{
+      'duration_ms': elapsed,
+      'total_frames': _totalFrames,
+      'accepted_frames': _acceptedFrames,
+      'segment_count': workflow.segmentResults.length,
+      'required_segments': workflow.requiredSegments,
+      'completed_segments': workflow.segmentResults.length,
+      'continue_count': workflow.continueCount,
+      'retry_count': _voiceRecoveryCycles,
+      'interruption_count':
+          _multiplePeopleCount + _targetChangedCount + _framingAdjustmentCount,
+      'multiple_people_count': _multiplePeopleCount,
+      'target_changed_count': _targetChangedCount,
+      'framing_adjustment_count': _framingAdjustmentCount,
+      'completion_confirmation': finishConfirmed
+          ? 'voice_confirmed'
+          : 'not_confirmed',
+      'voice_provider': voice.providerName,
+      'voice_connected': _voiceEverReady,
+    };
+  }
+
+  Future<void> _finalizeCompleted() async {
+    if (_terminalizationInProgress || _closed) return;
+    _terminalizationInProgress = true;
+    _phase = MotionAssessmentPagePhase.finalizing;
+    _guidance = '正在保存评估结果';
+    _notify();
+    try {
+      await voice.requestGuidance(
+        'assessment_finalizing',
+        _withLatestContext({
+          'finish_confirmed': true,
+          'dedupe_key': 'assessment_finalizing',
+        }),
+        awaitPlaybackCompletion: true,
+      );
+    } catch (_) {
+      // The fresh user confirmation is authoritative even if farewell audio is
+      // interrupted after it.
+    }
+    final session = _session;
+    final summary = _latestResultSummary;
+    if (session == null || summary == null) {
+      _terminalizationInProgress = false;
+      await _fail(
+        failureCode: 'completion_payload_missing',
+        message: '评估结果保存失败，请重试。',
+      );
+      return;
+    }
+    final finalization = MotionAssessmentFinalization(
+      finalizationId: 'finalization-${session.id}-v1',
+      assessmentId: session.id,
+      outcome: MotionAssessmentOutcome.completed,
+      resultSummary: summary,
+      processSummary: _processSummary(finishConfirmed: true),
+      safetyEvents: workflow.safetyEvents,
+      clientRevision: 1,
+    );
+    try {
+      await repository.stageFinalization(finalization);
+    } catch (_) {
+      _terminalizationInProgress = false;
+      await _fail(
+        failureCode: 'finalization_storage_failed',
+        message: '评估结果暂时无法安全保存，请重试。',
+        persistFinalization: false,
+      );
+      return;
+    }
+    await _closeResources();
+    try {
+      _session = await repository.finalize(finalization);
+    } catch (_) {
+      // The durable payload is retried on launch/resume.
+    }
+    workflow.markCompleted();
+    _phase = MotionAssessmentPagePhase.completed;
+    _completedSuccessfully = true;
+    _completedAssessmentId = session.id;
+    _exitRequested = true;
+    _terminalizationInProgress = false;
+    _notify();
+  }
+
+  Future<void> _finalizeCancelled() async {
+    if (_terminalizationInProgress || _closed) return;
+    _terminalizationInProgress = true;
+    _phase = MotionAssessmentPagePhase.finalizing;
+    _notify();
+    final session = _session;
+    MotionAssessmentFinalization? finalization;
+    if (session != null) {
+      finalization = MotionAssessmentFinalization(
+        finalizationId: 'finalization-${session.id}-v1',
+        assessmentId: session.id,
+        outcome: MotionAssessmentOutcome.cancelled,
+        resultSummary: _latestResultSummary ?? const <String, Object?>{},
+        processSummary: _processSummary(finishConfirmed: false),
+        safetyEvents: workflow.safetyEvents,
+        clientRevision: 1,
+      );
+      try {
+        await repository.stageFinalization(finalization);
+      } catch (_) {
+        // Cancellation still tears down private camera and microphone data.
+      }
+    }
+    await _closeResources();
+    if (finalization != null) {
+      try {
+        _session = await repository.finalize(finalization);
+      } catch (_) {
+        // A successfully staged cancellation is retried later.
+      }
+    }
+    workflow.markCompleted();
+    _phase = MotionAssessmentPagePhase.completed;
+    _exitRequested = true;
+    _terminalizationInProgress = false;
+    _notify();
+  }
+
   Future<void> finish({bool completed = false}) async {
+    if (_closed || _terminalizationInProgress) return;
+    if (completed && _latestResultSummary != null) {
+      await _finalizeCompleted();
+      return;
+    }
+    workflow.cancel();
+    await _finalizeCancelled();
+  }
+
+  Future<void> exitAfterFailure() async {
+    if (_phase != MotionAssessmentPagePhase.failed) return;
+    _exitRequested = true;
+    _notify();
+  }
+
+  Future<void> _fail({
+    required String failureCode,
+    required String message,
+    String? diagnostic,
+    bool persistFinalization = true,
+  }) async {
+    if (_phase == MotionAssessmentPagePhase.failed ||
+        _phase == MotionAssessmentPagePhase.completed ||
+        _terminalizationInProgress) {
+      return;
+    }
+    _terminalizationInProgress = true;
+    _errorMessage = message;
+    _poseDiagnosticMessage = diagnostic;
+    _guidance = message;
+    final session = _session;
+    MotionAssessmentFinalization? finalization;
+    if (session != null && persistFinalization) {
+      finalization = MotionAssessmentFinalization(
+        finalizationId: 'finalization-${session.id}-v1',
+        assessmentId: session.id,
+        outcome: MotionAssessmentOutcome.failed,
+        resultSummary: _latestResultSummary ?? const <String, Object?>{},
+        processSummary: _processSummary(finishConfirmed: false),
+        safetyEvents: workflow.safetyEvents,
+        clientRevision: 1,
+        failureCode: failureCode,
+      );
+      try {
+        await repository.stageFinalization(finalization);
+      } catch (_) {
+        // Teardown and the visible error state are still mandatory.
+      }
+    }
+    await _closeResources();
+    if (finalization != null) {
+      try {
+        _session = await repository.finalize(finalization);
+      } catch (_) {
+        // A staged failure remains available for a later retry.
+      }
+    }
+    workflow.markFailed();
+    _phase = MotionAssessmentPagePhase.failed;
+    _terminalizationInProgress = false;
+    _notify();
+  }
+
+  Future<void> _closeResources() async {
     if (_closed) return;
     _closed = true;
     _cameraStarted = false;
+    _voiceReady = false;
     final poseStop = _stopPosePlatform();
     final voiceStop = voice.close();
     await _poseSubscription?.cancel();
@@ -715,24 +1153,6 @@ class MotionAssessmentController extends ChangeNotifier {
     _voiceCommandSubscription = null;
     await poseStop;
     await voiceStop;
-    final session = _session;
-    if (session != null) {
-      try {
-        await repository.update(
-          assessmentId: session.id,
-          status: completed ? 'completed' : 'cancelled',
-          resultSummary: _latestResultSummary,
-        );
-        if (completed) {
-          _completedSuccessfully = true;
-          _completedAssessmentId = session.id;
-        }
-      } catch (_) {
-        // Closing the private camera is more important than a final status sync.
-      }
-    }
-    _phase = MotionAssessmentPagePhase.completed;
-    if (!_disposed) notifyListeners();
   }
 
   Future<void> _stopPosePlatform() async {
@@ -776,46 +1196,46 @@ class MotionAssessmentController extends ChangeNotifier {
       _voiceStatusMessage = 'OpenAI 实时语音未连接';
       final assessmentId = _voiceAssessmentId;
       if (!_voiceConnectInProgress &&
-          !_completionInProgress &&
+          !_terminalizationInProgress &&
           _voiceRecoveryCycles < 1 &&
           assessmentId != null) {
         _voiceRecoveryCycles += 1;
         unawaited(_connectVoice(assessmentId, recovering: true));
+      } else if (!_voiceConnectInProgress && !_terminalizationInProgress) {
+        unawaited(
+          _fail(
+            failureCode: voice.failureCode ?? 'realtime_connection_lost',
+            message: 'OpenAI 实时语音连接已中断，请重试。',
+          ),
+        );
       }
     }
-    notifyListeners();
+    _notify();
   }
 
   void _onPoseError(Object error, StackTrace _) {
     if (_closed) return;
     debugPrint('Motion pose stream failed: $error');
-    unawaited(_stopPoseAfterFailure());
-    _cameraStarted = false;
-    _phase = MotionAssessmentPagePhase.failed;
-    _errorMessage = _friendlyPoseError(error);
-    _poseDiagnosticMessage = _poseDiagnosticFor(error);
-    _guidance = _errorMessage!;
-    notifyListeners();
-  }
-
-  Future<void> _stopPoseAfterFailure() async {
-    final subscription = _poseSubscription;
-    _poseSubscription = null;
-    await subscription?.cancel();
-    await _stopPosePlatform();
+    unawaited(
+      _fail(
+        failureCode: 'pose_stream_failed',
+        message: _friendlyPoseError(error),
+        diagnostic: _poseDiagnosticFor(error),
+      ),
+    );
   }
 
   String _friendlyPoseError(Object error) {
     if (error case PlatformException(code: final code)) {
       return switch (code) {
-        'pose_model_initialization_failed' => '端侧姿态模型加载失败，请退出后重试。',
-        'pose_inference_failed' => '端侧姿态识别运行异常，请退出后重试。',
-        'pose_start_timeout' => '端侧姿态模型启动超时，请退出后重试。',
-        'pose_event_stream_closed' => '端侧姿态识别连接中断，请退出后重试。',
+        'pose_model_initialization_failed' => '端侧姿态模型加载失败，请重试。',
+        'pose_inference_failed' => '端侧姿态识别运行异常，请重试。',
+        'pose_start_timeout' => '端侧姿态模型启动超时，请重试。',
+        'pose_event_stream_closed' => '端侧姿态识别连接中断，请重试。',
         'camera_start_cancelled' => '端侧姿态识别启动已取消。',
         'camera_start_failed' => '前置摄像头启动失败，请检查相机是否被其他应用占用。',
         'permission_denied' => '请允许摄像头权限后重试。',
-        _ => '端侧姿态识别暂时不可用，请退出后重试。',
+        _ => '端侧姿态识别暂时不可用，请重试。',
       };
     }
     if (error is MissingPluginException) {
@@ -824,7 +1244,7 @@ class MotionAssessmentController extends ChangeNotifier {
     if (error.toString().contains('摄像头权限')) {
       return '请允许摄像头权限后重试。';
     }
-    return '端侧姿态识别暂时不可用，请退出后重试。';
+    return '端侧姿态识别暂时不可用，请重试。';
   }
 
   String? _poseDiagnosticFor(Object error) {
@@ -870,14 +1290,47 @@ class MotionAssessmentController extends ChangeNotifier {
     }
   }
 
+  void _syncPagePhaseFromWorkflow() {
+    _phase = switch (workflow.phase) {
+      MotionAssessmentWorkflowPhase.preparing =>
+        MotionAssessmentPagePhase.preparing,
+      MotionAssessmentWorkflowPhase.greeting =>
+        MotionAssessmentPagePhase.greeting,
+      MotionAssessmentWorkflowPhase.calibrating =>
+        MotionAssessmentPagePhase.calibrating,
+      MotionAssessmentWorkflowPhase.capturingSegment =>
+        MotionAssessmentPagePhase.capturingSegment,
+      MotionAssessmentWorkflowPhase.changingOrientation =>
+        MotionAssessmentPagePhase.changingOrientation,
+      MotionAssessmentWorkflowPhase.capturingValidationSegment =>
+        MotionAssessmentPagePhase.capturingValidationSegment,
+      MotionAssessmentWorkflowPhase.qualityReview =>
+        MotionAssessmentPagePhase.qualityReview,
+      MotionAssessmentWorkflowPhase.reviewReady =>
+        MotionAssessmentPagePhase.reviewReady,
+      MotionAssessmentWorkflowPhase.awaitingFinishConfirmation =>
+        MotionAssessmentPagePhase.awaitingFinishConfirmation,
+      MotionAssessmentWorkflowPhase.finalizing =>
+        MotionAssessmentPagePhase.finalizing,
+      MotionAssessmentWorkflowPhase.completed =>
+        MotionAssessmentPagePhase.completed,
+      MotionAssessmentWorkflowPhase.failed => MotionAssessmentPagePhase.failed,
+    };
+  }
+
   String _classificationValue(ForwardHeadClassification classification) {
     return classification == ForwardHeadClassification.forwardTendency
         ? 'forward_tendency'
         : 'neutral_range';
   }
 
+  void _notify() {
+    if (!_disposed) notifyListeners();
+  }
+
   @override
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
     voice.removeListener(_onVoiceChanged);
     unawaited(finish().whenComplete(voice.dispose));

@@ -192,9 +192,10 @@ Widget _buildMotionAssessmentPage(BuildContext context, Uri? routeUri) {
   final runtime = MomCozyRuntimeScope.of(context);
   const supportedTargets = {'forward_head'};
   final requestedTarget = routeUri?.queryParameters['target'];
-  final target = supportedTargets.contains(requestedTarget)
-      ? requestedTarget!
-      : 'forward_head';
+  if (requestedTarget != null && !supportedTargets.contains(requestedTarget)) {
+    return const _UnsupportedMotionAssessmentPage();
+  }
+  final target = requestedTarget ?? 'forward_head';
   final sourceArtifactId =
       routeUri?.queryParameters['source_artifact_id']?.trim() ?? '';
   return KeyedSubtree(
@@ -219,6 +220,55 @@ Widget _buildMotionAssessmentPage(BuildContext context, Uri? routeUri) {
       ),
     ),
   );
+}
+
+class _UnsupportedMotionAssessmentPage extends StatelessWidget {
+  const _UnsupportedMotionAssessmentPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: MomCozyColors.background,
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.accessibility_new_rounded,
+                  color: MomCozyColors.primary,
+                  size: 42,
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  '该评估暂未开放',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '当前仅支持头颈姿态动态评估。',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                FilledButton(
+                  onPressed: () =>
+                      context.canPop() ? context.pop() : context.go('/'),
+                  child: const Text('返回'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ActionTile extends StatelessWidget {

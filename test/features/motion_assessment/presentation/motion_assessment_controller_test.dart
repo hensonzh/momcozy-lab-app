@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/forward_head_analyzer.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_finalization.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_session.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pose.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_quality_gate.dart';
@@ -67,8 +68,8 @@ void main() {
       await controller.start();
 
       expect(pose.startCalls, 1);
-      expect(controller.exitRequested, isTrue);
-      expect(controller.phase, MotionAssessmentPagePhase.completed);
+      expect(controller.exitRequested, isFalse);
+      expect(controller.phase, MotionAssessmentPagePhase.failed);
       expect(voice.connectCalls, 0);
       expect(pose.stopCalls, greaterThanOrEqualTo(1));
     },
@@ -122,8 +123,8 @@ void main() {
       await _flush();
 
       expect(voice.connectCalls, 2);
-      expect(controller.exitRequested, isTrue);
-      expect(controller.phase, MotionAssessmentPagePhase.completed);
+      expect(controller.exitRequested, isFalse);
+      expect(controller.phase, MotionAssessmentPagePhase.failed);
       expect(pose.stopCalls, greaterThanOrEqualTo(1));
     },
   );
@@ -313,7 +314,7 @@ void main() {
   });
 
   test(
-    'links the source artifact and preserves rich completion evidence',
+    'requires two segments and a fresh voice confirmation before durable completion',
     () async {
       final repository = _FakeRepository(immediateSession: _session());
       final pose = _FakePosePlatform();
@@ -333,34 +334,176 @@ void main() {
       );
 
       await controller.start();
+      voice.latestAudioItemId = 'before-review';
       pose.emit(_acceptedSideObservation());
+      while (!voice.guidanceRequests.any(
+        (request) => request.type == 'change_orientation',
+      )) {
+        await _flush();
+      }
+      expect(controller.exitRequested, isFalse);
+
+      pose.emit(_acceptedSideObservation());
+      while (!voice.guidanceRequests.any(
+        (request) => request.type == 'assessment_review_ready',
+      )) {
+        await _flush();
+      }
+      expect(controller.exitRequested, isFalse);
+      expect(
+        controller.phase,
+        MotionAssessmentPagePhase.awaitingFinishConfirmation,
+      );
+
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.confirmFinish,
+          callId: 'confirm-stale',
+          userAudioItemId: 'before-review',
+        ),
+      );
+      await _flush();
+      expect(controller.exitRequested, isFalse);
+
+      voice.latestAudioItemId = 'finish-audio';
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.confirmFinish,
+          callId: 'confirm-fresh',
+          userAudioItemId: 'finish-audio',
+        ),
+      );
       while (!controller.exitRequested) {
         await _flush();
       }
 
       expect(repository.createdSourceArtifactIds, ['artifact-motion-1']);
       expect(voice.latestContext?.assessmentId, 'assessment-1');
-      expect(voice.latestContext?.samplingState, 'completed');
+      expect(voice.latestContext?.samplingState, 'review_ready');
 
-      final completed = repository.updates.lastWhere(
-        (update) => update.status == 'completed',
-      );
-      expect(completed.resultSummary?['sample_count'], 1);
-      expect(completed.resultSummary?['sample_duration_ms'], 0);
-      expect(completed.resultSummary?['angle_dispersion_degrees'], 0.0);
-      expect(completed.resultSummary?['accepted_frame_ratio'], 1.0);
+      final completed = repository.finalizations.single;
+      expect(completed.outcome, MotionAssessmentOutcome.completed);
+      expect(completed.resultSummary['segment_count'], 2);
+      expect(completed.resultSummary['sample_count'], 2);
+      expect(completed.resultSummary['sample_duration_ms'], 0);
+      expect(completed.resultSummary['angle_dispersion_degrees'], 0.0);
+      expect(completed.resultSummary['accepted_frame_ratio'], 1.0);
       expect(
-        completed.resultSummary?['measurement_quality_score'],
+        completed.resultSummary['measurement_quality_score'],
         isA<double>(),
       );
-      expect(completed.resultSummary?['analyzer_version'], isNotEmpty);
-      expect(completed.resultSummary?['threshold_version'], isNotEmpty);
+      expect(completed.resultSummary['analyzer_version'], isNotEmpty);
+      expect(completed.resultSummary['threshold_version'], isNotEmpty);
+      expect(
+        completed.processSummary['completion_confirmation'],
+        'voice_confirmed',
+      );
       expect(controller.completedSuccessfully, isTrue);
       expect(controller.completedAssessmentId, 'assessment-1');
       expect(
         voice.guidanceRequests.map((request) => request.type),
-        contains('assessment_completed'),
+        contains('assessment_review_ready'),
       );
+    },
+  );
+
+  test(
+    'safety voice command bypasses finish confirmation and cancels',
+    () async {
+      final repository = _FakeRepository(immediateSession: _session());
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+      );
+
+      await controller.start();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.stopAssessment,
+          callId: 'safety-stop',
+          reason: 'dizziness',
+          userAudioItemId: 'safety-audio',
+        ),
+      );
+      while (!controller.exitRequested) {
+        await _flush();
+      }
+
+      final finalization = repository.finalizations.single;
+      expect(finalization.outcome, MotionAssessmentOutcome.cancelled);
+      expect(finalization.safetyEvents, [
+        const {'reason': 'dizziness'},
+      ]);
+      expect(
+        finalization.processSummary['completion_confirmation'],
+        'not_confirmed',
+      );
+      expect(controller.completedSuccessfully, isFalse);
+      expect(pose.stopCalls, greaterThanOrEqualTo(1));
+    },
+  );
+
+  test(
+    'does not replace an ambiguously staged completion with a failed finalization',
+    () async {
+      final repository = _FakeRepository(
+        immediateSession: _session(),
+        stageError: StateError('secure storage acknowledgement failed'),
+      );
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice();
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: repository,
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+        forwardHeadAnalyzer: ForwardHeadAnalyzer(
+          minimumStableFor: Duration.zero,
+          minimumSamples: 1,
+        ),
+      );
+
+      await controller.start();
+      pose.emit(_acceptedSideObservation());
+      while (!voice.guidanceRequests.any(
+        (request) => request.type == 'change_orientation',
+      )) {
+        await _flush();
+      }
+      pose.emit(_acceptedSideObservation());
+      while (!voice.guidanceRequests.any(
+        (request) => request.type == 'assessment_review_ready',
+      )) {
+        await _flush();
+      }
+      voice.latestAudioItemId = 'finish-audio';
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.confirmFinish,
+          callId: 'confirm-finish',
+          userAudioItemId: 'finish-audio',
+        ),
+      );
+      while (controller.phase != MotionAssessmentPagePhase.failed) {
+        await _flush();
+      }
+
+      expect(repository.stagedFinalizations, hasLength(1));
+      expect(
+        repository.stagedFinalizations.single.outcome,
+        MotionAssessmentOutcome.completed,
+      );
+      expect(repository.finalizations, isEmpty);
+      expect(controller.exitRequested, isFalse);
+      expect(pose.stopCalls, greaterThanOrEqualTo(1));
     },
   );
 
@@ -399,6 +542,46 @@ void main() {
       );
     },
   );
+
+  testWidgets('shows retry and exit controls only after terminal failure', (
+    tester,
+  ) async {
+    final controller = MotionAssessmentController(
+      target: 'forward_head',
+      locale: 'zh-CN',
+      repository: _FakeRepository(immediateSession: _session()),
+      posePlatform: _FakePosePlatform(
+        startError: PlatformException(code: 'pose_model_initialization_failed'),
+      ),
+      voice: _FakeVoice(),
+    );
+    await tester.runAsync(controller.start);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MotionAssessmentPage(
+          controllerIdentity: 'failed-overlay',
+          controllerFactory: () => controller,
+          previewBuilder: (_) => const ColoredBox(color: Colors.black),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(controller.phase, MotionAssessmentPagePhase.failed);
+    expect(
+      find.byKey(const ValueKey('motion-assessment-error')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('motion-assessment-retry')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('motion-assessment-exit')),
+      findsOneWidget,
+    );
+  });
 
   testWidgets('keeps live guidance focused without technical keypoint labels', (
     tester,
@@ -514,16 +697,20 @@ class _FakeRepository implements MotionAssessmentRepository {
     this.createCompleter,
     this.immediateSession,
     this.createError,
+    this.stageError,
   });
 
   final Completer<MotionAssessmentSession>? createCompleter;
   final MotionAssessmentSession? immediateSession;
   final Object? createError;
+  final Object? stageError;
   int createCalls = 0;
   final List<String> createdSourceArtifactIds = [];
   final List<String> updatedStatuses = [];
   final List<({String status, Map<String, Object?>? resultSummary})> updates =
       [];
+  final List<MotionAssessmentFinalization> stagedFinalizations = [];
+  final List<MotionAssessmentFinalization> finalizations = [];
 
   @override
   Future<MotionAssessmentSession> create({
@@ -550,6 +737,26 @@ class _FakeRepository implements MotionAssessmentRepository {
     updates.add((status: status, resultSummary: resultSummary));
     return _session();
   }
+
+  @override
+  Future<void> stageFinalization(
+    MotionAssessmentFinalization finalization,
+  ) async {
+    stagedFinalizations.add(finalization);
+    final error = stageError;
+    if (error != null) throw error;
+  }
+
+  @override
+  Future<MotionAssessmentSession> finalize(
+    MotionAssessmentFinalization finalization,
+  ) async {
+    finalizations.add(finalization);
+    return _session();
+  }
+
+  @override
+  Future<void> retryPendingFinalizations() async {}
 }
 
 class _FakePosePlatform implements MotionPosePlatform {
@@ -612,9 +819,14 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   >
   guidanceRequests = [];
   MotionRealtimeVoicePhase _phase = MotionRealtimeVoicePhase.idle;
+  final _commands = StreamController<MotionVoiceCommand>.broadcast();
+  String? latestAudioItemId;
 
   @override
-  Stream<MotionVoiceCommand> get commands => const Stream.empty();
+  Stream<MotionVoiceCommand> get commands => _commands.stream;
+
+  @override
+  String? get latestCompletedUserAudioItemId => latestAudioItemId;
 
   @override
   bool get isConnected =>
@@ -702,6 +914,8 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   Future<void> close() async {
     _phase = MotionRealtimeVoicePhase.closed;
   }
+
+  void emitCommand(MotionVoiceCommand command) => _commands.add(command);
 }
 
 MotionPoseObservation _acceptedSideObservation() {

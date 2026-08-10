@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_finalization.dart';
 
 void main() {
   test(
@@ -21,10 +22,57 @@ void main() {
       });
     },
   );
+
+  test(
+    'retains a pending finalization until the idempotent PUT is acknowledged',
+    () async {
+      final transport = _FakeTransport()..putFailuresRemaining = 1;
+      final store = _FakeFinalizationStore();
+      final repository = MotionAssessmentApiRepository(
+        transport: transport,
+        finalizationStore: store,
+      );
+      final finalization = MotionAssessmentFinalization(
+        finalizationId: 'finalization-assessment-1-v1',
+        assessmentId: 'assessment-1',
+        outcome: MotionAssessmentOutcome.completed,
+        resultSummary: const {'metric': 'craniovertebral_angle', 'value': 49.0},
+        processSummary: const {
+          'segment_count': 2,
+          'completion_confirmation': 'voice_confirmed',
+        },
+        safetyEvents: const [],
+        clientRevision: 1,
+      );
+
+      await repository.stageFinalization(finalization);
+      expect(store.pending, [finalization]);
+
+      await expectLater(repository.finalize(finalization), throwsStateError);
+      expect(store.pending, [finalization]);
+
+      await repository.retryPendingFinalizations();
+      expect(store.pending, isEmpty);
+      expect(transport.putCalls, 2);
+      expect(
+        transport.lastPutPath,
+        '/v1/motion-assessments/assessment-1/finalization',
+      );
+      expect(
+        transport.lastPutBody?['finalization_id'],
+        finalization.finalizationId,
+      );
+      expect(transport.lastPutBody?['outcome'], 'completed');
+    },
+  );
 }
 
 class _FakeTransport implements ApiJsonTransport, ApiJsonMutationTransport {
   Map<String, Object?>? lastPatchBody;
+  Map<String, Object?>? lastPutBody;
+  String? lastPutPath;
+  int putFailuresRemaining = 0;
+  int putCalls = 0;
 
   @override
   Future<Map<String, Object?>> patchJson(
@@ -65,11 +113,53 @@ class _FakeTransport implements ApiJsonTransport, ApiJsonMutationTransport {
     String path, {
     Map<String, Object?> body = const {},
     Map<String, String> headers = const {},
-  }) => throw UnimplementedError();
+  }) async {
+    putCalls += 1;
+    lastPutPath = path;
+    lastPutBody = Map.of(body);
+    if (putFailuresRemaining > 0) {
+      putFailuresRemaining -= 1;
+      throw StateError('network unavailable');
+    }
+    return {
+      'id': 'assessment-1',
+      'target': 'forward_head',
+      'status': body['outcome'],
+      'pose_engine': 'mediapipe_pose_landmarker',
+      'privacy': {
+        'video_upload_enabled': false,
+        'landmark_upload_enabled': false,
+      },
+      'pause_reason': '',
+      'result_summary': body['result_summary'],
+      'finalization_id': body['finalization_id'],
+    };
+  }
 
   @override
   Future<Map<String, Object?>> deleteJson(
     String path, {
     Map<String, String> headers = const {},
   }) => throw UnimplementedError();
+}
+
+class _FakeFinalizationStore implements MotionAssessmentFinalizationStore {
+  final List<MotionAssessmentFinalization> pending = [];
+
+  @override
+  Future<List<MotionAssessmentFinalization>> readAll() async =>
+      List.of(pending);
+
+  @override
+  Future<void> remove(String finalizationId) async {
+    pending.removeWhere((item) => item.finalizationId == finalizationId);
+  }
+
+  @override
+  Future<void> upsert(MotionAssessmentFinalization finalization) async {
+    pending.removeWhere(
+      (item) => item.finalizationId == finalization.finalizationId,
+    );
+    pending.add(finalization);
+  }
 }

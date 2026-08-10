@@ -65,29 +65,34 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     _voiceExitScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final assessmentId = controller.completedAssessmentId;
-      if (controller.completedSuccessfully && assessmentId != null) {
+      if (controller.completedSuccessfully) {
         context.go(
           '/',
           extra: {
-            'agentAutoRun': {
-              'requestMessage':
-                  '[系统流程触发] 用户刚完成体态评估。请调用 '
-                  'motion_assessment_result.read 读取最新权威聚合结果，'
-                  '用简短、易懂、非诊断的中文主动反馈结果，并给出一到两个安全建议。'
-                  '评估 ID：$assessmentId',
-              'idempotencyKey': 'motion-assessment-feedback:$assessmentId',
-              'metadata': {
-                'source': 'motion_assessment_completion',
-                'assessment_id': assessmentId,
-              },
-            },
+            'motionAssessmentFeedbackRefreshKey':
+                controller.completedAssessmentId ?? '',
           },
         );
         return;
       }
       context.canPop() ? context.pop() : context.go('/');
     });
+  }
+
+  void _retryAfterFailure() {
+    if (!controller.canRetry) return;
+    controller.removeListener(_handleControllerSignal);
+    controller.dispose();
+    setState(() {
+      _controller = widget.controllerFactory();
+      _voiceExitScheduled = false;
+      controller.addListener(_handleControllerSignal);
+    });
+    _scheduleStart();
+  }
+
+  Future<void> _exitAfterFailure() async {
+    await controller.exitAfterFailure();
   }
 
   @override
@@ -109,9 +114,15 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                 ),
                 _topBar(),
                 _framingGuide(),
-                if (controller.phase == MotionAssessmentPagePhase.assessing &&
+                if ((controller.phase ==
+                            MotionAssessmentPagePhase.capturingSegment ||
+                        controller.phase ==
+                            MotionAssessmentPagePhase
+                                .capturingValidationSegment) &&
                     controller.forwardHeadResult == null)
                   _samplingProgress(),
+                if (controller.phase == MotionAssessmentPagePhase.failed)
+                  _failureOverlay(),
               ],
             ),
           ),
@@ -128,7 +139,7 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
         child: Row(
           children: [
             const Text(
-              '动态姿态评估',
+              '头颈姿态动态评估',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
@@ -197,6 +208,65 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
             minHeight: 5,
             backgroundColor: Colors.black38,
             color: const Color(0xff51e1d2),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _failureOverlay() {
+    return ColoredBox(
+      color: Colors.black.withValues(alpha: 0.74),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: const Color(0xff2b2024),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    color: Color(0xffffc2cf),
+                    size: 34,
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    controller.errorMessage ?? '评估暂时中断，请重试。',
+                    key: const ValueKey('motion-assessment-error'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      height: 1.45,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      key: const ValueKey('motion-assessment-retry'),
+                      onPressed: _retryAfterFailure,
+                      child: const Text('重新尝试'),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      key: const ValueKey('motion-assessment-exit'),
+                      onPressed: _exitAfterFailure,
+                      child: const Text('退出评估'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

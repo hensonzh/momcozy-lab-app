@@ -109,6 +109,26 @@ void main() {
   });
 
   test(
+    'keeps each model turn bound to its triggering user audio item',
+    () async {
+      final events = <Map<String, Object?>>[];
+      final queue = MotionRealtimeResponseQueue(
+        sendEvent: (event) async => events.add(event),
+      );
+
+      await queue.enqueueModelTurn('回答第一轮用户语音', contextId: 'audio-1');
+      await queue.enqueueModelTurn('回答第二轮用户语音', contextId: 'audio-2');
+
+      expect(queue.activeContextId, 'audio-1');
+      await queue.handleServerEvent({
+        'type': 'response.done',
+        'response': {'status': 'completed'},
+      });
+      expect(queue.activeContextId, 'audio-2');
+    },
+  );
+
+  test(
     'user speech cancels the active response without adding speech',
     () async {
       final events = <Map<String, Object?>>[];

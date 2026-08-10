@@ -30,6 +30,7 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/notifications/data/notifications_api_repository.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_finalization_store.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_voice_signaling.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
@@ -392,6 +393,8 @@ class MomCozyApiRuntime {
   ProductAssetRepository? _productAssetRepository;
   MediaContentRepository? _mediaContentRepository;
   PlanApiRepository? _planRepository;
+  MotionAssessmentApiRepository? _motionAssessmentRepository;
+  String? _motionAssessmentRepositoryUserId;
   VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
   late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
@@ -520,7 +523,18 @@ class MomCozyApiRuntime {
   }
 
   MotionAssessmentApiRepository get motionAssessmentRepository {
-    return MotionAssessmentApiRepository(transport: jsonTransport);
+    final ownerUserId = currentSession.userId;
+    if (_motionAssessmentRepository == null ||
+        _motionAssessmentRepositoryUserId != ownerUserId) {
+      _motionAssessmentRepositoryUserId = ownerUserId;
+      _motionAssessmentRepository = MotionAssessmentApiRepository(
+        transport: jsonTransport,
+        finalizationStore: FlutterSecureMotionAssessmentFinalizationStore(
+          userId: ownerUserId,
+        ),
+      );
+    }
+    return _motionAssessmentRepository!;
   }
 
   MotionVoiceSignaling get motionVoiceSignaling {
