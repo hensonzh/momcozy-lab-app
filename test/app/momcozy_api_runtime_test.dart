@@ -20,6 +20,7 @@ import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dar
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
@@ -208,7 +209,7 @@ void main() {
 
   test(
     'agent record change events invalidate only dependent overview caches',
-    () {
+    () async {
       final fetchedAt = DateTime(2026, 8, 10, 10);
       final cache =
           ProfileOverviewCache(
@@ -247,7 +248,7 @@ void main() {
               fetchedAt: fetchedAt,
             );
       final runtime = MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
+        jsonTransport: FixtureApiJsonTransport({'items': <Object?>[]}),
         userId: 'user-fixture',
         babyId: 'baby-fixture',
         locale: 'zh-CN',
@@ -282,6 +283,20 @@ void main() {
       );
       expect(cache.diaperRecords, isNull);
       expect(cache.overview, isNotNull);
+
+      cache.planDashboard = OverviewCacheEntry(
+        value: PlanDashboard.empty(weekOf: fetchedAt),
+        fetchedAt: fetchedAt,
+      );
+      final planRepository = runtime.planRepository;
+      await planRepository.fetchDashboard(weekOf: fetchedAt);
+      expect(planRepository.snapshotFor(weekOf: fetchedAt), isNotNull);
+
+      runtime.handleAgentApplicationEvent(
+        _recordChangedEvent('plans.lactation.changed'),
+      );
+      expect(cache.planDashboard, isNull);
+      expect(planRepository.snapshotFor(weekOf: fetchedAt), isNull);
     },
   );
 

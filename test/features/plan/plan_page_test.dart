@@ -721,6 +721,43 @@ void main() {
       );
     }
   });
+
+  testWidgets(
+    'lactation plan v1 shows schedule targets without fake volume progress',
+    (tester) async {
+      final start = DateTime(2026, 8, 11);
+      final dashboard = PlanDashboard(
+        weekOf: start,
+        plans: [
+          CarePlan(
+            id: 'lactation-v1',
+            category: PlanCategory.lactation,
+            title: '15-Day Supply Plan',
+            summary: 'Gradual schedule',
+            startDate: start,
+            endDate: DateTime(2026, 8, 25),
+            durationDays: 15,
+            goal: 'increase_supply',
+            basisMode: 'history_analysis',
+            pumpingSessionsPerDay: 6,
+            breastfeedingAnchorsPerDay: 1,
+            sessionsPerDay: 7,
+          ),
+        ],
+      );
+
+      await _pumpPlanPage(tester, dashboard: dashboard, now: start);
+
+      expect(find.text('Day 1/15'), findsOneWidget);
+      expect(find.text('Increase Supply'), findsOneWidget);
+      expect(find.text('Volume Progress'), findsNothing);
+      expect(find.textContaining('600'), findsNothing);
+      expect(find.textContaining('4200'), findsNothing);
+      await tester.drag(find.byType(ListView), const Offset(0, -600));
+      await tester.pumpAndSettle();
+      expect(find.text('7 sessions'), findsOneWidget);
+    },
+  );
 }
 
 TextStyle _renderedTextStyle(WidgetTester tester, Finder finder) {
