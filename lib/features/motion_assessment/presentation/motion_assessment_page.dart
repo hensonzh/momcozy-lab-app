@@ -66,49 +66,13 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
 
   Future<void> _startController() async {
     final startingController = controller;
-    var visualEnabled = false;
-    if (startingController.supportsVisualContext) {
-      visualEnabled =
-          await (widget.visualConsentPrompt?.call(context) ??
-              _showVisualConsentPrompt());
+    var visualEnabled = startingController.supportsVisualContext;
+    final visualConsentPrompt = widget.visualConsentPrompt;
+    if (visualEnabled && visualConsentPrompt != null) {
+      visualEnabled = await visualConsentPrompt(context);
     }
     if (!mounted || !identical(startingController, controller)) return;
     await startingController.start(keyFrameUploadEnabled: visualEnabled);
-  }
-
-  Future<bool> _showVisualConsentPrompt() async {
-    return await showDialog<bool>(
-          context: context,
-          barrierDismissible: false,
-          builder: (dialogContext) => AlertDialog(
-            backgroundColor: const Color(0xfffff8f6),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
-            title: const Text('开启视觉辅助吗？'),
-            content: const Text(
-              '为了更自然地回答“我这样站对吗”等问题，可以在关键时刻把少量压缩画面发送给本次云端实时语音会话。\n\n'
-              '不会上传连续视频或姿态关键点，Momcozy 后端也不会落盘保存这些关键帧。只使用端侧识别，评估也能正常完成。',
-              style: TextStyle(height: 1.5),
-            ),
-            actions: [
-              TextButton(
-                key: const ValueKey('motion-visual-consent-local-only'),
-                onPressed: () => Navigator.of(dialogContext).pop(false),
-                child: const Text('仅用端侧识别'),
-              ),
-              FilledButton(
-                key: const ValueKey('motion-visual-consent-enable'),
-                onPressed: () => Navigator.of(dialogContext).pop(true),
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xff7c2944),
-                ),
-                child: const Text('开启视觉辅助'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
   }
 
   void _handleControllerSignal() {
@@ -249,19 +213,59 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     final blocked =
         controller.phase == MotionAssessmentPagePhase.pausedMultiplePeople ||
         controller.phase == MotionAssessmentPagePhase.targetChanged;
+    final guide = controller.framingGuide;
+    final color = blocked
+        ? Colors.orangeAccent
+        : Colors.white.withValues(alpha: 0.72);
+    final (key, alignment, widthFactor, heightFactor, radius) = switch (guide) {
+      MotionAssessmentFramingGuide.forwardHead => (
+        const ValueKey('motion-framing-guide-forward-head'),
+        const Alignment(0, -0.08),
+        0.56,
+        0.54,
+        112.0,
+      ),
+      MotionAssessmentFramingGuide.shoulderHeight => (
+        const ValueKey('motion-framing-guide-shoulder-height'),
+        const Alignment(0, -0.08),
+        0.82,
+        0.44,
+        44.0,
+      ),
+      MotionAssessmentFramingGuide.trunkLateralLean => (
+        const ValueKey('motion-framing-guide-trunk-lean'),
+        const Alignment(0, -0.02),
+        0.72,
+        0.58,
+        52.0,
+      ),
+      MotionAssessmentFramingGuide.frontalCombined => (
+        const ValueKey('motion-framing-guide-front-combined'),
+        const Alignment(0, -0.02),
+        0.82,
+        0.55,
+        44.0,
+      ),
+      MotionAssessmentFramingGuide.neutral => (
+        const ValueKey('motion-framing-guide-neutral'),
+        const Alignment(0, -0.1),
+        0.68,
+        0.48,
+        96.0,
+      ),
+    };
     return Align(
-      alignment: const Alignment(0, -0.1),
+      alignment: alignment,
       child: FractionallySizedBox(
-        widthFactor: 0.68,
-        heightFactor: 0.48,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(96),
-            border: Border.all(
-              color: blocked
-                  ? Colors.orangeAccent
-                  : Colors.white.withValues(alpha: 0.72),
-              width: blocked ? 3 : 1.5,
+        key: key,
+        widthFactor: widthFactor,
+        heightFactor: heightFactor,
+        child: CustomPaint(
+          painter: _MotionFramingGuidePainter(guide: guide, color: color),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(radius),
+              border: Border.all(color: color, width: blocked ? 3 : 1.5),
             ),
           ),
         ),
@@ -346,4 +350,62 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
       ),
     );
   }
+}
+
+class _MotionFramingGuidePainter extends CustomPainter {
+  const _MotionFramingGuidePainter({required this.guide, required this.color});
+
+  final MotionAssessmentFramingGuide guide;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withValues(alpha: 0.48)
+      ..strokeWidth = 1
+      ..strokeCap = StrokeCap.round;
+    switch (guide) {
+      case MotionAssessmentFramingGuide.shoulderHeight:
+        final shoulderY = size.height * 0.32;
+        canvas.drawLine(
+          Offset(size.width * 0.18, shoulderY),
+          Offset(size.width * 0.82, shoulderY),
+          paint,
+        );
+        break;
+      case MotionAssessmentFramingGuide.trunkLateralLean:
+        canvas.drawLine(
+          Offset(size.width * 0.5, size.height * 0.22),
+          Offset(size.width * 0.5, size.height * 0.78),
+          paint,
+        );
+        break;
+      case MotionAssessmentFramingGuide.frontalCombined:
+        final shoulderY = size.height * 0.32;
+        canvas.drawLine(
+          Offset(size.width * 0.18, shoulderY),
+          Offset(size.width * 0.82, shoulderY),
+          paint,
+        );
+        canvas.drawLine(
+          Offset(size.width * 0.5, size.height * 0.22),
+          Offset(size.width * 0.5, size.height * 0.78),
+          paint,
+        );
+        break;
+      case MotionAssessmentFramingGuide.forwardHead:
+        canvas.drawLine(
+          Offset(size.width * 0.5, size.height * 0.22),
+          Offset(size.width * 0.5, size.height * 0.78),
+          paint,
+        );
+        break;
+      case MotionAssessmentFramingGuide.neutral:
+        break;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _MotionFramingGuidePainter oldDelegate) =>
+      oldDelegate.guide != guide || oldDelegate.color != color;
 }

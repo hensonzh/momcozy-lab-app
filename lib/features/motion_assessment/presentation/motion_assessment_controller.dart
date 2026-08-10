@@ -38,6 +38,14 @@ enum MotionAssessmentPagePhase {
   failed,
 }
 
+enum MotionAssessmentFramingGuide {
+  neutral,
+  forwardHead,
+  shoulderHeight,
+  trunkLateralLean,
+  frontalCombined,
+}
+
 class MotionAssessmentController extends ChangeNotifier {
   MotionAssessmentController({
     required this.target,
@@ -150,6 +158,36 @@ class MotionAssessmentController extends ChangeNotifier {
   bool get voiceReady => _voiceReady;
   bool get supportsVisualContext => visualContextCoordinator != null;
   bool get visualContextEnabled => visualContextCoordinator?.isEnabled ?? false;
+  MotionAssessmentFramingGuide get framingGuide {
+    if (target != 'posture_screen') {
+      return MotionAssessmentFramingGuide.forwardHead;
+    }
+    if (!_assessmentPlan.confirmed) {
+      return MotionAssessmentFramingGuide.neutral;
+    }
+    final step = _currentScreeningStep;
+    if (step == null) return MotionAssessmentFramingGuide.neutral;
+    if (step.view == MotionAssessmentCaptureView.side) {
+      return MotionAssessmentFramingGuide.forwardHead;
+    }
+    final measuresShoulders = step.targets.contains(
+      MotionAssessmentTarget.shoulderHeightAsymmetry,
+    );
+    final measuresTrunk = step.targets.contains(
+      MotionAssessmentTarget.trunkLateralLean,
+    );
+    if (measuresShoulders && measuresTrunk) {
+      return MotionAssessmentFramingGuide.frontalCombined;
+    }
+    if (measuresShoulders) {
+      return MotionAssessmentFramingGuide.shoulderHeight;
+    }
+    if (measuresTrunk) {
+      return MotionAssessmentFramingGuide.trunkLateralLean;
+    }
+    return MotionAssessmentFramingGuide.neutral;
+  }
+
   bool get completedSuccessfully => _completedSuccessfully;
   String? get completedAssessmentId => _completedAssessmentId;
   bool get canRetry => _phase == MotionAssessmentPagePhase.failed;
@@ -187,7 +225,7 @@ class MotionAssessmentController extends ChangeNotifier {
         : null;
   }
 
-  Future<void> start({bool keyFrameUploadEnabled = false}) async {
+  Future<void> start({bool keyFrameUploadEnabled = true}) async {
     if (_started || _closed) return;
     _started = true;
     visualContextCoordinator?.setUserConsent(keyFrameUploadEnabled);
@@ -633,10 +671,17 @@ class MotionAssessmentController extends ChangeNotifier {
         _notify();
         return;
       }
+      _voiceStatusMessage = null;
       _beginScreeningCapture();
-    } catch (_) {
+    } catch (error) {
       if (_closed || generation != _captureCountdownGeneration) return;
       _captureCountdownInProgress = false;
+      if (_recoverFromCountdownGuidanceFailure(
+        error,
+        fallbackPhase: MotionAssessmentPagePhase.calibrating,
+      )) {
+        return;
+      }
       await _fail(
         failureCode: 'capture_countdown_failed',
         message: '实时语音倒计时中断，请重试。',
@@ -912,10 +957,19 @@ class MotionAssessmentController extends ChangeNotifier {
         _notify();
         return;
       }
+      _voiceStatusMessage = null;
       _beginCaptureAfterCountdown(validation: validation);
-    } catch (_) {
+    } catch (error) {
       if (_closed || generation != _captureCountdownGeneration) return;
       _captureCountdownInProgress = false;
+      if (_recoverFromCountdownGuidanceFailure(
+        error,
+        fallbackPhase: validation
+            ? MotionAssessmentPagePhase.changingOrientation
+            : MotionAssessmentPagePhase.calibrating,
+      )) {
+        return;
+      }
       await _fail(
         failureCode: 'capture_countdown_failed',
         message: '实时语音倒计时中断，请重试。',
@@ -944,6 +998,22 @@ class MotionAssessmentController extends ChangeNotifier {
     return !validation ||
         expectedSide == null ||
         inspection.side == expectedSide;
+  }
+
+  bool _recoverFromCountdownGuidanceFailure(
+    Object error, {
+    required MotionAssessmentPagePhase fallbackPhase,
+  }) {
+    if (error is! MotionRealtimeGuidanceException ||
+        !error.isRecoverable ||
+        !voice.isConnected) {
+      return false;
+    }
+    _phase = fallbackPhase;
+    _voiceStatusMessage = 'OpenAI 实时语音正在恢复指导';
+    _guidance = '语音倒计时正在恢复';
+    _notify();
+    return true;
   }
 
   void _beginCaptureAfterCountdown({required bool validation}) {
@@ -1885,6 +1955,7 @@ class MotionAssessmentController extends ChangeNotifier {
               'continue_count': workflow.continueCount,
               'dedupe_key': 'continue_${workflow.continueCount}',
             }),
+            interrupt: true,
             awaitPlaybackStart: true,
           );
           return;
@@ -1973,19 +2044,26 @@ class MotionAssessmentController extends ChangeNotifier {
       _phase = MotionAssessmentPagePhase.calibrating;
       _guidance = '评估项目已确认，正在准备第一个采集方向';
       _notify();
-      await voice.requestGuidance('assessment_plan_confirmed', {
-        'selected_targets': _assessmentPlan.wireTargets,
-        'plan_revision': _assessmentPlan.revision,
-        'capture_steps': [
-          for (final step in _assessmentPlan.captureSteps)
-            {
-              'id': step.id,
-              'required_view': step.view.name,
-              'targets': [for (final target in step.targets) target.wireValue],
-            },
-        ],
-        'dedupe_key': 'plan_confirmed_${_assessmentPlan.revision}',
-      }, awaitPlaybackCompletion: true);
+      await voice.requestGuidance(
+        'assessment_plan_confirmed',
+        {
+          'selected_targets': _assessmentPlan.wireTargets,
+          'plan_revision': _assessmentPlan.revision,
+          'capture_steps': [
+            for (final step in _assessmentPlan.captureSteps)
+              {
+                'id': step.id,
+                'required_view': step.view.name,
+                'targets': [
+                  for (final target in step.targets) target.wireValue,
+                ],
+              },
+          ],
+          'dedupe_key': 'plan_confirmed_${_assessmentPlan.revision}',
+        },
+        interrupt: true,
+        awaitPlaybackCompletion: true,
+      );
       return;
     }
     await voice.requestGuidance('assessment_plan_updated', {
@@ -2065,6 +2143,7 @@ class MotionAssessmentController extends ChangeNotifier {
           'first_required_view': _currentScreeningStep?.view.name,
           'dedupe_key': 'screening_continue_$_screeningContinueCount',
         }),
+        interrupt: true,
         awaitPlaybackStart: true,
       );
       return;
@@ -2221,6 +2300,7 @@ class MotionAssessmentController extends ChangeNotifier {
           'finish_confirmed': true,
           'dedupe_key': 'assessment_finalizing',
         }),
+        interrupt: true,
         awaitPlaybackCompletion: true,
       );
     } catch (_) {
