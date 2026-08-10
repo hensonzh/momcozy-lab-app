@@ -49,7 +49,7 @@ class MotionQualityGate {
     this.targetMismatchStableFor = const Duration(milliseconds: 800),
     this.maximumCenterDrift = 0.22,
     this.maximumScaleRatioChange = 0.45,
-    this.minimumLandmarkConfidence = 0.45,
+    this.minimumLandmarkConfidence = 0.5,
     this.frameEdgeMargin = 0.02,
   });
 

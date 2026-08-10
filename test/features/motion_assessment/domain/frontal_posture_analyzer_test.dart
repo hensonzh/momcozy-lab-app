@@ -93,6 +93,60 @@ void main() {
       TrunkLateralLeanClassification.referenceRange,
     );
   });
+
+  test(
+    'production sampling tolerates realistic confidence and brief landmark loss',
+    () {
+      final analyzer = FrontalPostureAnalyzer();
+      FrontalPostureResult? result;
+
+      for (var index = 0; index < 25; index += 1) {
+        final confidence = const {6, 7, 15}.contains(index) ? 0.35 : 0.55;
+        result =
+            analyzer.add(
+              _frontPose(
+                leftShoulderX: 0.28,
+                leftShoulderY: 0.45,
+                rightShoulderX: 0.72,
+                rightShoulderY: 0.45,
+                leftHipX: 0.42,
+                rightHipX: 0.58,
+                confidence: confidence,
+              ),
+              at: Duration(milliseconds: index * 200),
+              inputWidth: 1000,
+              inputHeight: 1000,
+            ) ??
+            result;
+      }
+
+      expect(result, isNotNull);
+      expect(result!.sampleCount, greaterThanOrEqualTo(20));
+      expect(analyzer.acceptedRatio, greaterThanOrEqualTo(0.6));
+    },
+  );
+
+  test('reports the exact frontal regions that prevent capture', () {
+    final analyzer = FrontalPostureAnalyzer();
+
+    final inspection = analyzer.inspectDetails(
+      _frontPose(
+        leftShoulderX: 0.28,
+        leftShoulderY: 0.45,
+        rightShoulderX: 0.72,
+        rightShoulderY: 0.45,
+        leftHipX: 0.42,
+        rightHipX: 0.58,
+        confidence: 0.8,
+        rightHipConfidence: 0.3,
+      ),
+      inputWidth: 1000,
+      inputHeight: 1000,
+    );
+
+    expect(inspection.status, FrontalPostureFrameStatus.insufficientLandmarks);
+    expect(inspection.missingRegions, ['right_hip']);
+  });
 }
 
 MotionPose _frontPose({
@@ -102,15 +156,17 @@ MotionPose _frontPose({
   required double rightShoulderY,
   required double leftHipX,
   required double rightHipX,
+  double confidence = 0.95,
+  double? rightHipConfidence,
 }) {
-  const confidence = 0.95;
-  MotionPoseLandmark point(double x, double y) => MotionPoseLandmark(
-    x: x,
-    y: y,
-    z: 0,
-    visibility: confidence,
-    presence: confidence,
-  );
+  MotionPoseLandmark point(double x, double y, [double? pointConfidence]) =>
+      MotionPoseLandmark(
+        x: x,
+        y: y,
+        z: 0,
+        visibility: pointConfidence ?? confidence,
+        presence: pointConfidence ?? confidence,
+      );
   return MotionPose(
     centerX: 0.5,
     centerY: 0.5,
@@ -122,7 +178,11 @@ MotionPose _frontPose({
         rightShoulderY,
       ),
       MotionPoseLandmarkType.leftHip: point(leftHipX, 0.78),
-      MotionPoseLandmarkType.rightHip: point(rightHipX, 0.78),
+      MotionPoseLandmarkType.rightHip: point(
+        rightHipX,
+        0.78,
+        rightHipConfidence,
+      ),
     },
   );
 }

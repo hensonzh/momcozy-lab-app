@@ -540,18 +540,20 @@ class MotionRealtimeVoice extends ChangeNotifier
       final coordinator = visualContextCoordinator;
       final semanticEventId = event['event_id']?.toString() ?? '';
       if (coordinator != null && semanticEventId.isNotEmpty) {
-        final visual = await coordinator.captureForEvent(
+        final generation = _connectionGeneration;
+        coordinator.scheduleEventCapture(
           eventType: normalizedType,
           eventId: semanticEventId,
           context: context,
           contextAgeMs: _latestContextAgeMs(),
+          onCaptured: (visual) async {
+            if (!_isActive(generation)) return;
+            await _trySendVisualContext(
+              assessmentId: factory.assessmentId,
+              visual: visual,
+            );
+          },
         );
-        if (visual != null) {
-          await _trySendVisualContext(
-            assessmentId: factory.assessmentId,
-            visual: visual,
-          );
-        }
       }
       return true;
     } catch (_) {

@@ -12,14 +12,19 @@ enum ForwardHeadFrameStatus {
   interrupted,
 }
 
-const forwardHeadAnalyzerVersion = 'forward_head_cva_v3';
+const forwardHeadAnalyzerVersion = 'forward_head_cva_v4';
 const forwardHeadThresholdVersion = 'cva_50deg_visual_tendency_v1';
 
 class ForwardHeadFrameInspection {
-  const ForwardHeadFrameInspection({required this.status, this.side});
+  const ForwardHeadFrameInspection({
+    required this.status,
+    this.side,
+    this.missingRegions = const [],
+  });
 
   final ForwardHeadFrameStatus status;
   final String? side;
+  final List<String> missingRegions;
 
   bool get accepted => status == ForwardHeadFrameStatus.accepted;
 }
@@ -55,14 +60,14 @@ class ForwardHeadResult {
 /// enough elapsed time, and the configured accepted-frame ratio.
 class ForwardHeadAnalyzer {
   ForwardHeadAnalyzer({
-    this.minimumStableFor = const Duration(seconds: 6),
-    this.minimumSamples = 30,
-    this.minimumLandmarkConfidence = 0.65,
+    this.minimumStableFor = const Duration(seconds: 4),
+    this.minimumSamples = 20,
+    this.minimumLandmarkConfidence = 0.5,
     this.forwardTendencyBelowDegrees = 50,
-    Duration maximumSampleGap = const Duration(seconds: 2),
+    Duration maximumSampleGap = const Duration(seconds: 4),
     Duration? interruptionGracePeriod,
-    this.samplingWindow = const Duration(seconds: 8),
-    this.minimumAcceptedRatio = 0.7,
+    this.samplingWindow = const Duration(seconds: 10),
+    this.minimumAcceptedRatio = 0.6,
     this.maximumShoulderSpanToTorsoRatio = 0.55,
   }) : maximumSampleGap = maximumSampleGap,
        interruptionGracePeriod = interruptionGracePeriod ?? maximumSampleGap,
@@ -89,14 +94,23 @@ class ForwardHeadAnalyzer {
   double _maximumReportedProgress = 0;
   ForwardHeadFrameStatus _lastFrameStatus =
       ForwardHeadFrameStatus.insufficientLandmarks;
+  ForwardHeadFrameInspection _lastInspection = const ForwardHeadFrameInspection(
+    status: ForwardHeadFrameStatus.insufficientLandmarks,
+  );
 
   ForwardHeadFrameStatus get lastFrameStatus => _lastFrameStatus;
+  ForwardHeadFrameInspection get lastInspection => _lastInspection;
   int get sampleCount => _accepted.length;
   int get observedFrameCount => _window.length;
   double get acceptedRatio =>
       _window.isEmpty ? 0 : sampleCount / _window.length;
-  Duration get stableDuration =>
-      _window.length < 2 ? Duration.zero : _window.last.at - _window.first.at;
+  Duration get stableDuration {
+    final accepted = _accepted;
+    return accepted.length < 2
+        ? Duration.zero
+        : accepted.last.at - accepted.first.at;
+  }
+
   double? get rollingMedianDegrees {
     final angles = _angles;
     return angles.isEmpty ? null : _median(angles);
@@ -132,9 +146,10 @@ class ForwardHeadAnalyzer {
     required int inputHeight,
   }) {
     if (inputWidth <= 0 || inputHeight <= 0) {
-      _lastFrameStatus = ForwardHeadFrameStatus.invalidFrameSize;
-      return const ForwardHeadFrameInspection(
-        status: ForwardHeadFrameStatus.invalidFrameSize,
+      return _recordInspection(
+        const ForwardHeadFrameInspection(
+          status: ForwardHeadFrameStatus.invalidFrameSize,
+        ),
       );
     }
     final sideViewStatus = _sideViewStatus(
@@ -143,20 +158,30 @@ class ForwardHeadAnalyzer {
       inputHeight: inputHeight,
     );
     if (sideViewStatus != ForwardHeadFrameStatus.accepted) {
-      _lastFrameStatus = sideViewStatus;
-      return ForwardHeadFrameInspection(status: sideViewStatus);
+      return _recordInspection(
+        ForwardHeadFrameInspection(
+          status: sideViewStatus,
+          missingRegions:
+              sideViewStatus == ForwardHeadFrameStatus.insufficientLandmarks
+              ? _missingSideRegions(pose)
+              : const [],
+        ),
+      );
     }
     final sidePose = _selectSide(pose);
     if (sidePose == null) {
-      _lastFrameStatus = ForwardHeadFrameStatus.insufficientLandmarks;
-      return const ForwardHeadFrameInspection(
-        status: ForwardHeadFrameStatus.insufficientLandmarks,
+      return _recordInspection(
+        ForwardHeadFrameInspection(
+          status: ForwardHeadFrameStatus.insufficientLandmarks,
+          missingRegions: _missingSideRegions(pose),
+        ),
       );
     }
-    _lastFrameStatus = ForwardHeadFrameStatus.accepted;
-    return ForwardHeadFrameInspection(
-      status: ForwardHeadFrameStatus.accepted,
-      side: sidePose.side,
+    return _recordInspection(
+      ForwardHeadFrameInspection(
+        status: ForwardHeadFrameStatus.accepted,
+        side: sidePose.side,
+      ),
     );
   }
 
@@ -172,7 +197,7 @@ class ForwardHeadAnalyzer {
       inputHeight: inputHeight,
     );
     if (!inspection.accepted) {
-      _recordRejected(at, inspection.status);
+      _recordRejected(at, inspection.status, inspection: inspection);
       return null;
     }
     final sidePose = _selectSide(pose);
@@ -241,19 +266,30 @@ class ForwardHeadAnalyzer {
   void reset() {
     _clearWindow();
     _lastFrameStatus = ForwardHeadFrameStatus.insufficientLandmarks;
+    _lastInspection = const ForwardHeadFrameInspection(
+      status: ForwardHeadFrameStatus.insufficientLandmarks,
+    );
   }
 
-  void _recordRejected(Duration at, ForwardHeadFrameStatus status) {
+  void _recordRejected(
+    Duration at,
+    ForwardHeadFrameStatus status, {
+    ForwardHeadFrameInspection? inspection,
+  }) {
+    final rejectionInspection =
+        inspection ?? ForwardHeadFrameInspection(status: status);
     _prepareForObservation(at);
     _invalidSince ??= at;
     _window.add(_SamplingObservation.rejected(at: at));
     _lastObservationAt = at;
     _lastFrameStatus = status;
+    _lastInspection = rejectionInspection;
     _pruneWindow(at);
     if (at - _invalidSince! >= interruptionGracePeriod) {
       _clearWindow(lastObservationAt: at);
       _invalidSince = at;
       _lastFrameStatus = status;
+      _lastInspection = rejectionInspection;
     }
   }
 
@@ -286,21 +322,20 @@ class ForwardHeadAnalyzer {
     final rightShoulder = pose.landmark(MotionPoseLandmarkType.rightShoulder);
     final leftHip = pose.landmark(MotionPoseLandmarkType.leftHip);
     final rightHip = pose.landmark(MotionPoseLandmarkType.rightHip);
-    if (leftShoulder == null ||
-        rightShoulder == null ||
-        leftHip == null ||
-        rightHip == null) {
-      return ForwardHeadFrameStatus.insufficientLandmarks;
-    }
-
     final leftReliable =
-        leftShoulder.isReliable(minimumConfidence: minimumLandmarkConfidence) &&
-        leftHip.isReliable(minimumConfidence: minimumLandmarkConfidence);
+        leftShoulder?.isReliable(
+              minimumConfidence: minimumLandmarkConfidence,
+            ) ==
+            true &&
+        leftHip?.isReliable(minimumConfidence: minimumLandmarkConfidence) ==
+            true;
     final rightReliable =
-        rightShoulder.isReliable(
-          minimumConfidence: minimumLandmarkConfidence,
-        ) &&
-        rightHip.isReliable(minimumConfidence: minimumLandmarkConfidence);
+        rightShoulder?.isReliable(
+              minimumConfidence: minimumLandmarkConfidence,
+            ) ==
+            true &&
+        rightHip?.isReliable(minimumConfidence: minimumLandmarkConfidence) ==
+            true;
     if (leftReliable != rightReliable) {
       return ForwardHeadFrameStatus.accepted;
     }
@@ -309,20 +344,20 @@ class ForwardHeadAnalyzer {
     }
 
     final shoulderSpan = _pixelDistance(
-      leftShoulder,
-      rightShoulder,
+      leftShoulder!,
+      rightShoulder!,
       inputWidth: inputWidth,
       inputHeight: inputHeight,
     );
     final leftTorso = _pixelDistance(
       leftShoulder,
-      leftHip,
+      leftHip!,
       inputWidth: inputWidth,
       inputHeight: inputHeight,
     );
     final rightTorso = _pixelDistance(
       rightShoulder,
-      rightHip,
+      rightHip!,
       inputWidth: inputWidth,
       inputHeight: inputHeight,
     );
@@ -394,6 +429,45 @@ class ForwardHeadAnalyzer {
       shoulder: shoulder,
       confidence: confidence,
     );
+  }
+
+  List<String> _missingSideRegions(MotionPose pose) {
+    List<String> missingForSide({
+      required MotionPoseLandmarkType ear,
+      required MotionPoseLandmarkType shoulder,
+      required MotionPoseLandmarkType hip,
+    }) {
+      bool unavailable(MotionPoseLandmarkType type) {
+        final point = pose.landmark(type);
+        return point == null ||
+            !point.isReliable(minimumConfidence: minimumLandmarkConfidence);
+      }
+
+      return <String>[
+        if (unavailable(ear)) 'ear',
+        if (unavailable(shoulder)) 'shoulder',
+        if (unavailable(hip)) 'hip',
+      ];
+    }
+
+    final left = missingForSide(
+      ear: MotionPoseLandmarkType.leftEar,
+      shoulder: MotionPoseLandmarkType.leftShoulder,
+      hip: MotionPoseLandmarkType.leftHip,
+    );
+    final right = missingForSide(
+      ear: MotionPoseLandmarkType.rightEar,
+      shoulder: MotionPoseLandmarkType.rightShoulder,
+      hip: MotionPoseLandmarkType.rightHip,
+    );
+    return List.unmodifiable(left.length <= right.length ? left : right);
+  }
+
+  ForwardHeadFrameInspection _recordInspection(
+    ForwardHeadFrameInspection inspection,
+  ) {
+    _lastFrameStatus = inspection.status;
+    return _lastInspection = inspection;
   }
 
   String _dominantSide() {

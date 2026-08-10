@@ -115,6 +115,9 @@ class MotionAssessmentController extends ChangeNotifier {
   bool _sideViewPromptEmitted = false;
   bool _frontViewPromptEmitted = false;
   bool _oppositeSidePromptEmitted = false;
+  String? _analyzerFramingCandidateKey;
+  Duration? _analyzerFramingCandidateSince;
+  String? _analyzerFramingPromptedKey;
   bool _orientationGuidanceCompleted = false;
   bool _captureCountdownInProgress = false;
   int _captureCountdownGeneration = 0;
@@ -449,12 +452,18 @@ class MotionAssessmentController extends ChangeNotifier {
           forwardHeadAnalyzer.lastFrameStatus ==
               ForwardHeadFrameStatus.needsSideView) {
         _guidance = '请转为自然侧身，让两侧肩部在画面中尽量重合';
+      } else if (readyResult == null &&
+          forwardHeadAnalyzer.lastInspection.missingRegions.isNotEmpty) {
+        _guidance = _guidanceForMissingRegions(
+          forwardHeadAnalyzer.lastInspection.missingRegions,
+        );
       }
     }
 
     final snapshot = _buildContextSnapshot(observation, decision);
     _latestContext = snapshot;
     voice.updateAssessmentContext(snapshot);
+    _emitAnalyzerFramingPromptIfNeeded(observation, decision, snapshot);
     if (captureLifecycle &&
         forwardHeadAnalyzer.lastFrameStatus ==
             ForwardHeadFrameStatus.needsSideView &&
@@ -553,6 +562,13 @@ class MotionAssessmentController extends ChangeNotifier {
         if (frontalPostureAnalyzer.lastFrameStatus ==
             FrontalPostureFrameStatus.needsFrontView) {
           _guidance = '请自然正对镜头，双肩放松并站稳';
+        } else if (frontalPostureAnalyzer
+            .lastInspection
+            .missingRegions
+            .isNotEmpty) {
+          _guidance = _guidanceForMissingRegions(
+            frontalPostureAnalyzer.lastInspection.missingRegions,
+          );
         }
       } else {
         forwardResult = forwardHeadAnalyzer.add(
@@ -568,6 +584,13 @@ class MotionAssessmentController extends ChangeNotifier {
         if (forwardHeadAnalyzer.lastFrameStatus ==
             ForwardHeadFrameStatus.needsSideView) {
           _guidance = '请自然侧身，让两侧肩部在画面中尽量重合';
+        } else if (forwardHeadAnalyzer
+            .lastInspection
+            .missingRegions
+            .isNotEmpty) {
+          _guidance = _guidanceForMissingRegions(
+            forwardHeadAnalyzer.lastInspection.missingRegions,
+          );
         }
       }
     }
@@ -575,6 +598,7 @@ class MotionAssessmentController extends ChangeNotifier {
     final snapshot = _buildScreeningContextSnapshot(observation, decision);
     _latestContext = snapshot;
     voice.updateAssessmentContext(snapshot);
+    _emitAnalyzerFramingPromptIfNeeded(observation, decision, snapshot);
     _emitScreeningViewPromptIfNeeded(snapshot);
     _notify();
     if (directive != null) unawaited(_handleDirective(directive));
@@ -613,7 +637,12 @@ class MotionAssessmentController extends ChangeNotifier {
             FrontalPostureFrameStatus.accepted,
     };
     if (!accepted) {
-      _guidance = step.view == MotionAssessmentCaptureView.front
+      final missingRegions = step.view == MotionAssessmentCaptureView.front
+          ? frontalPostureAnalyzer.lastInspection.missingRegions
+          : forwardHeadAnalyzer.lastInspection.missingRegions;
+      _guidance = missingRegions.isNotEmpty
+          ? _guidanceForMissingRegions(missingRegions)
+          : step.view == MotionAssessmentCaptureView.front
           ? '请自然正对镜头，双肩放松并站稳'
           : '请自然侧身，站稳并目视前方';
       return;
@@ -626,6 +655,7 @@ class MotionAssessmentController extends ChangeNotifier {
       return;
     }
     _oppositeSidePromptEmitted = false;
+    _resetAnalyzerFramingPrompt();
     if (captureCountdown == Duration.zero) {
       _beginScreeningCapture();
       return;
@@ -810,6 +840,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _sideViewPromptEmitted = false;
     _frontViewPromptEmitted = false;
     _oppositeSidePromptEmitted = false;
+    _resetAnalyzerFramingPrompt();
     final next = _currentScreeningStep;
     if (next == null) {
       _latestResultSummary = Map.unmodifiable(_screeningSummary());
@@ -896,6 +927,8 @@ class MotionAssessmentController extends ChangeNotifier {
           : MotionAssessmentPagePhase.calibrating;
       if (inspection.status == ForwardHeadFrameStatus.needsSideView) {
         _guidance = '请自然侧身，站稳并目视前方';
+      } else if (inspection.missingRegions.isNotEmpty) {
+        _guidance = _guidanceForMissingRegions(inspection.missingRegions);
       }
       return;
     }
@@ -909,6 +942,7 @@ class MotionAssessmentController extends ChangeNotifier {
       return;
     }
     _oppositeSidePromptEmitted = false;
+    _resetAnalyzerFramingPrompt();
     if (captureCountdown == Duration.zero) {
       _beginCaptureAfterCountdown(validation: validation);
       return;
@@ -1435,11 +1469,18 @@ class MotionAssessmentController extends ChangeNotifier {
         : forwardHeadAnalyzer.minimumStableFor;
     final personCount = observation.poses.length;
     final resultReady = _latestResultSummary != null;
-    final missingRegions = <String>[
+    final analyzerMissingRegions =
+        personCount == 1 && decision.acceptFrame && !frameAccepted && !needsView
+        ? (isFront
+              ? frontalPostureAnalyzer.lastInspection.missingRegions
+              : forwardHeadAnalyzer.lastInspection.missingRegions)
+        : const <String>[];
+    final missingRegions = <String>{
       if (personCount == 0) 'person',
       if (personCount == 1 && decision.phase == MotionQualityPhase.framing)
         ..._missingAssessmentRegions(observation.poses.single),
-    ];
+      ...analyzerMissingRegions,
+    }.toList(growable: false);
     final rejectionReasons = <String>[
       if (personCount == 0) 'no_person',
       if (personCount > 1) 'multiple_people',
@@ -1448,6 +1489,7 @@ class MotionAssessmentController extends ChangeNotifier {
       if (needsView) '${requiredView}_view_required',
       if (!frameAccepted && !needsView && decision.acceptFrame)
         'insufficient_landmark_confidence',
+      ...analyzerMissingRegions.map((region) => 'missing_$region'),
     ];
     final recommended = resultReady
         ? (
@@ -1465,6 +1507,8 @@ class MotionAssessmentController extends ChangeNotifier {
             action: isFront ? 'face_camera' : 'turn_sideways',
             reason: '${requiredView}_view_required',
           )
+        : analyzerMissingRegions.isNotEmpty
+        ? _missingRegionRecommendation(analyzerMissingRegions)
         : (action: 'hold_still', reason: 'stable_samples_needed');
     final startedAt = _firstObservationAt ?? observation.timestamp;
     return MotionAssessmentContextSnapshot(
@@ -1483,12 +1527,19 @@ class MotionAssessmentController extends ChangeNotifier {
           decision.target != null || decision.phase == MotionQualityPhase.ready,
       continuity: _continuityValue(decision.phase),
       assessmentRegionVisible:
-          personCount == 1 && decision.phase != MotionQualityPhase.framing,
+          personCount == 1 &&
+          decision.phase != MotionQualityPhase.framing &&
+          missingRegions.isEmpty,
       missingRegions: missingRegions,
-      distance: personCount == 1 && decision.phase != MotionQualityPhase.framing
+      distance:
+          personCount == 1 &&
+              decision.phase != MotionQualityPhase.framing &&
+              missingRegions.isEmpty
           ? 'acceptable'
           : decision.phase == MotionQualityPhase.framing
           ? 'too_close_or_cropped'
+          : missingRegions.isNotEmpty
+          ? 'adjustment_needed'
           : 'unknown',
       requiredView: requiredView,
       detectedView: frameAccepted
@@ -1567,15 +1618,24 @@ class MotionAssessmentController extends ChangeNotifier {
     MotionQualityDecision decision,
   ) {
     final personCount = observation.poses.length;
-    final assessmentRegionVisible =
-        personCount == 1 && decision.phase != MotionQualityPhase.framing;
     final frameStatus = forwardHeadAnalyzer.lastFrameStatus;
     final result = _forwardHeadResult;
-    final missingRegions = <String>[
+    final analyzerMissingRegions =
+        personCount == 1 &&
+            decision.acceptFrame &&
+            frameStatus == ForwardHeadFrameStatus.insufficientLandmarks
+        ? forwardHeadAnalyzer.lastInspection.missingRegions
+        : const <String>[];
+    final missingRegions = <String>{
       if (personCount == 0) 'person',
       if (personCount == 1 && decision.phase == MotionQualityPhase.framing)
         ..._missingAssessmentRegions(observation.poses.single),
-    ];
+      ...analyzerMissingRegions,
+    }.toList(growable: false);
+    final assessmentRegionVisible =
+        personCount == 1 &&
+        decision.phase != MotionQualityPhase.framing &&
+        missingRegions.isEmpty;
     final rejectionReasons = <String>[
       if (personCount == 0) 'no_person',
       if (personCount > 1) 'multiple_people',
@@ -1586,6 +1646,7 @@ class MotionAssessmentController extends ChangeNotifier {
       if (frameStatus == ForwardHeadFrameStatus.insufficientLandmarks &&
           decision.acceptFrame)
         'insufficient_landmark_confidence',
+      ...analyzerMissingRegions.map((region) => 'missing_$region'),
       if (frameStatus == ForwardHeadFrameStatus.invalidFrameSize)
         'invalid_frame_size',
     ];
@@ -1613,6 +1674,7 @@ class MotionAssessmentController extends ChangeNotifier {
       frameStatus: frameStatus,
       resultReady: result != null,
       personCount: personCount,
+      missingRegions: analyzerMissingRegions,
     );
     final startedAt = _firstObservationAt ?? observation.timestamp;
     return MotionAssessmentContextSnapshot(
@@ -1636,6 +1698,8 @@ class MotionAssessmentController extends ChangeNotifier {
           ? 'acceptable'
           : decision.phase == MotionQualityPhase.framing
           ? 'too_close_or_cropped'
+          : missingRegions.isNotEmpty
+          ? 'adjustment_needed'
           : 'unknown',
       requiredView: 'side',
       detectedView: detectedView,
@@ -1680,7 +1744,7 @@ class MotionAssessmentController extends ChangeNotifier {
     bool unavailable(MotionPoseLandmarkType type) {
       final landmark = pose.landmark(type);
       return landmark == null ||
-          !landmark.isReliable(minimumConfidence: 0.45) ||
+          !landmark.isReliable(minimumConfidence: 0.5) ||
           landmark.x < 0.02 ||
           landmark.x > 0.98 ||
           landmark.y < 0.02 ||
@@ -1706,6 +1770,7 @@ class MotionAssessmentController extends ChangeNotifier {
     required ForwardHeadFrameStatus frameStatus,
     required bool resultReady,
     required int personCount,
+    required List<String> missingRegions,
   }) {
     if (resultReady) {
       return (
@@ -1731,10 +1796,112 @@ class MotionAssessmentController extends ChangeNotifier {
     if (frameStatus == ForwardHeadFrameStatus.needsSideView) {
       return (action: 'turn_sideways', reason: 'side_view_required');
     }
+    if (missingRegions.isNotEmpty) {
+      return _missingRegionRecommendation(missingRegions);
+    }
     if (decision.acceptFrame) {
       return (action: 'hold_still', reason: 'stable_samples_needed');
     }
     return (action: 'hold_position', reason: 'quality_gate_calibrating');
+  }
+
+  ({String action, String reason}) _missingRegionRecommendation(
+    List<String> missingRegions,
+  ) {
+    final regions = missingRegions.map((region) => region.toLowerCase());
+    if (regions.any((region) => region.contains('hip'))) {
+      return (action: 'step_back_include_hips', reason: 'hips_not_reliable');
+    }
+    if (regions.any(
+      (region) => region.contains('ear') || region.contains('head'),
+    )) {
+      return (
+        action: 'adjust_side_profile',
+        reason: 'ear_or_head_not_reliable',
+      );
+    }
+    if (regions.any((region) => region.contains('shoulder'))) {
+      return (
+        action: 'adjust_framing_include_shoulders',
+        reason: 'shoulders_not_reliable',
+      );
+    }
+    return (action: 'adjust_framing', reason: 'assessment_region_not_reliable');
+  }
+
+  String _guidanceForMissingRegions(List<String> missingRegions) {
+    final recommended = _missingRegionRecommendation(missingRegions);
+    return switch (recommended.action) {
+      'step_back_include_hips' => '请稍微后退，让肩部和髋部同时清晰入镜',
+      'adjust_side_profile' => '请保持自然侧身，让靠近镜头一侧的耳朵和肩部清晰入镜',
+      'adjust_framing_include_shoulders' => '请调整站位，让双肩和髋部清晰入镜',
+      _ => '请稍微调整站位，让头部、肩部和髋部清晰入镜',
+    };
+  }
+
+  void _emitAnalyzerFramingPromptIfNeeded(
+    MotionPoseObservation observation,
+    MotionQualityDecision decision,
+    MotionAssessmentContextSnapshot snapshot,
+  ) {
+    final phaseAllowsPrompt = switch (_phase) {
+      MotionAssessmentPagePhase.calibrating ||
+      MotionAssessmentPagePhase.capturingSegment ||
+      MotionAssessmentPagePhase.capturingValidationSegment => true,
+      MotionAssessmentPagePhase.changingOrientation =>
+        target == 'posture_screen'
+            ? _screeningOrientationGuidanceCompleted
+            : _orientationGuidanceCompleted,
+      _ => false,
+    };
+    final analyzerMissingRegions = target == 'posture_screen'
+        ? (_currentScreeningStep?.view == MotionAssessmentCaptureView.front
+              ? frontalPostureAnalyzer.lastInspection.missingRegions
+              : forwardHeadAnalyzer.lastInspection.missingRegions)
+        : forwardHeadAnalyzer.lastInspection.missingRegions;
+    if (!phaseAllowsPrompt ||
+        !decision.acceptFrame ||
+        analyzerMissingRegions.isEmpty) {
+      _resetAnalyzerFramingPrompt();
+      return;
+    }
+
+    final sortedRegions = [...analyzerMissingRegions]..sort();
+    final stepKey = target == 'posture_screen'
+        ? _currentScreeningStep?.id ?? 'screening_complete'
+        : target;
+    final candidateKey = '$stepKey:${sortedRegions.join(',')}';
+    if (_analyzerFramingCandidateKey != candidateKey) {
+      _analyzerFramingCandidateKey = candidateKey;
+      _analyzerFramingCandidateSince = observation.timestamp;
+      return;
+    }
+    final candidateSince = _analyzerFramingCandidateSince;
+    if (candidateSince == null ||
+        observation.timestamp - candidateSince <
+            const Duration(milliseconds: 800) ||
+        _analyzerFramingPromptedKey == candidateKey) {
+      return;
+    }
+
+    _analyzerFramingPromptedKey = candidateKey;
+    final recommendation = _missingRegionRecommendation(sortedRegions);
+    unawaited(
+      voice.requestGuidance('framing_incomplete', {
+        'missing_regions': sortedRegions,
+        'recommended_action': recommendation.action,
+        'guidance_reason': recommendation.reason,
+        'accept_pose_frames': false,
+        'dedupe_key': 'analyzer_framing_$candidateKey',
+        'context': snapshot.toJson(),
+      }),
+    );
+  }
+
+  void _resetAnalyzerFramingPrompt() {
+    _analyzerFramingCandidateKey = null;
+    _analyzerFramingCandidateSince = null;
+    _analyzerFramingPromptedKey = null;
   }
 
   String _workflowPhaseValue(MotionAssessmentWorkflowPhase value) {
@@ -1848,6 +2015,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _sideViewPromptEmitted = false;
     _frontViewPromptEmitted = false;
     _oppositeSidePromptEmitted = false;
+    _resetAnalyzerFramingPrompt();
     _captureCountdownGeneration += 1;
     _captureCountdownInProgress = false;
     if (target == 'posture_screen') {
@@ -2164,6 +2332,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _sideViewPromptEmitted = false;
     _frontViewPromptEmitted = false;
     _oppositeSidePromptEmitted = false;
+    _resetAnalyzerFramingPrompt();
     _captureCountdownGeneration += 1;
     _captureCountdownInProgress = false;
     _firstObservationAt = null;
@@ -2178,6 +2347,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _latestResultSummary = null;
     _sideViewPromptEmitted = false;
     _oppositeSidePromptEmitted = false;
+    _resetAnalyzerFramingPrompt();
     _captureCountdownGeneration += 1;
     _captureCountdownInProgress = false;
     _syncPagePhaseFromWorkflow();

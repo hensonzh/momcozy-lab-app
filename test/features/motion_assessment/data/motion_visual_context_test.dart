@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -86,6 +87,34 @@ void main() {
 
       expect(captureCalls, 1);
       expect(captures.whereType<MotionVisualContext>(), hasLength(1));
+    },
+  );
+
+  test(
+    'runs automatic visual capture outside the voice critical path',
+    () async {
+      final capture = Completer<MotionPoseKeyFrame>();
+      final submitted = Completer<MotionVisualContext>();
+      final coordinator =
+          MotionVisualContextCoordinator(
+              captureKeyFrame: () => capture.future,
+              cooldown: Duration.zero,
+            )
+            ..setUserConsent(true)
+            ..setServerCapability(true);
+
+      coordinator.scheduleEventCapture(
+        eventType: 'framing_incomplete',
+        eventId: 'assessment-1:latency',
+        context: _context(),
+        contextAgeMs: 10,
+        onCaptured: (visual) async => submitted.complete(visual),
+      );
+
+      expect(submitted.isCompleted, isFalse);
+      capture.complete(_frame(id: 'non-blocking-frame'));
+      final visual = await submitted.future.timeout(const Duration(seconds: 1));
+      expect(visual.sourceEventId, 'assessment-1:latency');
     },
   );
 
