@@ -28,6 +28,28 @@ void main() {
     expect(workflow.aggregateResult()!.valueDegrees, 49);
   });
 
+  test('validation segment must come from the opposite side', () {
+    final workflow = MotionAssessmentWorkflow(requiredSegments: 2)
+      ..beginCalibration()
+      ..beginCapture();
+
+    workflow.completeSegment(_result(side: 'left', value: 48));
+    expect(workflow.expectedValidationSide, 'right');
+    workflow.orientationInstructionCompleted();
+
+    final duplicateSide = workflow.completeSegment(
+      _result(side: 'left', value: 49),
+    );
+    expect(duplicateSide.accepted, isFalse);
+    expect(duplicateSide.code, 'opposite_side_required');
+    expect(
+      duplicateSide.action,
+      MotionAssessmentWorkflowAction.requestOrientationChange,
+    );
+    expect(workflow.segmentResults, hasLength(1));
+    expect(workflow.phase, MotionAssessmentWorkflowPhase.changingOrientation);
+  });
+
   test('finish requires prompt playback followed by a new user audio item', () {
     final workflow = _reviewReadyWorkflow();
 

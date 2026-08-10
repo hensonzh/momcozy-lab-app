@@ -128,6 +128,54 @@ void main() {
     },
   );
 
+  test('coalesces stale pending guidance and keeps the newest state', () async {
+    final events = <Map<String, Object?>>[];
+    final queue = MotionRealtimeResponseQueue(
+      sendEvent: (event) async => events.add(event),
+    );
+
+    await queue.enqueueModelTurn('正在播报的指导');
+    await queue.enqueueModelTurn('请进入画面', coalesceKey: 'assessment-guidance');
+    await queue.enqueueModelTurn('现在请保持侧身', coalesceKey: 'assessment-guidance');
+
+    await queue.handleServerEvent({
+      'type': 'response.done',
+      'response': {'status': 'completed'},
+    });
+
+    final creates = events
+        .where((event) => event['type'] == 'response.create')
+        .toList();
+    expect(creates, hasLength(2));
+    expect(_instructions(creates.last), contains('现在请保持侧身'));
+    expect(_instructions(creates.last), isNot(contains('请进入画面')));
+  });
+
+  test('a newer state can cancel active guidance in the same lane', () async {
+    final events = <Map<String, Object?>>[];
+    final queue = MotionRealtimeResponseQueue(
+      sendEvent: (event) async => events.add(event),
+    );
+
+    await queue.enqueueModelTurn('请进入画面', coalesceKey: 'assessment-guidance');
+    await queue.enqueueModelTurn(
+      '检测到多人，请先暂停',
+      coalesceKey: 'assessment-guidance',
+      interruptActive: true,
+    );
+
+    expect(events.map((event) => event['type']), [
+      'response.create',
+      'response.cancel',
+      'output_audio_buffer.clear',
+    ]);
+    await queue.handleServerEvent({
+      'type': 'response.done',
+      'response': {'status': 'cancelled'},
+    });
+    expect(_instructions(events.last), contains('检测到多人'));
+  });
+
   test(
     'user speech cancels the active response without adding speech',
     () async {

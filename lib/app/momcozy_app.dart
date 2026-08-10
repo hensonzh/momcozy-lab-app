@@ -1453,6 +1453,8 @@ Widget _buildDefaultAgentHubPage(
     initialAutoSend: _agentAutoSendFromRoute(uri, extra),
     initialAutoRunRequest: _agentAutoRunFromRoute(extra),
     externalConversationRefreshKey: _motionAssessmentFeedbackRefreshKey(extra),
+    externalConversationRefreshUntilFound:
+        _motionAssessmentFeedbackRefreshKey(extra) != null,
   );
 }
 

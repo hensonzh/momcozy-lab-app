@@ -14,6 +14,7 @@ class MotionRealtimeResponseQueue {
   bool _cancelSent = false;
   bool _closed = false;
   String? _activeContextId;
+  String? _activeCoalesceKey;
 
   String? get activeContextId => _activeContextId;
 
@@ -46,12 +47,38 @@ class MotionRealtimeResponseQueue {
     });
   }
 
-  Future<void> enqueueModelTurn(String instructions, {String? contextId}) {
+  Future<void> enqueueModelTurn(
+    String instructions, {
+    String? contextId,
+    String? coalesceKey,
+    bool interruptActive = false,
+  }) {
     return _serialize(() async {
       if (_closed || instructions.trim().isEmpty) return;
-      _pending.addLast(
-        _PendingResponse.modelTurn(instructions.trim(), contextId: contextId),
+      final normalizedKey = coalesceKey?.trim();
+      if (normalizedKey?.isNotEmpty == true) {
+        _pending.removeWhere(
+          (response) => response.coalesceKey == normalizedKey,
+        );
+      }
+      final response = _PendingResponse.modelTurn(
+        instructions.trim(),
+        contextId: contextId,
+        coalesceKey: normalizedKey?.isNotEmpty == true ? normalizedKey : null,
       );
+      if (interruptActive &&
+          _responseActive &&
+          _activeCoalesceKey == response.coalesceKey &&
+          response.coalesceKey != null) {
+        _pending.addFirst(response);
+        if (!_cancelSent) {
+          _cancelSent = true;
+          await sendEvent({'type': 'response.cancel'});
+          await sendEvent({'type': 'output_audio_buffer.clear'});
+        }
+        return;
+      }
+      _pending.addLast(response);
       await _sendNextIfIdle();
     });
   }
@@ -78,6 +105,7 @@ class MotionRealtimeResponseQueue {
           _responseActive = false;
           _cancelSent = false;
           _activeContextId = null;
+          _activeCoalesceKey = null;
           await _sendNextIfIdle();
       }
     });
@@ -90,6 +118,7 @@ class MotionRealtimeResponseQueue {
       _responseActive = false;
       _cancelSent = false;
       _activeContextId = null;
+      _activeCoalesceKey = null;
     });
   }
 
@@ -98,6 +127,7 @@ class MotionRealtimeResponseQueue {
     final next = _pending.removeFirst();
     _responseActive = true;
     _activeContextId = next.contextId;
+    _activeCoalesceKey = next.coalesceKey;
     try {
       await sendEvent({
         'type': 'response.create',
@@ -117,6 +147,7 @@ class MotionRealtimeResponseQueue {
     } catch (_) {
       _responseActive = false;
       _activeContextId = null;
+      _activeCoalesceKey = null;
       rethrow;
     }
   }
@@ -134,6 +165,7 @@ class _PendingResponse {
     required this.exactSpeech,
     required this.modelTurn,
     this.contextId,
+    this.coalesceKey,
   });
 
   const _PendingResponse.exactSpeech(String instructions)
@@ -142,16 +174,21 @@ class _PendingResponse {
   const _PendingResponse.naturalGuidance(String instructions)
     : this._(instructions, exactSpeech: false, modelTurn: false);
 
-  const _PendingResponse.modelTurn(String instructions, {String? contextId})
-    : this._(
-        instructions,
-        exactSpeech: false,
-        modelTurn: true,
-        contextId: contextId,
-      );
+  const _PendingResponse.modelTurn(
+    String instructions, {
+    String? contextId,
+    String? coalesceKey,
+  }) : this._(
+         instructions,
+         exactSpeech: false,
+         modelTurn: true,
+         contextId: contextId,
+         coalesceKey: coalesceKey,
+       );
 
   final String instructions;
   final bool exactSpeech;
   final bool modelTurn;
   final String? contextId;
+  final String? coalesceKey;
 }

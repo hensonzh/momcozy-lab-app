@@ -2731,6 +2731,61 @@ void main() {
     },
   );
 
+  testWidgets(
+    'durable motion feedback keeps refreshing with a visible pending state',
+    (tester) async {
+      const sourceState = AgentStreamRunState(
+        phase: AgentStreamRunPhase.finished,
+        threadId: 'thread-source',
+        runId: 'run-source',
+        textContent: '我们开始评估吧。',
+      );
+      const feedbackState = AgentStreamRunState(
+        phase: AgentStreamRunPhase.finished,
+        threadId: 'thread-source',
+        runId: 'run-feedback',
+        textContent: '评估反馈已经生成。',
+      );
+      final repository = _SequencedConversationRepository([
+        _conversationHistory(sourceState),
+        _conversationHistory(sourceState),
+        _conversationHistory(feedbackState),
+      ]);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: sourceState,
+            conversationRepository: repository,
+            externalConversationRefreshKey: 'motion:assessment-durable',
+            externalConversationRefreshInterval: const Duration(seconds: 1),
+            externalConversationRefreshAttempts: 1,
+            externalConversationRefreshUntilFound: true,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(
+        find.byKey(const ValueKey('motion-feedback-pending')),
+        findsOneWidget,
+      );
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 2));
+      await _pumpUntil(
+        tester,
+        () => find.text(feedbackState.textContent).evaluate().isNotEmpty,
+      );
+
+      expect(repository.loadCalls, greaterThan(1));
+      expect(
+        find.byKey(const ValueKey('motion-feedback-pending')),
+        findsNothing,
+      );
+    },
+  );
+
   testWidgets('Agent Hub starts auto voice playback after finished reply', (
     tester,
   ) async {

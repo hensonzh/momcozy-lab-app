@@ -12,8 +12,17 @@ enum ForwardHeadFrameStatus {
   interrupted,
 }
 
-const forwardHeadAnalyzerVersion = 'forward_head_cva_v2';
+const forwardHeadAnalyzerVersion = 'forward_head_cva_v3';
 const forwardHeadThresholdVersion = 'cva_50deg_visual_tendency_v1';
+
+class ForwardHeadFrameInspection {
+  const ForwardHeadFrameInspection({required this.status, this.side});
+
+  final ForwardHeadFrameStatus status;
+  final String? side;
+
+  bool get accepted => status == ForwardHeadFrameStatus.accepted;
+}
 
 class ForwardHeadResult {
   const ForwardHeadResult({
@@ -39,52 +48,116 @@ class ForwardHeadResult {
   final double measurementQualityScore;
 }
 
-/// Estimates the side-view craniovertebral angle from accepted local poses.
+/// Estimates a side-view craniovertebral angle from a tolerant rolling window.
 ///
-/// It deliberately reports a visual tendency for the current frame rather than
-/// a clinical diagnosis.
+/// Short landmark or framing losses pause useful sampling instead of erasing it.
+/// A result is emitted only after the window contains enough accepted samples,
+/// enough elapsed time, and the configured accepted-frame ratio.
 class ForwardHeadAnalyzer {
   ForwardHeadAnalyzer({
-    this.minimumStableFor = const Duration(seconds: 5),
+    this.minimumStableFor = const Duration(seconds: 6),
     this.minimumSamples = 30,
     this.minimumLandmarkConfidence = 0.65,
     this.forwardTendencyBelowDegrees = 50,
-    this.maximumSampleGap = const Duration(milliseconds: 350),
+    Duration maximumSampleGap = const Duration(seconds: 2),
+    Duration? interruptionGracePeriod,
+    this.samplingWindow = const Duration(seconds: 8),
+    this.minimumAcceptedRatio = 0.7,
     this.maximumShoulderSpanToTorsoRatio = 0.55,
-  });
+  }) : maximumSampleGap = maximumSampleGap,
+       interruptionGracePeriod = interruptionGracePeriod ?? maximumSampleGap,
+       assert(minimumAcceptedRatio >= 0 && minimumAcceptedRatio <= 1),
+       assert(!samplingWindow.isNegative),
+       assert(!minimumStableFor.isNegative);
 
   final Duration minimumStableFor;
   final int minimumSamples;
   final double minimumLandmarkConfidence;
   final double forwardTendencyBelowDegrees;
+
+  /// Kept as a public compatibility alias for callers that configured the old
+  /// contiguous-window implementation.
   final Duration maximumSampleGap;
+  final Duration interruptionGracePeriod;
+  final Duration samplingWindow;
+  final double minimumAcceptedRatio;
   final double maximumShoulderSpanToTorsoRatio;
 
-  final List<double> _angles = <double>[];
-  final List<String> _sides = <String>[];
-  final List<double> _confidences = <double>[];
-  Duration? _startedAt;
-  Duration? _lastSampleAt;
+  final List<_SamplingObservation> _window = <_SamplingObservation>[];
+  Duration? _lastObservationAt;
+  Duration? _invalidSince;
+  double _maximumReportedProgress = 0;
   ForwardHeadFrameStatus _lastFrameStatus =
       ForwardHeadFrameStatus.insufficientLandmarks;
 
   ForwardHeadFrameStatus get lastFrameStatus => _lastFrameStatus;
-  int get sampleCount => _angles.length;
-  Duration get stableDuration => _startedAt == null || _lastSampleAt == null
-      ? Duration.zero
-      : _lastSampleAt! - _startedAt!;
-  double? get rollingMedianDegrees => _angles.isEmpty ? null : _median(_angles);
-  double? get angleDispersionDegrees =>
-      _angles.isEmpty ? null : _medianAbsoluteDeviation(_angles);
-  String? get dominantSide => _sides.isEmpty ? null : _dominantSide();
+  int get sampleCount => _accepted.length;
+  int get observedFrameCount => _window.length;
+  double get acceptedRatio =>
+      _window.isEmpty ? 0 : sampleCount / _window.length;
+  Duration get stableDuration =>
+      _window.length < 2 ? Duration.zero : _window.last.at - _window.first.at;
+  double? get rollingMedianDegrees {
+    final angles = _angles;
+    return angles.isEmpty ? null : _median(angles);
+  }
+
+  double? get angleDispersionDegrees {
+    final angles = _angles;
+    return angles.isEmpty ? null : _medianAbsoluteDeviation(angles);
+  }
+
+  String? get dominantSide => _accepted.isEmpty ? null : _dominantSide();
   double get samplingProgress {
     final sampleProgress = minimumSamples <= 0
         ? 1.0
-        : _angles.length / minimumSamples;
+        : sampleCount / minimumSamples;
     final durationProgress = minimumStableFor.inMilliseconds <= 0
         ? 1.0
         : stableDuration.inMilliseconds / minimumStableFor.inMilliseconds;
-    return math.min(sampleProgress, durationProgress).clamp(0, 1).toDouble();
+    final ratioProgress = minimumAcceptedRatio <= 0
+        ? 1.0
+        : acceptedRatio / minimumAcceptedRatio;
+    final current = math
+        .min(sampleProgress, math.min(durationProgress, ratioProgress))
+        .clamp(0, 1)
+        .toDouble();
+    _maximumReportedProgress = math.max(_maximumReportedProgress, current);
+    return _maximumReportedProgress;
+  }
+
+  ForwardHeadFrameInspection inspect(
+    MotionPose pose, {
+    required int inputWidth,
+    required int inputHeight,
+  }) {
+    if (inputWidth <= 0 || inputHeight <= 0) {
+      _lastFrameStatus = ForwardHeadFrameStatus.invalidFrameSize;
+      return const ForwardHeadFrameInspection(
+        status: ForwardHeadFrameStatus.invalidFrameSize,
+      );
+    }
+    final sideViewStatus = _sideViewStatus(
+      pose,
+      inputWidth: inputWidth,
+      inputHeight: inputHeight,
+    );
+    if (sideViewStatus != ForwardHeadFrameStatus.accepted) {
+      _lastFrameStatus = sideViewStatus;
+      return ForwardHeadFrameInspection(status: sideViewStatus);
+    }
+    final sidePose = _selectSide(pose);
+    if (sidePose == null) {
+      _lastFrameStatus = ForwardHeadFrameStatus.insufficientLandmarks;
+      return const ForwardHeadFrameInspection(
+        status: ForwardHeadFrameStatus.insufficientLandmarks,
+      );
+    }
+    _lastFrameStatus = ForwardHeadFrameStatus.accepted;
+    return ForwardHeadFrameInspection(
+      status: ForwardHeadFrameStatus.accepted,
+      side: sidePose.side,
+    );
   }
 
   ForwardHeadResult? add(
@@ -93,53 +166,51 @@ class ForwardHeadAnalyzer {
     required int inputWidth,
     required int inputHeight,
   }) {
-    if (inputWidth <= 0 || inputHeight <= 0) {
-      _reject(ForwardHeadFrameStatus.invalidFrameSize);
-      return null;
-    }
-    final previousSampleAt = _lastSampleAt;
-    if (previousSampleAt != null &&
-        (at < previousSampleAt || at - previousSampleAt > maximumSampleGap)) {
-      _clearWindow();
-    }
-    final sideViewStatus = _sideViewStatus(
+    final inspection = inspect(
       pose,
       inputWidth: inputWidth,
       inputHeight: inputHeight,
     );
-    if (sideViewStatus != ForwardHeadFrameStatus.accepted) {
-      _reject(sideViewStatus);
+    if (!inspection.accepted) {
+      _recordRejected(at, inspection.status);
       return null;
     }
     final sidePose = _selectSide(pose);
     if (sidePose == null) {
-      _reject(ForwardHeadFrameStatus.insufficientLandmarks);
+      _recordRejected(at, ForwardHeadFrameStatus.insufficientLandmarks);
       return null;
     }
-    final ear = sidePose.ear;
-    final shoulder = sidePose.shoulder;
-
-    final horizontal = (ear.x - shoulder.x).abs() * inputWidth;
-    final vertical = (shoulder.y - ear.y).abs() * inputHeight;
+    final horizontal =
+        (sidePose.ear.x - sidePose.shoulder.x).abs() * inputWidth;
+    final vertical = (sidePose.shoulder.y - sidePose.ear.y).abs() * inputHeight;
     if (horizontal < 1 && vertical < 1) {
-      _reject(ForwardHeadFrameStatus.insufficientLandmarks);
+      _recordRejected(at, ForwardHeadFrameStatus.insufficientLandmarks);
       return null;
     }
     final angle = math.atan2(vertical, horizontal) * 180 / math.pi;
-    _startedAt ??= at;
-    _lastSampleAt = at;
+    _prepareForObservation(at);
+    _invalidSince = null;
     _lastFrameStatus = ForwardHeadFrameStatus.accepted;
-    _angles.add(angle);
-    _sides.add(sidePose.side);
-    _confidences.add(sidePose.confidence);
+    _window.add(
+      _SamplingObservation.accepted(
+        at: at,
+        angle: angle,
+        side: sidePose.side,
+        confidence: sidePose.confidence,
+      ),
+    );
+    _lastObservationAt = at;
+    _pruneWindow(at);
 
-    if (_angles.length < minimumSamples ||
-        at - _startedAt! < minimumStableFor) {
+    if (sampleCount < minimumSamples ||
+        stableDuration < minimumStableFor ||
+        acceptedRatio < minimumAcceptedRatio) {
       return null;
     }
 
-    final median = _median(_angles);
-    final dispersion = _medianAbsoluteDeviation(_angles);
+    final angles = _angles;
+    final median = _median(angles);
+    final dispersion = _medianAbsoluteDeviation(angles);
     final classification = median < forwardTendencyBelowDegrees
         ? ForwardHeadClassification.forwardTendency
         : ForwardHeadClassification.neutralRange;
@@ -147,7 +218,7 @@ class ForwardHeadAnalyzer {
       metric: 'craniovertebral_angle',
       valueDegrees: median,
       classification: classification,
-      sampleCount: _angles.length,
+      sampleCount: sampleCount,
       sampleDuration: stableDuration,
       userMessage: classification == ForwardHeadClassification.forwardTendency
           ? '当前画面呈现头部前移倾向，建议结合更多角度与专业评估综合判断。'
@@ -157,6 +228,54 @@ class ForwardHeadAnalyzer {
       measurementQualityScore: _measurementQualityScore(dispersion),
     );
   }
+
+  void rejectFrame({Duration? at}) {
+    if (at == null) {
+      reset();
+      _lastFrameStatus = ForwardHeadFrameStatus.interrupted;
+      return;
+    }
+    _recordRejected(at, ForwardHeadFrameStatus.interrupted);
+  }
+
+  void reset() {
+    _clearWindow();
+    _lastFrameStatus = ForwardHeadFrameStatus.insufficientLandmarks;
+  }
+
+  void _recordRejected(Duration at, ForwardHeadFrameStatus status) {
+    _prepareForObservation(at);
+    _invalidSince ??= at;
+    _window.add(_SamplingObservation.rejected(at: at));
+    _lastObservationAt = at;
+    _lastFrameStatus = status;
+    _pruneWindow(at);
+    if (at - _invalidSince! >= interruptionGracePeriod) {
+      _clearWindow(lastObservationAt: at);
+      _invalidSince = at;
+      _lastFrameStatus = status;
+    }
+  }
+
+  void _prepareForObservation(Duration at) {
+    final previous = _lastObservationAt;
+    if (previous != null &&
+        (at < previous || at - previous > interruptionGracePeriod)) {
+      _clearWindow();
+    }
+  }
+
+  void _pruneWindow(Duration now) {
+    if (samplingWindow == Duration.zero) return;
+    final earliest = now - samplingWindow;
+    _window.removeWhere((sample) => sample.at < earliest);
+  }
+
+  List<_SamplingObservation> get _accepted =>
+      _window.where((sample) => sample.accepted).toList(growable: false);
+
+  List<double> get _angles =>
+      _accepted.map((sample) => sample.angle!).toList(growable: false);
 
   ForwardHeadFrameStatus _sideViewStatus(
     MotionPose pose, {
@@ -278,28 +397,32 @@ class ForwardHeadAnalyzer {
   }
 
   String _dominantSide() {
-    final left = _sides.where((value) => value == 'left').length;
-    final right = _sides.length - left;
+    final sides = _accepted.map((sample) => sample.side);
+    final left = sides.where((value) => value == 'left').length;
+    final right = sampleCount - left;
     return right > left ? 'right' : 'left';
   }
 
   double _measurementQualityScore(double dispersion) {
-    final confidence = _confidences.isEmpty
+    final accepted = _accepted;
+    final confidence = accepted.isEmpty
         ? 0.0
-        : _confidences.reduce((a, b) => a + b) / _confidences.length;
+        : accepted.map((sample) => sample.confidence!).reduce((a, b) => a + b) /
+              accepted.length;
     final dispersionScore = (1 - dispersion / 10).clamp(0, 1).toDouble();
     final sampleScore = minimumSamples <= 0
         ? 1.0
-        : (_angles.length / minimumSamples).clamp(0, 1).toDouble();
+        : (sampleCount / minimumSamples).clamp(0, 1).toDouble();
     final durationScore = minimumStableFor.inMilliseconds <= 0
         ? 1.0
         : (stableDuration.inMilliseconds / minimumStableFor.inMilliseconds)
               .clamp(0, 1)
               .toDouble();
-    return (confidence * 0.45 +
+    return (confidence * 0.35 +
             dispersionScore * 0.25 +
             sampleScore * 0.15 +
-            durationScore * 0.15)
+            durationScore * 0.15 +
+            acceptedRatio * 0.10)
         .clamp(0, 1)
         .toDouble();
   }
@@ -316,27 +439,44 @@ class ForwardHeadAnalyzer {
     return _median(values.map((value) => (value - median).abs()).toList());
   }
 
-  void rejectFrame() {
-    _reject(ForwardHeadFrameStatus.interrupted);
+  void _clearWindow({Duration? lastObservationAt}) {
+    _window.clear();
+    _lastObservationAt = lastObservationAt;
+    _invalidSince = null;
+    _maximumReportedProgress = 0;
   }
+}
 
-  void reset() {
-    _clearWindow();
-    _lastFrameStatus = ForwardHeadFrameStatus.insufficientLandmarks;
-  }
+class _SamplingObservation {
+  const _SamplingObservation._({
+    required this.at,
+    required this.accepted,
+    this.angle,
+    this.side,
+    this.confidence,
+  });
 
-  void _reject(ForwardHeadFrameStatus status) {
-    _clearWindow();
-    _lastFrameStatus = status;
-  }
+  const _SamplingObservation.accepted({
+    required Duration at,
+    required double angle,
+    required String side,
+    required double confidence,
+  }) : this._(
+         at: at,
+         accepted: true,
+         angle: angle,
+         side: side,
+         confidence: confidence,
+       );
 
-  void _clearWindow() {
-    _angles.clear();
-    _sides.clear();
-    _confidences.clear();
-    _startedAt = null;
-    _lastSampleAt = null;
-  }
+  const _SamplingObservation.rejected({required Duration at})
+    : this._(at: at, accepted: false);
+
+  final Duration at;
+  final bool accepted;
+  final double? angle;
+  final String? side;
+  final double? confidence;
 }
 
 class _ForwardHeadSidePose {

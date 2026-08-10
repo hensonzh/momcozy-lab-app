@@ -59,6 +59,15 @@ class MotionAssessmentWorkflow {
   List<Map<String, Object?>> get safetyEvents =>
       List<Map<String, Object?>>.unmodifiable(_safetyEvents);
   int get continueCount => _continueCount;
+  String? get expectedValidationSide {
+    if (_segmentResults.isEmpty) return null;
+    return _segmentResults.last.side == 'left'
+        ? 'right'
+        : _segmentResults.last.side == 'right'
+        ? 'left'
+        : null;
+  }
+
   bool get isTerminal =>
       _phase == MotionAssessmentWorkflowPhase.completed ||
       _phase == MotionAssessmentWorkflowPhase.failed;
@@ -88,6 +97,17 @@ class MotionAssessmentWorkflow {
         _phase == MotionAssessmentWorkflowPhase.capturingSegment ||
         _phase == MotionAssessmentWorkflowPhase.capturingValidationSegment;
     if (!isCapturing) return _rejected('capture_not_active');
+    final expectedSide = expectedValidationSide;
+    if (_phase == MotionAssessmentWorkflowPhase.capturingValidationSegment &&
+        expectedSide != null &&
+        result.side != expectedSide) {
+      _phase = MotionAssessmentWorkflowPhase.changingOrientation;
+      return const MotionAssessmentWorkflowDecision(
+        action: MotionAssessmentWorkflowAction.requestOrientationChange,
+        accepted: false,
+        code: 'opposite_side_required',
+      );
+    }
     _segmentResults.add(result);
     if (_segmentResults.length < requiredSegments) {
       _phase = MotionAssessmentWorkflowPhase.changingOrientation;

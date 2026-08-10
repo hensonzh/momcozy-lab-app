@@ -44,6 +44,9 @@ class MotionQualityGate {
   MotionQualityGate({
     this.singlePersonStableFor = const Duration(seconds: 1),
     this.multiplePeopleStableFor = const Duration(milliseconds: 400),
+    this.personMissingStableFor = const Duration(milliseconds: 600),
+    this.framingIssueStableFor = const Duration(milliseconds: 600),
+    this.targetMismatchStableFor = const Duration(milliseconds: 800),
     this.maximumCenterDrift = 0.22,
     this.maximumScaleRatioChange = 0.45,
     this.minimumLandmarkConfidence = 0.45,
@@ -52,6 +55,9 @@ class MotionQualityGate {
 
   final Duration singlePersonStableFor;
   final Duration multiplePeopleStableFor;
+  final Duration personMissingStableFor;
+  final Duration framingIssueStableFor;
+  final Duration targetMismatchStableFor;
   final double maximumCenterDrift;
   final double maximumScaleRatioChange;
   final double minimumLandmarkConfidence;
@@ -60,6 +66,9 @@ class MotionQualityGate {
   MotionQualityPhase _phase = MotionQualityPhase.calibrating;
   Duration? _singleSince;
   Duration? _multipleSince;
+  Duration? _missingSince;
+  Duration? _framingIssueSince;
+  Duration? _targetMismatchSince;
   MotionPose? _target;
   bool _multiplePromptEmitted = false;
   bool _targetChangedPromptEmitted = false;
@@ -84,6 +93,9 @@ class MotionQualityGate {
 
     if (poses.length >= 2) {
       _singleSince = null;
+      _missingSince = null;
+      _framingIssueSince = null;
+      _targetMismatchSince = null;
       _multipleSince ??= now;
       final persisted = now - _multipleSince! >= multiplePeopleStableFor;
       _phase = persisted
@@ -99,37 +111,78 @@ class MotionQualityGate {
     _multipleSince = null;
     if (poses.isEmpty) {
       _singleSince = null;
+      _framingIssueSince = null;
+      _targetMismatchSince = null;
+      _missingSince ??= now;
       if (_target == null) {
         _phase = MotionQualityPhase.calibrating;
       } else {
         _phase = MotionQualityPhase.reacquiring;
       }
-      final directive = _enterFramePromptEmitted
+      final persisted = now - _missingSince! >= personMissingStableFor;
+      final directive = !persisted || _enterFramePromptEmitted
           ? null
           : MotionGuidanceDirective.enterFrame;
-      _enterFramePromptEmitted = true;
+      if (directive != null) _enterFramePromptEmitted = true;
       return _decision(_phase, directive: directive);
     }
 
+    final recoveredFromBriefLoss =
+        _missingSince != null &&
+        now - _missingSince! < personMissingStableFor &&
+        _target != null;
+    _missingSince = null;
     _enterFramePromptEmitted = false;
 
     final candidate = poses.single;
     if (!_hasAssessmentRegion(candidate)) {
       _singleSince = null;
-      _phase = MotionQualityPhase.framing;
-      final directive = _framingPromptEmitted
+      _targetMismatchSince = null;
+      _framingIssueSince ??= now;
+      final persisted = now - _framingIssueSince! >= framingIssueStableFor;
+      _phase = persisted
+          ? MotionQualityPhase.framing
+          : MotionQualityPhase.reacquiring;
+      final directive = !persisted || _framingPromptEmitted
           ? null
           : MotionGuidanceDirective.adjustFraming;
-      _framingPromptEmitted = true;
+      if (directive != null) _framingPromptEmitted = true;
       return _decision(_phase, directive: directive);
     }
+    final recoveredFromBriefFramingIssue =
+        _framingIssueSince != null &&
+        now - _framingIssueSince! < framingIssueStableFor &&
+        _target != null;
+    _framingIssueSince = null;
     _framingPromptEmitted = false;
     _enterFramePromptEmitted = false;
 
     if (_target != null && !_matchesTarget(candidate, _target!)) {
-      _phase = MotionQualityPhase.targetChanged;
+      _targetMismatchSince ??= now;
       _singleSince = null;
-      return _decision(_phase, directive: _emitTargetChangedPrompt());
+      final persisted = now - _targetMismatchSince! >= targetMismatchStableFor;
+      _phase = persisted
+          ? MotionQualityPhase.targetChanged
+          : MotionQualityPhase.reacquiring;
+      return _decision(
+        _phase,
+        directive: persisted ? _emitTargetChangedPrompt() : null,
+      );
+    }
+    final recoveredFromBriefTargetMismatch = _targetMismatchSince != null;
+    _targetMismatchSince = null;
+
+    if (_target != null &&
+        (recoveredFromBriefLoss ||
+            recoveredFromBriefFramingIssue ||
+            recoveredFromBriefTargetMismatch)) {
+      _target = candidate;
+      _phase = MotionQualityPhase.ready;
+      return _decision(
+        MotionQualityPhase.ready,
+        acceptFrame: true,
+        target: candidate,
+      );
     }
 
     if (_phase == MotionQualityPhase.ready && _target != null) {
@@ -268,6 +321,9 @@ class MotionQualityGate {
     _target = null;
     _singleSince = null;
     _multipleSince = null;
+    _missingSince = null;
+    _framingIssueSince = null;
+    _targetMismatchSince = null;
     _multiplePromptEmitted = false;
     _targetChangedPromptEmitted = false;
     _framingPromptEmitted = false;
