@@ -102,7 +102,7 @@ class _PlanPageState extends State<PlanPage> {
           selectedPlanId: state.selectedPlanId,
           onCreatePlan: widget.onCreatePlan,
           onSelectPlan: (planId) {
-            _controller.selectPlan(planId);
+            _controller.openPlanDetails(planId);
             Navigator.of(sheetContext).pop();
           },
         ),
@@ -137,58 +137,80 @@ class _PlanPageState extends State<PlanPage> {
     );
   }
 
+  void _backToOverview() {
+    _controller.showOverview();
+    widget.onBackToPlans?.call();
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = _controller.state;
     final dashboard = state.dashboard;
-    return Material(
-      key: const ValueKey('route-page-/plan'),
-      color: MomCozyV3Colors.background,
-      child: DefaultTextStyle.merge(
-        style: const TextStyle(
-          fontFamily: MomCozyTypography.interfaceFontFamily,
+    return PopScope(
+      canPop: state.surface != PlanSurface.detail,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && state.surface == PlanSurface.detail) {
+          _backToOverview();
+        }
+      },
+      child: Material(
+        key: const ValueKey('route-page-/plan'),
+        color: MomCozyV3Colors.background,
+        child: DefaultTextStyle.merge(
+          style: const TextStyle(
+            fontFamily: MomCozyTypography.interfaceFontFamily,
+          ),
+          child: switch (state.phase) {
+            PlanLoadPhase.loading when dashboard == null => _PlanLoadingView(
+              selectedDay: state.weekOf,
+            ),
+            PlanLoadPhase.error when dashboard == null => _PlanErrorView(
+              onRetry: _controller.load,
+            ),
+            _ when dashboard != null && dashboard.isEmpty => _EmptyPlanView(
+              selectedDay: state.weekOf,
+              onCreatePlan: widget.onCreatePlan,
+              onOpenCalendar: widget.onOpenCalendar ?? _openCalendar,
+              onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
+              onSelectDay: _controller.selectDay,
+              onChat: widget.onChat,
+              onStartSession: widget.onStartSession,
+            ),
+            _
+                when dashboard != null &&
+                    state.surface == PlanSurface.detail &&
+                    state.selectedPlan != null =>
+              _SinglePlanView(
+                dashboard: dashboard,
+                plan: state.selectedPlan!,
+                selectedDay: state.weekOf,
+                today: widget.now(),
+                onBackToPlans: _backToOverview,
+                onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
+                onSelectDay: _controller.selectDay,
+                onStartSession: widget.onStartSession,
+                onAdjustWithAi: widget.onChat,
+                onManualEdit: widget.onManualEdit ?? _openManualEdit,
+              ),
+            _ when dashboard != null => _MultiPlanView(
+              dashboard: dashboard,
+              selectedDay: state.weekOf,
+              today: widget.now(),
+              selectedPlan: state.selectedPlan!,
+              period: state.period,
+              onSelectPlan: _controller.selectPlan,
+              onOpenPlanDetails: () =>
+                  _controller.openPlanDetails(state.selectedPlan!.id),
+              onSelectPeriod: _controller.selectPeriod,
+              onBrowseWeek: _controller.browseWeek,
+              onOpenCalendar: widget.onOpenCalendar ?? _openCalendar,
+              onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
+              onSelectDay: _controller.selectDay,
+              onStartSession: widget.onStartSession,
+            ),
+            _ => _PlanErrorView(onRetry: _controller.load),
+          },
         ),
-        child: switch (state.phase) {
-          PlanLoadPhase.loading when dashboard == null => _PlanLoadingView(
-            selectedDay: state.weekOf,
-          ),
-          PlanLoadPhase.error when dashboard == null => _PlanErrorView(
-            onRetry: _controller.load,
-          ),
-          _ when dashboard != null && dashboard.isEmpty => _EmptyPlanView(
-            selectedDay: state.weekOf,
-            onCreatePlan: widget.onCreatePlan,
-            onOpenCalendar: widget.onOpenCalendar ?? _openCalendar,
-            onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
-            onSelectDay: _controller.selectDay,
-            onChat: widget.onChat,
-            onStartSession: widget.onStartSession,
-          ),
-          _ when dashboard != null && dashboard.isSinglePlan => _SinglePlanView(
-            dashboard: dashboard,
-            selectedDay: state.weekOf,
-            onBackToPlans: widget.onBackToPlans ?? _openAllPlans,
-            onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
-            onSelectDay: _controller.selectDay,
-            onStartSession: widget.onStartSession,
-            onAdjustWithAi: widget.onChat,
-            onManualEdit: widget.onManualEdit ?? _openManualEdit,
-          ),
-          _ when dashboard != null => _MultiPlanView(
-            dashboard: dashboard,
-            selectedDay: state.weekOf,
-            selectedPlan: state.selectedPlan!,
-            period: state.period,
-            onSelectPlan: _controller.selectPlan,
-            onSelectPeriod: _controller.selectPeriod,
-            onBrowseWeek: _controller.browseWeek,
-            onOpenCalendar: widget.onOpenCalendar ?? _openCalendar,
-            onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
-            onSelectDay: _controller.selectDay,
-            onStartSession: widget.onStartSession,
-          ),
-          _ => _PlanErrorView(onRetry: _controller.load),
-        },
       ),
     );
   }
@@ -405,9 +427,11 @@ class _MultiPlanView extends StatelessWidget {
   const _MultiPlanView({
     required this.dashboard,
     required this.selectedDay,
+    required this.today,
     required this.selectedPlan,
     required this.period,
     required this.onSelectPlan,
+    required this.onOpenPlanDetails,
     required this.onSelectPeriod,
     required this.onBrowseWeek,
     this.onSelectDay,
@@ -418,9 +442,11 @@ class _MultiPlanView extends StatelessWidget {
 
   final PlanDashboard dashboard;
   final DateTime selectedDay;
+  final DateTime today;
   final CarePlan selectedPlan;
   final PlanPeriod period;
   final ValueChanged<String> onSelectPlan;
+  final VoidCallback onOpenPlanDetails;
   final ValueChanged<PlanPeriod> onSelectPeriod;
   final ValueChanged<int> onBrowseWeek;
   final ValueChanged<DateTime>? onSelectDay;
@@ -430,11 +456,16 @@ class _MultiPlanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visibleSessions = dashboard.sessions
+    final visibleSessions = dashboard
+        .sessionsFor(selectedPlan.id)
         .where((session) => _sameDay(session.scheduledAt, selectedDay))
         .toList(growable: false);
-    final completed = dashboard.completedThisWeek;
-    final total = math.max(1, dashboard.totalThisWeek);
+    final completed = selectedPlan.weeklyCompletedSessions;
+    final total = selectedPlan.weeklyTotalSessions;
+    final hasWeeklyProgress = completed != null && total != null && total > 0;
+    final scheduledDateKeys = visibleSessions
+        .map((session) => _dateKey(session.scheduledAt))
+        .toSet();
     return SafeArea(
       bottom: false,
       child: ListView(
@@ -449,25 +480,36 @@ class _MultiPlanView extends StatelessWidget {
           SizedBox(
             key: const ValueKey('plan-category-tabs'),
             height: 36,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (
-                    var index = 0;
-                    index < dashboard.plans.length;
-                    index++
-                  ) ...[
-                    _PlanCategoryChip(
-                      plan: dashboard.plans[index],
-                      selected: dashboard.plans[index].id == selectedPlan.id,
-                      onTap: () => onSelectPlan(dashboard.plans[index].id),
+            child: Row(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (
+                          var index = 0;
+                          index < dashboard.plans.length;
+                          index++
+                        ) ...[
+                          _PlanCategoryChip(
+                            plan: dashboard.plans[index],
+                            showPlanTitle: dashboard.plans.length == 1,
+                            selected:
+                                dashboard.plans[index].id == selectedPlan.id,
+                            onTap: () =>
+                                onSelectPlan(dashboard.plans[index].id),
+                          ),
+                          if (index != dashboard.plans.length - 1)
+                            const SizedBox(width: 8),
+                        ],
+                      ],
                     ),
-                    if (index != dashboard.plans.length - 1)
-                      const SizedBox(width: 8),
-                  ],
-                ],
-              ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _PlanDetailsButton(onTap: onOpenPlanDetails),
+              ],
             ),
           ),
           const SizedBox(height: 12),
@@ -501,6 +543,7 @@ class _MultiPlanView extends StatelessWidget {
                   const SizedBox(height: 5.6),
                   _PlanWeekStrip(
                     selectedDay: selectedDay,
+                    scheduledDateKeys: scheduledDateKeys,
                     onSelectDay: onSelectDay,
                   ),
                 ],
@@ -509,37 +552,45 @@ class _MultiPlanView extends StatelessWidget {
             const SizedBox(height: 13),
           ],
           Text(
-            period == PlanPeriod.month ? 'Selected Day' : 'Today',
+            _scheduleHeading(selectedDay, today),
             style: _PlanText.sectionTitle,
           ),
           const SizedBox(height: 7.6),
           if (visibleSessions.isEmpty)
-            const _NoPlanSessionsCard(
-              key: ValueKey('plan-no-sessions-selected-day'),
+            _NoPlanSessionsCard(
+              key: const ValueKey('plan-no-sessions-selected-day'),
+              plan: selectedPlan,
+              selectedDay: selectedDay,
+              onSelectDay: onSelectDay,
             ),
           for (var index = 0; index < visibleSessions.length; index++) ...[
             _PlanSessionCard(
               key: ValueKey('plan-session-${visibleSessions[index].id}'),
               session: visibleSessions[index],
-              onStart: visibleSessions[index].status == PlanSessionStatus.next
+              today: today,
+              onStart:
+                  visibleSessions[index].status == PlanSessionStatus.next &&
+                      _sameDay(selectedDay, today)
                   ? onStartSession
                   : null,
             ),
             if (index != visibleSessions.length - 1) const SizedBox(height: 8),
           ],
           if (period == PlanPeriod.week) ...[
-            const SizedBox(height: 16),
-            const Text('This Week', style: _PlanText.sectionTitle),
-            const SizedBox(height: 7.6),
-            _WeekSummaryCard(
-              completed: completed,
-              total: total,
-              onTap: () => _showWeekDetails(
-                context,
-                plan: selectedPlan,
-                sessions: dashboard.sessionsFor(selectedPlan.id),
+            if (hasWeeklyProgress) ...[
+              const SizedBox(height: 16),
+              const Text('This Week', style: _PlanText.sectionTitle),
+              const SizedBox(height: 7.6),
+              _WeekSummaryCard(
+                completed: completed,
+                total: total,
+                onTap: () => _showWeekDetails(
+                  context,
+                  plan: selectedPlan,
+                  sessions: dashboard.sessionsFor(selectedPlan.id),
+                ),
               ),
-            ),
+            ],
             const SizedBox(height: 16),
             const SizedBox(
               key: ValueKey('plan-monthly-calendar-section'),
@@ -564,7 +615,9 @@ class _MultiPlanView extends StatelessWidget {
 class _SinglePlanView extends StatelessWidget {
   const _SinglePlanView({
     required this.dashboard,
+    required this.plan,
     required this.selectedDay,
+    required this.today,
     this.onBackToPlans,
     this.onOpenAllPlans,
     this.onSelectDay,
@@ -574,7 +627,9 @@ class _SinglePlanView extends StatelessWidget {
   });
 
   final PlanDashboard dashboard;
+  final CarePlan plan;
   final DateTime selectedDay;
+  final DateTime today;
   final VoidCallback? onBackToPlans;
   final VoidCallback? onOpenAllPlans;
   final ValueChanged<DateTime>? onSelectDay;
@@ -584,7 +639,6 @@ class _SinglePlanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final plan = dashboard.plans.single;
     final sessions = dashboard
         .sessionsFor(plan.id)
         .where((session) => _sameDay(session.scheduledAt, selectedDay))
@@ -606,20 +660,30 @@ class _SinglePlanView extends StatelessWidget {
           const SizedBox(height: 16),
           _MilestoneWeekStrip(
             selectedDay: selectedDay,
+            sessions: dashboard.sessionsFor(plan.id),
             onSelectDay: onSelectDay,
           ),
           const SizedBox(height: 18),
-          const Text("Today's Sessions", style: _PlanText.sectionTitle),
+          Text(
+            _sessionHeading(selectedDay, today),
+            style: _PlanText.sectionTitle,
+          ),
           const SizedBox(height: 5.6),
           if (sessions.isEmpty)
-            const _NoPlanSessionsCard(
-              key: ValueKey('plan-single-no-sessions-selected-day'),
+            _NoPlanSessionsCard(
+              key: const ValueKey('plan-single-no-sessions-selected-day'),
+              plan: plan,
+              selectedDay: selectedDay,
+              onSelectDay: onSelectDay,
             ),
           for (var index = 0; index < sessions.length; index++) ...[
             _SingleSessionCard(
               key: ValueKey('plan-single-session-${sessions[index].id}'),
               session: sessions[index],
-              onStart: sessions[index].status == PlanSessionStatus.next
+              today: today,
+              onStart:
+                  sessions[index].status == PlanSessionStatus.next &&
+                      _sameDay(selectedDay, today)
                   ? onStartSession
                   : null,
             ),
@@ -759,7 +823,8 @@ class _SinglePlanHeader extends StatelessWidget {
                 ),
               ),
               Positioned(
-                left: 82,
+                left: 64,
+                right: 102,
                 top: 0,
                 bottom: 0,
                 child: Center(
@@ -772,7 +837,7 @@ class _SinglePlanHeader extends StatelessWidget {
                 ),
               ),
               Positioned(
-                left: 292,
+                right: 58,
                 top: 0,
                 child: _HeaderAssetButton(
                   key: const ValueKey('plan-single-edit'),
@@ -784,7 +849,7 @@ class _SinglePlanHeader extends StatelessWidget {
                 ),
               ),
               Positioned(
-                left: 332,
+                right: 14,
                 top: 0,
                 child: _HeaderAssetButton(
                   key: const ValueKey('plan-single-all-plans'),
@@ -850,11 +915,13 @@ class _PlanWeekStrip extends StatelessWidget {
     super.key,
     required this.selectedDay,
     this.compact = false,
+    this.scheduledDateKeys = const <String>{},
     this.onSelectDay,
   });
 
   final DateTime selectedDay;
   final bool compact;
+  final Set<String> scheduledDateKeys;
   final ValueChanged<DateTime>? onSelectDay;
 
   @override
@@ -879,7 +946,9 @@ class _PlanWeekStrip extends StatelessWidget {
                   child: _PlanDay(
                     day: week[index],
                     selected: _sameDay(week[index], selectedDay),
-                    showDot: !compact,
+                    showDot:
+                        !compact &&
+                        scheduledDateKeys.contains(_dateKey(week[index])),
                     showFullWeekday: compact,
                     onTap: onSelectDay == null
                         ? null
@@ -979,10 +1048,11 @@ class _PlanDay extends StatelessWidget {
                   bottom: 0,
                   child: Center(
                     child: Container(
+                      key: ValueKey('plan-day-dot-${_dateKey(day)}'),
                       width: 6,
                       height: 6,
                       decoration: BoxDecoration(
-                        color: selected ? Colors.white : _dayDotColor(day),
+                        color: selected ? Colors.white : MomCozyV3Colors.brand,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -1329,11 +1399,13 @@ class _PlanAvatar extends StatelessWidget {
 class _PlanCategoryChip extends StatelessWidget {
   const _PlanCategoryChip({
     required this.plan,
+    required this.showPlanTitle,
     required this.selected,
     required this.onTap,
   });
 
   final CarePlan plan;
+  final bool showPlanTitle;
   final bool selected;
   final VoidCallback onTap;
 
@@ -1345,33 +1417,36 @@ class _PlanCategoryChip extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          width: switch (plan.category) {
-            PlanCategory.lactation => 84,
-            PlanCategory.yoga => 58,
-            PlanCategory.pelvicFloor => 97,
-            PlanCategory.other => null,
-          },
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? MomCozyV3Colors.brand : Colors.white,
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: plan.category == PlanCategory.yoga
-                  ? Colors.white
-                  : const Color(0xffe8dcda),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: showPlanTitle ? 190 : 110),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: showPlanTitle
+                ? null
+                : switch (plan.category) {
+                    PlanCategory.lactation => 84,
+                    PlanCategory.yoga => 58,
+                    PlanCategory.pelvicFloor => 97,
+                    PlanCategory.other => null,
+                  },
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: selected ? MomCozyV3Colors.brand : Colors.white,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: plan.category == PlanCategory.yoga
+                    ? Colors.white
+                    : const Color(0xffe8dcda),
+              ),
             ),
-          ),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
             child: Text(
-              plan.category == PlanCategory.other
+              showPlanTitle || plan.category == PlanCategory.other
                   ? plan.title
                   : plan.category.label,
               maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: selected ? Colors.white : const Color(0xff9e8880),
                 fontFamily: MomCozyTypography.interfaceFontFamily,
@@ -1380,6 +1455,55 @@ class _PlanCategoryChip extends StatelessWidget {
                 fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PlanDetailsButton extends StatelessWidget {
+  const _PlanDetailsButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Open plan details',
+      child: InkWell(
+        key: const ValueKey('plan-open-details'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 11),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: const Color(0xffe8dcda)),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Details',
+                style: TextStyle(
+                  color: MomCozyV3Colors.brand,
+                  fontFamily: MomCozyTypography.interfaceFontFamily,
+                  fontSize: 12,
+                  height: 1,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(width: 2),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 16,
+                color: MomCozyV3Colors.brand,
+              ),
+            ],
           ),
         ),
       ),
@@ -1536,10 +1660,13 @@ class _WeekArrowButton extends StatelessWidget {
             alignment: tooltip == 'Previous week'
                 ? Alignment.centerLeft
                 : Alignment.center,
-            child: SvgPicture.asset(
-              MomCozyAssets.planChevronRight,
-              width: 16,
-              height: 16,
+            child: Transform.rotate(
+              angle: tooltip == 'Previous week' ? math.pi : 0,
+              child: SvgPicture.asset(
+                MomCozyAssets.planChevronRight,
+                width: 16,
+                height: 16,
+              ),
             ),
           ),
         ),
@@ -1549,31 +1676,102 @@ class _WeekArrowButton extends StatelessWidget {
 }
 
 class _NoPlanSessionsCard extends StatelessWidget {
-  const _NoPlanSessionsCard({super.key});
+  const _NoPlanSessionsCard({
+    super.key,
+    required this.plan,
+    required this.selectedDay,
+    this.onSelectDay,
+  });
+
+  final CarePlan plan;
+  final DateTime selectedDay;
+  final ValueChanged<DateTime>? onSelectDay;
 
   @override
   Widget build(BuildContext context) {
+    final start = plan.startDate;
+    final normalizedSelected = DateTime(
+      selectedDay.year,
+      selectedDay.month,
+      selectedDay.day,
+    );
+    final normalizedStart = start == null
+        ? null
+        : DateTime(start.year, start.month, start.day);
+    final end = _planEndDate(plan);
+    final beforeStart =
+        normalizedStart != null && normalizedSelected.isBefore(normalizedStart);
+    final afterEnd = end != null && normalizedSelected.isAfter(end);
+    final status = beforeStart
+        ? 'Starts ${_monthShort(normalizedStart.month)} ${normalizedStart.day}'
+        : afterEnd
+        ? 'Ended ${_monthShort(end.month)} ${end.day}'
+        : 'No sessions scheduled for ${_monthShort(selectedDay.month)} ${selectedDay.day}.';
+    final supporting = beforeStart
+        ? 'Your first sessions will appear on the plan start date.'
+        : afterEnd
+        ? 'Choose a date within the plan to review its sessions.'
+        : null;
     return Container(
-      height: 70,
-      alignment: Alignment.center,
+      height: supporting == null ? 70 : 88,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: _flatCardDecoration(radius: 18, showBorder: true),
-      child: const Text(
-        'No sessions scheduled for this day.',
-        style: _PlanText.body,
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  status,
+                  style: supporting == null
+                      ? _PlanText.body
+                      : _PlanText.cardTitle.copyWith(fontSize: 15),
+                ),
+                if (supporting != null) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    supporting,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: _PlanText.body.copyWith(fontSize: 12),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (beforeStart && onSelectDay != null) ...[
+            const SizedBox(width: 8),
+            TextButton(
+              key: const ValueKey('plan-jump-to-start'),
+              onPressed: () => onSelectDay!(normalizedStart),
+              child: const Text('View date'),
+            ),
+          ],
+        ],
       ),
     );
   }
 }
 
 class _PlanSessionCard extends StatelessWidget {
-  const _PlanSessionCard({super.key, required this.session, this.onStart});
+  const _PlanSessionCard({
+    super.key,
+    required this.session,
+    required this.today,
+    this.onStart,
+  });
 
   final PlanSession session;
+  final DateTime today;
   final VoidCallback? onStart;
 
   @override
   Widget build(BuildContext context) {
-    final next = session.status == PlanSessionStatus.next;
+    final next =
+        session.status == PlanSessionStatus.next &&
+        _sameDay(session.scheduledAt, today);
     final muted = session.status == PlanSessionStatus.upcoming;
     return Opacity(
       opacity: muted ? 0.6 : 1,
@@ -1633,7 +1831,14 @@ class _PlanSessionCard extends StatelessWidget {
                   foreground: Color(0xff42b883),
                   background: Color(0xffebf9f4),
                 ),
-                PlanSessionStatus.next => _StartButton(onPressed: onStart),
+                PlanSessionStatus.next when next => _StartButton(
+                  onPressed: onStart,
+                ),
+                PlanSessionStatus.next => _StatusBadge(
+                  label: _pendingSessionLabel(session.scheduledAt, today),
+                  foreground: MomCozyV3Colors.brand,
+                  background: const Color(0xfff5ecea),
+                ),
                 PlanSessionStatus.upcoming => const _StatusBadge(
                   label: 'Upcoming',
                   foreground: MomCozyV3Colors.brand,
@@ -2325,19 +2530,47 @@ class _MilestoneCard extends StatelessWidget {
     final compact = MediaQuery.sizeOf(context).width < 380;
     final planDay = plan.dayNumberOn(selectedDay);
     final durationDays = plan.durationDays;
+    final start = plan.startDate;
+    final normalizedSelected = DateTime(
+      selectedDay.year,
+      selectedDay.month,
+      selectedDay.day,
+    );
+    final normalizedStart = start == null
+        ? null
+        : DateTime(start.year, start.month, start.day);
+    final end = _planEndDate(plan);
+    final beforeStart =
+        normalizedStart != null && normalizedSelected.isBefore(normalizedStart);
+    final afterEnd = end != null && normalizedSelected.isAfter(end);
     final usesDailySchedule = planDay != null && durationDays != null;
     final weekNumber = plan.weekNumber;
     final totalWeeks = plan.totalWeeks;
-    final progress = usesDailySchedule
+    final progress = beforeStart
+        ? 0.0
+        : afterEnd
+        ? 1.0
+        : usesDailySchedule
         ? planDay / math.max(1, durationDays)
         : weekNumber != null && totalWeeks != null
         ? weekNumber / math.max(1, totalWeeks)
         : 0.0;
     final sessionsPerDay = plan.sessionsPerDay;
-    final milestoneTitle = usesDailySchedule
-        ? plan.goalLabel ?? '15-Day Plan'
+    final milestoneTitle = beforeStart
+        ? plan.goalLabel ?? plan.title
+        : afterEnd
+        ? 'Plan Complete'
+        : usesDailySchedule
+        ? plan.goalLabel ?? '$durationDays-Day Plan'
         : 'Mid-Way Milestone';
-    final milestoneSummary = usesDailySchedule
+    final milestoneSummary = beforeStart
+        ? [
+            if (durationDays != null) '$durationDays-day plan',
+            if (sessionsPerDay != null) '$sessionsPerDay sessions per day',
+          ].join(' · ')
+        : afterEnd
+        ? 'This plan ended ${_monthShort(end.month)} ${end.day}.'
+        : usesDailySchedule
         ? sessionsPerDay == null
               ? plan.summary
               : '$sessionsPerDay sessions are scheduled for this plan day.'
@@ -2368,7 +2601,49 @@ class _MilestoneCard extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (usesDailySchedule)
+                      if (beforeStart) ...[
+                        const Text(
+                          'Starts',
+                          style: TextStyle(
+                            color: MomCozyV3Colors.ink,
+                            fontFamily: MomCozyTypography.interfaceFontFamily,
+                            fontSize: 12,
+                            height: 1.1,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          '${_monthShort(normalizedStart.month)} ${normalizedStart.day}',
+                          style: const TextStyle(
+                            color: MomCozyV3Colors.brand,
+                            fontFamily: MomCozyTypography.interfaceFontFamily,
+                            fontSize: 13,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ] else if (afterEnd) ...[
+                        const Text(
+                          'Ended',
+                          style: TextStyle(
+                            color: MomCozyV3Colors.ink,
+                            fontFamily: MomCozyTypography.interfaceFontFamily,
+                            fontSize: 12,
+                            height: 1.1,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          '${_monthShort(end.month)} ${end.day}',
+                          style: const TextStyle(
+                            color: MomCozyV3Colors.brand,
+                            fontFamily: MomCozyTypography.interfaceFontFamily,
+                            fontSize: 13,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ] else if (usesDailySchedule)
                         Text(
                           'Day $planDay/$durationDays',
                           style: const TextStyle(
@@ -2423,6 +2698,8 @@ class _MilestoneCard extends StatelessWidget {
                   SizedBox(height: compact ? 4 : 6),
                   Text(
                     milestoneSummary,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                     style: _PlanText.body.copyWith(
                       fontSize: compact ? 13 : 14,
                       height: 1.25,
@@ -2473,14 +2750,29 @@ class _MilestoneRingPainter extends CustomPainter {
 }
 
 class _MilestoneWeekStrip extends StatelessWidget {
-  const _MilestoneWeekStrip({required this.selectedDay, this.onSelectDay});
+  const _MilestoneWeekStrip({
+    required this.selectedDay,
+    required this.sessions,
+    this.onSelectDay,
+  });
 
   final DateTime selectedDay;
+  final List<PlanSession> sessions;
   final ValueChanged<DateTime>? onSelectDay;
 
   @override
   Widget build(BuildContext context) {
     final days = _weekDays(selectedDay);
+    bool completed(DateTime day) {
+      final daySessions = sessions.where(
+        (session) => _sameDay(session.scheduledAt, day),
+      );
+      return daySessions.isNotEmpty &&
+          daySessions.every(
+            (session) => session.status == PlanSessionStatus.completed,
+          );
+    }
+
     return Container(
       key: const ValueKey('plan-milestone-week'),
       height: 70,
@@ -2509,25 +2801,50 @@ class _MilestoneWeekStrip extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Container(
+                        key: completed(days[index])
+                            ? ValueKey(
+                                'plan-milestone-completed-${_dateKey(days[index])}',
+                              )
+                            : _sameDay(days[index], selectedDay)
+                            ? ValueKey(
+                                'plan-milestone-selected-${_dateKey(days[index])}',
+                              )
+                            : null,
                         width: 22,
                         height: 22,
                         decoration: BoxDecoration(
-                          color: index < 2
+                          color: completed(days[index])
                               ? MomCozyV3Colors.brand
+                              : _sameDay(days[index], selectedDay)
+                              ? const Color(0xfff5ecea)
                               : Colors.white,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: index < 2
+                            color:
+                                completed(days[index]) ||
+                                    _sameDay(days[index], selectedDay)
                                 ? MomCozyV3Colors.brand
                                 : const Color(0xffe7d9d5),
                             width: 2,
                           ),
                         ),
-                        child: index < 2
+                        child: completed(days[index])
                             ? const Icon(
                                 Icons.check_rounded,
                                 color: Colors.white,
                                 size: 15,
+                              )
+                            : _sameDay(days[index], selectedDay)
+                            ? const Center(
+                                child: SizedBox.square(
+                                  dimension: 6,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      color: MomCozyV3Colors.brand,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
                               )
                             : null,
                       ),
@@ -2543,15 +2860,26 @@ class _MilestoneWeekStrip extends StatelessWidget {
 }
 
 class _SingleSessionCard extends StatelessWidget {
-  const _SingleSessionCard({super.key, required this.session, this.onStart});
+  const _SingleSessionCard({
+    super.key,
+    required this.session,
+    required this.today,
+    this.onStart,
+  });
 
   final PlanSession session;
+  final DateTime today;
   final VoidCallback? onStart;
 
   @override
   Widget build(BuildContext context) {
     final completed = session.status == PlanSessionStatus.completed;
-    final next = session.status == PlanSessionStatus.next;
+    final next =
+        session.status == PlanSessionStatus.next &&
+        _sameDay(session.scheduledAt, today);
+    final pendingLabel = session.status == PlanSessionStatus.next
+        ? _pendingSessionLabel(session.scheduledAt, today)
+        : 'Upcoming';
     final iconAsset = completed
         ? MomCozyAssets.planDroplet
         : next
@@ -2609,6 +2937,8 @@ class _SingleSessionCard extends StatelessWidget {
                     children: [
                       Text(
                         session.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: next
                               ? MomCozyV3Colors.brand
@@ -2623,7 +2953,9 @@ class _SingleSessionCard extends StatelessWidget {
                             ? 'Completed'
                             : next
                             ? 'Next Up'
-                            : 'Upcoming'} · ${_time(session.scheduledAt)}',
+                            : pendingLabel} · ${_time(session.scheduledAt)}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style:
                             const TextStyle(
                               color: Color(0xff9e8880),
@@ -3099,6 +3431,41 @@ bool _sameDay(DateTime left, DateTime right) =>
     left.month == right.month &&
     left.day == right.day;
 
+DateTime? _planEndDate(CarePlan plan) {
+  final explicitEnd = plan.endDate;
+  if (explicitEnd != null) {
+    return DateTime(explicitEnd.year, explicitEnd.month, explicitEnd.day);
+  }
+  final start = plan.startDate;
+  final duration = plan.durationDays;
+  if (start == null || duration == null || duration <= 0) return null;
+  return DateTime(
+    start.year,
+    start.month,
+    start.day,
+  ).add(Duration(days: duration - 1));
+}
+
+String _scheduleHeading(DateTime selectedDay, DateTime today) =>
+    _sameDay(selectedDay, today)
+    ? 'Today'
+    : '${_weekdayLong(selectedDay.weekday)}, ${_monthShort(selectedDay.month)} ${selectedDay.day}';
+
+String _sessionHeading(DateTime selectedDay, DateTime today) =>
+    _sameDay(selectedDay, today)
+    ? "Today's Sessions"
+    : '${_weekdayLong(selectedDay.weekday)}, ${_monthShort(selectedDay.month)} ${selectedDay.day} Sessions';
+
+String _pendingSessionLabel(DateTime scheduledAt, DateTime today) {
+  final scheduledDay = DateTime(
+    scheduledAt.year,
+    scheduledAt.month,
+    scheduledAt.day,
+  );
+  final currentDay = DateTime(today.year, today.month, today.day);
+  return scheduledDay.isAfter(currentDay) ? 'Scheduled' : 'Pending';
+}
+
 String _dateKey(DateTime value) =>
     '${value.year.toString().padLeft(4, '0')}-'
     '${value.month.toString().padLeft(2, '0')}-'
@@ -3109,16 +3476,6 @@ String _weekday(int weekday) =>
 
 String _weekdayLong(int weekday) =>
     const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][weekday - 1];
-
-Color _dayDotColor(DateTime day) => const [
-  Color(0xff8a233f),
-  Color(0xff7d65d6),
-  Color(0xff40b985),
-  Color(0xff8066ef),
-  Color(0xff8a233f),
-  Color(0xff40b985),
-  Color(0xff8a233f),
-][day.weekday - 1];
 
 String _monthShort(int month) => const [
   'Jan',

@@ -116,15 +116,14 @@ class PlanApiRepository
           ..sort(
             (left, right) => left.scheduledAt.compareTo(right.scheduledAt),
           );
-    var markedNext = false;
+    final plansWithNextSession = <String>{};
     final sessions = <PlanSession>[];
     for (final session in rawSessions) {
       final status = session.completed
           ? PlanSessionStatus.completed
-          : !markedNext
+          : plansWithNextSession.add(session.planId)
           ? PlanSessionStatus.next
           : PlanSessionStatus.upcoming;
-      if (status == PlanSessionStatus.next) markedNext = true;
       sessions.add(
         PlanSession(
           id: session.id,
@@ -137,17 +136,10 @@ class PlanApiRepository
       );
     }
 
-    final primaryPayload = _items(
-      planResponse,
-      endpoint: planListEndpoint,
-    ).firstOrNull?['payload'];
-    final metrics = _objectMap(primaryPayload);
     return PlanDashboard(
       weekOf: selectedDay,
       plans: plans,
       sessions: List<PlanSession>.unmodifiable(sessions),
-      weeklyCompletedSessions: _integer(metrics['weekly_completed_sessions']),
-      weeklyTotalSessions: _integer(metrics['weekly_total_sessions']),
     );
   }
 
@@ -233,6 +225,10 @@ CarePlan _carePlan(Map<String, Object?> data) {
       payload['weekly_target_volume_ml'],
     ),
     weeklyVolumeMl: _optionalNonNegativeInt(payload['weekly_volume_ml']),
+    weeklyCompletedSessions: _optionalNonNegativeInt(
+      payload['weekly_completed_sessions'],
+    ),
+    weeklyTotalSessions: _optionalPositiveInt(payload['weekly_total_sessions']),
     startDate: _optionalApiDate(payload['start_date']),
     endDate: _optionalApiDate(payload['end_date']),
     durationDays: _optionalPositiveInt(payload['duration_days']),
