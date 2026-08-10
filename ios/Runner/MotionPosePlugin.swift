@@ -204,7 +204,10 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
   func view() -> UIView { container }
 
   func start() {
-    guard !running else { return }
+    guard !running else {
+      if session.isRunning { emitModelReady() }
+      return
+    }
     running = true
     cameraQueue.async { [weak self] in
       guard let self, self.running else { return }
@@ -214,6 +217,7 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
           self.configured = true
         }
         if !self.session.isRunning { self.session.startRunning() }
+        self.emitModelReady()
       } catch {
         self.running = false
         self.plugin?.emitError(
@@ -306,6 +310,7 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
       let rawWidth = pixelBuffer.map { CVPixelBufferGetWidth($0) } ?? 1
       let rawHeight = pixelBuffer.map { CVPixelBufferGetHeight($0) } ?? 1
       plugin?.emit([
+        "event": "observation",
         "timestamp_ms": timestamp,
         "inference_ms": inference,
         "input_width": rawHeight,
@@ -382,6 +387,13 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
       "body_scale": Double(max(maxX - minX, maxY - minY)),
       "landmarks": landmarks,
     ]
+  }
+
+  private func emitModelReady() {
+    plugin?.emit([
+      "event": "model_ready",
+      "engine": "apple_vision_body_pose",
+    ])
   }
 
   deinit { stop() }

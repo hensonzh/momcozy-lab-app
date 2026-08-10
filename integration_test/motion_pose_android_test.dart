@@ -21,7 +21,7 @@ void main() {
       final platform = NativeMotionPosePlatform();
       final observations = <MotionPoseObservation>[];
       final observationBatch = Completer<List<MotionPoseObservation>>();
-      final requiredObservationCount = requireDetectedPerson ? 3 : 1;
+      const requiredObservationCount = 3;
       final latestObservation = ValueNotifier<MotionPoseObservation?>(null);
       final subscription = platform.observations.listen(
         (observation) {
@@ -89,13 +89,13 @@ void main() {
       expect(observation.inputWidth, greaterThan(0));
       expect(observation.inputHeight, greaterThan(0));
       expect(observation.inferenceTime, greaterThanOrEqualTo(Duration.zero));
+      expect(captured.map((frame) => frame.timestamp).toSet(), hasLength(3));
       if (requireDetectedPerson) {
         expect(observation.poses, isNotEmpty);
         expect(
           observation.poses.first.landmarks,
           hasLength(MotionPoseLandmarkType.values.length),
         );
-        expect(captured.map((frame) => frame.timestamp).toSet(), hasLength(3));
         final overlay = tester.widget<MotionPoseOverlay>(
           find.byType(MotionPoseOverlay),
         );

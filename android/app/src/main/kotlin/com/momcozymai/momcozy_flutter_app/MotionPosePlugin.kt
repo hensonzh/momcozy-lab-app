@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -20,6 +21,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.tasks.core.BaseOptions
@@ -154,14 +156,25 @@ class MotionPosePlugin(
         mainHandler.post { eventSink?.success(value) }
     }
 
-    private fun emitError(code: String, message: String) {
-        Log.e(TAG, "$code: $message")
-        mainHandler.post { eventSink?.error(code, message, null) }
+    private fun emitError(code: String, message: String, cause: Throwable? = null) {
+        val details = mapOf(
+            "exception" to (cause?.javaClass?.name ?: "unknown"),
+            "build" to currentVersionCode(),
+            "abis" to Build.SUPPORTED_ABIS.toList(),
+        )
+        Log.e(TAG, "$code: $message", cause)
+        mainHandler.post { eventSink?.error(code, message, details) }
     }
 
     private fun hasCameraPermission(): Boolean = CAMERA_PERMISSIONS.all { permission ->
         ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
     }
+
+    @Suppress("DEPRECATION")
+    private fun currentVersionCode(): Long = runCatching {
+        val packageInfo = activity.packageManager.getPackageInfo(activity.packageName, 0)
+        PackageInfoCompat.getLongVersionCode(packageInfo)
+    }.getOrDefault(-1L)
 
     companion object {
         const val CONTROL_CHANNEL = "com.momcozymai.motion_pose/control"
@@ -180,7 +193,7 @@ private class MotionPosePlatformView(
     private val activity: Activity,
     private val useFrontCamera: Boolean,
     private val emit: (Map<String, Any>) -> Unit,
-    private val emitError: (String, String) -> Unit,
+    private val emitError: (String, String, Throwable?) -> Unit,
     private val onDisposed: (MotionPosePlatformView) -> Unit,
 ) : PlatformView {
     private val previewView = PreviewView(context).apply {
@@ -207,7 +220,11 @@ private class MotionPosePlatformView(
     override fun getView(): View = previewView
 
     fun start() {
-        if (started || disposed) return
+        if (disposed) return
+        if (started) {
+            if (poseLandmarker != null) emitModelReady()
+            return
+        }
         started = true
         val providerFuture = ProcessCameraProvider.getInstance(previewView.context)
         providerFuture.addListener(
@@ -219,7 +236,12 @@ private class MotionPosePlatformView(
                     bindPreview(provider)
                     initializePoseAnalysis(provider)
                 } catch (error: Exception) {
-                    emitError("camera_start_failed", error.message ?: "Camera failed to start")
+                    started = false
+                    emitError(
+                        "camera_start_failed",
+                        error.message ?: "Camera failed to start",
+                        error,
+                    )
                 }
             },
             ContextCompat.getMainExecutor(previewView.context),
@@ -241,9 +263,11 @@ private class MotionPosePlatformView(
                 createPoseLandmarker(previewView.context)
             } catch (error: RuntimeException) {
                 if (started && !disposed) {
+                    started = false
                     emitError(
                         "pose_model_initialization_failed",
                         error.message ?: "MediaPipe failed to initialize",
+                        error,
                     )
                 }
                 return@analysis
@@ -256,8 +280,16 @@ private class MotionPosePlatformView(
                 poseLandmarker = landmarker
                 try {
                     bindCamera(provider)
+                    emitModelReady()
                 } catch (error: Exception) {
-                    emitError("camera_start_failed", error.message ?: "Camera analysis failed to start")
+                    started = false
+                    poseLandmarker?.close()
+                    poseLandmarker = null
+                    emitError(
+                        "camera_start_failed",
+                        error.message ?: "Camera analysis failed to start",
+                        error,
+                    )
                 }
             }
         }
@@ -330,6 +362,7 @@ private class MotionPosePlatformView(
                 emitError(
                     "pose_inference_failed",
                     error.message ?: "MediaPipe pose inference failed",
+                    error,
                 )
             }
         }
@@ -376,6 +409,7 @@ private class MotionPosePlatformView(
                     emitError(
                         "pose_inference_failed",
                         error.message ?: "MediaPipe pose inference failed",
+                        error,
                     )
                 }
             }
@@ -414,6 +448,7 @@ private class MotionPosePlatformView(
             }
             emit(
                 mapOf(
+                    "event" to "observation",
                     "timestamp_ms" to result.timestampMs(),
                     "inference_ms" to (SystemClock.uptimeMillis() - result.timestampMs()).coerceAtLeast(0),
                     "input_width" to input.width,
@@ -429,8 +464,16 @@ private class MotionPosePlatformView(
 
     private fun displayX(value: Float): Float = if (useFrontCamera) 1f - value else value
 
+    private fun emitModelReady() {
+        emit(
+            mapOf(
+                "event" to "model_ready",
+                "engine" to "mediapipe_pose_landmarker",
+            ),
+        )
+    }
+
     fun stop() {
-        if (!started) return
         started = false
         cameraProvider?.unbindAll()
         cameraProvider = null

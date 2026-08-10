@@ -188,7 +188,17 @@ void main() {
     'surfaces a native pose model startup failure with a useful cause',
     () async {
       final repository = _FakeRepository(immediateSession: _session());
-      final pose = _FakePosePlatform();
+      final pose = _FakePosePlatform(
+        startError: PlatformException(
+          code: 'pose_model_initialization_failed',
+          message: 'Unable to open pose model asset',
+          details: const {
+            'exception': 'java.lang.RuntimeException',
+            'build': 42,
+            'abis': ['arm64-v8a'],
+          },
+        ),
+      );
       final controller = MotionAssessmentController(
         target: 'forward_head',
         locale: 'zh-CN',
@@ -198,21 +208,46 @@ void main() {
       );
 
       await controller.start();
-      pose.emitError(
-        PlatformException(
-          code: 'pose_model_initialization_failed',
-          message: 'Unable to open pose model asset',
-        ),
-      );
-      await _flush();
 
       expect(controller.phase, MotionAssessmentPagePhase.failed);
       expect(controller.errorMessage, contains('姿态模型加载失败'));
       expect(controller.errorMessage, isNot(contains('网络')));
+      expect(controller.poseDiagnosticMessage, contains('Unable to open'));
+      expect(controller.poseDiagnosticMessage, contains('RuntimeException'));
+      expect(controller.poseDiagnosticMessage, contains('build 42'));
+      expect(repository.createCalls, 0);
+      expect(pose.stopCalls, 1);
 
       await controller.finish();
     },
   );
+
+  test('stops the local camera when native pose inference fails', () async {
+    final repository = _FakeRepository(immediateSession: _session());
+    final pose = _FakePosePlatform();
+    final controller = MotionAssessmentController(
+      target: 'forward_head',
+      locale: 'zh-CN',
+      repository: repository,
+      posePlatform: pose,
+      voice: _FakeVoice(),
+    );
+
+    await controller.start();
+    pose.emitError(
+      PlatformException(
+        code: 'pose_inference_failed',
+        message: 'MediaPipe execution failed',
+      ),
+    );
+    await _flush();
+
+    expect(controller.phase, MotionAssessmentPagePhase.failed);
+    expect(controller.errorMessage, contains('姿态识别运行异常'));
+    expect(pose.stopCalls, 1);
+
+    await controller.finish();
+  });
 
   test(
     'links the source artifact and preserves rich completion evidence',
@@ -439,9 +474,10 @@ class _FakeRepository implements MotionAssessmentRepository {
 }
 
 class _FakePosePlatform implements MotionPosePlatform {
-  _FakePosePlatform({this.startCompleter});
+  _FakePosePlatform({this.startCompleter, this.startError});
 
   final Completer<void>? startCompleter;
+  final Object? startError;
   final _observations = StreamController<MotionPoseObservation>.broadcast();
   int startCalls = 0;
   int stopCalls = 0;
@@ -459,6 +495,8 @@ class _FakePosePlatform implements MotionPosePlatform {
   @override
   Future<void> start() {
     startCalls += 1;
+    final error = startError;
+    if (error != null) return Future.error(error);
     return startCompleter?.future ?? Future.value();
   }
 
