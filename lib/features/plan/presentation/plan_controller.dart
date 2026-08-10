@@ -3,7 +3,7 @@ import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 
 enum PlanLoadPhase { loading, empty, success, error }
 
-enum PlanPeriod { day, week, month }
+enum PlanPeriod { day, month }
 
 enum PlanSurface { overview, detail }
 
@@ -15,7 +15,7 @@ class PlanViewState {
     this.dashboard,
     this.selectedPlanId,
     this.errorMessage,
-    this.period = PlanPeriod.week,
+    this.period = PlanPeriod.day,
     this.surface = PlanSurface.overview,
   });
 
