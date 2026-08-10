@@ -13,6 +13,7 @@ enum MotionQualityPhase {
 }
 
 enum MotionGuidanceDirective {
+  enterFrame,
   adjustFraming,
   singlePersonReady,
   askOthersToLeave,
@@ -63,6 +64,7 @@ class MotionQualityGate {
   bool _multiplePromptEmitted = false;
   bool _targetChangedPromptEmitted = false;
   bool _framingPromptEmitted = false;
+  bool _enterFramePromptEmitted = false;
   bool _recalibrationRequested = false;
 
   MotionQualityDecision evaluate(MotionPoseObservation observation) {
@@ -102,8 +104,14 @@ class MotionQualityGate {
       } else {
         _phase = MotionQualityPhase.reacquiring;
       }
-      return _decision(_phase);
+      final directive = _enterFramePromptEmitted
+          ? null
+          : MotionGuidanceDirective.enterFrame;
+      _enterFramePromptEmitted = true;
+      return _decision(_phase, directive: directive);
     }
+
+    _enterFramePromptEmitted = false;
 
     final candidate = poses.single;
     if (!_hasCompleteBody(candidate)) {
@@ -116,6 +124,7 @@ class MotionQualityGate {
       return _decision(_phase, directive: directive);
     }
     _framingPromptEmitted = false;
+    _enterFramePromptEmitted = false;
 
     if (_target != null && !_matchesTarget(candidate, _target!)) {
       _phase = MotionQualityPhase.targetChanged;

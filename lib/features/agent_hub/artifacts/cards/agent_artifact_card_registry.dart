@@ -100,6 +100,7 @@ class _ArtifactCardSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final hasSubtitle = subtitle?.trim().isNotEmpty ?? false;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: const Color(0xfffffdfc),
@@ -119,7 +120,9 @@ class _ArtifactCardSurface extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: hasSubtitle
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
               children: [
                 DecoratedBox(
                   decoration: BoxDecoration(
@@ -144,7 +147,7 @@ class _ArtifactCardSurface extends StatelessWidget {
                           height: 1.2,
                         ),
                       ),
-                      if (subtitle?.trim().isNotEmpty ?? false) ...[
+                      if (hasSubtitle) ...[
                         const SizedBox(height: 4),
                         Text(
                           subtitle!,
