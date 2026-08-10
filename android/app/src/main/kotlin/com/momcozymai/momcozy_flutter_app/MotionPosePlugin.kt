@@ -35,6 +35,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 import io.flutter.plugin.common.StandardMessageCodec
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -100,6 +101,18 @@ class MotionPosePlugin(
                 startRequested = false
                 currentView?.stop()
                 result.success(null)
+            }
+            "captureKeyFrame" -> {
+                val view = currentView
+                if (!startRequested || view == null) {
+                    result.error(
+                        "key_frame_unavailable",
+                        "Motion camera is not running",
+                        null,
+                    )
+                    return
+                }
+                view.captureKeyFrame(call.arguments, result)
             }
             else -> result.notImplemented()
         }
@@ -209,6 +222,9 @@ private class MotionPosePlatformView(
     @Volatile
     private var disposed = false
     private var lastSubmittedAtMs = 0L
+    private val keyFrameLock = Any()
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private var pendingKeyFrame: PendingKeyFrame? = null
 
     private val cameraSelector: CameraSelector
         get() = if (useFrontCamera) {
@@ -348,6 +364,7 @@ private class MotionPosePlatformView(
             true,
         )
         if (rotated !== bitmap) bitmap.recycle()
+        fulfillPendingKeyFrame(rotated)
         val input = BitmapImageBuilder(rotated).build()
         val landmarker = poseLandmarker
         if (landmarker == null) {
@@ -464,6 +481,137 @@ private class MotionPosePlatformView(
 
     private fun displayX(value: Float): Float = if (useFrontCamera) 1f - value else value
 
+    fun captureKeyFrame(arguments: Any?, result: MethodChannel.Result) {
+        if (!started || disposed) {
+            result.error("key_frame_unavailable", "Motion camera is not running", null)
+            return
+        }
+        val values = arguments as? Map<*, *>
+        val options = KeyFrameOptions(
+            maxWidth = ((values?.get("max_width") as? Number)?.toInt() ?: 448)
+                .coerceIn(160, 720),
+            jpegQuality = ((values?.get("jpeg_quality") as? Number)?.toInt() ?: 60)
+                .coerceIn(30, 85),
+            maxBytes = ((values?.get("max_bytes") as? Number)?.toInt() ?: 122_880)
+                .coerceIn(16_384, 245_760),
+        )
+        val request = PendingKeyFrame(
+            id = "frame-${SystemClock.elapsedRealtimeNanos()}",
+            options = options,
+            result = result,
+        )
+        synchronized(keyFrameLock) {
+            if (pendingKeyFrame != null) {
+                result.error(
+                    "key_frame_request_active",
+                    "A key frame request is already active",
+                    null,
+                )
+                return
+            }
+            pendingKeyFrame = request
+        }
+        mainHandler.postDelayed(
+            { failPendingKeyFrame(request.id, "key_frame_timeout", "No camera frame was available in time") },
+            KEY_FRAME_TIMEOUT_MS,
+        )
+    }
+
+    private fun fulfillPendingKeyFrame(source: Bitmap) {
+        val request = synchronized(keyFrameLock) {
+            pendingKeyFrame.also { pendingKeyFrame = null }
+        } ?: return
+        try {
+            val displayed = if (useFrontCamera) {
+                val mirror = Matrix().apply {
+                    setScale(-1f, 1f)
+                    postTranslate(source.width.toFloat(), 0f)
+                }
+                Bitmap.createBitmap(
+                    source.width,
+                    source.height,
+                    Bitmap.Config.ARGB_8888,
+                ).also { target ->
+                    android.graphics.Canvas(target).drawBitmap(source, mirror, null)
+                }
+            } else {
+                source
+            }
+            val encoded = try {
+                encodeBoundedJpeg(displayed, request.options)
+            } finally {
+                if (displayed !== source) displayed.recycle()
+            }
+            mainHandler.post {
+                request.result.success(
+                    mapOf(
+                        "id" to request.id,
+                        "bytes" to encoded.bytes,
+                        "mime_type" to "image/jpeg",
+                        "captured_at_ms" to System.currentTimeMillis(),
+                        "width" to encoded.width,
+                        "height" to encoded.height,
+                    ),
+                )
+            }
+        } catch (error: Exception) {
+            mainHandler.post {
+                request.result.error(
+                    "key_frame_encoding_failed",
+                    error.message ?: "Key frame encoding failed",
+                    null,
+                )
+            }
+        }
+    }
+
+    private fun encodeBoundedJpeg(source: Bitmap, options: KeyFrameOptions): EncodedKeyFrame {
+        var width = minOf(source.width, options.maxWidth)
+        var height = (source.height.toDouble() * width / source.width)
+            .toInt()
+            .coerceAtLeast(1)
+        var scaled = if (width == source.width) {
+            source
+        } else {
+            Bitmap.createScaledBitmap(source, width, height, true)
+        }
+        try {
+            var quality = options.jpegQuality
+            repeat(8) {
+                val output = ByteArrayOutputStream()
+                scaled.compress(Bitmap.CompressFormat.JPEG, quality, output)
+                val bytes = output.toByteArray()
+                if (bytes.size <= options.maxBytes) {
+                    return EncodedKeyFrame(bytes, scaled.width, scaled.height)
+                }
+                if (quality > 30) {
+                    quality = (quality - 10).coerceAtLeast(30)
+                } else {
+                    width = (scaled.width * 0.82).toInt().coerceAtLeast(160)
+                    height = (scaled.height.toDouble() * width / scaled.width)
+                        .toInt()
+                        .coerceAtLeast(1)
+                    if (width == scaled.width) return@repeat
+                    val smaller = Bitmap.createScaledBitmap(scaled, width, height, true)
+                    if (scaled !== source) scaled.recycle()
+                    scaled = smaller
+                }
+            }
+            throw IllegalStateException("Key frame exceeds the configured byte limit")
+        } finally {
+            if (scaled !== source) scaled.recycle()
+        }
+    }
+
+    private fun failPendingKeyFrame(id: String?, code: String, message: String) {
+        val request = synchronized(keyFrameLock) {
+            val current = pendingKeyFrame
+            if (current == null || (id != null && current.id != id)) null
+            else current.also { pendingKeyFrame = null }
+        } ?: return
+        mainHandler.post { request.result.error(code, message, null) }
+    }
+
     private fun emitModelReady() {
         emit(
             mapOf(
@@ -475,6 +623,7 @@ private class MotionPosePlatformView(
 
     fun stop() {
         started = false
+        failPendingKeyFrame(null, "key_frame_cancelled", "Motion camera stopped")
         cameraProvider?.unbindAll()
         cameraProvider = null
         poseLandmarker?.close()
@@ -491,5 +640,24 @@ private class MotionPosePlatformView(
 
     companion object {
         private const val FRAME_INTERVAL_MS = 66L
+        private const val KEY_FRAME_TIMEOUT_MS = 1_200L
     }
+
+    private data class KeyFrameOptions(
+        val maxWidth: Int,
+        val jpegQuality: Int,
+        val maxBytes: Int,
+    )
+
+    private data class PendingKeyFrame(
+        val id: String,
+        val options: KeyFrameOptions,
+        val result: MethodChannel.Result,
+    )
+
+    private data class EncodedKeyFrame(
+        val bytes: ByteArray,
+        val width: Int,
+        val height: Int,
+    )
 }

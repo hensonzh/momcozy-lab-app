@@ -6,8 +6,12 @@ class MotionAssessmentSession {
     required this.poseEngine,
     required this.videoUploadEnabled,
     required this.landmarkUploadEnabled,
+    this.keyFrameUploadEnabled = false,
     required this.pauseReason,
     required this.resultSummary,
+    this.requestedTargets = const [],
+    this.planRevision = 0,
+    this.planConfirmed = false,
   });
 
   factory MotionAssessmentSession.fromJson(Map<String, Object?> json) {
@@ -25,8 +29,19 @@ class MotionAssessmentSession {
           json['pose_engine']?.toString() ?? 'mediapipe_pose_landmarker',
       videoUploadEnabled: privacy['video_upload_enabled'] == true,
       landmarkUploadEnabled: privacy['landmark_upload_enabled'] == true,
+      keyFrameUploadEnabled: privacy['keyframe_upload_enabled'] == true,
       pauseReason: json['pause_reason']?.toString() ?? '',
       resultSummary: Map<String, Object?>.unmodifiable(result),
+      requestedTargets: List<String>.unmodifiable(
+        (json['requested_targets'] is List
+                ? json['requested_targets']! as List
+                : const [])
+            .map((item) => item.toString()),
+      ),
+      planRevision: json['plan_revision'] is int
+          ? json['plan_revision']! as int
+          : 0,
+      planConfirmed: json['plan_confirmed'] == true,
     );
   }
 
@@ -36,6 +51,10 @@ class MotionAssessmentSession {
   final String poseEngine;
   final bool videoUploadEnabled;
   final bool landmarkUploadEnabled;
+  final bool keyFrameUploadEnabled;
   final String pauseReason;
   final Map<String, Object?> resultSummary;
+  final List<String> requestedTargets;
+  final int planRevision;
+  final bool planConfirmed;
 }

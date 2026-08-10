@@ -40,7 +40,7 @@ void main() {
     );
 
     final json = snapshot.toJson();
-    expect(json['schema_version'], 'motion_assessment.context.v3');
+    expect(json['schema_version'], 'motion_assessment.context.v4');
     final framing = json['framing']! as Map;
     expect(framing['assessment_region_visible'], isTrue);
     expect(framing['required_regions'], ['head', 'shoulders', 'hips']);
@@ -50,5 +50,27 @@ void main() {
     expect(snapshot.toRealtimeInstructions(), contains('本地质量门是权威来源'));
     expect(json.toString(), isNot(contains('landmarks')));
     expect(json.toString(), isNot(contains('video')));
+  });
+
+  test('selection context carries the current voice plan revision', () {
+    final snapshot = MotionAssessmentContextSnapshot.selection(
+      assessmentId: 'assessment-1',
+      sequence: 2,
+      selectedTargets: const ['forward_head', 'trunk_lateral_lean'],
+      planRevision: 3,
+      planConfirmed: false,
+    );
+
+    final json = snapshot.toJson();
+    expect((json['assessment']! as Map)['phase'], 'selecting_assessments');
+    expect(json['plan'], {
+      'selected_targets': ['forward_head', 'trunk_lateral_lean'],
+      'revision': 3,
+      'confirmed': false,
+    });
+    expect(
+      snapshot.toRealtimeInstructions(),
+      contains('可以根据用户刚才的明确语音调用 motion_assessment_plan'),
+    );
   });
 }

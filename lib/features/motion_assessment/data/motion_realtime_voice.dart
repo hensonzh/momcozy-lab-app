@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realt
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_response_queue.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_session_gate.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_voice_signaling.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_visual_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_event.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_voice_command.dart';
@@ -51,6 +52,7 @@ abstract interface class MotionRealtimeVoiceClient implements Listenable {
     MotionVoiceCommand command, {
     required bool accepted,
     required String message,
+    Map<String, Object?> details = const {},
     bool speakResult = true,
   });
   Future<void> close();
@@ -62,10 +64,12 @@ class MotionRealtimeVoice extends ChangeNotifier
   MotionRealtimeVoice({
     required this.signaling,
     MotionRealtimeAudioSession? audioSession,
+    this.visualContextCoordinator,
   }) : audioSession = audioSession ?? WebRtcMotionRealtimeAudioSession();
 
   final MotionVoiceSignaling signaling;
   final MotionRealtimeAudioSession audioSession;
+  final MotionVisualContextCoordinator? visualContextCoordinator;
 
   MotionRealtimeVoicePhase _phase = MotionRealtimeVoicePhase.idle;
   RTCPeerConnection? _peerConnection;
@@ -80,7 +84,11 @@ class MotionRealtimeVoice extends ChangeNotifier
       StreamController<MotionVoiceCommand>.broadcast();
   final Set<String> _handledCommandCallIds = {};
   final Set<String> _handledUserAudioItemIds = {};
+  final Set<String> _handledVisualCallIds = {};
+  final Set<String> _visualRequestTurnIds = {};
+  final Set<String> _visualClientEventIds = {};
   final MotionAssessmentEventGate _eventGate = MotionAssessmentEventGate();
+  Future<void> _inputOperations = Future<void>.value();
   MotionAssessmentContextSnapshot? _latestAssessmentContext;
   DateTime? _latestAssessmentContextReceivedAt;
   MotionAssessmentEventFactory? _eventFactory;
@@ -97,6 +105,7 @@ class MotionRealtimeVoice extends ChangeNotifier
   Completer<void>? _playbackStarted;
   Completer<void>? _playbackCompleted;
   String? _protectedPlaybackEventType;
+  int _visualEventSequence = 0;
 
   @override
   MotionRealtimeVoicePhase get phase => _phase;
@@ -133,6 +142,7 @@ class MotionRealtimeVoice extends ChangeNotifier
       if (_disposed || _closed) return;
     }
     final generation = ++_connectionGeneration;
+    visualContextCoordinator?.setServerCapability(false);
     _eventFactory = MotionAssessmentEventFactory(assessmentId: assessmentId);
     _failureCode = null;
     _setPhase(MotionRealtimeVoicePhase.requestingPermission);
@@ -242,6 +252,9 @@ class MotionRealtimeVoice extends ChangeNotifier
       );
       if (!_isActive(generation)) return;
       _providerName = answer.provider;
+      visualContextCoordinator?.setServerCapability(
+        answer.visualContextEnabled,
+      );
       await peer.setRemoteDescription(
         RTCSessionDescription(answer.answerSdp, 'answer'),
       );
@@ -363,6 +376,20 @@ class MotionRealtimeVoice extends ChangeNotifier
   Future<bool> _publishClientEvent(
     String eventType,
     Map<String, Object?> payload,
+  ) {
+    final normalizedType = eventType.trim();
+    if (normalizedType.startsWith('safety_') ||
+        normalizedType == 'multiple_people') {
+      return _publishClientEventInOrder(normalizedType, payload);
+    }
+    return _serializeInput(
+      () => _publishClientEventInOrder(normalizedType, payload),
+    );
+  }
+
+  Future<bool> _publishClientEventInOrder(
+    String eventType,
+    Map<String, Object?> payload,
   ) async {
     if (!isConnected) return false;
     final channel = _dataChannel;
@@ -396,20 +423,33 @@ class MotionRealtimeVoice extends ChangeNotifier
     );
     final content = jsonEncode(event);
     try {
-      await channel!.send(
-        RTCDataChannelMessage(
-          jsonEncode({
-            'type': 'conversation.item.create',
-            'item': {
-              'type': 'message',
-              'role': 'user',
-              'content': [
-                {'type': 'input_text', 'text': '[客户端姿态事件]$content'},
-              ],
-            },
-          }),
-        ),
-      );
+      await _sendRealtimeEvent({
+        'event_id': 'motion-semantic-${event['event_id']}',
+        'type': 'conversation.item.create',
+        'item': {
+          'type': 'message',
+          'role': 'user',
+          'content': [
+            {'type': 'input_text', 'text': '[客户端姿态事件]$content'},
+          ],
+        },
+      });
+      final coordinator = visualContextCoordinator;
+      final semanticEventId = event['event_id']?.toString() ?? '';
+      if (coordinator != null && semanticEventId.isNotEmpty) {
+        final visual = await coordinator.captureForEvent(
+          eventType: normalizedType,
+          eventId: semanticEventId,
+          context: context,
+          contextAgeMs: _latestContextAgeMs(),
+        );
+        if (visual != null) {
+          await _trySendVisualContext(
+            assessmentId: factory.assessmentId,
+            visual: visual,
+          );
+        }
+      }
       return true;
     } catch (_) {
       _scheduleTerminalFailure(_connectionGeneration);
@@ -422,6 +462,7 @@ class MotionRealtimeVoice extends ChangeNotifier
     MotionVoiceCommand command, {
     required bool accepted,
     required String message,
+    Map<String, Object?> details = const {},
     bool speakResult = true,
   }) async {
     if (!isConnected) return;
@@ -435,7 +476,11 @@ class MotionRealtimeVoice extends ChangeNotifier
             'item': {
               'type': 'function_call_output',
               'call_id': command.callId,
-              'output': jsonEncode({'accepted': accepted, 'message': message}),
+              'output': jsonEncode({
+                'accepted': accepted,
+                'message': message,
+                ...details,
+              }),
             },
           }),
         ),
@@ -448,6 +493,9 @@ class MotionRealtimeVoice extends ChangeNotifier
 
   String _guidanceTurnInstructions(String eventType) {
     return switch (eventType) {
+      'assessment_started' =>
+        '这是通用体态评估的新会话。先自然介绍当前开放的三个项目：头前伸倾向、高低肩倾向、躯干侧倾；'
+            '说明可以选择一个或多个，然后明确询问用户想评估哪些项目。此时不要引导站位，也不要自行选择。',
       'capture_countdown' =>
         '端侧已确认当前画面可以开始采样。只用一句短句让用户站稳，然后清楚地说“三、二、一，开始”。'
             '必须说完倒计时，不要添加其他动作或结果。',
@@ -455,12 +503,25 @@ class MotionRealtimeVoice extends ChangeNotifier
         '端侧确认用户仍是上一段的方向。请亲切地说明需要转到另一侧，站稳并目视前方；'
             '不要声称第二段已完成。',
       'assessment_review_ready' =>
-        '客户端已完成两段采集与质量复核。请用一句自然中文说明采集已完成，并明确询问用户：'
+        '客户端已完成计划内全部采集与质量复核。请用一句自然中文说明采集已完成，并明确询问用户：'
             '“你想结束本次评估，还是继续评估？”说完后等待用户新的语音回复，不要自行结束。',
+      'assessment_plan_updated' =>
+        '客户端已更新用户选择。请只依据事件里的 selected_targets 和 plan_revision，'
+            '用自然中文简短复述当前选择，并询问是否确认；不要开始站位指导。',
+      'assessment_plan_confirmed' =>
+        '客户端已持久化并确认评估项目。请简短说明接下来第一个取景方向，再开始引导用户站位；'
+            '不要朗读内部 target。',
+      'front_view_required' =>
+        '下一个项目需要正面稳定画面。请清楚引导用户自然正对镜头、双肩放松并站稳；'
+            '不要让用户猜下一步，也不要要求腿脚完整入镜。',
       'change_orientation' =>
         '第一段已完成。请自然、亲切地引导用户缓慢转换到另一个侧身方向，站稳并目视前方；一次只说一个动作。',
+      'assessment_continued' =>
+        '用户已明确选择继续评估。请依据事件里的 first_required_view 立即说明第一个站位方向，'
+            '并请用户站稳；不要只说“继续评估”，也不要让用户等待下一条指令。',
       'assessment_finalizing' =>
-        '用户已通过新的语音回复确认结束。请简短告知结果正在保存，稍后由主智能体反馈；不要自行诊断。',
+        '用户已通过新的语音回复确认结束。请以 CozyMate 的同一身份简短告知：'
+            '结果正在保存，保存完成后我会继续为你解读。不要提及内部模型、角色切换或结果交接，不要自行诊断。',
       'command_rejected' => '客户端拒绝了不符合当前状态或语音轮次的命令。请依据最新事件继续当前步骤，不要声称评估已结束。',
       _ =>
         '最新客户端语义事件为 $eventType。请只依据刚收到的 motion_assessment.event.v4 facts，'
@@ -472,6 +533,8 @@ class MotionRealtimeVoice extends ChangeNotifier
   String? _guidanceCoalesceKey(String eventType) {
     return switch (eventType) {
       'assessment_started' ||
+      'assessment_plan_updated' ||
+      'assessment_plan_confirmed' ||
       'assessment_review_ready' ||
       'assessment_finalizing' ||
       'safety_stop' => null,
@@ -486,6 +549,7 @@ class MotionRealtimeVoice extends ChangeNotifier
       'multiple_people',
       'target_changed',
       'side_view_required',
+      'front_view_required',
       'capture_countdown',
       'change_orientation',
       'opposite_side_required',
@@ -505,6 +569,7 @@ class MotionRealtimeVoice extends ChangeNotifier
       if (decoded is! Map) return;
       final event = Map<Object?, Object?>.from(decoded);
       final type = decoded['type']?.toString() ?? '';
+      final isVisualError = type == 'error' && _isVisualContextError(event);
       sessionGate.handleServerEvent(event);
       unawaited(_handleResponseQueueEvent(event, generation));
       if (type == 'input_audio_buffer.speech_started' &&
@@ -540,8 +605,23 @@ class MotionRealtimeVoice extends ChangeNotifier
         case null:
           break;
       }
-      if (type == 'error') {
+      if (type == 'error' && !isVisualError) {
         _scheduleTerminalFailure(generation);
+      }
+      for (final request in motionVisualSnapshotRequestsFromServerEvent(
+        event,
+      )) {
+        if (_handledVisualCallIds.add(request.callId)) {
+          unawaited(
+            _handleVisualSnapshotRequest(
+              request: request,
+              generation: generation,
+              userAudioItemId:
+                  _responseQueue?.activeContextId ??
+                  _latestCompletedUserAudioItemId,
+            ),
+          );
+        }
       }
       for (final command in motionVoiceCommandsFromServerEvent(event)) {
         if (_handledCommandCallIds.add(command.callId) && !_commands.isClosed) {
@@ -578,6 +658,154 @@ class MotionRealtimeVoice extends ChangeNotifier
       generation,
       contextId: userAudioItemId,
     );
+  }
+
+  Future<void> _handleVisualSnapshotRequest({
+    required MotionVisualSnapshotRequest request,
+    required int generation,
+    required String? userAudioItemId,
+  }) async {
+    if (!_isActive(generation)) return;
+    final normalizedTurnId = userAudioItemId?.trim() ?? '';
+    var submitted = false;
+    var unavailableReason = 'visual_context_unavailable';
+    try {
+      await _serializeInput(() async {
+        final firstRequestForTurn = normalizedTurnId.isEmpty
+            ? true
+            : _visualRequestTurnIds.add(normalizedTurnId);
+        if (firstRequestForTurn) {
+          final coordinator = visualContextCoordinator;
+          final snapshot = _latestAssessmentContext;
+          final factory = _eventFactory;
+          if (coordinator != null && factory != null) {
+            final visual = await coordinator.captureOnDemand(
+              reason: request.reason,
+              userAudioItemId: normalizedTurnId.isEmpty
+                  ? null
+                  : normalizedTurnId,
+              context: snapshot,
+              contextAgeMs: _latestContextAgeMs(),
+            );
+            if (_isActive(generation) && visual != null) {
+              submitted = await _trySendVisualContext(
+                assessmentId: factory.assessmentId,
+                visual: visual,
+              );
+              if (!submitted) {
+                unavailableReason = 'visual_transport_unavailable';
+              }
+            } else if (visual == null) {
+              unavailableReason = 'no_fresh_single_person_frame';
+            }
+          }
+        } else {
+          unavailableReason = 'already_requested_for_turn';
+        }
+        if (!_isActive(generation)) return;
+        await _sendFunctionCallOutput(
+          callId: request.callId,
+          output: {
+            'submitted': submitted,
+            'reason': submitted ? request.reason.wireName : unavailableReason,
+            'authority': 'advisory',
+            'fallback': 'use_latest_semantic_pose_context',
+          },
+        );
+      });
+      if (!_isActive(generation)) return;
+      final snapshot = _latestAssessmentContext;
+      final instructions = snapshot == null
+          ? '视觉关键帧当前不可用。请自然回答用户刚才的问题，不要猜测她的姿态，也不要让评估中断。'
+          : '${snapshot.toRealtimeInstructions(contextAgeMs: _latestContextAgeMs())}\n'
+                '${submitted ? '本轮已提交一张稀疏关键帧作为辅助；' : '本轮没有可用关键帧；'}'
+                '端侧语义事实仍然是权威。直接回应用户，不要再次调用 motion_visual_snapshot。';
+      await _enqueueModelTurn(
+        instructions,
+        generation,
+        contextId: normalizedTurnId.isEmpty ? null : normalizedTurnId,
+      );
+    } catch (_) {
+      if (_isActive(generation)) _scheduleTerminalFailure(generation);
+    }
+  }
+
+  Future<bool> _trySendVisualContext({
+    required String assessmentId,
+    required MotionVisualContext visual,
+  }) async {
+    final coordinator = visualContextCoordinator;
+    if (coordinator == null ||
+        !coordinator.isEnabled ||
+        !_visualIsStillSafeToSend(visual)) {
+      return false;
+    }
+    final clientEventId = 'motion-visual-${++_visualEventSequence}';
+    if (_visualClientEventIds.length >= 32) {
+      _visualClientEventIds.remove(_visualClientEventIds.first);
+    }
+    _visualClientEventIds.add(clientEventId);
+    try {
+      await _sendRealtimeEvent(
+        motionVisualConversationItemCreate(
+          clientEventId: clientEventId,
+          assessmentId: assessmentId,
+          visual: visual,
+        ),
+      );
+      coordinator.markSent();
+      return true;
+    } catch (_) {
+      _visualClientEventIds.remove(clientEventId);
+      coordinator.recordTransportFailure(disableForSession: true);
+      return false;
+    }
+  }
+
+  bool _visualIsStillSafeToSend(MotionVisualContext visual) {
+    final context = _latestAssessmentContext;
+    if (context == null ||
+        context.personCount != 1 ||
+        context.multiplePeople ||
+        _latestContextAgeMs() > context.freshForMs) {
+      return false;
+    }
+    final revisionGap = context.sequence - visual.stateRevision;
+    return revisionGap >= 0 && revisionGap <= 24;
+  }
+
+  Future<void> _sendFunctionCallOutput({
+    required String callId,
+    required Map<String, Object?> output,
+  }) {
+    return _sendRealtimeEvent({
+      'type': 'conversation.item.create',
+      'item': {
+        'type': 'function_call_output',
+        'call_id': callId,
+        'output': jsonEncode(output),
+      },
+    });
+  }
+
+  int _latestContextAgeMs() {
+    final receivedAt = _latestAssessmentContextReceivedAt;
+    if (receivedAt == null) return 1 << 31;
+    return DateTime.now()
+        .difference(receivedAt)
+        .inMilliseconds
+        .clamp(0, 1 << 31);
+  }
+
+  bool _isVisualContextError(Map<Object?, Object?> event) {
+    if (!motionRealtimeErrorTargetsVisualContext(
+      event,
+      pendingVisualEventIds: _visualClientEventIds,
+    )) {
+      return false;
+    }
+    visualContextCoordinator?.recordTransportFailure(disableForSession: true);
+    return true;
   }
 
   Future<void> _handleResponseQueueEvent(
@@ -676,6 +904,8 @@ class MotionRealtimeVoice extends ChangeNotifier
     _responseQueue = null;
     _sessionGate = null;
     _audioSessionActive = false;
+    visualContextCoordinator?.setServerCapability(false);
+    _visualClientEventIds.clear();
     _playbackTracker.reset();
     _failPlaybackWaiters(
       StateError('Realtime voice connection was closed during playback.'),
@@ -715,6 +945,15 @@ class MotionRealtimeVoice extends ChangeNotifier
       throw StateError('Realtime data channel is not open.');
     }
     await channel!.send(RTCDataChannelMessage(jsonEncode(event)));
+  }
+
+  Future<T> _serializeInput<T>(Future<T> Function() operation) {
+    final result = _inputOperations.then((_) => operation());
+    _inputOperations = result.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return result;
   }
 
   void _scheduleTerminalFailure(int generation) {

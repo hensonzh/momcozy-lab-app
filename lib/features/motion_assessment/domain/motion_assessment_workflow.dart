@@ -217,8 +217,8 @@ class MotionAssessmentWorkflow {
       valueDegrees: median,
       classification: classification,
       userMessage: classification == ForwardHeadClassification.forwardTendency
-          ? '本次多段采集呈现头部前移倾向，结果将交给主智能体解释。'
-          : '本次多段采集处于参考范围，结果将交给主智能体解释。',
+          ? '本次多段采集呈现头部前移倾向，完整结果正在整理。'
+          : '本次多段采集处于参考范围，完整结果正在整理。',
       sampleCount: samples,
       sampleDuration: duration,
       side: sides.length == 1 ? sides.single : 'both',

@@ -195,6 +195,26 @@ void main() {
   });
 
   test(
+    'planned orientation changes recalibrate without a target-changed alert',
+    () {
+      final gate = _readyGate(targetMismatchStableFor: Duration.zero);
+
+      gate.beginPlannedRecalibration();
+      final recalibrating = gate.evaluate(
+        _observation(1100, [_pose(centerX: 0.5, bodyScale: 0.85)]),
+      );
+
+      expect(recalibrating.phase, MotionQualityPhase.calibrating);
+      expect(recalibrating.directive, isNull);
+      final ready = gate.evaluate(
+        _observation(2100, [_pose(centerX: 0.5, bodyScale: 0.85)]),
+      );
+      expect(ready.phase, MotionQualityPhase.ready);
+      expect(ready.directive, MotionGuidanceDirective.singlePersonReady);
+    },
+  );
+
+  test(
     'brief framing loss pauses frames without emitting corrective chatter',
     () {
       final gate = _readyGate(

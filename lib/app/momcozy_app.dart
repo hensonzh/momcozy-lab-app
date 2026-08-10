@@ -1688,8 +1688,8 @@ const momCozyRoutes = [
   ),
   MomCozyRouteConfig(
     path: '/motion-assessment',
-    title: '头颈姿态动态评估',
-    summary: '端侧头颈姿态识别与独立实时语音指导。',
+    title: '体态动态评估',
+    summary: '端侧姿态识别与 CozyMate 实时语音指导。',
     icon: Icons.accessibility_new_rounded,
     accent: Color(0xff8c4768),
     priority: 'P0',

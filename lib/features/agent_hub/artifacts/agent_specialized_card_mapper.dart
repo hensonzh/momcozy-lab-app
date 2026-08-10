@@ -49,8 +49,12 @@ AgentMotionAssessmentCardView? _motionAssessmentCard(
   final source = <String, Object?>{...nestedPayload, ...raw};
   final privacy = _map(source['privacy']);
   final requestedTarget = _text(source['target']);
-  if (requestedTarget != 'forward_head') return null;
+  if (requestedTarget != 'forward_head' &&
+      requestedTarget != 'posture_screen') {
+    return null;
+  }
   final target = requestedTarget;
+  final isPostureScreen = target == 'posture_screen';
   final normalizedArtifactId = artifactId.trim();
   final routeLocation = Uri(
     path: '/motion-assessment',
@@ -61,12 +65,14 @@ AgentMotionAssessmentCardView? _motionAssessmentCard(
     },
   ).toString();
   return AgentMotionAssessmentCardView(
-    title: '头颈姿态动态评估',
+    title: isPostureScreen ? '体态动态评估' : '头颈姿态动态评估',
     target: target,
     sourceArtifactId: normalizedArtifactId,
     userGoal: _nonEmptyText(source['user_goal'] ?? source['userGoal']),
     description: _text(source['description']).isEmpty
-        ? '按语音提示调整站位，系统会实时检查头颈取景质量。'
+        ? isPostureScreen
+              ? '先用语音选择评估项目，再按 CozyMate 的提示完成取景。'
+              : '按语音提示调整站位，系统会实时检查头颈取景质量。'
         : _text(source['description']),
     startLabel: '开始评估',
     routeLocation: routeLocation,

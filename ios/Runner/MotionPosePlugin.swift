@@ -7,6 +7,7 @@ import Vision
 fileprivate protocol MotionPoseViewControlling: AnyObject {
   func start()
   func stop()
+  func captureKeyFrame(arguments: Any?, result: @escaping FlutterResult)
 }
 
 final class MotionPosePlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
@@ -58,6 +59,18 @@ final class MotionPosePlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       startRequested = false
       currentView?.stop()
       result(nil)
+    case "captureKeyFrame":
+      guard startRequested, let currentView else {
+        result(
+          FlutterError(
+            code: "key_frame_unavailable",
+            message: "Motion camera is not running",
+            details: nil
+          )
+        )
+        return
+      }
+      currentView.captureKeyFrame(arguments: call.arguments, result: result)
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -169,6 +182,16 @@ private final class MotionPoseUnsupportedPlatformView: NSObject,
   }
 
   func stop() {}
+
+  func captureKeyFrame(arguments: Any?, result: @escaping FlutterResult) {
+    result(
+      FlutterError(
+        code: "key_frame_unavailable",
+        message: "Key frame capture requires iOS 14 or later",
+        details: nil
+      )
+    )
+  }
 }
 
 private final class MotionPreviewContainer: UIView {
@@ -193,6 +216,9 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
   private var configured = false
   private var running = false
   private var lastAnalyzedTime: CFTimeInterval = 0
+  private let keyFrameLock = NSLock()
+  private var pendingKeyFrame: PendingKeyFrame?
+  private let imageContext = CIContext(options: [.cacheIntermediates: false])
 
   init(frame: CGRect, plugin: MotionPosePlugin) {
     container = MotionPreviewContainer(frame: frame)
@@ -230,6 +256,11 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
 
   func stop() {
     running = false
+    failPendingKeyFrame(
+      id: nil,
+      code: "key_frame_cancelled",
+      message: "Motion camera stopped"
+    )
     cameraQueue.async { [weak self] in
       guard let self, self.session.isRunning else { return }
       self.session.stopRunning()
@@ -291,6 +322,7 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
     let now = CACurrentMediaTime()
     guard now - lastAnalyzedTime >= 0.066 else { return }
     lastAnalyzedTime = now
+    fulfillPendingKeyFrame(sampleBuffer: sampleBuffer)
     let startedAt = CACurrentMediaTime()
     do {
       let handler = VNImageRequestHandler(
@@ -389,6 +421,145 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
     ]
   }
 
+  func captureKeyFrame(arguments: Any?, result: @escaping FlutterResult) {
+    guard running else {
+      result(
+        FlutterError(
+          code: "key_frame_unavailable",
+          message: "Motion camera is not running",
+          details: nil
+        )
+      )
+      return
+    }
+    let values = arguments as? [String: Any]
+    let options = KeyFrameOptions(
+      maxWidth: min(max(values?["max_width"] as? Int ?? 448, 160), 720),
+      jpegQuality: min(max(values?["jpeg_quality"] as? Int ?? 60, 30), 85),
+      maxBytes: min(max(values?["max_bytes"] as? Int ?? 122_880, 16_384), 245_760)
+    )
+    let request = PendingKeyFrame(
+      id: "frame-\(DispatchTime.now().uptimeNanoseconds)",
+      options: options,
+      result: result
+    )
+    keyFrameLock.lock()
+    guard pendingKeyFrame == nil else {
+      keyFrameLock.unlock()
+      result(
+        FlutterError(
+          code: "key_frame_request_active",
+          message: "A key frame request is already active",
+          details: nil
+        )
+      )
+      return
+    }
+    pendingKeyFrame = request
+    keyFrameLock.unlock()
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+      self?.failPendingKeyFrame(
+        id: request.id,
+        code: "key_frame_timeout",
+        message: "No camera frame was available in time"
+      )
+    }
+  }
+
+  private func takePendingKeyFrame() -> PendingKeyFrame? {
+    keyFrameLock.lock()
+    defer { keyFrameLock.unlock() }
+    let request = pendingKeyFrame
+    pendingKeyFrame = nil
+    return request
+  }
+
+  private func failPendingKeyFrame(id: String?, code: String, message: String) {
+    keyFrameLock.lock()
+    let request = pendingKeyFrame
+    if let request, id == nil || request.id == id {
+      pendingKeyFrame = nil
+    }
+    keyFrameLock.unlock()
+    guard let request, id == nil || request.id == id else { return }
+    DispatchQueue.main.async {
+      request.result(FlutterError(code: code, message: message, details: nil))
+    }
+  }
+
+  private func fulfillPendingKeyFrame(sampleBuffer: CMSampleBuffer) {
+    guard let request = takePendingKeyFrame() else { return }
+    do {
+      guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+        throw MotionPoseError.keyFrameEncodingFailed
+      }
+      let oriented = CIImage(cvPixelBuffer: pixelBuffer).oriented(.leftMirrored)
+      guard let cgImage = imageContext.createCGImage(oriented, from: oriented.extent) else {
+        throw MotionPoseError.keyFrameEncodingFailed
+      }
+      let image = UIImage(cgImage: cgImage)
+      let encoded = try encodeBoundedJpeg(image: image, options: request.options)
+      DispatchQueue.main.async {
+        request.result([
+          "id": request.id,
+          "bytes": FlutterStandardTypedData(bytes: encoded.data),
+          "mime_type": "image/jpeg",
+          "captured_at_ms": Int64(Date().timeIntervalSince1970 * 1000),
+          "width": encoded.width,
+          "height": encoded.height,
+        ])
+      }
+    } catch {
+      DispatchQueue.main.async {
+        request.result(
+          FlutterError(
+            code: "key_frame_encoding_failed",
+            message: error.localizedDescription,
+            details: nil
+          )
+        )
+      }
+    }
+  }
+
+  private func encodeBoundedJpeg(
+    image: UIImage,
+    options: KeyFrameOptions
+  ) throws -> EncodedKeyFrame {
+    var current = resized(image: image, maximumWidth: CGFloat(options.maxWidth))
+    var quality = CGFloat(options.jpegQuality) / 100
+    for _ in 0..<8 {
+      if let data = current.jpegData(compressionQuality: quality),
+         data.count <= options.maxBytes {
+        return EncodedKeyFrame(
+          data: data,
+          width: Int(current.size.width.rounded()),
+          height: Int(current.size.height.rounded())
+        )
+      }
+      if quality > 0.3 {
+        quality = max(0.3, quality - 0.1)
+      } else {
+        let nextWidth = max(160, Int(current.size.width * 0.82))
+        guard nextWidth < Int(current.size.width) else { continue }
+        current = resized(image: current, maximumWidth: CGFloat(nextWidth))
+      }
+    }
+    throw MotionPoseError.keyFrameTooLarge
+  }
+
+  private func resized(image: UIImage, maximumWidth: CGFloat) -> UIImage {
+    guard image.size.width > maximumWidth else { return image }
+    let size = CGSize(
+      width: maximumWidth,
+      height: max(1, image.size.height * maximumWidth / image.size.width)
+    )
+    let renderer = UIGraphicsImageRenderer(size: size)
+    return renderer.image { _ in
+      image.draw(in: CGRect(origin: .zero, size: size))
+    }
+  }
+
   private func emitModelReady() {
     plugin?.emit([
       "event": "model_ready",
@@ -401,11 +572,35 @@ fileprivate final class MotionPosePlatformView: NSObject, FlutterPlatformView,
 
 private enum MotionPoseError: LocalizedError {
   case cameraUnavailable
+  case keyFrameEncodingFailed
+  case keyFrameTooLarge
 
   var errorDescription: String? {
     switch self {
     case .cameraUnavailable:
       return "Front camera is unavailable"
+    case .keyFrameEncodingFailed:
+      return "Key frame could not be encoded"
+    case .keyFrameTooLarge:
+      return "Key frame exceeds the configured byte limit"
     }
   }
+}
+
+private struct KeyFrameOptions {
+  let maxWidth: Int
+  let jpegQuality: Int
+  let maxBytes: Int
+}
+
+private struct PendingKeyFrame {
+  let id: String
+  let options: KeyFrameOptions
+  let result: FlutterResult
+}
+
+private struct EncodedKeyFrame {
+  let data: Data
+  let width: Int
+  let height: Int
 }

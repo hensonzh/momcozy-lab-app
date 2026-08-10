@@ -409,7 +409,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (_interactionState == null &&
         oldWidget.historyMessages != widget.historyMessages &&
         !_state.isActive) {
-      _historyMessages = [...widget.historyMessages];
+      _historyMessages = _visibleAgentHubHistoryMessages(
+        widget.historyMessages,
+      );
       _persistInteractionState();
     }
     if (oldWidget.initialComposerText != widget.initialComposerText) {
@@ -560,7 +562,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final stateCacheKey = widget.stateCacheKey;
     if (stateCacheKey == null) {
       _state = widget.state;
-      _historyMessages = [...widget.historyMessages];
+      _historyMessages = _visibleAgentHubHistoryMessages(
+        widget.historyMessages,
+      );
       _composerController = TextEditingController();
       return;
     }
@@ -575,9 +579,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
       restoredRunState,
       disconnectedMessage: '连接中断，请重试',
     );
-    _historyMessages = [
-      ...(interactionState.historyMessages ?? widget.historyMessages),
-    ];
+    _historyMessages = _visibleAgentHubHistoryMessages(
+      interactionState.historyMessages ?? widget.historyMessages,
+    );
     _composerController = TextEditingController(
       text: interactionState.composerText,
     );
@@ -716,9 +720,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
         disconnectedMessage: '连接已中断，可继续接收。',
       ),
     );
-    _historyMessages = snapshot.historyMessages
-        .map(_historyMessageFromSnapshot)
-        .toList();
+    _historyMessages = _visibleAgentHubHistoryMessages(
+      snapshot.historyMessages.map(_historyMessageFromSnapshot),
+    );
     _composerController
       ..text = snapshot.composerText
       ..selection = TextSelection.collapsed(
@@ -3654,6 +3658,17 @@ AgentHubHistoryMessage _historyMessageFromConversation(
     images: message.images,
     files: message.files,
   );
+}
+
+List<AgentHubHistoryMessage> _visibleAgentHubHistoryMessages(
+  Iterable<AgentHubHistoryMessage> messages,
+) {
+  return [
+    for (final message in messages)
+      if (message.role != AgentHubHistoryRole.user ||
+          !isMotionAssessmentCompletionPrompt(message.content))
+        message,
+  ];
 }
 
 List<AgentHubHistoryMessage> _historyMessagesFromOlderConversationPage(

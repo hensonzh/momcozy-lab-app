@@ -108,6 +108,21 @@ void main() {
     expect(_instructions(events.single), isNot(contains('请只说下面这句')));
   });
 
+  test('keeps every Realtime response in the CozyMate identity', () async {
+    final events = <Map<String, Object?>>[];
+    final queue = MotionRealtimeResponseQueue(
+      sendEvent: (event) async => events.add(event),
+    );
+
+    await queue.enqueueModelTurn('回答用户刚才的问题');
+
+    final instructions = _instructions(events.single);
+    expect(instructions, contains('始终以 CozyMate 的同一身份'));
+    expect(instructions, contains('延续 App 主对话'));
+    expect(instructions, contains('不要自称独立教练'));
+    expect(instructions, contains('不要提及内部模型'));
+  });
+
   test(
     'keeps each model turn bound to its triggering user audio item',
     () async {
