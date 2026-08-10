@@ -106,6 +106,7 @@ void main() {
             'can_enter_app': true,
             'avatar_setup_completed': true,
             'selected_avatar_file_id': 'file-2',
+            'primary_infant_id': 'infant-1',
           },
         },
       );
@@ -122,16 +123,23 @@ void main() {
           ),
         ),
       );
-      var avatarActivationCount = 0;
+      String? activatedAvatarFileId;
+      final activationOrder = <String>[];
       final controller = OnboardingController(
         runtimeController: runtimeController,
-        onAvatarActivated: () => avatarActivationCount += 1,
+        onPrimaryInfantSelected: (infantId) async {
+          activationOrder.add('infant:$infantId');
+        },
+        onAvatarActivated: (fileId) {
+          activatedAvatarFileId = fileId;
+          activationOrder.add('avatar:$fileId');
+        },
       );
 
       await controller.load();
 
       expect(controller.requiresOnboardingFor('avatar-review-user'), isFalse);
-      expect(avatarActivationCount, 0);
+      expect(activatedAvatarFileId, isNull);
       expect(transport.postedBodies, isEmpty);
       expect(controller.hasAvatarSelection, isFalse);
 
@@ -143,7 +151,8 @@ void main() {
       expect(controller.hasAvatarSelection, isTrue);
       expect(controller.defaultAvatarSelected, isFalse);
       expect(await controller.confirmAvatarSelection(), isTrue);
-      expect(avatarActivationCount, 1);
+      expect(activatedAvatarFileId, 'file-2');
+      expect(activationOrder, ['infant:infant-1', 'avatar:file-2']);
       expect(transport.lastBody, {
         'avatar_candidate_id': 'candidate-2',
         'use_default_avatar': false,

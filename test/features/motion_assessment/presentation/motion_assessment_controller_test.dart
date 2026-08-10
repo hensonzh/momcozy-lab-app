@@ -297,7 +297,7 @@ void main() {
   );
 
   testWidgets(
-    'shows active local camera and realtime voice fallback on screen',
+    'shows realtime voice fallback without dense camera diagnostics',
     (tester) async {
       final controller = MotionAssessmentController(
         target: 'forward_head',
@@ -319,7 +319,10 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(find.textContaining('相机已开启'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('motion-assessment-camera-status')),
+        findsNothing,
+      );
       expect(
         find.byKey(const ValueKey('motion-assessment-voice-status')),
         findsOneWidget,
@@ -328,7 +331,7 @@ void main() {
     },
   );
 
-  testWidgets('shows live keypoint tracking as pose frames arrive', (
+  testWidgets('keeps live guidance focused without technical keypoint labels', (
     tester,
   ) async {
     final pose = _FakePosePlatform();
@@ -351,7 +354,10 @@ void main() {
     );
     await tester.pump();
     await tester.pump();
-    expect(find.text('正在启动人体关键点识别'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('motion-pose-tracking-status')),
+      findsNothing,
+    );
     expect(pose.startCalls, 1);
 
     pose.emit(_acceptedSideObservation());
@@ -360,7 +366,11 @@ void main() {
     expect(controller.observation, isNotNull);
 
     expect(find.byKey(const ValueKey('motion-pose-overlay')), findsOneWidget);
-    expect(find.textContaining('个关键点'), findsOneWidget);
+    expect(find.textContaining('个关键点'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('motion-assessment-guidance')),
+      findsOneWidget,
+    );
   });
 
   testWidgets(
@@ -528,6 +538,15 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   bool get isConnected => false;
 
   @override
+  bool get hasRemoteAudioTrack => true;
+
+  @override
+  String get providerName => 'openai_realtime';
+
+  @override
+  String? get failureCode => connectError == null ? null : 'signaling';
+
+  @override
   MotionRealtimeVoicePhase get phase => MotionRealtimeVoicePhase.idle;
 
   @override
@@ -538,7 +557,11 @@ class _FakeVoice extends ChangeNotifier implements MotionRealtimeVoiceClient {
   }
 
   @override
-  Future<void> speak(String instruction, {bool interrupt = false}) async {
+  Future<void> speak(
+    String instruction, {
+    bool interrupt = false,
+    bool exact = false,
+  }) async {
     spokenInstructions.add(instruction);
   }
 

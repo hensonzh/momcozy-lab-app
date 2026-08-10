@@ -114,7 +114,7 @@ class MotionQualityGate {
     _enterFramePromptEmitted = false;
 
     final candidate = poses.single;
-    if (!_hasCompleteBody(candidate)) {
+    if (!_hasAssessmentRegion(candidate)) {
       _singleSince = null;
       _phase = MotionQualityPhase.framing;
       final directive = _framingPromptEmitted
@@ -173,49 +173,76 @@ class MotionQualityGate {
   }
 
   bool _matchesTarget(MotionPose candidate, MotionPose target) {
-    final dx = candidate.centerX - target.centerX;
-    final dy = candidate.centerY - target.centerY;
+    final candidateSignature = _assessmentSignature(candidate);
+    final targetSignature = _assessmentSignature(target);
+    if (candidateSignature == null || targetSignature == null) return false;
+    final dx = candidateSignature.x - targetSignature.x;
+    final dy = candidateSignature.y - targetSignature.y;
     final centerDistance = math.sqrt(dx * dx + dy * dy);
-    final largestScale = math.max(candidate.bodyScale, target.bodyScale);
+    final largestScale = math.max(
+      candidateSignature.scale,
+      targetSignature.scale,
+    );
     final scaleChange = largestScale <= 0
         ? 0.0
-        : (candidate.bodyScale - target.bodyScale).abs() / largestScale;
+        : (candidateSignature.scale - targetSignature.scale).abs() /
+              largestScale;
     return centerDistance <= maximumCenterDrift &&
         scaleChange <= maximumScaleRatioChange;
   }
 
-  bool _hasCompleteBody(MotionPose pose) {
-    final nose = pose.landmark(MotionPoseLandmarkType.nose);
-    if (!_isVisibleInFrame(nose)) return false;
-    return _sideIsVisible(
+  bool _hasAssessmentRegion(MotionPose pose) {
+    final headVisible = [
+      MotionPoseLandmarkType.nose,
+      MotionPoseLandmarkType.leftEar,
+      MotionPoseLandmarkType.rightEar,
+    ].map(pose.landmark).any(_isVisibleInFrame);
+    if (!headVisible) return false;
+    return _torsoSideIsVisible(
           pose,
           shoulder: MotionPoseLandmarkType.leftShoulder,
           hip: MotionPoseLandmarkType.leftHip,
-          knee: MotionPoseLandmarkType.leftKnee,
-          ankle: MotionPoseLandmarkType.leftAnkle,
         ) ||
-        _sideIsVisible(
+        _torsoSideIsVisible(
           pose,
           shoulder: MotionPoseLandmarkType.rightShoulder,
           hip: MotionPoseLandmarkType.rightHip,
-          knee: MotionPoseLandmarkType.rightKnee,
-          ankle: MotionPoseLandmarkType.rightAnkle,
         );
   }
 
-  bool _sideIsVisible(
+  bool _torsoSideIsVisible(
     MotionPose pose, {
     required MotionPoseLandmarkType shoulder,
     required MotionPoseLandmarkType hip,
-    required MotionPoseLandmarkType knee,
-    required MotionPoseLandmarkType ankle,
   }) {
-    return [
-      shoulder,
-      hip,
-      knee,
-      ankle,
-    ].map(pose.landmark).every(_isVisibleInFrame);
+    return [shoulder, hip].map(pose.landmark).every(_isVisibleInFrame);
+  }
+
+  ({double x, double y, double scale})? _assessmentSignature(MotionPose pose) {
+    final sides = <({double x, double y, double scale})>[];
+    for (final pair in const [
+      (MotionPoseLandmarkType.leftShoulder, MotionPoseLandmarkType.leftHip),
+      (MotionPoseLandmarkType.rightShoulder, MotionPoseLandmarkType.rightHip),
+    ]) {
+      final shoulder = pose.landmark(pair.$1);
+      final hip = pose.landmark(pair.$2);
+      if (!_isVisibleInFrame(shoulder) || !_isVisibleInFrame(hip)) continue;
+      final dx = shoulder!.x - hip!.x;
+      final dy = shoulder.y - hip.y;
+      sides.add((
+        x: (shoulder.x + hip.x) / 2,
+        y: (shoulder.y + hip.y) / 2,
+        scale: math.sqrt(dx * dx + dy * dy),
+      ));
+    }
+    if (sides.isEmpty) return null;
+    return (
+      x: sides.map((side) => side.x).reduce((a, b) => a + b) / sides.length,
+      y: sides.map((side) => side.y).reduce((a, b) => a + b) / sides.length,
+      scale:
+          sides.map((side) => side.scale).reduce((a, b) => a + b) /
+          sides.length,
+    );
   }
 
   bool _isVisibleInFrame(MotionPoseLandmark? landmark) {

@@ -16,7 +16,7 @@ class MotionAssessmentContextSnapshot {
     required this.personCount,
     required this.targetLocked,
     required this.continuity,
-    required this.fullBodyVisible,
+    required this.assessmentRegionVisible,
     required this.missingRegions,
     required this.distance,
     required this.requiredView,
@@ -54,7 +54,7 @@ class MotionAssessmentContextSnapshot {
   final int personCount;
   final bool targetLocked;
   final String continuity;
-  final bool fullBodyVisible;
+  final bool assessmentRegionVisible;
   final List<String> missingRegions;
   final String distance;
   final String requiredView;
@@ -82,7 +82,7 @@ class MotionAssessmentContextSnapshot {
 
   Map<String, Object?> toJson() {
     return {
-      'schema_version': 'motion_assessment.context.v2',
+      'schema_version': 'motion_assessment.context.v3',
       'assessment_id': assessmentId,
       'sequence': sequence,
       'observed_at_ms': observedAtMs,
@@ -94,7 +94,8 @@ class MotionAssessmentContextSnapshot {
         'continuity': continuity,
       },
       'framing': {
-        'full_body_visible': fullBodyVisible,
+        'assessment_region_visible': assessmentRegionVisible,
+        'required_regions': const ['head', 'shoulders', 'hips'],
         'missing_regions': missingRegions,
         'distance': distance,
       },

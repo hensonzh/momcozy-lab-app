@@ -55,7 +55,7 @@ class _MomAvatarImageState extends State<_MomAvatarImage> {
       future: load,
       initialData: _initialBytes,
       builder: (context, snapshot) {
-        final bytes = snapshot.data;
+        final bytes = snapshot.data ?? _initialBytes;
         if (bytes == null) {
           return const _CustomAvatarPlaceholder(
             key: ValueKey('mom-custom-avatar-placeholder'),
@@ -86,11 +86,31 @@ class _CustomAvatarPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Icon(
-        Icons.person_outline_rounded,
-        size: 88,
-        color: Color(0x24932C4A),
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0x14B15B74), Color(0x2E932C4A)],
+        ),
+      ),
+      child: const Center(
+        child: SizedBox.square(
+          dimension: 76,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.fromBorderSide(
+                BorderSide(width: 2, color: Color(0x99932C4A)),
+              ),
+            ),
+            child: Icon(
+              Icons.person_rounded,
+              size: 62,
+              color: Color(0x66932C4A),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -114,7 +134,7 @@ class _MomStageWorkspace extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showAvatar = MediaQuery.textScalerOf(context).scale(1) <= 1.35;
-    final avatarFileId = data.overview.data?.mom?.avatarFileId;
+    final avatarFileId = data.activeAvatarFileId;
     final hasCustomAvatar = avatarFileId?.trim().isNotEmpty == true;
     final defaultAvatarTop = switch (stage) {
       MomLifeStage.pregnancy => -16.0,
@@ -1407,7 +1427,7 @@ class _MomAvatarStage extends StatelessWidget {
                 bottom: compact ? 118 : 126,
                 child: _MomAvatarImage(
                   stage: stage,
-                  fileId: data.overview.data?.mom?.avatarFileId,
+                  fileId: data.activeAvatarFileId,
                   fit: BoxFit.contain,
                   alignment: Alignment.topCenter,
                 ),
