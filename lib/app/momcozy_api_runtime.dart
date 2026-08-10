@@ -426,9 +426,15 @@ class MomCozyApiRuntime {
       'records.diaper.changed' => const <ProfileOverviewResourceKey>[
         ProfileOverviewResourceKey.diapers,
       ],
+      'plans.lactation.changed' => const <ProfileOverviewResourceKey>[
+        ProfileOverviewResourceKey.plans,
+      ],
       _ => const <ProfileOverviewResourceKey>[],
     };
     profileOverviewCache.invalidate(resources);
+    if (event.type == 'plans.lactation.changed') {
+      _planRepository?.invalidate();
+    }
   }
 
   BlePlatform get blePlatform {
