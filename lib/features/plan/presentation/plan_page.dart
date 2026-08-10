@@ -602,7 +602,7 @@ class _SinglePlanView extends StatelessWidget {
             onOpenAllPlans: onOpenAllPlans,
           ),
           const SizedBox(height: 18),
-          _MilestoneCard(plan: plan),
+          _MilestoneCard(plan: plan, selectedDay: selectedDay),
           const SizedBox(height: 16),
           _MilestoneWeekStrip(
             selectedDay: selectedDay,
@@ -630,10 +630,12 @@ class _SinglePlanView extends StatelessWidget {
                     : 10,
               ),
           ],
-          const SizedBox(height: 18),
-          const Text('Volume Progress', style: _PlanText.sectionTitle),
-          const SizedBox(height: 7.6),
-          _VolumeProgressCard(plan: plan),
+          if (plan.hasVolumeProgress) ...[
+            const SizedBox(height: 18),
+            const Text('Volume Progress', style: _PlanText.sectionTitle),
+            const SizedBox(height: 7.6),
+            _VolumeProgressCard(plan: plan),
+          ],
           const SizedBox(height: 16),
           _PlanSettingsCard(
             plan: plan,
@@ -2313,13 +2315,35 @@ class _MonthlyCalendar extends StatelessWidget {
 }
 
 class _MilestoneCard extends StatelessWidget {
-  const _MilestoneCard({required this.plan});
+  const _MilestoneCard({required this.plan, required this.selectedDay});
 
   final CarePlan plan;
+  final DateTime selectedDay;
 
   @override
   Widget build(BuildContext context) {
     final compact = MediaQuery.sizeOf(context).width < 380;
+    final planDay = plan.dayNumberOn(selectedDay);
+    final durationDays = plan.durationDays;
+    final usesDailySchedule = planDay != null && durationDays != null;
+    final weekNumber = plan.weekNumber;
+    final totalWeeks = plan.totalWeeks;
+    final progress = usesDailySchedule
+        ? planDay / math.max(1, durationDays)
+        : weekNumber != null && totalWeeks != null
+        ? weekNumber / math.max(1, totalWeeks)
+        : 0.0;
+    final sessionsPerDay = plan.sessionsPerDay;
+    final milestoneTitle = usesDailySchedule
+        ? plan.goalLabel ?? '15-Day Plan'
+        : 'Mid-Way Milestone';
+    final milestoneSummary = usesDailySchedule
+        ? sessionsPerDay == null
+              ? plan.summary
+              : '$sessionsPerDay sessions are scheduled for this plan day.'
+        : sessionsPerDay == null
+        ? plan.summary
+        : "You've consistently completed $sessionsPerDay sessions a day this week. Keep it up!";
     return Container(
       key: const ValueKey('plan-milestone-card'),
       height: 112,
@@ -2336,9 +2360,7 @@ class _MilestoneCard extends StatelessWidget {
               children: [
                 Positioned.fill(
                   child: CustomPaint(
-                    painter: _MilestoneRingPainter(
-                      progress: plan.weekNumber / math.max(1, plan.totalWeeks),
-                    ),
+                    painter: _MilestoneRingPainter(progress: progress),
                   ),
                 ),
                 Transform.translate(
@@ -2346,26 +2368,41 @@ class _MilestoneCard extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'Week',
-                        style: TextStyle(
-                          color: MomCozyV3Colors.ink,
-                          fontFamily: MomCozyTypography.interfaceFontFamily,
-                          fontSize: 14,
-                          height: 1.2,
-                          fontWeight: FontWeight.w700,
+                      if (usesDailySchedule)
+                        Text(
+                          'Day $planDay/$durationDays',
+                          style: const TextStyle(
+                            color: MomCozyV3Colors.brand,
+                            fontFamily: MomCozyTypography.interfaceFontFamily,
+                            fontSize: 13,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      else ...[
+                        const Text(
+                          'Week',
+                          style: TextStyle(
+                            color: MomCozyV3Colors.ink,
+                            fontFamily: MomCozyTypography.interfaceFontFamily,
+                            fontSize: 14,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      Text(
-                        '${plan.weekNumber}/${plan.totalWeeks}',
-                        style: const TextStyle(
-                          color: MomCozyV3Colors.brand,
-                          fontFamily: MomCozyTypography.interfaceFontFamily,
-                          fontSize: 20,
-                          height: 1.2,
-                          fontWeight: FontWeight.w700,
+                        Text(
+                          weekNumber != null && totalWeeks != null
+                              ? '$weekNumber/$totalWeeks'
+                              : '—',
+                          style: const TextStyle(
+                            color: MomCozyV3Colors.brand,
+                            fontFamily: MomCozyTypography.interfaceFontFamily,
+                            fontSize: 20,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -2380,12 +2417,12 @@ class _MilestoneCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Mid-Way Milestone',
+                    milestoneTitle,
                     style: _PlanText.cardTitle.copyWith(letterSpacing: 0.1),
                   ),
                   SizedBox(height: compact ? 4 : 6),
                   Text(
-                    "You've consistently completed ${plan.sessionsPerDay} sessions a day this week. Keep it up!",
+                    milestoneSummary,
                     style: _PlanText.body.copyWith(
                       fontSize: compact ? 13 : 14,
                       height: 1.25,
@@ -2637,6 +2674,10 @@ class _VolumeProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final todayVolumeMl = plan.todayVolumeMl!;
+    final dailyTargetVolumeMl = plan.dailyTargetVolumeMl!;
+    final weeklyVolumeMl = plan.weeklyVolumeMl!;
+    final weeklyTargetVolumeMl = plan.weeklyTargetVolumeMl!;
     return Container(
       key: const ValueKey('plan-volume-progress'),
       height: 108,
@@ -2646,17 +2687,15 @@ class _VolumeProgressCard extends StatelessWidget {
         children: [
           _VolumeProgressRow(
             label: "Today's Target",
-            value: '${plan.todayVolumeMl} / ${plan.dailyTargetVolumeMl} ml',
-            progress:
-                plan.todayVolumeMl / math.max(1, plan.dailyTargetVolumeMl),
+            value: '$todayVolumeMl / $dailyTargetVolumeMl ml',
+            progress: todayVolumeMl / math.max(1, dailyTargetVolumeMl),
           ),
           const Divider(height: 22, color: Color(0xffe8dcda)),
           _VolumeProgressRow(
             label: 'Weekly Target',
             value:
-                '${_thousands(plan.weeklyVolumeMl)} / ${_thousands(plan.weeklyTargetVolumeMl)} ml',
-            progress:
-                plan.weeklyVolumeMl / math.max(1, plan.weeklyTargetVolumeMl),
+                '${_thousands(weeklyVolumeMl)} / ${_thousands(weeklyTargetVolumeMl)} ml',
+            progress: weeklyVolumeMl / math.max(1, weeklyTargetVolumeMl),
           ),
         ],
       ),
@@ -2739,6 +2778,21 @@ class _PlanSettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sessionsPerDay = plan.sessionsPerDay;
+    final dailyTargetVolumeMl = plan.dailyTargetVolumeMl;
+    final pumpingSessions = plan.pumpingSessionsPerDay;
+    final breastfeedingAnchors = plan.breastfeedingAnchorsPerDay;
+    final secondarySetting = dailyTargetVolumeMl != null
+        ? (label: 'Daily Target Volume', value: '$dailyTargetVolumeMl ml')
+        : pumpingSessions != null || breastfeedingAnchors != null
+        ? (
+            label: 'Daily mix',
+            value:
+                '${pumpingSessions ?? 0} pump · ${breastfeedingAnchors ?? 0} nursing',
+          )
+        : plan.goalLabel != null
+        ? (label: 'Goal', value: plan.goalLabel!)
+        : null;
     return Container(
       key: const ValueKey('plan-settings'),
       height: 221,
@@ -2777,26 +2831,28 @@ class _PlanSettingsCard extends StatelessWidget {
             top: 48,
             child: Text('Plan Settings', style: _PlanText.cardTitle),
           ),
-          Positioned(
-            left: 15,
-            right: 15,
-            top: 77,
-            height: 21,
-            child: _SettingRow(
-              label: 'Sessions per day',
-              value: '${plan.sessionsPerDay} sessions',
+          if (sessionsPerDay != null)
+            Positioned(
+              left: 15,
+              right: 15,
+              top: 77,
+              height: 21,
+              child: _SettingRow(
+                label: 'Sessions per day',
+                value: '$sessionsPerDay sessions',
+              ),
             ),
-          ),
-          Positioned(
-            left: 15,
-            right: 15,
-            top: 105,
-            height: 21,
-            child: _SettingRow(
-              label: 'Daily Target Volume',
-              value: '${plan.dailyTargetVolumeMl} ml',
+          if (secondarySetting != null)
+            Positioned(
+              left: 15,
+              right: 15,
+              top: 105,
+              height: 21,
+              child: _SettingRow(
+                label: secondarySetting.label,
+                value: secondarySetting.value,
+              ),
             ),
-          ),
           const Positioned(
             left: 16,
             right: 16,

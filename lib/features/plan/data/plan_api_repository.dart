@@ -55,6 +55,14 @@ class PlanApiRepository
     return _sameDay(_snapshotDay, _dateOnly(weekOf)) ? _snapshot : null;
   }
 
+  void invalidate() {
+    _cacheRevision += 1;
+    _snapshot = null;
+    _snapshotDay = null;
+    _inFlight = null;
+    _inFlightDay = null;
+  }
+
   @override
   Future<void> updateSession({
     required String sessionId,
@@ -82,11 +90,7 @@ class PlanApiRepository
         'task_time': _apiTime(scheduledAt),
       },
     );
-    _cacheRevision += 1;
-    _snapshot = null;
-    _snapshotDay = null;
-    _inFlight = null;
-    _inFlightDay = null;
+    invalidate();
   }
 
   Future<PlanDashboard> _fetchDashboard(DateTime selectedDay) async {
@@ -191,26 +195,51 @@ class _PlanSessionResponse {
 
 CarePlan _carePlan(Map<String, Object?> data) {
   final payload = _objectMap(data['payload']);
+  final basis = _objectMap(payload['basis']);
+  final preferences = _objectMap(payload['preferences']);
+  final targetDailyPattern = _objectMap(preferences['target_daily_pattern']);
   final category = _category(_requiredString(data, 'plan_type'));
   final rawTitle = _optionalString(data['title']);
+  final pumpingSessions = _optionalNonNegativeInt(
+    targetDailyPattern['pumping_sessions'],
+  );
+  final breastfeedingAnchors = _optionalNonNegativeInt(
+    targetDailyPattern['breastfeeding_anchors'],
+  );
+  final explicitSessionsPerDay = _optionalPositiveInt(
+    payload['sessions_per_day'],
+  );
+  final generatedSessionsPerDay =
+      pumpingSessions != null || breastfeedingAnchors != null
+      ? (pumpingSessions ?? 0) + (breastfeedingAnchors ?? 0)
+      : null;
   return CarePlan(
     id: _requiredString(data, 'id'),
     category: category,
     title: rawTitle ?? _defaultTitle(category),
     summary: _optionalString(data['summary']) ?? '',
-    weekNumber: _positiveInt(payload['week_number'], fallback: 1),
-    totalWeeks: _positiveInt(payload['total_weeks'], fallback: 8),
-    sessionsPerDay: _positiveInt(payload['sessions_per_day'], fallback: 5),
-    dailyTargetVolumeMl: _positiveInt(
+    weekNumber: _optionalPositiveInt(payload['week_number']),
+    totalWeeks: _optionalPositiveInt(payload['total_weeks']),
+    sessionsPerDay:
+        explicitSessionsPerDay ??
+        (generatedSessionsPerDay != null && generatedSessionsPerDay > 0
+            ? generatedSessionsPerDay
+            : null),
+    dailyTargetVolumeMl: _optionalPositiveInt(
       payload['daily_target_volume_ml'],
-      fallback: 600,
     ),
-    todayVolumeMl: _nonNegativeInt(payload['today_volume_ml']),
-    weeklyTargetVolumeMl: _positiveInt(
+    todayVolumeMl: _optionalNonNegativeInt(payload['today_volume_ml']),
+    weeklyTargetVolumeMl: _optionalPositiveInt(
       payload['weekly_target_volume_ml'],
-      fallback: 4200,
     ),
-    weeklyVolumeMl: _nonNegativeInt(payload['weekly_volume_ml']),
+    weeklyVolumeMl: _optionalNonNegativeInt(payload['weekly_volume_ml']),
+    startDate: _optionalApiDate(payload['start_date']),
+    endDate: _optionalApiDate(payload['end_date']),
+    durationDays: _optionalPositiveInt(payload['duration_days']),
+    goal: _optionalString(payload['goal']),
+    basisMode: _optionalString(basis['mode']),
+    pumpingSessionsPerDay: pumpingSessions,
+    breastfeedingAnchorsPerDay: breastfeedingAnchors,
   );
 }
 
@@ -312,14 +341,22 @@ int? _integer(Object? value) {
   return int.tryParse(value?.toString() ?? '');
 }
 
-int _positiveInt(Object? value, {required int fallback}) {
+int? _optionalPositiveInt(Object? value) {
   final parsed = _integer(value);
-  return parsed == null || parsed <= 0 ? fallback : parsed;
+  return parsed == null || parsed <= 0 ? null : parsed;
 }
 
-int _nonNegativeInt(Object? value) {
-  final parsed = _integer(value) ?? 0;
-  return parsed < 0 ? 0 : parsed;
+int? _optionalNonNegativeInt(Object? value) {
+  final parsed = _integer(value);
+  return parsed == null || parsed < 0 ? null : parsed;
+}
+
+DateTime? _optionalApiDate(Object? value) {
+  final raw = _optionalString(value);
+  if (raw == null) return null;
+  final parsed = DateTime.tryParse(raw);
+  if (parsed == null) return null;
+  return _dateOnly(parsed);
 }
 
 DateTime _dateOnly(DateTime value) =>
