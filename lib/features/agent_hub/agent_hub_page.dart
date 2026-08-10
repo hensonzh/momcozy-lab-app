@@ -244,6 +244,11 @@ class AgentHubPage extends StatefulWidget {
     this.initialComposerText,
     this.initialAutoSend = false,
     this.initialAutoRunRequest,
+    this.externalConversationRefreshKey,
+    this.externalConversationRefreshInterval = const Duration(
+      milliseconds: 750,
+    ),
+    this.externalConversationRefreshAttempts = 20,
   });
 
   final Object? stateCacheKey;
@@ -275,6 +280,9 @@ class AgentHubPage extends StatefulWidget {
   final String? initialComposerText;
   final bool initialAutoSend;
   final AgentHubAutoRunRequest? initialAutoRunRequest;
+  final String? externalConversationRefreshKey;
+  final Duration externalConversationRefreshInterval;
+  final int externalConversationRefreshAttempts;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -369,6 +377,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   AgentHubGreetingProfile? _profile;
   int _greetingRefreshGeneration = 0;
   int _lastHandledIbclcCompletionRevision = 0;
+  int _externalConversationRefreshGeneration = 0;
+  String? _consumedExternalConversationRefreshKey;
 
   @override
   void initState() {
@@ -414,6 +424,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _interactionRestoreResolved) {
       _scheduleInitialAutoRunIfNeeded();
     }
+    if (oldWidget.externalConversationRefreshKey !=
+            widget.externalConversationRefreshKey &&
+        _interactionRestoreResolved) {
+      _scheduleExternalConversationRefreshIfNeeded();
+    }
     if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
       _syncVoicePlaybackIdleSubscription();
     }
@@ -427,6 +442,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   void dispose() {
+    _externalConversationRefreshGeneration += 1;
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
     widget.ibclcConsultStore?.removeListener(_handleIbclcConsultStoreChanged);
@@ -630,6 +646,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _applyInitialComposerText();
       _scheduleInitialAutoSendIfNeeded();
       _scheduleInitialAutoRunIfNeeded();
+      _scheduleExternalConversationRefreshIfNeeded();
       _scheduleInitialInteractionPostFrame();
       return;
     }
@@ -658,6 +675,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _applyInitialComposerText();
     _scheduleInitialAutoSendIfNeeded();
     _scheduleInitialAutoRunIfNeeded();
+    _scheduleExternalConversationRefreshIfNeeded();
     if (shouldRestore) _persistInteractionState();
     _scheduleInitialInteractionPostFrame(scrollToLatest: shouldRestore);
   }
@@ -846,6 +864,108 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _initialAutoRunInFlight = false;
       if (accepted) _consumedInitialAutoRunKey = key;
     });
+  }
+
+  void _scheduleExternalConversationRefreshIfNeeded() {
+    final key = widget.externalConversationRefreshKey?.trim() ?? '';
+    if (key.isEmpty ||
+        widget.conversationRepository == null ||
+        widget.externalConversationRefreshAttempts <= 0 ||
+        _consumedExternalConversationRefreshKey == key) {
+      return;
+    }
+    _consumedExternalConversationRefreshKey = key;
+    final generation = ++_externalConversationRefreshGeneration;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || generation != _externalConversationRefreshGeneration) {
+        return;
+      }
+      unawaited(_pollForExternalConversationUpdate(generation));
+    });
+  }
+
+  Future<void> _pollForExternalConversationUpdate(int generation) async {
+    final repository = widget.conversationRepository;
+    final sourceThreadId = (_state.threadId ?? _activeRequest?.threadId)
+        ?.trim();
+    final sourceRunId = _state.runId?.trim() ?? '';
+    if (repository == null ||
+        sourceThreadId == null ||
+        sourceThreadId.isEmpty) {
+      return;
+    }
+    for (
+      var attempt = 0;
+      attempt < widget.externalConversationRefreshAttempts;
+      attempt += 1
+    ) {
+      if (attempt > 0 &&
+          widget.externalConversationRefreshInterval > Duration.zero) {
+        await Future<void>.delayed(widget.externalConversationRefreshInterval);
+      }
+      if (!mounted || generation != _externalConversationRefreshGeneration) {
+        return;
+      }
+      final activeThreadId = (_state.threadId ?? _activeRequest?.threadId)
+          ?.trim();
+      final activeRunId = _state.runId?.trim() ?? '';
+      if (activeThreadId != sourceThreadId || activeRunId != sourceRunId) {
+        return;
+      }
+      try {
+        final history = await repository.loadConversation(sourceThreadId);
+        if (!mounted || generation != _externalConversationRefreshGeneration) {
+          return;
+        }
+        final nextRunId = history.currentState.runId?.trim() ?? '';
+        if (history.thread.id != sourceThreadId ||
+            nextRunId.isEmpty ||
+            nextRunId == sourceRunId) {
+          continue;
+        }
+        await _adoptExternalConversationHistory(history);
+        return;
+      } catch (_) {
+        // The durable backend job may not have created its Agent run yet.
+      }
+    }
+  }
+
+  Future<void> _adoptExternalConversationHistory(
+    AgentConversationHistory history,
+  ) async {
+    if (!mounted || _isVisibleReplyRunning || _isSessionMutationPending) {
+      return;
+    }
+    widget.voicePlaybackCoordinator?.cancel();
+    _cancelRunSubscription();
+    setState(() {
+      _historyMessages = history.messages
+          .map(_historyMessageFromConversation)
+          .toList(growable: true);
+      _conversationHistoryBeforeSequence = history.nextBeforeSequence;
+      _olderConversationHistoryLoading = false;
+      _olderConversationHistoryLoadArmed = false;
+      _olderConversationHistoryError = null;
+      _setRunState(history.currentState);
+      _activeRequest = null;
+      _pendingAutoVoiceReplay = null;
+      _resetAutoVoiceProgress();
+    });
+    _seedExistingFormPresentations();
+    _notifyActionStateChanged();
+    _persistInteractionState();
+    _flushPersistentInteractionState();
+    _scheduleScrollToLatest();
+    _armOlderConversationHistoryLoading();
+
+    if (history.currentState.isActive &&
+        history.currentState.runId?.trim().isNotEmpty == true &&
+        widget.runner != null) {
+      await _resumeCurrentRun(preserveActionState: true);
+      return;
+    }
+    _maybeStartAutoVoicePlayback(history.currentState);
   }
 
   void _updateLatestButtonVisibility() {

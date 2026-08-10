@@ -19,6 +19,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
@@ -2676,6 +2677,57 @@ void main() {
       expect(client.requests.single.idempotencyKey, endsWith('assessment-1'));
       expect(client.requests.single.metadata['assessment_id'], 'assessment-1');
       expect(find.text('请读取刚完成的体态评估并给出简短反馈。'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub refreshes the source conversation for durable motion feedback',
+    (tester) async {
+      const sourceState = AgentStreamRunState(
+        phase: AgentStreamRunPhase.finished,
+        threadId: 'thread-source',
+        runId: 'run-source',
+        textContent: '我们开始评估吧。',
+      );
+      const feedbackState = AgentStreamRunState(
+        phase: AgentStreamRunPhase.finished,
+        threadId: 'thread-source',
+        runId: 'run-feedback',
+        textContent: '这次头颈姿态整体稳定，建议每天做一次轻柔放松。',
+      );
+      final repository = _SequencedConversationRepository([
+        _conversationHistory(sourceState),
+        _conversationHistory(feedbackState),
+      ]);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: sourceState,
+            conversationRepository: repository,
+            externalConversationRefreshInterval: Duration.zero,
+            externalConversationRefreshAttempts: 3,
+          ),
+        ),
+      );
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: sourceState,
+            conversationRepository: repository,
+            externalConversationRefreshKey: 'motion:assessment-1',
+            externalConversationRefreshInterval: Duration.zero,
+            externalConversationRefreshAttempts: 3,
+          ),
+        ),
+      );
+      await _pumpUntil(
+        tester,
+        () => find.text(feedbackState.textContent).evaluate().isNotEmpty,
+      );
+
+      expect(repository.loadCalls, 2);
+      expect(find.text(feedbackState.textContent), findsOneWidget);
     },
   );
 
@@ -8748,6 +8800,44 @@ bool _composerHasFocus(WidgetTester tester) {
       .widget<EditableText>(find.byType(EditableText))
       .focusNode
       .hasFocus;
+}
+
+AgentConversationHistory _conversationHistory(AgentStreamRunState state) {
+  final now = DateTime.utc(2026, 8, 10);
+  return AgentConversationHistory(
+    thread: AgentConversationSummary(
+      id: state.threadId!,
+      title: '头颈姿态评估',
+      status: 'active',
+      createdAt: now,
+      updatedAt: now,
+    ),
+    messages: const [],
+    currentState: state,
+  );
+}
+
+class _SequencedConversationRepository implements AgentConversationRepository {
+  _SequencedConversationRepository(this.histories);
+
+  final List<AgentConversationHistory> histories;
+  int loadCalls = 0;
+
+  @override
+  Future<List<AgentConversationSummary>> listConversations({
+    int limit = 50,
+  }) async => const [];
+
+  @override
+  Future<AgentConversationHistory> loadConversation(
+    String threadId, {
+    int? beforeSequence,
+    int limit = 20,
+  }) async {
+    final index = loadCalls.clamp(0, histories.length - 1);
+    loadCalls += 1;
+    return histories[index];
+  }
 }
 
 class _FixtureAgentStreamClient implements AgentStreamClient {

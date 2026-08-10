@@ -4,6 +4,8 @@ enum MotionVoiceCommandType {
   confirmRecalibration,
   repeatInstruction,
   stopAssessment,
+  continueAssessment,
+  confirmFinish,
 }
 
 class MotionVoiceCommand {
@@ -11,11 +13,22 @@ class MotionVoiceCommand {
     required this.type,
     required this.callId,
     this.reason,
+    this.userAudioItemId,
   });
 
   final MotionVoiceCommandType type;
   final String callId;
   final String? reason;
+  final String? userAudioItemId;
+
+  MotionVoiceCommand withUserAudioItemId(String? value) {
+    return MotionVoiceCommand(
+      type: type,
+      callId: callId,
+      reason: reason,
+      userAudioItemId: value,
+    );
+  }
 }
 
 String? completedUserAudioItemIdFromServerEvent(Map<Object?, Object?> event) {
@@ -85,6 +98,8 @@ MotionVoiceCommand? _commandFromFunctionCall(Map<Object?, Object?> item) {
     'confirm_recalibration' => MotionVoiceCommandType.confirmRecalibration,
     'repeat_instruction' => MotionVoiceCommandType.repeatInstruction,
     'stop_assessment' => MotionVoiceCommandType.stopAssessment,
+    'continue_assessment' => MotionVoiceCommandType.continueAssessment,
+    'confirm_finish' => MotionVoiceCommandType.confirmFinish,
     _ => null,
   };
   final rawReason = decoded['reason']?.toString();
@@ -94,6 +109,8 @@ MotionVoiceCommand? _commandFromFunctionCall(Map<Object?, Object?> item) {
         'discomfort',
         'pain',
         'dizziness',
+        'numbness',
+        'breathing_difficulty',
         'other',
       }.contains(rawReason)
       ? rawReason

@@ -61,12 +61,12 @@ AgentMotionAssessmentCardView? _motionAssessmentCard(
     },
   ).toString();
   return AgentMotionAssessmentCardView(
-    title: '人体姿态动态评估',
+    title: '头颈姿态动态评估',
     target: target,
     sourceArtifactId: normalizedArtifactId,
     userGoal: _nonEmptyText(source['user_goal'] ?? source['userGoal']),
     description: _text(source['description']).isEmpty
-        ? '按语音提示调整站位和动作，系统会实时检查取景质量。'
+        ? '按语音提示调整站位，系统会实时检查头颈取景质量。'
         : _text(source['description']),
     startLabel: '开始评估',
     routeLocation: routeLocation,

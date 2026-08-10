@@ -4,12 +4,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_audio_session.dart';
-import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_context_publisher.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_playback_tracker.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_response_queue.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_session_gate.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_voice_signaling.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_context.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_assessment_event.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_voice_command.dart';
 
 enum MotionRealtimeVoicePhase {
@@ -29,6 +29,7 @@ abstract interface class MotionRealtimeVoiceClient implements Listenable {
   bool get hasRemoteAudioTrack;
   String get providerName;
   String? get failureCode;
+  String? get latestCompletedUserAudioItemId;
   Stream<MotionVoiceCommand> get commands;
 
   Future<void> connect({required String assessmentId});
@@ -61,16 +62,10 @@ class MotionRealtimeVoice extends ChangeNotifier
   MotionRealtimeVoice({
     required this.signaling,
     MotionRealtimeAudioSession? audioSession,
-  }) : audioSession = audioSession ?? WebRtcMotionRealtimeAudioSession() {
-    _contextPublisher = MotionRealtimeContextPublisher(
-      publish: (snapshot) =>
-          sendClientEvent('assessment_context_sync', {'context': snapshot}),
-    );
-  }
+  }) : audioSession = audioSession ?? WebRtcMotionRealtimeAudioSession();
 
   final MotionVoiceSignaling signaling;
   final MotionRealtimeAudioSession audioSession;
-  late final MotionRealtimeContextPublisher _contextPublisher;
 
   MotionRealtimeVoicePhase _phase = MotionRealtimeVoicePhase.idle;
   RTCPeerConnection? _peerConnection;
@@ -85,8 +80,11 @@ class MotionRealtimeVoice extends ChangeNotifier
       StreamController<MotionVoiceCommand>.broadcast();
   final Set<String> _handledCommandCallIds = {};
   final Set<String> _handledUserAudioItemIds = {};
+  final MotionAssessmentEventGate _eventGate = MotionAssessmentEventGate();
   MotionAssessmentContextSnapshot? _latestAssessmentContext;
   DateTime? _latestAssessmentContextReceivedAt;
+  MotionAssessmentEventFactory? _eventFactory;
+  String? _latestCompletedUserAudioItemId;
   int _connectionGeneration = 0;
   bool _closed = false;
   bool _disposed = false;
@@ -98,6 +96,7 @@ class MotionRealtimeVoice extends ChangeNotifier
   bool _audioSessionActive = false;
   Completer<void>? _playbackStarted;
   Completer<void>? _playbackCompleted;
+  String? _protectedPlaybackEventType;
 
   @override
   MotionRealtimeVoicePhase get phase => _phase;
@@ -113,6 +112,8 @@ class MotionRealtimeVoice extends ChangeNotifier
   String get providerName => _providerName;
   @override
   String? get failureCode => _failureCode;
+  @override
+  String? get latestCompletedUserAudioItemId => _latestCompletedUserAudioItemId;
   @override
   Stream<MotionVoiceCommand> get commands => _commands.stream;
 
@@ -132,6 +133,7 @@ class MotionRealtimeVoice extends ChangeNotifier
       if (_disposed || _closed) return;
     }
     final generation = ++_connectionGeneration;
+    _eventFactory = MotionAssessmentEventFactory(assessmentId: assessmentId);
     _failureCode = null;
     _setPhase(MotionRealtimeVoicePhase.requestingPermission);
     var failureStage = 'audio_session';
@@ -256,12 +258,6 @@ class MotionRealtimeVoice extends ChangeNotifier
         track.enabled = true;
       }
       _setPhase(MotionRealtimeVoicePhase.listening);
-      final snapshot = _latestAssessmentContext;
-      if (snapshot != null) {
-        await sendClientEvent('assessment_context_sync', {
-          'context': snapshot.toJson(),
-        });
-      }
     } catch (error) {
       if (_isActive(generation)) {
         _failureCode = failureStage;
@@ -299,9 +295,15 @@ class MotionRealtimeVoice extends ChangeNotifier
       _playbackStarted = started;
       _playbackCompleted = completed;
     }
+    final protectsFinishHandshake =
+        normalizedEventType == 'assessment_review_ready';
+    if (protectsFinishHandshake) {
+      _protectedPlaybackEventType = normalizedEventType;
+    }
     try {
       if (interrupt) await _responseQueue?.interrupt();
-      await sendClientEvent(normalizedEventType, payload);
+      final published = await _publishClientEvent(normalizedEventType, payload);
+      if (!published) return;
       await _responseQueue?.enqueueModelTurn(
         _guidanceTurnInstructions(normalizedEventType),
       );
@@ -317,6 +319,10 @@ class MotionRealtimeVoice extends ChangeNotifier
     } finally {
       if (identical(_playbackStarted, started)) _playbackStarted = null;
       if (identical(_playbackCompleted, completed)) _playbackCompleted = null;
+      if (protectsFinishHandshake &&
+          _protectedPlaybackEventType == normalizedEventType) {
+        _protectedPlaybackEventType = null;
+      }
     }
   }
 
@@ -343,7 +349,6 @@ class MotionRealtimeVoice extends ChangeNotifier
     if (_disposed || _closed) return;
     _latestAssessmentContext = snapshot;
     _latestAssessmentContextReceivedAt = DateTime.now();
-    if (isConnected) _contextPublisher.add(snapshot.toJson());
   }
 
   @override
@@ -351,14 +356,44 @@ class MotionRealtimeVoice extends ChangeNotifier
     String eventType,
     Map<String, Object?> payload,
   ) async {
-    if (!isConnected) return;
+    await _publishClientEvent(eventType, payload);
+  }
+
+  Future<bool> _publishClientEvent(
+    String eventType,
+    Map<String, Object?> payload,
+  ) async {
+    if (!isConnected) return false;
     final channel = _dataChannel;
-    if (channel?.state != RTCDataChannelState.RTCDataChannelOpen) return;
-    final content = jsonEncode({
-      'event_type': eventType,
-      'payload': payload,
-      'source': 'on_device_pose_gate',
-    });
+    if (channel?.state != RTCDataChannelState.RTCDataChannelOpen) return false;
+    final factory = _eventFactory;
+    if (factory == null) return false;
+    final normalizedType = eventType.trim();
+    if (normalizedType.isEmpty) return false;
+    final dedupeKey = payload['dedupe_key']?.toString().trim();
+    if (!_eventGate.shouldSend(
+      type: normalizedType,
+      dedupeKey: dedupeKey?.isNotEmpty == true ? dedupeKey! : normalizedType,
+    )) {
+      return false;
+    }
+    final context = _latestAssessmentContext;
+    final facts =
+        <String, Object?>{
+            ...payload,
+            if (!payload.containsKey('context') && context != null)
+              'context': context.toJson(),
+          }
+          ..remove('dedupe_key')
+          ..remove('requires_voice_response');
+    final event = factory.create(
+      type: normalizedType,
+      stateRevision: context?.sequence ?? 0,
+      facts: facts,
+      requiresVoiceResponse: payload['requires_voice_response'] != false,
+      dedupeKey: dedupeKey,
+    );
+    final content = jsonEncode(event);
     try {
       await channel!.send(
         RTCDataChannelMessage(
@@ -374,8 +409,10 @@ class MotionRealtimeVoice extends ChangeNotifier
           }),
         ),
       );
+      return true;
     } catch (_) {
       _scheduleTerminalFailure(_connectionGeneration);
+      rethrow;
     }
   }
 
@@ -409,13 +446,20 @@ class MotionRealtimeVoice extends ChangeNotifier
   }
 
   String _guidanceTurnInstructions(String eventType) {
-    if (eventType == 'assessment_completed') {
-      return '最新客户端事件为 assessment_completed。只用一句简短中文告知用户：'
-          '本次采集已经完成，接下来由主智能体解读结果。不要在这里诊断或展开结果。';
-    }
-    return '最新客户端姿态事件为 $eventType。请依据刚收到的事件与最新的 '
-        'motion_assessment.context.v3 快照，主动给出一句简短、自然、可立即执行的中文语音指导。'
-        '一次只说一个动作；本地质量门和状态机结论是权威，不要要求用户触碰屏幕，不要要求腿脚完整入镜。';
+    return switch (eventType) {
+      'assessment_review_ready' =>
+        '客户端已完成两段采集与质量复核。请用一句自然中文说明采集已完成，并明确询问用户：'
+            '“你想结束本次评估，还是继续评估？”说完后等待用户新的语音回复，不要自行结束。',
+      'change_orientation' =>
+        '第一段已完成。请自然、亲切地引导用户缓慢转换到另一个侧身方向，站稳并目视前方；一次只说一个动作。',
+      'assessment_finalizing' =>
+        '用户已通过新的语音回复确认结束。请简短告知结果正在保存，稍后由主智能体反馈；不要自行诊断。',
+      'command_rejected' => '客户端拒绝了不符合当前状态或语音轮次的命令。请依据最新事件继续当前步骤，不要声称评估已结束。',
+      _ =>
+        '最新客户端语义事件为 $eventType。请只依据刚收到的 motion_assessment.event.v4 facts，'
+            '主动给出一句简短、自然、可立即执行的中文语音指导。一次只说一个动作；端侧质量门和状态机结论是权威，'
+            '不要要求用户触碰屏幕，不要要求腿脚完整入镜。',
+    };
   }
 
   void _handleServerEvent(
@@ -432,21 +476,20 @@ class MotionRealtimeVoice extends ChangeNotifier
       final type = decoded['type']?.toString() ?? '';
       sessionGate.handleServerEvent(event);
       unawaited(_handleResponseQueueEvent(event, generation));
-      if (type == 'input_audio_buffer.speech_started') {
+      if (type == 'input_audio_buffer.speech_started' &&
+          _protectedPlaybackEventType == null) {
         unawaited(_interruptResponseQueue(generation));
       }
       final userAudioItemId = completedUserAudioItemIdFromServerEvent(event);
       if (userAudioItemId != null &&
           _handledUserAudioItemIds.add(userAudioItemId)) {
-        final snapshot = _latestAssessmentContext;
-        final receivedAt = _latestAssessmentContextReceivedAt;
-        final contextAgeMs = receivedAt == null
-            ? 0
-            : DateTime.now().difference(receivedAt).inMilliseconds;
-        final instructions =
-            snapshot?.toRealtimeInstructions(contextAgeMs: contextAgeMs) ??
-            '请简短回答用户刚才的问题。当前没有新鲜的端侧姿态语义快照，因此不要猜测用户姿态；请提示用户保持单人且头部、肩部和髋部入镜，等待本地质量门重新确认。';
-        unawaited(_enqueueModelTurn(instructions, generation));
+        _latestCompletedUserAudioItemId = userAudioItemId;
+        unawaited(
+          _handleCompletedUserAudio(
+            userAudioItemId: userAudioItemId,
+            generation: generation,
+          ),
+        );
       }
       final playbackTransition = _playbackTracker.handleEventType(type);
       switch (playbackTransition) {
@@ -471,12 +514,39 @@ class MotionRealtimeVoice extends ChangeNotifier
       }
       for (final command in motionVoiceCommandsFromServerEvent(event)) {
         if (_handledCommandCallIds.add(command.callId) && !_commands.isClosed) {
-          _commands.add(command);
+          _commands.add(
+            command.withUserAudioItemId(_responseQueue?.activeContextId),
+          );
         }
       }
     } on FormatException {
       return;
     }
+  }
+
+  Future<void> _handleCompletedUserAudio({
+    required String userAudioItemId,
+    required int generation,
+  }) async {
+    await sendClientEvent('user_speech_completed', {
+      'user_audio_item_id': userAudioItemId,
+      'requires_voice_response': true,
+      'dedupe_key': userAudioItemId,
+    });
+    if (!_isActive(generation)) return;
+    final snapshot = _latestAssessmentContext;
+    final receivedAt = _latestAssessmentContextReceivedAt;
+    final contextAgeMs = receivedAt == null
+        ? 0
+        : DateTime.now().difference(receivedAt).inMilliseconds;
+    final instructions =
+        snapshot?.toRealtimeInstructions(contextAgeMs: contextAgeMs) ??
+        '自然回应用户刚才的话。当前没有新鲜的端侧姿态事实，不要猜测姿态或推进状态；请等待客户端的新事件。';
+    await _enqueueModelTurn(
+      instructions,
+      generation,
+      contextId: userAudioItemId,
+    );
   }
 
   Future<void> _handleResponseQueueEvent(
@@ -498,9 +568,16 @@ class MotionRealtimeVoice extends ChangeNotifier
     }
   }
 
-  Future<void> _enqueueModelTurn(String instructions, int generation) async {
+  Future<void> _enqueueModelTurn(
+    String instructions,
+    int generation, {
+    String? contextId,
+  }) async {
     try {
-      await _responseQueue?.enqueueModelTurn(instructions);
+      await _responseQueue?.enqueueModelTurn(
+        instructions,
+        contextId: contextId,
+      );
     } catch (_) {
       _scheduleTerminalFailure(generation);
     }
@@ -547,7 +624,6 @@ class MotionRealtimeVoice extends ChangeNotifier
     if (_closed) return;
     _closed = true;
     _connectionGeneration += 1;
-    await _contextPublisher.close();
     await _closeResources();
     _setPhase(MotionRealtimeVoicePhase.closed);
   }
@@ -644,7 +720,6 @@ class MotionRealtimeVoice extends ChangeNotifier
     _disposed = true;
     _closed = true;
     _connectionGeneration += 1;
-    unawaited(_contextPublisher.close());
     unawaited(_closeResources());
     unawaited(_commands.close());
     super.dispose();

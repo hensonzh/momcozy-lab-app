@@ -113,12 +113,15 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
       widget.routeIntentPlatform ?? AndroidRouteIntentPlatform();
   late final bool _ownsRouteIntentPlatform = widget.routeIntentPlatform == null;
   StreamSubscription<PendingNativeRoute>? _activeRouteSub;
+  MomCozyApiRuntime? _lastFinalizationRetryRuntime;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _runtimeController.enableSessionAutoRefresh(widget.sessionStore);
+    _runtimeController.addListener(_handleRuntimeChanged);
+    _retryPendingMotionFinalizations();
     _activeRouteSub = _routeIntentPlatform.activeRoutes.listen(
       _handlePendingNativeRoute,
     );
@@ -128,6 +131,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _runtimeController.removeListener(_handleRuntimeChanged);
     unawaited(_activeRouteSub?.cancel());
     if (_ownsRouteIntentPlatform) {
       final platform = _routeIntentPlatform;
@@ -143,6 +147,18 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _avatarTaskController?.setForeground(state == AppLifecycleState.resumed);
+    if (state == AppLifecycleState.resumed) {
+      _retryPendingMotionFinalizations(force: true);
+    }
+  }
+
+  void _handleRuntimeChanged() => _retryPendingMotionFinalizations();
+
+  void _retryPendingMotionFinalizations({bool force = false}) {
+    final runtime = _runtimeController.runtime;
+    if (!force && identical(runtime, _lastFinalizationRetryRuntime)) return;
+    _lastFinalizationRetryRuntime = runtime;
+    unawaited(runtime.motionAssessmentRepository.retryPendingFinalizations());
   }
 
   Future<void> _consumePendingNativeRoute() async {
@@ -1436,7 +1452,17 @@ Widget _buildDefaultAgentHubPage(
     initialComposerText: _agentPrefillFromRoute(uri, extra),
     initialAutoSend: _agentAutoSendFromRoute(uri, extra),
     initialAutoRunRequest: _agentAutoRunFromRoute(extra),
+    externalConversationRefreshKey: _motionAssessmentFeedbackRefreshKey(extra),
   );
+}
+
+String? _motionAssessmentFeedbackRefreshKey(Object? extra) {
+  final extraMap = extra is Map ? extra : null;
+  final assessmentId = extraMap?['motionAssessmentFeedbackRefreshKey']
+      ?.toString()
+      .trim();
+  if (assessmentId == null || assessmentId.isEmpty) return null;
+  return 'motion:$assessmentId';
 }
 
 AgentHubAutoRunRequest? _agentAutoRunFromRoute(Object? extra) {
@@ -1660,8 +1686,8 @@ const momCozyRoutes = [
   ),
   MomCozyRouteConfig(
     path: '/motion-assessment',
-    title: '动态姿态评估',
-    summary: '端侧人体关键点识别与独立实时语音动作指导。',
+    title: '头颈姿态动态评估',
+    summary: '端侧头颈姿态识别与独立实时语音指导。',
     icon: Icons.accessibility_new_rounded,
     accent: Color(0xff8c4768),
     priority: 'P0',

@@ -13,6 +13,9 @@ class MotionRealtimeResponseQueue {
   bool _responseActive = false;
   bool _cancelSent = false;
   bool _closed = false;
+  String? _activeContextId;
+
+  String? get activeContextId => _activeContextId;
 
   Future<void> enqueue(
     String instruction, {
@@ -43,10 +46,12 @@ class MotionRealtimeResponseQueue {
     });
   }
 
-  Future<void> enqueueModelTurn(String instructions) {
+  Future<void> enqueueModelTurn(String instructions, {String? contextId}) {
     return _serialize(() async {
       if (_closed || instructions.trim().isEmpty) return;
-      _pending.addLast(_PendingResponse.modelTurn(instructions.trim()));
+      _pending.addLast(
+        _PendingResponse.modelTurn(instructions.trim(), contextId: contextId),
+      );
       await _sendNextIfIdle();
     });
   }
@@ -72,6 +77,7 @@ class MotionRealtimeResponseQueue {
         case 'response.done':
           _responseActive = false;
           _cancelSent = false;
+          _activeContextId = null;
           await _sendNextIfIdle();
       }
     });
@@ -83,6 +89,7 @@ class MotionRealtimeResponseQueue {
       _pending.clear();
       _responseActive = false;
       _cancelSent = false;
+      _activeContextId = null;
     });
   }
 
@@ -90,6 +97,7 @@ class MotionRealtimeResponseQueue {
     if (_closed || _responseActive || _pending.isEmpty) return;
     final next = _pending.removeFirst();
     _responseActive = true;
+    _activeContextId = next.contextId;
     try {
       await sendEvent({
         'type': 'response.create',
@@ -108,6 +116,7 @@ class MotionRealtimeResponseQueue {
       });
     } catch (_) {
       _responseActive = false;
+      _activeContextId = null;
       rethrow;
     }
   }
@@ -124,6 +133,7 @@ class _PendingResponse {
     this.instructions, {
     required this.exactSpeech,
     required this.modelTurn,
+    this.contextId,
   });
 
   const _PendingResponse.exactSpeech(String instructions)
@@ -132,10 +142,16 @@ class _PendingResponse {
   const _PendingResponse.naturalGuidance(String instructions)
     : this._(instructions, exactSpeech: false, modelTurn: false);
 
-  const _PendingResponse.modelTurn(String instructions)
-    : this._(instructions, exactSpeech: false, modelTurn: true);
+  const _PendingResponse.modelTurn(String instructions, {String? contextId})
+    : this._(
+        instructions,
+        exactSpeech: false,
+        modelTurn: true,
+        contextId: contextId,
+      );
 
   final String instructions;
   final bool exactSpeech;
   final bool modelTurn;
+  final String? contextId;
 }
