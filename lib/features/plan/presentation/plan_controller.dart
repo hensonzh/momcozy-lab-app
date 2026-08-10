@@ -5,6 +5,8 @@ enum PlanLoadPhase { loading, empty, success, error }
 
 enum PlanPeriod { day, week, month }
 
+enum PlanSurface { overview, detail }
+
 @immutable
 class PlanViewState {
   const PlanViewState({
@@ -14,6 +16,7 @@ class PlanViewState {
     this.selectedPlanId,
     this.errorMessage,
     this.period = PlanPeriod.week,
+    this.surface = PlanSurface.overview,
   });
 
   final PlanLoadPhase phase;
@@ -22,6 +25,7 @@ class PlanViewState {
   final String? selectedPlanId;
   final String? errorMessage;
   final PlanPeriod period;
+  final PlanSurface surface;
 
   CarePlan? get selectedPlan {
     final plans = dashboard?.plans ?? const <CarePlan>[];
@@ -54,13 +58,16 @@ class PlanController extends ChangeNotifier {
       dashboard: _state.dashboard,
       selectedPlanId: _state.selectedPlanId,
       period: _state.period,
+      surface: _state.surface,
     );
     notifyListeners();
     try {
       final dashboard = await repository.fetchDashboard(weekOf: weekOf);
       if (generation != _loadGeneration) return;
-      final selectedPlanId =
-          dashboard.plans.any((plan) => plan.id == _state.selectedPlanId)
+      final keepsSelectedPlan = dashboard.plans.any(
+        (plan) => plan.id == _state.selectedPlanId,
+      );
+      final selectedPlanId = keepsSelectedPlan
           ? _state.selectedPlanId
           : dashboard.plans.firstOrNull?.id;
       _state = PlanViewState(
@@ -69,6 +76,9 @@ class PlanController extends ChangeNotifier {
         dashboard: dashboard,
         selectedPlanId: selectedPlanId,
         period: _state.period,
+        surface: dashboard.isEmpty || !keepsSelectedPlan
+            ? PlanSurface.overview
+            : _state.surface,
       );
     } catch (_) {
       if (generation != _loadGeneration) return;
@@ -79,6 +89,7 @@ class PlanController extends ChangeNotifier {
         selectedPlanId: _state.selectedPlanId,
         errorMessage: 'Plans could not be loaded.',
         period: _state.period,
+        surface: _state.surface,
       );
     }
     notifyListeners();
@@ -97,6 +108,43 @@ class PlanController extends ChangeNotifier {
       dashboard: dashboard,
       selectedPlanId: planId,
       period: _state.period,
+      surface: _state.surface,
+    );
+    notifyListeners();
+  }
+
+  void openPlanDetails(String planId) {
+    final dashboard = _state.dashboard;
+    if (dashboard == null ||
+        !dashboard.plans.any((plan) => plan.id == planId)) {
+      return;
+    }
+    if (_state.selectedPlanId == planId &&
+        _state.surface == PlanSurface.detail) {
+      return;
+    }
+    _state = PlanViewState(
+      phase: _state.phase,
+      weekOf: _state.weekOf,
+      dashboard: dashboard,
+      selectedPlanId: planId,
+      errorMessage: _state.errorMessage,
+      period: _state.period,
+      surface: PlanSurface.detail,
+    );
+    notifyListeners();
+  }
+
+  void showOverview() {
+    if (_state.surface == PlanSurface.overview) return;
+    _state = PlanViewState(
+      phase: _state.phase,
+      weekOf: _state.weekOf,
+      dashboard: _state.dashboard,
+      selectedPlanId: _state.selectedPlanId,
+      errorMessage: _state.errorMessage,
+      period: _state.period,
+      surface: PlanSurface.overview,
     );
     notifyListeners();
   }
@@ -110,6 +158,7 @@ class PlanController extends ChangeNotifier {
       selectedPlanId: _state.selectedPlanId,
       errorMessage: _state.errorMessage,
       period: period,
+      surface: _state.surface,
     );
     notifyListeners();
   }
@@ -123,6 +172,7 @@ class PlanController extends ChangeNotifier {
       dashboard: _state.dashboard,
       selectedPlanId: _state.selectedPlanId,
       period: _state.period,
+      surface: _state.surface,
     );
     notifyListeners();
     await load();

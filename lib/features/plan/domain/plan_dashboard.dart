@@ -43,6 +43,8 @@ class CarePlan {
     this.todayVolumeMl,
     this.weeklyTargetVolumeMl,
     this.weeklyVolumeMl,
+    this.weeklyCompletedSessions,
+    this.weeklyTotalSessions,
     this.startDate,
     this.endDate,
     this.durationDays,
@@ -63,6 +65,8 @@ class CarePlan {
   final int? todayVolumeMl;
   final int? weeklyTargetVolumeMl;
   final int? weeklyVolumeMl;
+  final int? weeklyCompletedSessions;
+  final int? weeklyTotalSessions;
   final DateTime? startDate;
   final DateTime? endDate;
   final int? durationDays;
@@ -94,8 +98,15 @@ class CarePlan {
       selectedDay.month,
       selectedDay.day,
     );
+    final normalizedEnd = endDate == null
+        ? normalizedStart.add(Duration(days: duration - 1))
+        : DateTime.utc(endDate!.year, endDate!.month, endDate!.day);
+    if (normalizedSelected.isBefore(normalizedStart) ||
+        normalizedSelected.isAfter(normalizedEnd)) {
+      return null;
+    }
     final day = normalizedSelected.difference(normalizedStart).inDays + 1;
-    return day.clamp(1, duration);
+    return day;
   }
 }
 
@@ -124,8 +135,6 @@ class PlanDashboard {
     required this.weekOf,
     this.plans = const <CarePlan>[],
     this.sessions = const <PlanSession>[],
-    this.weeklyCompletedSessions,
-    this.weeklyTotalSessions,
   });
 
   factory PlanDashboard.empty({required DateTime weekOf}) {
@@ -135,22 +144,10 @@ class PlanDashboard {
   final DateTime weekOf;
   final List<CarePlan> plans;
   final List<PlanSession> sessions;
-  final int? weeklyCompletedSessions;
-  final int? weeklyTotalSessions;
 
   bool get isEmpty => plans.isEmpty;
-
-  bool get isSinglePlan => plans.length == 1;
 
   List<PlanSession> sessionsFor(String planId) => sessions
       .where((session) => session.planId == planId)
       .toList(growable: false);
-
-  int get completedThisWeek =>
-      weeklyCompletedSessions ??
-      sessions
-          .where((session) => session.status == PlanSessionStatus.completed)
-          .length;
-
-  int get totalThisWeek => weeklyTotalSessions ?? sessions.length;
 }

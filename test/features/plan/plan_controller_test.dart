@@ -3,6 +3,26 @@ import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/plan/presentation/plan_controller.dart';
 
 void main() {
+  test(
+    'keeps overview and plan details as explicit reversible levels',
+    () async {
+      final selectedDay = DateTime(2026, 10, 22);
+      final controller = PlanController(
+        repository: _MutablePlanRepository(selectedDay),
+        initialWeek: selectedDay,
+      );
+      addTearDown(controller.dispose);
+
+      await controller.load();
+
+      expect(controller.state.surface, PlanSurface.overview);
+      controller.openPlanDetails('plan-1');
+      expect(controller.state.surface, PlanSurface.detail);
+      controller.showOverview();
+      expect(controller.state.surface, PlanSurface.overview);
+    },
+  );
+
   test('updates a session and refreshes the selected Plan day', () async {
     final selectedDay = DateTime(2026, 10, 22);
     final repository = _MutablePlanRepository(selectedDay);

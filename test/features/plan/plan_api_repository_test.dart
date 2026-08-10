@@ -28,6 +28,8 @@ void main() {
                 'today_volume_ml': 473,
                 'weekly_target_volume_ml': 4200,
                 'weekly_volume_ml': 2850,
+                'weekly_completed_sessions': 3,
+                'weekly_total_sessions': 5,
               },
             },
             {
@@ -82,6 +84,8 @@ void main() {
       expect(dashboard.plans, hasLength(2));
       expect(dashboard.plans.first.category, PlanCategory.lactation);
       expect(dashboard.plans.first.weekNumber, 4);
+      expect(dashboard.plans.first.weeklyCompletedSessions, 3);
+      expect(dashboard.plans.first.weeklyTotalSessions, 5);
       expect(dashboard.plans.last.category, PlanCategory.yoga);
       expect(dashboard.sessions, hasLength(2));
       expect(dashboard.sessions.first.status, PlanSessionStatus.completed);
@@ -89,6 +93,65 @@ void main() {
       expect(dashboard.sessions.last.status, PlanSessionStatus.next);
     },
   );
+
+  test('marks the first pending session as next within each plan', () async {
+    final transport = FixtureApiJsonTransportByPath({
+      planListEndpoint: const {
+        'items': [
+          {
+            'id': 'plan-a',
+            'plan_type': 'lactation',
+            'title': 'Plan A',
+            'payload': <String, Object?>{},
+          },
+          {
+            'id': 'plan-b',
+            'plan_type': 'yoga',
+            'title': 'Plan B',
+            'payload': <String, Object?>{},
+          },
+        ],
+      },
+      planSessionListEndpoint: const {
+        'items': [
+          {
+            'id': 'a-1',
+            'plan_id': 'plan-a',
+            'task_date': '2026-10-22',
+            'task_time': '08:00',
+            'title': 'A first',
+            'status': 'pending',
+          },
+          {
+            'id': 'b-1',
+            'plan_id': 'plan-b',
+            'task_date': '2026-10-22',
+            'task_time': '09:00',
+            'title': 'B first',
+            'status': 'pending',
+          },
+          {
+            'id': 'a-2',
+            'plan_id': 'plan-a',
+            'task_date': '2026-10-22',
+            'task_time': '10:00',
+            'title': 'A second',
+            'status': 'pending',
+          },
+        ],
+      },
+    });
+
+    final dashboard = await PlanApiRepository(
+      transport: transport,
+    ).fetchDashboard(weekOf: DateTime(2026, 10, 22));
+
+    expect(dashboard.sessions.map((session) => session.status), [
+      PlanSessionStatus.next,
+      PlanSessionStatus.next,
+      PlanSessionStatus.upcoming,
+    ]);
+  });
 
   test(
     'starts plan and session requests together for the active-plan path',
@@ -171,6 +234,10 @@ void main() {
       expect(plan.todayVolumeMl, isNull);
       expect(plan.weeklyTargetVolumeMl, isNull);
       expect(plan.weeklyVolumeMl, isNull);
+      expect(plan.dayNumberOn(DateTime(2026, 8, 10)), isNull);
+      expect(plan.dayNumberOn(DateTime(2026, 8, 11)), 1);
+      expect(plan.dayNumberOn(DateTime(2026, 8, 25)), 15);
+      expect(plan.dayNumberOn(DateTime(2026, 8, 26)), isNull);
     },
   );
 

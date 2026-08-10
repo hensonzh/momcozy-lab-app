@@ -250,6 +250,115 @@ void main() {
     expect(avatar.right, closeTo(serviceHeader.right, 0.6));
   });
 
+  testWidgets('a single active plan keeps a reversible My Plans overview', (
+    tester,
+  ) async {
+    await _pumpPlanPage(tester, dashboard: _singlePlanDashboard(now), now: now);
+
+    expect(
+      find.byKey(const ValueKey('plan-multi-category-state')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('plan-single-category-state')),
+      findsNothing,
+    );
+    expect(find.text('My Plans'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('plan-single-category-state')),
+      findsOneWidget,
+    );
+    expect(find.text('My Plans'), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('plan-single-back')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('plan-multi-category-state')),
+      findsOneWidget,
+    );
+    expect(find.text('My Plans'), findsOneWidget);
+  });
+
+  testWidgets('the selected plan owns the visible sessions and progress', (
+    tester,
+  ) async {
+    await _pumpPlanPage(tester, dashboard: _mixedPlanDashboard(now), now: now);
+
+    expect(find.byKey(const ValueKey('plan-session-one')), findsOneWidget);
+    expect(find.byKey(const ValueKey('plan-session-two')), findsOneWidget);
+    expect(find.byKey(const ValueKey('plan-session-three')), findsNothing);
+    expect(find.byKey(const ValueKey('plan-week-summary')), findsOneWidget);
+
+    await tester.tap(find.text('Pelvic Floor'));
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('plan-session-one')), findsNothing);
+    expect(find.byKey(const ValueKey('plan-session-two')), findsNothing);
+    expect(find.byKey(const ValueKey('plan-session-three')), findsOneWidget);
+    expect(find.byKey(const ValueKey('plan-week-summary')), findsNothing);
+  });
+
+  testWidgets('schedule headings describe the selected date truthfully', (
+    tester,
+  ) async {
+    final repository = _RecordingPlanRepository(_multiCategoryDashboard(now));
+    await _pumpPlanPage(
+      tester,
+      dashboard: repository.dashboard,
+      repository: repository,
+      now: now,
+    );
+
+    expect(find.text('Today'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('plan-week-day-2024-10-23')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Wed, Oct 23'), findsOneWidget);
+    expect(find.text('Today'), findsNothing);
+  });
+
+  testWidgets('a future generated plan is shown as upcoming, not day one', (
+    tester,
+  ) async {
+    final today = DateTime(2026, 8, 10);
+    final dashboard = _upcomingPlanDashboard(today);
+
+    await _pumpPlanPage(tester, dashboard: dashboard, now: today);
+
+    await expectLater(
+      find.byKey(const ValueKey('route-page-/plan')),
+      matchesGoldenFile('../../goldens/plan/generated_upcoming_mobile.png'),
+    );
+
+    expect(
+      find.byKey(const ValueKey('plan-multi-category-state')),
+      findsOneWidget,
+    );
+    expect(find.text('15-Day Supply Plan'), findsOneWidget);
+    expect(find.text('Starts Aug 11'), findsOneWidget);
+    expect(find.text('Day 1/15'), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+    await tester.pump();
+
+    expect(find.text('Starts Aug 11'), findsWidgets);
+    expect(find.text('Day 1/15'), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('plan-single-back')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('plan-jump-to-start')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tue, Aug 11'), findsOneWidget);
+    expect(find.text('Scheduled'), findsOneWidget);
+    expect(find.text('Start'), findsNothing);
+  });
+
   testWidgets('renders the supplied multi-category weekly plan structure', (
     tester,
   ) async {
@@ -283,6 +392,11 @@ void main() {
     expect(find.text('Completed'), findsOneWidget);
     expect(find.text('11:00 AM'), findsOneWidget);
     expect(find.text('Start'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('plan-day-dot-2024-10-22')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('plan-day-dot-2024-10-21')), findsNothing);
     await tester.tap(find.text('Start'));
     expect(startCount, 1);
 
@@ -401,14 +515,21 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Yoga'));
     await tester.pump();
-    await tester.tap(find.text('View week details'));
-    await tester.pumpAndSettle();
-
+    expect(find.byKey(const ValueKey('plan-week-summary')), findsNothing);
     expect(
-      find.byKey(const ValueKey('plan-week-details-sheet')),
+      find.byKey(const ValueKey('plan-no-sessions-selected-day')),
       findsOneWidget,
     );
-    expect(find.text('Yoga Week Details'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey('plan-single-category-state')),
+      findsOneWidget,
+    );
+    expect(find.text('Yoga'), findsOneWidget);
+    expect(find.text('Recovery yoga'), findsOneWidget);
   });
 
   testWidgets('Plan header opens the default calendar and all-plans flows', (
@@ -435,9 +556,12 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('plan-all-plans-yoga')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('plan-all-plans-sheet')), findsNothing);
-    await tester.tap(find.text('View week details'));
-    await tester.pumpAndSettle();
-    expect(find.text('Yoga Week Details'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('plan-single-category-state')),
+      findsOneWidget,
+    );
+    expect(find.text('Yoga'), findsOneWidget);
+    expect(find.text('Recovery yoga'), findsOneWidget);
   });
 
   testWidgets('week and month date cells reload the selected Plan day', (
@@ -494,16 +618,27 @@ void main() {
     expect(repository.requestedDays.last, DateTime(2024, 10, 23));
   });
 
-  testWidgets('single-category back opens the default all-plans flow', (
+  testWidgets('system back returns from plan details to the overview', (
     tester,
   ) async {
     await _pumpPlanPage(tester, dashboard: _singlePlanDashboard(now), now: now);
 
-    await tester.tap(find.byKey(const ValueKey('plan-single-back')));
+    await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('plan-single-category-state')),
+      findsOneWidget,
+    );
+
+    await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('plan-all-plans-sheet')), findsOneWidget);
-    expect(find.text('Breast Pumping Plan'), findsWidgets);
+    expect(
+      find.byKey(const ValueKey('plan-multi-category-state')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('plan-all-plans-sheet')), findsNothing);
+    expect(find.text('My Plans'), findsOneWidget);
   });
 
   testWidgets('manual edit persists a session title and time', (tester) async {
@@ -515,6 +650,8 @@ void main() {
       now: now,
     );
 
+    await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+    await tester.pump();
     await tester.drag(find.byType(ListView), const Offset(0, -700));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Manual Edit'));
@@ -557,6 +694,8 @@ void main() {
       onStartSession: () => startCount += 1,
       onManualEdit: () => editCount += 1,
     );
+    await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+    await tester.pump();
 
     await expectLater(
       find.byKey(const ValueKey('route-page-/plan')),
@@ -574,6 +713,14 @@ void main() {
     expect(find.text("Today's Sessions"), findsOneWidget);
     expect(find.text('Session 1'), findsOneWidget);
     expect(find.text('Session 2'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('plan-milestone-selected-2024-10-22')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('plan-milestone-completed-2024-10-21')),
+      findsNothing,
+    );
 
     expect(
       tester.getSize(find.byKey(const ValueKey('plan-milestone-ring'))),
@@ -589,6 +736,8 @@ void main() {
       onManualEdit: () => editCount += 1,
       viewportSize: const Size(390, 1100),
     );
+    await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+    await tester.pump();
     await expectLater(
       find.byKey(const ValueKey('route-page-/plan')),
       matchesGoldenFile('../../goldens/plan/single_category_full_mobile.png'),
@@ -638,11 +787,9 @@ void main() {
       const Rect.fromLTWH(18, 833, 354, 221),
       tolerance: 1,
     );
-    await tester.tap(find.byKey(const ValueKey('plan-single-back')));
     await tester.tap(find.byKey(const ValueKey('plan-single-edit')));
     await tester.tap(find.byKey(const ValueKey('plan-single-all-plans')));
     await tester.tap(find.text('Start'));
-    expect(backCount, 1);
     expect(editCount, 1);
     expect(allPlansCount, 1);
     expect(startCount, 1);
@@ -660,6 +807,10 @@ void main() {
     expect(find.text('Manual Edit'), findsOneWidget);
 
     expect(find.text('My Plans'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('plan-single-back')));
+    await tester.pump();
+    expect(backCount, 1);
+    expect(find.text('My Plans'), findsOneWidget);
     expect(find.text('日程'), findsNothing);
     expect(find.text('今天还没有计划任务'), findsNothing);
   });
@@ -668,18 +819,32 @@ void main() {
     testWidgets(
       'all supplied plan states fit ${viewport.width.toInt()}x${viewport.height.toInt()}',
       (tester) async {
-        for (final dashboard in [
-          PlanDashboard.empty(weekOf: now),
-          _multiCategoryDashboard(now),
-          _singlePlanDashboard(now),
+        for (final planCase in [
+          (name: 'empty', dashboard: PlanDashboard.empty(weekOf: now)),
+          (name: 'multi', dashboard: _multiCategoryDashboard(now)),
+          (name: 'single', dashboard: _singlePlanDashboard(now)),
+          (name: 'upcoming', dashboard: _upcomingPlanDashboard(now)),
         ]) {
           await _pumpPlanPage(
             tester,
-            dashboard: dashboard,
+            dashboard: planCase.dashboard,
             now: now,
             viewportSize: viewport,
           );
-          expect(tester.takeException(), isNull);
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: '${planCase.name} overview at ${viewport.width}',
+          );
+          if (!planCase.dashboard.isEmpty) {
+            await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+            await tester.pump();
+            expect(
+              tester.takeException(),
+              isNull,
+              reason: '${planCase.name} details at ${viewport.width}',
+            );
+          }
         }
       },
     );
@@ -694,18 +859,21 @@ void main() {
         now: emptyNow,
         viewport: const Size(390, 1140),
         golden: '../../goldens/plan/empty_design_2x.png',
+        openDetails: false,
       ),
       (
         dashboard: _multiCategoryDashboard(now),
         now: now,
         viewport: const Size(390, 683),
         golden: '../../goldens/plan/multi_category_design_2x.png',
+        openDetails: false,
       ),
       (
         dashboard: _singlePlanDashboard(now),
         now: now,
         viewport: const Size(390, 1060),
         golden: '../../goldens/plan/single_category_design_2x.png',
+        openDetails: true,
       ),
     ]) {
       await _pumpPlanPage(
@@ -715,6 +883,10 @@ void main() {
         viewportSize: designCase.viewport,
         devicePixelRatio: 2,
       );
+      if (designCase.openDetails) {
+        await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+        await tester.pump();
+      }
       await expectLater(
         find.byKey(const ValueKey('route-page-/plan')),
         matchesGoldenFile(designCase.golden),
@@ -747,6 +919,8 @@ void main() {
       );
 
       await _pumpPlanPage(tester, dashboard: dashboard, now: start);
+      await tester.tap(find.byKey(const ValueKey('plan-open-details')));
+      await tester.pump();
 
       expect(find.text('Day 1/15'), findsOneWidget);
       expect(find.text('Increase Supply'), findsOneWidget);
@@ -843,6 +1017,8 @@ PlanDashboard _multiCategoryDashboard(DateTime now) {
       category: PlanCategory.lactation,
       title: 'Lactation',
       summary: 'Pumping plan',
+      weeklyCompletedSessions: 3,
+      weeklyTotalSessions: 5,
     ),
     const CarePlan(
       id: 'yoga',
@@ -860,8 +1036,6 @@ PlanDashboard _multiCategoryDashboard(DateTime now) {
   return PlanDashboard(
     weekOf: now,
     plans: plans,
-    weeklyCompletedSessions: 3,
-    weeklyTotalSessions: 5,
     sessions: [
       PlanSession(
         id: 'one',
@@ -879,10 +1053,28 @@ PlanDashboard _multiCategoryDashboard(DateTime now) {
       ),
       PlanSession(
         id: 'three',
+        planId: 'lactation',
+        title: 'Pumping: Evening power session 15min',
+        scheduledAt: DateTime(now.year, now.month, now.day, 16),
+        status: PlanSessionStatus.upcoming,
+      ),
+    ],
+  );
+}
+
+PlanDashboard _mixedPlanDashboard(DateTime now) {
+  final dashboard = _multiCategoryDashboard(now);
+  return PlanDashboard(
+    weekOf: now,
+    plans: dashboard.plans,
+    sessions: [
+      ...dashboard.sessions.take(2),
+      PlanSession(
+        id: 'three',
         planId: 'pelvic',
         title: 'Pelvic Floor: Evening Stretches 15min',
         scheduledAt: DateTime(now.year, now.month, now.day, 16),
-        status: PlanSessionStatus.upcoming,
+        status: PlanSessionStatus.next,
       ),
     ],
   );
@@ -946,6 +1138,37 @@ PlanDashboard _singlePlanDashboard(DateTime now) {
   );
 }
 
+PlanDashboard _upcomingPlanDashboard(DateTime today) {
+  final start = DateTime(today.year, today.month, today.day + 1);
+  return PlanDashboard(
+    weekOf: today,
+    plans: [
+      CarePlan(
+        id: 'lactation-v1',
+        category: PlanCategory.lactation,
+        title: '15-Day Supply Plan',
+        summary: 'Gradual schedule',
+        startDate: start,
+        endDate: start.add(const Duration(days: 14)),
+        durationDays: 15,
+        goal: 'increase_supply',
+        pumpingSessionsPerDay: 6,
+        breastfeedingAnchorsPerDay: 1,
+        sessionsPerDay: 7,
+      ),
+    ],
+    sessions: [
+      PlanSession(
+        id: 'future-session',
+        planId: 'lactation-v1',
+        title: 'Morning pumping session',
+        scheduledAt: DateTime(start.year, start.month, start.day, 8),
+        status: PlanSessionStatus.next,
+      ),
+    ],
+  );
+}
+
 class _FakePlanRepository implements PlanRepository {
   const _FakePlanRepository(this.dashboard);
 
@@ -983,8 +1206,6 @@ class _EditablePlanRepository
     dashboard = PlanDashboard(
       weekOf: dashboard.weekOf,
       plans: dashboard.plans,
-      weeklyCompletedSessions: dashboard.weeklyCompletedSessions,
-      weeklyTotalSessions: dashboard.weeklyTotalSessions,
       sessions: [
         for (final session in dashboard.sessions)
           if (session.id == sessionId)
@@ -1016,8 +1237,6 @@ class _RecordingPlanRepository implements PlanRepository {
       weekOf: weekOf,
       plans: dashboard.plans,
       sessions: dashboard.sessions,
-      weeklyCompletedSessions: dashboard.weeklyCompletedSessions,
-      weeklyTotalSessions: dashboard.weeklyTotalSessions,
     );
   }
 }

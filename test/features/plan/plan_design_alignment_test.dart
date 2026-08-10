@@ -54,8 +54,14 @@ void main() {
       comparisonHeight: 683,
       maxMeanAbsoluteError: 6.5,
       maxSignificantDifferenceRatio: 0.05,
-      // Product-approved header grouping places Calendar beside "My Plans".
-      ignoredRegions: [_ImageRect(134, 0, 50, 66), _ImageRect(204, 0, 50, 66)],
+      // Product-approved UX changes group Calendar beside "My Plans", add an
+      // explicit detail affordance, and render schedule dots from real data.
+      ignoredRegions: [
+        _ImageRect(134, 0, 50, 66),
+        _ImageRect(204, 0, 50, 66),
+        _ImageRect(286, 70, 92, 44),
+        _ImageRect(12, 272, 366, 16),
+      ],
       regions: [
         _AlignmentRegion('header', _ImageRect(0, 0, 390, 66)),
         _AlignmentRegion('plan controls', _ImageRect(12, 70, 366, 128)),
@@ -78,6 +84,9 @@ void main() {
       comparisonHeight: 1060,
       maxMeanAbsoluteError: 6.5,
       maxSignificantDifferenceRatio: 0.05,
+      // The static export marks two weekdays complete; production now shows
+      // only completion and selection states backed by loaded sessions.
+      ignoredRegions: [_ImageRect(12, 238, 366, 42)],
       regions: [
         _AlignmentRegion(
           'header',
@@ -213,6 +222,7 @@ void main() {
       renderedPath: 'test/goldens/plan/multi_category_design_2x.png',
       renderedRect: _ImageRect(17, 205, 356, 80),
       maxMeanAbsoluteError: 8,
+      ignoredRegions: [_ImageRect(0, 68, 356, 12)],
     ),
     _ComponentAlignmentCase(
       name: 'multi-category completed session',
