@@ -61,9 +61,12 @@ class MotionPosePlugin(
             VIEW_TYPE,
             object : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
                 override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
+                    val useFrontCamera =
+                        (args as? Map<*, *>)?.get("camera_facing")?.toString() != "back"
                     return MotionPosePlatformView(
                         context = context,
                         activity = activity,
+                        useFrontCamera = useFrontCamera,
                         emit = ::emit,
                         emitError = ::emitError,
                         onDisposed = { disposed ->
@@ -175,6 +178,7 @@ class MotionPosePlugin(
 private class MotionPosePlatformView(
     context: Context,
     private val activity: Activity,
+    private val useFrontCamera: Boolean,
     private val emit: (Map<String, Any>) -> Unit,
     private val emitError: (String, String) -> Unit,
     private val onDisposed: (MotionPosePlatformView) -> Unit,
@@ -192,6 +196,13 @@ private class MotionPosePlatformView(
     @Volatile
     private var disposed = false
     private var lastSubmittedAtMs = 0L
+
+    private val cameraSelector: CameraSelector
+        get() = if (useFrontCamera) {
+            CameraSelector.DEFAULT_FRONT_CAMERA
+        } else {
+            CameraSelector.DEFAULT_BACK_CAMERA
+        }
 
     override fun getView(): View = previewView
 
@@ -219,7 +230,7 @@ private class MotionPosePlatformView(
         provider.unbindAll()
         provider.bindToLifecycle(
             activity as LifecycleOwner,
-            CameraSelector.DEFAULT_FRONT_CAMERA,
+            cameraSelector,
             previewUseCase(),
         )
     }
@@ -272,7 +283,7 @@ private class MotionPosePlatformView(
         provider.unbindAll()
         provider.bindToLifecycle(
             activity as LifecycleOwner,
-            CameraSelector.DEFAULT_FRONT_CAMERA,
+            cameraSelector,
             preview,
             analysis,
         )
@@ -305,7 +316,23 @@ private class MotionPosePlatformView(
             true,
         )
         if (rotated !== bitmap) bitmap.recycle()
-        poseLandmarker?.detectAsync(BitmapImageBuilder(rotated).build(), now)
+        val input = BitmapImageBuilder(rotated).build()
+        val landmarker = poseLandmarker
+        if (landmarker == null) {
+            input.close()
+            return
+        }
+        try {
+            landmarker.detectAsync(input, now)
+        } catch (error: RuntimeException) {
+            input.close()
+            if (started && !disposed) {
+                emitError(
+                    "pose_inference_failed",
+                    error.message ?: "MediaPipe pose inference failed",
+                )
+            }
+        }
     }
 
     private fun rgbaBitmap(imageProxy: ImageProxy): Bitmap {
@@ -357,44 +384,50 @@ private class MotionPosePlatformView(
     }
 
     private fun onPoseResult(result: PoseLandmarkerResult, input: com.google.mediapipe.framework.image.MPImage) {
-        if (!started || disposed) return
-        val poses = result.landmarks().map { landmarks ->
-            val encoded = landmarks.map { landmark ->
+        try {
+            if (!started || disposed) return
+            val poses = result.landmarks().map { landmarks ->
+                val encoded = landmarks.map { landmark ->
+                    mapOf(
+                        "x" to displayX(landmark.x()).toDouble(),
+                        "y" to landmark.y().toDouble(),
+                        "z" to landmark.z().toDouble(),
+                        "visibility" to landmark.visibility().orElse(0f).toDouble(),
+                        "presence" to landmark.presence().orElse(0f).toDouble(),
+                    )
+                }
+                val reliable = landmarks.filter { landmark ->
+                    landmark.visibility().orElse(0f) >= 0.35f &&
+                        landmark.presence().orElse(0f) >= 0.35f
+                }
+                val extentLandmarks = reliable.ifEmpty { landmarks }
+                val minX = extentLandmarks.minOf { displayX(it.x()) }
+                val maxX = extentLandmarks.maxOf { displayX(it.x()) }
+                val minY = extentLandmarks.minOf { it.y() }
+                val maxY = extentLandmarks.maxOf { it.y() }
                 mapOf(
-                    "x" to (1f - landmark.x()).toDouble(),
-                    "y" to landmark.y().toDouble(),
-                    "z" to landmark.z().toDouble(),
-                    "visibility" to landmark.visibility().orElse(0f).toDouble(),
-                    "presence" to landmark.presence().orElse(0f).toDouble(),
+                    "center_x" to ((minX + maxX) / 2f).toDouble(),
+                    "center_y" to ((minY + maxY) / 2f).toDouble(),
+                    "body_scale" to maxOf(maxX - minX, maxY - minY).toDouble(),
+                    "landmarks" to encoded,
                 )
             }
-            val reliable = landmarks.filter { landmark ->
-                landmark.visibility().orElse(0f) >= 0.35f &&
-                    landmark.presence().orElse(0f) >= 0.35f
-            }
-            val extentLandmarks = reliable.ifEmpty { landmarks }
-            val minX = extentLandmarks.minOf { 1f - it.x() }
-            val maxX = extentLandmarks.maxOf { 1f - it.x() }
-            val minY = extentLandmarks.minOf { it.y() }
-            val maxY = extentLandmarks.maxOf { it.y() }
-            mapOf(
-                "center_x" to ((minX + maxX) / 2f).toDouble(),
-                "center_y" to ((minY + maxY) / 2f).toDouble(),
-                "body_scale" to maxOf(maxX - minX, maxY - minY).toDouble(),
-                "landmarks" to encoded,
+            emit(
+                mapOf(
+                    "timestamp_ms" to result.timestampMs(),
+                    "inference_ms" to (SystemClock.uptimeMillis() - result.timestampMs()).coerceAtLeast(0),
+                    "input_width" to input.width,
+                    "input_height" to input.height,
+                    "engine" to "mediapipe_pose_landmarker",
+                    "poses" to poses,
+                ),
             )
+        } finally {
+            input.close()
         }
-        emit(
-            mapOf(
-                "timestamp_ms" to result.timestampMs(),
-                "inference_ms" to (SystemClock.uptimeMillis() - result.timestampMs()).coerceAtLeast(0),
-                "input_width" to input.width,
-                "input_height" to input.height,
-                "engine" to "mediapipe_pose_landmarker",
-                "poses" to poses,
-            ),
-        )
     }
+
+    private fun displayX(value: Float): Float = if (useFrontCamera) 1f - value else value
 
     fun stop() {
         if (!started) return

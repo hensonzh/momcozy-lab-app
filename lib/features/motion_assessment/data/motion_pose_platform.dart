@@ -7,6 +7,8 @@ import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pos
 
 const _motionPoseViewType = 'com.momcozymai.motion_pose/preview';
 
+enum MotionPoseCameraFacing { front, back }
+
 abstract interface class MotionPosePlatform {
   String get engineName;
 
@@ -59,12 +61,21 @@ class NativeMotionPosePlatform implements MotionPosePlatform {
 }
 
 class MotionPosePreview extends StatelessWidget {
-  const MotionPosePreview({super.key});
+  const MotionPosePreview({
+    super.key,
+    this.cameraFacing = MotionPoseCameraFacing.front,
+  });
+
+  final MotionPoseCameraFacing cameraFacing;
 
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return const AndroidView(viewType: _motionPoseViewType);
+      return AndroidView(
+        viewType: _motionPoseViewType,
+        creationParams: {'camera_facing': cameraFacing.name},
+        creationParamsCodec: const StandardMessageCodec(),
+      );
     }
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return const UiKitView(viewType: _motionPoseViewType);

@@ -243,6 +243,8 @@ class MotionAssessmentController extends ChangeNotifier {
 
   void _recordDirective(MotionGuidanceDirective directive) {
     switch (directive) {
+      case MotionGuidanceDirective.enterFrame:
+        break;
       case MotionGuidanceDirective.adjustFraming:
         _framingAdjustmentCount += 1;
       case MotionGuidanceDirective.askOthersToLeave:
@@ -466,6 +468,12 @@ class MotionAssessmentController extends ChangeNotifier {
 
   Future<void> _handleDirective(MotionGuidanceDirective directive) async {
     switch (directive) {
+      case MotionGuidanceDirective.enterFrame:
+        await voice.sendClientEvent(
+          'person_not_detected',
+          _withLatestContext({'person_count': 0, 'accept_pose_frames': false}),
+        );
+        await voice.speak('请站到镜头前，并让全身完整进入画面。');
       case MotionGuidanceDirective.adjustFraming:
         await voice.sendClientEvent(
           'framing_incomplete',

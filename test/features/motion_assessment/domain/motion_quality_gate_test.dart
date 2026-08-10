@@ -3,6 +3,20 @@ import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pos
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_quality_gate.dart';
 
 void main() {
+  test('emits one enter-frame directive until a person returns', () {
+    final gate = MotionQualityGate();
+
+    final first = gate.evaluate(_observation(0, const []));
+    final repeated = gate.evaluate(_observation(66, const []));
+
+    expect(first.directive, MotionGuidanceDirective.enterFrame);
+    expect(repeated.directive, isNull);
+
+    gate.evaluate(_observation(132, [_pose(centerX: 0.5)]));
+    final lostAgain = gate.evaluate(_observation(198, const []));
+    expect(lostAgain.directive, MotionGuidanceDirective.enterFrame);
+  });
+
   test('requires one stable person before accepting assessment frames', () {
     final gate = MotionQualityGate(
       singlePersonStableFor: const Duration(seconds: 1),
