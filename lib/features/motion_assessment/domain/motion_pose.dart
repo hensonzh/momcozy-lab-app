@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 enum MotionPoseLandmarkType {
   nose,
   leftEyeInner,
@@ -47,10 +49,27 @@ class MotionPoseLandmark {
   final double y;
   final double z;
   final double visibility;
-  final double presence;
 
-  bool isReliable({double minimumConfidence = 0.65}) {
-    return visibility >= minimumConfidence && presence >= minimumConfidence;
+  /// Optional per-landmark presence score.
+  ///
+  /// MediaPipe exposes this as an optional value. Absence means that the
+  /// engine did not publish the score, not that the landmark confidence is
+  /// zero.
+  final double? presence;
+
+  double get confidenceScore =>
+      presence == null ? visibility : math.min(visibility, presence!);
+
+  bool isReliable({
+    double minimumConfidence = 0.65,
+    double minimumPresence = 0.2,
+  }) {
+    if (!x.isFinite || !y.isFinite || !z.isFinite || !visibility.isFinite) {
+      return false;
+    }
+    final score = presence;
+    return visibility >= minimumConfidence &&
+        (score == null || (score.isFinite && score >= minimumPresence));
   }
 }
 

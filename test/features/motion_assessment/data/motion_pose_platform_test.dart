@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pose.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,30 @@ void main() {
       expect(observation.inputHeight, 1280);
     },
   );
+
+  test('does not turn an omitted optional presence score into a rejection', () {
+    final observation = motionPoseObservationFromNative({
+      'timestamp_ms': 100,
+      'inference_ms': 20,
+      'input_width': 720,
+      'input_height': 1280,
+      'poses': [
+        {
+          'center_x': 0.5,
+          'center_y': 0.5,
+          'body_scale': 0.5,
+          'landmarks': [
+            {'x': 0.5, 'y': 0.2, 'z': 0.0, 'visibility': 0.9},
+          ],
+        },
+      ],
+    });
+
+    final nose = observation.poses.single.landmark(MotionPoseLandmarkType.nose);
+    expect(nose, isNotNull);
+    expect(nose!.presence, isNull);
+    expect(nose.isReliable(minimumConfidence: 0.5), isTrue);
+  });
 
   test(
     'waits for the native model-ready event before start completes',

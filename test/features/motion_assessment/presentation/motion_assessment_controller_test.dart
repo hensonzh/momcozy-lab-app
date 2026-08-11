@@ -484,6 +484,10 @@ void main() {
     expect(voice.connectCalls, 1);
     expect(voice.guidanceRequests.first.type, 'assessment_started');
     expect(voice.guidanceRequests.first.awaitPlaybackCompletion, isTrue);
+    expect(voice.guidanceRequests.first.payload['required_regions'], [
+      'head',
+      'shoulders',
+    ]);
     await controller.finish();
   });
 
@@ -562,6 +566,114 @@ void main() {
         voice.guidanceRequests.map((request) => request.type),
         contains('change_orientation'),
       );
+      await controller.finish();
+    },
+  );
+
+  test(
+    'starts forward-head capture after a brief final countdown dropout',
+    () async {
+      final countdown = Completer<void>();
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice()
+        ..guidanceCompleters['capture_countdown'] = countdown;
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: _FakeRepository(immediateSession: _session()),
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+      );
+
+      await controller.start();
+      pose.emit(_acceptedSideObservation(timestamp: Duration.zero));
+      await _flush();
+      expect(controller.phase, MotionAssessmentPagePhase.readyCountdown);
+
+      pose.emit(
+        _acceptedSideObservation(
+          timestamp: const Duration(milliseconds: 300),
+          earConfidence: 0.35,
+        ),
+      );
+      await _flush();
+      countdown.complete();
+      await _flush();
+
+      expect(controller.phase, MotionAssessmentPagePhase.capturingSegment);
+      expect(
+        voice.guidanceRequests.where(
+          (request) => request.type == 'capture_countdown',
+        ),
+        hasLength(1),
+      );
+
+      await controller.finish();
+    },
+  );
+
+  test(
+    'starts shoulder capture after a brief final countdown dropout',
+    () async {
+      final countdown = Completer<void>();
+      final pose = _FakePosePlatform();
+      final voice = _FakeVoice()
+        ..guidanceCompleters['capture_countdown'] = countdown;
+      final controller = MotionAssessmentController(
+        target: 'posture_screen',
+        locale: 'zh-CN',
+        repository: _FakeRepository(
+          immediateSession: _session(target: 'posture_screen'),
+        ),
+        posePlatform: pose,
+        voice: voice,
+        qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+      );
+
+      await controller.start();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'replace-shoulder-countdown',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.replace,
+            targets: [MotionAssessmentTarget.shoulderHeightAsymmetry],
+            expectedRevision: 0,
+          ),
+        ),
+      );
+      await _flush();
+      voice.emitCommand(
+        const MotionVoiceCommand(
+          type: MotionVoiceCommandType.updateAssessmentPlan,
+          callId: 'confirm-shoulder-countdown',
+          planMutation: MotionAssessmentPlanMutation(
+            action: MotionAssessmentPlanAction.confirm,
+            targets: [],
+            expectedRevision: 1,
+          ),
+        ),
+      );
+      await _flush();
+
+      pose.emit(_acceptedFrontObservation(timestamp: Duration.zero));
+      await _flush();
+      expect(controller.phase, MotionAssessmentPagePhase.readyCountdown);
+
+      pose.emit(_poseObservation(const Duration(milliseconds: 300), const []));
+      await _flush();
+      countdown.complete();
+      await _flush();
+
+      expect(controller.phase, MotionAssessmentPagePhase.capturingSegment);
+      expect(
+        voice.guidanceRequests.where(
+          (request) => request.type == 'capture_countdown',
+        ),
+        hasLength(1),
+      );
+
       await controller.finish();
     },
   );
@@ -713,13 +825,14 @@ void main() {
       expect(prompt.payload['recommended_action'], 'adjust_side_profile');
       expect(voice.latestContext?.missingRegions, ['ear']);
       expect(voice.latestContext?.samplingState, 'blocked');
+      expect(controller.guidance, '请侧身，让近侧耳朵和肩部入镜');
 
       await controller.finish();
     },
   );
 
   test(
-    'reports the exact missing hip during a shoulder-height capture',
+    'keeps shoulder-height capture active across a brief landmark dropout',
     () async {
       final pose = _FakePosePlatform();
       final voice = _FakeVoice();
@@ -732,6 +845,10 @@ void main() {
         posePlatform: pose,
         voice: voice,
         qualityGate: MotionQualityGate(singlePersonStableFor: Duration.zero),
+        frontalPostureAnalyzer: FrontalPostureAnalyzer(
+          minimumStableFor: const Duration(seconds: 1),
+          minimumSamples: 3,
+        ),
       );
 
       await controller.start();
@@ -761,26 +878,37 @@ void main() {
       await _flush();
 
       pose.emit(
-        _acceptedFrontObservation(
-          timestamp: const Duration(seconds: 1),
-          rightHipConfidence: 0.35,
-        ),
+        _acceptedFrontObservation(timestamp: const Duration(seconds: 1)),
+      );
+      while (controller.phase != MotionAssessmentPagePhase.capturingSegment) {
+        await _flush();
+      }
+      pose.emit(
+        _acceptedFrontObservation(timestamp: const Duration(seconds: 2)),
       );
       await _flush();
+      pose.emit(_poseObservation(const Duration(milliseconds: 2200), const []));
+      await _flush();
+
+      expect(controller.phase, MotionAssessmentPagePhase.capturingSegment);
+      expect(
+        voice.guidanceRequests.where(
+          (request) => request.type == 'capture_countdown',
+        ),
+        hasLength(1),
+      );
+
       pose.emit(
         _acceptedFrontObservation(
-          timestamp: const Duration(seconds: 2),
-          rightHipConfidence: 0.35,
+          timestamp: const Duration(milliseconds: 2600),
+          rightHipConfidence: 0.1,
         ),
       );
       await _flush();
 
-      final prompt = voice.guidanceRequests.lastWhere(
-        (request) => request.type == 'framing_incomplete',
-      );
-      expect(prompt.payload['missing_regions'], ['right_hip']);
-      expect(prompt.payload['recommended_action'], 'step_back_include_hips');
-      expect(voice.latestContext?.missingRegions, ['right_hip']);
+      expect(controller.phase, MotionAssessmentPagePhase.capturingSegment);
+      expect(controller.samplingProgress, greaterThan(0));
+      expect(voice.latestContext?.requiredRegions, ['head', 'shoulders']);
 
       await controller.finish();
     },
@@ -1082,7 +1210,7 @@ void main() {
   );
 
   testWidgets(
-    'keeps guidance hands-free while exposing one explicit end control',
+    'keeps Realtime guidance hands-free with only one explicit end control',
     (tester) async {
       final controller = MotionAssessmentController(
         target: 'forward_head',
@@ -1117,11 +1245,24 @@ void main() {
       );
       expect(
         find.byKey(const ValueKey('motion-assessment-voice-status')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.byKey(const ValueKey('motion-framing-guide-forward-head')),
         findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('motion-assessment-body-guide')),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.mic_rounded), findsNothing);
+      expect(
+        tester
+            .getSize(
+              find.byKey(const ValueKey('motion-assessment-body-guide')),
+            )
+            .height,
+        greaterThan(400),
       );
     },
   );
@@ -1270,8 +1411,8 @@ void main() {
     final guide = tester.widget<FractionallySizedBox>(
       find.byKey(const ValueKey('motion-framing-guide-forward-head')),
     );
-    expect(guide.widthFactor, greaterThanOrEqualTo(0.64));
-    expect(guide.heightFactor, greaterThanOrEqualTo(0.62));
+    expect(guide.widthFactor, 0.58);
+    expect(guide.heightFactor, greaterThanOrEqualTo(0.75));
     expect(find.textContaining('个关键点'), findsNothing);
     expect(
       find.byKey(const ValueKey('motion-assessment-guidance')),

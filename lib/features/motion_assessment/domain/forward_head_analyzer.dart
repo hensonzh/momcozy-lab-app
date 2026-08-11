@@ -12,7 +12,7 @@ enum ForwardHeadFrameStatus {
   interrupted,
 }
 
-const forwardHeadAnalyzerVersion = 'forward_head_cva_v4';
+const forwardHeadAnalyzerVersion = 'forward_head_cva_v5';
 const forwardHeadThresholdVersion = 'cva_50deg_visual_tendency_v1';
 
 class ForwardHeadFrameInspection {
@@ -69,6 +69,7 @@ class ForwardHeadAnalyzer {
     this.samplingWindow = const Duration(seconds: 10),
     this.minimumAcceptedRatio = 0.6,
     this.maximumShoulderSpanToTorsoRatio = 0.55,
+    this.maximumShoulderSpanToHeadLengthRatio = 0.8,
   }) : maximumSampleGap = maximumSampleGap,
        interruptionGracePeriod = interruptionGracePeriod ?? maximumSampleGap,
        assert(minimumAcceptedRatio >= 0 && minimumAcceptedRatio <= 1),
@@ -87,6 +88,7 @@ class ForwardHeadAnalyzer {
   final Duration samplingWindow;
   final double minimumAcceptedRatio;
   final double maximumShoulderSpanToTorsoRatio;
+  final double maximumShoulderSpanToHeadLengthRatio;
 
   final List<_SamplingObservation> _window = <_SamplingObservation>[];
   Duration? _lastObservationAt;
@@ -320,22 +322,16 @@ class ForwardHeadAnalyzer {
   }) {
     final leftShoulder = pose.landmark(MotionPoseLandmarkType.leftShoulder);
     final rightShoulder = pose.landmark(MotionPoseLandmarkType.rightShoulder);
-    final leftHip = pose.landmark(MotionPoseLandmarkType.leftHip);
-    final rightHip = pose.landmark(MotionPoseLandmarkType.rightHip);
     final leftReliable =
         leftShoulder?.isReliable(
-              minimumConfidence: minimumLandmarkConfidence,
-            ) ==
-            true &&
-        leftHip?.isReliable(minimumConfidence: minimumLandmarkConfidence) ==
-            true;
+          minimumConfidence: minimumLandmarkConfidence,
+        ) ==
+        true;
     final rightReliable =
         rightShoulder?.isReliable(
-              minimumConfidence: minimumLandmarkConfidence,
-            ) ==
-            true &&
-        rightHip?.isReliable(minimumConfidence: minimumLandmarkConfidence) ==
-            true;
+          minimumConfidence: minimumLandmarkConfidence,
+        ) ==
+        true;
     if (leftReliable != rightReliable) {
       return ForwardHeadFrameStatus.accepted;
     }
@@ -349,23 +345,63 @@ class ForwardHeadAnalyzer {
       inputWidth: inputWidth,
       inputHeight: inputHeight,
     );
-    final leftTorso = _pixelDistance(
-      leftShoulder,
-      leftHip!,
-      inputWidth: inputWidth,
-      inputHeight: inputHeight,
-    );
-    final rightTorso = _pixelDistance(
-      rightShoulder,
-      rightHip!,
-      inputWidth: inputWidth,
-      inputHeight: inputHeight,
-    );
-    final torsoLength = (leftTorso + rightTorso) / 2;
-    if (torsoLength < 1) {
+    final leftHip = pose.landmark(MotionPoseLandmarkType.leftHip);
+    final rightHip = pose.landmark(MotionPoseLandmarkType.rightHip);
+    final hipsReliable =
+        leftHip?.isReliable(minimumConfidence: minimumLandmarkConfidence) ==
+            true &&
+        rightHip?.isReliable(minimumConfidence: minimumLandmarkConfidence) ==
+            true;
+    if (hipsReliable) {
+      final leftTorso = _pixelDistance(
+        leftShoulder,
+        leftHip!,
+        inputWidth: inputWidth,
+        inputHeight: inputHeight,
+      );
+      final rightTorso = _pixelDistance(
+        rightShoulder,
+        rightHip!,
+        inputWidth: inputWidth,
+        inputHeight: inputHeight,
+      );
+      final torsoLength = (leftTorso + rightTorso) / 2;
+      if (torsoLength < 1) {
+        return ForwardHeadFrameStatus.insufficientLandmarks;
+      }
+      return shoulderSpan / torsoLength <= maximumShoulderSpanToTorsoRatio
+          ? ForwardHeadFrameStatus.accepted
+          : ForwardHeadFrameStatus.needsSideView;
+    }
+
+    final headLengths = <double>[];
+    for (final pair in [
+      (pose.landmark(MotionPoseLandmarkType.leftEar), leftShoulder),
+      (pose.landmark(MotionPoseLandmarkType.rightEar), rightShoulder),
+    ]) {
+      final ear = pair.$1;
+      final shoulder = pair.$2;
+      if (ear?.isReliable(minimumConfidence: minimumLandmarkConfidence) !=
+          true) {
+        continue;
+      }
+      headLengths.add(
+        _pixelDistance(
+          ear!,
+          shoulder,
+          inputWidth: inputWidth,
+          inputHeight: inputHeight,
+        ),
+      );
+    }
+    if (headLengths.isEmpty) {
       return ForwardHeadFrameStatus.insufficientLandmarks;
     }
-    return shoulderSpan / torsoLength <= maximumShoulderSpanToTorsoRatio
+    final headLength = headLengths.reduce((a, b) => a + b) / headLengths.length;
+    if (headLength < 1) {
+      return ForwardHeadFrameStatus.insufficientLandmarks;
+    }
+    return shoulderSpan / headLength <= maximumShoulderSpanToHeadLengthRatio
         ? ForwardHeadFrameStatus.accepted
         : ForwardHeadFrameStatus.needsSideView;
   }
@@ -388,14 +424,12 @@ class ForwardHeadAnalyzer {
         side: 'left',
         earType: MotionPoseLandmarkType.leftEar,
         shoulderType: MotionPoseLandmarkType.leftShoulder,
-        hipType: MotionPoseLandmarkType.leftHip,
       ),
       _sideCandidate(
         pose,
         side: 'right',
         earType: MotionPoseLandmarkType.rightEar,
         shoulderType: MotionPoseLandmarkType.rightShoulder,
-        hipType: MotionPoseLandmarkType.rightHip,
       ),
     ].whereType<_ForwardHeadSidePose>().toList();
     if (candidates.isEmpty) return null;
@@ -408,20 +442,18 @@ class ForwardHeadAnalyzer {
     required String side,
     required MotionPoseLandmarkType earType,
     required MotionPoseLandmarkType shoulderType,
-    required MotionPoseLandmarkType hipType,
   }) {
     final ear = pose.landmark(earType);
     final shoulder = pose.landmark(shoulderType);
-    final hip = pose.landmark(hipType);
-    if (ear == null || shoulder == null || hip == null) return null;
-    final landmarks = [ear, shoulder, hip];
+    if (ear == null || shoulder == null) return null;
+    final landmarks = [ear, shoulder];
     if (!landmarks.every(
       (value) => value.isReliable(minimumConfidence: minimumLandmarkConfidence),
     )) {
       return null;
     }
     final confidence = landmarks
-        .map((value) => math.min(value.visibility, value.presence))
+        .map((value) => value.confidenceScore)
         .reduce(math.min);
     return _ForwardHeadSidePose(
       side: side,
@@ -435,7 +467,6 @@ class ForwardHeadAnalyzer {
     List<String> missingForSide({
       required MotionPoseLandmarkType ear,
       required MotionPoseLandmarkType shoulder,
-      required MotionPoseLandmarkType hip,
     }) {
       bool unavailable(MotionPoseLandmarkType type) {
         final point = pose.landmark(type);
@@ -446,19 +477,16 @@ class ForwardHeadAnalyzer {
       return <String>[
         if (unavailable(ear)) 'ear',
         if (unavailable(shoulder)) 'shoulder',
-        if (unavailable(hip)) 'hip',
       ];
     }
 
     final left = missingForSide(
       ear: MotionPoseLandmarkType.leftEar,
       shoulder: MotionPoseLandmarkType.leftShoulder,
-      hip: MotionPoseLandmarkType.leftHip,
     );
     final right = missingForSide(
       ear: MotionPoseLandmarkType.rightEar,
       shoulder: MotionPoseLandmarkType.rightShoulder,
-      hip: MotionPoseLandmarkType.rightHip,
     );
     return List.unmodifiable(left.length <= right.length ? left : right);
   }

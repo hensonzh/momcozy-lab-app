@@ -26,7 +26,7 @@ class FrontalPostureFrameInspection {
   bool get accepted => status == FrontalPostureFrameStatus.accepted;
 }
 
-const frontalPostureAnalyzerVersion = 'frontal_posture_v2';
+const frontalPostureAnalyzerVersion = 'frontal_posture_v3';
 const frontalPostureThresholdVersion = 'frontal_visual_tendency_v1';
 
 class FrontalPostureResult {
@@ -66,6 +66,7 @@ class FrontalPostureAnalyzer {
     this.samplingWindow = const Duration(seconds: 10),
     this.interruptionGracePeriod = const Duration(seconds: 4),
     this.minimumShoulderSpanToTorsoRatio = 0.65,
+    this.minimumShoulderSpanOfFrame = 0.12,
     this.shoulderAsymmetryThresholdDegrees = 3,
     this.trunkLeanThresholdDegrees = 4,
   });
@@ -77,6 +78,7 @@ class FrontalPostureAnalyzer {
   final Duration samplingWindow;
   final Duration interruptionGracePeriod;
   final double minimumShoulderSpanToTorsoRatio;
+  final double minimumShoulderSpanOfFrame;
   final double shoulderAsymmetryThresholdDegrees;
   final double trunkLeanThresholdDegrees;
 
@@ -121,28 +123,36 @@ class FrontalPostureAnalyzer {
     MotionPose pose, {
     required int inputWidth,
     required int inputHeight,
+    bool assessShoulderHeight = true,
+    bool assessTrunkLean = true,
   }) => inspectDetails(
     pose,
     inputWidth: inputWidth,
     inputHeight: inputHeight,
+    assessShoulderHeight: assessShoulderHeight,
+    assessTrunkLean: assessTrunkLean,
   ).status;
 
   FrontalPostureFrameInspection inspectDetails(
     MotionPose pose, {
     required int inputWidth,
     required int inputHeight,
+    bool assessShoulderHeight = true,
+    bool assessTrunkLean = true,
   }) {
+    assert(assessShoulderHeight || assessTrunkLean);
     if (inputWidth <= 0 || inputHeight <= 0) {
       return _recordInspection(FrontalPostureFrameStatus.invalidFrameSize);
     }
-    final missingRegions = _missingRegions(pose);
+    final requireHips = assessTrunkLean;
+    final missingRegions = _missingRegions(pose, requireHips: requireHips);
     if (missingRegions.isNotEmpty) {
       return _recordInspection(
         FrontalPostureFrameStatus.insufficientLandmarks,
         missingRegions: missingRegions,
       );
     }
-    final points = _points(pose);
+    final points = _points(pose, requireHips: requireHips);
     if (points == null) {
       return _recordInspection(FrontalPostureFrameStatus.insufficientLandmarks);
     }
@@ -152,24 +162,15 @@ class FrontalPostureAnalyzer {
       inputWidth,
       inputHeight,
     );
-    final torso =
-        (_distance(
-              points.leftShoulder,
-              points.leftHip,
-              inputWidth,
-              inputHeight,
-            ) +
-            _distance(
-              points.rightShoulder,
-              points.rightHip,
-              inputWidth,
-              inputHeight,
-            )) /
-        2;
-    if (torso < 1) {
-      return _recordInspection(FrontalPostureFrameStatus.insufficientLandmarks);
-    }
-    if (shoulderSpan / torso < minimumShoulderSpanToTorsoRatio) {
+    final frontViewConfirmed = requireHips
+        ? _frontViewConfirmedWithTorso(
+            points,
+            shoulderSpan: shoulderSpan,
+            inputWidth: inputWidth,
+            inputHeight: inputHeight,
+          )
+        : shoulderSpan / inputWidth >= minimumShoulderSpanOfFrame;
+    if (!frontViewConfirmed) {
       return _recordInspection(FrontalPostureFrameStatus.needsFrontView);
     }
     return _recordInspection(FrontalPostureFrameStatus.accepted);
@@ -180,45 +181,48 @@ class FrontalPostureAnalyzer {
     required Duration at,
     required int inputWidth,
     required int inputHeight,
+    bool assessShoulderHeight = true,
+    bool assessTrunkLean = true,
   }) {
+    assert(assessShoulderHeight || assessTrunkLean);
     final inspection = inspectDetails(
       pose,
       inputWidth: inputWidth,
       inputHeight: inputHeight,
+      assessShoulderHeight: assessShoulderHeight,
+      assessTrunkLean: assessTrunkLean,
     );
     if (!inspection.accepted) {
       _reject(at, inspection.status, inspection: inspection);
       return null;
     }
-    final points = _points(pose)!;
+    final points = _points(pose, requireHips: assessTrunkLean)!;
     _prepare(at);
     _invalidSince = null;
-    final shoulderAngle = _lineAngle(
-      points.leftShoulder,
-      points.rightShoulder,
-      inputWidth,
-      inputHeight,
-    );
-    final hipAngle = _lineAngle(
-      points.leftHip,
-      points.rightHip,
-      inputWidth,
-      inputHeight,
-    );
-    final relativeShoulderAngle = _normalizedLineDifference(
-      shoulderAngle,
-      hipAngle,
-    );
-    final shoulderMidX =
-        (points.leftShoulder.x + points.rightShoulder.x) / 2 * inputWidth;
-    final shoulderMidY =
-        (points.leftShoulder.y + points.rightShoulder.y) / 2 * inputHeight;
-    final hipMidX = (points.leftHip.x + points.rightHip.x) / 2 * inputWidth;
-    final hipMidY = (points.leftHip.y + points.rightHip.y) / 2 * inputHeight;
-    final trunkLean =
-        math.atan2(shoulderMidX - hipMidX, (hipMidY - shoulderMidY).abs()) *
-        180 /
-        math.pi;
+    final shoulderAngle = assessShoulderHeight
+        ? _lineAngle(
+            points.leftShoulder,
+            points.rightShoulder,
+            inputWidth,
+            inputHeight,
+          )
+        : null;
+    final relativeShoulderAngle = shoulderAngle == null
+        ? null
+        : assessTrunkLean
+        ? _normalizedLineDifference(
+            shoulderAngle,
+            _lineAngle(
+              points.leftHip!,
+              points.rightHip!,
+              inputWidth,
+              inputHeight,
+            ),
+          )
+        : shoulderAngle;
+    final trunkLean = assessTrunkLean
+        ? _trunkLean(points, inputWidth: inputWidth, inputHeight: inputHeight)
+        : null;
     _window.add(
       _FrontalSample.accepted(
         at: at,
@@ -235,15 +239,19 @@ class FrontalPostureAnalyzer {
     }
 
     final accepted = _window.where((sample) => sample.accepted).toList();
-    final shoulder = _median(
-      accepted.map((sample) => sample.shoulderAngle!).toList(),
-    );
-    final trunk = _median(accepted.map((sample) => sample.trunkLean!).toList());
-    final dispersions = [
-      _mad(accepted.map((sample) => sample.shoulderAngle!).toList()),
-      _mad(accepted.map((sample) => sample.trunkLean!).toList()),
+    final shoulder = assessShoulderHeight
+        ? _median(accepted.map((sample) => sample.shoulderAngle!).toList())
+        : 0.0;
+    final trunk = assessTrunkLean
+        ? _median(accepted.map((sample) => sample.trunkLean!).toList())
+        : 0.0;
+    final dispersions = <double>[
+      if (assessShoulderHeight)
+        _mad(accepted.map((sample) => sample.shoulderAngle!).toList()),
+      if (assessTrunkLean)
+        _mad(accepted.map((sample) => sample.trunkLean!).toList()),
     ];
-    final dispersion = math.max(dispersions[0], dispersions[1]);
+    final dispersion = dispersions.reduce(math.max);
     final shoulderClass = shoulder.abs() >= shoulderAsymmetryThresholdDegrees
         ? ShoulderHeightClassification.asymmetryTendency
         : ShoulderHeightClassification.referenceRange;
@@ -327,12 +335,17 @@ class FrontalPostureAnalyzer {
     _window.removeWhere((sample) => sample.at < at - samplingWindow);
   }
 
-  _FrontalPoints? _points(MotionPose pose) {
+  _FrontalPoints? _points(MotionPose pose, {required bool requireHips}) {
     final leftShoulder = pose.landmark(MotionPoseLandmarkType.leftShoulder);
     final rightShoulder = pose.landmark(MotionPoseLandmarkType.rightShoulder);
     final leftHip = pose.landmark(MotionPoseLandmarkType.leftHip);
     final rightHip = pose.landmark(MotionPoseLandmarkType.rightHip);
-    final points = [leftShoulder, rightShoulder, leftHip, rightHip];
+    final points = [
+      leftShoulder,
+      rightShoulder,
+      if (requireHips) leftHip,
+      if (requireHips) rightHip,
+    ];
     if (points.any(
       (point) =>
           point == null ||
@@ -340,10 +353,10 @@ class FrontalPostureAnalyzer {
     )) {
       return null;
     }
-    return _FrontalPoints(leftShoulder!, rightShoulder!, leftHip!, rightHip!);
+    return _FrontalPoints(leftShoulder!, rightShoulder!, leftHip, rightHip);
   }
 
-  List<String> _missingRegions(MotionPose pose) {
+  List<String> _missingRegions(MotionPose pose, {required bool requireHips}) {
     bool unavailable(MotionPoseLandmarkType type) {
       final point = pose.landmark(type);
       return point == null ||
@@ -353,9 +366,51 @@ class FrontalPostureAnalyzer {
     return <String>[
       if (unavailable(MotionPoseLandmarkType.leftShoulder)) 'left_shoulder',
       if (unavailable(MotionPoseLandmarkType.rightShoulder)) 'right_shoulder',
-      if (unavailable(MotionPoseLandmarkType.leftHip)) 'left_hip',
-      if (unavailable(MotionPoseLandmarkType.rightHip)) 'right_hip',
+      if (requireHips && unavailable(MotionPoseLandmarkType.leftHip))
+        'left_hip',
+      if (requireHips && unavailable(MotionPoseLandmarkType.rightHip))
+        'right_hip',
     ];
+  }
+
+  bool _frontViewConfirmedWithTorso(
+    _FrontalPoints points, {
+    required double shoulderSpan,
+    required int inputWidth,
+    required int inputHeight,
+  }) {
+    final torso =
+        (_distance(
+              points.leftShoulder,
+              points.leftHip!,
+              inputWidth,
+              inputHeight,
+            ) +
+            _distance(
+              points.rightShoulder,
+              points.rightHip!,
+              inputWidth,
+              inputHeight,
+            )) /
+        2;
+    return torso >= 1 &&
+        shoulderSpan / torso >= minimumShoulderSpanToTorsoRatio;
+  }
+
+  double _trunkLean(
+    _FrontalPoints points, {
+    required int inputWidth,
+    required int inputHeight,
+  }) {
+    final shoulderMidX =
+        (points.leftShoulder.x + points.rightShoulder.x) / 2 * inputWidth;
+    final shoulderMidY =
+        (points.leftShoulder.y + points.rightShoulder.y) / 2 * inputHeight;
+    final hipMidX = (points.leftHip!.x + points.rightHip!.x) / 2 * inputWidth;
+    final hipMidY = (points.leftHip!.y + points.rightHip!.y) / 2 * inputHeight;
+    return math.atan2(shoulderMidX - hipMidX, (hipMidY - shoulderMidY).abs()) *
+        180 /
+        math.pi;
   }
 
   FrontalPostureFrameInspection _recordInspection(
@@ -425,8 +480,8 @@ class _FrontalPoints {
 
   final MotionPoseLandmark leftShoulder;
   final MotionPoseLandmark rightShoulder;
-  final MotionPoseLandmark leftHip;
-  final MotionPoseLandmark rightHip;
+  final MotionPoseLandmark? leftHip;
+  final MotionPoseLandmark? rightHip;
 }
 
 class _FrontalSample {
@@ -439,8 +494,8 @@ class _FrontalSample {
 
   factory _FrontalSample.accepted({
     required Duration at,
-    required double shoulderAngle,
-    required double trunkLean,
+    required double? shoulderAngle,
+    required double? trunkLean,
   }) => _FrontalSample(
     at: at,
     accepted: true,

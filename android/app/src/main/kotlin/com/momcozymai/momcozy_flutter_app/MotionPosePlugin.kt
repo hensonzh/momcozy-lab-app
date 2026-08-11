@@ -439,17 +439,17 @@ private class MotionPosePlatformView(
             if (!started || disposed) return
             val poses = result.landmarks().map { landmarks ->
                 val encoded = landmarks.map { landmark ->
-                    mapOf(
+                    mapOf<String, Any?>(
                         "x" to displayX(landmark.x()).toDouble(),
                         "y" to landmark.y().toDouble(),
                         "z" to landmark.z().toDouble(),
                         "visibility" to landmark.visibility().orElse(0f).toDouble(),
-                        "presence" to landmark.presence().orElse(0f).toDouble(),
+                        "presence" to landmark.presence().orElse(null)?.toDouble(),
                     )
                 }
                 val reliable = landmarks.filter { landmark ->
                     landmark.visibility().orElse(0f) >= 0.35f &&
-                        landmark.presence().orElse(0f) >= 0.35f
+                        landmark.presence().map { it >= 0.2f }.orElse(true)
                 }
                 val extentLandmarks = reliable.ifEmpty { landmarks }
                 val minX = extentLandmarks.minOf { displayX(it.x()) }

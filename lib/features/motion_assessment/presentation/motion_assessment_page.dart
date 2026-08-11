@@ -183,26 +183,6 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
               ),
               child: const Text('结束评估'),
             ),
-            const SizedBox(width: 8),
-            AnimatedContainer(
-              key: const ValueKey('motion-assessment-voice-status'),
-              duration: const Duration(milliseconds: 220),
-              decoration: BoxDecoration(
-                color: controller.voicePhase.name == 'failed'
-                    ? Colors.orange.withValues(alpha: 0.82)
-                    : const Color(0xff7c2944).withValues(alpha: 0.88),
-                shape: BoxShape.circle,
-              ),
-              width: 40,
-              height: 40,
-              child: Icon(
-                controller.voicePhase.name == 'speaking'
-                    ? Icons.graphic_eq_rounded
-                    : Icons.mic_rounded,
-                size: 20,
-                color: Colors.white,
-              ),
-            ),
           ],
         ),
       ),
@@ -217,41 +197,36 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     final color = blocked
         ? Colors.orangeAccent
         : Colors.white.withValues(alpha: 0.72);
-    final (key, alignment, widthFactor, heightFactor, radius) = switch (guide) {
+    final (key, alignment, widthFactor, heightFactor) = switch (guide) {
       MotionAssessmentFramingGuide.forwardHead => (
         const ValueKey('motion-framing-guide-forward-head'),
-        Alignment.center,
-        0.64,
-        0.62,
-        112.0,
+        const Alignment(0, 0.08),
+        0.58,
+        0.76,
       ),
       MotionAssessmentFramingGuide.shoulderHeight => (
         const ValueKey('motion-framing-guide-shoulder-height'),
-        Alignment.center,
-        0.82,
-        0.62,
-        44.0,
+        const Alignment(0, 0.08),
+        0.70,
+        0.76,
       ),
       MotionAssessmentFramingGuide.trunkLateralLean => (
         const ValueKey('motion-framing-guide-trunk-lean'),
-        const Alignment(0, -0.02),
-        0.72,
-        0.62,
-        52.0,
+        const Alignment(0, 0.08),
+        0.68,
+        0.78,
       ),
       MotionAssessmentFramingGuide.frontalCombined => (
         const ValueKey('motion-framing-guide-front-combined'),
-        const Alignment(0, -0.02),
-        0.82,
-        0.62,
-        44.0,
+        const Alignment(0, 0.08),
+        0.72,
+        0.78,
       ),
       MotionAssessmentFramingGuide.neutral => (
         const ValueKey('motion-framing-guide-neutral'),
-        const Alignment(0, -0.1),
-        0.68,
-        0.48,
-        96.0,
+        const Alignment(0, 0.06),
+        0.64,
+        0.75,
       ),
     };
     return Align(
@@ -261,13 +236,8 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
         widthFactor: widthFactor,
         heightFactor: heightFactor,
         child: CustomPaint(
+          key: const ValueKey('motion-assessment-body-guide'),
           painter: _MotionFramingGuidePainter(guide: guide, color: color),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(radius),
-              border: Border.all(color: color, width: blocked ? 3 : 1.5),
-            ),
-          ),
         ),
       ),
     );
@@ -360,66 +330,87 @@ class _MotionFramingGuidePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color.withValues(alpha: 0.48)
-      ..strokeWidth = 1
+    final outline = Paint()
+      ..color = color.withValues(alpha: 0.82)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..strokeJoin = StrokeJoin.round
       ..strokeCap = StrokeCap.round;
+    final fill = Paint()
+      ..color = color.withValues(alpha: 0.035)
+      ..style = PaintingStyle.fill;
+    final cue = Paint()
+      ..color = color.withValues(alpha: 0.46)
+      ..strokeWidth = 1.2
+      ..strokeCap = StrokeCap.round;
+    final horizontalScale = guide == MotionAssessmentFramingGuide.forwardHead
+        ? 0.76
+        : 1.0;
+    double x(double normalized) =>
+        size.width * (0.5 + (normalized - 0.5) * horizontalScale);
+    double y(double normalized) => size.height * normalized;
+
+    final body = Path()
+      ..moveTo(x(0.44), y(0.22))
+      ..cubicTo(x(0.36), y(0.23), x(0.29), y(0.25), x(0.24), y(0.29))
+      ..cubicTo(x(0.20), y(0.39), x(0.18), y(0.51), x(0.24), y(0.61))
+      ..cubicTo(x(0.27), y(0.63), x(0.31), y(0.56), x(0.35), y(0.47))
+      ..cubicTo(x(0.36), y(0.53), x(0.36), y(0.58), x(0.35), y(0.64))
+      ..lineTo(x(0.31), y(0.96))
+      ..cubicTo(x(0.35), y(0.98), x(0.41), y(0.98), x(0.47), y(0.96))
+      ..lineTo(x(0.50), y(0.68))
+      ..lineTo(x(0.53), y(0.96))
+      ..cubicTo(x(0.59), y(0.98), x(0.65), y(0.98), x(0.69), y(0.96))
+      ..lineTo(x(0.65), y(0.64))
+      ..cubicTo(x(0.64), y(0.58), x(0.64), y(0.53), x(0.65), y(0.47))
+      ..cubicTo(x(0.69), y(0.56), x(0.73), y(0.63), x(0.76), y(0.61))
+      ..cubicTo(x(0.82), y(0.51), x(0.80), y(0.39), x(0.76), y(0.29))
+      ..cubicTo(x(0.71), y(0.25), x(0.64), y(0.23), x(0.56), y(0.22));
+    body.close();
+    final head = Rect.fromCenter(
+      center: Offset(x(0.5), y(0.12)),
+      width: x(0.61) - x(0.39),
+      height: size.height * 0.17,
+    );
+    canvas.drawPath(body, fill);
+    canvas.drawOval(head, fill);
+    canvas.drawPath(body, outline);
+    canvas.drawOval(head, outline);
+
     switch (guide) {
       case MotionAssessmentFramingGuide.shoulderHeight:
-        final shoulderY = size.height * 0.32;
-        final hipY = size.height * 0.72;
+        final shoulderY = y(0.29);
         canvas.drawLine(
-          Offset(size.width * 0.18, shoulderY),
-          Offset(size.width * 0.82, shoulderY),
-          paint,
-        );
-        canvas.drawLine(
-          Offset(size.width * 0.28, hipY),
-          Offset(size.width * 0.72, hipY),
-          paint,
+          Offset(x(0.25), shoulderY),
+          Offset(x(0.75), shoulderY),
+          cue,
         );
         break;
       case MotionAssessmentFramingGuide.trunkLateralLean:
-        canvas.drawLine(
-          Offset(size.width * 0.5, size.height * 0.22),
-          Offset(size.width * 0.5, size.height * 0.78),
-          paint,
-        );
+        canvas.drawLine(Offset(x(0.5), y(0.22)), Offset(x(0.5), y(0.66)), cue);
         break;
       case MotionAssessmentFramingGuide.frontalCombined:
-        final shoulderY = size.height * 0.32;
-        final hipY = size.height * 0.72;
+        final shoulderY = y(0.29);
+        final hipY = y(0.63);
         canvas.drawLine(
-          Offset(size.width * 0.18, shoulderY),
-          Offset(size.width * 0.82, shoulderY),
-          paint,
+          Offset(x(0.25), shoulderY),
+          Offset(x(0.75), shoulderY),
+          cue,
         );
-        canvas.drawLine(
-          Offset(size.width * 0.28, hipY),
-          Offset(size.width * 0.72, hipY),
-          paint,
-        );
-        canvas.drawLine(
-          Offset(size.width * 0.5, size.height * 0.2),
-          Offset(size.width * 0.5, size.height * 0.82),
-          paint,
-        );
+        canvas.drawLine(Offset(x(0.35), hipY), Offset(x(0.65), hipY), cue);
+        canvas.drawLine(Offset(x(0.5), y(0.22)), Offset(x(0.5), y(0.66)), cue);
         break;
       case MotionAssessmentFramingGuide.forwardHead:
+        canvas.drawLine(Offset(x(0.5), y(0.04)), Offset(x(0.5), y(0.66)), cue);
         canvas.drawLine(
-          Offset(size.width * 0.5, size.height * 0.18),
-          Offset(size.width * 0.5, size.height * 0.82),
-          paint,
+          Offset(x(0.32), y(0.29)),
+          Offset(x(0.68), y(0.29)),
+          cue,
         );
         canvas.drawLine(
-          Offset(size.width * 0.34, size.height * 0.48),
-          Offset(size.width * 0.66, size.height * 0.48),
-          paint,
-        );
-        canvas.drawLine(
-          Offset(size.width * 0.39, size.height * 0.76),
-          Offset(size.width * 0.61, size.height * 0.76),
-          paint,
+          Offset(x(0.38), y(0.63)),
+          Offset(x(0.62), y(0.63)),
+          cue,
         );
         break;
       case MotionAssessmentFramingGuide.neutral:

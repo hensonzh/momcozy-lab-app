@@ -47,6 +47,35 @@ class MotionRealtimeGuidanceException implements Exception {
       'MotionRealtimeGuidanceException($eventType, ${failure.name})';
 }
 
+@visibleForTesting
+String motionGuidanceTurnInstructions(String eventType) {
+  const languageRule = '若用户已明确切换语言，使用等义短句并保持相同长度。';
+  return switch (eventType) {
+    'assessment_started' =>
+      '这是通用体态评估的新会话。开场最多两句：第一句只介绍当前开放的头前伸、高低肩和躯干侧倾；'
+          '第二句只问“想测头颈、正面体态，还是全部三项？”。用户也可主动自选，不要另行朗读第四个选项；'
+          '不要介绍未开放项目，不要引导站位。$languageRule',
+    'capture_countdown' => '只说：“请站稳。三、二、一，开始。”不要添加解释、鼓励或结果。$languageRule',
+    'opposite_side_required' ||
+    'change_orientation' => '只说：“请转到另一侧，站稳看前方。”不要解释内部状态。$languageRule',
+    'assessment_review_ready' => '只说：“采集完成。你想结束，还是继续？”说完等待新的语音回复。$languageRule',
+    'assessment_plan_updated' =>
+      '最多两句：简短复述 selected_targets，再问“确认开始吗？”。不要开始站位指导。$languageRule',
+    'assessment_plan_confirmed' =>
+      '只用一句短句说明第一个取景方向并请用户站稳，不朗读内部 target。$languageRule',
+    'front_view_required' => '只说：“请正对镜头，双肩放松。”不要要求腿脚完整入镜。$languageRule',
+    'assessment_continued' =>
+      '只用一句短句依据 first_required_view 说明站位方向并请用户站稳。$languageRule',
+    'assessment_finalizing' =>
+      '只说：“结果正在保存，完成后我会继续为你解读。”不要提模型或角色切换。$languageRule',
+    'command_rejected' => '只用一句短句继续最新步骤，不解释内部状态，不声称评估已结束。$languageRule',
+    _ =>
+      '最新客户端语义事件为 $eventType。动作指导只说一句，尽量不超过 18 个汉字；'
+          '只给一个立即可执行的动作，不说寒暄、原因、检测状态、重复鼓励、流程预告或“请稍等”；'
+          '端侧质量门和状态机结论是权威，不要求触屏或腿脚完整入镜。$languageRule',
+  };
+}
+
 abstract interface class MotionRealtimeVoiceClient implements Listenable {
   MotionRealtimeVoicePhase get phase;
   bool get isConnected;
@@ -381,7 +410,7 @@ class MotionRealtimeVoice extends ChangeNotifier
           eventPublished = true;
         }
         await _responseQueue?.enqueueModelTurn(
-          _guidanceTurnInstructions(normalizedEventType),
+          motionGuidanceTurnInstructions(normalizedEventType),
           coalesceKey: _guidanceCoalesceKey(normalizedEventType),
           interruptActive: _interruptsStaleGuidance(normalizedEventType),
         );
@@ -594,47 +623,6 @@ class MotionRealtimeVoice extends ChangeNotifier
     } catch (_) {
       _scheduleTerminalFailure(_connectionGeneration);
     }
-  }
-
-  String _guidanceTurnInstructions(String eventType) {
-    return switch (eventType) {
-      'assessment_started' =>
-        '这是通用体态评估的新会话。简洁介绍当前开放的三个项目，并给出四种容易理解的选择：'
-            '头颈专项（头前伸）、正面体态（高低肩加躯干侧倾）、完整三项，或自选一个或多个；'
-            '然后明确询问用户选择哪一种。此时不要引导站位，也不要自行选择，未开放项目不要说成可选。',
-      'capture_countdown' =>
-        '端侧已确认当前画面可以开始采样。只用一句短句让用户站稳，然后清楚地说“三、二、一，开始”。'
-            '必须说完倒计时，不要添加其他动作或结果。',
-      'opposite_side_required' =>
-        '端侧确认用户仍是上一段的方向。请亲切地说明需要转到另一侧，站稳并目视前方；'
-            '不要声称第二段已完成。',
-      'assessment_review_ready' =>
-        '客户端已完成计划内全部采集与质量复核。请用一句自然中文说明采集已完成，并明确询问用户：'
-            '“你想结束本次评估，还是继续评估？”说完后等待用户新的语音回复，不要自行结束。',
-      'assessment_plan_updated' =>
-        '客户端已更新用户选择。请只依据事件里的 selected_targets 和 plan_revision，'
-            '用自然中文简短复述当前选择，并询问是否确认；不要开始站位指导。',
-      'assessment_plan_confirmed' =>
-        '客户端已持久化并确认评估项目。请简短说明接下来第一个取景方向，再开始引导用户站位；'
-            '不要朗读内部 target。',
-      'front_view_required' =>
-        '下一个项目需要正面稳定画面。请清楚引导用户自然正对镜头、双肩放松并站稳；'
-            '不要让用户猜下一步，也不要要求腿脚完整入镜。',
-      'change_orientation' =>
-        '第一段已完成。请自然、亲切地引导用户缓慢转换到另一个侧身方向，站稳并目视前方；一次只说一个动作。',
-      'assessment_continued' =>
-        '用户已明确选择继续评估。请依据事件里的 first_required_view 立即说明第一个站位方向，'
-            '并请用户站稳；不要只说“继续评估”，也不要让用户等待下一条指令。',
-      'assessment_finalizing' =>
-        '用户已通过新的语音回复确认结束。请以 CozyMate 的同一身份简短告知：'
-            '结果正在保存，保存完成后我会继续为你解读。不要提及内部模型、角色切换或结果交接，不要自行诊断。',
-      'command_rejected' => '客户端拒绝了不符合当前状态或语音轮次的命令。请依据最新事件继续当前步骤，不要声称评估已结束。',
-      _ =>
-        '最新客户端语义事件为 $eventType。请只依据刚收到的 motion_assessment.event.v4 facts，'
-            '只说一句简短、自然、可立即执行的中文语音指导，一次只说一个动作。不要解释原因、复述检测状态、重复鼓励或预告后续动作；'
-            '端侧质量门和状态机结论是权威，'
-            '不要要求用户触碰屏幕，不要要求腿脚完整入镜。',
-    };
   }
 
   String? _guidanceCoalesceKey(String eventType) {

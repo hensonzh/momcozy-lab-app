@@ -83,18 +83,38 @@ void main() {
     expect(ready.acceptFrame, isTrue);
   });
 
-  test('requires the assessment head-to-hip region before calibration', () {
+  test('calibrates from the upper-body region without requiring hips', () {
     final gate = MotionQualityGate(
       singlePersonStableFor: Duration.zero,
       framingIssueStableFor: Duration.zero,
     );
 
-    final framing = gate.evaluate(
+    final ready = gate.evaluate(
       _observation(0, [_pose(centerX: 0.5, includeHip: false)]),
     );
-    expect(framing.phase, MotionQualityPhase.framing);
-    expect(framing.acceptFrame, isFalse);
-    expect(framing.directive, MotionGuidanceDirective.adjustFraming);
+    expect(ready.phase, MotionQualityPhase.ready);
+    expect(ready.acceptFrame, isTrue);
+  });
+
+  test('keeps the same target when hip landmarks disappear', () {
+    final gate = MotionQualityGate(
+      singlePersonStableFor: Duration.zero,
+      targetMismatchStableFor: Duration.zero,
+    );
+
+    final initial = gate.evaluate(
+      _observation(0, [_pose(centerX: 0.5, bodyScale: 0.9)]),
+    );
+    final withoutHips = gate.evaluate(
+      _observation(66, [
+        _pose(centerX: 0.5, bodyScale: 0.9, includeHip: false),
+      ]),
+    );
+
+    expect(initial.phase, MotionQualityPhase.ready);
+    expect(withoutHips.phase, MotionQualityPhase.ready);
+    expect(withoutHips.acceptFrame, isTrue);
+    expect(withoutHips.directive, isNull);
   });
 
   test('drops frames immediately and pauses after multiple people persist', () {
@@ -220,7 +240,7 @@ void main() {
       final gate = _readyGate(
         framingIssueStableFor: const Duration(milliseconds: 600),
       );
-      final cropped = _pose(centerX: 0.5, includeHip: false);
+      final cropped = _pose(centerX: 0.5, includeShoulder: false);
 
       final transient = gate.evaluate(_observation(1100, [cropped]));
       expect(transient.phase, MotionQualityPhase.reacquiring);
@@ -263,6 +283,7 @@ MotionPose _pose({
   required double centerX,
   double bodyScale = 0.5,
   bool includeHip = true,
+  bool includeShoulder = true,
   bool includeKnee = true,
   bool includeAnkle = true,
 }) {
@@ -292,7 +313,7 @@ MotionPose _pose({
         visibility: 0.95,
         presence: 0.95,
       ),
-      MotionPoseLandmarkType.leftShoulder: shoulder,
+      if (includeShoulder) MotionPoseLandmarkType.leftShoulder: shoulder,
       if (includeHip) MotionPoseLandmarkType.leftHip: hip,
       if (includeKnee)
         MotionPoseLandmarkType.leftKnee: MotionPoseLandmark(

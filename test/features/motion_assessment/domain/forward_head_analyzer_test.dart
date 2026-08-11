@@ -101,6 +101,32 @@ void main() {
     expect(result!.side, 'left');
   });
 
+  test(
+    'measures forward head posture without making hips a hard dependency',
+    () {
+      final analyzer = ForwardHeadAnalyzer(
+        minimumStableFor: Duration.zero,
+        minimumSamples: 1,
+      );
+
+      final result = analyzer.add(
+        _sidePose(
+          earX: 0.7,
+          earY: 0.4,
+          shoulderX: 0.5,
+          shoulderY: 0.6,
+          includeHips: false,
+        ),
+        at: Duration.zero,
+        inputWidth: 1000,
+        inputHeight: 1000,
+      );
+
+      expect(result, isNotNull);
+      expect(result!.valueDegrees, closeTo(45, 0.2));
+    },
+  );
+
   test('rejects frames when side landmarks are not sufficiently visible', () {
     final analyzer = ForwardHeadAnalyzer(
       minimumStableFor: Duration.zero,
@@ -114,6 +140,7 @@ void main() {
         shoulderX: 0.5,
         shoulderY: 0.6,
         visibility: 0.3,
+        farSideVisibility: 0.3,
       ),
       at: Duration.zero,
       inputWidth: 1000,
@@ -419,6 +446,7 @@ MotionPose _sidePose({
   double? farSideVisibility,
   bool includeReliableRightSide = false,
   bool includeFarSideLandmarks = true,
+  bool includeHips = true,
   double rightShoulderX = 0.50,
   double rightHipX = 0.50,
 }) {
@@ -441,13 +469,14 @@ MotionPose _sidePose({
         visibility: visibility,
         presence: visibility,
       ),
-      MotionPoseLandmarkType.leftHip: MotionPoseLandmark(
-        x: 0.5,
-        y: 0.85,
-        z: 0,
-        visibility: visibility,
-        presence: visibility,
-      ),
+      if (includeHips)
+        MotionPoseLandmarkType.leftHip: MotionPoseLandmark(
+          x: 0.5,
+          y: 0.85,
+          z: 0,
+          visibility: visibility,
+          presence: visibility,
+        ),
       if (includeFarSideLandmarks) ...{
         MotionPoseLandmarkType.rightEar: MotionPoseLandmark(
           x: 0.3,
@@ -463,17 +492,18 @@ MotionPose _sidePose({
           visibility: farSideVisibility ?? 0.95,
           presence: farSideVisibility ?? 0.95,
         ),
-        MotionPoseLandmarkType.rightHip: MotionPoseLandmark(
-          x: rightHipX,
-          y: 0.85,
-          z: 0,
-          visibility: includeReliableRightSide
-              ? 0.95
-              : farSideVisibility ?? visibility,
-          presence: includeReliableRightSide
-              ? 0.95
-              : farSideVisibility ?? visibility,
-        ),
+        if (includeHips)
+          MotionPoseLandmarkType.rightHip: MotionPoseLandmark(
+            x: rightHipX,
+            y: 0.85,
+            z: 0,
+            visibility: includeReliableRightSide
+                ? 0.95
+                : farSideVisibility ?? visibility,
+            presence: includeReliableRightSide
+                ? 0.95
+                : farSideVisibility ?? visibility,
+          ),
       },
     },
   );
