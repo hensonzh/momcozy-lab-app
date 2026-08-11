@@ -1210,6 +1210,41 @@ void main() {
   );
 
   testWidgets(
+    'gives a standing person a full-height guide on a portrait phone',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final controller = MotionAssessmentController(
+        target: 'forward_head',
+        locale: 'zh-CN',
+        repository: _FakeRepository(immediateSession: _session()),
+        posePlatform: _FakePosePlatform(),
+        voice: _FakeVoice(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MotionAssessmentPage(
+            controllerIdentity: 'portrait-body-guide',
+            controllerFactory: () => controller,
+            previewBuilder: (_) => const ColoredBox(color: Colors.black),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final guideSize = tester.getSize(
+        find.byKey(const ValueKey('motion-assessment-body-guide')),
+      );
+      expect(guideSize.width, greaterThanOrEqualTo(358));
+      expect(guideSize.height, greaterThanOrEqualTo(700));
+    },
+  );
+
+  testWidgets(
     'keeps Realtime guidance hands-free with only one explicit end control',
     (tester) async {
       final controller = MotionAssessmentController(
@@ -1406,11 +1441,11 @@ void main() {
     expect(controller.observation, isNotNull);
 
     expect(find.byKey(const ValueKey('motion-pose-overlay')), findsOneWidget);
-    final guide = tester.widget<FractionallySizedBox>(
+    final guideSize = tester.getSize(
       find.byKey(const ValueKey('motion-framing-guide-forward-head')),
     );
-    expect(guide.widthFactor, 0.58);
-    expect(guide.heightFactor, greaterThanOrEqualTo(0.75));
+    expect(guideSize.width, greaterThanOrEqualTo(700));
+    expect(guideSize.height, greaterThanOrEqualTo(500));
     expect(find.textContaining('个关键点'), findsNothing);
     expect(
       find.byKey(const ValueKey('motion-assessment-guidance')),

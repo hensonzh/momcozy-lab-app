@@ -197,47 +197,35 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     final color = blocked
         ? Colors.orangeAccent
         : Colors.white.withValues(alpha: 0.72);
-    final (key, alignment, widthFactor, heightFactor) = switch (guide) {
-      MotionAssessmentFramingGuide.forwardHead => (
-        const ValueKey('motion-framing-guide-forward-head'),
-        const Alignment(0, 0.08),
-        0.58,
-        0.76,
+    final key = switch (guide) {
+      MotionAssessmentFramingGuide.forwardHead => const ValueKey(
+        'motion-framing-guide-forward-head',
       ),
-      MotionAssessmentFramingGuide.shoulderHeight => (
-        const ValueKey('motion-framing-guide-shoulder-height'),
-        const Alignment(0, 0.08),
-        0.70,
-        0.76,
+      MotionAssessmentFramingGuide.shoulderHeight => const ValueKey(
+        'motion-framing-guide-shoulder-height',
       ),
-      MotionAssessmentFramingGuide.trunkLateralLean => (
-        const ValueKey('motion-framing-guide-trunk-lean'),
-        const Alignment(0, 0.08),
-        0.68,
-        0.78,
+      MotionAssessmentFramingGuide.trunkLateralLean => const ValueKey(
+        'motion-framing-guide-trunk-lean',
       ),
-      MotionAssessmentFramingGuide.frontalCombined => (
-        const ValueKey('motion-framing-guide-front-combined'),
-        const Alignment(0, 0.08),
-        0.72,
-        0.78,
+      MotionAssessmentFramingGuide.frontalCombined => const ValueKey(
+        'motion-framing-guide-front-combined',
       ),
-      MotionAssessmentFramingGuide.neutral => (
-        const ValueKey('motion-framing-guide-neutral'),
-        const Alignment(0, 0.06),
-        0.64,
-        0.75,
+      MotionAssessmentFramingGuide.neutral => const ValueKey(
+        'motion-framing-guide-neutral',
       ),
     };
-    return Align(
-      alignment: alignment,
-      child: FractionallySizedBox(
-        key: key,
-        widthFactor: widthFactor,
-        heightFactor: heightFactor,
-        child: CustomPaint(
-          key: const ValueKey('motion-assessment-body-guide'),
-          painter: _MotionFramingGuidePainter(guide: guide, color: color),
+    return Positioned.fill(
+      left: 6,
+      top: 58,
+      right: 6,
+      bottom: 22,
+      child: IgnorePointer(
+        child: KeyedSubtree(
+          key: key,
+          child: CustomPaint(
+            key: const ValueKey('motion-assessment-body-guide'),
+            painter: _MotionFramingGuidePainter(guide: guide, color: color),
+          ),
         ),
       ),
     );
@@ -343,34 +331,41 @@ class _MotionFramingGuidePainter extends CustomPainter {
       ..color = color.withValues(alpha: 0.46)
       ..strokeWidth = 1.2
       ..strokeCap = StrokeCap.round;
+    // The outer envelope stays large and stable between assessment types so
+    // the user never has to move closer just because the requested metric
+    // changed. Side-view cues narrow only the painted silhouette, not the
+    // available standing area.
     final horizontalScale = guide == MotionAssessmentFramingGuide.forwardHead
-        ? 0.76
+        ? 0.88
         : 1.0;
     double x(double normalized) =>
         size.width * (0.5 + (normalized - 0.5) * horizontalScale);
     double y(double normalized) => size.height * normalized;
 
     final body = Path()
-      ..moveTo(x(0.44), y(0.22))
-      ..cubicTo(x(0.36), y(0.23), x(0.29), y(0.25), x(0.24), y(0.29))
-      ..cubicTo(x(0.20), y(0.39), x(0.18), y(0.51), x(0.24), y(0.61))
-      ..cubicTo(x(0.27), y(0.63), x(0.31), y(0.56), x(0.35), y(0.47))
-      ..cubicTo(x(0.36), y(0.53), x(0.36), y(0.58), x(0.35), y(0.64))
-      ..lineTo(x(0.31), y(0.96))
-      ..cubicTo(x(0.35), y(0.98), x(0.41), y(0.98), x(0.47), y(0.96))
-      ..lineTo(x(0.50), y(0.68))
-      ..lineTo(x(0.53), y(0.96))
-      ..cubicTo(x(0.59), y(0.98), x(0.65), y(0.98), x(0.69), y(0.96))
-      ..lineTo(x(0.65), y(0.64))
-      ..cubicTo(x(0.64), y(0.58), x(0.64), y(0.53), x(0.65), y(0.47))
-      ..cubicTo(x(0.69), y(0.56), x(0.73), y(0.63), x(0.76), y(0.61))
-      ..cubicTo(x(0.82), y(0.51), x(0.80), y(0.39), x(0.76), y(0.29))
-      ..cubicTo(x(0.71), y(0.25), x(0.64), y(0.23), x(0.56), y(0.22));
+      ..moveTo(x(0.43), y(0.19))
+      ..cubicTo(x(0.34), y(0.20), x(0.25), y(0.22), x(0.18), y(0.27))
+      ..cubicTo(x(0.12), y(0.34), x(0.10), y(0.46), x(0.12), y(0.55))
+      ..cubicTo(x(0.14), y(0.61), x(0.18), y(0.61), x(0.22), y(0.55))
+      ..cubicTo(x(0.26), y(0.50), x(0.28), y(0.46), x(0.30), y(0.43))
+      ..cubicTo(x(0.31), y(0.53), x(0.30), y(0.60), x(0.27), y(0.66))
+      ..lineTo(x(0.20), y(0.97))
+      ..cubicTo(x(0.27), y(0.99), x(0.36), y(0.99), x(0.44), y(0.97))
+      ..lineTo(x(0.49), y(0.69))
+      ..lineTo(x(0.51), y(0.69))
+      ..lineTo(x(0.56), y(0.97))
+      ..cubicTo(x(0.64), y(0.99), x(0.73), y(0.99), x(0.80), y(0.97))
+      ..lineTo(x(0.73), y(0.66))
+      ..cubicTo(x(0.70), y(0.60), x(0.69), y(0.53), x(0.70), y(0.43))
+      ..cubicTo(x(0.72), y(0.46), x(0.74), y(0.50), x(0.78), y(0.55))
+      ..cubicTo(x(0.82), y(0.61), x(0.86), y(0.61), x(0.88), y(0.55))
+      ..cubicTo(x(0.90), y(0.46), x(0.88), y(0.34), x(0.82), y(0.27))
+      ..cubicTo(x(0.75), y(0.22), x(0.66), y(0.20), x(0.57), y(0.19));
     body.close();
     final head = Rect.fromCenter(
-      center: Offset(x(0.5), y(0.12)),
-      width: x(0.61) - x(0.39),
-      height: size.height * 0.17,
+      center: Offset(x(0.5), y(0.105)),
+      width: x(0.615) - x(0.385),
+      height: size.height * 0.16,
     );
     canvas.drawPath(body, fill);
     canvas.drawOval(head, fill);
@@ -379,37 +374,37 @@ class _MotionFramingGuidePainter extends CustomPainter {
 
     switch (guide) {
       case MotionAssessmentFramingGuide.shoulderHeight:
-        final shoulderY = y(0.29);
+        final shoulderY = y(0.27);
         canvas.drawLine(
-          Offset(x(0.25), shoulderY),
-          Offset(x(0.75), shoulderY),
+          Offset(x(0.18), shoulderY),
+          Offset(x(0.82), shoulderY),
           cue,
         );
         break;
       case MotionAssessmentFramingGuide.trunkLateralLean:
-        canvas.drawLine(Offset(x(0.5), y(0.22)), Offset(x(0.5), y(0.66)), cue);
+        canvas.drawLine(Offset(x(0.5), y(0.19)), Offset(x(0.5), y(0.68)), cue);
         break;
       case MotionAssessmentFramingGuide.frontalCombined:
-        final shoulderY = y(0.29);
-        final hipY = y(0.63);
+        final shoulderY = y(0.27);
+        final hipY = y(0.65);
         canvas.drawLine(
-          Offset(x(0.25), shoulderY),
-          Offset(x(0.75), shoulderY),
+          Offset(x(0.18), shoulderY),
+          Offset(x(0.82), shoulderY),
           cue,
         );
-        canvas.drawLine(Offset(x(0.35), hipY), Offset(x(0.65), hipY), cue);
-        canvas.drawLine(Offset(x(0.5), y(0.22)), Offset(x(0.5), y(0.66)), cue);
+        canvas.drawLine(Offset(x(0.28), hipY), Offset(x(0.72), hipY), cue);
+        canvas.drawLine(Offset(x(0.5), y(0.19)), Offset(x(0.5), y(0.68)), cue);
         break;
       case MotionAssessmentFramingGuide.forwardHead:
-        canvas.drawLine(Offset(x(0.5), y(0.04)), Offset(x(0.5), y(0.66)), cue);
+        canvas.drawLine(Offset(x(0.5), y(0.025)), Offset(x(0.5), y(0.68)), cue);
         canvas.drawLine(
-          Offset(x(0.32), y(0.29)),
-          Offset(x(0.68), y(0.29)),
+          Offset(x(0.25), y(0.27)),
+          Offset(x(0.75), y(0.27)),
           cue,
         );
         canvas.drawLine(
-          Offset(x(0.38), y(0.63)),
-          Offset(x(0.62), y(0.63)),
+          Offset(x(0.31), y(0.65)),
+          Offset(x(0.69), y(0.65)),
           cue,
         );
         break;
