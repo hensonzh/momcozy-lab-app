@@ -1258,9 +1258,7 @@ void main() {
       expect(find.byIcon(Icons.mic_rounded), findsNothing);
       expect(
         tester
-            .getSize(
-              find.byKey(const ValueKey('motion-assessment-body-guide')),
-            )
+            .getSize(find.byKey(const ValueKey('motion-assessment-body-guide')))
             .height,
         greaterThan(400),
       );
