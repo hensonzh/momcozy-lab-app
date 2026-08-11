@@ -1,7 +1,27 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_response_queue.dart';
+import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
 
 void main() {
+  test('bounds routine assessment guidance to short spoken turns', () {
+    expect(
+      motionGuidanceTurnInstructions('assessment_started'),
+      contains('开场最多两句'),
+    );
+    expect(
+      motionGuidanceTurnInstructions('capture_countdown'),
+      contains('只说：“请站稳。三、二、一，开始。”'),
+    );
+    expect(
+      motionGuidanceTurnInstructions('front_view_required'),
+      contains('只说：“请正对镜头，双肩放松。”'),
+    );
+    expect(
+      motionGuidanceTurnInstructions('framing_incomplete'),
+      contains('尽量不超过 18 个汉字'),
+    );
+  });
+
   test(
     'waits for response.done before creating the next default response',
     () async {

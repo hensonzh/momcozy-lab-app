@@ -147,6 +147,39 @@ void main() {
     expect(inspection.status, FrontalPostureFrameStatus.insufficientLandmarks);
     expect(inspection.missingRegions, ['right_hip']);
   });
+
+  test(
+    'shoulder-only screening remains measurable when hips are unavailable',
+    () {
+      final analyzer = FrontalPostureAnalyzer(
+        minimumStableFor: Duration.zero,
+        minimumSamples: 1,
+      );
+
+      final result = analyzer.add(
+        _frontPose(
+          leftShoulderX: 0.28,
+          leftShoulderY: 0.43,
+          rightShoulderX: 0.72,
+          rightShoulderY: 0.50,
+          leftHipX: 0.42,
+          rightHipX: 0.58,
+          rightHipConfidence: 0.1,
+        ),
+        at: Duration.zero,
+        inputWidth: 1000,
+        inputHeight: 1000,
+        assessShoulderHeight: true,
+        assessTrunkLean: false,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        result!.shoulderClassification,
+        ShoulderHeightClassification.asymmetryTendency,
+      );
+    },
+  );
 }
 
 MotionPose _frontPose({

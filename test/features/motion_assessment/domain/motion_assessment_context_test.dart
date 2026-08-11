@@ -43,7 +43,7 @@ void main() {
     expect(json['schema_version'], 'motion_assessment.context.v4');
     final framing = json['framing']! as Map;
     expect(framing['assessment_region_visible'], isTrue);
-    expect(framing['required_regions'], ['head', 'shoulders', 'hips']);
+    expect(framing['required_regions'], ['head', 'shoulders']);
     expect(framing, isNot(contains('full_body_visible')));
     expect((json['sampling']! as Map)['progress'], 0.75);
     expect((json['measurement']! as Map)['rolling_median'], 48.1);

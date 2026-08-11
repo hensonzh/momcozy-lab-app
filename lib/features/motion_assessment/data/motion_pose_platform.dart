@@ -269,7 +269,7 @@ MotionPoseObservation motionPoseObservationFromNative(Object? raw) {
             y: _double(value['y']),
             z: _double(value['z']),
             visibility: _double(value['visibility']),
-            presence: _double(value['presence']),
+            presence: _optionalDouble(value['presence']),
           );
         }
       }
@@ -293,6 +293,9 @@ MotionPoseObservation motionPoseObservationFromNative(Object? raw) {
 }
 
 double _double(Object? value) => value is num ? value.toDouble() : 0;
+
+double? _optionalDouble(Object? value) =>
+    value is num ? value.toDouble() : null;
 
 int _int(Object? value) => value is num ? value.toInt() : 0;
 

@@ -257,51 +257,40 @@ class MotionQualityGate {
       MotionPoseLandmarkType.rightEar,
     ].map(pose.landmark).any(_isVisibleInFrame);
     if (!headVisible) return false;
-    return _torsoSideIsVisible(
-          pose,
-          shoulder: MotionPoseLandmarkType.leftShoulder,
-          hip: MotionPoseLandmarkType.leftHip,
-        ) ||
-        _torsoSideIsVisible(
-          pose,
-          shoulder: MotionPoseLandmarkType.rightShoulder,
-          hip: MotionPoseLandmarkType.rightHip,
-        );
-  }
-
-  bool _torsoSideIsVisible(
-    MotionPose pose, {
-    required MotionPoseLandmarkType shoulder,
-    required MotionPoseLandmarkType hip,
-  }) {
-    return [shoulder, hip].map(pose.landmark).every(_isVisibleInFrame);
+    return [
+      MotionPoseLandmarkType.leftShoulder,
+      MotionPoseLandmarkType.rightShoulder,
+    ].map(pose.landmark).any(_isVisibleInFrame);
   }
 
   ({double x, double y, double scale})? _assessmentSignature(MotionPose pose) {
-    final sides = <({double x, double y, double scale})>[];
-    for (final pair in const [
-      (MotionPoseLandmarkType.leftShoulder, MotionPoseLandmarkType.leftHip),
-      (MotionPoseLandmarkType.rightShoulder, MotionPoseLandmarkType.rightHip),
-    ]) {
-      final shoulder = pose.landmark(pair.$1);
-      final hip = pose.landmark(pair.$2);
-      if (!_isVisibleInFrame(shoulder) || !_isVisibleInFrame(hip)) continue;
-      final dx = shoulder!.x - hip!.x;
-      final dy = shoulder.y - hip.y;
-      sides.add((
-        x: (shoulder.x + hip.x) / 2,
-        y: (shoulder.y + hip.y) / 2,
-        scale: math.sqrt(dx * dx + dy * dy),
-      ));
-    }
-    if (sides.isEmpty) return null;
-    return (
-      x: sides.map((side) => side.x).reduce((a, b) => a + b) / sides.length,
-      y: sides.map((side) => side.y).reduce((a, b) => a + b) / sides.length,
-      scale:
-          sides.map((side) => side.scale).reduce((a, b) => a + b) /
-          sides.length,
-    );
+    // Keep the identity signature on the same upper-body landmarks used by the
+    // global framing gate. Switching between a torso signature and an
+    // upper-body signature when hips briefly disappear makes the same person
+    // look like a different target and unnecessarily stops capture.
+    final shoulders = [
+      MotionPoseLandmarkType.leftShoulder,
+      MotionPoseLandmarkType.rightShoulder,
+    ].map(pose.landmark).where(_isVisibleInFrame).cast<MotionPoseLandmark>();
+    final heads = [
+      MotionPoseLandmarkType.nose,
+      MotionPoseLandmarkType.leftEar,
+      MotionPoseLandmarkType.rightEar,
+    ].map(pose.landmark).where(_isVisibleInFrame).cast<MotionPoseLandmark>();
+    if (shoulders.isEmpty || heads.isEmpty) return null;
+    final shoulderX =
+        shoulders.map((point) => point.x).reduce((a, b) => a + b) /
+        shoulders.length;
+    final shoulderY =
+        shoulders.map((point) => point.y).reduce((a, b) => a + b) /
+        shoulders.length;
+    final headX =
+        heads.map((point) => point.x).reduce((a, b) => a + b) / heads.length;
+    final headY =
+        heads.map((point) => point.y).reduce((a, b) => a + b) / heads.length;
+    final dx = shoulderX - headX;
+    final dy = shoulderY - headY;
+    return (x: shoulderX, y: shoulderY, scale: math.sqrt(dx * dx + dy * dy));
   }
 
   bool _isVisibleInFrame(MotionPoseLandmark? landmark) {

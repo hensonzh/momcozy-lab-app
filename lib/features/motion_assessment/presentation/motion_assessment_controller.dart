@@ -58,6 +58,7 @@ class MotionAssessmentController extends ChangeNotifier {
     this.prepareRealtimeAudio,
     this.voiceRetryDelay = const Duration(milliseconds: 500),
     this.captureCountdown = const Duration(seconds: 3),
+    this.captureReadinessGracePeriod = const Duration(milliseconds: 800),
     MotionQualityGate? qualityGate,
     ForwardHeadAnalyzer? forwardHeadAnalyzer,
     FrontalPostureAnalyzer? frontalPostureAnalyzer,
@@ -85,6 +86,7 @@ class MotionAssessmentController extends ChangeNotifier {
   final Future<void> Function()? prepareRealtimeAudio;
   final Duration voiceRetryDelay;
   final Duration captureCountdown;
+  final Duration captureReadinessGracePeriod;
   final MotionQualityGate qualityGate;
   final ForwardHeadAnalyzer forwardHeadAnalyzer;
   final FrontalPostureAnalyzer frontalPostureAnalyzer;
@@ -121,6 +123,8 @@ class MotionAssessmentController extends ChangeNotifier {
   bool _orientationGuidanceCompleted = false;
   bool _captureCountdownInProgress = false;
   int _captureCountdownGeneration = 0;
+  Duration? _lastCaptureReadyAt;
+  String? _lastCaptureReadyKey;
   Duration? _firstObservationAt;
   Duration? _lastObservationAt;
   MotionAssessmentContextSnapshot? _latestContext;
@@ -257,7 +261,7 @@ class MotionAssessmentController extends ChangeNotifier {
       }
       _cameraStarted = true;
       _phase = MotionAssessmentPagePhase.calibrating;
-      _guidance = '请让头部、肩部和髋部进入画面';
+      _guidance = '请让头部和双肩进入画面';
       _notify();
     } catch (error) {
       await _fail(
@@ -334,7 +338,7 @@ class MotionAssessmentController extends ChangeNotifier {
                 for (final capability in motionAssessmentCapabilities.all)
                   capability.toRealtimeJson(),
               ],
-              'required_regions': const ['head', 'shoulders', 'hips'],
+              'required_regions': const ['head', 'shoulders'],
               'legs_or_feet_required': false,
               'required_segments': workflow.requiredSegments,
             }),
@@ -401,14 +405,17 @@ class MotionAssessmentController extends ChangeNotifier {
         case MotionQualityPhase.checkingMultiplePeople:
           _phase = MotionAssessmentPagePhase.calibrating;
           _guidance = decision.phase == MotionQualityPhase.framing
-              ? '请调整距离，让头部、肩部和髋部进入画面'
+              ? '请调整站位，让头部和双肩入镜'
               : observation.poses.isEmpty
-              ? '请站到镜头前，让头部到髋部入镜'
+              ? '请站到镜头前，让头部和双肩入镜'
               : observation.poses.length > 1
               ? '检测到多人，正在确认…'
               : '保持站位，正在校准评估对象…';
         case MotionQualityPhase.ready:
           final targetPose = decision.target;
+          if (_captureCountdownInProgress && targetPose != null) {
+            _rememberForwardReadinessIfValid(targetPose, observation);
+          }
           if (targetPose != null &&
               (workflow.phase == MotionAssessmentWorkflowPhase.calibrating ||
                   workflow.phase ==
@@ -494,6 +501,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _totalFrames += 1;
     final decision = qualityGate.evaluate(observation);
     _lastQualityDecision = decision;
+    final wasSampling = _phase == MotionAssessmentPagePhase.capturingSegment;
     final captureLifecycle = const {
       MotionAssessmentPagePhase.calibrating,
       MotionAssessmentPagePhase.readyCountdown,
@@ -509,18 +517,24 @@ class MotionAssessmentController extends ChangeNotifier {
         case MotionQualityPhase.framing:
         case MotionQualityPhase.reacquiring:
         case MotionQualityPhase.checkingMultiplePeople:
-          if (_phase != MotionAssessmentPagePhase.changingOrientation) {
+          if (wasSampling &&
+              decision.phase != MotionQualityPhase.checkingMultiplePeople) {
+            _phase = MotionAssessmentPagePhase.capturingSegment;
+          } else if (_phase != MotionAssessmentPagePhase.changingOrientation) {
             _phase = MotionAssessmentPagePhase.calibrating;
           }
           _guidance = decision.phase == MotionQualityPhase.framing
-              ? '请调整距离，让头部、肩部和髋部进入画面'
+              ? _screeningFramingGuidance()
               : observation.poses.isEmpty
-              ? '请站到镜头前，让头部到髋部入镜'
+              ? '请站到镜头前，让头部和双肩进入画面'
               : observation.poses.length > 1
               ? '检测到多人，正在确认…'
               : '保持站位，正在校准评估对象…';
         case MotionQualityPhase.ready:
           final pose = decision.target;
+          if (_captureCountdownInProgress && pose != null) {
+            _rememberScreeningReadinessIfValid(pose, observation);
+          }
           if (pose != null &&
               (_phase == MotionAssessmentPagePhase.calibrating ||
                   _phase == MotionAssessmentPagePhase.changingOrientation)) {
@@ -549,11 +563,14 @@ class MotionAssessmentController extends ChangeNotifier {
           forwardHeadAnalyzer.rejectFrame(at: observation.timestamp);
         }
       } else if (step.view == MotionAssessmentCaptureView.front) {
+        final metrics = _currentFrontalMetrics;
         frontalResult = frontalPostureAnalyzer.add(
           decision.target!,
           at: observation.timestamp,
           inputWidth: observation.inputWidth,
           inputHeight: observation.inputHeight,
+          assessShoulderHeight: metrics.shoulderHeight,
+          assessTrunkLean: metrics.trunkLean,
         );
         if (frontalPostureAnalyzer.lastFrameStatus ==
             FrontalPostureFrameStatus.accepted) {
@@ -633,6 +650,8 @@ class MotionAssessmentController extends ChangeNotifier {
               pose,
               inputWidth: observation.inputWidth,
               inputHeight: observation.inputHeight,
+              assessShoulderHeight: _currentFrontalMetrics.shoulderHeight,
+              assessTrunkLean: _currentFrontalMetrics.trunkLean,
             ) ==
             FrontalPostureFrameStatus.accepted,
     };
@@ -654,6 +673,10 @@ class MotionAssessmentController extends ChangeNotifier {
       _emitScreeningOppositeSideRequired(detectedSide);
       return;
     }
+    _rememberCaptureReadiness(
+      _screeningReadinessKey(step),
+      observation.timestamp,
+    );
     _oppositeSidePromptEmitted = false;
     _resetAnalyzerFramingPrompt();
     if (captureCountdown == Duration.zero) {
@@ -722,31 +745,70 @@ class MotionAssessmentController extends ChangeNotifier {
   bool _screeningReadinessStillValid() {
     final decision = _lastQualityDecision;
     final observation = _observation;
-    final pose = decision?.target;
     final step = _currentScreeningStep;
-    if (decision?.phase != MotionQualityPhase.ready ||
-        observation == null ||
-        pose == null ||
-        step == null) {
+    if (decision == null || observation == null || step == null) {
       return false;
     }
+    if (_countdownReadinessIsUnsafe(decision, observation)) return false;
+    final pose =
+        decision.target ??
+        (observation.poses.length == 1 ? observation.poses.single : null);
+    if (pose == null) {
+      return _hasRecentCaptureReadiness(
+        _screeningReadinessKey(step),
+        observation.timestamp,
+      );
+    }
     if (step.view == MotionAssessmentCaptureView.front) {
-      return frontalPostureAnalyzer.inspect(
-            pose,
-            inputWidth: observation.inputWidth,
-            inputHeight: observation.inputHeight,
-          ) ==
-          FrontalPostureFrameStatus.accepted;
+      final metrics = _currentFrontalMetrics;
+      final status = frontalPostureAnalyzer.inspect(
+        pose,
+        inputWidth: observation.inputWidth,
+        inputHeight: observation.inputHeight,
+        assessShoulderHeight: metrics.shoulderHeight,
+        assessTrunkLean: metrics.trunkLean,
+      );
+      if (status == FrontalPostureFrameStatus.accepted) {
+        _rememberCaptureReadiness(
+          _screeningReadinessKey(step),
+          observation.timestamp,
+        );
+        return true;
+      }
+      if (status != FrontalPostureFrameStatus.insufficientLandmarks &&
+          status != FrontalPostureFrameStatus.interrupted) {
+        return false;
+      }
+      return _hasRecentCaptureReadiness(
+        _screeningReadinessKey(step),
+        observation.timestamp,
+      );
     }
     final inspection = forwardHeadAnalyzer.inspect(
       pose,
       inputWidth: observation.inputWidth,
       inputHeight: observation.inputHeight,
     );
-    if (!inspection.accepted) return false;
-    return step.requiredSide != 'opposite' ||
-        _screeningForwardResults.isEmpty ||
-        inspection.side != _screeningForwardResults.last.side;
+    if (inspection.accepted) {
+      final correctSide =
+          step.requiredSide != 'opposite' ||
+          _screeningForwardResults.isEmpty ||
+          inspection.side != _screeningForwardResults.last.side;
+      if (!correctSide) return false;
+      _rememberCaptureReadiness(
+        _screeningReadinessKey(step),
+        observation.timestamp,
+      );
+      return true;
+    }
+    if (inspection.status != ForwardHeadFrameStatus.insufficientLandmarks &&
+        inspection.status != ForwardHeadFrameStatus.interrupted) {
+      return false;
+    }
+    return _hasRecentCaptureReadiness(
+      _screeningReadinessKey(step),
+      observation.timestamp,
+    );
   }
 
   void _beginScreeningCapture() {
@@ -758,6 +820,16 @@ class MotionAssessmentController extends ChangeNotifier {
         : '正在采集侧面稳定姿态';
     _refreshLatestContext();
     _notify();
+  }
+
+  ({bool shoulderHeight, bool trunkLean}) get _currentFrontalMetrics {
+    final targets = _currentScreeningStep?.targets ?? const {};
+    return (
+      shoulderHeight: targets.contains(
+        MotionAssessmentTarget.shoulderHeightAsymmetry,
+      ),
+      trunkLean: targets.contains(MotionAssessmentTarget.trunkLateralLean),
+    );
   }
 
   void _emitScreeningViewPromptIfNeeded(
@@ -840,6 +912,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _sideViewPromptEmitted = false;
     _frontViewPromptEmitted = false;
     _oppositeSidePromptEmitted = false;
+    _clearCaptureReadiness();
     _resetAnalyzerFramingPrompt();
     final next = _currentScreeningStep;
     if (next == null) {
@@ -941,6 +1014,10 @@ class MotionAssessmentController extends ChangeNotifier {
       _emitOppositeSideRequired(inspection.side);
       return;
     }
+    _rememberCaptureReadiness(
+      _forwardReadinessKey(validation: validation, expectedSide: expectedSide),
+      observation.timestamp,
+    );
     _oppositeSidePromptEmitted = false;
     _resetAnalyzerFramingPrompt();
     if (captureCountdown == Duration.zero) {
@@ -1017,21 +1094,138 @@ class MotionAssessmentController extends ChangeNotifier {
   }) {
     final decision = _lastQualityDecision;
     final observation = _observation;
-    final pose = decision?.target;
-    if (decision?.phase != MotionQualityPhase.ready ||
-        observation == null ||
-        pose == null) {
-      return false;
+    if (decision == null || observation == null) return false;
+    if (_countdownReadinessIsUnsafe(decision, observation)) return false;
+    final pose =
+        decision.target ??
+        (observation.poses.length == 1 ? observation.poses.single : null);
+    final key = _forwardReadinessKey(
+      validation: validation,
+      expectedSide: expectedSide,
+    );
+    if (pose == null) {
+      return _hasRecentCaptureReadiness(key, observation.timestamp);
     }
     final inspection = forwardHeadAnalyzer.inspect(
       pose,
       inputWidth: observation.inputWidth,
       inputHeight: observation.inputHeight,
     );
-    if (!inspection.accepted) return false;
-    return !validation ||
-        expectedSide == null ||
-        inspection.side == expectedSide;
+    if (inspection.accepted) {
+      final correctSide =
+          !validation ||
+          expectedSide == null ||
+          inspection.side == expectedSide;
+      if (!correctSide) return false;
+      _rememberCaptureReadiness(key, observation.timestamp);
+      return true;
+    }
+    if (inspection.status != ForwardHeadFrameStatus.insufficientLandmarks &&
+        inspection.status != ForwardHeadFrameStatus.interrupted) {
+      return false;
+    }
+    return _hasRecentCaptureReadiness(key, observation.timestamp);
+  }
+
+  void _rememberScreeningReadinessIfValid(
+    MotionPose pose,
+    MotionPoseObservation observation,
+  ) {
+    final step = _currentScreeningStep;
+    if (step == null) return;
+    if (step.view == MotionAssessmentCaptureView.front) {
+      final metrics = _currentFrontalMetrics;
+      if (frontalPostureAnalyzer.inspect(
+            pose,
+            inputWidth: observation.inputWidth,
+            inputHeight: observation.inputHeight,
+            assessShoulderHeight: metrics.shoulderHeight,
+            assessTrunkLean: metrics.trunkLean,
+          ) ==
+          FrontalPostureFrameStatus.accepted) {
+        _rememberCaptureReadiness(
+          _screeningReadinessKey(step),
+          observation.timestamp,
+        );
+      }
+      return;
+    }
+    final inspection = forwardHeadAnalyzer.inspect(
+      pose,
+      inputWidth: observation.inputWidth,
+      inputHeight: observation.inputHeight,
+    );
+    final correctSide =
+        step.requiredSide != 'opposite' ||
+        _screeningForwardResults.isEmpty ||
+        inspection.side != _screeningForwardResults.last.side;
+    if (inspection.accepted && correctSide) {
+      _rememberCaptureReadiness(
+        _screeningReadinessKey(step),
+        observation.timestamp,
+      );
+    }
+  }
+
+  void _rememberForwardReadinessIfValid(
+    MotionPose pose,
+    MotionPoseObservation observation,
+  ) {
+    final validation =
+        workflow.phase == MotionAssessmentWorkflowPhase.changingOrientation;
+    final expectedSide = workflow.expectedValidationSide;
+    final inspection = forwardHeadAnalyzer.inspect(
+      pose,
+      inputWidth: observation.inputWidth,
+      inputHeight: observation.inputHeight,
+    );
+    if (!inspection.accepted ||
+        (validation &&
+            expectedSide != null &&
+            inspection.side != expectedSide)) {
+      return;
+    }
+    _rememberCaptureReadiness(
+      _forwardReadinessKey(validation: validation, expectedSide: expectedSide),
+      observation.timestamp,
+    );
+  }
+
+  bool _countdownReadinessIsUnsafe(
+    MotionQualityDecision decision,
+    MotionPoseObservation observation,
+  ) {
+    return observation.poses.length > 1 ||
+        decision.phase == MotionQualityPhase.checkingMultiplePeople ||
+        decision.phase == MotionQualityPhase.pausedMultiplePeople ||
+        decision.phase == MotionQualityPhase.targetChanged;
+  }
+
+  String _screeningReadinessKey(MotionAssessmentCaptureStep step) =>
+      'screening:${step.id}';
+
+  String _forwardReadinessKey({
+    required bool validation,
+    required String? expectedSide,
+  }) => validation
+      ? 'forward:validation:${expectedSide ?? 'opposite'}'
+      : 'forward:primary';
+
+  void _rememberCaptureReadiness(String key, Duration at) {
+    _lastCaptureReadyKey = key;
+    _lastCaptureReadyAt = at;
+  }
+
+  bool _hasRecentCaptureReadiness(String key, Duration at) {
+    final lastReadyAt = _lastCaptureReadyAt;
+    if (_lastCaptureReadyKey != key || lastReadyAt == null) return false;
+    final elapsed = at - lastReadyAt;
+    return !elapsed.isNegative && elapsed <= captureReadinessGracePeriod;
+  }
+
+  void _clearCaptureReadiness() {
+    _lastCaptureReadyKey = null;
+    _lastCaptureReadyAt = null;
   }
 
   bool _recoverFromCountdownGuidanceFailure(
@@ -1088,6 +1282,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _syncPagePhaseFromWorkflow();
     _sideViewPromptEmitted = false;
     _oppositeSidePromptEmitted = false;
+    _clearCaptureReadiness();
     if (decision.action ==
         MotionAssessmentWorkflowAction.requestOrientationChange) {
       forwardHeadAnalyzer.reset();
@@ -1445,6 +1640,7 @@ class MotionAssessmentController extends ChangeNotifier {
     final step = _currentScreeningStep;
     final requiredView = step?.view.name ?? 'complete';
     final isFront = step?.view == MotionAssessmentCaptureView.front;
+    final requireHips = isFront && _currentFrontalMetrics.trunkLean;
     final frameAccepted = isFront
         ? frontalPostureAnalyzer.lastFrameStatus ==
               FrontalPostureFrameStatus.accepted
@@ -1478,7 +1674,10 @@ class MotionAssessmentController extends ChangeNotifier {
     final missingRegions = <String>{
       if (personCount == 0) 'person',
       if (personCount == 1 && decision.phase == MotionQualityPhase.framing)
-        ..._missingAssessmentRegions(observation.poses.single),
+        ..._missingAssessmentRegions(
+          observation.poses.single,
+          requireHips: requireHips,
+        ),
       ...analyzerMissingRegions,
     }.toList(growable: false);
     final rejectionReasons = <String>[
@@ -1531,6 +1730,7 @@ class MotionAssessmentController extends ChangeNotifier {
           decision.phase != MotionQualityPhase.framing &&
           missingRegions.isEmpty,
       missingRegions: missingRegions,
+      requiredRegions: ['head', 'shoulders', if (requireHips) 'hips'],
       distance:
           personCount == 1 &&
               decision.phase != MotionQualityPhase.framing &&
@@ -1629,7 +1829,10 @@ class MotionAssessmentController extends ChangeNotifier {
     final missingRegions = <String>{
       if (personCount == 0) 'person',
       if (personCount == 1 && decision.phase == MotionQualityPhase.framing)
-        ..._missingAssessmentRegions(observation.poses.single),
+        ..._missingAssessmentRegions(
+          observation.poses.single,
+          requireHips: false,
+        ),
       ...analyzerMissingRegions,
     }.toList(growable: false);
     final assessmentRegionVisible =
@@ -1694,6 +1897,7 @@ class MotionAssessmentController extends ChangeNotifier {
       continuity: _continuityValue(decision.phase),
       assessmentRegionVisible: assessmentRegionVisible,
       missingRegions: missingRegions,
+      requiredRegions: const ['head', 'shoulders'],
       distance: assessmentRegionVisible
           ? 'acceptable'
           : decision.phase == MotionQualityPhase.framing
@@ -1740,7 +1944,10 @@ class MotionAssessmentController extends ChangeNotifier {
     );
   }
 
-  List<String> _missingAssessmentRegions(MotionPose pose) {
+  List<String> _missingAssessmentRegions(
+    MotionPose pose, {
+    required bool requireHips,
+  }) {
     bool unavailable(MotionPoseLandmarkType type) {
       final landmark = pose.landmark(type);
       return landmark == null ||
@@ -1759,10 +1966,17 @@ class MotionAssessmentController extends ChangeNotifier {
       if (unavailable(MotionPoseLandmarkType.leftShoulder) &&
           unavailable(MotionPoseLandmarkType.rightShoulder))
         'shoulders',
-      if (unavailable(MotionPoseLandmarkType.leftHip) &&
+      if (requireHips &&
+          unavailable(MotionPoseLandmarkType.leftHip) &&
           unavailable(MotionPoseLandmarkType.rightHip))
         'hips',
     ];
+  }
+
+  String _screeningFramingGuidance() {
+    return _currentFrontalMetrics.trunkLean
+        ? '请后退一点，让头部、双肩和髋部入镜'
+        : '请调整站位，让头部和双肩入镜';
   }
 
   ({String action, String reason}) _recommendedAction({
@@ -1832,10 +2046,10 @@ class MotionAssessmentController extends ChangeNotifier {
   String _guidanceForMissingRegions(List<String> missingRegions) {
     final recommended = _missingRegionRecommendation(missingRegions);
     return switch (recommended.action) {
-      'step_back_include_hips' => '请稍微后退，让肩部和髋部同时清晰入镜',
-      'adjust_side_profile' => '请保持自然侧身，让靠近镜头一侧的耳朵和肩部清晰入镜',
-      'adjust_framing_include_shoulders' => '请调整站位，让双肩和髋部清晰入镜',
-      _ => '请稍微调整站位，让头部、肩部和髋部清晰入镜',
+      'step_back_include_hips' => '请后退一点，让髋部入镜',
+      'adjust_side_profile' => '请侧身，让近侧耳朵和肩部入镜',
+      'adjust_framing_include_shoulders' => '请调整站位，让双肩入镜',
+      _ => '请调整站位，让头部和双肩入镜',
     };
   }
 
@@ -2018,6 +2232,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _resetAnalyzerFramingPrompt();
     _captureCountdownGeneration += 1;
     _captureCountdownInProgress = false;
+    _clearCaptureReadiness();
     if (target == 'posture_screen') {
       _phase = MotionAssessmentPagePhase.calibrating;
       _screeningOrientationGuidanceCompleted = true;
@@ -2335,6 +2550,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _resetAnalyzerFramingPrompt();
     _captureCountdownGeneration += 1;
     _captureCountdownInProgress = false;
+    _clearCaptureReadiness();
     _firstObservationAt = null;
     _lastObservationAt = null;
     _totalFrames = 0;
@@ -2350,6 +2566,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _resetAnalyzerFramingPrompt();
     _captureCountdownGeneration += 1;
     _captureCountdownInProgress = false;
+    _clearCaptureReadiness();
     _syncPagePhaseFromWorkflow();
     _refreshLatestContext();
     _guidance = '继续评估，请自然侧身并保持稳定';

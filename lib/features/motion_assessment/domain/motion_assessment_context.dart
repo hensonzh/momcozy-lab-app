@@ -18,6 +18,7 @@ class MotionAssessmentContextSnapshot {
     required this.continuity,
     required this.assessmentRegionVisible,
     required this.missingRegions,
+    this.requiredRegions = const ['head', 'shoulders'],
     required this.distance,
     required this.requiredView,
     required this.detectedView,
@@ -110,6 +111,7 @@ class MotionAssessmentContextSnapshot {
   final String continuity;
   final bool assessmentRegionVisible;
   final List<String> missingRegions;
+  final List<String> requiredRegions;
   final String distance;
   final String requiredView;
   final String detectedView;
@@ -158,7 +160,7 @@ class MotionAssessmentContextSnapshot {
       },
       'framing': {
         'assessment_region_visible': assessmentRegionVisible,
-        'required_regions': const ['head', 'shoulders', 'hips'],
+        'required_regions': requiredRegions,
         'missing_regions': missingRegions,
         'distance': distance,
       },
@@ -210,7 +212,7 @@ class MotionAssessmentContextSnapshot {
 请基于下面“最新评估项目计划”回应用户刚才的语音：
 ${jsonEncode(toJson())}
 
-当前仍在项目选择阶段，没有姿态画面结论。可以根据用户刚才的明确语音调用 motion_assessment_plan；更新、增加或移除项目必须使用这里的 revision，用户明确确认当前选择时才调用 confirm。自然复述选择并说清下一步，不要要求用户站位，不要虚构姿态结果。
+当前仍在项目选择阶段，没有姿态画面结论。可以根据用户刚才的明确语音调用 motion_assessment_plan；更新、增加或移除项目必须使用这里的 revision，用户明确确认当前选择时才调用 confirm。最多说两句：简短复述选择，再说清唯一的下一步。不要寒暄、要求用户站位或虚构姿态结果。
 '''
           .trim();
     }
@@ -219,7 +221,7 @@ ${jsonEncode(toJson())}
 ${jsonEncode(toJson())}
 快照当前年龄：${contextAgeMs.clamp(0, 1 << 31)} ms。
 
-约束：本地质量门是权威来源；不得推翻 accept/reject、多人暂停或最终 classification。只解释当前画面趋势和下一步动作，一次只给一个简短动作。若快照已过 fresh_for_ms，只说明正在重新确认画面，不猜测当前姿态。不要声称持续观看视频或看到原始关键点，不作医疗诊断。
+约束：本地质量门是权威来源；不得推翻 accept/reject、多人暂停或最终 classification。普通回答最多两句；动作指导只说一句，尽量不超过 18 个汉字。不要寒暄、解释检测过程、重复鼓励或预告后续。若快照已过 fresh_for_ms，只说明正在重新确认画面，不猜测当前姿态。不要声称持续观看视频或看到原始关键点，不作医疗诊断。
 '''
         .trim();
   }
