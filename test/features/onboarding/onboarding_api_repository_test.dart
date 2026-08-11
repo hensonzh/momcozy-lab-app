@@ -69,7 +69,7 @@ void main() {
       });
 
       expect(state.status, OnboardingStatus.avatarGenerating);
-      expect(state.avatar?.phase, expected);
+      expect(state.pendingAvatar?.phase, expected);
       expect(state.canEnterApp, isTrue);
       expect(state.avatarSetupCompleted, isFalse);
     }
@@ -184,20 +184,7 @@ void main() {
         'profile_confirmed': true,
         'can_enter_app': true,
         'avatar_setup_completed': true,
-        'selected_avatar_file_id': 'output-id',
-        'avatar': {
-          'id': 'generation-id',
-          'status': 'succeeded',
-          'stage': 'postpartum',
-          'error_code': '',
-          'created_at': '2026-08-09T00:00:00Z',
-          'candidates': [
-            {'id': 'candidate-1', 'file_id': 'file-1', 'position': 1},
-            {'id': 'candidate-2', 'file_id': 'file-2', 'position': 2},
-            {'id': 'candidate-3', 'file_id': 'file-3', 'position': 3},
-            {'id': 'candidate-4', 'file_id': 'file-4', 'position': 4},
-          ],
-        },
+        'active_avatar_file_id': 'output-id',
       });
       final repository = OnboardingApiRepository(
         transport: transport,
@@ -212,8 +199,8 @@ void main() {
         'use_default_avatar': false,
       });
       expect(state.isCompleted, isTrue);
-      expect(state.avatar?.candidates, hasLength(4));
-      expect(state.avatar?.candidates[1].fileId, 'file-2');
+      expect(state.activeAvatarFileId, 'output-id');
+      expect(state.pendingAvatar, isNull);
     },
   );
 
@@ -237,4 +224,32 @@ void main() {
       'use_default_avatar': true,
     });
   });
+
+  test(
+    'dismisses a pending replacement without changing the active avatar',
+    () async {
+      final transport = FixtureApiJsonTransport(const {
+        'status': 'completed',
+        'current_step': 'done',
+        'profile_confirmed': true,
+        'can_enter_app': true,
+        'avatar_setup_completed': true,
+        'active_avatar_file_id': 'active-file',
+      });
+      final repository = OnboardingApiRepository(
+        transport: transport,
+        multipartTransport: FixtureApiMultipartTransport(const {}),
+      );
+
+      final state = await repository.dismissPendingAvatar();
+
+      expect(transport.lastMethod, 'DELETE');
+      expect(
+        transport.lastPath,
+        '$onboardingMeEndpoint/avatar-generations/pending',
+      );
+      expect(state.activeAvatarFileId, 'active-file');
+      expect(state.pendingAvatar, isNull);
+    },
+  );
 }

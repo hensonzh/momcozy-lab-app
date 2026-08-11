@@ -21,7 +21,7 @@ class AvatarTaskController extends ChangeNotifier {
   }) {
     onboardingController.addListener(_handleOnboardingChanged);
     _status = _statusFor(onboardingController.state);
-    _generationId = onboardingController.state?.avatar?.id;
+    _generationId = onboardingController.state?.pendingAvatar?.id;
     _schedulePollIfNeeded();
   }
 
@@ -74,7 +74,7 @@ class AvatarTaskController extends ChangeNotifier {
         next == AvatarTaskStatus.hidden)) {
       _status = next;
     }
-    _generationId = state?.avatar?.id;
+    _generationId = state?.pendingAvatar?.id;
     _schedulePollIfNeeded();
     if (previous != _status) _notify();
   }
@@ -93,12 +93,14 @@ class AvatarTaskController extends ChangeNotifier {
   }
 
   AvatarTaskStatus _statusFor(OnboardingState? state) {
-    if (state == null || !state.canEnterApp || state.avatarSetupCompleted) {
+    if (state == null || !state.canEnterApp) {
       return AvatarTaskStatus.hidden;
     }
-    return switch (state.status) {
+    final pending = state.pendingAvatar;
+    if (pending == null) return AvatarTaskStatus.hidden;
+    return switch (pending.status) {
       OnboardingStatus.avatarGenerating =>
-        state.avatar?.phase == OnboardingAvatarGenerationPhase.queued
+        pending.phase == OnboardingAvatarGenerationPhase.queued
             ? AvatarTaskStatus.queued
             : AvatarTaskStatus.generating,
       OnboardingStatus.avatarReview => AvatarTaskStatus.reviewRequired,
