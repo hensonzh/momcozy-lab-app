@@ -554,6 +554,18 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                 identity: widget.identity,
                 careStage: stageState,
                 avatarExpanded: _avatarExpanded,
+                onCreateAvatar:
+                    widget.identity == ProfileIdentity.mom &&
+                        stageState.stage != null
+                    ? () => unawaited(
+                        context.push(
+                          Uri(
+                            path: '/avatar/create',
+                            queryParameters: const {'from': '/me'},
+                          ).toString(),
+                        ),
+                      )
+                    : null,
               ),
             ),
           ),
@@ -904,11 +916,13 @@ class _MeBabyOverviewHeader extends StatelessWidget {
     required this.identity,
     required this.careStage,
     required this.avatarExpanded,
+    this.onCreateAvatar,
   });
 
   final ProfileIdentity identity;
   final CareStageSelectionState careStage;
   final bool avatarExpanded;
+  final VoidCallback? onCreateAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -1037,6 +1051,56 @@ class _MeBabyOverviewHeader extends StatelessWidget {
               ).toString(),
             ),
           ),
+          if (isMom && onCreateAvatar != null) ...[
+            const SizedBox(width: 8),
+            Tooltip(
+              message: 'Create new digital companion',
+              child: Semantics(
+                label: 'Create new digital companion',
+                button: true,
+                child: Material(
+                  color: _MeBabyOverviewColors.pill,
+                  shape: const CircleBorder(),
+                  child: InkWell(
+                    key: const ValueKey('me-create-digital-avatar'),
+                    customBorder: const CircleBorder(),
+                    onTap: onCreateAvatar,
+                    child: const SizedBox.square(
+                      dimension: 44,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Icon(
+                            Icons.face_retouching_natural_rounded,
+                            color: _MeBabyOverviewColors.wine,
+                            size: 24,
+                          ),
+                          Positioned(
+                            right: 7,
+                            bottom: 7,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: _MeBabyOverviewColors.wine,
+                                shape: BoxShape.circle,
+                              ),
+                              child: SizedBox.square(
+                                dimension: 13,
+                                child: Icon(
+                                  Icons.add_rounded,
+                                  color: Colors.white,
+                                  size: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

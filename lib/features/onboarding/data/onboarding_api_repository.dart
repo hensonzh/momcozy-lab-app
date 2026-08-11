@@ -91,6 +91,18 @@ class OnboardingApiRepository {
     });
   }
 
+  Future<OnboardingState> dismissPendingAvatar() async {
+    final mutation = transport;
+    if (mutation is! ApiJsonMutationTransport) {
+      throw StateError('Onboarding avatar mutation is not configured.');
+    }
+    return OnboardingState.fromMap(
+      await (mutation as ApiJsonMutationTransport).deleteJson(
+        '$onboardingMeEndpoint/avatar-generations/pending',
+      ),
+    );
+  }
+
   Future<OnboardingState> _complete(Map<String, Object?> body) async {
     return OnboardingState.fromMap(
       await transport.postJson('$onboardingMeEndpoint/complete', body: body),

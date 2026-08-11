@@ -83,6 +83,10 @@ void main() {
       expect(find.text('Postpartum Recovery'), findsWidgets);
       expect(find.text('No active program yet'), findsOneWidget);
       expect(find.text('Body Profile'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('me-create-digital-avatar')),
+        findsOneWidget,
+      );
       expect(find.text('Me'), findsWidgets);
       expect(find.text('Lactation'), findsWidgets);
       expect(find.text('Recovery'), findsWidgets);
@@ -581,7 +585,9 @@ void main() {
       expect(find.text('Infant'), findsOneWidget);
     });
 
-    testWidgets('Baby header matches the Me header geometry', (tester) async {
+    testWidgets('Me avatar entry preserves the shared header geometry', (
+      tester,
+    ) async {
       await _pumpApp(tester, initialLocation: '/baby');
 
       final babyWordmark = tester.getRect(find.text('momcozy'));
@@ -596,18 +602,23 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.getRect(find.text('momcozy')), babyWordmark);
-      expect(
-        tester.getRect(
-          find.byKey(const ValueKey('me-current-stage-indicator')),
-        ),
-        babyIndicator,
+      final meIndicator = tester.getRect(
+        find.byKey(const ValueKey('me-current-stage-indicator')),
       );
-      expect(
-        tester.getRect(
-          find.byKey(const ValueKey('me-baby-overview-notification')),
-        ),
-        babyBell,
+      final meBell = tester.getRect(
+        find.byKey(const ValueKey('me-baby-overview-notification')),
       );
+      final avatarEntry = tester.getRect(
+        find.byKey(const ValueKey('me-create-digital-avatar')),
+      );
+      expect(meIndicator.left, babyIndicator.left);
+      expect(meIndicator.top, babyIndicator.top);
+      expect(meIndicator.bottom, babyIndicator.bottom);
+      expect(meIndicator.right, lessThan(babyIndicator.right));
+      expect(meBell.size, babyBell.size);
+      expect(meBell.top, babyBell.top);
+      expect(avatarEntry.size, const Size.square(44));
+      expect(avatarEntry.right, babyBell.right);
     });
 
     testWidgets('Notification bell opens the real owner inbox', (tester) async {

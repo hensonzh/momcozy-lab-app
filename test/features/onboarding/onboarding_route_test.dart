@@ -703,7 +703,61 @@ void main() {
     onboardingController.dispose();
     runtimeController.dispose();
   });
+
+  testWidgets('completed user can open a fresh avatar creation flow', (
+    tester,
+  ) async {
+    final runtimeController = MomCozyRuntimeController(
+      MomCozyApiRuntime(
+        jsonTransport: FixtureApiJsonTransport(_completedAvatarState),
+        multipartTransport: FixtureApiMultipartTransport(const {}),
+        session: const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'avatar-replacement-user',
+          babyId: '',
+          locale: 'en-US',
+          accessToken: 'access',
+        ),
+      ),
+    );
+    final onboardingController = OnboardingController(
+      runtimeController: runtimeController,
+    );
+    await onboardingController.load();
+    final router = createMomCozyRouter(
+      initialLocation: '/avatar/create?from=/me',
+      runtimeController: runtimeController,
+      onboardingController: onboardingController,
+    );
+
+    await tester.pumpWidget(
+      MomCozyFlutterApp(router: router, runtimeController: runtimeController),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Create a new digital companion'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Upload a photo'), findsOneWidget);
+    expect(find.text('Use the MomCozy character for now'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('onboarding-avatar-back')),
+      findsOneWidget,
+    );
+
+    router.dispose();
+    onboardingController.dispose();
+    runtimeController.dispose();
+  });
 }
+
+const _completedAvatarState = <String, Object?>{
+  'status': 'completed',
+  'current_step': 'done',
+  'current_stage': 'postpartum',
+  'profile_confirmed': true,
+  'can_enter_app': true,
+  'avatar_setup_completed': true,
+  'active_avatar_file_id': '00000000-0000-4000-8000-000000000001',
+};
 
 const _shellGeneratingState = <String, Object?>{
   'status': 'avatar_generating',

@@ -165,6 +165,42 @@ void main() {
     onboardingController.dispose();
     runtimeController.dispose();
   });
+
+  test(
+    'replacement task stays visible while the active avatar remains set',
+    () async {
+      final runtimeController = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: FixtureApiJsonTransport(_replacementGeneratingState),
+          multipartTransport: FixtureApiMultipartTransport(const {}),
+          session: const MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: 'replacement-avatar-user',
+            babyId: '',
+            locale: 'en-US',
+            accessToken: 'access',
+          ),
+        ),
+      );
+      final onboardingController = OnboardingController(
+        runtimeController: runtimeController,
+      );
+      await onboardingController.load();
+      final taskController = AvatarTaskController(
+        onboardingController: onboardingController,
+        pollInterval: const Duration(days: 1),
+      );
+
+      expect(onboardingController.state?.avatarSetupCompleted, isTrue);
+      expect(onboardingController.state?.activeAvatarFileId, 'active-file');
+      expect(taskController.status, AvatarTaskStatus.generating);
+      expect(taskController.generationId, 'replacement-generation');
+
+      taskController.dispose();
+      onboardingController.dispose();
+      runtimeController.dispose();
+    },
+  );
 }
 
 class _DelayedOnboardingTransport implements ApiJsonTransport {
@@ -208,6 +244,24 @@ const _generatingState = <String, Object?>{
     'status': 'generating',
     'error_code': '',
     'created_at': '2026-08-09T00:00:00Z',
+    'candidates': <Object?>[],
+  },
+};
+
+const _replacementGeneratingState = <String, Object?>{
+  'status': 'completed',
+  'current_step': 'done',
+  'current_stage': 'postpartum',
+  'profile_confirmed': true,
+  'can_enter_app': true,
+  'avatar_setup_completed': true,
+  'active_avatar_file_id': 'active-file',
+  'pending_avatar': {
+    'id': 'replacement-generation',
+    'stage': 'postpartum',
+    'status': 'generating',
+    'error_code': '',
+    'created_at': '2026-08-11T00:00:00Z',
     'candidates': <Object?>[],
   },
 };

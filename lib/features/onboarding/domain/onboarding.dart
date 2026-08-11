@@ -167,28 +167,32 @@ class OnboardingState {
     this.stage,
     this.canContinueWithDefault = false,
     this.primaryInfantId,
-    this.selectedAvatarFileId,
-    this.avatar,
+    this.activeAvatarFileId,
+    this.pendingAvatar,
   });
 
   factory OnboardingState.fromMap(Map<String, Object?> map) {
-    final avatar = map['avatar'];
     final status = _status(_string(map['status']));
+    final avatarSetupCompleted =
+        map['avatar_setup_completed'] == true ||
+        status == OnboardingStatus.completed;
+    final pendingAvatar =
+        map['pending_avatar'] ?? (avatarSetupCompleted ? null : map['avatar']);
     return OnboardingState(
       status: status,
       profileConfirmed: map['profile_confirmed'] == true,
       canEnterApp:
           map['can_enter_app'] == true || status == OnboardingStatus.completed,
-      avatarSetupCompleted:
-          map['avatar_setup_completed'] == true ||
-          status == OnboardingStatus.completed,
+      avatarSetupCompleted: avatarSetupCompleted,
       stage: _stage(_nullableString(map['current_stage'])),
       canContinueWithDefault: map['can_continue_with_default'] == true,
       primaryInfantId: _nullableString(map['primary_infant_id']),
-      selectedAvatarFileId: _nullableString(map['selected_avatar_file_id']),
-      avatar: avatar is Map
+      activeAvatarFileId: _nullableString(
+        map['active_avatar_file_id'] ?? map['selected_avatar_file_id'],
+      ),
+      pendingAvatar: pendingAvatar is Map
           ? OnboardingAvatarGeneration.fromMap(
-              Map<String, Object?>.from(avatar),
+              Map<String, Object?>.from(pendingAvatar),
             )
           : null,
     );
@@ -201,8 +205,8 @@ class OnboardingState {
   final OnboardingCareStage? stage;
   final bool canContinueWithDefault;
   final String? primaryInfantId;
-  final String? selectedAvatarFileId;
-  final OnboardingAvatarGeneration? avatar;
+  final String? activeAvatarFileId;
+  final OnboardingAvatarGeneration? pendingAvatar;
 
   bool get isCompleted =>
       avatarSetupCompleted || status == OnboardingStatus.completed;

@@ -502,9 +502,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
   };
 
   Widget _buildAvatarFlow(BuildContext context, OnboardingState state) {
-    if (widget.avatarTaskMode && _activatingAvatar && state.isCompleted) {
+    if (widget.avatarTaskMode &&
+        _activatingAvatar &&
+        state.isCompleted &&
+        state.pendingAvatar == null) {
       _scheduleAvatarTaskReturn();
     }
+    final flowStatus =
+        _activatingAvatar && state.isCompleted && state.pendingAvatar == null
+        ? OnboardingStatus.completed
+        : state.pendingAvatar?.status ??
+              (widget.avatarTaskMode && state.avatarSetupCompleted
+                  ? OnboardingStatus.avatarRequired
+                  : state.status);
     final totalSteps = _totalStepsForStage(state.stage);
     final canReturnToProfile =
         _draft != null && !state.canEnterApp && !widget.controller.busy;
@@ -526,7 +536,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
-            child: switch (state.status) {
+            child: switch (flowStatus) {
               OnboardingStatus.avatarGenerating => _generatingView(state),
               OnboardingStatus.avatarReview => _reviewView(context, state),
               OnboardingStatus.avatarFailed => _avatarChoiceView(
@@ -559,15 +569,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _avatarChoiceView(OnboardingState state, {bool failed = false}) {
+    final replacing = state.avatarSetupCompleted;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _StepPrompt(
           title: failed
               ? 'Let’s try another photo'
+              : replacing
+              ? 'Create a new digital companion'
               : 'Create your digital companion',
           reason: failed
               ? 'A clear, front-facing portrait helps us create a companion that feels more like you. We couldn’t use the last photo.'
+              : replacing
+              ? 'Your current companion stays active until you choose and confirm a new one.'
               : 'A portrait helps us make your companion feel more like you.',
         ),
         const SizedBox(height: 18),
@@ -610,10 +625,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ),
         const SizedBox(height: 4),
-        TextButton(
-          onPressed: widget.controller.busy ? null : _confirmDefaultAvatar,
-          child: const Text('Use the MomCozy character for now'),
-        ),
+        if (state.canContinueWithDefault)
+          TextButton(
+            onPressed: widget.controller.busy ? null : _confirmDefaultAvatar,
+            child: const Text('Use the MomCozy character for now'),
+          )
+        else if (failed && state.pendingAvatar != null)
+          TextButton(
+            onPressed: widget.controller.busy ? null : _keepCurrentAvatar,
+            child: const Text('Keep my current companion'),
+          ),
       ],
     );
   }
@@ -774,12 +795,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _generatingView(OnboardingState state) {
     return _AvatarGenerationWaitingView(
-      phase: state.avatar?.phase ?? OnboardingAvatarGenerationPhase.unknown,
+      phase:
+          state.pendingAvatar?.phase ?? OnboardingAvatarGenerationPhase.unknown,
     );
   }
 
   Widget _reviewView(BuildContext context, OnboardingState state) {
-    final candidates = state.avatar?.candidates ?? const [];
+    final candidates = state.pendingAvatar?.candidates ?? const [];
     final thumbnailLoader =
         widget.avatarThumbnailLoader ??
         MomCozyRuntimeScope.of(
@@ -821,14 +843,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
           },
         ),
         const SizedBox(height: 12),
-        _DefaultAvatarChoiceCard(
-          key: const ValueKey('onboarding-avatar-default'),
-          stage: state.stage,
-          selected: widget.controller.defaultAvatarSelected,
-          onTap: widget.controller.busy || _activatingAvatar
-              ? null
-              : widget.controller.selectDefaultAvatar,
-        ),
+        if (state.canContinueWithDefault)
+          _DefaultAvatarChoiceCard(
+            key: const ValueKey('onboarding-avatar-default'),
+            stage: state.stage,
+            selected: widget.controller.defaultAvatarSelected,
+            onTap: widget.controller.busy || _activatingAvatar
+                ? null
+                : widget.controller.selectDefaultAvatar,
+          ),
         const SizedBox(height: 20),
         _errorText(controllerError: true),
         _PrimaryButton(
@@ -851,8 +874,22 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
           child: const Text('Try another photo'),
         ),
+        if (state.avatarSetupCompleted) ...[
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: widget.controller.busy || _activatingAvatar
+                ? null
+                : _keepCurrentAvatar,
+            child: const Text('Keep my current companion'),
+          ),
+        ],
       ],
     );
+  }
+
+  Future<void> _keepCurrentAvatar() async {
+    final dismissed = await widget.controller.dismissPendingAvatar();
+    if (dismissed && mounted) _leaveAvatarTaskPage();
   }
 
   Future<void> _confirmAvatarSelection() async {

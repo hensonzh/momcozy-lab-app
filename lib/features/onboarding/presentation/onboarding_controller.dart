@@ -138,8 +138,8 @@ class OnboardingController extends ChangeNotifier {
 
   void selectAvatarCandidate(String candidateId) {
     final normalized = candidateId.trim();
-    final candidates = _state?.avatar?.candidates ?? const [];
-    if (_state?.status != OnboardingStatus.avatarReview ||
+    final candidates = _state?.pendingAvatar?.candidates ?? const [];
+    if (_state?.pendingAvatar?.status != OnboardingStatus.avatarReview ||
         !candidates.any((candidate) => candidate.id == normalized)) {
       return;
     }
@@ -172,6 +172,13 @@ class OnboardingController extends ChangeNotifier {
     return _complete(_repository.completeWithDefault);
   }
 
+  Future<bool> dismissPendingAvatar() {
+    return _run(() async {
+      _applyState(await _repository.dismissPendingAvatar());
+      _phase = OnboardingGatePhase.ready;
+    });
+  }
+
   Future<bool> _complete(Future<OnboardingState> Function() action) async {
     final userId = runtimeController.currentSession.userId;
     final succeeded = await _run(() async {
@@ -193,7 +200,7 @@ class OnboardingController extends ChangeNotifier {
     try {
       // Baby selection can replace the account runtime and its scoped caches,
       // so publish the avatar only after that transition has completed.
-      onAvatarActivated?.call(_state?.selectedAvatarFileId);
+      onAvatarActivated?.call(_state?.activeAvatarFileId);
     } catch (_) {
       // The server selection is authoritative; local projections can refresh
       // again when their page is next opened.
@@ -258,12 +265,12 @@ class OnboardingController extends ChangeNotifier {
   }
 
   void _applyState(OnboardingState next) {
-    final previousGenerationId = _state?.avatar?.id;
+    final previousGenerationId = _state?.pendingAvatar?.id;
     _state = next;
-    final candidates = next.avatar?.candidates ?? const [];
+    final candidates = next.pendingAvatar?.candidates ?? const [];
     final selectionIsStillValid =
-        next.status == OnboardingStatus.avatarReview &&
-        previousGenerationId == next.avatar?.id &&
+        next.pendingAvatar?.status == OnboardingStatus.avatarReview &&
+        previousGenerationId == next.pendingAvatar?.id &&
         (_selectedAvatarCandidateId == null ||
             candidates.any(
               (candidate) => candidate.id == _selectedAvatarCandidateId,

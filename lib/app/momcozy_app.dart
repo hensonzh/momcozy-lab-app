@@ -487,6 +487,18 @@ GoRouter createMomCozyRouter({
             onAvatarTaskCompleted: avatarTaskController?.showCompleted,
           ),
         ),
+      if (runtimeController != null && onboardingController != null)
+        GoRoute(
+          path: '/avatar/create',
+          builder: (context, state) => OnboardingPage(
+            controller: onboardingController,
+            avatarTaskMode: true,
+            entryPath:
+                _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/me',
+            avatarThumbnailLoader: avatarThumbnailLoader,
+            onAvatarTaskCompleted: avatarTaskController?.showCompleted,
+          ),
+        ),
       ShellRoute(
         builder: (context, state, child) {
           final runtime = MomCozyRuntimeScope.of(context);
