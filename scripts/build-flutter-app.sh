@@ -5,7 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 
-DEFAULT_API_BASE_URL="https://lute-momcozylab.luteos.cloud:8443"
+DEFAULT_LOCAL_API_BASE_URL="http://127.0.0.1:8769"
+DEFAULT_LOCAL_AGENT_API_BASE_URL="http://127.0.0.1:8010"
 DEFAULT_GITHUB_RELEASE_REPO="hensonzh/momcozy-lab-releases"
 DEFAULT_DOWNLOAD_BASE_URL="https://hensonzh.github.io/momcozy-lab-releases"
 
@@ -13,18 +14,21 @@ usage() {
   cat <<'EOF'
 Usage:
   ./scripts/build-flutter-app.sh
+  ./scripts/build-flutter-app.sh --check-config
 
 Builds the Flutter Android APK, generates its download page and "Momcozy Lab"
 QR code under dist/android-apk/, uploads the APK to GitHub Releases and publishes
 the download page through GitHub Pages.
 
 Environment overrides:
-  MOMCOZY_API_BASE_URL           API compiled into the Flutter App.
+  MOMCOZY_API_BASE_URL           Product API compiled into the Flutter App.
+  MOMCOZY_AGENT_API_BASE_URL     Agent Runtime API compiled into the Flutter App.
   MOMCOZY_DOWNLOAD_BASE_URL      Public GitHub Pages URL for the download page.
   MOMCOZY_GITHUB_RELEASE_REPO    Public owner/repository for Releases and Pages.
   MOMCOZY_APK_FLAVOR             local | staging | production (default: staging).
   MOMCOZY_APK_MODE               debug | release (default: release).
-  MOMCOZY_EXTRA_DART_DEFINES     Extra comma-separated KEY=VALUE definitions.
+  MOMCOZY_EXTRA_DART_DEFINES     Extra comma-separated KEY=VALUE definitions;
+                                  the two API URL keys are reserved.
   MOMCOZY_SKIP_NPM_CI            Set to 1 to skip npm ci.
   MOMCOZY_SKIP_UPLOAD            Set to 1 to build without publishing to GitHub.
   MOMCOZY_REQUIRE_RELEASE_SIGNING
@@ -45,6 +49,9 @@ case "${1:-}" in
     ;;
   "")
     ;;
+  --check-config)
+    check_config=1
+    ;;
   *)
     usage >&2
     exit 2
@@ -53,21 +60,38 @@ esac
 
 cd "${PROJECT_ROOT}"
 
-api_base_url="${MOMCOZY_API_BASE_URL:-${DEFAULT_API_BASE_URL}}"
+check_config="${check_config:-0}"
 download_base_url="${MOMCOZY_DOWNLOAD_BASE_URL:-${DEFAULT_DOWNLOAD_BASE_URL}}"
 github_release_repo="${MOMCOZY_GITHUB_RELEASE_REPO:-${DEFAULT_GITHUB_RELEASE_REPO}}"
 apk_flavor="${MOMCOZY_APK_FLAVOR:-staging}"
 apk_mode="${MOMCOZY_APK_MODE:-release}"
 skip_upload="${MOMCOZY_SKIP_UPLOAD:-0}"
-dart_defines="MOMCOZY_API_BASE_URL=${api_base_url}"
+
+if [[ "${apk_flavor}" == "local" ]]; then
+  api_base_url="${MOMCOZY_API_BASE_URL:-${DEFAULT_LOCAL_API_BASE_URL}}"
+  agent_api_base_url="${MOMCOZY_AGENT_API_BASE_URL:-${DEFAULT_LOCAL_AGENT_API_BASE_URL}}"
+else
+  api_base_url="${MOMCOZY_API_BASE_URL:-}"
+  agent_api_base_url="${MOMCOZY_AGENT_API_BASE_URL:-}"
+fi
 
 if [[ "${skip_upload}" != "0" && "${skip_upload}" != "1" ]]; then
   printf 'MOMCOZY_SKIP_UPLOAD must be 0 or 1.\n' >&2
   exit 2
 fi
 
-if [[ -n "${MOMCOZY_EXTRA_DART_DEFINES:-}" ]]; then
-  dart_defines="${dart_defines},${MOMCOZY_EXTRA_DART_DEFINES}"
+node "${SCRIPT_DIR}/flutter-api-config.mjs" validate \
+  --flavor "${apk_flavor}" \
+  --product-url "${api_base_url}" \
+  --agent-url "${agent_api_base_url}" \
+  --extra-dart-defines "${MOMCOZY_EXTRA_DART_DEFINES:-}"
+
+if [[ "${check_config}" == "1" ]]; then
+  printf 'Flutter build config is valid.\n'
+  printf '  Product API: %s\n' "${api_base_url}"
+  printf '  Agent API:   %s\n' "${agent_api_base_url}"
+  printf '  Variant:     %s %s\n' "${apk_flavor}" "${apk_mode}"
+  exit 0
 fi
 
 if [[ "${MOMCOZY_SKIP_NPM_CI:-0}" != "1" ]]; then
@@ -76,15 +100,18 @@ fi
 
 export MOMCOZY_DOWNLOAD_BASE_URL="${download_base_url}"
 export MOMCOZY_GITHUB_RELEASE_REPO="${github_release_repo}"
-export MOMCOZY_APK_DART_DEFINES="${dart_defines}"
+export MOMCOZY_API_BASE_URL="${api_base_url}"
+export MOMCOZY_AGENT_API_BASE_URL="${agent_api_base_url}"
+export MOMCOZY_APK_DART_DEFINES="${MOMCOZY_EXTRA_DART_DEFINES:-}"
 export MOMCOZY_APK_FLAVOR="${apk_flavor}"
 export MOMCOZY_APK_MODE="${apk_mode}"
 
 printf 'Building Momcozy Lab Flutter App\n'
-printf '  API:      %s\n' "${api_base_url}"
-printf '  Download: %s\n' "${download_base_url}"
-printf '  Releases: %s\n' "${github_release_repo}"
-printf '  Variant:  %s %s\n' "${apk_flavor}" "${apk_mode}"
+printf '  Product API: %s\n' "${api_base_url}"
+printf '  Agent API:   %s\n' "${agent_api_base_url}"
+printf '  Download:    %s\n' "${download_base_url}"
+printf '  Releases:    %s\n' "${github_release_repo}"
+printf '  Variant:     %s %s\n' "${apk_flavor}" "${apk_mode}"
 if [[ "${skip_upload}" == "1" ]]; then
   printf '  Publish:  skipped\n\n'
 else

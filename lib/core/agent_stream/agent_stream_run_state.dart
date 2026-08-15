@@ -109,9 +109,7 @@ class AgentStreamRunState {
     if (_hasSeenReplayKey(event)) return this;
 
     final type = event.type;
-    final nextEvents = _shouldRetainEvent(event)
-        ? List<AgentStreamEvent>.unmodifiable([...events, event])
-        : events;
+    final nextEvents = _nextRetainedEvents(events, event);
     final textUpdate = _nextTextStream(event);
     final nextQuickReplies = _nextQuickReplies(event);
     final completedAssistantMessage = _isAssistantCompletedMessage(event);
@@ -170,7 +168,7 @@ class AgentStreamRunState {
         phase: AgentStreamRunPhase.waitingForConfirmation,
       );
     }
-    if (type == 'run.failed' || type == 'error') {
+    if (type == 'run.failed' || type == 'run.expired' || type == 'error') {
       return nextState.copyWith(
         phase: AgentStreamRunPhase.error,
         errorMessage:
@@ -191,7 +189,8 @@ class AgentStreamRunState {
         event.type == 'message.completed' ||
         event.type == 'run.completed' ||
         event.type == 'run.failed' ||
-        event.type == 'run.cancelled';
+        event.type == 'run.cancelled' ||
+        event.type == 'run.expired';
   }
 
   _TextStreamUpdate _nextTextStream(AgentStreamEvent event) {
@@ -342,11 +341,12 @@ class AgentStreamRunState {
     if (_seenReplayKeys.contains(replayKey)) return _seenReplayKeys;
 
     if (_seenReplayKeys.isEmpty) {
-      return _replayKeysFromEvents(events)..add(replayKey);
+      return Set<String>.unmodifiable(
+        _replayKeysFromEvents(events)..add(replayKey),
+      );
     }
 
-    _seenReplayKeys.add(replayKey);
-    return _seenReplayKeys;
+    return Set<String>.unmodifiable({..._seenReplayKeys, replayKey});
   }
 
   AgentStreamRunState requestCancel() {
@@ -702,6 +702,29 @@ Map<int, AgentStreamEvent> _pendingTextSegmentsFromMap(Object? value) {
 
 bool _shouldRetainEvent(AgentStreamEvent event) {
   return event.type != 'message.delta';
+}
+
+List<AgentStreamEvent> _nextRetainedEvents(
+  List<AgentStreamEvent> current,
+  AgentStreamEvent event,
+) {
+  if (!_shouldRetainEvent(event)) return current;
+  if (_isAssistantCompletedMessage(event)) {
+    final messageId = event.messageId?.trim();
+    if (messageId != null && messageId.isNotEmpty) {
+      final existingIndex = current.lastIndexWhere(
+        (candidate) =>
+            _isAssistantCompletedMessage(candidate) &&
+            candidate.messageId?.trim() == messageId,
+      );
+      if (existingIndex >= 0) {
+        final merged = List<AgentStreamEvent>.of(current);
+        merged[existingIndex] = event;
+        return List<AgentStreamEvent>.unmodifiable(merged);
+      }
+    }
+  }
+  return List<AgentStreamEvent>.unmodifiable([...current, event]);
 }
 
 bool _isAssistantCompletedMessage(AgentStreamEvent event) {

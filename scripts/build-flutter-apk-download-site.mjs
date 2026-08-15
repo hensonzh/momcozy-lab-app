@@ -6,6 +6,10 @@ import crypto from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  assertNoReservedApiDartDefines,
+  withFlutterApiDartDefines,
+} from "./flutter-api-config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
@@ -18,6 +22,7 @@ const qrFileName = "momcozy-lab-download-qr.svg";
 if (process.argv.includes("--help")) {
   console.log(`Usage:
   MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app make flutter-apk-download-site
+  node scripts/build-flutter-apk-download-site.mjs --check-config
 
 Environment:
   MOMCOZY_DOWNLOAD_BASE_URL     Public HTTPS URL of the uploaded dist/android-apk directory.
@@ -26,12 +31,45 @@ Environment:
                                 e.g. hensonzh/momcozy-lab-releases.
   MOMCOZY_APK_FLAVOR            local | staging | production. Default: staging
   MOMCOZY_APK_MODE              debug | release. Default: release
+  MOMCOZY_API_BASE_URL          Product API URL. Required outside local.
+  MOMCOZY_AGENT_API_BASE_URL    Agent Runtime API URL. Required outside local.
   MOMCOZY_APK_INPUT             Existing APK path. When set, skips Flutter build.
   MOMCOZY_SKIP_APK_BUILD        Set to 1 to use the expected APK output path without building.
   MOMCOZY_DOWNLOAD_DIST         Output directory. Default: dist/android-apk
-  MOMCOZY_APK_DART_DEFINES      Comma-separated --dart-define pairs, e.g. A=1,B=2
+  MOMCOZY_APK_DART_DEFINES      Other comma-separated --dart-define pairs; the
+                                two API URL keys are reserved.
   MOMCOZY_REQUIRE_RELEASE_SIGNING Set to 1 to fail release builds without signing env.
 `);
+  process.exit(0);
+}
+
+const flavor = envText("MOMCOZY_APK_FLAVOR", "staging");
+const mode = envText("MOMCOZY_APK_MODE", "release");
+let dartDefines;
+try {
+  assertMode(mode);
+  assertFlavor(flavor);
+  const extraDartDefines = parseDartDefines(
+    envText("MOMCOZY_APK_DART_DEFINES", ""),
+  );
+  assertNoReservedApiDartDefines(extraDartDefines, {
+    sourceName: "MOMCOZY_APK_DART_DEFINES",
+  });
+  dartDefines = withFlutterApiDartDefines({
+    flavor,
+    dartDefines: [
+      `MOMCOZY_API_BASE_URL=${envText("MOMCOZY_API_BASE_URL", "")}`,
+      `MOMCOZY_AGENT_API_BASE_URL=${envText("MOMCOZY_AGENT_API_BASE_URL", "")}`,
+      ...extraDartDefines,
+    ],
+  });
+} catch (error) {
+  console.error(`FAIL ${error.message}`);
+  process.exit(1);
+}
+
+if (process.argv.includes("--check-config")) {
+  console.log(`Flutter APK download config is valid for ${flavor}.`);
   process.exit(0);
 }
 
@@ -42,8 +80,6 @@ const toolchainConfig = JSON.parse(
 );
 const pubspec = await readFile(path.join(flutterAppDir, "pubspec.yaml"), "utf8");
 const version = parsePubspecVersion(pubspec);
-const flavor = envText("MOMCOZY_APK_FLAVOR", "staging");
-const mode = envText("MOMCOZY_APK_MODE", "release");
 const baseUrl = normalizeBaseUrl(envText("MOMCOZY_DOWNLOAD_BASE_URL", defaultBaseUrl));
 const githubReleaseRepo = envText("MOMCOZY_GITHUB_RELEASE_REPO", "");
 const distDir = path.resolve(envText("MOMCOZY_DOWNLOAD_DIST", defaultDistDir));
@@ -58,13 +94,11 @@ const artifactName = `momcozy-android-${flavor}-${version.versionName}-${version
 const artifactPath = path.join(releaseDir, artifactName);
 const githubReleaseTag = `android-v${version.versionName}-${version.buildNumber}`;
 
-assertMode(mode);
-assertFlavor(flavor);
 assertGithubReleaseRepo(githubReleaseRepo);
 checkReleaseSigning({ mode });
 
 if (!apkInput && !skipBuild) {
-  buildApk({ flavor, mode });
+  buildApk({ flavor, mode, dartDefines });
 } else {
   console.log(`Using existing APK: ${path.relative(projectRoot, buildApkPath)}`);
 }
@@ -129,11 +163,11 @@ console.log(`APK URL:${apkUrl}`);
 console.log(`QR:     ${qrCodeUrl}`);
 console.log(`SHA256: ${sha256}`);
 
-function buildApk({ flavor, mode }) {
+function buildApk({ flavor, mode, dartDefines }) {
   const env = buildToolchainEnv();
-  const dartDefines = [
+  const buildDartDefines = [
     `MOMCOZY_ENV=${flavor}`,
-    ...parseDartDefines(envText("MOMCOZY_APK_DART_DEFINES", "")),
+    ...dartDefines,
   ];
   const args = [
     "scripts/build-flutter-android-apk.mjs",
@@ -141,7 +175,7 @@ function buildApk({ flavor, mode }) {
     mode,
     "--flavor",
     flavor,
-    ...dartDefines.map((define) => `--dart-define=${define}`),
+    ...buildDartDefines.map((define) => `--dart-define=${define}`),
   ];
   run("node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot, env);
   run("node", args, projectRoot, env);

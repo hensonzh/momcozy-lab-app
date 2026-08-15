@@ -59,6 +59,22 @@ void main() {
     },
   );
 
+  test('accepts the split Product API profile schema', () async {
+    final repository = AgentHubProfileRepository(
+      transport: FixtureApiJsonTransport({
+        'preferred_name': ' 小美 ',
+        'age': 29,
+        'estimated_due_date': '2026-09-12',
+      }),
+    );
+
+    final profile = await repository.fetchGreetingProfile();
+
+    expect(profile.displayName, '小美');
+    expect(profile.age, 29);
+    expect(profile.birthPrepDefaults.dueDateOrWeek, '2026-09-12');
+  });
+
   test('does not prefill pregnancy dates from a postpartum profile', () async {
     final repository = AgentHubProfileRepository(
       transport: FixtureApiJsonTransport({

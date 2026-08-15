@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_sto
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/core/config/momcozy_app_capabilities.dart';
 import 'package:momcozy_flutter_app/core/update/app_release_lifecycle.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
@@ -48,6 +49,7 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.sessionStore = const FlutterSecureMomCozySessionStore(),
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
     this.lastInviteCodeStore = const FlutterSecureMomCozyLastInviteCodeStore(),
+    this.capabilities = const MomCozyAppCapabilities.fromEnvironment(),
     this.onboardingReleasePolicy = const NoopOnboardingReleasePolicy(),
     this.agentHubBuilder,
     this.externalUrlLauncher = const PlatformExternalUrlLauncher(),
@@ -63,6 +65,7 @@ class MomCozyFlutterApp extends StatefulWidget {
   final MomCozySessionStore sessionStore;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
   final MomCozyLastInviteCodeStore lastInviteCodeStore;
+  final MomCozyAppCapabilities capabilities;
   final OnboardingReleasePolicy onboardingReleasePolicy;
   final MomCozyAgentHubBuilder? agentHubBuilder;
   final ExternalUrlLauncher externalUrlLauncher;
@@ -80,7 +83,8 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
       );
   late final bool _ownsRuntimeController = widget.runtimeController == null;
   late final OnboardingController? _onboardingController =
-      widget.router == null &&
+      widget.capabilities.onboardingGateEnabled &&
+          widget.router == null &&
           _runtimeController.runtime.supportsSessionAutoRefresh
       ? OnboardingController(
           runtimeController: _runtimeController,
@@ -105,6 +109,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
         lastInviteCodeStore: widget.lastInviteCodeStore,
+        capabilities: widget.capabilities,
         agentHubBuilder: widget.agentHubBuilder,
         externalUrlLauncher: widget.externalUrlLauncher,
       );
@@ -155,6 +160,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
   void _handleRuntimeChanged() => _retryPendingMotionFinalizations();
 
   void _retryPendingMotionFinalizations({bool force = false}) {
+    if (!widget.capabilities.extendedProductApiEnabled) return;
     final runtime = _runtimeController.runtime;
     if (!force && identical(runtime, _lastFinalizationRetryRuntime)) return;
     _lastFinalizationRetryRuntime = runtime;
@@ -416,6 +422,7 @@ GoRouter createMomCozyRouter({
       const FlutterSecureMomCozyAuthDeviceIdStore(),
   MomCozyLastInviteCodeStore lastInviteCodeStore =
       const FlutterSecureMomCozyLastInviteCodeStore(),
+  MomCozyAppCapabilities capabilities = const MomCozyAppCapabilities(),
   MomCozyAgentHubBuilder? agentHubBuilder,
   ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
 }) {
@@ -428,6 +435,8 @@ GoRouter createMomCozyRouter({
             extra,
             voicePlaybackCoordinator,
             externalUrlLauncher: externalUrlLauncher,
+            conversationHistoryEnabled:
+                capabilities.agentConversationHistoryEnabled,
           );
   return GoRouter(
     initialLocation: initialLocation,
@@ -442,6 +451,10 @@ GoRouter createMomCozyRouter({
         return state.uri.replace(path: '/plan').toString();
       }
       if (runtimeController == null) return null;
+      if (onboardingController == null &&
+          _isOnboardingFlowPath(state.uri.path)) {
+        return '/';
+      }
       final authRedirect = _authRedirect(runtimeController, state);
       if (authRedirect != null) return authRedirect;
       if (onboardingController == null ||
@@ -519,16 +532,23 @@ GoRouter createMomCozyRouter({
           for (final route in momCozyRoutes)
             GoRoute(
               path: route.path,
-              builder: (context, state) => MomCozyRoutePage(
-                route: route,
-                uri: state.uri,
-                extra: state.extra,
-                onLogout: runtimeController == null
-                    ? null
-                    : () =>
-                          runtimeController.logout(sessionStore: sessionStore),
-                onBabySelected: runtimeController?.selectBaby,
-              ),
+              builder: (context, state) =>
+                  runtimeController != null &&
+                      !capabilities.isRouteEnabled(route.path)
+                  ? _BackendCapabilityUnavailablePage(route: route)
+                  : MomCozyRoutePage(
+                      route: route,
+                      uri: state.uri,
+                      extra: state.extra,
+                      extendedProductResourcesEnabled:
+                          capabilities.extendedProductApiEnabled,
+                      onLogout: runtimeController == null
+                          ? null
+                          : () => runtimeController.logout(
+                              sessionStore: sessionStore,
+                            ),
+                      onBabySelected: runtimeController?.selectBaby,
+                    ),
             ),
         ],
       ),
@@ -540,6 +560,54 @@ GoRouter createMomCozyRouter({
       );
     },
   );
+}
+
+bool _isOnboardingFlowPath(String path) {
+  return path == '/onboarding' || path.startsWith('/avatar/');
+}
+
+class _BackendCapabilityUnavailablePage extends StatelessWidget {
+  const _BackendCapabilityUnavailablePage({required this.route});
+
+  final MomCozyRouteConfig route;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: MomCozyColors.background,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 360),
+            child: Column(
+              key: ValueKey('backend-capability-unavailable-${route.path}'),
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(route.icon, color: route.accent, size: 42),
+                const SizedBox(height: 16),
+                Text(
+                  '${route.title} 暂未开放',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '当前环境尚未启用对应后端契约。其他功能可继续使用。',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 String? _onboardingRedirect(
@@ -1356,6 +1424,7 @@ class MomCozyRoutePage extends StatelessWidget {
     this.extra,
     this.onLogout,
     this.onBabySelected,
+    this.extendedProductResourcesEnabled = false,
   });
 
   final MomCozyRouteConfig route;
@@ -1363,6 +1432,7 @@ class MomCozyRoutePage extends StatelessWidget {
   final Object? extra;
   final Future<void> Function()? onLogout;
   final Future<void> Function(String babyId)? onBabySelected;
+  final bool extendedProductResourcesEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -1386,6 +1456,7 @@ class MomCozyRoutePage extends StatelessWidget {
       routeExtra: extra,
       onLogout: onLogout,
       onBabySelected: onBabySelected,
+      extendedProductResourcesEnabled: extendedProductResourcesEnabled,
     );
   }
 }
@@ -1396,6 +1467,7 @@ Widget _buildDefaultAgentHubPage(
   Object? extra,
   AgentVoicePlaybackCoordinator voicePlaybackCoordinator, {
   ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
+  bool conversationHistoryEnabled = false,
 }) {
   final runtime = MomCozyRuntimeScope.of(context);
   String? currentAccessToken() {
@@ -1418,16 +1490,21 @@ Widget _buildDefaultAgentHubPage(
     cancelClient: createSessionAgentHubCancelClient(
       runtime.session,
       accessTokenProvider: currentAccessToken,
+      onUnauthorized: runtime.agentStreamUnauthorizedHandler,
     ),
     actionClient: createSessionAgentHubActionClient(
       runtime.session,
       accessTokenProvider: currentAccessToken,
+      onUnauthorized: runtime.agentStreamUnauthorizedHandler,
     ),
     clientEventClient: createSessionAgentHubClientEventClient(
       runtime.session,
       accessTokenProvider: currentAccessToken,
+      onUnauthorized: runtime.agentStreamUnauthorizedHandler,
     ),
-    conversationRepository: runtime.agentConversationRepository,
+    conversationRepository: conversationHistoryEnabled
+        ? runtime.agentConversationRepository
+        : null,
     greetingProfileLoader:
         runtime.agentHubProfileRepository.fetchGreetingProfile,
     requestBuilder: (message) => buildSessionAgentHubRequest(

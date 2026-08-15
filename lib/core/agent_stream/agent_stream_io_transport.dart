@@ -4,6 +4,7 @@ import 'dart:io';
 
 import '../network/transport_security_policy.dart';
 import '../privacy/log_redactor.dart';
+import 'agent_run_create_context.dart';
 import 'agent_stream_client.dart';
 import 'agent_stream_event.dart';
 
@@ -138,13 +139,9 @@ class AgentStreamActionConfirmRequest {
       throw const AgentStreamPayloadException('Missing actionId.');
     }
 
-    final normalizedIdempotencyKey = idempotencyKey?.trim();
     return {
       if (editedApplyPayload != null)
         'edited_apply_payload': editedApplyPayload,
-      if (normalizedIdempotencyKey != null &&
-          normalizedIdempotencyKey.isNotEmpty)
-        'idempotency_key': normalizedIdempotencyKey,
     };
   }
 }
@@ -337,10 +334,12 @@ class ProductionAgentRunStatusReader implements AgentRunStatusReader {
 class AgentStreamCancelClient {
   const AgentStreamCancelClient({
     required this.endpoint,
+    this.onUnauthorized,
     this.connector = const _DefaultControlHttpConnector(),
   });
 
   final AgentStreamEndpoint endpoint;
+  final AgentStreamUnauthorizedHandler? onUnauthorized;
   final AgentStreamControlHttpConnector connector;
 
   Future<AgentStreamCancelResult> cancel(
@@ -351,10 +350,15 @@ class AgentStreamCancelClient {
       if (runId == null || runId.isEmpty) {
         throw const AgentStreamPayloadException('Missing runId.');
       }
-      final response = await connector.post(
-        _runScopedUri(endpoint.requestUri, runId, 'cancel'),
-        headers: endpoint.requestHeaders(includeContentType: true),
-        body: jsonEncode(request.toMap()),
+      final uri = _runScopedUri(endpoint.requestUri, runId, 'cancel');
+      final body = jsonEncode(request.toMap());
+      final response = await _postWithSingleUnauthorizedRetry(
+        onUnauthorized: onUnauthorized,
+        post: () => connector.post(
+          uri,
+          headers: endpoint.requestHeaders(includeContentType: true),
+          body: body,
+        ),
       );
       final acknowledged =
           (response.statusCode >= 200 && response.statusCode < 300) ||
@@ -373,10 +377,12 @@ class AgentStreamCancelClient {
 class AgentStreamActionClient {
   const AgentStreamActionClient({
     required this.endpoint,
+    this.onUnauthorized,
     this.connector = const _DefaultControlHttpConnector(),
   });
 
   final AgentStreamEndpoint endpoint;
+  final AgentStreamUnauthorizedHandler? onUnauthorized;
   final AgentStreamControlHttpConnector connector;
 
   Future<AgentStreamActionResult> confirm(
@@ -414,13 +420,22 @@ class AgentStreamActionClient {
       if (normalizedActionId.isEmpty) {
         throw const AgentStreamPayloadException('Missing actionId.');
       }
-      final response = await connector.post(
-        _actionScopedUri(endpoint.requestUri, normalizedActionId, suffix),
-        headers: {
-          ...endpoint.requestHeaders(includeContentType: true),
-          ...extraHeaders,
-        },
-        body: jsonEncode(body),
+      final uri = _actionScopedUri(
+        endpoint.requestUri,
+        normalizedActionId,
+        suffix,
+      );
+      final encodedBody = jsonEncode(body);
+      final response = await _postWithSingleUnauthorizedRetry(
+        onUnauthorized: onUnauthorized,
+        post: () => connector.post(
+          uri,
+          headers: {
+            ...endpoint.requestHeaders(includeContentType: true),
+            ...extraHeaders,
+          },
+          body: encodedBody,
+        ),
       );
       final accepted = response.statusCode >= 200 && response.statusCode < 300;
       return AgentStreamActionResult(
@@ -537,6 +552,7 @@ typedef AgentStreamClientEventRecorder =
 class AgentStreamClientEventClient {
   const AgentStreamClientEventClient({
     this.endpoint,
+    this.onUnauthorized,
     this.connector = const _DefaultControlHttpConnector(),
     this.recorder,
     this.sent = true,
@@ -544,6 +560,7 @@ class AgentStreamClientEventClient {
   });
 
   final AgentStreamEndpoint? endpoint;
+  final AgentStreamUnauthorizedHandler? onUnauthorized;
   final AgentStreamControlHttpConnector connector;
   final AgentStreamClientEventRecorder? recorder;
   final bool sent;
@@ -565,10 +582,15 @@ class AgentStreamClientEventClient {
       final runId = event.runId?.trim();
       final endpoint = this.endpoint;
       if (endpoint != null && runId != null && runId.isNotEmpty) {
-        final response = await connector.post(
-          _runScopedUri(endpoint.requestUri, runId, 'client-events'),
-          headers: endpoint.requestHeaders(includeContentType: true),
-          body: jsonEncode(event.toAgentRunClientEventMap()),
+        final uri = _runScopedUri(endpoint.requestUri, runId, 'client-events');
+        final encodedBody = jsonEncode(event.toAgentRunClientEventMap());
+        final response = await _postWithSingleUnauthorizedRetry(
+          onUnauthorized: onUnauthorized,
+          post: () => connector.post(
+            uri,
+            headers: endpoint.requestHeaders(includeContentType: true),
+            body: encodedBody,
+          ),
         );
         final accepted =
             response.statusCode >= 200 && response.statusCode < 300;
@@ -586,6 +608,19 @@ class AgentStreamClientEventClient {
       return AgentStreamClientEventResult(sent: false, error: error);
     }
   }
+}
+
+Future<AgentStreamControlHttpResponse> _postWithSingleUnauthorizedRetry({
+  required Future<AgentStreamControlHttpResponse> Function() post,
+  AgentStreamUnauthorizedHandler? onUnauthorized,
+}) async {
+  var response = await post();
+  if (response.statusCode == HttpStatus.unauthorized &&
+      onUnauthorized != null &&
+      await onUnauthorized()) {
+    response = await post();
+  }
+  return response;
 }
 
 abstract interface class AgentStreamSseGetConnector {
@@ -648,6 +683,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
     this.onUnauthorized,
     this.runConnector = const _DefaultControlHttpConnector(),
     this.streamConnector = const _DefaultSseGetConnector(),
+    this.runCreateContextProvider,
     this.runCreationTimeout = const Duration(seconds: 15),
     this.streamIdleTimeout = const Duration(seconds: 45),
   });
@@ -657,6 +693,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
   final AgentStreamUnauthorizedHandler? onUnauthorized;
   final AgentStreamControlHttpConnector runConnector;
   final AgentStreamSseGetConnector streamConnector;
+  final AgentRunCreateContextProvider? runCreateContextProvider;
   final Duration runCreationTimeout;
   final Duration streamIdleTimeout;
 
@@ -732,7 +769,13 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
   }
 
   Future<String> _createRunWithinDeadline(AgentStreamRequest request) async {
-    final payload = Map<String, Object?>.from(payloadFactory(request));
+    final runCreateContext =
+        await (runCreateContextProvider ??
+                PlatformAgentRunCreateContextProvider())
+            .load();
+    final payload = Map<String, Object?>.from(
+      payloadFactory(request.withRunCreateContext(runCreateContext)),
+    );
     final idempotencyKey =
         stringField(payload, 'idempotency_key') ?? _agentRunIdempotencyKey();
     payload['idempotency_key'] = idempotencyKey;
@@ -809,6 +852,7 @@ AgentRunLifecycleStatus _runLifecycleStatus(String? status) {
     'completed' => AgentRunLifecycleStatus.completed,
     'failed' => AgentRunLifecycleStatus.failed,
     'cancelled' => AgentRunLifecycleStatus.cancelled,
+    'expired' => AgentRunLifecycleStatus.expired,
     _ => AgentRunLifecycleStatus.unknown,
   };
 }

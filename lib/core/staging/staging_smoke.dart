@@ -29,15 +29,15 @@ class StagingSmokeConfig {
     final apiBase = Uri.parse(
       _envOrDefault(env, 'MOMCOZY_API_BASE_URL', 'http://127.0.0.1:8769'),
     );
-    final agentRunsUrl = _envOrNull(env, 'MOMCOZY_AGENT_RUNS_URL');
+    final agentBase = Uri.parse(
+      _envOrDefault(env, 'MOMCOZY_AGENT_API_BASE_URL', 'http://127.0.0.1:8010'),
+    );
     return StagingSmokeConfig(
       enabled: _flag(env, 'MOMCOZY_STAGING_SMOKE'),
       includeMutating: _flag(env, 'MOMCOZY_STAGING_SMOKE_MUTATE'),
       includeAgentStream: _flag(env, 'MOMCOZY_STAGING_SMOKE_AGENT'),
       apiBaseUri: apiBase,
-      agentRunsUri: agentRunsUrl == null
-          ? apiBase.replace(path: '/v1/agent/runs')
-          : Uri.parse(agentRunsUrl),
+      agentRunsUri: _appendPath(agentBase, '/v1/agent/runs'),
       session: MomCozySession.fromEnvironment(
         accessToken: _envOrDefault(env, 'MOMCOZY_API_TOKEN', ''),
         refreshToken: _envOrDefault(env, 'MOMCOZY_REFRESH_TOKEN', ''),
@@ -55,6 +55,14 @@ class StagingSmokeConfig {
   final Uri agentRunsUri;
   final MomCozySession session;
   final Duration timeout;
+}
+
+Uri _appendPath(Uri base, String path) {
+  final basePath = base.path.endsWith('/')
+      ? base.path.substring(0, base.path.length - 1)
+      : base.path;
+  final suffix = path.startsWith('/') ? path : '/$path';
+  return base.replace(path: '$basePath$suffix');
 }
 
 abstract interface class StagingSmokeProbe {

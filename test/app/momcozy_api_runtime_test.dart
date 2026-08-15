@@ -36,12 +36,17 @@ void main() {
     final runtime = MomCozyApiRuntime.fromEnvironment();
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
+    final observedAgent =
+        runtime.agentJsonTransport as ObservedApiJsonTransport;
+    final agentTransport = observedAgent.inner as IoApiJsonTransport;
 
     expect(runtime.userId, 'demo-user');
     expect(runtime.babyId, 'demo-baby');
     expect(runtime.locale, 'zh-CN');
     expect(runtime.session.status, MomCozySessionStatus.anonymous);
     expect(transport.baseUri, Uri.parse('http://127.0.0.1:8769'));
+    expect(agentTransport.baseUri, Uri.parse('http://127.0.0.1:8010'));
+    expect(agentTransport, isNot(same(transport)));
     expect(transport.token, isNull);
     expect(transport.headers, containsPair('X-Momcozy-Client', 'flutter'));
     expect(runtime.observability, same(observed.observability));
@@ -159,9 +164,11 @@ void main() {
       'current_care_stage': 'postpartum',
       'actual_delivery_date': '2026-06-11',
     });
+    final agentTransport = FixtureApiJsonTransport({'items': <Object?>[]});
     final volumePreferences = _MemoryVolumeUnitPreferenceStore();
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
+      agentJsonTransport: agentTransport,
       multipartTransport: FixtureApiMultipartTransport({
         'status': 200,
         'data': {},
@@ -177,6 +184,7 @@ void main() {
       isA<ProfileOverviewApiRepository>(),
     );
     expect(runtime.agentHubProfileRepository, isA<AgentHubProfileRepository>());
+    expect(runtime.agentConversationRepository.transport, same(agentTransport));
     expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
     final planRepository = runtime.planRepository;
     expect(planRepository, isA<PlanApiRepository>());

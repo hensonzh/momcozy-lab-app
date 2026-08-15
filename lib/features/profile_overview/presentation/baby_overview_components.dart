@@ -923,6 +923,13 @@ class _BabySleepContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (data.sleepRecords.isUnavailable) {
+      return const _OverviewStateCard(
+        title: 'Sleep data unavailable',
+        description: 'This environment does not expose baby sleep records yet.',
+        icon: Icons.bedtime_outlined,
+      );
+    }
     return Column(
       children: [
         Material(
@@ -1141,10 +1148,14 @@ class _BabyFeedingContent extends StatelessWidget {
               const SizedBox(height: 10),
               _EmptyInlineState(
                 iconAsset: _MeBabyOverviewAssets.babyIcon,
-                title: data.todayDiapers.isEmpty
+                title: data.diaperRecords.isUnavailable
+                    ? 'Diaper data unavailable'
+                    : data.todayDiapers.isEmpty
                     ? 'No diaper changes today'
                     : '${data.todayDiapers.length} confirmed ${data.todayDiapers.length == 1 ? 'change' : 'changes'} today',
-                description: data.todayDiapers.isEmpty
+                description: data.diaperRecords.isUnavailable
+                    ? 'This environment does not expose diaper records yet.'
+                    : data.todayDiapers.isEmpty
                     ? 'Confirmed diaper records will appear here.'
                     : '${data.todayWetDiapers} wet · ${data.todayDirtyDiapers} dirty',
               ),
@@ -1161,10 +1172,12 @@ class _BabyFeedingContent extends StatelessWidget {
               const SizedBox(height: 10),
               _EmptyInlineState(
                 iconAsset: _MeBabyOverviewAssets.activityIcon,
-                title:
-                    '${data.weeklyFeedingCount} confirmed ${data.weeklyFeedingCount == 1 ? 'feed' : 'feeds'} in the last 7 days',
-                description:
-                    '${_formatNumber(data.weeklyMeasuredFeedTotalMl)} mL measured; unmeasured feeds are not treated as 0 mL.',
+                title: data.feedingSummary.isUnavailable
+                    ? 'Weekly feeding summary unavailable'
+                    : '${data.weeklyFeedingCount} confirmed ${data.weeklyFeedingCount == 1 ? 'feed' : 'feeds'} in the last 7 days',
+                description: data.feedingSummary.isUnavailable
+                    ? 'Today’s confirmed feeding records remain available.'
+                    : '${_formatNumber(data.weeklyMeasuredFeedTotalMl)} mL measured; unmeasured feeds are not treated as 0 mL.',
               ),
             ],
           ),
@@ -1324,6 +1337,14 @@ class _BabyDiaperContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (data.diaperRecords.isUnavailable) {
+      return const _OverviewStateCard(
+        title: 'Diaper data unavailable',
+        description:
+            'This environment does not expose baby diaper records yet.',
+        icon: Icons.child_care_outlined,
+      );
+    }
     final diapers = data.todayDiapers;
     final days = data.weeklyDiaperDays;
     final maximum = days.fold<int>(
@@ -1633,6 +1654,14 @@ class _BabyWeeklyFeedingContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final summary = data.feedingSummary.data;
+    if (data.feedingSummary.isUnavailable) {
+      return const _OverviewStateCard(
+        title: 'Weekly feeding summary unavailable',
+        description:
+            'Today’s confirmed feeding records remain available in this environment.',
+        icon: Icons.bar_chart_rounded,
+      );
+    }
     final isLoading =
         data.feedingSummary.phase == OverviewResourcePhase.initial ||
         data.feedingSummary.phase == OverviewResourcePhase.loading;
@@ -1799,6 +1828,13 @@ class _BabySleepReportContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (data.sleepRecords.isUnavailable) {
+      return const _OverviewStateCard(
+        title: 'Sleep data unavailable',
+        description: 'This environment does not expose baby sleep records yet.',
+        icon: Icons.bedtime_outlined,
+      );
+    }
     final night = data.latestNightSleep;
     final sleeps = data.todaySleeps;
     final naps = data.todayNaps;

@@ -21,8 +21,7 @@ export PATH := $(TOOLCHAIN_PATH)
 	flutter-emulator-smoke \
 	flutter-apk-download-site \
 	flutter-release-gate \
-	backend-contract-validate \
-	backend-contract-validate-source
+	backend-contract-validate
 
 flutter-check:
 	node scripts/check-flutter-toolchain.mjs
@@ -50,10 +49,3 @@ flutter-release-gate:
 
 backend-contract-validate:
 	python3 scripts/validate_backend_contract.py
-
-BACKEND_SOURCE_REPO ?= ../MomCozyAgent
-
-backend-contract-validate-source:
-	python3 scripts/validate_backend_contract.py \
-		--source-repository "$(BACKEND_SOURCE_REPO)" \
-		--require-source

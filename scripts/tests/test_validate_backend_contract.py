@@ -1,48 +1,67 @@
-from pathlib import Path
-from tempfile import TemporaryDirectory
 import unittest
 
-from scripts.validate_backend_contract import _compare_snapshot
+from scripts.validate_backend_contract import (
+    AGENT_RUNTIME_OPENAPI_PATH,
+    PRODUCT_OPENAPI_PATH,
+    AGENT_RUNTIME_SERVICE,
+    PRODUCT_SERVICE,
+    _parse_args,
+    _validate_agent_runtime_pattern,
+    _validate_service_boundaries,
+)
 
 
-class CompareSnapshotTest(unittest.TestCase):
-    def test_accepts_byte_identical_snapshot(self) -> None:
-        with TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / "source.json"
-            local = root / "local.json"
-            source.write_bytes(b'{"version": 1}\n')
-            local.write_bytes(source.read_bytes())
+class SplitBackendContractTest(unittest.TestCase):
+    def test_defaults_to_independent_product_and_agent_snapshots(self) -> None:
+        args = _parse_args([])
 
-            self.assertEqual(
-                _compare_snapshot(local=local, source=source, label="OpenAPI"),
-                [],
+        self.assertEqual(args.product_openapi, PRODUCT_OPENAPI_PATH)
+        self.assertEqual(args.agent_runtime_openapi, AGENT_RUNTIME_OPENAPI_PATH)
+
+    def test_rejects_routes_owned_by_the_other_service(self) -> None:
+        errors = _validate_service_boundaries(
+            {
+                PRODUCT_SERVICE: {"/v1/agent/runs": {}},
+                AGENT_RUNTIME_SERVICE: {"/v1/profile/me": {}},
+            }
+        )
+
+        self.assertEqual(
+            errors,
+            [
+                "Product OpenAPI must not expose Agent Runtime path: /v1/agent/runs",
+                "Agent Runtime OpenAPI contains Product-owned path: /v1/profile/me",
+            ],
+        )
+
+    def test_requires_the_deployed_proprietary_runtime_pattern(self) -> None:
+        def schema(pattern: str) -> dict[str, object]:
+            return {
+                "components": {
+                    "schemas": {
+                        "AgentRunCreate": {
+                            "properties": {
+                                "runtime_pattern": {
+                                    "anyOf": [
+                                        {"const": pattern, "type": "string"},
+                                        {"type": "null"},
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        self.assertEqual(
+            _validate_agent_runtime_pattern(schema("proprietary_runtime")),
+            [],
+        )
+        self.assertTrue(
+            _validate_agent_runtime_pattern(schema("sdk_only"))[0].startswith(
+                "AgentRunCreate.runtime_pattern must accept only"
             )
-
-    def test_rejects_semantically_similar_but_nonidentical_snapshot(self) -> None:
-        with TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / "source.json"
-            local = root / "local.json"
-            source.write_bytes(b'{"version": 1}\n')
-            local.write_bytes(b'{"version":1}\n')
-
-            self.assertEqual(
-                _compare_snapshot(local=local, source=source, label="OpenAPI"),
-                [f"OpenAPI snapshot differs from Agent source: {source}"],
-            )
-
-    def test_reports_missing_source_snapshot(self) -> None:
-        with TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / "missing.json"
-            local = root / "local.json"
-            local.write_text("{}\n")
-
-            self.assertEqual(
-                _compare_snapshot(local=local, source=source, label="OpenAPI"),
-                [f"Agent source snapshot is missing: {source}"],
-            )
+        )
 
 
 if __name__ == "__main__":

@@ -11,6 +11,88 @@ import 'package:momcozy_flutter_app/features/profile_overview/presentation/profi
 
 void main() {
   group('ProfileOverviewController', () {
+    test(
+      'default Product capability marks missing resources unavailable',
+      () async {
+        final records = _FakeRecordsRepository();
+        final care = _FakeMaternalCareOverviewRepository(
+          const MaternalCareOverview(),
+        );
+        final controller = _controller(
+          records: records,
+          maternalCareOverviewRepository: care,
+          extendedProductResourcesEnabled: false,
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        expect(controller.overview.value.phase, OverviewResourcePhase.data);
+        expect(controller.milkTrends.value.phase, OverviewResourcePhase.data);
+        expect(
+          controller.maternalCareOverview.value.phase,
+          OverviewResourcePhase.unavailable,
+        );
+        expect(
+          controller.waterRecords.value.phase,
+          OverviewResourcePhase.unavailable,
+        );
+        expect(
+          controller.waterTrends.value.phase,
+          OverviewResourcePhase.unavailable,
+        );
+        expect(
+          controller.vitalRecords.value.phase,
+          OverviewResourcePhase.unavailable,
+        );
+        expect(records.waterFetchCount, 0);
+        expect(records.waterTrendFetchCount, 0);
+        expect(records.vitalFetchCount, 0);
+        expect(care.fetchCount, 0);
+      },
+    );
+
+    test(
+      'Baby keeps supported records when extended resources are off',
+      () async {
+        final records = _FakeRecordsRepository();
+        final controller = _controller(
+          records: records,
+          identity: ProfileIdentity.baby,
+          extendedProductResourcesEnabled: false,
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        expect(
+          controller.feedingRecords.value.phase,
+          OverviewResourcePhase.data,
+        );
+        expect(
+          controller.growthRecords.value.phase,
+          OverviewResourcePhase.data,
+        );
+        expect(
+          controller.feedingSummary.value.phase,
+          OverviewResourcePhase.unavailable,
+        );
+        expect(
+          controller.sleepRecords.value.phase,
+          OverviewResourcePhase.unavailable,
+        );
+        expect(
+          controller.diaperRecords.value.phase,
+          OverviewResourcePhase.unavailable,
+        );
+        expect(records.feedingFetchCount, 1);
+        expect(records.growthFetchCount, 1);
+        expect(records.feedingSummaryFetchCount, 0);
+        expect(records.sleepFetchCount, 0);
+        expect(records.diaperFetchCount, 0);
+      },
+    );
+
     test('Me loads only the resources used by the current page', () async {
       final overviewRepository = _FakeProfileOverviewRepository();
       final records = _FakeRecordsRepository();
@@ -464,6 +546,7 @@ ProfileOverviewController _controller({
   DateTime Function()? now,
   PlanRepository? planRepository,
   MaternalCareOverviewRepository? maternalCareOverviewRepository,
+  bool extendedProductResourcesEnabled = true,
 }) {
   final effectiveRecords = records ?? _FakeRecordsRepository();
   return ProfileOverviewController(
@@ -482,6 +565,7 @@ ProfileOverviewController _controller({
     maternalCareOverviewRepository: maternalCareOverviewRepository,
     babyId: 'baby-001',
     identity: identity,
+    extendedProductResourcesEnabled: extendedProductResourcesEnabled,
     cache: cache,
     timezoneProvider: () async => 'Asia/Shanghai',
     now: now ?? () => DateTime(2026, 7, 11, 10),

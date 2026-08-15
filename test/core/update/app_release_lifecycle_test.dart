@@ -2,6 +2,50 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/update/app_release_lifecycle.dart';
 
 void main() {
+  test(
+    'disabled release reset does not resolve a release or touch account data',
+    () async {
+      final storage = _MemoryReleaseStorage({
+        'momcozy.session.v1.payload': 'atomic-session',
+      });
+      var releaseLoads = 0;
+      var fileCacheClears = 0;
+
+      final policy = await prepareAppReleaseLifecycle(
+        enabled: false,
+        loadReleaseId: () async {
+          releaseLoads += 1;
+          return '1.0.0+27';
+        },
+        storage: storage,
+        clearFileCache: () async => fileCacheClears += 1,
+      );
+
+      expect(policy, isA<NoopOnboardingReleasePolicy>());
+      expect(releaseLoads, 0);
+      expect(fileCacheClears, 0);
+      expect(storage.values['momcozy.session.v1.payload'], 'atomic-session');
+    },
+  );
+
+  test('enabled release reset prepares the destructive lifecycle', () async {
+    final storage = _MemoryReleaseStorage({
+      'momcozy.releaseLifecycle.v1.installedRelease': '1.0.0+26',
+      'momcozy.session.v1.payload': 'atomic-session',
+    });
+
+    final policy = await prepareAppReleaseLifecycle(
+      enabled: true,
+      loadReleaseId: () async => '1.0.0+27',
+      storage: storage,
+      clearFileCache: () async {},
+    );
+
+    expect(policy, isA<AppReleaseLifecycle>());
+    expect(storage.values, isNot(contains('momcozy.session.v1.payload')));
+    expect(policy.releaseId, '1.0.0+27');
+  });
+
   test('new release purges account data and requires a cloud reset', () async {
     final storage = _MemoryReleaseStorage({
       'momcozy.releaseLifecycle.v1.installedRelease': '1.0.0+26',

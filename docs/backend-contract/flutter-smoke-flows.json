@@ -10,6 +10,7 @@
   "flows": [
     {
       "name": "auth_session",
+      "service": "product",
       "steps": [
         {
           "method": "POST",
@@ -57,6 +58,7 @@
     },
     {
       "name": "core_records_plans_files",
+      "service": "product",
       "steps": [
         {
           "method": "POST",
@@ -72,32 +74,13 @@
         },
         {
           "method": "POST",
-          "path": "/v1/profile/infants",
-          "headers": ["${auth_header}", "${idempotency_header}"],
-          "body": {
-            "infant_name": "Smoke Baby",
-            "sex": "female",
-            "birth_date": "2026-01-01",
-            "birth_source": "independent"
-          },
-          "captures": {
-            "infant_id": "$.id"
-          }
-        },
-        {
-          "method": "POST",
           "path": "/v1/records/feeding",
           "headers": ["${auth_header}", "${idempotency_header}"],
           "body": {
-            "infant_id": "${infant_id}",
             "feed_time": "${iso_now}",
-            "feeding_method": "bottle",
-            "milk_components": [
-              {
-                "milk_source": "breast_milk",
-                "volume_ml": 60
-              }
-            ],
+            "feed_type": "bottle",
+            "feed_action": "fed",
+            "volume_ml": 60,
             "title": "Smoke feeding"
           }
         },
@@ -113,22 +96,14 @@
         },
         {
           "method": "GET",
-          "path": "/v1/records/feeding?infant_id=${infant_id}",
+          "path": "/v1/records/feeding",
           "headers": ["${auth_header}"]
-        },
-        {
-          "method": "GET",
-          "path": "/v1/records/feeding-summary?infant_id=${infant_id}&days=7&timezone=Asia%2FShanghai",
-          "headers": ["${auth_header}"],
-          "assertions": [
-            "unmeasured daily volume remains null rather than zero",
-            "WHO growth evidence is exposed only as intake_evaluation_context"
-          ]
         }
       ]
     },
     {
       "name": "agent_replay",
+      "service": "agent_runtime",
       "steps": [
         {
           "method": "POST",
@@ -147,7 +122,13 @@
           "headers": ["${auth_header}", "${idempotency_header}"],
           "body": {
             "thread_id": "${thread_id}",
-            "message": "Create a smoke-test run without external side effects."
+            "message": "Create a smoke-test run without external side effects.",
+            "client_context": {
+              "source": "flutter-smoke",
+              "locale": "en-US",
+              "timezone": "Etc/UTC",
+              "message_sent_at": "${iso_now}"
+            }
           },
           "captures": {
             "run_id": "$.id"
@@ -174,7 +155,21 @@
     },
     {
       "name": "voice_contract",
+      "service": "product",
       "steps": [
+        {
+          "method": "POST",
+          "path": "/v1/speech/transcribe-chunk",
+          "headers": ["${auth_header}"],
+          "multipart": {
+            "file": {
+              "filename": "speech.wav",
+              "content_type": "audio/wav",
+              "body": "voice smoke"
+            }
+          },
+          "assertions": ["returns text field or stable voice_provider_disabled error"]
+        },
         {
           "method": "GET",
           "path": "/v1/realtime-voice-stream?text=hello",

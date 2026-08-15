@@ -13,30 +13,84 @@ val motionPoseModelUrl =
     "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task"
 val motionPoseModelSha256 =
     "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a"
+val motionPoseModelFileName = "pose_landmarker_lite.task"
+val motionPoseModelOverride = providers.environmentVariable("MOMCOZY_POSE_MODEL_FILE")
+val motionPoseModelCacheFile = gradle.gradleUserHomeDir.resolve(
+    "caches/momcozy/motion-pose/$motionPoseModelSha256/$motionPoseModelFileName",
+)
 val motionPoseModelDirectory = layout.buildDirectory.dir("generated/motionPoseModels")
 val prepareMotionPoseModel by tasks.registering {
     val outputFile = motionPoseModelDirectory.map {
-        it.file("pose_landmarker_lite.task")
+        it.file(motionPoseModelFileName)
     }
     inputs.property("modelUrl", motionPoseModelUrl)
     inputs.property("modelSha256", motionPoseModelSha256)
+    inputs.property("modelOverride", motionPoseModelOverride.orElse(""))
     outputs.file(outputFile)
     doLast {
         val target = outputFile.get().asFile
         target.parentFile.mkdirs()
-        if (!target.exists() || target.sha256() != motionPoseModelSha256) {
-            val staged = target.resolveSibling("${target.name}.download")
-            URI(motionPoseModelUrl).toURL().openStream().use { input ->
-                staged.outputStream().use { output -> input.copyTo(output) }
+
+        if (target.isFile && target.sha256() == motionPoseModelSha256) {
+            return@doLast
+        }
+
+        val overridePath = motionPoseModelOverride.orNull
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+        val source = if (overridePath != null) {
+            file(overridePath).also { localModel ->
+                check(localModel.isFile) {
+                    "MOMCOZY_POSE_MODEL_FILE does not point to a readable file: $overridePath"
+                }
+                check(localModel.sha256() == motionPoseModelSha256) {
+                    "MOMCOZY_POSE_MODEL_FILE checksum mismatch"
+                }
             }
-            check(staged.sha256() == motionPoseModelSha256) {
-                "MediaPipe pose model checksum mismatch"
+        } else {
+            val cachedModel = motionPoseModelCacheFile
+            if (!cachedModel.isFile || cachedModel.sha256() != motionPoseModelSha256) {
+                check(!gradle.startParameter.isOffline) {
+                    "MediaPipe pose model is not cached. Provide MOMCOZY_POSE_MODEL_FILE " +
+                        "or run one non-offline build to populate ${cachedModel.absolutePath}."
+                }
+
+                cachedModel.parentFile.mkdirs()
+                val staged = Files.createTempFile(
+                    cachedModel.parentFile.toPath(),
+                    "${cachedModel.name}.",
+                    ".download",
+                ).toFile()
+                try {
+                    val connection = URI(motionPoseModelUrl).toURL().openConnection().apply {
+                        connectTimeout = 30_000
+                        readTimeout = 120_000
+                    }
+                    connection.getInputStream().use { input ->
+                        staged.outputStream().use { output -> input.copyTo(output) }
+                    }
+                    check(staged.sha256() == motionPoseModelSha256) {
+                        "MediaPipe pose model checksum mismatch"
+                    }
+                    Files.move(
+                        staged.toPath(),
+                        cachedModel.toPath(),
+                        StandardCopyOption.REPLACE_EXISTING,
+                    )
+                } finally {
+                    staged.delete()
+                }
             }
-            Files.move(
-                staged.toPath(),
-                target.toPath(),
-                StandardCopyOption.REPLACE_EXISTING,
-            )
+            cachedModel
+        }
+
+        Files.copy(
+            source.toPath(),
+            target.toPath(),
+            StandardCopyOption.REPLACE_EXISTING,
+        )
+        check(target.sha256() == motionPoseModelSha256) {
+            "Prepared MediaPipe pose model checksum mismatch"
         }
     }
 }

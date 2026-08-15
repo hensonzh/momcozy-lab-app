@@ -310,6 +310,8 @@ AgentStreamRequest _withStableIdempotencyKey(AgentStreamRequest request) {
     runId: request.runId,
     afterSequence: request.afterSequence,
     locale: request.locale,
+    timezone: request.timezone,
+    messageSentAt: request.messageSentAt,
     images: request.images,
     files: request.files,
     metadata: request.metadata,

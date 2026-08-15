@@ -32,6 +32,8 @@ void main() {
             },
           ],
         },
+      });
+      final factTransport = FixtureApiJsonTransportByPath({
         profilePregnancyFactEndpoint: {
           'items': [
             {
@@ -45,6 +47,7 @@ void main() {
       });
       final repository = ProfileOverviewApiRepository(
         transport: transport,
+        factTransport: factTransport,
         babyId: 'infant-001',
         now: () => DateTime.utc(2026, 7, 1),
       );
@@ -52,16 +55,9 @@ void main() {
       final overview = await repository.fetchOverview();
 
       expect(transport.postedBodies, isEmpty);
-      expect(
-        transport.getPaths,
-        containsAll(<String>[
-          profileMeEndpoint,
-          profileInfantsEndpoint,
-          profilePregnancyFactEndpoint,
-        ]),
-      );
-      expect(transport.lastPath, profilePregnancyFactEndpoint);
-      expect(transport.lastQuery, {
+      expect(transport.getPaths, [profileMeEndpoint, profileInfantsEndpoint]);
+      expect(factTransport.lastPath, profilePregnancyFactEndpoint);
+      expect(factTransport.lastQuery, {
         'fact_kind': 'verified',
         'fact_key': pregnancyDueDateOrWeekFactKey,
         'limit': 1,
@@ -83,6 +79,25 @@ void main() {
       expect(overview.baby?.sex, 'female');
     });
 
+    test('does not send Agent fact reads to the Product transport', () async {
+      final transport = FixtureApiJsonTransportByPath({
+        profileMeEndpoint: const {
+          'user_id': 'user-001',
+          'current_care_stage': 'pregnancy',
+        },
+        profileInfantsEndpoint: const {'items': []},
+      });
+      final repository = ProfileOverviewApiRepository(
+        transport: transport,
+        babyId: 'infant-001',
+      );
+
+      await repository.fetchOverview();
+
+      expect(transport.getPaths, [profileMeEndpoint, profileInfantsEndpoint]);
+      expect(transport.getPaths, isNot(contains(profilePregnancyFactEndpoint)));
+    });
+
     test('maps an explicit stage without date inference', () async {
       final repository = ProfileOverviewApiRepository(
         transport: FixtureApiJsonTransportByPath({
@@ -99,6 +114,55 @@ void main() {
       final overview = await repository.fetchOverview();
 
       expect(overview.mom?.stage, MomLifeStage.fertility);
+    });
+
+    test('adapts the deployed Product pregnancy profile fields', () async {
+      final repository = ProfileOverviewApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          profileMeEndpoint: const {
+            'preferred_name': 'Avery',
+            'estimated_due_date': '2026-10-31',
+          },
+          profileInfantsEndpoint: const {'items': []},
+        }),
+        babyId: 'infant-001',
+        now: () => DateTime.utc(2026, 8, 8),
+      );
+
+      final overview = await repository.fetchOverview();
+
+      expect(overview.mom?.displayName, 'Avery');
+      expect(overview.mom?.stage, MomLifeStage.pregnancy);
+      expect(overview.mom?.expectedDueDate, DateTime.parse('2026-10-31'));
+      expect(overview.mom?.actualDeliveryDate, isNull);
+    });
+
+    test('adapts the deployed Product infant fields for postpartum', () async {
+      final repository = ProfileOverviewApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          profileMeEndpoint: const {'preferred_name': 'Avery'},
+          profileInfantsEndpoint: const {
+            'items': [
+              {
+                'id': 'infant-001',
+                'name': 'Mia',
+                'birth_date': '2026-05-20',
+                'sex_at_birth': 'female',
+              },
+            ],
+          },
+        }),
+        babyId: 'infant-001',
+        now: () => DateTime.utc(2026, 7, 1),
+      );
+
+      final overview = await repository.fetchOverview();
+
+      expect(overview.mom?.stage, MomLifeStage.postpartum);
+      expect(overview.mom?.actualDeliveryDate, DateTime.parse('2026-05-20'));
+      expect(overview.mom?.postpartumDay, 42);
+      expect(overview.baby?.nickname, 'Mia');
+      expect(overview.baby?.sex, 'female');
     });
 
     test('maps only the canonical date for the active stage', () async {
@@ -288,8 +352,10 @@ void main() {
 
     test('starts profile and infant reads in parallel', () async {
       final transport = _DeferredProfileOverviewTransport();
+      final factTransport = _DeferredProfileOverviewTransport();
       final repository = ProfileOverviewApiRepository(
         transport: transport,
+        factTransport: factTransport,
         babyId: 'infant-001',
       );
 
@@ -299,11 +365,11 @@ void main() {
       expect(transport.startedPaths, {
         profileMeEndpoint,
         profileInfantsEndpoint,
-        profilePregnancyFactEndpoint,
       });
+      expect(factTransport.startedPaths, {profilePregnancyFactEndpoint});
       transport.complete(profileMeEndpoint, const {'user_id': 'user-001'});
       transport.complete(profileInfantsEndpoint, const {'items': []});
-      transport.complete(profilePregnancyFactEndpoint, const {'items': []});
+      factTransport.complete(profilePregnancyFactEndpoint, const {'items': []});
       await overview;
     });
 

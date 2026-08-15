@@ -48,6 +48,10 @@ const _defaultApiBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
   defaultValue: 'http://127.0.0.1:8769',
 );
+const _defaultAgentApiBaseUrl = String.fromEnvironment(
+  'MOMCOZY_AGENT_API_BASE_URL',
+  defaultValue: 'http://127.0.0.1:8010',
+);
 const _defaultApiToken = String.fromEnvironment('MOMCOZY_API_TOKEN');
 const _defaultRefreshToken = String.fromEnvironment('MOMCOZY_REFRESH_TOKEN');
 const _defaultUserId = String.fromEnvironment(
@@ -69,6 +73,7 @@ Future<String> _deviceTimezone() async =>
 class MomCozyApiRuntime {
   MomCozyApiRuntime({
     required this.jsonTransport,
+    ApiJsonTransport? agentJsonTransport,
     MomCozySession? session,
     String? userId,
     String? babyId,
@@ -93,9 +98,11 @@ class MomCozyApiRuntime {
     DateTime Function()? now,
     Future<String> Function()? timezoneProvider,
     this.supportsSessionAutoRefresh = false,
+    this.supportsAgentFacts = false,
     this._currentSessionProvider,
     this.agentStreamUnauthorizedHandler,
-  }) : session =
+  }) : agentJsonTransport = agentJsonTransport ?? jsonTransport,
+       session =
            session ??
            MomCozySession.fromEnvironment(
              accessToken: '',
@@ -163,6 +170,7 @@ class MomCozyApiRuntime {
 
   factory MomCozyApiRuntime.fromEnvironment({
     ApiJsonTransport? jsonTransport,
+    ApiJsonTransport? agentJsonTransport,
     AgentStreamClientEventClient? clientEventClient,
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
@@ -188,6 +196,7 @@ class MomCozyApiRuntime {
     return MomCozyApiRuntime.fromSession(
       session,
       jsonTransport: jsonTransport,
+      agentJsonTransport: agentJsonTransport,
       clientEventClient: clientEventClient,
       multipartTransport: multipartTransport,
       blePlatform: blePlatform,
@@ -205,6 +214,7 @@ class MomCozyApiRuntime {
   factory MomCozyApiRuntime.fromSession(
     MomCozySession session, {
     ApiJsonTransport? jsonTransport,
+    ApiJsonTransport? agentJsonTransport,
     AgentStreamClientEventClient? clientEventClient,
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
@@ -222,6 +232,7 @@ class MomCozyApiRuntime {
     Future<void> Function(MomCozySession session)? onSessionChanged,
   }) {
     final baseUri = Uri.parse(_defaultApiBaseUrl);
+    final agentBaseUri = Uri.parse(_defaultAgentApiBaseUrl);
     final authToken = session.accessToken;
     const defaultHeaders = {'X-Momcozy-Client': 'flutter'};
     final runtimeObservability = observability ?? MomCozyObservability();
@@ -229,6 +240,17 @@ class MomCozyApiRuntime {
       return ObservedApiJsonTransport(
         inner: IoApiJsonTransport(
           baseUri: baseUri,
+          token: token,
+          headers: defaultHeaders,
+        ),
+        observability: runtimeObservability,
+      );
+    }
+
+    ApiJsonTransport agentJsonTransportForToken(String? token) {
+      return ObservedApiJsonTransport(
+        inner: IoApiJsonTransport(
+          baseUri: agentBaseUri,
           token: token,
           headers: defaultHeaders,
         ),
@@ -249,6 +271,7 @@ class MomCozyApiRuntime {
 
     final canAutoRefresh =
         jsonTransport == null &&
+        agentJsonTransport == null &&
         sessionStore != null &&
         sessionProvider != null &&
         onSessionChanged != null;
@@ -271,6 +294,16 @@ class MomCozyApiRuntime {
                   onSessionChanged: onSessionChanged,
                 )
               : jsonTransportForToken(authToken)),
+      agentJsonTransport:
+          agentJsonTransport ??
+          (canAutoRefresh
+              ? AuthenticatedApiJsonTransport(
+                  transportFactory: agentJsonTransportForToken,
+                  sessionProvider: sessionProvider,
+                  refreshCoordinator: refreshCoordinator!,
+                  onSessionChanged: onSessionChanged,
+                )
+              : agentJsonTransportForToken(authToken)),
       multipartTransport:
           multipartTransport ??
           (canAutoRefresh
@@ -305,7 +338,9 @@ class MomCozyApiRuntime {
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
-          jsonTransport == null && multipartTransport == null,
+          jsonTransport == null &&
+          agentJsonTransport == null &&
+          multipartTransport == null,
       agentStreamUnauthorizedHandler: canAutoRefresh
           ? () async {
               final currentSession = sessionProvider();
@@ -323,6 +358,7 @@ class MomCozyApiRuntime {
     MomCozySessionStore store = const FlutterSecureMomCozySessionStore(),
     MomCozySession? environmentSession,
     ApiJsonTransport? jsonTransport,
+    ApiJsonTransport? agentJsonTransport,
     AgentStreamClientEventClient? clientEventClient,
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
@@ -348,6 +384,7 @@ class MomCozyApiRuntime {
     final runtime = MomCozyApiRuntime.fromSession(
       session,
       jsonTransport: jsonTransport,
+      agentJsonTransport: agentJsonTransport,
       clientEventClient: clientEventClient,
       multipartTransport: multipartTransport,
       blePlatform: blePlatform,
@@ -369,6 +406,7 @@ class MomCozyApiRuntime {
   }
 
   final ApiJsonTransport jsonTransport;
+  final ApiJsonTransport agentJsonTransport;
   final MomCozySession session;
   final MomCozyObservability observability;
   final HospitalBagCartStore hospitalBagCartStore;
@@ -377,6 +415,7 @@ class MomCozyApiRuntime {
   final DateTime Function() now;
   final Future<String> Function() timezoneProvider;
   final bool supportsSessionAutoRefresh;
+  final bool supportsAgentFacts;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
   final MomCozySession Function()? _currentSessionProvider;
   final AgentStreamClientEventClient Function() _clientEventClientFactory;
@@ -412,6 +451,8 @@ class MomCozyApiRuntime {
       _currentSessionProvider?.call() ?? session;
 
   Uri get apiBaseUri => Uri.parse(_defaultApiBaseUrl);
+
+  Uri get agentApiBaseUri => Uri.parse(_defaultAgentApiBaseUrl);
 
   void handleAgentApplicationEvent(AgentStreamEvent event) {
     final resources = switch (event.type) {
@@ -489,6 +530,7 @@ class MomCozyApiRuntime {
   ProfileOverviewApiRepository get profileOverviewRepository {
     return ProfileOverviewApiRepository(
       transport: jsonTransport,
+      factTransport: supportsAgentFacts ? agentJsonTransport : null,
       babyId: currentSession.babyId,
       now: now,
     );
@@ -503,7 +545,7 @@ class MomCozyApiRuntime {
   }
 
   AgentConversationApiRepository get agentConversationRepository {
-    return AgentConversationApiRepository(transport: jsonTransport);
+    return AgentConversationApiRepository(transport: agentJsonTransport);
   }
 
   SupportTicketApiRepository get supportTicketRepository {
@@ -557,6 +599,7 @@ class MomCozyApiRuntime {
   ProfileOverviewController createProfileOverviewController({
     ProfileIdentity initialIdentity = ProfileIdentity.mom,
     String? babyId,
+    bool extendedProductResourcesEnabled = false,
   }) {
     final requestedBabyId = babyId?.trim();
     final selectedBabyId = requestedBabyId?.isNotEmpty == true
@@ -566,6 +609,7 @@ class MomCozyApiRuntime {
     return ProfileOverviewController(
       profileOverviewRepository: ProfileOverviewApiRepository(
         transport: jsonTransport,
+        factTransport: supportsAgentFacts ? agentJsonTransport : null,
         babyId: selectedBabyId,
         now: now,
       ),
@@ -573,12 +617,14 @@ class MomCozyApiRuntime {
       pumpMilkRepository: records,
       milkTrendRepository: records,
       growthRepository: records,
-      waterRepository: records,
-      waterTrendRepository: records,
-      vitalRepository: records,
-      sleepRepository: records,
-      diaperRepository: records,
-      maternalCareOverviewRepository: maternalCareOverviewRepository,
+      waterRepository: extendedProductResourcesEnabled ? records : null,
+      waterTrendRepository: extendedProductResourcesEnabled ? records : null,
+      vitalRepository: extendedProductResourcesEnabled ? records : null,
+      sleepRepository: extendedProductResourcesEnabled ? records : null,
+      diaperRepository: extendedProductResourcesEnabled ? records : null,
+      maternalCareOverviewRepository: extendedProductResourcesEnabled
+          ? maternalCareOverviewRepository
+          : null,
       planRepository: planRepository,
       cache:
           profileOverviewCache.matches(
@@ -592,6 +638,7 @@ class MomCozyApiRuntime {
             ),
       babyId: selectedBabyId,
       identity: initialIdentity,
+      extendedProductResourcesEnabled: extendedProductResourcesEnabled,
       timezoneProvider: timezoneProvider,
       now: now,
     );

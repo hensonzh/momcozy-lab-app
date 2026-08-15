@@ -45,12 +45,9 @@
   },
   "expectedIntents": [
     {
-      "type": "OpenMediaViewer",
-      "path": "/media-viewer",
+      "type": "ShowToast",
       "payload": {
-        "kind": "pdf",
-        "title": "泵奶指南 PDF",
-        "url": "resolved-http-url:/skill-assets/guides/pump.pdf"
+        "message": "该资料已失效，请获取最新资料。"
       }
     },
     {
@@ -98,7 +95,7 @@
     ]
   },
   "assertions": [
-    "skill-assets media URLs are resolved through HTTP base URL",
+    "retired skill-assets media URLs fail closed before the media viewer",
     "unsupported doc kind does not navigate",
     "IBCLC return_to must be same-origin path",
     "IBCLC viewport restore expires after 10 minutes",

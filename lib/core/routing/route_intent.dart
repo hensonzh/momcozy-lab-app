@@ -130,6 +130,12 @@ RouteIntent routeIntentFromFallbackCase(Map<String, Object?> inputCase) {
           payload: {'message': '缺少资源参数，请从资料卡片进入。'},
         );
       }
+      if (_isRetiredSkillAssetUrl(url)) {
+        return const RouteIntent(
+          type: 'ShowToast',
+          payload: {'message': '该资料已失效，请获取最新资料。'},
+        );
+      }
       return RouteIntent(type: 'OpenMediaViewer', path: '/media-viewer');
     case 'ibclc-return':
       final returnTo = _string(inputCase['returnTo']) ?? '/';
@@ -158,6 +164,12 @@ RouteIntent _routeIntentFromMediaLink(Map<String, Object?> link) {
   final kind = _string(link['kind']) ?? '';
   final url = _string(link['url']) ?? '';
   final title = _string(link['title']) ?? '';
+  if (_isRetiredSkillAssetUrl(url)) {
+    return const RouteIntent(
+      type: 'ShowToast',
+      payload: {'message': '该资料已失效，请获取最新资料。'},
+    );
+  }
   if (!_supportedMediaKinds.contains(kind) || url.isEmpty) {
     return const RouteIntent(
       type: 'ShowToast',
@@ -168,7 +180,7 @@ RouteIntent _routeIntentFromMediaLink(Map<String, Object?> link) {
   return RouteIntent(
     type: 'OpenMediaViewer',
     path: '/media-viewer',
-    payload: {'kind': kind, 'title': title, 'url': _resolveMediaUrl(url)},
+    payload: {'kind': kind, 'title': title, 'url': url},
   );
 }
 
@@ -306,9 +318,8 @@ RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
   );
 }
 
-String _resolveMediaUrl(String url) {
-  if (url.startsWith('/skill-assets/')) return 'resolved-http-url:$url';
-  return url;
+bool _isRetiredSkillAssetUrl(String url) {
+  return Uri.tryParse(url.trim())?.path.startsWith('/skill-assets/') == true;
 }
 
 String? _safeSameOriginPath(String? value) {

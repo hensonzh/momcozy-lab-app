@@ -261,6 +261,23 @@ void main() {
     },
   );
 
+  test('proprietary runtime asset ids survive secure persistence', () {
+    const image = AgentStreamImageInput(
+      dataUrl: 'data:image/png;base64,large-sensitive-payload',
+      assetId: '7b8aa8c8-2c49-48c4-9cad-80f438a6c979',
+    );
+    const snapshot = AgentHubInteractionSnapshot(attachedImages: [image]);
+
+    final encoded = jsonEncode(snapshot.toMap(includeImageData: false));
+    final restored = AgentHubInteractionSnapshot.fromMap(
+      Map<String, Object?>.from(jsonDecode(encoded) as Map),
+    );
+
+    expect(encoded, isNot(contains('large-sensitive-payload')));
+    expect(restored.attachedImages.single.assetId, image.assetId);
+    expect(restored.attachedImages.single.fileId, image.assetId);
+  });
+
   test('PDF draft and request metadata survive secure persistence', () {
     const file = AgentStreamFileInput(
       fileId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',

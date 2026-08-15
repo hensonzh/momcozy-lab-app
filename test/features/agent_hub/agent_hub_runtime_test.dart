@@ -16,7 +16,7 @@ void main() {
 
     expect(
       transport.runsEndpoint.uri.toString(),
-      'http://127.0.0.1:8769/v1/agent/runs',
+      'http://127.0.0.1:8010/v1/agent/runs',
     );
     expect(transport.runsEndpoint.token, isNull);
     expect(
@@ -26,20 +26,20 @@ void main() {
     expect(request.threadId, isNull);
     expect(request.locale, 'zh-CN');
     expect(payload['message'], 'Review my pattern');
-    expect(payload['runtime_pattern'], 'sdk_only');
+    expect(payload['runtime_pattern'], 'proprietary_runtime');
     expect(payload.containsKey('thread_id'), isFalse);
     expect(payload.containsKey('user_id'), isFalse);
     expect(runner.reconnectPolicy.enabled, isTrue);
     expect(runner.runStatusReader, isA<ProductionAgentRunStatusReader>());
   });
 
-  test('default Agent Hub cancel client uses unified API endpoint', () {
+  test('default Agent Hub controls use the dedicated Agent Runtime', () {
     final cancelClient = createDefaultAgentHubCancelClient();
     final actionClient = createDefaultAgentHubActionClient();
 
     expect(
       cancelClient.endpoint.uri.toString(),
-      'http://127.0.0.1:8769/v1/agent/runs',
+      'http://127.0.0.1:8010/v1/agent/runs',
     );
     expect(
       cancelClient.endpoint.headers,
@@ -47,7 +47,7 @@ void main() {
     );
     expect(
       actionClient.endpoint.uri.toString(),
-      'http://127.0.0.1:8769/v1/agent/actions',
+      'http://127.0.0.1:8010/v1/agent/actions',
     );
     expect(
       actionClient.endpoint.headers,
@@ -63,11 +63,25 @@ void main() {
       locale: 'en-US',
       accessToken: 'secure-access',
     );
-    final runner = createSessionAgentHubRunner(session);
+    Future<bool> onUnauthorized() async => true;
+    final runner = createSessionAgentHubRunner(
+      session,
+      onUnauthorized: onUnauthorized,
+    );
     final client = runner.client as SseAgentStreamClient;
     final transport = client.transport as ProductionAgentSseTransport;
-    final cancelClient = createSessionAgentHubCancelClient(session);
-    final actionClient = createSessionAgentHubActionClient(session);
+    final cancelClient = createSessionAgentHubCancelClient(
+      session,
+      onUnauthorized: onUnauthorized,
+    );
+    final actionClient = createSessionAgentHubActionClient(
+      session,
+      onUnauthorized: onUnauthorized,
+    );
+    final clientEventClient = createSessionAgentHubClientEventClient(
+      session,
+      onUnauthorized: onUnauthorized,
+    );
     final request = buildSessionAgentHubRequest(
       '  Help me plan today  ',
       session: session,
@@ -77,9 +91,13 @@ void main() {
     expect(transport.runsEndpoint.token, 'secure-access');
     expect(cancelClient.endpoint.token, 'secure-access');
     expect(actionClient.endpoint.token, 'secure-access');
+    expect(clientEventClient.endpoint?.token, 'secure-access');
+    expect(cancelClient.onUnauthorized, same(onUnauthorized));
+    expect(actionClient.onUnauthorized, same(onUnauthorized));
+    expect(clientEventClient.onUnauthorized, same(onUnauthorized));
     expect(
       actionClient.endpoint.uri.toString(),
-      'http://127.0.0.1:8769/v1/agent/actions',
+      'http://127.0.0.1:8010/v1/agent/actions',
     );
     expect(request.threadId, isNull);
     expect(request.locale, 'en-US');

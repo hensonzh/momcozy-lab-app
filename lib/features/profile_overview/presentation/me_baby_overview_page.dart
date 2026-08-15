@@ -27,11 +27,13 @@ class MeBabyOverviewPage extends StatefulWidget {
     super.key,
     required this.path,
     required this.identity,
+    this.extendedProductResourcesEnabled = false,
     this.onBabySelected,
   });
 
   final String path;
   final ProfileIdentity identity;
+  final bool extendedProductResourcesEnabled;
   final Future<void> Function(String babyId)? onBabySelected;
 
   @override
@@ -107,6 +109,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       ..addListener(_handleProfileOverviewInvalidated);
     final controller = runtime.createProfileOverviewController(
       initialIdentity: widget.identity,
+      extendedProductResourcesEnabled: widget.extendedProductResourcesEnabled,
     );
     _overviewController = controller;
     _displayedStage = controller.careStage.value.stage;
@@ -448,6 +451,14 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
                                 112,
                               ),
                               children: [
+                                if (data.hasUnavailableExtendedResources(
+                                  widget.identity,
+                                )) ...[
+                                  _ExtendedResourcesUnavailableBanner(
+                                    identity: widget.identity,
+                                  ),
+                                  const SizedBox(height: 12),
+                                ],
                                 if (data.hasStaleRefreshFailure) ...[
                                   _RefreshFailureBanner(
                                     onRetry: _refreshOverview,
@@ -680,6 +691,19 @@ class _MeBabyOverviewData {
     feedingSummary,
     plans,
   ].any((resource) => resource.hasError && resource.data != null);
+
+  bool hasUnavailableExtendedResources(ProfileIdentity identity) {
+    final resources = switch (identity) {
+      ProfileIdentity.mom => [
+        maternalCareOverview,
+        waterRecords,
+        waterTrends,
+        vitalRecords,
+      ],
+      ProfileIdentity.baby => [feedingSummary, sleepRecords, diaperRecords],
+    };
+    return resources.any((resource) => resource.isUnavailable);
+  }
 
   String get momName {
     final name = overview.data?.mom?.displayName?.trim();
@@ -1139,6 +1163,53 @@ class _RefreshFailureBanner extends StatelessWidget {
                 ),
               ),
               TextButton(onPressed: onRetry, child: const Text('Retry')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ExtendedResourcesUnavailableBanner extends StatelessWidget {
+  const _ExtendedResourcesUnavailableBanner({required this.identity});
+
+  final ProfileIdentity identity;
+
+  @override
+  Widget build(BuildContext context) {
+    final detail = switch (identity) {
+      ProfileIdentity.mom => 'Care, water, and vital summaries',
+      ProfileIdentity.baby => 'Weekly feeding, sleep, and diaper summaries',
+    };
+    return Semantics(
+      liveRegion: true,
+      child: Material(
+        key: const ValueKey('profile-extended-resources-unavailable'),
+        color: const Color(0xfffff7ef),
+        borderRadius: BorderRadius.circular(18),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.info_outline_rounded,
+                color: _MeBabyOverviewColors.wine,
+                size: 21,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  '$detail are unavailable in this environment. Supported profile and record data remain available.',
+                  style: const TextStyle(
+                    color: _MeBabyOverviewColors.ink,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    height: 1.35,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -41,7 +41,7 @@ MOMCOZY_STAGING_SMOKE_MUTATE=1
 
 ```bash
 MOMCOZY_STAGING_SMOKE_AGENT=1
-MOMCOZY_AGENT_RUNS_URL=https://staging-api.example.com/v1/agent/runs
+MOMCOZY_AGENT_API_BASE_URL=https://staging-agent.example.com
 ```
 
 ## 退出码
@@ -55,3 +55,5 @@ MOMCOZY_AGENT_RUNS_URL=https://staging-api.example.com/v1/agent/runs
 - smoke 失败信息会脱敏 Bearer token 和 `token=` query 参数。
 - 写入类探针必须显式设置 `MOMCOZY_STAGING_SMOKE_MUTATE=1`。
 - Agent 文本流必须显式设置 `MOMCOZY_STAGING_SMOKE_AGENT=1`。
+- Product 和 Agent 探针分别使用 `MOMCOZY_API_BASE_URL` 与
+  `MOMCOZY_AGENT_API_BASE_URL`，不会把两个服务折叠到同一 origin。

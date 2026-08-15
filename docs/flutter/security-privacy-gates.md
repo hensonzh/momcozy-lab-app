@@ -106,5 +106,7 @@ make flutter-security-check
 
 ```bash
 make flutter-check
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 make flutter-release-gate
 ```
