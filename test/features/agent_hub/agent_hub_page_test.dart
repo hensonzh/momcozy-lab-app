@@ -29,6 +29,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
+import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
@@ -3955,7 +3956,8 @@ void main() {
     await tester.pump();
     await cancelConnector.called.future;
 
-    expect(find.text('已停止本次回复'), findsOneWidget);
+    expect(find.text('正在请求服务端停止'), findsOneWidget);
+    expect(find.text('已停止本次回复'), findsNothing);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
 
     await tester.enterText(
@@ -4007,6 +4009,59 @@ void main() {
       find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
       findsNothing,
     );
+  });
+
+  testWidgets('Agent Hub does not claim server cancellation after a 401', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    final cancelConnector = _RecordingCancelConnector(
+      response: const AgentStreamControlHttpResponse(
+        statusCode: 401,
+        body: '{"error":{"code":"authentication_required"}}',
+      ),
+    );
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          cancelClient: AgentStreamCancelClient(
+            endpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8010/v1/agent/runs'),
+            ),
+            onUnauthorized: () async => false,
+            connector: cancelConnector,
+          ),
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Cancel this run',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'cancel-unauthorized-started',
+        'type': 'run.started',
+        'thread_id': 'thread-cancel-unauthorized',
+        'run_id': 'run-cancel-unauthorized',
+        'sequence': 1,
+      }),
+    );
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
+    await cancelConnector.called.future;
+    await _pumpFrames(tester, 4);
+
+    expect(find.text('本地已停止，服务端取消未确认'), findsOneWidget);
+    expect(find.text('已停止本次回复'), findsNothing);
   });
 
   testWidgets(
@@ -7479,8 +7534,16 @@ void main() {
           'title': '资源',
           'content': '可以打开这些资料。',
           'button': [
-            {'text': '打开文档', 'type': 'doc', 'value': '/docs/a.pdf'},
-            {'text': '查看图片', 'type': 'media', 'value': '/media/a.png'},
+            {
+              'text': '打开文档',
+              'type': 'doc',
+              'value': '/v1/assets/asset-doc?kind=pdf',
+            },
+            {
+              'text': '查看图片',
+              'type': 'media',
+              'value': '/v1/assets/asset-image?kind=image',
+            },
           ],
           'card': [
             {
@@ -7525,11 +7588,11 @@ void main() {
     await tester.pump();
 
     expect(actions.single.kind, 'doc');
-    expect(actions.single.value, '/docs/a.pdf');
+    expect(actions.single.value, '/v1/assets/asset-doc?kind=pdf');
     expect(actions.single.routePath, '/media-viewer');
     expect(actions.single.routeExtra, {
       'kind': 'pdf',
-      'url': '/docs/a.pdf',
+      'url': '/v1/assets/asset-doc?kind=pdf',
       'title': '打开文档',
     });
 
@@ -7539,11 +7602,11 @@ void main() {
     await tester.pump();
 
     expect(actions.last.kind, 'media');
-    expect(actions.last.value, '/media/a.png');
+    expect(actions.last.value, '/v1/assets/asset-image?kind=image');
     expect(actions.last.routePath, '/media-viewer');
     expect(actions.last.routeExtra, {
       'kind': 'image',
-      'url': '/media/a.png',
+      'url': '/v1/assets/asset-image?kind=image',
       'title': '查看图片',
     });
   });
@@ -8032,6 +8095,90 @@ milk_total: 120ml
       await tester.pump();
 
       expect(actions.last.routePath, '/hospital-bag-cart');
+    },
+  );
+
+  testWidgets(
+    'Agent Hub degrades retired skill assets without network or viewer actions',
+    (tester) async {
+      final actions = <AgentArtifactActionView>[];
+      const legacyImage =
+          '/skill-assets/device-guidance/air1/images/legacy-guide.png';
+      const legacyPdf = '/skill-assets/device-guidance/air1/legacy-guide.pdf';
+      const unstableExternalImage = 'https://cdn.example.test/legacy-guide.png';
+      const markdown =
+          '''
+![Air1 对照图]($legacyImage)
+
+![外部临时图]($unstableExternalImage)
+
+[打开旧版说明书]($legacyPdf)
+''';
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: markdown,
+              events: [
+                AgentStreamEvent({
+                  'type': 'artifact.created',
+                  'artifact_id': 'retired-media',
+                  'payload': {
+                    'artifact_type': 'rich_text',
+                    'rich_text': {
+                      'title': '旧版资料',
+                      'button': [
+                        {'text': '打开旧版资料卡', 'type': 'doc', 'value': legacyPdf},
+                      ],
+                    },
+                  },
+                }),
+              ],
+            ),
+            onArtifactAction: actions.add,
+          ),
+        ),
+      );
+
+      final imageFinder = find.byKey(
+        const ValueKey('agent-markdown-image-$legacyImage'),
+      );
+      expect(imageFinder, findsOneWidget);
+      expect(
+        find.descendant(of: imageFinder, matching: find.byType(Image)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: imageFinder,
+          matching: find.byType(ProductAssetImage),
+        ),
+        findsNothing,
+      );
+      final externalImageFinder = find.byKey(
+        const ValueKey('agent-markdown-image-$unstableExternalImage'),
+      );
+      expect(externalImageFinder, findsOneWidget);
+      expect(
+        find.descendant(of: externalImageFinder, matching: find.byType(Image)),
+        findsNothing,
+      );
+      expect(find.text('图片暂不可用'), findsNWidgets(2));
+
+      await tester.tap(imageFinder);
+      await tester.pump();
+      await tester.tap(externalImageFinder);
+      await tester.pump();
+      await tester.tap(find.text('打开旧版说明书', findRichText: true));
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey('agent-artifact-action-retired-media-0')),
+      );
+      await tester.pump();
+
+      expect(actions, isEmpty);
     },
   );
 
@@ -9145,6 +9292,14 @@ class _FailingAgentStreamClient implements AgentStreamClient {
 }
 
 class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
+  _RecordingCancelConnector({
+    this.response = const AgentStreamControlHttpResponse(
+      statusCode: 200,
+      body: '{}',
+    ),
+  });
+
+  final AgentStreamControlHttpResponse response;
   final called = Completer<void>();
   Uri? uri;
   Map<String, String>? headers;
@@ -9161,7 +9316,7 @@ class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
     this.headers = headers;
     this.body = body;
     if (!called.isCompleted) called.complete();
-    return const AgentStreamControlHttpResponse(statusCode: 200, body: '{}');
+    return response;
   }
 }
 

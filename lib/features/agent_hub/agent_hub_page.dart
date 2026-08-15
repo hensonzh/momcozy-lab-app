@@ -58,10 +58,6 @@ typedef HospitalBagCartUpdateHandler =
     void Function(HospitalBagCartArtifactSeed seed);
 
 const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
-const _agentSkillAssetBaseUrl = String.fromEnvironment(
-  'MOMCOZY_API_BASE_URL',
-  defaultValue: 'http://127.0.0.1:8769',
-);
 const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 const _completedReplyRunSettlementTimeout = Duration(seconds: 2);
 const _completedReplyCancelTimeout = Duration(seconds: 2);
@@ -80,7 +76,8 @@ String _agentAssistantTextForState(
     AgentStreamRunPhase.idle => greeting,
     AgentStreamRunPhase.streaming => '我已经收到你的消息啦～',
     AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
-    AgentStreamRunPhase.cancelled => '已停止本次回复。',
+    AgentStreamRunPhase.cancelled =>
+      state.cancelAcknowledged ? '已停止本次回复。' : '本地已停止，服务端取消未确认。',
     AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
     AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
     AgentStreamRunPhase.error => '这次处理没有成功，暂时没有生成回复。你可以重试一次。',
@@ -1218,8 +1215,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   bool _isComposerLockedForState(AgentStreamRunState state) =>
-      state.phase == AgentStreamRunPhase.waitingForConfirmation ||
-      state.phase == AgentStreamRunPhase.cancelRequested;
+      state.phase == AgentStreamRunPhase.waitingForConfirmation;
 
   bool _isVisibleReplyRunningForState(AgentStreamRunState state) =>
       state.isAwaitingVisibleReply;
@@ -1263,7 +1259,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       await _cancelServerRun(
         waitingState,
         activeRequest,
-      ).timeout(_completedReplyCancelTimeout, onTimeout: () {});
+      ).timeout(_completedReplyCancelTimeout, onTimeout: () => null);
       if (!mounted || !_state.isActive || _state.runId != waitingState.runId) {
         return;
       }
@@ -1413,6 +1409,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _handleArtifactAction(AgentArtifactActionView action) {
     if (action.kind == 'form.submit') {
       unawaited(_handleArtifactFormSubmit(action));
+      return;
+    }
+    if (action.routePath == '/media-viewer' &&
+        !_isStableProductAssetAction(action)) {
       return;
     }
     var resolvedAction = action;
@@ -2653,9 +2653,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _setRunState(activeState.requestCancel());
     _persistInteractionState();
     _cancelRunSubscription();
-    _setRunState(_state.applyCancelResult(acknowledged: true));
-    _persistInteractionState();
-    _sendBestEffortServerCancel(activeState, activeRequest);
+    final hasServerRun =
+        widget.cancelClient != null &&
+        activeState.runId?.trim().isNotEmpty == true;
+    if (hasServerRun) {
+      _sendBestEffortServerCancel(activeState, activeRequest);
+    } else {
+      _setRunState(_state.applyCancelResult(acknowledged: true));
+      _persistInteractionState();
+    }
   }
 
   void _toggleAutoVoice() {
@@ -2706,15 +2712,33 @@ class _AgentHubPageState extends State<AgentHubPage> {
     AgentStreamRunState activeState,
     AgentStreamRequest? activeRequest,
   ) async {
+    AgentStreamCancelResult? result;
     try {
-      await _cancelServerRun(
+      result = await _cancelServerRun(
         activeState,
         activeRequest,
       ).timeout(_completedReplyCancelTimeout);
-    } catch (_) {
-      // Cancellation is best effort; a new run may still proceed after the
-      // bounded settlement window.
+    } catch (error) {
+      result = AgentStreamCancelResult(acknowledged: false, error: error);
     }
+    if (!mounted || result == null) return;
+    if (_state.phase != AgentStreamRunPhase.cancelRequested ||
+        _state.runId != activeState.runId) {
+      return;
+    }
+    final failure = result.acknowledged
+        ? null
+        : result.error ??
+              result.body ??
+              'Server cancellation was not acknowledged.';
+    _setRunState(
+      _state.applyCancelResult(
+        acknowledged: result.acknowledged,
+        statusCode: result.statusCode,
+        error: failure,
+      ),
+    );
+    _persistInteractionState();
   }
 
   Future<void> _waitForPendingServerCancel() async {
@@ -2732,17 +2756,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
   }
 
-  Future<void> _cancelServerRun(
+  Future<AgentStreamCancelResult?> _cancelServerRun(
     AgentStreamRunState activeState,
     AgentStreamRequest? activeRequest,
   ) async {
     final cancelClient = widget.cancelClient;
-    if (cancelClient == null) return;
+    if (cancelClient == null) return null;
 
     final runId = activeState.runId;
-    if (runId == null || runId.trim().isEmpty) return;
+    if (runId == null || runId.trim().isEmpty) return null;
 
-    await cancelClient.cancel(
+    return cancelClient.cancel(
       AgentStreamCancelRequest(
         threadId: activeState.threadId ?? activeRequest?.threadId ?? '',
         runId: runId,
@@ -4498,7 +4522,12 @@ class AgentRunTranscript extends StatelessWidget {
           ) ??
           '服务执行失败，请稍后重试';
     }
-    if (state.phase == AgentStreamRunPhase.cancelled) return '已停止本次回复';
+    if (state.phase == AgentStreamRunPhase.cancelRequested) {
+      return '正在请求服务端停止';
+    }
+    if (state.phase == AgentStreamRunPhase.cancelled) {
+      return state.cancelAcknowledged ? '已停止本次回复' : '本地已停止，服务端取消未确认';
+    }
     return null;
   }
 
@@ -4860,6 +4889,7 @@ class AgentMarkdownText extends StatelessWidget {
             onTapLink: (label, href, title) {
               final url = href?.trim();
               if (url == null || url.isEmpty) return;
+              if (_isRetiredSkillAssetReference(url)) return;
               if (_isHospitalBagCartPath(url)) {
                 onArtifactAction?.call(AgentArtifactActions.hospitalBagCart);
                 return;
@@ -5176,13 +5206,12 @@ class _AgentMarkdownImage extends StatelessWidget {
       kind: ProductAssetKind.image.routeValue,
       title: label,
     );
-    final displayUrl = _displayableHttpUrl(url);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
         key: ValueKey('agent-markdown-image-$url'),
-        onTap: onTap,
+        onTap: productAsset == null ? null : onTap,
         borderRadius: BorderRadius.circular(8),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
@@ -5193,8 +5222,9 @@ class _AgentMarkdownImage extends StatelessWidget {
               minWidth: 180,
               maxWidth: 360,
             ),
-            child: productAsset != null
-                ? ProductAssetImage(
+            child: productAsset == null
+                ? const _AgentMarkdownImagePlaceholder(label: '图片暂不可用')
+                : ProductAssetImage(
                     reference: productAsset,
                     repository: repository,
                     variant: ProductAssetVariant.display,
@@ -5212,15 +5242,6 @@ class _AgentMarkdownImage extends StatelessWidget {
                         label: label,
                         onRetry: retry,
                       );
-                    },
-                  )
-                : displayUrl == null
-                ? _AgentMarkdownImagePlaceholder(label: label)
-                : Image.network(
-                    displayUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return _AgentMarkdownImagePlaceholder(label: label);
                     },
                   ),
           ),
@@ -5293,28 +5314,7 @@ class _AgentMarkdownImagePlaceholder extends StatelessWidget {
 }
 
 String _prepareAgentMarkdown(String markdown) {
-  return _promoteImageLinksToMarkdownImages(
-    _linkifyBareSkillAssetUrlsForMarkdown(markdown),
-  );
-}
-
-String _linkifyBareSkillAssetUrlsForMarkdown(String markdown) {
-  var inFence = false;
-  return markdown
-      .split('\n')
-      .map((line) {
-        if (RegExp(r'^\s*```').hasMatch(line)) {
-          inFence = !inFence;
-          return line;
-        }
-        if (inFence) return line;
-        return line.replaceAllMapped(_bareSkillAssetUrlPattern, (match) {
-          final prefix = match.group(1) ?? '';
-          final url = match.group(2) ?? '';
-          return '$prefix[${_skillAssetLinkLabel(url)}]($url)';
-        });
-      })
-      .join('\n');
+  return _promoteImageLinksToMarkdownImages(markdown);
 }
 
 String _promoteImageLinksToMarkdownImages(String markdown) {
@@ -5339,30 +5339,13 @@ String _promoteImageLinksToMarkdownImages(String markdown) {
       .join('\n');
 }
 
-String _skillAssetLinkLabel(String url) {
-  final kind = _viewerKindForUrl(url);
-  return switch (kind) {
-    'pdf' => '打开 PDF',
-    'video' => '打开视频',
-    'image' => '查看图片',
-    _ => '打开资源',
-  };
-}
-
 String _markdownDestinationUrl(String destination) {
   return destination.trim().split(RegExp(r'\s+')).first;
 }
 
 String? _viewerKindForUrl(String url) {
   final productAsset = ProductAssetReference.tryParse(url);
-  if (productAsset != null) return productAsset.kind.routeValue;
-  final path = url.split(RegExp(r'[?#]')).first.toLowerCase();
-  if (path.endsWith('.pdf')) return 'pdf';
-  if (RegExp(r'\.(mp4|webm|ogv|m4v|mov)$').hasMatch(path)) return 'video';
-  if (RegExp(r'\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$').hasMatch(path)) {
-    return 'image';
-  }
-  return null;
+  return productAsset?.kind.routeValue;
 }
 
 bool _isImageUrl(String url) => _viewerKindForUrl(url) == 'image';
@@ -5435,23 +5418,22 @@ bool _isStandaloneHospitalBagCartLinkLine(String line) {
   return bareUrl != null && _isHospitalBagCartPath(bareUrl);
 }
 
-String? _displayableHttpUrl(String url) {
-  final normalized = url.trim();
-  if (normalized.startsWith('/skill-assets/')) {
-    return Uri.tryParse(
-      _agentSkillAssetBaseUrl,
-    )?.resolve(normalized).toString();
-  }
-  final uri = Uri.tryParse(normalized);
-  if (uri == null) return null;
-  if (uri.scheme == 'http' || uri.scheme == 'https') return uri.toString();
-  return null;
+bool _isRetiredSkillAssetReference(String url) {
+  final uri = Uri.tryParse(url.trim());
+  return uri?.path.startsWith('/skill-assets/') == true;
 }
 
-final _bareSkillAssetUrlPattern = RegExp(
-  r'(^|[\s:：])((?:/skill-assets/)[^\s<>)\]}，。；;、]+(?:\.(?:pdf|mp4|mov|m4v|webm|png|jpe?g|gif|webp|svg))(?:[?#][^\s<>)\]}，。；;、]*)?)',
-  caseSensitive: false,
-);
+bool _isStableProductAssetAction(AgentArtifactActionView action) {
+  final extra = action.routeExtra;
+  final rawUrl = extra is Map && extra['url'] is String
+      ? extra['url']! as String
+      : action.value;
+  final rawKind = extra is Map && extra['kind'] is String
+      ? extra['kind']! as String
+      : null;
+  if (rawUrl == null) return false;
+  return ProductAssetReference.tryParse(rawUrl, kind: rawKind) != null;
+}
 
 final _markdownLinkPattern = RegExp(r'(^|[^!])\[([^\]\n]+)\]\(([^)\n]+)\)');
 final _hospitalBagCartMarkdownLinkPattern = RegExp(

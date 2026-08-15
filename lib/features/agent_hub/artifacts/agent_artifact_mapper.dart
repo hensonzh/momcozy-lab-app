@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 
 class AgentArtifactMapper {
   const AgentArtifactMapper._();
@@ -775,6 +776,14 @@ bool _isMediaActionKind(String? kind) {
 
 String? _mediaViewerKind({required String? kind, required String url}) {
   final normalizedKind = kind?.trim().toLowerCase();
+  final productKind = switch (normalizedKind) {
+    'doc' || 'document' => ProductAssetKind.pdf.routeValue,
+    'photo' || 'picture' => ProductAssetKind.image.routeValue,
+    'pdf' || 'image' || 'video' => normalizedKind,
+    _ => null,
+  };
+  final productAsset = ProductAssetReference.tryParse(url, kind: productKind);
+  if (productAsset != null) return productAsset.kind.routeValue;
   if (const {'pdf', 'doc', 'document'}.contains(normalizedKind)) return 'pdf';
   if (const {'image', 'photo', 'picture'}.contains(normalizedKind)) {
     return 'image';

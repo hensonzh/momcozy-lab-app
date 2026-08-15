@@ -376,6 +376,8 @@ bool _sameImages(
     final a = left[index];
     final b = right[index];
     if (a.dataUrl != b.dataUrl ||
+        a.assetId != b.assetId ||
+        a.fileId != b.fileId ||
         a.mimeType != b.mimeType ||
         a.name != b.name ||
         a.size != b.size ||
@@ -411,6 +413,7 @@ AgentStreamRequest? _requestFromMap(Object? value) {
 
 Map<String, Object?> _imageToMap(AgentStreamImageInput image) => {
   'dataUrl': image.dataUrl,
+  if (image.assetId.trim().isNotEmpty) 'assetId': image.assetId.trim(),
   if (image.fileId.trim().isNotEmpty) 'fileId': image.fileId.trim(),
   'mimeType': image.mimeType,
   'name': image.name,
@@ -419,7 +422,7 @@ Map<String, Object?> _imageToMap(AgentStreamImageInput image) => {
 };
 
 bool _hasFileReference(AgentStreamImageInput image) =>
-    image.fileId.trim().isNotEmpty;
+    image.assetId.trim().isNotEmpty || image.fileId.trim().isNotEmpty;
 
 List<Map<String, Object?>> _imagesToPersistenceMaps(
   List<AgentStreamImageInput> images, {
@@ -431,7 +434,10 @@ List<Map<String, Object?>> _imagesToPersistenceMaps(
         (image) => includeImageData
             ? _imageToMap(image)
             : <String, Object?>{
-                'fileId': image.fileId.trim(),
+                if (image.assetId.trim().isNotEmpty)
+                  'assetId': image.assetId.trim(),
+                if (image.fileId.trim().isNotEmpty)
+                  'fileId': image.fileId.trim(),
                 'mimeType': image.mimeType,
                 'name': image.name,
                 'size': image.size,
@@ -445,12 +451,16 @@ AgentStreamImageInput? _imageFromMap(Object? value) {
   if (value is! Map) return null;
   final map = Map<String, Object?>.from(value);
   final dataUrl = _string(map['dataUrl']) ?? _string(map['data_url']);
-  final fileId = _string(map['fileId']) ?? _string(map['file_id']) ?? '';
-  if ((dataUrl == null || dataUrl.trim().isEmpty) && fileId.trim().isEmpty) {
+  final assetId = _string(map['assetId']) ?? _string(map['asset_id']) ?? '';
+  final fileId = _string(map['fileId']) ?? _string(map['file_id']) ?? assetId;
+  if ((dataUrl == null || dataUrl.trim().isEmpty) &&
+      assetId.trim().isEmpty &&
+      fileId.trim().isEmpty) {
     return null;
   }
   return AgentStreamImageInput(
     dataUrl: dataUrl ?? '',
+    assetId: assetId,
     fileId: fileId,
     mimeType:
         _string(map['mimeType']) ?? _string(map['mime_type']) ?? 'image/png',

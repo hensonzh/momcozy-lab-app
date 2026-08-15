@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { withFlutterApiDartDefines } from "./flutter-api-config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
@@ -10,12 +11,26 @@ const flutterAppDir = projectRoot;
 
 if (process.argv.includes("--help")) {
   console.log(`Usage:
-  node scripts/build-flutter-android-apk.mjs --mode <debug|release> --flavor <local|staging|production> [--dart-define=KEY=VALUE]
+  node scripts/build-flutter-android-apk.mjs [--check-config] --mode <debug|release> --flavor <local|staging|production> [--dart-define=KEY=VALUE]
 `);
   process.exit(0);
 }
 
 const options = parseArgs(process.argv.slice(2));
+try {
+  options.dartDefines = withFlutterApiDartDefines({
+    flavor: options.flavor,
+    dartDefines: options.dartDefines,
+  });
+} catch (error) {
+  fail(error.message);
+}
+
+if (options.checkConfig) {
+  console.log(`Flutter Android APK config is valid for ${options.flavor}.`);
+  process.exit(0);
+}
+
 const apkPath = path.join(
   flutterAppDir,
   "build",
@@ -81,11 +96,14 @@ console.log(`Verified PDF packaging: ${path.relative(projectRoot, apkPath)}`);
 function parseArgs(args) {
   let mode = "";
   let flavor = "";
+  let checkConfig = false;
   const dartDefines = [];
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
-    if (arg === "--mode") {
+    if (arg === "--check-config") {
+      checkConfig = true;
+    } else if (arg === "--mode") {
       mode = args[++index] || "";
     } else if (arg.startsWith("--mode=")) {
       mode = arg.slice("--mode=".length);
@@ -112,7 +130,7 @@ function parseArgs(args) {
     fail("Every --dart-define must use KEY=VALUE format.");
   }
 
-  return { mode, flavor, dartDefines };
+  return { mode, flavor, dartDefines, checkConfig };
 }
 
 function verifyPdfPackaging(targetApk, { release }) {

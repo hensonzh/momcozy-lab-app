@@ -57,6 +57,24 @@ class NoopOnboardingReleasePolicy implements OnboardingReleasePolicy {
   Future<void> markCompletedFor(String userId) async {}
 }
 
+Future<OnboardingReleasePolicy> prepareAppReleaseLifecycle({
+  required bool enabled,
+  required Future<String> Function() loadReleaseId,
+  AppReleaseLifecycleStorage storage =
+      const FlutterSecureAppReleaseLifecycleStorage(),
+  Future<void> Function()? clearFileCache,
+}) async {
+  if (!enabled) return const NoopOnboardingReleasePolicy();
+
+  final lifecycle = AppReleaseLifecycle(
+    releaseId: await loadReleaseId(),
+    storage: storage,
+    clearFileCache: clearFileCache,
+  );
+  await lifecycle.prepareForLaunch();
+  return lifecycle;
+}
+
 class AppReleaseLifecycle implements OnboardingReleasePolicy {
   AppReleaseLifecycle({
     required String releaseId,

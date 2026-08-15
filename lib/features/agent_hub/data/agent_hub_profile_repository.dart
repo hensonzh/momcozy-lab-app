@@ -14,7 +14,10 @@ class AgentHubProfileRepository {
     final birthPrepDefaults = BirthPrepProfileDefaults.fromProfileMap(profile);
     return AgentHubGreetingProfile(
       displayName: _string(
-        profile['display_name'] ?? profile['displayName'],
+        profile['display_name'] ??
+            profile['displayName'] ??
+            profile['preferred_name'] ??
+            profile['preferredName'],
       ).trim(),
       age: birthPrepDefaults.age,
       onboardingSkipped:

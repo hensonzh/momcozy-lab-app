@@ -13,10 +13,12 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
   const ProfileOverviewApiRepository({
     required this.transport,
     required this.babyId,
+    this.factTransport,
     this.now,
   });
 
   final ApiJsonTransport transport;
+  final ApiJsonTransport? factTransport;
   final String babyId;
   final DateTime Function()? now;
 
@@ -48,13 +50,22 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
         matchingInfant ??
         (infantOverviews.length == 1 ? infantOverviews.single : null);
     return ProfileOverview(
-      mom: _momProfileOverview(profile, dueDateOrWeek: dueDateOrWeek, now: now),
+      mom: _momProfileOverview(
+        profile,
+        dueDateOrWeek: dueDateOrWeek,
+        selectedInfant: selectedInfant,
+        now: now,
+      ),
       baby: selectedInfant,
       infants: infantOverviews,
     );
   }
 
   Future<Map<String, Object?>> _fetchVerifiedPregnancyFact() async {
+    final transport = factTransport;
+    if (transport == null) {
+      return const <String, Object?>{'items': <Object>[]};
+    }
     try {
       return await transport.getJson(
         profilePregnancyFactEndpoint,
@@ -103,11 +114,15 @@ String? _infantId(Map<String, Object?> data) {
 MomProfileOverview? _momProfileOverview(
   Map<String, Object?>? data, {
   String? dueDateOrWeek,
+  BabyProfileOverview? selectedInfant,
   DateTime Function()? now,
 }) {
   if (data == null || data.isEmpty) return null;
   final canonicalExpectedDueDate = _date(
-    data['expected_due_date'] ?? data['expectedDueDate'],
+    data['expected_due_date'] ??
+        data['expectedDueDate'] ??
+        data['estimated_due_date'] ??
+        data['estimatedDueDate'],
   );
   final canonicalActualDeliveryDate = _date(
     data['actual_delivery_date'] ?? data['actualDeliveryDate'],
@@ -119,19 +134,30 @@ MomProfileOverview? _momProfileOverview(
   final confirmedPregnancyContext = profilePregnancyContext?.isNotEmpty == true
       ? profilePregnancyContext
       : fallbackPregnancyContext;
-  final displayName = _string(data['display_name'] ?? data['displayName']);
+  final displayName = _string(
+    data['display_name'] ??
+        data['displayName'] ??
+        data['preferred_name'] ??
+        data['preferredName'],
+  );
   final explicitStage = MomLifeStage.tryParse(
     data['current_care_stage'] ?? data['currentCareStage'],
   );
-  if (displayName?.trim().isNotEmpty != true && explicitStage == null) {
+  final stage =
+      explicitStage ??
+      (canonicalExpectedDueDate != null
+          ? MomLifeStage.pregnancy
+          : selectedInfant?.birthDate != null
+          ? MomLifeStage.postpartum
+          : null);
+  if (displayName?.trim().isNotEmpty != true && stage == null) {
     return null;
   }
-  final stage = explicitStage;
   final expectedDueDate = stage == MomLifeStage.pregnancy
       ? canonicalExpectedDueDate
       : null;
   final actualDeliveryDate = stage == MomLifeStage.postpartum
-      ? canonicalActualDeliveryDate
+      ? canonicalActualDeliveryDate ?? selectedInfant?.birthDate
       : null;
   return MomProfileOverview(
     displayName: displayName,
@@ -205,11 +231,14 @@ BabyProfileOverview? _babyProfileOverview(
   return BabyProfileOverview(
     id: _infantId(data),
     nickname: _string(
-      data['infant_name'] ?? data['nickname'] ?? data['nickName'],
+      data['infant_name'] ??
+          data['nickname'] ??
+          data['nickName'] ??
+          data['name'],
     ),
     ageDays: _ageDays(birthDate, now: now),
     birthDate: birthDate,
-    sex: _nonEmptyString(data['sex']),
+    sex: _nonEmptyString(data['sex'] ?? data['sex_at_birth']),
   );
 }
 

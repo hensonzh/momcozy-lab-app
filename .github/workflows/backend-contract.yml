@@ -6,6 +6,12 @@ on:
       - ".github/workflows/backend-contract.yml"
       - "Makefile"
       - "docs/backend-contract/**"
+      - "scripts/build-flutter-android-apk.mjs"
+      - "scripts/build-flutter-apk-download-site.mjs"
+      - "scripts/build-flutter-app.sh"
+      - "scripts/flutter-api-config.mjs"
+      - "scripts/run-flutter-invite-dev.mjs"
+      - "scripts/run-flutter-release-gate.mjs"
       - "scripts/validate_backend_contract.py"
       - "scripts/tests/**"
   push:
@@ -15,6 +21,12 @@ on:
       - ".github/workflows/backend-contract.yml"
       - "Makefile"
       - "docs/backend-contract/**"
+      - "scripts/build-flutter-android-apk.mjs"
+      - "scripts/build-flutter-apk-download-site.mjs"
+      - "scripts/build-flutter-app.sh"
+      - "scripts/flutter-api-config.mjs"
+      - "scripts/run-flutter-invite-dev.mjs"
+      - "scripts/run-flutter-release-gate.mjs"
       - "scripts/validate_backend_contract.py"
       - "scripts/tests/**"
   workflow_dispatch:
@@ -23,28 +35,19 @@ permissions:
   contents: read
 
 jobs:
-  validate-agent-source:
+  validate-split-contracts:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out MomCozyApp
+      - name: Check out App
         uses: actions/checkout@v4
-        with:
-          path: MomCozyApp
 
-      - name: Check out authoritative MomCozyAgent contract
-        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          repository: hensonzh/MomCozyAgent
-          ref: main
-          path: MomCozyAgent
+          node-version: "20"
 
-      - name: Test contract validator
-        working-directory: MomCozyApp
+      - name: Test contract and release config validators
         run: python3 -m unittest discover -s scripts/tests -p 'test_*.py'
 
-      - name: Require byte-identical Agent contracts
-        working-directory: MomCozyApp
-        run: >-
-          python3 scripts/validate_backend_contract.py
-          --source-repository ../MomCozyAgent
-          --require-source
+      - name: Validate Product and Agent Runtime boundaries
+        run: python3 scripts/validate_backend_contract.py

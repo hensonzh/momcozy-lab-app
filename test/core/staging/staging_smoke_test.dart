@@ -9,7 +9,7 @@ void main() {
       'MOMCOZY_STAGING_SMOKE_MUTATE': 'true',
       'MOMCOZY_STAGING_SMOKE_AGENT': 'yes',
       'MOMCOZY_API_BASE_URL': 'https://api.example.test/base',
-      'MOMCOZY_AGENT_RUNS_URL': 'https://agent.example.test/v1/agent/runs',
+      'MOMCOZY_AGENT_API_BASE_URL': 'https://agent.example.test/runtime',
       'MOMCOZY_API_TOKEN': ' secret-token ',
       'MOMCOZY_REFRESH_TOKEN': ' refresh-token ',
       'MOMCOZY_DEFAULT_USER_ID': ' user-001 ',
@@ -23,7 +23,7 @@ void main() {
     expect(config.apiBaseUri, Uri.parse('https://api.example.test/base'));
     expect(
       config.agentRunsUri,
-      Uri.parse('https://agent.example.test/v1/agent/runs'),
+      Uri.parse('https://agent.example.test/runtime/v1/agent/runs'),
     );
     expect(config.session.userId, 'user-001');
     expect(config.session.babyId, 'baby-001');

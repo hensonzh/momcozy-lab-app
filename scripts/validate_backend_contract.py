@@ -11,50 +11,55 @@ from urllib.parse import parse_qsl, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_DIR = ROOT / "docs" / "backend-contract"
-OPENAPI_PATH = CONTRACT_DIR / "openapi.generated.json"
+PRODUCT_OPENAPI_PATH = CONTRACT_DIR / "product.openapi.generated.json"
+AGENT_RUNTIME_OPENAPI_PATH = CONTRACT_DIR / "agent-runtime.openapi.generated.json"
 SMOKE_FLOWS_PATH = CONTRACT_DIR / "flutter-smoke-flows.json"
-DEFAULT_SOURCE_REPOSITORY = ROOT.parent / "MomCozyAgent"
 FORBIDDEN_REPOSITORY_PATHS = ("production_backend/", "flutter_app/")
+PRODUCT_SERVICE = "product"
+AGENT_RUNTIME_SERVICE = "agent_runtime"
+REQUIRED_AGENT_RUNTIME_PATTERN = "proprietary_runtime"
 
 REQUIRED_OPENAPI_PATHS = {
-    "/v1/auth/signup",
-    "/v1/auth/login",
-    "/v1/auth/invite-login",
-    "/v1/auth/refresh",
-    "/v1/auth/logout",
-    "/v1/files/upload",
-    "/v1/onboarding/me/release-reset",
-    "/v1/records/feeding",
-    "/v1/records/feeding-summary",
-    "/v1/records/pumping",
-    "/v1/records/growth",
-    "/v1/plans",
-    "/v1/realtime-voice-stream",
-    "/v1/agent/threads",
-    "/v1/agent/runs",
-    "/v1/agent/actions/{action_id}",
-    "/v1/agent/actions/{action_id}/confirm",
-    "/v1/agent/actions/{action_id}/reject",
-    "/v1/agent/runs/{run_id}/events",
-    "/v1/agent/runs/{run_id}/stream",
-}
-FORBIDDEN_OPENAPI_PATHS = {
-    "/v1/speech/transcribe-chunk",
+    PRODUCT_SERVICE: {
+        "/v1/auth/signup",
+        "/v1/auth/login",
+        "/v1/auth/invite-login",
+        "/v1/auth/refresh",
+        "/v1/auth/logout",
+        "/v1/files/upload",
+        "/v1/profile/lactation",
+        "/v1/records/feeding",
+        "/v1/records/pumping",
+        "/v1/records/growth",
+        "/v1/plans",
+        "/v1/speech/transcribe-chunk",
+        "/v1/realtime-voice-stream",
+    },
+    AGENT_RUNTIME_SERVICE: {
+        "/v1/agent/threads",
+        "/v1/agent/runs",
+        "/v1/agent/actions/{action_id}",
+        "/v1/agent/actions/{action_id}/confirm",
+        "/v1/agent/actions/{action_id}/reject",
+        "/v1/agent/runs/{run_id}/events",
+        "/v1/agent/runs/{run_id}/stream",
+    },
 }
 REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS = {
-    ("POST", "/v1/agent/runs"),
-    ("POST", "/v1/agent/actions/{action_id}/confirm"),
+    (AGENT_RUNTIME_SERVICE, "POST", "/v1/agent/runs"),
+    (AGENT_RUNTIME_SERVICE, "POST", "/v1/agent/actions/{action_id}/confirm"),
 }
 REQUIRED_OPENAPI_OPERATIONS = {
-    ("POST", "/v1/pregnancy-diary/entries"),
-    ("PATCH", "/v1/pregnancy-diary/entries/{entry_date}"),
-    ("DELETE", "/v1/pregnancy-diary/entries/{entry_date}"),
+    (PRODUCT_SERVICE, "POST", "/v1/pregnancy-diary/entries"),
+    (PRODUCT_SERVICE, "PATCH", "/v1/pregnancy-diary/entries/{entry_date}"),
+    (PRODUCT_SERVICE, "DELETE", "/v1/pregnancy-diary/entries/{entry_date}"),
 }
 REQUIRED_QUERY_KEYS = {
-    "/v1/records/feeding": {"infant_id"},
-    "/v1/records/feeding-summary": {"infant_id", "days", "timezone"},
-    "/v1/plans": {"plan_type", "status"},
-    "/v1/agent/runs/{run_id}/stream": {"after_sequence", "follow"},
+    (PRODUCT_SERVICE, "/v1/plans"): {"plan_type", "status"},
+    (
+        AGENT_RUNTIME_SERVICE,
+        "/v1/agent/runs/{run_id}/stream",
+    ): {"after_sequence", "follow"},
 }
 FORBIDDEN_QUERY_KEYS = {
     "access_token",
@@ -72,22 +77,8 @@ AUTH_EXEMPT_PATHS = {
 }
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Validate the Flutter backend contract snapshot."
-    )
-    parser.add_argument(
-        "--source-repository",
-        type=Path,
-        help="MomCozyAgent checkout whose generated contracts must match byte-for-byte.",
-    )
-    parser.add_argument(
-        "--require-source",
-        action="store_true",
-        help="Fail when no MomCozyAgent source checkout is available.",
-    )
-    args = parser.parse_args()
-
+def main(argv: list[str] | None = None) -> int:
+    args = _parse_args(argv)
     errors: list[str] = []
     for document in sorted(CONTRACT_DIR.glob("*.md")):
         content = document.read_text()
@@ -98,62 +89,58 @@ def main() -> int:
                     f"wrapper: {legacy_path}"
                 )
 
-    schema = _read_json_object(OPENAPI_PATH)
-    smoke_flows = _read_json_object(SMOKE_FLOWS_PATH)
+    schemas = {
+        PRODUCT_SERVICE: _read_json_object(args.product_openapi),
+        AGENT_RUNTIME_SERVICE: _read_json_object(args.agent_runtime_openapi),
+    }
+    smoke_flows = _read_json_object(args.smoke_flows)
+    service_paths: dict[str, dict[object, object]] = {}
+    for service, schema in schemas.items():
+        paths = schema.get("paths")
+        if not isinstance(paths, dict):
+            errors.append(f"{service} OpenAPI snapshot is missing a paths object.")
+            paths = {}
+        service_paths[service] = paths
 
-    source_repository = args.source_repository
-    if source_repository is None and DEFAULT_SOURCE_REPOSITORY.is_dir():
-        source_repository = DEFAULT_SOURCE_REPOSITORY
-    if source_repository is None:
-        if args.require_source:
-            errors.append(
-                "MomCozyAgent source checkout is required; pass --source-repository."
-            )
-    else:
-        source_contract_dir = source_repository.resolve() / "docs"
-        errors.extend(
-            _compare_snapshot(
-                local=OPENAPI_PATH,
-                source=source_contract_dir / "openapi.generated.json",
-                label="OpenAPI",
-            )
+    errors.extend(_validate_service_boundaries(service_paths))
+    errors.extend(
+        _validate_agent_runtime_pattern(
+            schemas[AGENT_RUNTIME_SERVICE],
         )
-        errors.extend(
-            _compare_snapshot(
-                local=SMOKE_FLOWS_PATH,
-                source=source_contract_dir / "flutter-smoke-flows.json",
-                label="Smoke-flow",
-            )
-        )
+    )
 
-    paths = schema.get("paths")
-    if not isinstance(paths, dict):
-        errors.append("OpenAPI snapshot is missing a paths object.")
-        paths = {}
+    for service, required_paths in REQUIRED_OPENAPI_PATHS.items():
+        paths = service_paths[service]
+        for path in sorted(required_paths):
+            if path not in paths:
+                errors.append(f"Missing required {service} OpenAPI path: {path}")
 
-    for path in sorted(REQUIRED_OPENAPI_PATHS):
-        if path not in paths:
-            errors.append(f"Missing required OpenAPI path: {path}")
-
-    for path in sorted(FORBIDDEN_OPENAPI_PATHS):
-        if path in paths:
-            errors.append(f"Removed OpenAPI path is still present: {path}")
-
-    for method, path in sorted(REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS):
+    for service, method, path in sorted(REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS):
+        paths = service_paths[service]
         operation = _operation(paths, path, method)
         if operation is None:
-            errors.append(f"Missing required idempotent operation: {method} {path}")
+            errors.append(
+                f"Missing required {service} idempotent operation: {method} {path}"
+            )
         elif not _requires_idempotency(operation):
-            errors.append(f"{method} {path} must declare Idempotency-Key.")
+            errors.append(
+                f"{service} {method} {path} must declare Idempotency-Key."
+            )
 
-    for method, path in sorted(REQUIRED_OPENAPI_OPERATIONS):
+    for service, method, path in sorted(REQUIRED_OPENAPI_OPERATIONS):
+        paths = service_paths[service]
         if _operation(paths, path, method) is None:
-            errors.append(f"Missing required OpenAPI operation: {method} {path}")
+            errors.append(
+                f"Missing required {service} OpenAPI operation: {method} {path}"
+            )
 
-    for path, required_query_keys in sorted(REQUIRED_QUERY_KEYS.items()):
+    for (service, path), required_query_keys in sorted(REQUIRED_QUERY_KEYS.items()):
+        paths = service_paths[service]
         operation = _operation(paths, path, "GET")
         if operation is None:
-            errors.append(f"Missing required query operation: GET {path}")
+            errors.append(
+                f"Missing required {service} query operation: GET {path}"
+            )
             continue
         query_keys = {
             parameter.get("name")
@@ -163,14 +150,22 @@ def main() -> int:
         missing = sorted(required_query_keys - query_keys)
         if missing:
             errors.append(
-                f"GET {path} is missing required query parameters: "
+                f"{service} GET {path} is missing required query parameters: "
                 f"{', '.join(missing)}."
             )
 
     for flow in _list(smoke_flows.get("flows")):
         flow_name = str(flow.get("name", "<unnamed>"))
+        service = flow.get("service")
+        if service not in service_paths:
+            errors.append(
+                f"{flow_name} must declare service as "
+                f"{PRODUCT_SERVICE!r} or {AGENT_RUNTIME_SERVICE!r}."
+            )
+            continue
+        paths = service_paths[service]
         for index, step in enumerate(_list(flow.get("steps")), start=1):
-            errors.extend(_validate_step(paths, flow_name, index, step))
+            errors.extend(_validate_step(paths, str(service), flow_name, index, step))
 
     if errors:
         for error in errors:
@@ -180,26 +175,101 @@ def main() -> int:
     print(
         "backend-contract: validated "
         f"{len(smoke_flows.get('flows', []))} smoke flows against "
-        f"{len(paths)} OpenAPI paths"
-        + (
-            f" and matched Agent source at {source_repository.resolve()}"
-            if source_repository is not None
-            else ""
-        )
+        f"{len(service_paths[PRODUCT_SERVICE])} Product paths and "
+        f"{len(service_paths[AGENT_RUNTIME_SERVICE])} Agent Runtime paths"
     )
     return 0
 
 
-def _compare_snapshot(*, local: Path, source: Path, label: str) -> list[str]:
-    if not source.is_file():
-        return [f"Agent source snapshot is missing: {source}"]
-    if local.read_bytes() != source.read_bytes():
-        return [f"{label} snapshot differs from Agent source: {source}"]
-    return []
+def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Validate Flutter smoke flows against split backend contracts."
+    )
+    parser.add_argument(
+        "--product-openapi",
+        type=Path,
+        default=PRODUCT_OPENAPI_PATH,
+    )
+    parser.add_argument(
+        "--agent-runtime-openapi",
+        type=Path,
+        default=AGENT_RUNTIME_OPENAPI_PATH,
+    )
+    parser.add_argument(
+        "--smoke-flows",
+        type=Path,
+        default=SMOKE_FLOWS_PATH,
+    )
+    return parser.parse_args(argv)
+
+
+def _validate_service_boundaries(
+    service_paths: dict[str, dict[object, object]],
+) -> list[str]:
+    errors: list[str] = []
+    product_agent_paths = sorted(
+        str(path)
+        for path in service_paths[PRODUCT_SERVICE]
+        if str(path).startswith("/v1/agent/")
+    )
+    for path in product_agent_paths:
+        errors.append(
+            f"Product OpenAPI must not expose Agent Runtime path: {path}"
+        )
+
+    runtime_exempt_paths = {"/v1/health/live", "/v1/health/ready"}
+    invalid_runtime_paths = sorted(
+        str(path)
+        for path in service_paths[AGENT_RUNTIME_SERVICE]
+        if not str(path).startswith("/v1/agent/")
+        and path not in runtime_exempt_paths
+    )
+    for path in invalid_runtime_paths:
+        errors.append(
+            f"Agent Runtime OpenAPI contains Product-owned path: {path}"
+        )
+    return errors
+
+
+def _validate_agent_runtime_pattern(
+    schema: dict[str, object],
+) -> list[str]:
+    components = schema.get("components")
+    schemas = components.get("schemas") if isinstance(components, dict) else None
+    run_create = (
+        schemas.get("AgentRunCreate") if isinstance(schemas, dict) else None
+    )
+    properties = (
+        run_create.get("properties") if isinstance(run_create, dict) else None
+    )
+    runtime_pattern = (
+        properties.get("runtime_pattern")
+        if isinstance(properties, dict)
+        else None
+    )
+    variants = (
+        runtime_pattern.get("anyOf")
+        if isinstance(runtime_pattern, dict)
+        else None
+    )
+    expected_variants = [
+        {
+            "const": REQUIRED_AGENT_RUNTIME_PATTERN,
+            "type": "string",
+        },
+        {"type": "null"},
+    ]
+    if variants == expected_variants:
+        return []
+    return [
+        "AgentRunCreate.runtime_pattern must accept only "
+        f"{REQUIRED_AGENT_RUNTIME_PATTERN!r}; found {variants!r}."
+    ]
 
 
 def _validate_step(
     paths: dict[object, object],
+    service: str,
     flow_name: str,
     index: int,
     step: object,
@@ -215,7 +285,8 @@ def _validate_step(
 
     if operation is None:
         errors.append(
-            f"{flow_name}[{index}] {method} {raw_path} is not in OpenAPI."
+            f"{flow_name}[{index}] {method} {raw_path} is not in "
+            f"{service} OpenAPI."
         )
     else:
         headers = set(_list(step.get("headers")))

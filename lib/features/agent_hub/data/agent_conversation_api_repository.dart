@@ -255,8 +255,10 @@ List<AgentStreamImageInput> _imagesFromAttachments(Object? value) {
     if (item is! Map) continue;
     final map = Map<String, Object?>.from(item);
     if (_string(map['type']).trim() != 'image') continue;
+    final assetId = _string(map['asset_id'] ?? map['assetId']).trim();
     final fileId = _string(map['file_id'] ?? map['fileId']).trim();
-    if (fileId.isEmpty) continue;
+    final contentId = assetId.isNotEmpty ? assetId : fileId;
+    if (contentId.isEmpty) continue;
     final mimeType = _string(
       map['content_type'] ?? map['mime_type'] ?? map['mimeType'],
     ).trim();
@@ -265,7 +267,8 @@ List<AgentStreamImageInput> _imagesFromAttachments(Object? value) {
     images.add(
       AgentStreamImageInput(
         dataUrl: '',
-        fileId: fileId,
+        assetId: assetId,
+        fileId: contentId,
         mimeType: mimeType.isEmpty ? 'image/png' : mimeType,
         name: name.isEmpty ? 'image.png' : name,
         size: _int(map['size']) ?? 0,

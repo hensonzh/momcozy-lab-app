@@ -3,6 +3,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import 'app/momcozy_app.dart';
 import 'app/momcozy_api_runtime.dart';
+import 'core/config/momcozy_app_capabilities.dart';
 import 'core/network/staging_certificate_trust.dart';
 import 'core/update/app_release_lifecycle.dart';
 import 'features/agent_hub/data/card_export.dart';
@@ -11,15 +12,19 @@ import 'features/media/data/product_asset_file_cache.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureStagingCertificateTrust();
-  final packageInfo = await PackageInfo.fromPlatform();
-  final lifecycle = AppReleaseLifecycle(
-    releaseId: _releaseId(packageInfo),
+  const capabilities = MomCozyAppCapabilities.fromEnvironment();
+  final releasePolicy = await prepareAppReleaseLifecycle(
+    enabled: capabilities.releaseResetLifecycleEnabled,
+    loadReleaseId: () async => _releaseId(await PackageInfo.fromPlatform()),
     clearFileCache: _clearAccountFileCaches,
   );
-  await lifecycle.prepareForLaunch();
   final runtime = await MomCozyApiRuntime.bootstrap();
   runApp(
-    MomCozyFlutterApp(apiRuntime: runtime, onboardingReleasePolicy: lifecycle),
+    MomCozyFlutterApp(
+      apiRuntime: runtime,
+      capabilities: capabilities,
+      onboardingReleasePolicy: releasePolicy,
+    ),
   );
 }
 

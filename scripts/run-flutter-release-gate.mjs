@@ -4,10 +4,22 @@ import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { withFlutterApiDartDefines } from "./flutter-api-config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
 const flutterAppDir = projectRoot;
+
+if (process.argv.includes("--help") || process.argv.includes("-h")) {
+  console.log(`Usage:
+  MOMCOZY_API_BASE_URL=https://product.example.test \\
+  MOMCOZY_AGENT_API_BASE_URL=https://agent.example.test \\
+  make flutter-release-gate
+
+Use --check-config to validate the required staging URLs without running the gate.`);
+  process.exit(0);
+}
+
 const toolchainConfig = JSON.parse(
   readFileSync(path.join(projectRoot, "flutter-toolchain.json"), "utf8"),
 );
@@ -51,6 +63,25 @@ const hasReleaseSigning = signingKeys.every((key) =>
 );
 const requiresReleaseSigning =
   String(env.MOMCOZY_REQUIRE_RELEASE_SIGNING || "").trim() === "1";
+
+let stagingApiDartDefines;
+try {
+  stagingApiDartDefines = withFlutterApiDartDefines({
+    flavor: "staging",
+    dartDefines: [
+      `MOMCOZY_API_BASE_URL=${env.MOMCOZY_API_BASE_URL || ""}`,
+      `MOMCOZY_AGENT_API_BASE_URL=${env.MOMCOZY_AGENT_API_BASE_URL || ""}`,
+    ],
+  });
+} catch (error) {
+  console.error(`FAIL ${error.message}`);
+  process.exit(1);
+}
+
+if (process.argv.includes("--check-config")) {
+  console.log("Flutter release gate staging API config is valid.");
+  process.exit(0);
+}
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
   console.error("Invalid repository root: missing pubspec.yaml.");
@@ -106,6 +137,7 @@ const steps = [
       "--flavor",
       "staging",
       "--dart-define=MOMCOZY_ENV=staging",
+      ...stagingApiDartDefines.map((define) => `--dart-define=${define}`),
     ],
     projectRoot,
   ],

@@ -24,12 +24,14 @@ class BirthPrepProfileDefaults {
     ]);
     return BirthPrepProfileDefaults(
       age: _profileAge(profile['age']),
-      dueDateOrWeek: currentCareStage == 'pregnancy'
+      dueDateOrWeek: currentCareStage == null || currentCareStage == 'pregnancy'
           ? _firstProfileText(profile, const [
               'birth_prep_due_date_or_week',
               'birthPrepDueDateOrWeek',
               'expected_due_date',
               'expectedDueDate',
+              'estimated_due_date',
+              'estimatedDueDate',
             ])
           : null,
       ivf: _firstProfileText(profile, const ['birth_prep_ivf', 'birthPrepIvf']),

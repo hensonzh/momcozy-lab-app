@@ -189,7 +189,8 @@ class AgentStreamEvent {
       type == 'run.completed' ||
       type == 'run.waiting_for_confirmation' ||
       type == 'run.failed' ||
-      type == 'run.cancelled';
+      type == 'run.cancelled' ||
+      type == 'run.expired';
 
   String get mergeKey {
     final toolCallId = this.toolCallId;
@@ -505,11 +506,13 @@ bool _looksLikeStructuredAgentJson(Object? value) {
     'tool_name',
     'safe_args',
     'safe_output',
+    'output_summary',
     'service_skill_id',
     'skill_version',
     'tool_scope',
     'business_facts',
     'display_name',
+    'preferred_name',
     'profile',
     'quick_replies',
     'quickReplies',

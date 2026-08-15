@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_run_create_context.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 
@@ -29,6 +30,7 @@ void main() {
             token: 'secret-token',
           ),
           payloadFactory: buildProductionAgentRunPayload,
+          runCreateContextProvider: _runCreateContextProvider,
           runConnector: runConnector,
           streamConnector: streamConnector,
         ),
@@ -53,7 +55,13 @@ void main() {
         'poll_interval_seconds': '0.01',
       });
       expect(postedBody['message'], 'Review my pumping pattern.');
-      expect(postedBody['runtime_pattern'], 'sdk_only');
+      expect(postedBody['runtime_pattern'], 'proprietary_runtime');
+      expect(postedBody['client_context'], {
+        'source': 'io-transport-test',
+        'locale': 'en-US',
+        'timezone': 'Asia/Shanghai',
+        'message_sent_at': '2026-07-26T16:30:00+08:00',
+      });
       expect(postedBody.containsKey('user_id'), isFalse);
       expect(
         runConnector.headers,
@@ -81,6 +89,7 @@ void main() {
               token: 'secret-token',
             ),
             payloadFactory: buildProductionAgentRunPayload,
+            runCreateContextProvider: _runCreateContextProvider,
             runConnector: runConnector,
             streamConnector: streamConnector,
           ),
@@ -147,6 +156,33 @@ void main() {
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
         );
+      },
+    );
+
+    test(
+      'production run status reader treats expired runs as terminal',
+      () async {
+        final connector = _RecordingControlHttpGetConnector(
+          const AgentStreamControlHttpResponse(
+            statusCode: 200,
+            body:
+                '{"id":"run-expired-001","thread_id":"thread-expired-001","status":"expired","error_code":"run_expired"}',
+          ),
+        );
+        final reader = ProductionAgentRunStatusReader(
+          runsEndpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8010/v1/agent/runs'),
+          ),
+          connector: connector,
+        );
+
+        final snapshot = await reader.read('run-expired-001');
+        final terminal = snapshot.terminalEvent();
+
+        expect(snapshot.status, AgentRunLifecycleStatus.expired);
+        expect(snapshot.status.isTerminal, isTrue);
+        expect(terminal?.type, 'run.expired');
+        expect(terminal?.payload['code'], 'run_expired');
       },
     );
 
@@ -235,6 +271,7 @@ void main() {
               uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
             ),
             payloadFactory: buildProductionAgentRunPayload,
+            runCreateContextProvider: _runCreateContextProvider,
             runConnector: runConnector,
             runCreationTimeout: const Duration(milliseconds: 10),
           ),
@@ -347,6 +384,7 @@ void main() {
               tokenProvider: () => token,
             ),
             payloadFactory: buildProductionAgentRunPayload,
+            runCreateContextProvider: _runCreateContextProvider,
             onUnauthorized: () async {
               refreshCount += 1;
               token = 'new-token';
@@ -458,13 +496,16 @@ void main() {
       final response = await connector.post(
         Uri.parse('http://${server.address.host}:${server.port}/v1/agent/runs'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'message': '你好', 'runtime_pattern': 'sdk_only'}),
+        body: jsonEncode({
+          'message': '你好',
+          'runtime_pattern': 'proprietary_runtime',
+        }),
       );
 
       expect(response.statusCode, 201);
       expect(jsonDecode(await receivedBody) as Map<String, Object?>, {
         'message': '你好',
-        'runtime_pattern': 'sdk_only',
+        'runtime_pattern': 'proprietary_runtime',
       });
     });
 
@@ -573,6 +614,88 @@ void main() {
       expect(networkFailure.error, isA<StateError>());
     });
 
+    test('cancel client refreshes authorization once after 401', () async {
+      var token = 'old-token';
+      var refreshCount = 0;
+      final connector =
+          _RecordingControlHttpConnector(
+              const AgentStreamControlHttpResponse(
+                statusCode: 401,
+                body: '{"error":{"code":"authentication_required"}}',
+              ),
+            )
+            ..queuedResponses.add(
+              const AgentStreamControlHttpResponse(
+                statusCode: 200,
+                body: '{"id":"run-fixture-tool-001","status":"cancelled"}',
+              ),
+            );
+      final client = AgentStreamCancelClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8010/v1/agent/runs'),
+          tokenProvider: () => token,
+        ),
+        onUnauthorized: () async {
+          refreshCount += 1;
+          token = 'new-token';
+          return true;
+        },
+        connector: connector,
+      );
+
+      final result = await client.cancel(
+        const AgentStreamCancelRequest(
+          threadId: 'thread-fixture-001',
+          runId: 'run-fixture-tool-001',
+        ),
+      );
+
+      expect(result.acknowledged, isTrue);
+      expect(result.statusCode, 200);
+      expect(refreshCount, 1);
+      expect(connector.requests, hasLength(2));
+      expect(
+        connector.requests.first.headers,
+        containsPair('Authorization', 'Bearer old-token'),
+      );
+      expect(
+        connector.requests.last.headers,
+        containsPair('Authorization', 'Bearer new-token'),
+      );
+    });
+
+    test('cancel client keeps 401 unacknowledged when refresh fails', () async {
+      var refreshCount = 0;
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 401,
+          body: '{"error":{"code":"authentication_required"}}',
+        ),
+      );
+      final client = AgentStreamCancelClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8010/v1/agent/runs'),
+        ),
+        onUnauthorized: () async {
+          refreshCount += 1;
+          return false;
+        },
+        connector: connector,
+      );
+
+      final result = await client.cancel(
+        const AgentStreamCancelRequest(
+          threadId: 'thread-fixture-001',
+          runId: 'run-fixture-tool-001',
+        ),
+      );
+
+      expect(result.acknowledged, isFalse);
+      expect(result.statusCode, 401);
+      expect(refreshCount, 1);
+      expect(connector.requests, hasLength(1));
+    });
+
     test(
       'action client posts confirmation and rejection to action-scoped endpoints',
       () async {
@@ -595,6 +718,7 @@ void main() {
           const AgentStreamActionConfirmRequest(
             actionId: 'action-fixture-001',
             editedApplyPayload: {'priority': 'normal'},
+            idempotencyKey: 'confirm-action-fixture-001',
           ),
         );
 
@@ -616,7 +740,7 @@ void main() {
         );
         expect(
           connector.headers,
-          containsPair('Idempotency-Key', 'agent-action-action-fixture-001'),
+          containsPair('Idempotency-Key', 'confirm-action-fixture-001'),
         );
         expect(jsonDecode(connector.body!) as Map<String, Object?>, {
           'edited_apply_payload': {'priority': 'normal'},
@@ -647,6 +771,92 @@ void main() {
         });
       },
     );
+
+    test(
+      'action client refreshes once and preserves confirmation idempotency',
+      () async {
+        var token = 'old-token';
+        var refreshCount = 0;
+        final connector =
+            _RecordingControlHttpConnector(
+                const AgentStreamControlHttpResponse(
+                  statusCode: 401,
+                  body: '{"error":{"code":"authentication_required"}}',
+                ),
+              )
+              ..queuedResponses.add(
+                const AgentStreamControlHttpResponse(
+                  statusCode: 200,
+                  body: '{"id":"action-fixture-001","status":"confirmed"}',
+                ),
+              );
+        final client = AgentStreamActionClient(
+          endpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8010/v1/agent/actions'),
+            tokenProvider: () => token,
+          ),
+          onUnauthorized: () async {
+            refreshCount += 1;
+            token = 'new-token';
+            return true;
+          },
+          connector: connector,
+        );
+
+        final result = await client.confirm(
+          const AgentStreamActionConfirmRequest(
+            actionId: 'action-fixture-001',
+            idempotencyKey: 'confirm-action-fixture-001',
+          ),
+        );
+
+        expect(result.accepted, isTrue);
+        expect(result.statusCode, 200);
+        expect(refreshCount, 1);
+        expect(connector.requests, hasLength(2));
+        expect(
+          connector.requests.first.headers,
+          containsPair('Authorization', 'Bearer old-token'),
+        );
+        expect(
+          connector.requests.last.headers,
+          containsPair('Authorization', 'Bearer new-token'),
+        );
+        expect(
+          connector.requests.last.headers['Idempotency-Key'],
+          connector.requests.first.headers['Idempotency-Key'],
+        );
+      },
+    );
+
+    test('action client returns the 401 when refresh fails', () async {
+      var refreshCount = 0;
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 401,
+          body: '{"error":{"code":"authentication_required"}}',
+        ),
+      );
+      final client = AgentStreamActionClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8010/v1/agent/actions'),
+        ),
+        onUnauthorized: () async {
+          refreshCount += 1;
+          return false;
+        },
+        connector: connector,
+      );
+
+      final result = await client.confirm(
+        const AgentStreamActionConfirmRequest(actionId: 'action-fixture-001'),
+      );
+
+      expect(result.accepted, isFalse);
+      expect(result.statusCode, 401);
+      expect(refreshCount, 1);
+      expect(connector.requests, hasLength(1));
+    });
 
     test(
       'client event client records safe local events without user authority',
@@ -743,6 +953,92 @@ void main() {
     });
 
     test(
+      'client event client refreshes authorization once after 401',
+      () async {
+        var token = 'old-token';
+        var refreshCount = 0;
+        final connector =
+            _RecordingControlHttpConnector(
+                const AgentStreamControlHttpResponse(
+                  statusCode: 401,
+                  body: '{"error":{"code":"authentication_required"}}',
+                ),
+              )
+              ..queuedResponses.add(
+                const AgentStreamControlHttpResponse(
+                  statusCode: 201,
+                  body: '{"event_id":"event-client-001","type":"client.event"}',
+                ),
+              );
+        final client = AgentStreamClientEventClient(
+          endpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8010/v1/agent/runs'),
+            tokenProvider: () => token,
+          ),
+          onUnauthorized: () async {
+            refreshCount += 1;
+            token = 'new-token';
+            return true;
+          },
+          connector: connector,
+        );
+
+        final result = await client.post(
+          const AgentStreamClientEventRequest(
+            eventType: 'ui.quick_reply.clicked',
+            runId: 'run-client-event-001',
+            occurredAt: '2026-06-29T10:00:00+08:00',
+          ),
+        );
+
+        expect(result.sent, isTrue);
+        expect(refreshCount, 1);
+        expect(connector.requests, hasLength(2));
+        expect(
+          connector.requests.first.headers,
+          containsPair('Authorization', 'Bearer old-token'),
+        );
+        expect(
+          connector.requests.last.headers,
+          containsPair('Authorization', 'Bearer new-token'),
+        );
+      },
+    );
+
+    test('client event client reports 401 when refresh fails', () async {
+      var refreshCount = 0;
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 401,
+          body: '{"error":{"code":"authentication_required"}}',
+        ),
+      );
+      final client = AgentStreamClientEventClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8010/v1/agent/runs'),
+        ),
+        onUnauthorized: () async {
+          refreshCount += 1;
+          return false;
+        },
+        connector: connector,
+      );
+
+      final result = await client.post(
+        const AgentStreamClientEventRequest(
+          eventType: 'ui.quick_reply.clicked',
+          runId: 'run-client-event-001',
+          occurredAt: '2026-06-29T10:00:00+08:00',
+        ),
+      );
+
+      expect(result.sent, isFalse);
+      expect(result.error, contains('authentication_required'));
+      expect(refreshCount, 1);
+      expect(connector.requests, hasLength(1));
+    });
+
+    test(
       'client event client reports guard and local recorder failures',
       () async {
         const client = AgentStreamClientEventClient(sent: false);
@@ -780,6 +1076,20 @@ const _request = AgentStreamRequest(
   threadId: 'thread-fixture-001',
   metadata: {'source': 'io-transport-test'},
 );
+
+const _runCreateContextProvider = _FixedRunCreateContextProvider();
+
+class _FixedRunCreateContextProvider implements AgentRunCreateContextProvider {
+  const _FixedRunCreateContextProvider();
+
+  @override
+  Future<AgentRunCreateContext> load() async {
+    return const AgentRunCreateContext(
+      timezone: 'Asia/Shanghai',
+      messageSentAt: '2026-07-26T16:30:00+08:00',
+    );
+  }
+}
 
 class _RecordingSseGetConnector implements AgentStreamSseGetConnector {
   _RecordingSseGetConnector(this.seedFrames);

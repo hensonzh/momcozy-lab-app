@@ -73,20 +73,53 @@ MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS
 MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD
 ```
 
+## MotionPose 模型供应
+
+Android 构建继续使用固定版本的 MediaPipe Pose Landmarker Lite 模型，并在打包前校验固定 SHA-256。首次在线构建会把校验后的模型写入 Gradle User Home 的 Momcozy 专用缓存；后续 clean build 可复用该缓存。
+
+离线或隔离网络环境可显式提供已经过审批的模型文件：
+
+```bash
+MOMCOZY_POSE_MODEL_FILE=/absolute/path/to/pose_landmarker_lite.task \
+  node scripts/build-flutter-android-apk.mjs \
+    --mode release \
+    --flavor staging \
+    --dart-define=MOMCOZY_ENV=staging \
+    --dart-define=MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+    --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
+```
+
+本地文件仍必须匹配 Gradle 配置中的固定 SHA-256；离线模式下既没有有效缓存、也没有提供该变量时，构建会快速失败，不会隐式访问网络。
+
 CI / internal distribution 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制缺少 signing env 时失败。
 
 ## 当前构建命令
 
 ```bash
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 make flutter-release-gate
 ```
 
 或直接在仓库根目录构建：
 
 ```bash
-flutter build apk --debug --flavor local
-flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
+node scripts/build-flutter-android-apk.mjs \
+  --mode debug \
+  --flavor local
+
+node scripts/build-flutter-android-apk.mjs \
+  --mode release \
+  --flavor staging \
+  --dart-define=MOMCOZY_ENV=staging \
+  --dart-define=MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
 ```
+
+低层 APK、下载页和一键发布封装共享同一配置校验。`local` 缺省注入 Product
+`http://127.0.0.1:8769` 与 Agent `http://127.0.0.1:8010`；`staging` /
+`production` 必须显式传入两个非 loopback HTTPS URL。直接调用裸
+`flutter build` 不具备这层 fail-closed 门禁，不应用于分发产物。
 
 当前本机验证：
 

@@ -27,11 +27,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>用于拍摄头像，以及在动态体态评估中进行仅限本机的人体关键点识别。</string>
+	<string>用于拍摄头像或智能体图片，并在动态体态评估中进行仅限本机的人体关键点识别。</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>用于动态体态评估中的独立实时语音指导与对话。</string>
+	<string>用于录制语音消息，以及动态体态评估中的实时语音指导与对话。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>用于选择头像并生成你的 Momcozy 数字人形象。</string>
+	<string>用于选择头像或母婴场景图片，以生成数字人形象或发送给智能体分析。</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -42,6 +42,7 @@ class MomCozyFeaturePage extends StatelessWidget {
     this.routeExtra,
     this.onLogout,
     this.onBabySelected,
+    this.extendedProductResourcesEnabled = false,
   });
 
   final String path;
@@ -54,6 +55,7 @@ class MomCozyFeaturePage extends StatelessWidget {
   final Object? routeExtra;
   final Future<void> Function()? onLogout;
   final Future<void> Function(String babyId)? onBabySelected;
+  final bool extendedProductResourcesEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -96,15 +98,21 @@ class MomCozyFeaturePage extends StatelessWidget {
         path: path,
         onBack: () => context.go('/more/body-profile'),
       ),
-      '/me' => MeBabyOverviewPage(path: path, identity: ProfileIdentity.mom),
+      '/me' => MeBabyOverviewPage(
+        path: path,
+        identity: ProfileIdentity.mom,
+        extendedProductResourcesEnabled: extendedProductResourcesEnabled,
+      ),
       '/baby' => MeBabyOverviewPage(
         path: path,
         identity: ProfileIdentity.baby,
+        extendedProductResourcesEnabled: extendedProductResourcesEnabled,
         onBabySelected: onBabySelected,
       ),
       '/baby/development' => MeBabyOverviewPage(
         path: path,
         identity: ProfileIdentity.baby,
+        extendedProductResourcesEnabled: extendedProductResourcesEnabled,
         onBabySelected: onBabySelected,
       ),
       '/notifications' => NotificationsPage(

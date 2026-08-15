@@ -65,7 +65,7 @@ void main() {
                 {
                   'type': 'image',
                   'data_url': 'data:image/png;base64,must-not-be-restored',
-                  'file_id': '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+                  'asset_id': '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
                   'content_type': 'image/png',
                   'original_filename': '记录.png',
                   'size': 1,
@@ -155,6 +155,10 @@ void main() {
       expect(history.messages.first.images.single.name, '记录.png');
       expect(
         history.messages.first.images.single.fileId,
+        '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+      );
+      expect(
+        history.messages.first.images.single.assetId,
         '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
       );
       expect(history.messages.first.images.single.dataUrl, isEmpty);

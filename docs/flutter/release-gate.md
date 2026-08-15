@@ -3,8 +3,13 @@
 ## 命令
 
 ```bash
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 make flutter-release-gate
 ```
+
+`example.test` 是文档占位域名，实际执行发布 gate 时必须替换为已验收的
+staging 服务地址。
 
 该 gate 会在仓库根目录顺序执行：
 
@@ -16,8 +21,22 @@ dart format --set-exit-if-changed lib test integration_test tool
 flutter analyze
 flutter test
 dart run tool/staging_smoke.dart
-flutter build apk --debug --flavor local
-flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
+node scripts/build-flutter-android-apk.mjs --mode debug --flavor local
+node scripts/build-flutter-android-apk.mjs --mode release --flavor staging \
+  --dart-define=MOMCOZY_ENV=staging \
+  --dart-define=MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
+```
+
+所有受支持的打包封装都会执行同一套 API 配置校验。`local` 缺省注入 Product
+`http://127.0.0.1:8769` 与 Agent `http://127.0.0.1:8010`；`staging` 和
+`production` 必须显式提供两个非空、非 loopback HTTPS URL，否则在运行
+Flutter/Gradle 前失败。可用下面的命令只检查 release gate 配置：
+
+```bash
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+node scripts/run-flutter-release-gate.mjs --check-config
 ```
 
 `tool/staging_smoke.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
@@ -39,6 +58,8 @@ cd android
 ## 内测构建与发布
 
 ```bash
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 ./scripts/build-flutter-app.sh
 ```
 
@@ -49,6 +70,8 @@ GitHub Pages 极简下载页。APK 不进入 Git 历史。
 只生成本地产物、不上传：
 
 ```bash
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 MOMCOZY_SKIP_UPLOAD=1 ./scripts/build-flutter-app.sh
 ```
 
@@ -79,6 +102,8 @@ MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD
 强制要求 release signing：
 
 ```bash
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 MOMCOZY_REQUIRE_RELEASE_SIGNING=1 make flutter-release-gate
 ```
 

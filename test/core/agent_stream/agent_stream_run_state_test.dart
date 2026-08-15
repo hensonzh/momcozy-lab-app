@@ -224,6 +224,94 @@ void main() {
       expect(state.events.length, 2);
     });
 
+    test(
+      'keeps replay keys isolated across reducer snapshots and branches',
+      () {
+        final snapshot = const AgentStreamRunState().start().applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-replay-root',
+            'type': 'run.started',
+            'thread_id': 'thread-replay-branches',
+            'run_id': 'run-replay-branches',
+          }),
+        );
+
+        final leftBranch = snapshot.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-replay-left',
+            'type': 'message.delta',
+            'thread_id': 'thread-replay-branches',
+            'run_id': 'run-replay-branches',
+            'payload': {'text': 'left'},
+          }),
+        );
+        final rightBranch = snapshot.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-replay-right',
+            'type': 'message.delta',
+            'thread_id': 'thread-replay-branches',
+            'run_id': 'run-replay-branches',
+            'payload': {'text': 'right'},
+          }),
+        );
+
+        expect(snapshot.seenReplayKeys, {'event:evt-replay-root'});
+        expect(leftBranch.seenReplayKeys, {
+          'event:evt-replay-root',
+          'event:evt-replay-left',
+        });
+        expect(rightBranch.seenReplayKeys, {
+          'event:evt-replay-root',
+          'event:evt-replay-right',
+        });
+        expect(leftBranch.textContent, 'left');
+        expect(rightBranch.textContent, 'right');
+      },
+    );
+
+    test('merges repeated assistant completion events by message id', () {
+      var state = const AgentStreamRunState().start();
+
+      for (final event in [
+        const {
+          'event_id': 'evt-completed-primary',
+          'type': 'message.completed',
+          'thread_id': 'thread-completed-001',
+          'run_id': 'run-completed-001',
+          'message_id': 'message-completed-001',
+          'sequence': 2,
+          'payload': {'role': 'assistant', 'text': '最终回复。'},
+        },
+        const {
+          'event_id': 'evt-completed-replay-alias',
+          'type': 'message.completed',
+          'thread_id': 'thread-completed-001',
+          'run_id': 'run-completed-001',
+          'message_id': 'message-completed-001',
+          'sequence': 3,
+          'payload': {
+            'role': 'assistant',
+            'text': '最终回复。',
+            'quick_replies': [
+              {'text': '继续聊这个'},
+              {'text': '给我更多细节'},
+              {'text': '换个方向'},
+            ],
+          },
+        },
+      ].map(AgentStreamEvent.new)) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.textContent, '最终回复。');
+      expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
+      expect(
+        state.events.where((event) => event.type == 'message.completed'),
+        hasLength(1),
+      );
+      expect(state.lastSequence, 3);
+    });
+
     test('keeps streamed text stable when assistant completed arrives', () {
       var state = const AgentStreamRunState().start();
 

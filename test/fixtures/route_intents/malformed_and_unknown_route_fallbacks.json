@@ -21,6 +21,13 @@
         }
       },
       {
+        "source": "media-viewer",
+        "state": {
+          "kind": "pdf",
+          "url": "/skill-assets/guides/pump.pdf"
+        }
+      },
+      {
         "source": "ibclc-return",
         "returnTo": "https://evil.example.com/me"
       },
@@ -52,6 +59,12 @@
       }
     },
     {
+      "type": "ShowToast",
+      "payload": {
+        "message": "该资料已失效，请获取最新资料。"
+      }
+    },
+    {
       "type": "RejectUnsafeReturnTo",
       "payload": {
         "fallback": "/"
@@ -70,6 +83,7 @@
     "unsafe route schemes never reach Navigator",
     "unknown same-origin route falls back without crashing",
     "empty media viewer state renders missing-resource UI",
+    "retired skill-assets never reach the media viewer",
     "cross-origin IBCLC return_to is rejected"
   ]
 }

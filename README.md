@@ -38,7 +38,10 @@ make flutter-emulator-smoke
 
 Pinned versions live in [`flutter-toolchain.json`](flutter-toolchain.json);
 `make flutter-check` validates the local SDK/JDK/Android directories and versions against that file.
-`make flutter-release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, local debug APK, and staging release APK.
+`make flutter-release-gate` runs the non-device release gate: format, analyze,
+tests, staging smoke harness, local debug APK, and staging release APK. It
+requires explicit HTTPS, non-loopback `MOMCOZY_API_BASE_URL` and
+`MOMCOZY_AGENT_API_BASE_URL` values for the staging artifact.
 `make flutter-emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `build/emulator-smoke/`, and checks the process/window/crash log.
 
 Direct Flutter commands also run from the repository root:
@@ -48,7 +51,10 @@ flutter pub get
 flutter analyze
 flutter test
 flutter build apk --debug --flavor local
-flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
+flutter build apk --release --flavor staging \
+  --dart-define=MOMCOZY_ENV=staging \
+  --dart-define=MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
 ```
 
 邀请码登录本地联调用父目录命令：
@@ -57,13 +63,15 @@ flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 make flutter-invite-dev
 ```
 
-该命令默认连接 `http://10.0.2.2:8000`，不会传入 `MOMCOZY_API_TOKEN` 或
+该命令默认将 Product 和 Agent 分别连接到 `http://10.0.2.2:8000` 与
+`http://10.0.2.2:8010`，不会传入 `MOMCOZY_API_TOKEN` 或
 `MOMCOZY_REFRESH_TOKEN`，并会先清理 local flavor 安装包，确保进入邀请码登录页。
 如需覆盖模拟器或后端地址：
 
 ```bash
 MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5554 \
 MOMCOZY_API_BASE_URL=http://10.0.2.2:8000 \
+MOMCOZY_AGENT_API_BASE_URL=http://10.0.2.2:8010 \
 make flutter-invite-dev
 ```
 
@@ -72,13 +80,18 @@ Agent Hub 默认使用 SSE transport，并可通过 dart-define 配置：
 ```bash
 flutter run \
   --dart-define=MOMCOZY_API_BASE_URL=http://192.168.x.x:8769 \
-  --dart-define=MOMCOZY_AGENT_RUNS_URL=http://192.168.x.x:8769/v1/agent/runs \
+  --dart-define=MOMCOZY_AGENT_API_BASE_URL=http://192.168.x.x:8010 \
   --dart-define=MOMCOZY_API_TOKEN=APP_API_TEST \
   --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user
 ```
 
-Android 真机不能使用 `127.0.0.1` 访问电脑上的 Agent 服务，需要改成手机可访问的局域网或公网地址。Android emulator 可使用 `10.0.2.2`。
-如 cancel 服务和统一 API 分开部署，可额外设置 `MOMCOZY_AGENT_CANCEL_URL`。
+Product 请求始终使用 `MOMCOZY_API_BASE_URL`；所有 `/v1/agent/*` HTTP/SSE
+请求使用独立的 `MOMCOZY_AGENT_API_BASE_URL`。Android 真机不能使用
+`127.0.0.1` 访问电脑上的服务，需要改成手机可访问的局域网或公网地址；
+Android emulator 可使用 `10.0.2.2`。
+
+当前部署契约使用 `runtime_pattern: proprietary_runtime`。客户端不会把 Product
+和 Agent OpenAPI 合并成一个服务，也不会把 bearer token 放进 URL。
 
 Current Android package IDs:
 
@@ -90,7 +103,11 @@ Current Android package IDs:
 
 ## New-user onboarding
 
-Authenticated users whose backend onboarding state is incomplete are held on
+Backend-driven onboarding is capability-gated while the split Product contract
+is being rolled out. It is disabled by default, so a missing onboarding endpoint
+cannot block login or the main App shell. Enable it only in a compatible
+environment with `--dart-define=MOMCOZY_ENABLE_ONBOARDING=true`. When enabled,
+authenticated users whose backend onboarding state is incomplete are held on
 the full-screen `/onboarding` route before the main App shell is available. The
 flow collects a stage-exclusive maternal profile, the fields required by that
 stage, and one shared delivery/infant set for postpartum users. It then offers
@@ -103,15 +120,32 @@ completion sub-routes. Portraits are sent only through authenticated multipart
 transport; the backend normalizes them and applies its temporary privacy
 lifecycle.
 
-For the current internal-test policy, startup compares the installed runtime
-version and build number (for example `1.0.0+27`) with the last launched
-release. A changed release clears the local session, all user-scoped secure
-storage, generated-card/product media caches, and prior onboarding completion
-markers while preserving the device ID and last invite code. After the user
-signs in, the App performs the matching idempotent cloud reset before loading
-onboarding. Reset failure keeps the user behind the onboarding gate. Completion
-is recorded per user, so another account on the same device still receives its
-own reset and onboarding flow.
+The destructive internal-test release reset is disabled by default and runs
+only when **both** `MOMCOZY_ENABLE_ONBOARDING=true` and
+`MOMCOZY_ENABLE_RELEASE_RESET=true` are supplied as `--dart-define` values.
+Enabling the reset flag alone has no effect. With both flags enabled, startup
+compares the installed runtime version and build number (for example
+`1.0.0+55`) with the last launched release. A changed release clears the local
+session, all user-scoped secure storage, generated-card/product media caches,
+and prior onboarding completion markers while preserving the device ID and
+last invite code. After the user signs in, the App performs the matching
+idempotent cloud reset before loading onboarding. Reset failure keeps the user
+behind the onboarding gate. Completion is recorded per user, so another
+account on the same device still receives its own reset and onboarding flow.
+
+Two additional rollout flags fail closed until their backend schemas are
+available in staging:
+
+- `MOMCOZY_ENABLE_AGENT_HISTORY` must remain disabled: the frozen Agent Runtime
+  contract does not expose `GET /v1/agent/threads/{thread_id}/history` yet.
+- `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API=true` enables Body Profile and Motion
+  Assessment routes and extended Me/Baby resources that depend on the extended
+  Product API. By default, the supported profile, feeding, growth, milk-trend,
+  and plan data remains available while unsupported summaries show an explicit
+  unavailable state.
+
+See [the integration baseline](docs/flutter/unified-app-integration.md) for
+contract ownership and verification gates.
 
 ## Contract and Regression Tests
 

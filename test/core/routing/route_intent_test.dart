@@ -69,8 +69,9 @@ void main() {
         );
         expect(actual[1].path, '/unknown-old-page');
         expect(actual[1].payload, containsPair('fallback', 'AgentHub'));
-        expect(actual[3].payload, containsPair('fallback', '/'));
-        expect(actual[4].payload, containsPair('status', 'unknown'));
+        expect(actual[3].type, 'ShowToast');
+        expect(actual[4].payload, containsPair('fallback', '/'));
+        expect(actual[5].payload, containsPair('status', 'unknown'));
       },
     );
 

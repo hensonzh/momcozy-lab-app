@@ -9,7 +9,7 @@ import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_ove
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 
-enum OverviewResourcePhase { initial, loading, data, error }
+enum OverviewResourcePhase { initial, loading, data, error, unavailable }
 
 class ProfileOverviewResource<T> {
   const ProfileOverviewResource._({required this.phase, this.data, this.error});
@@ -26,12 +26,16 @@ class ProfileOverviewResource<T> {
   const ProfileOverviewResource.error(Object value, {T? previous})
     : this._(phase: OverviewResourcePhase.error, data: previous, error: value);
 
+  const ProfileOverviewResource.unavailable()
+    : this._(phase: OverviewResourcePhase.unavailable);
+
   final OverviewResourcePhase phase;
   final T? data;
   final Object? error;
 
   bool get isLoading => phase == OverviewResourcePhase.loading;
   bool get hasError => phase == OverviewResourcePhase.error;
+  bool get isUnavailable => phase == OverviewResourcePhase.unavailable;
 }
 
 class CareStageSelectionState {
@@ -69,6 +73,7 @@ class ProfileOverviewController {
     this.planRepository,
     required this.babyId,
     required this.identity,
+    required this.extendedProductResourcesEnabled,
     required this.timezoneProvider,
     ProfileOverviewCache? cache,
     this.cachePolicy = const ProfileOverviewCachePolicy(),
@@ -82,7 +87,9 @@ class ProfileOverviewController {
     );
     maternalCareOverview =
         ValueNotifier<ProfileOverviewResource<MaternalCareOverview>>(
-          this.cache.maternalCareOverview == null
+          !extendedProductResourcesEnabled
+              ? const ProfileOverviewResource.unavailable()
+              : this.cache.maternalCareOverview == null
               ? const ProfileOverviewResource.initial()
               : ProfileOverviewResource.data(
                   this.cache.maternalCareOverview!.value,
@@ -95,7 +102,9 @@ class ProfileOverviewController {
               : ProfileOverviewResource.data(this.cache.feedingRecords!.value),
         );
     feedingSummary = ValueNotifier<ProfileOverviewResource<FeedingSummary>>(
-      this.cache.feedingSummary == null
+      !extendedProductResourcesEnabled
+          ? const ProfileOverviewResource.unavailable()
+          : this.cache.feedingSummary == null
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.feedingSummary!.value),
     );
@@ -106,27 +115,37 @@ class ProfileOverviewController {
     );
     waterRecords =
         ValueNotifier<ProfileOverviewResource<List<WaterIntakeRecord>>>(
-          this.cache.waterRecords == null
+          !extendedProductResourcesEnabled
+              ? const ProfileOverviewResource.unavailable()
+              : this.cache.waterRecords == null
               ? const ProfileOverviewResource.initial()
               : ProfileOverviewResource.data(this.cache.waterRecords!.value),
         );
     waterTrends = ValueNotifier<ProfileOverviewResource<List<WaterTrendDay>>>(
-      this.cache.waterTrends == null
+      !extendedProductResourcesEnabled
+          ? const ProfileOverviewResource.unavailable()
+          : this.cache.waterTrends == null
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.waterTrends!.value),
     );
     vitalRecords = ValueNotifier<ProfileOverviewResource<List<VitalRecord>>>(
-      this.cache.vitalRecords == null
+      !extendedProductResourcesEnabled
+          ? const ProfileOverviewResource.unavailable()
+          : this.cache.vitalRecords == null
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.vitalRecords!.value),
     );
     sleepRecords = ValueNotifier<ProfileOverviewResource<List<SleepRecord>>>(
-      this.cache.sleepRecords == null
+      !extendedProductResourcesEnabled
+          ? const ProfileOverviewResource.unavailable()
+          : this.cache.sleepRecords == null
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.sleepRecords!.value),
     );
     diaperRecords = ValueNotifier<ProfileOverviewResource<List<DiaperRecord>>>(
-      this.cache.diaperRecords == null
+      !extendedProductResourcesEnabled
+          ? const ProfileOverviewResource.unavailable()
+          : this.cache.diaperRecords == null
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.diaperRecords!.value),
     );
@@ -141,14 +160,17 @@ class ProfileOverviewController {
           : ProfileOverviewResource.data(this.cache.planDashboard!.value),
     );
     final cachedStage =
-        this.cache.maternalCareOverview?.value.stage ??
+        (extendedProductResourcesEnabled
+            ? this.cache.maternalCareOverview?.value.stage
+            : null) ??
         this.cache.overview?.value.mom?.stage;
     careStage = ValueNotifier<CareStageSelectionState>(
       CareStageSelectionState(
         stage: cachedStage,
         isResolved:
             this.cache.overview != null ||
-            this.cache.maternalCareOverview != null,
+            (extendedProductResourcesEnabled &&
+                this.cache.maternalCareOverview != null),
       ),
     );
     recordMutation = ValueNotifier<RecordMutationState>(
@@ -174,6 +196,7 @@ class ProfileOverviewController {
   final PlanRepository? planRepository;
   final String babyId;
   final ProfileIdentity identity;
+  final bool extendedProductResourcesEnabled;
   final Future<String> Function() timezoneProvider;
   final DateTime Function() now;
   final ProfileOverviewCache cache;
@@ -249,20 +272,30 @@ class ProfileOverviewController {
     return {
       ProfileOverviewResourceKey.overview,
       ProfileOverviewResourceKey.milkTrends,
-      if (identity == ProfileIdentity.mom && waterRepository != null)
+      if (extendedProductResourcesEnabled &&
+          identity == ProfileIdentity.mom &&
+          waterRepository != null)
         ProfileOverviewResourceKey.waterRecords,
-      if (identity == ProfileIdentity.mom && waterTrendRepository != null)
+      if (extendedProductResourcesEnabled &&
+          identity == ProfileIdentity.mom &&
+          waterTrendRepository != null)
         ProfileOverviewResourceKey.waterTrends,
-      if (identity == ProfileIdentity.mom && vitalRepository != null)
+      if (extendedProductResourcesEnabled &&
+          identity == ProfileIdentity.mom &&
+          vitalRepository != null)
         ProfileOverviewResourceKey.vitals,
-      if (identity == ProfileIdentity.mom &&
+      if (extendedProductResourcesEnabled &&
+          identity == ProfileIdentity.mom &&
           maternalCareOverviewRepository != null)
         ProfileOverviewResourceKey.maternalCareOverview,
       if (identity == ProfileIdentity.baby) ...{
         ProfileOverviewResourceKey.feeding,
-        ProfileOverviewResourceKey.feedingSummary,
-        if (sleepRepository != null) ProfileOverviewResourceKey.sleep,
-        if (diaperRepository != null) ProfileOverviewResourceKey.diapers,
+        if (extendedProductResourcesEnabled)
+          ProfileOverviewResourceKey.feedingSummary,
+        if (extendedProductResourcesEnabled && sleepRepository != null)
+          ProfileOverviewResourceKey.sleep,
+        if (extendedProductResourcesEnabled && diaperRepository != null)
+          ProfileOverviewResourceKey.diapers,
         ProfileOverviewResourceKey.growth,
       },
       if (identity == ProfileIdentity.mom && planRepository != null)
@@ -286,7 +319,9 @@ class ProfileOverviewController {
     required bool showLoading,
     required bool force,
   }) {
-    if (_disposed) return Future<void>.value();
+    if (_disposed || !_isResourceAvailable(resource)) {
+      return Future<void>.value();
+    }
     if (!force && _resourceIsFresh(resource)) {
       return Future<void>.value();
     }
@@ -298,6 +333,24 @@ class ProfileOverviewController {
       resource,
       () => _drainResource(resource),
     );
+  }
+
+  bool _isResourceAvailable(ProfileOverviewResourceKey resource) {
+    if (extendedProductResourcesEnabled) return true;
+    return switch (resource) {
+      ProfileOverviewResourceKey.overview ||
+      ProfileOverviewResourceKey.feeding ||
+      ProfileOverviewResourceKey.milkTrends ||
+      ProfileOverviewResourceKey.growth ||
+      ProfileOverviewResourceKey.plans => true,
+      ProfileOverviewResourceKey.maternalCareOverview ||
+      ProfileOverviewResourceKey.feedingSummary ||
+      ProfileOverviewResourceKey.waterRecords ||
+      ProfileOverviewResourceKey.waterTrends ||
+      ProfileOverviewResourceKey.vitals ||
+      ProfileOverviewResourceKey.sleep ||
+      ProfileOverviewResourceKey.diapers => false,
+    };
   }
 
   Future<void> _drainResource(ProfileOverviewResourceKey resource) async {

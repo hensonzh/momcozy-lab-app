@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/config/momcozy_app_capabilities.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/notifications/data/notifications_api_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
@@ -558,6 +559,7 @@ void main() {
               'user_id': 'profile-overview-user',
               'display_name': 'Avery',
             },
+            infantItems: const [],
           ),
         ),
       );
@@ -2516,9 +2518,17 @@ Future<void> _pumpApp(
 
   await tester.pumpWidget(
     MomCozyFlutterApp(
-      router: createMomCozyRouter(initialLocation: initialLocation),
+      router: createMomCozyRouter(
+        initialLocation: initialLocation,
+        capabilities: const MomCozyAppCapabilities(
+          extendedProductApiEnabled: true,
+        ),
+      ),
       routeIntentPlatform: routes,
       apiRuntime: runtime ?? _runtime(),
+      capabilities: const MomCozyAppCapabilities(
+        extendedProductApiEnabled: true,
+      ),
     ),
   );
   await tester.pumpAndSettle();
@@ -2582,14 +2592,17 @@ MomCozyApiRuntime _runtime({
   ApiJsonTransport? transport,
   ProfileOverviewCache? profileOverviewCache,
 }) {
+  final resolvedTransport = transport ?? _profileOverviewTransport();
   return MomCozyApiRuntime(
-    jsonTransport: transport ?? _profileOverviewTransport(),
+    jsonTransport: resolvedTransport,
+    agentJsonTransport: resolvedTransport,
     userId: 'profile-overview-user',
     babyId: 'profile-overview-baby',
     locale: 'en-US',
     now: () => DateTime.utc(2026, 7, 3),
     timezoneProvider: () async => 'UTC',
     profileOverviewCache: profileOverviewCache,
+    supportsAgentFacts: true,
   );
 }
 

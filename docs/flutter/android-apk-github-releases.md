@@ -18,16 +18,33 @@ gh auth login
 然后执行：
 
 ```bash
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 ./scripts/build-flutter-app.sh
 ```
+
+上面的 `example.test` 仅表示占位地址，发布前必须替换为已验收的真实服务地址。
 
 默认配置：
 
 ```text
-API:       https://lute-momcozylab.luteos.cloud:8443
 Download:  https://hensonzh.github.io/momcozy-lab-releases
 Releases:  hensonzh/momcozy-lab-releases
 Variant:   staging release
+```
+
+`staging` 和 `production` 没有 API 默认值：必须显式提供两个非空、非
+loopback 的 HTTPS 地址，即 Product `MOMCOZY_API_BASE_URL` 与 Agent
+Runtime `MOMCOZY_AGENT_API_BASE_URL`。两者可以使用同一主机，但仍必须分别配置。
+`local` 构建缺省使用 Product `http://127.0.0.1:8769` 和 Agent
+`http://127.0.0.1:8010`。
+
+只校验配置、不安装依赖或启动构建：
+
+```bash
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+./scripts/build-flutter-app.sh --check-config
 ```
 
 脚本会依次：
@@ -44,6 +61,13 @@ Variant:   staging release
 清空该账号的云端业务数据并统一进入 onboarding；同一构建重复启动不会再次清理。
 
 ## 常用参数
+
+以下 staging 示例假定已经导出两个 API 环境变量：
+
+```bash
+export MOMCOZY_API_BASE_URL=https://product-staging.example.test
+export MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
+```
 
 ```bash
 # 只生成本地产物，不发布
@@ -67,8 +91,14 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 \
 ```bash
 MOMCOZY_GITHUB_RELEASE_REPO=hensonzh/momcozy-lab-releases \
 MOMCOZY_DOWNLOAD_BASE_URL=https://hensonzh.github.io/momcozy-lab-releases \
+MOMCOZY_API_BASE_URL=https://product-staging.example.test \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 make flutter-apk-download-site
 ```
+
+`MOMCOZY_EXTRA_DART_DEFINES` 只用于其他开关；其中出现
+`MOMCOZY_API_BASE_URL` 或 `MOMCOZY_AGENT_API_BASE_URL` 会直接失败，不能覆盖
+一等配置。
 
 本地产物结构：
 
