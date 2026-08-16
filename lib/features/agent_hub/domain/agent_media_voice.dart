@@ -174,14 +174,25 @@ String? fallbackAgentMediaVoiceNarration(String? mediaId) {
 Iterable<Map<String, Object?>> _mediaVoiceItemsFromEvent(
   AgentStreamEvent event,
 ) sync* {
-  final queue = <Map<String, Object?>>[
-    event.raw,
-    event.payload,
-    ?_decodedMap(event.raw['content']),
-  ];
+  final queue = <Map<String, Object?>>[];
+  if (event.type == 'tool.completed') {
+    final summary =
+        event.payload['output_summary'] ?? event.payload['outputSummary'];
+    final summaryMap = summary is Map
+        ? Map<String, Object?>.from(summary)
+        : _decodedMap(summary);
+    if (summaryMap == null) return;
+    queue.add(summaryMap);
+  } else {
+    queue.addAll([
+      event.raw,
+      event.payload,
+      ?_decodedMap(event.raw['content']),
+    ]);
+  }
   const nestedKeys = [
-    'safe_output',
-    'safeOutput',
+    'output_summary',
+    'outputSummary',
     'tool_result',
     'toolResult',
     'result',

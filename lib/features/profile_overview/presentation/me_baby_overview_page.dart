@@ -29,12 +29,14 @@ class MeBabyOverviewPage extends StatefulWidget {
     required this.identity,
     this.extendedProductResourcesEnabled = false,
     this.onBabySelected,
+    this.routeExtra,
   });
 
   final String path;
   final ProfileIdentity identity;
   final bool extendedProductResourcesEnabled;
   final Future<void> Function(String babyId)? onBabySelected;
+  final Object? routeExtra;
 
   @override
   State<MeBabyOverviewPage> createState() => _MeBabyOverviewPageState();
@@ -60,6 +62,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   MomCozyApiRuntime? _runtime;
   ProfileOverviewController? _overviewController;
   ProfileOverviewCache? _overviewCache;
+  String? _consumedPlanTaskId;
 
   @override
   void initState() {
@@ -83,7 +86,19 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   @override
   void didUpdateWidget(covariant MeBabyOverviewPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.identity == widget.identity) return;
+    if (oldWidget.identity == widget.identity) {
+      if (oldWidget.routeExtra != widget.routeExtra) {
+        final controller = _overviewController;
+        if (controller != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && identical(controller, _overviewController)) {
+              unawaited(_openPlanTaskIfNeeded(controller));
+            }
+          });
+        }
+      }
+      return;
+    }
     _section = _initialSection(widget.identity);
     _detailsPosition.value = 0;
     _showAvatarLayer = false;
@@ -109,6 +124,7 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       ..addListener(_handleProfileOverviewInvalidated);
     final controller = runtime.createProfileOverviewController(
       initialIdentity: widget.identity,
+      onBabyIdResolved: widget.onBabySelected,
       extendedProductResourcesEnabled: widget.extendedProductResourcesEnabled,
     );
     _overviewController = controller;
@@ -125,9 +141,29 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
   ) async {
     try {
       await controller.initialize();
+      if (!mounted || !identical(controller, _overviewController)) return;
+      await _openPlanTaskIfNeeded(controller);
     } catch (_) {
       // Each resource keeps its own error state for an honest partial UI.
     }
+  }
+
+  Future<void> _openPlanTaskIfNeeded(
+    ProfileOverviewController controller,
+  ) async {
+    final session = widget.routeExtra is PlanSession
+        ? widget.routeExtra! as PlanSession
+        : null;
+    if (session?.kind != PlanSessionKind.feeding ||
+        session!.id == _consumedPlanTaskId ||
+        !identical(controller, _overviewController)) {
+      return;
+    }
+    _consumedPlanTaskId = session.id;
+    await _openRecordComposer(
+      kind: _RecordKind.feeding,
+      planTaskId: session.id,
+    );
   }
 
   void _detachOverviewController() {
@@ -317,7 +353,10 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
     await _openRecordComposer(kind: _RecordKind.pumping);
   }
 
-  Future<void> _openRecordComposer({required _RecordKind kind}) async {
+  Future<void> _openRecordComposer({
+    required _RecordKind kind,
+    String? planTaskId,
+  }) async {
     final controller = _overviewController;
     if (controller == null || controller.recordMutation.value.isSaving) return;
     controller.clearRecordMutationError();
@@ -329,8 +368,11 @@ class _MeBabyOverviewPageState extends State<MeBabyOverviewPage>
       useRootNavigator: true,
       barrierLabel: 'Dismiss add record form',
       backgroundColor: _MeBabyOverviewColors.background,
-      builder: (sheetContext) =>
-          _RecordComposerSheet(controller: controller, kind: kind),
+      builder: (sheetContext) => _RecordComposerSheet(
+        controller: controller,
+        kind: kind,
+        planTaskId: planTaskId,
+      ),
     );
     controller.clearRecordMutationError();
     if (!mounted || saved != true) return;
@@ -1221,10 +1263,15 @@ class _ExtendedResourcesUnavailableBanner extends StatelessWidget {
 enum _RecordKind { pumping, feeding, growth, sleep, diaper }
 
 class _RecordComposerSheet extends StatefulWidget {
-  const _RecordComposerSheet({required this.controller, required this.kind});
+  const _RecordComposerSheet({
+    required this.controller,
+    required this.kind,
+    this.planTaskId,
+  });
 
   final ProfileOverviewController controller;
   final _RecordKind kind;
+  final String? planTaskId;
 
   @override
   State<_RecordComposerSheet> createState() => _RecordComposerSheetState();
@@ -1245,9 +1292,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
   final _wetDiaperCountController = TextEditingController();
   final _bowelMovementCountController = TextEditingController();
   FeedingMethod _feedingMethod = FeedingMethod.bottle;
-  MilkSource _milkSource = MilkSource.breastMilk;
-  FeedingBreastSide? _feedingBreastSide;
-  bool _isPostFeedPumping = false;
   MeasurementContext? _measurementContext = MeasurementContext.routine;
   SleepKind _sleepKind = SleepKind.nap;
   String? _validationError;
@@ -1282,10 +1326,8 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     setState(() {
       _feedingMethod = method;
       if (method == FeedingMethod.directBreastfeeding) {
-        _milkSource = MilkSource.breastMilk;
         _feedingAmountController.clear();
       } else {
-        _feedingBreastSide = null;
         _endedAt = null;
       }
       _validationError = null;
@@ -1330,7 +1372,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
           endedAt: _endedAt,
           leftVolumeMl: leftVolume,
           rightVolumeMl: rightVolume,
-          isPostFeedPumping: _isPostFeedPumping,
+          planTaskId: widget.planTaskId,
         );
       case _RecordKind.feeding:
         final isDirect = _feedingMethod == FeedingMethod.directBreastfeeding;
@@ -1352,9 +1394,8 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
           startedAt: _startedAt,
           endedAt: isDirect ? _endedAt : null,
           feedingMethod: _feedingMethod,
-          milkSource: isDirect ? MilkSource.breastMilk : _milkSource,
           amountMl: amount,
-          breastSide: isDirect ? _feedingBreastSide : null,
+          planTaskId: widget.planTaskId,
         );
       case _RecordKind.growth:
         final weight = _positiveNumber(_weightController);
@@ -1399,6 +1440,7 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
         }
         setState(() => _validationError = null);
         saved = await widget.controller.saveDiaperRecord(
+          changedAt: _startedAt,
           wetDiaperCount: wetCount.value,
           bowelMovementCount: bowelCount.value,
           stoolConsistency: _optionalText(_stoolConsistencyController),
@@ -1732,20 +1774,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        CheckboxListTile(
-                          key: const ValueKey('record-pumping-post-feed'),
-                          contentPadding: EdgeInsets.zero,
-                          value: _isPostFeedPumping,
-                          onChanged: mutation.isSaving
-                              ? null
-                              : (value) => setState(
-                                  () => _isPostFeedPumping = value ?? false,
-                                ),
-                          title: const Text('Pumping after direct feeding'),
-                          subtitle: const Text('Optional'),
-                          controlAffinity: ListTileControlAffinity.leading,
-                        ),
                       ],
                     )
                   else if (_kind == _RecordKind.feeding)
@@ -1820,61 +1848,8 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
                                 ? null
                                 : () => _setEndedAt(null),
                           ),
-                          const SizedBox(height: 18),
-                          const Text(
-                            'Breast side (optional)',
-                            style: _MeBabyOverviewText.supporting,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            children: [
-                              for (final side in FeedingBreastSide.values)
-                                ChoiceChip(
-                                  key: ValueKey(
-                                    'record-feeding-side-${side.apiValue}',
-                                  ),
-                                  label: Text(_feedingBreastSideLabel(side)),
-                                  selected: _feedingBreastSide == side,
-                                  onSelected: mutation.isSaving
-                                      ? null
-                                      : (selected) => setState(
-                                          () => _feedingBreastSide = selected
-                                              ? side
-                                              : null,
-                                        ),
-                                ),
-                            ],
-                          ),
                         ] else ...[
                           const SizedBox(height: 18),
-                          const Text(
-                            'Milk type',
-                            style: _MeBabyOverviewText.supporting,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            children: [
-                              for (final source in const [
-                                MilkSource.breastMilk,
-                                MilkSource.formula,
-                              ])
-                                ChoiceChip(
-                                  key: ValueKey(
-                                    'record-feeding-source-${source.apiValue}',
-                                  ),
-                                  label: Text(_milkSourceLabel(source)),
-                                  selected: _milkSource == source,
-                                  onSelected: mutation.isSaving
-                                      ? null
-                                      : (_) => setState(
-                                          () => _milkSource = source,
-                                        ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
                           _RecordNumberField(
                             fieldKey: const ValueKey('record-feeding-amount'),
                             controller: _feedingAmountController,
@@ -1928,19 +1903,6 @@ class _RecordComposerSheetState extends State<_RecordComposerSheet> {
     );
   }
 }
-
-String _milkSourceLabel(MilkSource source) => switch (source) {
-  MilkSource.breastMilk => 'Breast milk',
-  MilkSource.formula => 'Formula',
-  MilkSource.donorMilk => 'Donor milk',
-  MilkSource.unknown => 'Unknown',
-};
-
-String _feedingBreastSideLabel(FeedingBreastSide side) => switch (side) {
-  FeedingBreastSide.left => 'Left',
-  FeedingBreastSide.right => 'Right',
-  FeedingBreastSide.both => 'Both',
-};
 
 String _formatRecordNumber(double value) {
   return value == value.roundToDouble()

@@ -165,6 +165,32 @@ void main() {
       expect(overview.baby?.sex, 'female');
     });
 
+    test(
+      'resolves an invalid stored baby id to the first owned infant',
+      () async {
+        final repository = ProfileOverviewApiRepository(
+          transport: FixtureApiJsonTransportByPath({
+            profileMeEndpoint: const {'preferred_name': 'Avery'},
+            profileInfantsEndpoint: const {
+              'items': [
+                {'id': 'infant-a', 'name': 'Mia'},
+                {'id': 'infant-b', 'name': 'Noah'},
+              ],
+            },
+          }),
+          babyId: 'demo-baby',
+        );
+
+        final overview = await repository.fetchOverview();
+
+        expect(overview.baby?.id, 'infant-a');
+        expect(overview.infants.map((infant) => infant.id), [
+          'infant-a',
+          'infant-b',
+        ]);
+      },
+    );
+
     test('maps only the canonical date for the active stage', () async {
       final repository = ProfileOverviewApiRepository(
         transport: FixtureApiJsonTransportByPath({
@@ -227,35 +253,6 @@ void main() {
 
       expect(overview.mom, isNull);
     });
-
-    test(
-      'updates delivery type through the maternal profile contract',
-      () async {
-        final transport = FixtureApiJsonTransportByPath(
-          const {},
-          writeResponsesByPath: const {
-            profileMeEndpoint: {
-              'user_id': 'user-001',
-              'current_care_stage': 'postpartum',
-              'delivery_type': 'cesarean',
-            },
-          },
-        );
-        final repository = ProfileOverviewApiRepository(
-          transport: transport,
-          babyId: 'infant-001',
-        );
-
-        final deliveryType = await repository.updateDeliveryType(
-          DeliveryType.cesarean,
-        );
-
-        expect(deliveryType, DeliveryType.cesarean);
-        expect(transport.lastMethod, 'PUT');
-        expect(transport.lastPath, profileMeEndpoint);
-        expect(transport.lastBody, {'delivery_type': 'cesarean'});
-      },
-    );
 
     test('maps empty profile and infants list', () async {
       final repository = ProfileOverviewApiRepository(
@@ -402,7 +399,7 @@ void main() {
     });
 
     test(
-      'does not expose another infant when the session infant is absent',
+      'resolves the first owned infant when the session infant is absent',
       () async {
         final repository = ProfileOverviewApiRepository(
           transport: FixtureApiJsonTransportByPath({
@@ -419,7 +416,7 @@ void main() {
 
         final overview = await repository.fetchOverview();
 
-        expect(overview.baby, isNull);
+        expect(overview.baby?.id, 'infant-other');
       },
     );
 

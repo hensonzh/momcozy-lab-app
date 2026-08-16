@@ -16,10 +16,12 @@ void main() {
           'items': [
             {
               'id': 'lactation-plan',
-              'plan_type': 'lactation',
+              'plan_type': 'milk_management',
               'title': 'Lactation Plan',
               'summary': 'Five sessions every day',
               'status': 'active',
+              'starts_on': '2026-10-01',
+              'ends_on': '2026-10-31',
               'payload': {
                 'week_number': 4,
                 'total_weeks': 8,
@@ -51,7 +53,7 @@ void main() {
               'task_time': '08:00',
               'title': 'Session 1',
               'status': 'completed',
-              'payload': {'value_label': '120 ml'},
+              'payload': {'record_type': 'pumping', 'value_label': '120 ml'},
             },
             {
               'id': 'session-2',
@@ -83,75 +85,81 @@ void main() {
       expect(transport.lastQuery, {'task_date': '2026-10-22', 'limit': 100});
       expect(dashboard.plans, hasLength(2));
       expect(dashboard.plans.first.category, PlanCategory.lactation);
+      expect(dashboard.plans.first.startDate, DateTime(2026, 10, 1));
+      expect(dashboard.plans.first.endDate, DateTime(2026, 10, 31));
       expect(dashboard.plans.first.weekNumber, 4);
       expect(dashboard.plans.first.weeklyCompletedSessions, 3);
       expect(dashboard.plans.first.weeklyTotalSessions, 5);
       expect(dashboard.plans.last.category, PlanCategory.yoga);
       expect(dashboard.sessions, hasLength(2));
       expect(dashboard.sessions.first.status, PlanSessionStatus.completed);
+      expect(dashboard.sessions.first.kind, PlanSessionKind.pumping);
       expect(dashboard.sessions.first.valueLabel, '120 ml');
       expect(dashboard.sessions.last.status, PlanSessionStatus.next);
     },
   );
 
-  test('marks the first pending session as next within each plan', () async {
-    final transport = FixtureApiJsonTransportByPath({
-      planListEndpoint: const {
-        'items': [
-          {
-            'id': 'plan-a',
-            'plan_type': 'lactation',
-            'title': 'Plan A',
-            'payload': <String, Object?>{},
-          },
-          {
-            'id': 'plan-b',
-            'plan_type': 'yoga',
-            'title': 'Plan B',
-            'payload': <String, Object?>{},
-          },
-        ],
-      },
-      planSessionListEndpoint: const {
-        'items': [
-          {
-            'id': 'a-1',
-            'plan_id': 'plan-a',
-            'task_date': '2026-10-22',
-            'task_time': '08:00',
-            'title': 'A first',
-            'status': 'pending',
-          },
-          {
-            'id': 'b-1',
-            'plan_id': 'plan-b',
-            'task_date': '2026-10-22',
-            'task_time': '09:00',
-            'title': 'B first',
-            'status': 'pending',
-          },
-          {
-            'id': 'a-2',
-            'plan_id': 'plan-a',
-            'task_date': '2026-10-22',
-            'task_time': '10:00',
-            'title': 'A second',
-            'status': 'pending',
-          },
-        ],
-      },
-    });
+  test(
+    'preserves skipped and marks the first pending session next per plan',
+    () async {
+      final transport = FixtureApiJsonTransportByPath({
+        planListEndpoint: const {
+          'items': [
+            {
+              'id': 'plan-a',
+              'plan_type': 'lactation',
+              'title': 'Plan A',
+              'payload': <String, Object?>{},
+            },
+            {
+              'id': 'plan-b',
+              'plan_type': 'yoga',
+              'title': 'Plan B',
+              'payload': <String, Object?>{},
+            },
+          ],
+        },
+        planSessionListEndpoint: const {
+          'items': [
+            {
+              'id': 'a-1',
+              'plan_id': 'plan-a',
+              'task_date': '2026-10-22',
+              'task_time': '08:00',
+              'title': 'A first',
+              'status': 'skipped',
+            },
+            {
+              'id': 'b-1',
+              'plan_id': 'plan-b',
+              'task_date': '2026-10-22',
+              'task_time': '09:00',
+              'title': 'B first',
+              'status': 'pending',
+            },
+            {
+              'id': 'a-2',
+              'plan_id': 'plan-a',
+              'task_date': '2026-10-22',
+              'task_time': '10:00',
+              'title': 'A second',
+              'status': 'pending',
+            },
+          ],
+        },
+      });
 
-    final dashboard = await PlanApiRepository(
-      transport: transport,
-    ).fetchDashboard(weekOf: DateTime(2026, 10, 22));
+      final dashboard = await PlanApiRepository(
+        transport: transport,
+      ).fetchDashboard(weekOf: DateTime(2026, 10, 22));
 
-    expect(dashboard.sessions.map((session) => session.status), [
-      PlanSessionStatus.next,
-      PlanSessionStatus.next,
-      PlanSessionStatus.upcoming,
-    ]);
-  });
+      expect(dashboard.sessions.map((session) => session.status), [
+        PlanSessionStatus.skipped,
+        PlanSessionStatus.next,
+        PlanSessionStatus.next,
+      ]);
+    },
+  );
 
   test(
     'starts plan and session requests together for the active-plan path',
@@ -195,11 +203,11 @@ void main() {
               'title': '15 天追奶计划',
               'summary': 'Gradual schedule',
               'status': 'active',
+              'starts_on': '2026-08-11',
+              'ends_on': '2026-08-25',
               'payload': {
                 'schema_version': 'lactation-plan.v1',
                 'goal': 'increase_supply',
-                'start_date': '2026-08-11',
-                'end_date': '2026-08-25',
                 'duration_days': 15,
                 'basis': {'mode': 'history_analysis'},
                 'preferences': {
@@ -340,6 +348,28 @@ void main() {
       'task_date': '2026-10-23',
       'task_time': '18:05',
     });
+  });
+
+  test('updates task state through the typed state endpoint', () async {
+    final transport = FixtureApiJsonTransportByPath(
+      const {},
+      writeResponsesByPath: const {
+        '/v1/plans/tasks/session-2/state': {
+          'id': 'session-2',
+          'status': 'skipped',
+        },
+      },
+    );
+    final repository = PlanApiRepository(transport: transport);
+
+    await repository.updateSessionState(
+      sessionId: 'session-2',
+      state: PlanTaskState.skipped,
+    );
+
+    expect(transport.lastMethod, 'PATCH');
+    expect(transport.lastPath, '/v1/plans/tasks/session-2/state');
+    expect(transport.lastBody, {'state': 'skipped'});
   });
 
   test('session updates invalidate the cached dashboard snapshot', () async {

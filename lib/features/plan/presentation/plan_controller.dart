@@ -199,6 +199,20 @@ class PlanController extends ChangeNotifier {
     );
     await load();
   }
+
+  Future<void> updateSessionState({
+    required String sessionId,
+    required PlanTaskState state,
+  }) async {
+    if (repository is! PlanSessionMutationRepository) {
+      throw UnsupportedError('This Plan source does not support task states.');
+    }
+    await (repository as PlanSessionMutationRepository).updateSessionState(
+      sessionId: sessionId,
+      state: state,
+    );
+    await load();
+  }
 }
 
 DateTime _dateOnly(DateTime value) =>

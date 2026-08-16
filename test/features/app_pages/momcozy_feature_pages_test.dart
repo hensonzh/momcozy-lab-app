@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
@@ -384,9 +385,22 @@ void main() {
       await tester.tap(endButton);
       await tester.pumpAndSettle();
 
-      expect(transport.postedBodies, hasLength(2));
+      expect(
+        transport.mutationPaths.where((path) => path == pumpWorkstateEndpoint),
+        hasLength(2),
+      );
+      expect(
+        transport.mutationPaths.where(
+          (path) => path == pumpMilkRecordsEndpoint,
+        ),
+        hasLength(1),
+      );
+      final lastWorkstateIndex = transport.mutationPaths.lastIndexOf(
+        pumpWorkstateEndpoint,
+      );
       final lastPayload =
-          transport.postedBodies.last['payload'] as Map<String, Object?>;
+          transport.postedBodies[lastWorkstateIndex]['payload']
+              as Map<String, Object?>;
       expect(lastPayload['left'], {
         'state': 0,
         'mode': 'massage_expression',
@@ -396,6 +410,135 @@ void main() {
       expect(find.text('重复结束已拦截'), findsOneWidget);
       expect(find.textContaining('只保留一组结束上传'), findsOneWidget);
       expect(find.text('1/1'), findsOneWidget);
+    });
+
+    testWidgets('pump completion preserves the stable plan task id', (
+      tester,
+    ) async {
+      const taskId = '2ecbf33a-15c5-4d60-bff0-cd16ce36cdae';
+      final transport = FixtureApiJsonTransportByPath(
+        {
+          pumpWorkstateEndpoint: const {
+            'id': 'telemetry-001',
+            'owner_user_id': 'demo-user-fixture',
+            'device_id': 'app-pump-session',
+            'event_type': 'workstate',
+            'occurred_at': '2026-07-01T10:00:00Z',
+            'payload': <String, Object?>{},
+          },
+        },
+        writeResponsesByPath: {
+          pumpMilkRecordsEndpoint: const {
+            'id': '9f3e28d7-d927-4d50-a3ce-b24249f9578a',
+            'pump_start_time': '2026-07-01T00:00:00Z',
+            'milk_volume_ml': 27,
+            'pump_type': 'manual',
+            'source': 'manual',
+          },
+        },
+      );
+      final task = PlanSession(
+        id: taskId,
+        planId: 'milk-plan',
+        title: 'Morning pumping',
+        scheduledAt: DateTime.utc(2026, 7, 1),
+        status: PlanSessionStatus.next,
+        kind: PlanSessionKind.pumping,
+      );
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/pump'),
+          jsonTransport: transport,
+          routeExtra: task,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
+      await _tapScrollableText(tester, '开始');
+      await tester.pumpAndSettle();
+      await _tapScrollableText(tester, '结束');
+      await tester.pumpAndSettle();
+
+      final recordIndex = transport.mutationPaths.indexOf(
+        pumpMilkRecordsEndpoint,
+      );
+      expect(recordIndex, isNonNegative);
+      expect(transport.postedBodies[recordIndex], {
+        'pump_start_time': '2026-07-01T00:00:00.000Z',
+        'pump_end_time': '2026-07-01T00:00:00.000Z',
+        'milk_volume_ml': 27.0,
+        'duration_seconds': 180,
+        'plan_task_id': taskId,
+        'pump_type': 'manual',
+        'source': 'manual',
+      });
+      expect(find.text('奶量记录与计划任务已原子完成。'), findsOneWidget);
+    });
+
+    testWidgets('non-record plan tasks start the matching Agent workflow', (
+      tester,
+    ) async {
+      const taskId = 'd5e23a71-cb3a-423a-8bf8-34317efda608';
+      Object? agentRouteExtra;
+      final transport = FixtureApiJsonTransportByPath({
+        planListEndpoint: const {
+          'items': [
+            {
+              'id': 'f495db63-28a7-4b7d-a688-b294fab40226',
+              'plan_type': 'pregnancy',
+              'title': 'Pregnancy Plan',
+              'summary': 'Daily prenatal guidance',
+              'status': 'active',
+              'payload': <String, Object?>{},
+            },
+          ],
+        },
+        planSessionListEndpoint: const {
+          'items': [
+            {
+              'id': taskId,
+              'plan_id': 'f495db63-28a7-4b7d-a688-b294fab40226',
+              'task_date': '2026-07-01',
+              'task_time': '08:00',
+              'title': 'Prenatal breathing practice',
+              'status': 'pending',
+              'payload': {'activity_type': 'pregnancy'},
+            },
+          ],
+        },
+      });
+      final router = createMomCozyRouter(
+        initialLocation: '/plan',
+        agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) {
+          agentRouteExtra = extra;
+          return const SizedBox(key: ValueKey('agent-plan-task-stub'));
+        },
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          apiRuntime: _appRuntime(jsonTransport: transport),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Start'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('route-page-/pump')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('agent-plan-task-stub')),
+        findsOneWidget,
+      );
+      final extra = agentRouteExtra! as Map;
+      final autoRun = extra['agentAutoRun']! as Map;
+      expect(
+        autoRun['requestMessage'],
+        'Guide me through "Prenatal breathing practice".',
+      );
+      expect(autoRun['idempotencyKey'], 'plan-task-start:$taskId');
+      expect(autoRun['metadata'], {'source': 'plan_task:$taskId'});
     });
 
     testWidgets('pump page clears active session when runtime user changes', (
@@ -2007,9 +2150,7 @@ MomCozyApiRuntime _appRuntime({
                 'id': 'pumping-7001',
                 'pump_type': 'manual',
                 'pump_start_time': '2026-07-01T02:40:00Z',
-                'outputs': <Object?>[
-                  <String, Object?>{'breast_side': 'left', 'volume_ml': 120},
-                ],
+                'milk_volume_ml': 120,
               },
             ],
           },
@@ -2017,15 +2158,15 @@ MomCozyApiRuntime _appRuntime({
             'items': <Object?>[
               <String, Object?>{
                 'date': '2026-06-30',
-                'measured_volume_ml': 110,
+                'pumped_milk_volume_ml': 110,
                 'pumping_count': 2,
-                'measured_pumping_count': 2,
+                'measured_only': true,
               },
               <String, Object?>{
                 'date': '2026-07-01',
-                'measured_volume_ml': 120,
+                'pumped_milk_volume_ml': 120,
                 'pumping_count': 1,
-                'measured_pumping_count': 1,
+                'measured_only': true,
               },
             ],
             'days': 31,
@@ -2036,13 +2177,8 @@ MomCozyApiRuntime _appRuntime({
               <String, Object?>{
                 'id': 'feeding-1001',
                 'infant_id': 'demo-baby-fixture',
-                'feeding_method': 'bottle',
-                'milk_components': <Object?>[
-                  <String, Object?>{
-                    'milk_source': 'breast_milk',
-                    'volume_ml': 80,
-                  },
-                ],
+                'feed_type': 'bottle',
+                'volume_ml': 80,
                 'feed_time': '2026-07-01T06:00:00Z',
               },
             ],

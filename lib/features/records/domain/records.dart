@@ -15,9 +15,9 @@ abstract interface class FeedingRecordsRepository {
     required String babyId,
     required DateTime occurredAt,
     required FeedingMethod feedingMethod,
-    required List<FeedingMilkComponent> milkComponents,
+    double? volumeMl,
     int? durationSeconds,
-    FeedingBreastSide? breastSide,
+    String? planTaskId,
     String? idempotencyKey,
   });
 
@@ -39,9 +39,9 @@ abstract interface class PumpMilkRecordsRepository {
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
     DateTime? endedAt,
-    required List<PumpingOutput> outputs,
+    double? milkVolumeMl,
     int? durationSeconds,
-    bool? isPostFeedPumping,
+    String? planTaskId,
     String? idempotencyKey,
   });
 }
@@ -250,7 +250,6 @@ class PumpMilkRecord {
     this.durationSeconds,
     this.occurredAt,
     this.endedAt,
-    this.isPostFeedPumping,
   });
 
   final String id;
@@ -259,7 +258,6 @@ class PumpMilkRecord {
   final int? durationSeconds;
   final DateTime? occurredAt;
   final DateTime? endedAt;
-  final bool? isPostFeedPumping;
 
   double? get measuredVolumeMl {
     final values = outputs

@@ -305,11 +305,23 @@ void main() {
       expect(planRepository.snapshotFor(weekOf: fetchedAt), isNotNull);
 
       runtime.handleAgentApplicationEvent(
-        _recordChangedEvent('plans.lactation.changed'),
+        _recordChangedEvent('pregnancy_plan.changed'),
       );
       expect(cache.planDashboard, isNull);
       expect(planRepository.snapshotFor(weekOf: fetchedAt), isNull);
       expect(invalidationCount, 5);
+
+      cache.planDashboard = OverviewCacheEntry(
+        value: PlanDashboard.empty(weekOf: fetchedAt),
+        fetchedAt: fetchedAt,
+      );
+      await planRepository.fetchDashboard(weekOf: fetchedAt);
+      runtime.handleAgentApplicationEvent(
+        _recordChangedEvent('milk_plan.changed'),
+      );
+      expect(cache.planDashboard, isNull);
+      expect(planRepository.snapshotFor(weekOf: fetchedAt), isNull);
+      expect(invalidationCount, 6);
     },
   );
 

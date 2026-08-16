@@ -11,6 +11,7 @@ class FixtureApiJsonTransport
   Map<String, Object?>? lastBody;
   Map<String, String>? lastHeaders;
   final List<Map<String, Object?>> postedBodies = [];
+  final List<String> mutationPaths = [];
   final List<String> getPaths = [];
   String? lastMethod;
 
@@ -38,6 +39,7 @@ class FixtureApiJsonTransport
     lastBody = Map<String, Object?>.from(body);
     lastHeaders = Map<String, String>.from(headers);
     postedBodies.add(lastBody!);
+    mutationPaths.add(path);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
     return response;
   }
@@ -72,6 +74,7 @@ class FixtureApiJsonTransport
     lastPath = path;
     lastBody = Map<String, Object?>.from(body);
     lastHeaders = Map<String, String>.from(headers);
+    mutationPaths.add(path);
     if (method != 'DELETE') postedBodies.add(lastBody!);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
     return response;
@@ -92,6 +95,7 @@ class FixtureApiJsonTransportByPath
   Map<String, Object?>? lastBody;
   Map<String, String>? lastHeaders;
   final List<Map<String, Object?>> postedBodies = [];
+  final List<String> mutationPaths = [];
   final List<String> getPaths = [];
   String? lastMethod;
 
@@ -120,6 +124,7 @@ class FixtureApiJsonTransportByPath
     lastBody = Map<String, Object?>.from(body);
     lastHeaders = Map<String, String>.from(headers);
     postedBodies.add(lastBody!);
+    mutationPaths.add(path);
     final response = _writeResponse(path);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
     return response;
@@ -155,6 +160,7 @@ class FixtureApiJsonTransportByPath
     lastPath = path;
     lastBody = Map<String, Object?>.from(body);
     lastHeaders = Map<String, String>.from(headers);
+    mutationPaths.add(path);
     if (method != 'DELETE') postedBodies.add(lastBody!);
     final response = _writeResponse(path);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);

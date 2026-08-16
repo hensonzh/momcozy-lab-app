@@ -59,7 +59,7 @@ void main() {
     expect(connector.requestCount, 1);
   });
 
-  test('loads and caches the bounded thumbnail variant by file id', () async {
+  test('uses the supported content resource for image previews', () async {
     final connector = _FakeBinaryConnector(
       ProductAssetHttpResponse(
         statusCode: 200,
@@ -90,9 +90,9 @@ void main() {
     expect(connector.requestCount, 1);
     expect(
       connector.uri.path,
-      '/v1/files/0ea4b76d-2bc4-4ab8-91b7-3b24df53c518/thumbnail',
+      '/v1/files/0ea4b76d-2bc4-4ab8-91b7-3b24df53c518/content',
     );
-    expect(connector.maxBytes, 1024 * 1024);
+    expect(connector.maxBytes, 10 * 1024 * 1024);
   });
 }
 

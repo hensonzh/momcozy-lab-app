@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
@@ -13,21 +16,16 @@ void main() {
           {
             'id': 'feeding-001',
             'infant_id': 'infant-fixture',
-            'feeding_method': 'bottle',
-            'milk_components': [
-              {'milk_source': 'breast_milk', 'volume_ml': 80.5},
-              {'milk_source': 'formula', 'volume_ml': 20.0},
-            ],
+            'feed_type': 'bottle',
+            'volume_ml': 100.5,
             'duration_seconds': 900,
             'feed_time': '2026-06-29T08:00:00Z',
           },
           {
             'id': 'feeding-other',
             'infant_id': 'infant-other',
-            'feeding_method': 'bottle',
-            'milk_components': [
-              {'milk_source': 'formula', 'volume_ml': 120.0},
-            ],
+            'feed_type': 'bottle',
+            'volume_ml': 120.0,
             'feed_time': '2026-06-29T09:00:00Z',
           },
         ],
@@ -50,14 +48,40 @@ void main() {
       expect(records.single.id, 'feeding-001');
       expect(records.single.infantId, 'infant-fixture');
       expect(records.single.feedingMethod, FeedingMethod.bottle);
-      expect(records.single.milkComponents, hasLength(2));
+      expect(records.single.milkComponents, hasLength(1));
       expect(
         records.single.milkComponents.first.milkSource,
-        MilkSource.breastMilk,
+        MilkSource.unknown,
       );
       expect(records.single.measuredVolumeMl, 100.5);
       expect(records.single.durationSeconds, 900);
       expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:00:00Z'));
+    });
+
+    test('rejects legacy feeding method and component fields', () async {
+      final repository = RecordsApiRepository(
+        transport: FixtureApiJsonTransport({
+          'items': [
+            {
+              'id': 'legacy-feeding',
+              'infant_id': 'infant-fixture',
+              'feeding_method': 'bottle',
+              'milk_components': [
+                {'milk_source': 'formula', 'volume_ml': 80},
+              ],
+              'feed_time': '2026-07-11T08:00:00Z',
+            },
+          ],
+        }),
+      );
+
+      await expectLater(
+        repository.fetchFeedingRecords(
+          date: DateTime.utc(2026, 7, 11),
+          babyId: 'infant-fixture',
+        ),
+        throwsA(isA<FormatException>()),
+      );
     });
 
     test('uses local calendar boundaries for a feeding day', () async {
@@ -84,19 +108,15 @@ void main() {
           {
             'id': 'feeding-001',
             'infant_id': 'infant-fixture',
-            'feeding_method': 'bottle',
-            'milk_components': [
-              {'milk_source': 'breast_milk', 'volume_ml': 80},
-            ],
+            'feed_type': 'bottle',
+            'volume_ml': 80,
             'feed_time': '2026-06-25T08:00:00Z',
           },
           {
             'id': 'feeding-other',
             'infant_id': 'infant-other',
-            'feeding_method': 'bottle',
-            'milk_components': [
-              {'milk_source': 'formula', 'volume_ml': 120},
-            ],
+            'feed_type': 'bottle',
+            'volume_ml': 120,
             'feed_time': '2026-06-26T09:00:00Z',
           },
         ],
@@ -145,10 +165,7 @@ void main() {
           {
             'id': 'pump-001',
             'pump_type': 'electric',
-            'outputs': [
-              {'breast_side': 'left', 'volume_ml': 80.5},
-              {'breast_side': 'right', 'volume_ml': 39.75},
-            ],
+            'milk_volume_ml': 120.25,
             'duration_seconds': 1200,
             'pump_start_time': '2026-06-29T08:40:00Z',
           },
@@ -169,22 +186,40 @@ void main() {
       expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
       expect(records.single.id, 'pump-001');
       expect(records.single.pumpType, 'electric');
-      expect(records.single.outputs, hasLength(2));
-      expect(records.single.outputs.first.breastSide, PumpingSide.left);
+      expect(records.single.outputs, hasLength(1));
+      expect(records.single.outputs.first.breastSide, PumpingSide.unassigned);
       expect(records.single.measuredVolumeMl, 120.25);
       expect(records.single.durationSeconds, 1200);
       expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:40:00Z'));
+    });
+
+    test('rejects legacy pumping output collections', () async {
+      final repository = RecordsApiRepository(
+        transport: FixtureApiJsonTransport({
+          'items': [
+            {
+              'id': 'legacy-pumping',
+              'pump_start_time': '2026-07-11T09:00:00Z',
+              'outputs': [
+                {'breast_side': 'left', 'volume_ml': 60},
+              ],
+            },
+          ],
+        }),
+      );
+
+      await expectLater(
+        repository.fetchPumpMilkRecords(date: DateTime.utc(2026, 7, 11)),
+        throwsA(isA<FormatException>()),
+      );
     });
 
     test('creates scoped feeding and pumping records', () async {
       final feedingTransport = FixtureApiJsonTransport({
         'id': 'feeding-new',
         'infant_id': 'infant-fixture',
-        'feeding_method': 'bottle',
-        'milk_components': [
-          {'milk_source': 'breast_milk', 'volume_ml': 55.5},
-          {'milk_source': 'formula', 'volume_ml': 40.0},
-        ],
+        'feed_type': 'bottle',
+        'volume_ml': 95.5,
         'feed_time': '2026-07-11T08:00:00Z',
       });
       final feedingRepository = RecordsApiRepository(
@@ -195,13 +230,8 @@ void main() {
         babyId: 'infant-fixture',
         occurredAt: DateTime.parse('2026-07-11T08:00:00Z'),
         feedingMethod: FeedingMethod.bottle,
-        milkComponents: const [
-          FeedingMilkComponent(
-            milkSource: MilkSource.breastMilk,
-            volumeMl: 55.5,
-          ),
-          FeedingMilkComponent(milkSource: MilkSource.formula, volumeMl: 40),
-        ],
+        volumeMl: 95.5,
+        planTaskId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
         idempotencyKey: 'feeding-create-001',
       );
 
@@ -212,11 +242,9 @@ void main() {
       expect(feedingTransport.lastBody, {
         'infant_id': 'infant-fixture',
         'feed_time': '2026-07-11T08:00:00.000Z',
-        'feeding_method': 'bottle',
-        'milk_components': [
-          {'milk_source': 'breast_milk', 'volume_ml': 55.5},
-          {'milk_source': 'formula', 'volume_ml': 40.0},
-        ],
+        'feed_type': 'bottle',
+        'volume_ml': 95.5,
+        'plan_task_id': '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
       });
       expect(feeding.measuredVolumeMl, 95.5);
 
@@ -224,12 +252,8 @@ void main() {
         'id': 'pumping-new',
         'pump_start_time': '2026-07-11T09:00:00Z',
         'pump_end_time': '2026-07-11T09:20:00Z',
-        'is_post_feed_pumping': true,
         'pump_type': 'manual',
-        'outputs': [
-          {'breast_side': 'left', 'volume_ml': 45.5},
-          {'breast_side': 'right', 'volume_ml': 64.5},
-        ],
+        'milk_volume_ml': 110.0,
       });
       final pumpingRepository = RecordsApiRepository(
         transport: pumpingTransport,
@@ -238,11 +262,8 @@ void main() {
       final pumping = await pumpingRepository.createPumpMilkRecord(
         occurredAt: DateTime.parse('2026-07-11T09:00:00Z'),
         endedAt: DateTime.parse('2026-07-11T09:20:00Z'),
-        outputs: const [
-          PumpingOutput(breastSide: PumpingSide.left, volumeMl: 45.5),
-          PumpingOutput(breastSide: PumpingSide.right, volumeMl: 64.5),
-        ],
-        isPostFeedPumping: true,
+        milkVolumeMl: 110,
+        planTaskId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c519',
         idempotencyKey: 'pumping-create-001',
       );
 
@@ -253,31 +274,24 @@ void main() {
       expect(pumpingTransport.lastBody, {
         'pump_start_time': '2026-07-11T09:00:00.000Z',
         'pump_end_time': '2026-07-11T09:20:00.000Z',
-        'outputs': [
-          {'breast_side': 'left', 'volume_ml': 45.5},
-          {'breast_side': 'right', 'volume_ml': 64.5},
-        ],
-        'is_post_feed_pumping': true,
+        'milk_volume_ml': 110.0,
+        'plan_task_id': '0ea4b76d-2bc4-4ab8-91b7-3b24df53c519',
         'pump_type': 'manual',
         'source': 'manual',
       });
       expect(pumping.measuredVolumeMl, 110);
-      expect(pumping.outputs.last.breastSide, PumpingSide.right);
+      expect(pumping.outputs.single.breastSide, PumpingSide.unassigned);
       expect(pumping.endedAt, DateTime.parse('2026-07-11T09:20:00Z'));
-      expect(pumping.isPostFeedPumping, isTrue);
     });
 
     test(
-      'encodes start-only direct breastfeeding with an optional side',
+      'encodes start-only direct breastfeeding without unsupported details',
       () async {
         final transport = FixtureApiJsonTransport({
           'id': 'feeding-direct',
           'infant_id': 'infant-fixture',
-          'feeding_method': 'direct_breastfeeding',
-          'milk_components': [
-            {'milk_source': 'breast_milk', 'volume_ml': null},
-          ],
-          'breast_side': 'left',
+          'feed_type': 'direct_breastfeeding',
+          'volume_ml': null,
           'feed_time': '2026-07-11T10:00:00Z',
         });
 
@@ -286,23 +300,15 @@ void main() {
               babyId: 'infant-fixture',
               occurredAt: DateTime.parse('2026-07-11T10:00:00Z'),
               feedingMethod: FeedingMethod.directBreastfeeding,
-              milkComponents: const [
-                FeedingMilkComponent(milkSource: MilkSource.breastMilk),
-              ],
-              breastSide: FeedingBreastSide.left,
             );
 
         expect(transport.lastBody, {
           'infant_id': 'infant-fixture',
           'feed_time': '2026-07-11T10:00:00.000Z',
-          'feeding_method': 'direct_breastfeeding',
-          'milk_components': [
-            {'milk_source': 'breast_milk', 'volume_ml': null},
-          ],
-          'breast_side': 'left',
+          'feed_type': 'direct_breastfeeding',
         });
         expect(record.feedingMethod, FeedingMethod.directBreastfeeding);
-        expect(record.breastSide, FeedingBreastSide.left);
+        expect(record.breastSide, isNull);
         expect(record.measuredVolumeMl, isNull);
       },
     );
@@ -577,15 +583,15 @@ void main() {
         'items': [
           {
             'date': '2026-07-01',
-            'measured_volume_ml': null,
+            'pumped_milk_volume_ml': 0,
             'pumping_count': 2,
-            'measured_pumping_count': 0,
+            'measured_only': false,
           },
           {
             'date': '2026-07-02',
-            'measured_volume_ml': 210.25,
+            'pumped_milk_volume_ml': 210.25,
             'pumping_count': 3,
-            'measured_pumping_count': 2,
+            'measured_only': true,
           },
         ],
       });
@@ -609,17 +615,17 @@ void main() {
       expect(trends.first.measuredPumpingCount, 0);
       expect(trends.last.measuredVolumeMl, 210.25);
       expect(trends.last.pumpingCount, 3);
-      expect(trends.last.measuredPumpingCount, 2);
+      expect(trends.last.measuredPumpingCount, 3);
     });
 
-    test('rejects retired milk trend field aliases', () async {
+    test('rejects legacy milk trend field aliases', () async {
       final transport = FixtureApiJsonTransport({
         'items': [
           {
             'date': '2026-07-01',
-            'pumped_milk_volume_ml': 210,
+            'measured_volume_ml': 210,
             'pumping_count': 2,
-            'measured_only': true,
+            'measured_pumping_count': 2,
           },
         ],
       });
@@ -846,5 +852,75 @@ void main() {
         ),
       );
     });
+
+    test(
+      'write adapters stay within the frozen Product OpenAPI schemas',
+      () async {
+        final schemas = _productSchemas();
+        final feedingTransport = FixtureApiJsonTransport({
+          'id': 'feeding-contract',
+          'feed_time': '2026-07-11T08:00:00Z',
+          'feed_type': 'bottle',
+          'volume_ml': 90,
+        });
+        await RecordsApiRepository(
+          transport: feedingTransport,
+        ).createFeedingRecord(
+          babyId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+          occurredAt: DateTime.utc(2026, 7, 11, 8),
+          feedingMethod: FeedingMethod.bottle,
+          volumeMl: 90,
+        );
+
+        final pumpingTransport = FixtureApiJsonTransport({
+          'id': 'pumping-contract',
+          'pump_start_time': '2026-07-11T09:00:00Z',
+          'pump_type': 'manual',
+          'source': 'manual',
+          'milk_volume_ml': 110,
+        });
+        await RecordsApiRepository(
+          transport: pumpingTransport,
+        ).createPumpMilkRecord(
+          occurredAt: DateTime.utc(2026, 7, 11, 9),
+          milkVolumeMl: 110,
+        );
+
+        _expectBodyMatchesSchema(
+          feedingTransport.lastBody!,
+          schemas['FeedingRecordCreate']! as Map<String, Object?>,
+        );
+        _expectBodyMatchesSchema(
+          pumpingTransport.lastBody!,
+          schemas['PumpingRecordCreate']! as Map<String, Object?>,
+        );
+      },
+    );
   });
+}
+
+Map<String, Object?> _productSchemas() {
+  final document =
+      jsonDecode(
+            File(
+              'docs/backend-contract/product.openapi.generated.json',
+            ).readAsStringSync(),
+          )
+          as Map<String, Object?>;
+  final components = document['components']! as Map<String, Object?>;
+  return components['schemas']! as Map<String, Object?>;
+}
+
+void _expectBodyMatchesSchema(
+  Map<String, Object?> body,
+  Map<String, Object?> schema,
+) {
+  final properties = (schema['properties']! as Map).keys
+      .map((key) => key.toString())
+      .toSet();
+  final required = (schema['required'] as List? ?? const <Object?>[])
+      .map((key) => key.toString())
+      .toSet();
+  expect(body.keys.toSet().difference(properties), isEmpty);
+  expect(required.difference(body.keys.toSet()), isEmpty);
 }

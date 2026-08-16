@@ -14,12 +14,18 @@ abstract interface class PlanSessionMutationRepository {
     required String title,
     required DateTime scheduledAt,
   });
+
+  Future<void> updateSessionState({
+    required String sessionId,
+    required PlanTaskState state,
+  });
 }
 
-enum PlanCategory { lactation, yoga, pelvicFloor, other }
+enum PlanCategory { pregnancy, lactation, yoga, pelvicFloor, other }
 
 extension PlanCategoryLabel on PlanCategory {
   String get label => switch (this) {
+    PlanCategory.pregnancy => 'Pregnancy',
     PlanCategory.lactation => 'Lactation',
     PlanCategory.yoga => 'Yoga',
     PlanCategory.pelvicFloor => 'Pelvic Floor',
@@ -27,7 +33,11 @@ extension PlanCategoryLabel on PlanCategory {
   };
 }
 
-enum PlanSessionStatus { completed, next, upcoming }
+enum PlanTaskState { pending, completed, skipped }
+
+enum PlanSessionStatus { completed, skipped, next, upcoming }
+
+enum PlanSessionKind { pumping, feeding, pregnancy, yoga, pelvicFloor, general }
 
 @immutable
 class CarePlan {
@@ -118,6 +128,7 @@ class PlanSession {
     required this.title,
     required this.scheduledAt,
     required this.status,
+    this.kind = PlanSessionKind.general,
     this.valueLabel,
   });
 
@@ -126,6 +137,7 @@ class PlanSession {
   final String title;
   final DateTime scheduledAt;
   final PlanSessionStatus status;
+  final PlanSessionKind kind;
   final String? valueLabel;
 }
 

@@ -346,6 +346,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
   bool _attachmentUploadPending = false;
+  bool _attachmentDiscardPending = false;
   double? _attachmentUploadProgress;
   Timer? _persistentWriteTimer;
   Timer? _activeRunPersistentWriteTimer;
@@ -1229,6 +1230,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _supportTicketSubmitPending ||
       _conversationSwitchPending ||
       _attachmentUploadPending ||
+      _attachmentDiscardPending ||
       _isComposerLockedForState(_state);
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
@@ -1367,8 +1369,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     await _waitForCompletedReplyRunSettlement();
     await _waitForPendingServerCancel();
     if (!mounted || _isComposerLocked) return false;
-    final interruptedState = _state.isActive ? _state : null;
-    final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithIdempotencyKey(
       _requestWithWorkflowReply(
         _requestWithMetadata(
@@ -1379,6 +1379,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ),
       idempotencyKey,
     );
+    final abandonedAttachmentIds = _attachedFileIds().toList(growable: false);
+    if (abandonedAttachmentIds.isNotEmpty) {
+      _setAttachmentDiscardPending(true);
+      final deleted = await _deleteAbandonedAttachments(abandonedAttachmentIds);
+      _setAttachmentDiscardPending(false);
+      if (!mounted) return false;
+      if (!deleted) {
+        _showAttachmentCleanupFailure();
+        return false;
+      }
+    }
+    final interruptedState = _state.isActive ? _state : null;
+    final interruptedRequest = _state.isActive ? _activeRequest : null;
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
     if (interruptedState != null) {
       _cancelRunSubscription();
@@ -1606,7 +1619,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
           image.fileId.trim().isEmpty) {
         final bytes = image.localBytes ?? _decodeAgentImageBytes(image.dataUrl);
         final uploaded = await mediaRepository.uploadFile(
-          temporary: true,
           file: ApiUploadFile(
             name: image.name.trim().isEmpty ? 'image.png' : image.name.trim(),
             mimeType: image.mimeType.trim().isEmpty
@@ -1627,7 +1639,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     } catch (error) {
       failure = error;
     }
-    if (!mounted) return;
+    if (!mounted) {
+      await _deleteAbandonedAttachments([image?.fileId ?? '']);
+      return;
+    }
     setState(() {
       _attachmentUploadPending = false;
       _attachmentUploadProgress = null;
@@ -1664,7 +1679,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       final document = await pickDocument();
       if (document != null) {
         final uploaded = await mediaRepository.uploadFile(
-          temporary: true,
           file: ApiUploadFile(
             name: document.name.trim().isEmpty
                 ? 'document.pdf'
@@ -1689,7 +1703,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     } catch (error) {
       failure = error;
     }
-    if (!mounted) return;
+    if (!mounted) {
+      await _deleteAbandonedAttachments([file?.fileId ?? '']);
+      return;
+    }
     setState(() {
       _attachmentUploadPending = false;
       _attachmentUploadProgress = null;
@@ -1738,27 +1755,59 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _syncConversationSwitchEnabled();
   }
 
+  void _setAttachmentDiscardPending(bool value) {
+    if (_attachmentDiscardPending == value) return;
+    if (!mounted) {
+      _attachmentDiscardPending = value;
+      return;
+    }
+    setState(() => _attachmentDiscardPending = value);
+    _publishAttachmentUploadState();
+  }
+
   bool get _canAddAttachment =>
       _attachedImages.length + _attachedFiles.length < _agentRunAttachmentLimit;
 
   void _removeAttachedImage(int index) {
     if (index < 0 || index >= _attachedImages.length) return;
     final removed = _attachedImages[index];
-    setState(() {
-      _attachedImages.removeAt(index);
-    });
+    unawaited(_removeAttachedImageAfterDelete(removed));
+  }
+
+  Future<void> _removeAttachedImageAfterDelete(
+    AgentStreamImageInput removed,
+  ) async {
+    _setAttachmentDiscardPending(true);
+    final deleted = await _deleteAbandonedAttachments([removed.fileId]);
+    _setAttachmentDiscardPending(false);
+    if (!mounted) return;
+    if (!deleted) {
+      _showAttachmentCleanupFailure();
+      return;
+    }
+    setState(() => _attachedImages.remove(removed));
     _persistInteractionState();
-    unawaited(_deleteAbandonedAttachments([removed.fileId]));
   }
 
   void _removeAttachedFile(int index) {
     if (index < 0 || index >= _attachedFiles.length) return;
     final removed = _attachedFiles[index];
-    setState(() {
-      _attachedFiles.removeAt(index);
-    });
+    unawaited(_removeAttachedFileAfterDelete(removed));
+  }
+
+  Future<void> _removeAttachedFileAfterDelete(
+    AgentStreamFileInput removed,
+  ) async {
+    _setAttachmentDiscardPending(true);
+    final deleted = await _deleteAbandonedAttachments([removed.fileId]);
+    _setAttachmentDiscardPending(false);
+    if (!mounted) return;
+    if (!deleted) {
+      _showAttachmentCleanupFailure();
+      return;
+    }
+    setState(() => _attachedFiles.remove(removed));
     _persistInteractionState();
-    unawaited(_deleteAbandonedAttachments([removed.fileId]));
   }
 
   Iterable<String> _attachedFileIds() sync* {
@@ -1770,25 +1819,37 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
   }
 
-  Future<void> _deleteAbandonedAttachments(Iterable<String> fileIds) async {
-    final repository = widget.mediaRepository;
-    if (repository == null) return;
+  Future<bool> _deleteAbandonedAttachments(Iterable<String> fileIds) async {
     final normalizedIds = fileIds
         .map((fileId) => fileId.trim())
         .where((fileId) => fileId.isNotEmpty)
         .toSet();
-    await Future.wait(
+    if (normalizedIds.isEmpty) return true;
+    final repository = widget.mediaRepository;
+    if (repository == null) return false;
+    final results = await Future.wait(
       normalizedIds.map((fileId) async {
         try {
           await repository.deleteFile(
             fileId: fileId,
             idempotencyKey: 'agent-draft-discard:$fileId',
           );
+          return true;
+        } on ApiHttpException catch (error) {
+          return error.statusCode == 404;
         } catch (_) {
-          // The server-side temporary-file TTL is the durable cleanup fallback.
+          return false;
         }
       }),
     );
+    return results.every((deleted) => deleted);
+  }
+
+  void _showAttachmentCleanupFailure() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('附件清理失败，已保留草稿，请重试。')));
   }
 
   Future<void> _openConversationHistory() async {
@@ -1834,9 +1895,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
         return false;
       }
 
+      final abandonedAttachmentIds = _attachedFileIds().toList();
+      if (abandonedAttachmentIds.isNotEmpty) {
+        _setAttachmentDiscardPending(true);
+        final deleted = await _deleteAbandonedAttachments(
+          abandonedAttachmentIds,
+        );
+        _setAttachmentDiscardPending(false);
+        if (!mounted ||
+            operationGeneration != _sessionOperationGeneration ||
+            !_conversationSwitchPending) {
+          return false;
+        }
+        if (!deleted) {
+          _showAttachmentCleanupFailure();
+          return false;
+        }
+      }
+
       widget.voicePlaybackCoordinator?.cancel();
       _cancelRunSubscription();
-      final abandonedAttachmentIds = _attachedFileIds().toList();
       _composerController.clear();
       _formPresentationSession.clear();
       _formSubmissionsNotifier.value =
@@ -1863,7 +1941,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _notifyActionStateChanged();
       _persistInteractionState();
       _flushPersistentInteractionState();
-      unawaited(_deleteAbandonedAttachments(abandonedAttachmentIds));
       _scheduleScrollToLatest();
       _armOlderConversationHistoryLoading();
 
@@ -1904,6 +1981,22 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final operationGeneration = ++_sessionOperationGeneration;
     _setNewSessionStartPending(true);
     try {
+      final abandonedAttachmentIds = _attachedFileIds().toList();
+      if (abandonedAttachmentIds.isNotEmpty) {
+        _setAttachmentDiscardPending(true);
+        final deleted = await _deleteAbandonedAttachments(
+          abandonedAttachmentIds,
+        );
+        _setAttachmentDiscardPending(false);
+        if (!mounted || operationGeneration != _sessionOperationGeneration) {
+          return;
+        }
+        if (!deleted) {
+          _showAttachmentCleanupFailure();
+          return;
+        }
+        _forgetDeletedDraftAttachments(abandonedAttachmentIds);
+      }
       if (_state.isActive) {
         _sendBestEffortServerCancel(_state, _activeRequest);
       }
@@ -1914,7 +2007,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
       _dismissComposerKeyboardOnRunAccepted = false;
       _cancelRunSubscription();
-      final abandonedAttachmentIds = _attachedFileIds().toList();
       _composerController.clear();
       _formSubmissionsNotifier.value =
           const <String, AgentArtifactFormSubmission>{};
@@ -1940,7 +2032,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _notifyActionStateChanged();
       _persistInteractionState();
       _flushPersistentInteractionState();
-      unawaited(_deleteAbandonedAttachments(abandonedAttachmentIds));
       unawaited(_refreshGreetingAndMaybePlayVoice());
     } catch (_) {
       // Keep the current session visible when its durable cart clear fails.
@@ -1959,6 +2050,20 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (_newSessionStartPending == value) return;
     _newSessionStartPending = value;
     _publishSessionMutationState();
+  }
+
+  void _forgetDeletedDraftAttachments(Iterable<String> fileIds) {
+    final deletedIds = fileIds.map((fileId) => fileId.trim()).toSet();
+    if (deletedIds.isEmpty || !mounted) return;
+    setState(() {
+      _attachedImages.removeWhere(
+        (image) => deletedIds.contains(image.fileId.trim()),
+      );
+      _attachedFiles.removeWhere(
+        (file) => deletedIds.contains(file.fileId.trim()),
+      );
+    });
+    _persistInteractionState();
   }
 
   bool get _isSessionMutationPending =>
@@ -1985,7 +2090,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _conversationSwitchEnabledNotifier,
       !_isVisibleReplyRunning &&
           !_isSessionMutationPending &&
-          !_attachmentUploadPending,
+          !_attachmentUploadPending &&
+          !_attachmentDiscardPending,
     );
   }
 

@@ -10,7 +10,7 @@ void main() {
       'type': 'tool.completed',
       'tool_call_id': 'tool-media-1',
       'payload': {
-        'safe_output': {
+        'output_summary': {
           'media_voice': [
             {
               'media_id': '/v1/assets/asset-image?kind=image',
@@ -84,6 +84,38 @@ void main() {
       isNull,
     );
   });
+
+  test(
+    'tool completion never exposes media metadata outside output_summary',
+    () {
+      final event = AgentStreamEvent(const {
+        'type': 'tool.completed',
+        'payload': {
+          'media_voice': [
+            {
+              'media_id': '/v1/assets/private-direct?kind=image',
+              'voice_policy': 'announce',
+              'spoken_label': 'Do not expose direct payload fields.',
+            },
+          ],
+          'output': {
+            'media_voice': [
+              {
+                'media_id': '/v1/assets/private-output?kind=image',
+                'voice_policy': 'announce',
+                'spoken_label': 'Do not expose canonical tool output.',
+              },
+            ],
+          },
+        },
+      });
+
+      final index = AgentMediaVoiceNarrationIndex.fromEvents([event]);
+
+      expect(index.items, isEmpty);
+      expect(index.autoSpeakableTexts, isEmpty);
+    },
+  );
 
   test('uses the legacy fallback only for device guidance images', () {
     expect(

@@ -23,9 +23,11 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_visua
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_controller.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_page.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/plan/presentation/plan_page.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/me_baby_overview_page.dart';
+import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
 
@@ -73,6 +75,7 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeExtra: routeExtra,
       ),
       '/plan' => PlanPage(
         key: ValueKey(
@@ -90,7 +93,8 @@ class MomCozyFeaturePage extends StatelessWidget {
           '/',
           extra: const {'agentPrefill': 'Help me review and adjust my plan'},
         ),
-        onStartSession: () => context.go('/pump'),
+        onStartPump: () => context.go('/pump'),
+        onStartSession: (session) => _openPlanSession(context, session),
       ),
       '/more' => MoreProfileOverviewPage(path: path),
       '/more/body-profile' => MoreProfileOverviewPage(path: path),
@@ -108,6 +112,7 @@ class MomCozyFeaturePage extends StatelessWidget {
         identity: ProfileIdentity.baby,
         extendedProductResourcesEnabled: extendedProductResourcesEnabled,
         onBabySelected: onBabySelected,
+        routeExtra: routeExtra,
       ),
       '/baby/development' => MeBabyOverviewPage(
         path: path,
@@ -194,6 +199,30 @@ class MomCozyFeaturePage extends StatelessWidget {
         accent: accent,
       ),
     };
+  }
+}
+
+void _openPlanSession(BuildContext context, PlanSession session) {
+  switch (session.kind) {
+    case PlanSessionKind.pumping:
+      context.go('/pump', extra: session);
+    case PlanSessionKind.feeding:
+      context.go('/baby', extra: session);
+    case PlanSessionKind.pregnancy:
+    case PlanSessionKind.yoga:
+    case PlanSessionKind.pelvicFloor:
+    case PlanSessionKind.general:
+      final requestMessage = 'Guide me through "${session.title}".';
+      context.go(
+        '/',
+        extra: {
+          'agentAutoRun': {
+            'requestMessage': requestMessage,
+            'idempotencyKey': 'plan-task-start:${session.id}',
+            'metadata': {'source': 'plan_task:${session.id}'},
+          },
+        },
+      );
   }
 }
 
@@ -1892,6 +1921,7 @@ class _PumpPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeExtra,
   });
 
   final String path;
@@ -1899,6 +1929,7 @@ class _PumpPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Object? routeExtra;
 
   @override
   State<_PumpPage> createState() => _PumpPageState();
@@ -1920,6 +1951,8 @@ class _PumpPageState extends State<_PumpPage> {
   String? _guardNotice;
   bool _isUploading = false;
   bool _calibrationPromptVisible = true;
+  DateTime? _sessionStartedAt;
+  Object? _recordUploadError;
 
   @override
   void didChangeDependencies() {
@@ -1946,6 +1979,14 @@ class _PumpPageState extends State<_PumpPage> {
 
   void _changeRunState(_PumpRunState next) {
     if (next == _PumpRunState.idle && _completionUploadLocked) {
+      if (_recordUploadError != null) {
+        setState(() {
+          _recordUploadError = null;
+          _guardNotice = '正在重试奶量记录同步。';
+        });
+        unawaited(_completePumpingRecord());
+        return;
+      }
       setState(() {
         _duplicateCompletionBlocked = true;
         _guardNotice = '重复结束已拦截，本次 session 只保留一组结束上传。';
@@ -1959,6 +2000,9 @@ class _PumpPageState extends State<_PumpPage> {
       _runState = next;
     });
     _uploadWorkstate(next);
+    if (next == _PumpRunState.idle) {
+      unawaited(_completePumpingRecord());
+    }
   }
 
   void _applyLocalSessionTransition(_PumpRunState next) {
@@ -1971,6 +2015,8 @@ class _PumpPageState extends State<_PumpPage> {
       _leftVolumeMl = 0;
       _rightVolumeMl = 0;
       _guardNotice = '已绑定 ${_sessionOwnerUserId ?? '当前用户'}。';
+      _sessionStartedAt = _runtime?.now();
+      _recordUploadError = null;
       _advanceLocalProgress(minutes: 2);
       return;
     }
@@ -2030,6 +2076,42 @@ class _PumpPageState extends State<_PumpPage> {
       setState(() {
         _uploadError = error;
         _isUploading = false;
+      });
+    }
+  }
+
+  Future<void> _completePumpingRecord() async {
+    final runtime = _runtime;
+    final startedAt = _sessionStartedAt;
+    if (runtime == null || startedAt == null || _totalVolumeMl <= 0) return;
+    final session = widget.routeExtra is PlanSession
+        ? widget.routeExtra! as PlanSession
+        : null;
+    try {
+      await runtime.recordsRepository.createPumpMilkRecord(
+        occurredAt: startedAt,
+        endedAt: runtime.now(),
+        milkVolumeMl: _totalVolumeMl.toDouble(),
+        durationSeconds: _elapsedMinutes * 60,
+        planTaskId: session?.id,
+        idempotencyKey:
+            'pump-session:${session?.id ?? runtime.userId}:${startedAt.toUtc().toIso8601String()}',
+      );
+      runtime.profileOverviewCache.invalidate(const {
+        ProfileOverviewResourceKey.milkTrends,
+        ProfileOverviewResourceKey.plans,
+      });
+      runtime.planRepository.invalidate();
+      if (!mounted) return;
+      setState(() {
+        _recordUploadError = null;
+        _guardNotice = session == null ? '奶量记录已保存。' : '奶量记录与计划任务已原子完成。';
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _recordUploadError = error;
+        _guardNotice = '奶量记录尚未保存，请再次点击结束重试。';
       });
     }
   }
@@ -2193,6 +2275,7 @@ class _PumpPageState extends State<_PumpPage> {
 
   String _completionGuardTitle() {
     if (_duplicateCompletionBlocked) return '重复结束已拦截';
+    if (_recordUploadError != null) return '奶量记录同步失败';
     if (_completionUploadLocked) return '结束同步已锁定';
     if (_sessionOwnerUserId != null) return 'Session 用户已绑定';
     return 'Session 等待开始';

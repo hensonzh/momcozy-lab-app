@@ -1,6 +1,6 @@
 {
   "meta": {
-    "schema_version": "momcozy.postpartum_day20.v4",
+    "schema_version": "momcozy.postpartum_day20.v5",
     "scenario": "postpartum_day_20_happy_path",
     "anchor_date": "2026-08-08",
     "timezone": "Asia/Shanghai",
@@ -69,768 +69,709 @@
           "id": "500b98d9-d0ba-5ad9-966f-51cac6dadf92",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T00:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "a660114c-ba24-542b-b566-3d1c7402988f",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T03:15:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "152ebcc7-74e9-5460-872a-f68afc8b0800",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T06:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 76.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 76.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "ce31c3f0-45ad-5b9c-b441-2fafdfee0c5f",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T09:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "19aa352c-11f3-5be2-8c45-a36163f9cc0e",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T12:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "ea4757b6-e757-5d05-9a73-7c6e6bc3aaf8",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T15:10:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "8c805557-7300-5c6d-ae21-377899829598",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T18:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 76.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 76.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "c70cfba0-4664-52af-8d39-8a3685c4f1da",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T21:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "62d85cf3-1b9e-5837-ad90-a7915de77506",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-02T23:30:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "1052b65e-096e-517b-9874-63216f0e07ff",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-03T00:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 72.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 72.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "cfdb5404-299a-576b-8c25-3abd225d9170",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-03T03:15:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "e1c7f257-9a9b-5f83-8db9-4f9ebd34840a",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-03T06:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "47d947e9-801f-59a1-8fb2-34dc4ff9edd2",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-03T09:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "780ddea9-fe81-5df3-bdcf-31526d154b86",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-03T12:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 72.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 72.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "69d9b640-9f0a-58ce-be88-86f0dc33e5a7",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-03T15:10:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "33f22af0-0fd6-52a6-a657-db7c9cd68ec1",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-03T18:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "9e33c9b5-bfc5-53de-890e-8f11f4b8a5e5",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-03T21:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "a9b1fd36-eca2-55e4-9b85-894c6c9cbf05",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T00:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 76.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 76.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "829c078d-3daa-599a-8533-17727a2d7002",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T03:15:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "ba906ad9-2878-5ed8-8ebf-838c9738f9a7",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T06:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "0e3908b6-41c2-5ed8-9fcf-b7458d73425b",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T09:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 72.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 72.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "0fa296ba-d833-5175-96d2-653512195987",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T12:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 76.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 76.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "96167149-cce1-5ea4-92bb-be47de7a0d80",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T15:10:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "cdbeaf56-d19d-5527-ba0b-89954c5a3112",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T18:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "1262922b-117f-5fb9-bf9d-29106fbce2d6",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T21:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 72.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 72.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "e8d32a22-cefb-55fb-8259-991b45ef5642",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-04T23:30:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "1fe07995-7b89-5c01-809c-a81d121a4d67",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-05T00:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "a4761794-1a3b-5aed-a980-345bc647b00a",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-05T03:15:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "233fdc4c-6402-5e87-90c3-c6623507ef45",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-05T06:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 72.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 72.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "6c5f2c17-7f7e-5973-8e6a-c9c586f9643c",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-05T09:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 76.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 76.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "08239d40-5c07-5963-be9f-44de94f528ce",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-05T12:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "b4ff65d2-09a3-5888-8855-9632b777ddf2",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-05T15:10:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "7b0a3879-5da6-5f13-8828-b921533fbf47",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-05T18:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 72.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 72.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "63888e36-7b3f-5c52-984b-f23db1ebdd9c",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-05T21:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 76.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 76.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "6a261f81-856e-5524-b516-a4bfbacb23db",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-06T00:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "881216ca-ef28-513a-9a8c-482bc8952adc",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-06T03:15:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "cf2f1d54-9125-58e2-ac60-4afa3b826491",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-06T06:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 76.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 76.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "99ea5f9e-2c79-5777-bcfa-d0433059c967",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-06T09:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "6ab3334a-0a25-56e7-8efe-3061551d0101",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-06T12:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "5b03dd3a-7284-54d2-a54f-de982c7793dc",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-06T15:10:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "e5a10090-32a4-5252-85d7-bfd50fedb3fb",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-06T18:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 76.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 76.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "9ebd9e15-57f4-5507-a2b3-b964e062fcce",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-06T21:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "b87cceb5-d5a2-5f99-b586-492a2c331e14",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T00:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 72.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 72.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "c93f8ed0-1982-51a8-a3c5-3caaebb49ace",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T03:15:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "a4c63b64-eeb1-543e-a1b9-2f2b4ad42987",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T06:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "a3bee431-39f8-57e1-8248-ac5c0e28b3d7",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T09:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "d56c6ddc-2511-569d-89b9-167eb947d1a7",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T12:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 72.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 72.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "c131eb30-2f88-5369-8a41-4e39e0bb8697",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T15:10:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "74350834-c9e6-545b-a253-f95ebed6a93f",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T18:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "15e27cbb-b407-5b05-bd82-45321263c284",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T21:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 68.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 68.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "25eef51f-b23b-527a-91a7-1f7dc63d0957",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-07T23:30:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "04750aba-9ed1-56f4-a089-1f8e15acf110",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-08T00:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 70.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 70.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "3244e6c5-ecea-564c-a983-b2af8ac34548",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-08T03:15:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "b585492b-eacb-5cab-a94f-b31fd01e6a06",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-08T06:30:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 75.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 75.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "06c67fcb-31bd-53af-b2ac-e7b81a0e7b64",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-08T09:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 75.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 75.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "ebb404f9-9bbf-538e-8d79-67ee743f5a9d",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-08T12:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 80.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 80.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "7e4c863a-7f58-5605-93e5-d2bd52627673",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-08T15:10:00+08:00",
-          "feeding_method": "direct_breastfeeding",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": null
-            }
-          ],
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "feed_type": "direct_breastfeeding",
+          "volume_ml": null,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "d57b849c-675d-5951-8211-331f1df52475",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-08T18:15:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 75.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 75.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         },
         {
           "id": "2aa16c1d-49d6-551c-aa1a-9ff4bce7cbe7",
           "infant_id": "3beb1d14-41c4-52d5-8d51-1fc9a1e99f82",
           "feed_time": "2026-08-08T21:20:00+08:00",
-          "feeding_method": "bottle",
-          "milk_components": [
-            {
-              "milk_source": "breast_milk",
-              "volume_ml": 75.0
-            }
-          ],
-          "duration_seconds": null
+          "duration_seconds": null,
+          "feed_type": "bottle",
+          "volume_ml": 75.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "feed_action": "recorded",
+          "title": "Feeding record",
+          "status": "completed"
         }
       ]
     },
@@ -839,518 +780,475 @@
         {
           "id": "5bfb8422-4f7a-5a52-9509-238e25ab9f96",
           "pump_start_time": "2026-08-02T05:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 90.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 90.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "1b8fa18d-94dd-5240-a0f9-4a8574859834",
           "pump_start_time": "2026-08-02T09:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 95.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 95.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "a68b32a6-34cb-514e-a8ec-55984ae634b5",
           "pump_start_time": "2026-08-02T12:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1020
+          "duration_seconds": 1020,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "688fdefa-0916-5e21-b70b-3b414eaae57d",
           "pump_start_time": "2026-08-02T16:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1200
+          "duration_seconds": 1200,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "118317e3-0076-5add-90fc-0bb335bb48c6",
           "pump_start_time": "2026-08-02T19:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "c6dc3de2-16ca-556c-919c-b4da63945ac5",
           "pump_start_time": "2026-08-02T23:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "03c89885-ee09-5d95-9f1a-84f709794a90",
           "pump_start_time": "2026-08-03T05:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 95.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 95.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "6c2bf4a2-eb23-598c-9ee1-010c192189c6",
           "pump_start_time": "2026-08-03T09:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "6f82e959-c243-5603-868c-81eaf4d817c7",
           "pump_start_time": "2026-08-03T12:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1020
+          "duration_seconds": 1020,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "d6374673-b89d-5424-a702-14b15db907c7",
           "pump_start_time": "2026-08-03T16:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1200
+          "duration_seconds": 1200,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "2d70ac83-6649-5d9b-8920-c996bc4274a2",
           "pump_start_time": "2026-08-03T19:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "57891f87-6272-51a3-bd3e-6545cf642396",
           "pump_start_time": "2026-08-03T23:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "80821dbd-674e-5fca-af49-22c906b2e85a",
           "pump_start_time": "2026-08-04T05:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "6a80439a-3eff-5daa-9434-6caa4a1c235e",
           "pump_start_time": "2026-08-04T09:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "859241ce-d1c6-5fa1-b1d2-ad9075bb5efa",
           "pump_start_time": "2026-08-04T12:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1020
+          "duration_seconds": 1020,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "40ae3fef-ed23-5a8a-8f31-ce74e689ff52",
           "pump_start_time": "2026-08-04T16:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1200
+          "duration_seconds": 1200,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "e9f1b90a-0fe1-5869-b739-48fd08188a02",
           "pump_start_time": "2026-08-04T19:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "a0e70e47-b76d-5242-9646-c382b4e30a2f",
           "pump_start_time": "2026-08-04T23:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 110.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 110.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "13fa5cdc-1b95-50a1-8b95-225506f5a4ae",
           "pump_start_time": "2026-08-05T05:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "72323378-b8b6-5171-8c54-5f0e004ac3c2",
           "pump_start_time": "2026-08-05T09:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "387b5ecd-ddb6-559f-9c4e-7dd13e954469",
           "pump_start_time": "2026-08-05T12:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1020
+          "duration_seconds": 1020,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "2d896b11-80b9-5526-8d2d-747828dc588a",
           "pump_start_time": "2026-08-05T16:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1200
+          "duration_seconds": 1200,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "72e1b109-a2d0-580e-a056-59bf0e446aea",
           "pump_start_time": "2026-08-05T19:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 110.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 110.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "b3576762-4b8b-5411-9d2e-03e6ac955f94",
           "pump_start_time": "2026-08-05T23:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 110.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 110.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "ae5ec4d8-9c45-5c3d-9156-d0ba17f1803d",
           "pump_start_time": "2026-08-06T05:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "ef8a4dca-f2c7-5e3e-a7ca-85654be92725",
           "pump_start_time": "2026-08-06T09:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "70481ce6-732e-5148-bbd4-cb7037ef3df0",
           "pump_start_time": "2026-08-06T12:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 110.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1020
+          "duration_seconds": 1020,
+          "milk_volume_ml": 110.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "828913cf-87d4-5f45-94e6-207bbbf53c32",
           "pump_start_time": "2026-08-06T16:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 110.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1200
+          "duration_seconds": 1200,
+          "milk_volume_ml": 110.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "1e553ba0-8284-5346-afda-b2a7cc231814",
           "pump_start_time": "2026-08-06T19:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 110.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 110.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "8797fd1c-97a3-5020-a4d3-9f973244f02d",
           "pump_start_time": "2026-08-06T23:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 110.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 110.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "644c9199-c11e-581e-8ac6-426180371f8f",
           "pump_start_time": "2026-08-07T04:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 90.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 90.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "97cff1e6-d95e-5943-9732-3a850e6d9a38",
           "pump_start_time": "2026-08-07T08:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 90.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 90.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "8a7c45fb-4ea1-529b-bc71-7230366fa9e3",
           "pump_start_time": "2026-08-07T11:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 95.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1020
+          "duration_seconds": 1020,
+          "milk_volume_ml": 95.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "04ad2714-78ce-5993-bfc7-61c73dea8e53",
           "pump_start_time": "2026-08-07T15:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 95.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1200
+          "duration_seconds": 1200,
+          "milk_volume_ml": 95.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "ed38192d-f338-5946-9fc3-74d12dc1360e",
           "pump_start_time": "2026-08-07T18:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 95.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 95.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "c7a21c3c-ea56-5559-b8f3-85da45faba28",
           "pump_start_time": "2026-08-07T21:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "62c0bf22-aa5b-5e72-8999-e94eddf5a493",
           "pump_start_time": "2026-08-07T23:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 900
+          "duration_seconds": 900,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "85bb49da-ab0a-5f64-9307-b1bd9c996a21",
           "pump_start_time": "2026-08-08T05:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 95.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 95.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "2399c882-db27-57d3-a623-a8b61afc3d38",
           "pump_start_time": "2026-08-08T09:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 105.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 105.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "c65a1e5a-8cfd-5656-bb4c-1100f2fe4d64",
           "pump_start_time": "2026-08-08T12:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1020
+          "duration_seconds": 1020,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "63291021-317e-5612-8ee2-661cec2241ff",
           "pump_start_time": "2026-08-08T16:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "unassigned",
-              "volume_ml": 110.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1200
+          "duration_seconds": 1200,
+          "milk_volume_ml": 110.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "f26e0bfc-03e7-5575-975c-6334d6153bb8",
           "pump_start_time": "2026-08-08T19:30:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "left",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 960
+          "duration_seconds": 960,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         },
         {
           "id": "d8bb949a-5d7d-5f1b-83e2-ec95a69164c8",
           "pump_start_time": "2026-08-08T23:00:00+08:00",
-          "outputs": [
-            {
-              "breast_side": "right",
-              "volume_ml": 100.0
-            }
-          ],
           "pump_type": "electric",
-          "duration_seconds": 1080
+          "duration_seconds": 1080,
+          "milk_volume_ml": 100.0,
+          "owner_user_id": "c1715770-8a29-5584-9fe5-6d6e758299b5",
+          "source": "manual",
+          "title": "Pumping record",
+          "status": "completed"
         }
       ]
     },
@@ -1358,45 +1256,45 @@
       "items": [
         {
           "date": "2026-08-02",
-          "measured_volume_ml": 590.0,
           "pumping_count": 6,
-          "measured_pumping_count": 6
+          "pumped_milk_volume_ml": 590.0,
+          "measured_only": true
         },
         {
           "date": "2026-08-03",
-          "measured_volume_ml": 605.0,
           "pumping_count": 6,
-          "measured_pumping_count": 6
+          "pumped_milk_volume_ml": 605.0,
+          "measured_only": true
         },
         {
           "date": "2026-08-04",
-          "measured_volume_ml": 620.0,
           "pumping_count": 6,
-          "measured_pumping_count": 6
+          "pumped_milk_volume_ml": 620.0,
+          "measured_only": true
         },
         {
           "date": "2026-08-05",
-          "measured_volume_ml": 635.0,
           "pumping_count": 6,
-          "measured_pumping_count": 6
+          "pumped_milk_volume_ml": 635.0,
+          "measured_only": true
         },
         {
           "date": "2026-08-06",
-          "measured_volume_ml": 650.0,
           "pumping_count": 6,
-          "measured_pumping_count": 6
+          "pumped_milk_volume_ml": 650.0,
+          "measured_only": true
         },
         {
           "date": "2026-08-07",
-          "measured_volume_ml": 665.0,
           "pumping_count": 7,
-          "measured_pumping_count": 7
+          "pumped_milk_volume_ml": 665.0,
+          "measured_only": true
         },
         {
           "date": "2026-08-08",
-          "measured_volume_ml": 610.0,
           "pumping_count": 6,
-          "measured_pumping_count": 6
+          "pumped_milk_volume_ml": 610.0,
+          "measured_only": true
         }
       ],
       "days": 7,

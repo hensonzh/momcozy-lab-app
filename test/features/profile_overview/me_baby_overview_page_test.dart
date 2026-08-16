@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/core/config/momcozy_app_capabilities.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/notifications/data/notifications_api_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
@@ -209,9 +210,9 @@ void main() {
             milkTrendItems: const [
               {
                 'date': '2026-07-02',
-                'measured_volume_ml': 190,
+                'pumped_milk_volume_ml': 190,
                 'pumping_count': 2,
-                'measured_pumping_count': 2,
+                'measured_only': true,
               },
             ],
           ),
@@ -234,9 +235,9 @@ void main() {
             milkTrendItems: const [
               {
                 'date': '2026-07-03',
-                'measured_volume_ml': null,
+                'pumped_milk_volume_ml': 0,
                 'pumping_count': 2,
-                'measured_pumping_count': 0,
+                'measured_only': false,
               },
             ],
           ),
@@ -784,19 +785,15 @@ void main() {
               {
                 'id': 'feed-today',
                 'infant_id': 'profile-overview-baby',
-                'feeding_method': 'bottle',
-                'milk_components': [
-                  {'milk_source': 'breast_milk', 'volume_ml': 80},
-                ],
+                'feed_type': 'bottle',
+                'volume_ml': 80,
                 'feed_time': '2026-07-03T06:00:00Z',
               },
               {
                 'id': 'feed-yesterday',
                 'infant_id': 'profile-overview-baby',
-                'feeding_method': 'bottle',
-                'milk_components': [
-                  {'milk_source': 'formula', 'volume_ml': 60},
-                ],
+                'feed_type': 'bottle',
+                'volume_ml': 60,
                 'feed_time': '2026-07-02T06:00:00Z',
               },
             ],
@@ -1789,7 +1786,7 @@ void main() {
         );
         expect(
           find.byKey(const ValueKey('record-pumping-post-feed')),
-          findsOneWidget,
+          findsNothing,
         );
         expect(find.text('Water Intake'), findsNothing);
         expect(find.text('Vitals'), findsNothing);
@@ -1805,20 +1802,13 @@ void main() {
         );
         await tester.pump();
         expect(find.text('137.5 mL total'), findsOneWidget);
-        await tester.tap(
-          find.byKey(const ValueKey('record-pumping-post-feed')),
-        );
         await tester.tap(find.byKey(const ValueKey('record-save')));
         await tester.pumpAndSettle();
 
         expect(find.text('Record saved'), findsOneWidget);
         expect(transport.postedBodies.last, {
           'pump_start_time': '2026-07-03T00:00:00.000Z',
-          'outputs': [
-            {'breast_side': 'left', 'volume_ml': 95.0},
-            {'breast_side': 'right', 'volume_ml': 42.5},
-          ],
-          'is_post_feed_pumping': true,
+          'milk_volume_ml': 137.5,
           'pump_type': 'manual',
           'source': 'manual',
         });
@@ -1845,11 +1835,10 @@ void main() {
       expect(find.text('Direct breastfeeding'), findsOneWidget);
       expect(find.text('Bottle'), findsOneWidget);
       expect(find.text('Cup'), findsNothing);
-
-      await tester.tap(
+      expect(
         find.byKey(const ValueKey('record-feeding-source-formula')),
+        findsNothing,
       );
-      await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('record-feeding-amount')),
         '95.5',
@@ -1860,15 +1849,53 @@ void main() {
       expect(transport.postedBodies.last, {
         'infant_id': 'profile-overview-baby',
         'feed_time': '2026-07-03T00:00:00.000Z',
-        'feeding_method': 'bottle',
-        'milk_components': [
-          {'milk_source': 'formula', 'volume_ml': 95.5},
-        ],
+        'feed_type': 'bottle',
+        'volume_ml': 95.5,
       });
     });
 
+    testWidgets('Baby plan feeding completion preserves the stable task id', (
+      tester,
+    ) async {
+      const taskId = '10426e1c-b226-41d7-84eb-9ef03ef34782';
+      final transport = _profileOverviewTransport();
+      await _pumpApp(
+        tester,
+        initialLocation: '/baby',
+        runtime: _runtime(transport: transport),
+        routeExtra: PlanSession(
+          id: taskId,
+          planId: 'feeding-plan',
+          title: 'Evening feeding',
+          scheduledAt: DateTime.utc(2026, 7, 3),
+          status: PlanSessionStatus.next,
+          kind: PlanSessionKind.feeding,
+        ),
+      );
+
+      expect(find.text('Add feeding record'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const ValueKey('record-feeding-amount')),
+        '88',
+      );
+      await tester.tap(find.byKey(const ValueKey('record-save')));
+      await tester.pumpAndSettle();
+
+      expect(transport.postedBodies.last, {
+        'infant_id': 'profile-overview-baby',
+        'feed_time': '2026-07-03T00:00:00.000Z',
+        'feed_type': 'bottle',
+        'volume_ml': 88.0,
+        'plan_task_id': taskId,
+      });
+      expect(transport.lastHeaders, {
+        'Idempotency-Key': 'plan-task-record:$taskId:feeding',
+      });
+      expect(find.text('Record saved'), findsOneWidget);
+    });
+
     testWidgets(
-      'Baby saves start-only direct breastfeeding with optional side',
+      'Baby saves start-only direct breastfeeding without unsupported side',
       (tester) async {
         final transport = _profileOverviewTransport();
         await _pumpApp(
@@ -1895,8 +1922,9 @@ void main() {
           find.byKey(const ValueKey('record-feeding-end')),
           findsOneWidget,
         );
-        await tester.tap(
+        expect(
           find.byKey(const ValueKey('record-feeding-side-left')),
+          findsNothing,
         );
         await tester.tap(find.byKey(const ValueKey('record-save')));
         await tester.pumpAndSettle();
@@ -1904,11 +1932,7 @@ void main() {
         expect(transport.postedBodies.last, {
           'infant_id': 'profile-overview-baby',
           'feed_time': '2026-07-03T00:00:00.000Z',
-          'feeding_method': 'direct_breastfeeding',
-          'milk_components': [
-            {'milk_source': 'breast_milk', 'volume_ml': null},
-          ],
-          'breast_side': 'left',
+          'feed_type': 'direct_breastfeeding',
         });
       },
     );
@@ -2254,9 +2278,9 @@ void main() {
             milkTrendItems: const [
               {
                 'date': '2026-07-03',
-                'measured_volume_ml': null,
+                'pumped_milk_volume_ml': 0,
                 'pumping_count': 2,
-                'measured_pumping_count': 0,
+                'measured_only': false,
               },
             ],
           ),
@@ -2498,6 +2522,7 @@ Future<void> _pumpApp(
   required String initialLocation,
   Size viewportSize = const Size(430, 932),
   MomCozyApiRuntime? runtime,
+  Object? routeExtra,
   double textScaleFactor = 1,
   FakeViewPadding viewPadding = FakeViewPadding.zero,
 }) async {
@@ -2516,14 +2541,13 @@ Future<void> _pumpApp(
   final routes = FakeRouteIntentPlatform();
   addTearDown(routes.dispose);
 
+  final router = createMomCozyRouter(
+    initialLocation: initialLocation,
+    capabilities: const MomCozyAppCapabilities(extendedProductApiEnabled: true),
+  );
   await tester.pumpWidget(
     MomCozyFlutterApp(
-      router: createMomCozyRouter(
-        initialLocation: initialLocation,
-        capabilities: const MomCozyAppCapabilities(
-          extendedProductApiEnabled: true,
-        ),
-      ),
+      router: router,
       routeIntentPlatform: routes,
       apiRuntime: runtime ?? _runtime(),
       capabilities: const MomCozyAppCapabilities(
@@ -2531,6 +2555,9 @@ Future<void> _pumpApp(
       ),
     ),
   );
+  if (routeExtra != null) {
+    router.go(initialLocation, extra: routeExtra);
+  }
   await tester.pumpAndSettle();
   final imageContext = tester.element(find.byType(MaterialApp));
   await tester.runAsync(() async {
@@ -2789,9 +2816,9 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
             const [
               {
                 'date': '2026-07-03',
-                'measured_volume_ml': 210,
+                'pumped_milk_volume_ml': 210,
                 'pumping_count': 3,
-                'measured_pumping_count': 3,
+                'measured_only': true,
               },
             ],
       },
@@ -2802,28 +2829,22 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
               {
                 'id': 'feed-1',
                 'infant_id': 'profile-overview-baby',
-                'feeding_method': 'bottle',
-                'milk_components': [
-                  {'milk_source': 'breast_milk', 'volume_ml': 80},
-                ],
+                'feed_type': 'bottle',
+                'volume_ml': 80,
                 'feed_time': '2026-07-03T06:00:00Z',
               },
               {
                 'id': 'feed-2',
                 'infant_id': 'profile-overview-baby',
-                'feeding_method': 'bottle',
-                'milk_components': [
-                  {'milk_source': 'formula', 'volume_ml': 40},
-                ],
+                'feed_type': 'bottle',
+                'volume_ml': 40,
                 'feed_time': '2026-07-03T10:00:00Z',
               },
               {
                 'id': 'feed-previous',
                 'infant_id': 'profile-overview-baby',
-                'feeding_method': 'bottle',
-                'milk_components': [
-                  {'milk_source': 'breast_milk', 'volume_ml': 80},
-                ],
+                'feed_type': 'bottle',
+                'volume_ml': 80,
                 'feed_time': '2026-07-01T10:00:00Z',
               },
             ],
@@ -2954,18 +2975,14 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
         'id': 'feeding-created',
         'infant_id': 'profile-overview-baby',
         'feed_time': '2026-07-03T00:00:00Z',
-        'feeding_method': 'bottle',
-        'milk_components': [
-          {'milk_source': 'breast_milk', 'volume_ml': 75},
-        ],
+        'feed_type': 'bottle',
+        'volume_ml': 75,
         'duration_seconds': null,
       },
       pumpMilkRecordsEndpoint: const {
         'id': 'pumping-created',
         'pump_start_time': '2026-07-03T00:00:00Z',
-        'outputs': [
-          {'breast_side': 'left', 'volume_ml': 95},
-        ],
+        'milk_volume_ml': 95,
         'pump_type': 'manual',
         'duration_seconds': null,
       },
