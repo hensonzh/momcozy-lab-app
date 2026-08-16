@@ -72,6 +72,7 @@ class ProfileOverviewController {
     this.maternalCareOverviewRepository,
     this.planRepository,
     required this.babyId,
+    this.onBabyIdResolved,
     required this.identity,
     required this.extendedProductResourcesEnabled,
     required this.timezoneProvider,
@@ -195,6 +196,7 @@ class ProfileOverviewController {
   final MaternalCareOverviewRepository? maternalCareOverviewRepository;
   final PlanRepository? planRepository;
   final String babyId;
+  final Future<void> Function(String babyId)? onBabyIdResolved;
   final ProfileIdentity identity;
   final bool extendedProductResourcesEnabled;
   final Future<String> Function() timezoneProvider;
@@ -232,6 +234,7 @@ class ProfileOverviewController {
   final Map<ProfileOverviewResourceKey, int> _resourceServiced = {};
   var _disposed = false;
   late String _recordsBabyId;
+  String? _persistedResolvedBabyId;
 
   Future<void> initialize() {
     return _requestVisibleResources(showLoading: true);
@@ -259,6 +262,8 @@ class ProfileOverviewController {
       showLoading: showLoading,
       force: force,
     );
+    await _persistResolvedBabyId();
+    if (_disposed) return;
     await _requestResources(
       resources.where(
         (resource) => resource != ProfileOverviewResourceKey.overview,
@@ -266,6 +271,25 @@ class ProfileOverviewController {
       showLoading: showLoading,
       force: force,
     );
+  }
+
+  Future<void> _persistResolvedBabyId() async {
+    final callback = onBabyIdResolved;
+    final resolvedBabyId = overview.value.data?.baby?.id?.trim();
+    if (callback == null ||
+        resolvedBabyId == null ||
+        resolvedBabyId.isEmpty ||
+        resolvedBabyId == babyId.trim() ||
+        resolvedBabyId == _persistedResolvedBabyId) {
+      return;
+    }
+    try {
+      await callback(resolvedBabyId);
+      _persistedResolvedBabyId = resolvedBabyId;
+    } catch (_) {
+      // The owner-scoped infant ID is already authoritative for this load.
+      // Keep the Baby page usable and retry session persistence on refresh.
+    }
   }
 
   Set<ProfileOverviewResourceKey> _visibleResources() {
@@ -595,7 +619,7 @@ class ProfileOverviewController {
     DateTime? endedAt,
     required double leftVolumeMl,
     required double rightVolumeMl,
-    bool isPostFeedPumping = false,
+    String? planTaskId,
   }) {
     final hasValidVolumes =
         leftVolumeMl > 0 &&
@@ -615,12 +639,13 @@ class ProfileOverviewController {
       await pumpMilkRepository.createPumpMilkRecord(
         occurredAt: startedAt,
         endedAt: endedAt,
-        outputs: [
-          PumpingOutput(breastSide: PumpingSide.left, volumeMl: leftVolumeMl),
-          PumpingOutput(breastSide: PumpingSide.right, volumeMl: rightVolumeMl),
-        ],
-        isPostFeedPumping: isPostFeedPumping,
-        idempotencyKey: _recordIdempotencyKey('pumping'),
+        milkVolumeMl: leftVolumeMl + rightVolumeMl,
+        planTaskId: planTaskId,
+        idempotencyKey: _recordIdempotencyKey(
+          'pumping',
+          planTaskId: planTaskId,
+          occurredAt: startedAt,
+        ),
       );
       await _requestResource(
         ProfileOverviewResourceKey.milkTrends,
@@ -634,26 +659,16 @@ class ProfileOverviewController {
     required DateTime startedAt,
     DateTime? endedAt,
     required FeedingMethod feedingMethod,
-    MilkSource milkSource = MilkSource.breastMilk,
     double? amountMl,
-    FeedingBreastSide? breastSide,
+    String? planTaskId,
   }) {
     final isDirect = feedingMethod == FeedingMethod.directBreastfeeding;
     final isBottle = feedingMethod == FeedingMethod.bottle;
-    final isSupportedSource =
-        milkSource == MilkSource.breastMilk || milkSource == MilkSource.formula;
     final hasValidInterval = endedAt == null || endedAt.isAfter(startedAt);
     final isValid =
         hasValidInterval &&
-        ((isDirect &&
-                milkSource == MilkSource.breastMilk &&
-                amountMl == null) ||
-            (isBottle &&
-                isSupportedSource &&
-                amountMl != null &&
-                amountMl > 0 &&
-                amountMl <= 2000 &&
-                breastSide == null));
+        ((isDirect && amountMl == null) ||
+            (isBottle && amountMl != null && amountMl > 0 && amountMl <= 2000));
     if (!isValid) {
       recordMutation.value = RecordMutationState(
         error: ArgumentError('Feeding details are incomplete or invalid.'),
@@ -665,17 +680,16 @@ class ProfileOverviewController {
         babyId: _recordsBabyId,
         occurredAt: startedAt,
         feedingMethod: feedingMethod,
-        milkComponents: [
-          FeedingMilkComponent(
-            milkSource: milkSource,
-            volumeMl: isBottle ? amountMl : null,
-          ),
-        ],
+        volumeMl: isBottle ? amountMl : null,
         durationSeconds: isDirect && endedAt != null
             ? endedAt.difference(startedAt).inSeconds
             : null,
-        breastSide: isDirect ? breastSide : null,
-        idempotencyKey: _recordIdempotencyKey('feeding'),
+        planTaskId: planTaskId,
+        idempotencyKey: _recordIdempotencyKey(
+          'feeding',
+          planTaskId: planTaskId,
+          occurredAt: startedAt,
+        ),
       );
       await Future.wait<void>([
         _requestResource(
@@ -714,7 +728,7 @@ class ProfileOverviewController {
         heightCm: heightCm,
         measurementPosition: MeasurementPosition.recumbent,
         measurementContext: measurementContext,
-        idempotencyKey: _recordIdempotencyKey('growth'),
+        idempotencyKey: _recordIdempotencyKey('growth', occurredAt: measuredAt),
       );
       await Future.wait<void>([
         _requestResource(
@@ -750,7 +764,7 @@ class ProfileOverviewController {
         startedAt: startedAt,
         endedAt: endedAt,
         kind: kind,
-        idempotencyKey: _recordIdempotencyKey('sleep'),
+        idempotencyKey: _recordIdempotencyKey('sleep', occurredAt: startedAt),
       );
       await _requestResource(
         ProfileOverviewResourceKey.sleep,
@@ -761,6 +775,7 @@ class ProfileOverviewController {
   }
 
   Future<bool> saveDiaperRecord({
+    DateTime? changedAt,
     int? wetDiaperCount,
     int? bowelMovementCount,
     String? stoolConsistency,
@@ -785,15 +800,16 @@ class ProfileOverviewController {
         : hasDirty
         ? DiaperKind.dirty
         : DiaperKind.wet;
+    final occurredAt = changedAt ?? now();
     return _saveRecord(() async {
       await repository.createDiaperRecord(
         babyId: _recordsBabyId,
-        changedAt: now(),
+        changedAt: occurredAt,
         kind: kind,
         stoolConsistency: stoolConsistency,
         wetDiaperCount: wetDiaperCount,
         bowelMovementCount: bowelMovementCount,
-        idempotencyKey: _recordIdempotencyKey('diaper'),
+        idempotencyKey: _recordIdempotencyKey('diaper', occurredAt: occurredAt),
       );
       await _requestResource(
         ProfileOverviewResourceKey.diapers,
@@ -818,8 +834,17 @@ class ProfileOverviewController {
     }
   }
 
-  String _recordIdempotencyKey(String kind) {
-    return 'profile-overview-$kind-${now().microsecondsSinceEpoch}';
+  String _recordIdempotencyKey(
+    String kind, {
+    String? planTaskId,
+    DateTime? occurredAt,
+  }) {
+    final normalizedPlanTaskId = planTaskId?.trim();
+    if (normalizedPlanTaskId?.isNotEmpty == true) {
+      return 'plan-task-record:$normalizedPlanTaskId:$kind';
+    }
+    final stableOccurredAt = occurredAt ?? now();
+    return 'profile-overview-record:$kind:$_recordsBabyId:${stableOccurredAt.toUtc().microsecondsSinceEpoch}';
   }
 
   void clearRecordMutationError() {

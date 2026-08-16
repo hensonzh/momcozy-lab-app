@@ -4,6 +4,7 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -188,17 +189,33 @@ MomCozyApiRuntime _runtime(FixtureApiJsonTransportByPath transport) {
 }
 
 FixtureApiJsonTransportByPath _successfulPumpTransport() {
-  return FixtureApiJsonTransportByPath({
-    pumpWorkstateEndpoint: const <String, Object?>{
-      'status': 200,
-      'data': <String, Object?>{
-        'need_reply': true,
-        'output': 'Workstate accepted',
-        'reply_code': 'pump_state_changed',
-        'reply_side': 'left',
+  return FixtureApiJsonTransportByPath(
+    {
+      pumpWorkstateEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'need_reply': true,
+          'output': 'Workstate accepted',
+          'reply_code': 'pump_state_changed',
+          'reply_side': 'left',
+        },
       },
     },
-  });
+    writeResponsesByPath: {
+      pumpMilkRecordsEndpoint: const <String, Object?>{
+        'id': 'a68b32a6-34cb-514e-a8ec-55984ae634b5',
+        'owner_user_id': 'c1715770-8a29-5584-9fe5-6d6e758299b5',
+        'pump_start_time': '2026-07-01T00:00:00Z',
+        'pump_end_time': '2026-07-01T00:02:00Z',
+        'pump_type': 'electric',
+        'source': 'manual',
+        'title': 'Pumping record',
+        'status': 'completed',
+        'milk_volume_ml': 27,
+        'duration_seconds': 120,
+      },
+    },
+  );
 }
 
 FixtureApiJsonTransportByPath _failingPumpTransport() {

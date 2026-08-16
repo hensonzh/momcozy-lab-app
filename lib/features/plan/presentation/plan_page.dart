@@ -17,6 +17,7 @@ class PlanPage extends StatefulWidget {
     this.onOpenAllPlans,
     this.onBackToPlans,
     this.onChat,
+    this.onStartPump,
     this.onStartSession,
     this.onManualEdit,
   });
@@ -28,7 +29,8 @@ class PlanPage extends StatefulWidget {
   final VoidCallback? onOpenAllPlans;
   final VoidCallback? onBackToPlans;
   final VoidCallback? onChat;
-  final VoidCallback? onStartSession;
+  final VoidCallback? onStartPump;
+  final ValueChanged<PlanSession>? onStartSession;
   final VoidCallback? onManualEdit;
 
   @override
@@ -37,6 +39,7 @@ class PlanPage extends StatefulWidget {
 
 class _PlanPageState extends State<PlanPage> {
   late PlanController _controller;
+  final Set<String> _sessionStateMutations = <String>{};
 
   @override
   void initState() {
@@ -50,6 +53,7 @@ class _PlanPageState extends State<PlanPage> {
     if (!identical(oldWidget.repository, widget.repository)) {
       _controller.removeListener(_refresh);
       _controller.dispose();
+      _sessionStateMutations.clear();
       _createController();
     }
   }
@@ -142,6 +146,32 @@ class _PlanPageState extends State<PlanPage> {
     widget.onBackToPlans?.call();
   }
 
+  Future<void> _changeSessionState(
+    PlanSession session,
+    PlanTaskState state,
+  ) async {
+    if (_sessionStateMutations.contains(session.id)) return;
+    setState(() => _sessionStateMutations.add(session.id));
+    try {
+      await _controller.updateSessionState(sessionId: session.id, state: state);
+      if (!mounted) return;
+      final label = state == PlanTaskState.completed ? 'completed' : 'skipped';
+      _showTaskStateMessage('Task marked $label.');
+    } catch (_) {
+      if (!mounted) return;
+      _showTaskStateMessage('Task state could not be updated.');
+    } finally {
+      if (mounted) setState(() => _sessionStateMutations.remove(session.id));
+    }
+  }
+
+  void _showTaskStateMessage(String message) {
+    if (Scaffold.maybeOf(context) == null) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = _controller.state;
@@ -174,7 +204,7 @@ class _PlanPageState extends State<PlanPage> {
               onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
               onSelectDay: _controller.selectDay,
               onChat: widget.onChat,
-              onStartSession: widget.onStartSession,
+              onStartSession: widget.onStartPump,
             ),
             _
                 when dashboard != null &&
@@ -188,6 +218,9 @@ class _PlanPageState extends State<PlanPage> {
                 onBackToPlans: _backToOverview,
                 onSelectDay: _controller.selectDay,
                 onStartSession: widget.onStartSession,
+                onChangeSessionState: _controller.canEditSessions
+                    ? _changeSessionState
+                    : null,
                 onAdjustWithAi: widget.onChat,
                 onManualEdit: widget.onManualEdit ?? _openManualEdit,
               ),
@@ -206,6 +239,9 @@ class _PlanPageState extends State<PlanPage> {
               onOpenAllPlans: widget.onOpenAllPlans ?? _openAllPlans,
               onSelectDay: _controller.selectDay,
               onStartSession: widget.onStartSession,
+              onChangeSessionState: _controller.canEditSessions
+                  ? _changeSessionState
+                  : null,
             ),
             _ => _PlanErrorView(onRetry: _controller.load),
           },
@@ -437,6 +473,7 @@ class _MultiPlanView extends StatelessWidget {
     this.onOpenCalendar,
     this.onOpenAllPlans,
     this.onStartSession,
+    this.onChangeSessionState,
   });
 
   final PlanDashboard dashboard;
@@ -451,7 +488,9 @@ class _MultiPlanView extends StatelessWidget {
   final ValueChanged<DateTime>? onSelectDay;
   final VoidCallback? onOpenCalendar;
   final VoidCallback? onOpenAllPlans;
-  final VoidCallback? onStartSession;
+  final ValueChanged<PlanSession>? onStartSession;
+  final void Function(PlanSession session, PlanTaskState state)?
+  onChangeSessionState;
 
   @override
   Widget build(BuildContext context) {
@@ -533,11 +572,16 @@ class _MultiPlanView extends StatelessWidget {
                   child: Row(
                     children: [
                       const Text('Select Day', style: _PlanText.sectionTitle),
-                      const Spacer(),
-                      _WeekRangeRow(
-                        selectedDay: selectedDay,
-                        onPrevious: () => onBrowseWeek(-1),
-                        onNext: () => onBrowseWeek(1),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: _WeekRangeRow(
+                            selectedDay: selectedDay,
+                            onPrevious: () => onBrowseWeek(-1),
+                            onNext: () => onBrowseWeek(1),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -572,8 +616,12 @@ class _MultiPlanView extends StatelessWidget {
               onStart:
                   visibleSessions[index].status == PlanSessionStatus.next &&
                       _sameDay(selectedDay, today)
-                  ? onStartSession
+                  ? () => onStartSession?.call(visibleSessions[index])
                   : null,
+              onChangeState: onChangeSessionState == null
+                  ? null
+                  : (state) =>
+                        onChangeSessionState!(visibleSessions[index], state),
             ),
             if (index != visibleSessions.length - 1) const SizedBox(height: 8),
           ],
@@ -606,6 +654,7 @@ class _SinglePlanView extends StatelessWidget {
     this.onBackToPlans,
     this.onSelectDay,
     this.onStartSession,
+    this.onChangeSessionState,
     this.onAdjustWithAi,
     this.onManualEdit,
   });
@@ -616,7 +665,9 @@ class _SinglePlanView extends StatelessWidget {
   final DateTime today;
   final VoidCallback? onBackToPlans;
   final ValueChanged<DateTime>? onSelectDay;
-  final VoidCallback? onStartSession;
+  final ValueChanged<PlanSession>? onStartSession;
+  final void Function(PlanSession session, PlanTaskState state)?
+  onChangeSessionState;
   final VoidCallback? onAdjustWithAi;
   final VoidCallback? onManualEdit;
 
@@ -666,8 +717,11 @@ class _SinglePlanView extends StatelessWidget {
               onStart:
                   sessions[index].status == PlanSessionStatus.next &&
                       _sameDay(selectedDay, today)
-                  ? onStartSession
+                  ? () => onStartSession?.call(sessions[index])
                   : null,
+              onChangeState: onChangeSessionState == null
+                  ? null
+                  : (state) => onChangeSessionState!(sessions[index], state),
             ),
             if (index != sessions.length - 1)
               SizedBox(
@@ -1388,6 +1442,7 @@ class _PlanCategoryChip extends StatelessWidget {
             width: showPlanTitle
                 ? null
                 : switch (plan.category) {
+                    PlanCategory.pregnancy => 90,
                     PlanCategory.lactation => 84,
                     PlanCategory.yoga => 58,
                     PlanCategory.pelvicFloor => 97,
@@ -1586,9 +1641,13 @@ class _WeekRangeRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _WeekArrowButton(tooltip: 'Previous week', onPressed: onPrevious),
-          Text(
-            '${_monthShort(days.first.month)} ${days.first.day} - ${_monthShort(days.last.month)} ${days.last.day}',
-            style: _PlanText.weekRange,
+          Flexible(
+            child: Text(
+              '${_monthShort(days.first.month)} ${days.first.day} - ${_monthShort(days.last.month)} ${days.last.day}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: _PlanText.weekRange,
+            ),
           ),
           _WeekArrowButton(tooltip: 'Next week', onPressed: onNext),
         ],
@@ -1718,11 +1777,13 @@ class _PlanSessionCard extends StatelessWidget {
     required this.session,
     required this.today,
     this.onStart,
+    this.onChangeState,
   });
 
   final PlanSession session;
   final DateTime today;
   final VoidCallback? onStart;
+  final ValueChanged<PlanTaskState>? onChangeState;
 
   @override
   Widget build(BuildContext context) {
@@ -1782,26 +1843,43 @@ class _PlanSessionCard extends StatelessWidget {
                   ],
                 ),
               ),
-              switch (session.status) {
-                PlanSessionStatus.completed => const _StatusBadge(
-                  label: 'Completed',
-                  foreground: Color(0xff42b883),
-                  background: Color(0xffebf9f4),
-                ),
-                PlanSessionStatus.next when next => _StartButton(
-                  onPressed: onStart,
-                ),
-                PlanSessionStatus.next => _StatusBadge(
-                  label: _pendingSessionLabel(session.scheduledAt, today),
-                  foreground: MomCozyV3Colors.brand,
-                  background: const Color(0xfff5ecea),
-                ),
-                PlanSessionStatus.upcoming => const _StatusBadge(
-                  label: 'Upcoming',
-                  foreground: MomCozyV3Colors.brand,
-                  background: Color(0xfff5ecea),
-                ),
-              },
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  switch (session.status) {
+                    PlanSessionStatus.completed => const _StatusBadge(
+                      label: 'Completed',
+                      foreground: Color(0xff42b883),
+                      background: Color(0xffebf9f4),
+                    ),
+                    PlanSessionStatus.skipped => const _StatusBadge(
+                      label: 'Skipped',
+                      foreground: Color(0xff7f6a75),
+                      background: Color(0xfff1eceb),
+                    ),
+                    PlanSessionStatus.next when next => _StartButton(
+                      onPressed: onStart,
+                    ),
+                    PlanSessionStatus.next => _StatusBadge(
+                      label: _pendingSessionLabel(session.scheduledAt, today),
+                      foreground: MomCozyV3Colors.brand,
+                      background: const Color(0xfff5ecea),
+                    ),
+                    PlanSessionStatus.upcoming => const _StatusBadge(
+                      label: 'Upcoming',
+                      foreground: MomCozyV3Colors.brand,
+                      background: Color(0xfff5ecea),
+                    ),
+                  },
+                  if (onChangeState != null &&
+                      (session.status == PlanSessionStatus.next ||
+                          session.status == PlanSessionStatus.upcoming))
+                    _PlanTaskStateMenu(
+                      sessionId: session.id,
+                      onSelected: onChangeState!,
+                    ),
+                ],
+              ),
             ],
           ),
         ),
@@ -1837,6 +1915,35 @@ class _StartButton extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _PlanTaskStateMenu extends StatelessWidget {
+  const _PlanTaskStateMenu({required this.sessionId, required this.onSelected});
+
+  final String sessionId;
+  final ValueChanged<PlanTaskState> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: 28,
+      child: PopupMenuButton<PlanTaskState>(
+        key: ValueKey('plan-task-state-$sessionId'),
+        tooltip: 'Update task state',
+        padding: EdgeInsets.zero,
+        iconSize: 18,
+        icon: const Icon(Icons.more_vert_rounded),
+        onSelected: onSelected,
+        itemBuilder: (context) => const [
+          PopupMenuItem(
+            value: PlanTaskState.completed,
+            child: Text('Mark completed'),
+          ),
+          PopupMenuItem(value: PlanTaskState.skipped, child: Text('Skip task')),
+        ],
       ),
     );
   }
@@ -2376,6 +2483,7 @@ Future<void> _showWeekDetails(
                     ),
                     trailing: Text(switch (session.status) {
                       PlanSessionStatus.completed => 'Completed',
+                      PlanSessionStatus.skipped => 'Skipped',
                       PlanSessionStatus.next => 'Next',
                       PlanSessionStatus.upcoming => 'Upcoming',
                     }, style: _PlanText.summaryLabel),
@@ -2822,19 +2930,24 @@ class _SingleSessionCard extends StatelessWidget {
     required this.session,
     required this.today,
     this.onStart,
+    this.onChangeState,
   });
 
   final PlanSession session;
   final DateTime today;
   final VoidCallback? onStart;
+  final ValueChanged<PlanTaskState>? onChangeState;
 
   @override
   Widget build(BuildContext context) {
     final completed = session.status == PlanSessionStatus.completed;
+    final skipped = session.status == PlanSessionStatus.skipped;
     final next =
         session.status == PlanSessionStatus.next &&
         _sameDay(session.scheduledAt, today);
-    final pendingLabel = session.status == PlanSessionStatus.next
+    final pendingLabel = skipped
+        ? 'Skipped'
+        : session.status == PlanSessionStatus.next
         ? _pendingSessionLabel(session.scheduledAt, today)
         : 'Upcoming';
     final iconAsset = completed
@@ -2848,7 +2961,11 @@ class _SingleSessionCard extends StatelessWidget {
         ? 1.0
         : 4.0;
     return Opacity(
-      opacity: completed || next ? 1 : 0.6,
+      opacity: completed || next
+          ? 1
+          : skipped
+          ? 0.5
+          : 0.6,
       child: SizedBox(
         height: next ? 61 : 59,
         child: Container(
@@ -2946,8 +3063,14 @@ class _SingleSessionCard extends StatelessWidget {
                   width: 16,
                   height: 16,
                 ),
-              ] else if (next)
-                _StartButton(onPressed: onStart),
+              ] else ...[
+                if (next) _StartButton(onPressed: onStart),
+                if (onChangeState != null && !skipped)
+                  _PlanTaskStateMenu(
+                    sessionId: session.id,
+                    onSelected: onChangeState!,
+                  ),
+              ],
             ],
           ),
         ),

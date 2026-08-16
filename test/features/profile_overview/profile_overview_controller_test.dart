@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
@@ -92,6 +91,60 @@ void main() {
         expect(records.diaperFetchCount, 0);
       },
     );
+
+    test('persists a resolved infant before loading infant records', () async {
+      final records = _FakeRecordsRepository();
+      final resolvedIds = <String>[];
+      final controller = _controller(
+        overviewRepository: _FakeProfileOverviewRepository(
+          overview: const ProfileOverview(
+            baby: BabyProfileOverview(id: 'infant-valid', nickname: 'Mia'),
+            infants: [
+              BabyProfileOverview(id: 'infant-valid', nickname: 'Mia'),
+              BabyProfileOverview(id: 'infant-other', nickname: 'Noah'),
+            ],
+          ),
+        ),
+        records: records,
+        identity: ProfileIdentity.baby,
+        babyId: 'demo-baby',
+        onBabyIdResolved: (babyId) async => resolvedIds.add(babyId),
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(resolvedIds, ['infant-valid']);
+      expect(records.feedingBabyId, 'infant-valid');
+      expect(records.growthBabyId, 'infant-valid');
+    });
+
+    test('keeps the resolved infant usable when persistence fails', () async {
+      final records = _FakeRecordsRepository();
+      final controller = _controller(
+        overviewRepository: _FakeProfileOverviewRepository(
+          overview: const ProfileOverview(
+            baby: BabyProfileOverview(id: 'infant-valid', nickname: 'Mia'),
+            infants: [
+              BabyProfileOverview(id: 'infant-valid', nickname: 'Mia'),
+              BabyProfileOverview(id: 'infant-other', nickname: 'Noah'),
+            ],
+          ),
+        ),
+        records: records,
+        identity: ProfileIdentity.baby,
+        babyId: 'demo-baby',
+        onBabyIdResolved: (_) async => throw StateError('storage unavailable'),
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(records.feedingBabyId, 'infant-valid');
+      expect(records.growthBabyId, 'infant-valid');
+      expect(controller.feedingRecords.value.phase, OverviewResourcePhase.data);
+      expect(controller.growthRecords.value.phase, OverviewResourcePhase.data);
+    });
 
     test('Me loads only the resources used by the current page', () async {
       final overviewRepository = _FakeProfileOverviewRepository();
@@ -394,14 +447,11 @@ void main() {
         endedAt: DateTime.utc(2026, 7, 11, 8, 20),
         leftVolumeMl: 95,
         rightVolumeMl: 42.5,
-        isPostFeedPumping: true,
       );
 
       expect(saved, isTrue);
       expect(records.createdPumpingAmountMl, 137.5);
-      expect(records.createdPumpingOutputs, hasLength(2));
       expect(records.createdPumpingEndedAt, DateTime.utc(2026, 7, 11, 8, 20));
-      expect(records.createdPumpingIsPostFeed, isTrue);
       expect(records.milkTrendFetchCount, 2);
       expect(controller.recordMutation.value.isSaving, isFalse);
       expect(controller.recordMutation.value.error, isNull);
@@ -445,7 +495,6 @@ void main() {
       final saved = await controller.saveFeedingRecord(
         startedAt: DateTime.utc(2026, 7, 11, 9),
         feedingMethod: FeedingMethod.bottle,
-        milkSource: MilkSource.breastMilk,
         amountMl: 80,
       );
 
@@ -547,6 +596,8 @@ ProfileOverviewController _controller({
   PlanRepository? planRepository,
   MaternalCareOverviewRepository? maternalCareOverviewRepository,
   bool extendedProductResourcesEnabled = true,
+  String babyId = 'baby-001',
+  Future<void> Function(String babyId)? onBabyIdResolved,
 }) {
   final effectiveRecords = records ?? _FakeRecordsRepository();
   return ProfileOverviewController(
@@ -563,7 +614,8 @@ ProfileOverviewController _controller({
     diaperRepository: effectiveRecords,
     planRepository: planRepository,
     maternalCareOverviewRepository: maternalCareOverviewRepository,
-    babyId: 'baby-001',
+    babyId: babyId,
+    onBabyIdResolved: onBabyIdResolved,
     identity: identity,
     extendedProductResourcesEnabled: extendedProductResourcesEnabled,
     cache: cache,
@@ -623,11 +675,6 @@ class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
     if (fetchError != null) throw fetchError!;
     return overview;
   }
-
-  @override
-  Future<DeliveryType?> updateDeliveryType(DeliveryType? deliveryType) async {
-    return deliveryType;
-  }
 }
 
 class _FakeRecordsRepository
@@ -673,9 +720,7 @@ class _FakeRecordsRepository
   String? createdSleepBabyId;
   String? createdDiaperBabyId;
   double? createdPumpingAmountMl;
-  List<PumpingOutput> createdPumpingOutputs = const [];
   DateTime? createdPumpingEndedAt;
-  bool? createdPumpingIsPostFeed;
   var pumpingCreateCount = 0;
   var feedingSummaryFetchCount = 0;
   Duration? createdSleepDuration;
@@ -683,6 +728,7 @@ class _FakeRecordsRepository
   int? createdWetDiaperCount;
   int? createdBowelMovementCount;
   String? createdGrowthBabyId;
+  String? growthBabyId;
   double? createdGrowthWeightKg;
 
   @override
@@ -715,22 +761,25 @@ class _FakeRecordsRepository
     required String babyId,
     required DateTime occurredAt,
     required FeedingMethod feedingMethod,
-    required List<FeedingMilkComponent> milkComponents,
+    double? volumeMl,
     int? durationSeconds,
-    FeedingBreastSide? breastSide,
+    String? planTaskId,
     String? idempotencyKey,
   }) async {
     createdFeedingBabyId = babyId;
-    createdFeedingAmountMl = milkComponents
-        .map((component) => component.volumeMl)
-        .whereType<double>()
-        .fold<double>(0, (sum, value) => sum + value);
+    createdFeedingAmountMl = volumeMl;
     return FeedingRecord(
       id: 'feeding-created',
       feedingMethod: feedingMethod,
-      milkComponents: milkComponents,
+      milkComponents: volumeMl == null
+          ? const []
+          : [
+              FeedingMilkComponent(
+                milkSource: MilkSource.unknown,
+                volumeMl: volumeMl,
+              ),
+            ],
       durationSeconds: durationSeconds,
-      breastSide: breastSide,
       occurredAt: occurredAt,
     );
   }
@@ -760,27 +809,28 @@ class _FakeRecordsRepository
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
     DateTime? endedAt,
-    required List<PumpingOutput> outputs,
+    double? milkVolumeMl,
     int? durationSeconds,
-    bool? isPostFeedPumping,
+    String? planTaskId,
     String? idempotencyKey,
   }) async {
     pumpingCreateCount += 1;
-    createdPumpingAmountMl = outputs
-        .map((output) => output.volumeMl)
-        .whereType<double>()
-        .fold<double>(0, (sum, value) => sum + value);
-    createdPumpingOutputs = outputs;
+    createdPumpingAmountMl = milkVolumeMl;
     createdPumpingEndedAt = endedAt;
-    createdPumpingIsPostFeed = isPostFeedPumping;
     return PumpMilkRecord(
       id: 'pumping-created',
       pumpType: 'manual',
-      outputs: outputs,
+      outputs: milkVolumeMl == null
+          ? const []
+          : [
+              PumpingOutput(
+                breastSide: PumpingSide.unassigned,
+                volumeMl: milkVolumeMl,
+              ),
+            ],
       durationSeconds: durationSeconds,
       occurredAt: occurredAt,
       endedAt: endedAt,
-      isPostFeedPumping: isPostFeedPumping,
     );
   }
 
@@ -941,6 +991,7 @@ class _FakeRecordsRepository
     required String babyId,
   }) async {
     growthFetchCount += 1;
+    growthBabyId = babyId;
     if (growthError != null) throw growthError!;
     return const [];
   }

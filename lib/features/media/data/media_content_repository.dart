@@ -22,9 +22,7 @@ class MediaContentRepository {
     ProductAssetHttpConnector? connector,
     this.headers = const {'X-Momcozy-Client': 'flutter'},
     this.maxImageBytes = 10 * 1024 * 1024,
-    this.maxThumbnailBytes = 1024 * 1024,
     this.maxCachedImages = 4,
-    this.maxCachedThumbnails = 64,
   }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri),
        connector = connector ?? IoProductAssetHttpConnector();
 
@@ -34,13 +32,9 @@ class MediaContentRepository {
   final ProductAssetHttpConnector connector;
   final Map<String, String> headers;
   final int maxImageBytes;
-  final int maxThumbnailBytes;
   final int maxCachedImages;
-  final int maxCachedThumbnails;
   final Map<String, Future<Uint8List>> _imageLoads = {};
   final Map<String, Uint8List> _imageBytes = {};
-  final Map<String, Future<Uint8List>> _thumbnailLoads = {};
-  final Map<String, Uint8List> _thumbnailBytes = {};
 
   Future<Uint8List> loadImage(String fileId) {
     final normalizedFileId = _validateFileId(fileId);
@@ -82,42 +76,11 @@ class MediaContentRepository {
   }
 
   Future<Uint8List> loadImageThumbnail(String fileId) {
-    final normalizedFileId = _validateFileId(fileId);
-    final cached = _thumbnailLoads[normalizedFileId];
-    if (cached != null) return cached;
-
-    late final Future<Uint8List> load;
-    load =
-        _loadImageVariant(
-          fileId: normalizedFileId,
-          variant: 'thumbnail',
-          maxBytes: maxThumbnailBytes,
-        ).then(
-          (bytes) {
-            if (identical(_thumbnailLoads[normalizedFileId], load)) {
-              _thumbnailBytes[normalizedFileId] = bytes;
-            }
-            return bytes;
-          },
-          onError: (Object error, StackTrace stackTrace) {
-            if (identical(_thumbnailLoads[normalizedFileId], load)) {
-              _thumbnailLoads.remove(normalizedFileId);
-              _thumbnailBytes.remove(normalizedFileId);
-            }
-            Error.throwWithStackTrace(error, stackTrace);
-          },
-        );
-    _thumbnailLoads[normalizedFileId] = load;
-    while (_thumbnailLoads.length > maxCachedThumbnails) {
-      final evictedFileId = _thumbnailLoads.keys.first;
-      _thumbnailLoads.remove(evictedFileId);
-      _thumbnailBytes.remove(evictedFileId);
-    }
-    return load;
+    return loadImage(fileId);
   }
 
   Uint8List? cachedImageThumbnail(String fileId) {
-    return _thumbnailBytes[_validateFileId(fileId)];
+    return cachedImage(fileId);
   }
 
   void _rememberImage(String fileId, Uint8List bytes) {

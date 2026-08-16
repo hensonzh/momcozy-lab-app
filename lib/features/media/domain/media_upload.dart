@@ -4,7 +4,6 @@ abstract interface class MediaRepository {
   Future<UploadedMediaFile> uploadFile({
     required ApiUploadFile file,
     String? idempotencyKey,
-    bool temporary = false,
   });
 
   Future<void> deleteFile({required String fileId, String? idempotencyKey});

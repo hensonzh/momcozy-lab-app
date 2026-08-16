@@ -17,6 +17,7 @@ import '../support/fixture_api_transport.dart';
 void main() {
   late Map<String, Object?> fixture;
   late Map<String, Object?> records;
+  late Map<String, Object?> productSchemas;
   late String infantId;
 
   setUpAll(() {
@@ -26,13 +27,24 @@ void main() {
       ),
     );
     records = _map(fixture['records']);
+    productSchemas = _map(
+      _map(
+        _map(
+          jsonDecode(
+            File(
+              'docs/backend-contract/product.openapi.generated.json',
+            ).readAsStringSync(),
+          ),
+        )['components'],
+      )['schemas'],
+    );
     infantId = _map(_items(_map(fixture['infants'])).single)['id']! as String;
   });
 
-  test('omits retired response fields from the canonical fixture', () {
+  test('uses frozen Product response fields in the canonical fixture', () {
     expect(
       _map(fixture['meta'])['schema_version'],
-      'momcozy.postpartum_day20.v4',
+      'momcozy.postpartum_day20.v5',
     );
     final profile = _map(fixture['profile']);
     final infant = _map(_items(_map(fixture['infants'])).single);
@@ -58,30 +70,18 @@ void main() {
     expect(care, isNot(contains('capabilities')));
     expect(care, isNot(contains('generated_at')));
 
-    const retiredRecordFields = {
-      'owner_user_id',
-      'plan_task_id',
-      'pump_end_time',
-      'source',
-      'title',
-      'status',
-    };
-    for (final resource in [
-      'feeding',
-      'pumping',
-      'water',
-      'vitals',
-      'sleep',
-      'diaper',
-      'growth',
-    ]) {
-      for (final rawItem in _items(_map(records[resource]))) {
-        expect(
-          _map(rawItem).keys.toSet().intersection(retiredRecordFields),
-          isEmpty,
-        );
-      }
-    }
+    _expectItemsMatchSchema(
+      response: _map(records['feeding']),
+      schema: _map(productSchemas['FeedingRecordRead']),
+    );
+    _expectItemsMatchSchema(
+      response: _map(records['pumping']),
+      schema: _map(productSchemas['PumpingRecordRead']),
+    );
+    _expectItemsMatchSchema(
+      response: _map(records['milk_trends']),
+      schema: _map(productSchemas['MilkTrendDayRead']),
+    );
   });
 
   test('maps the Day 20 profile, care overview, and body profile', () async {
@@ -270,3 +270,20 @@ Set<String> _todayIds(Map<String, Object?> response, String timestampKey) =>
         )
         .map((item) => item['id']! as String)
         .toSet();
+
+void _expectItemsMatchSchema({
+  required Map<String, Object?> response,
+  required Map<String, Object?> schema,
+}) {
+  final allowedFields = _map(schema['properties']).keys.toSet();
+  final requiredFields = Set<String>.from(
+    (schema['required'] as List<Object?>? ?? const <Object?>[])
+        .whereType<String>(),
+  );
+
+  for (final rawItem in _items(response)) {
+    final itemFields = _map(rawItem).keys.toSet();
+    expect(itemFields.difference(allowedFields), isEmpty);
+    expect(itemFields, containsAll(requiredFields));
+  }
+}

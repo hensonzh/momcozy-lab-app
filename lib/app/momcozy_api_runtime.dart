@@ -470,13 +470,13 @@ class MomCozyApiRuntime {
       'records.diaper.changed' => const <ProfileOverviewResourceKey>[
         ProfileOverviewResourceKey.diapers,
       ],
-      'plans.lactation.changed' => const <ProfileOverviewResourceKey>[
-        ProfileOverviewResourceKey.plans,
-      ],
+      'pregnancy_plan.changed' || 'milk_plan.changed' =>
+        const <ProfileOverviewResourceKey>[ProfileOverviewResourceKey.plans],
       _ => const <ProfileOverviewResourceKey>[],
     };
     profileOverviewCache.invalidate(resources);
-    if (event.type == 'plans.lactation.changed') {
+    if (event.type == 'pregnancy_plan.changed' ||
+        event.type == 'milk_plan.changed') {
       _planRepository?.invalidate();
     }
   }
@@ -599,6 +599,7 @@ class MomCozyApiRuntime {
   ProfileOverviewController createProfileOverviewController({
     ProfileIdentity initialIdentity = ProfileIdentity.mom,
     String? babyId,
+    Future<void> Function(String babyId)? onBabyIdResolved,
     bool extendedProductResourcesEnabled = false,
   }) {
     final requestedBabyId = babyId?.trim();
@@ -637,6 +638,7 @@ class MomCozyApiRuntime {
               babyId: selectedBabyId,
             ),
       babyId: selectedBabyId,
+      onBabyIdResolved: onBabyIdResolved,
       identity: initialIdentity,
       extendedProductResourcesEnabled: extendedProductResourcesEnabled,
       timezoneProvider: timezoneProvider,

@@ -46,9 +46,7 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
     final matchingInfant = infantOverviews
         .where((infant) => infant.id == babyId.trim())
         .firstOrNull;
-    final selectedInfant =
-        matchingInfant ??
-        (infantOverviews.length == 1 ? infantOverviews.single : null);
+    final selectedInfant = matchingInfant ?? infantOverviews.firstOrNull;
     return ProfileOverview(
       mom: _momProfileOverview(
         profile,
@@ -78,32 +76,6 @@ class ProfileOverviewApiRepository implements ProfileOverviewRepository {
     } catch (_) {
       return const <String, Object?>{'items': <Object>[]};
     }
-  }
-
-  @override
-  Future<DeliveryType?> updateDeliveryType(DeliveryType? deliveryType) async {
-    final mutations = transport;
-    if (mutations is! ApiJsonMutationTransport) {
-      throw UnsupportedError('Profile updates require JSON mutation support.');
-    }
-    final response = await (mutations as ApiJsonMutationTransport).putJson(
-      profileMeEndpoint,
-      body: {'delivery_type': deliveryType?.apiValue},
-    );
-    if (!response.containsKey('delivery_type')) {
-      throw const FormatException(
-        'Profile update response is missing delivery_type.',
-      );
-    }
-    final rawValue = response['delivery_type'];
-    if (rawValue == null) return null;
-    final saved = DeliveryType.tryParse(rawValue);
-    if (saved == null) {
-      throw const FormatException(
-        'Profile update response has an invalid delivery_type.',
-      );
-    }
-    return saved;
   }
 }
 

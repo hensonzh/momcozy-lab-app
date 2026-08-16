@@ -92,25 +92,22 @@ class RecordsApiRepository
     required String babyId,
     required DateTime occurredAt,
     required FeedingMethod feedingMethod,
-    required List<FeedingMilkComponent> milkComponents,
+    double? volumeMl,
     int? durationSeconds,
-    FeedingBreastSide? breastSide,
+    String? planTaskId,
     String? idempotencyKey,
   }) async {
     final selectedBabyId = _requiredBabyId(babyId);
+    final normalizedPlanTaskId = planTaskId?.trim();
     final body = <String, Object?>{
       'infant_id': selectedBabyId,
       'feed_time': occurredAt.toUtc().toIso8601String(),
-      'feeding_method': feedingMethod.apiValue,
-      'milk_components': [
-        for (final component in milkComponents)
-          {
-            'milk_source': component.milkSource.apiValue,
-            'volume_ml': component.volumeMl,
-          },
-      ],
+      'feed_type': feedingMethod.apiValue,
+      'volume_ml': volumeMl,
       'duration_seconds': durationSeconds,
-      'breast_side': breastSide?.apiValue,
+      'plan_task_id': normalizedPlanTaskId?.isNotEmpty == true
+          ? normalizedPlanTaskId
+          : null,
     }..removeWhere((_, value) => value == null);
     final response = await transport.postJson(
       feedingRecordsEndpoint,
@@ -167,23 +164,20 @@ class RecordsApiRepository
   Future<PumpMilkRecord> createPumpMilkRecord({
     required DateTime occurredAt,
     DateTime? endedAt,
-    required List<PumpingOutput> outputs,
+    double? milkVolumeMl,
     int? durationSeconds,
-    bool? isPostFeedPumping,
+    String? planTaskId,
     String? idempotencyKey,
   }) async {
+    final normalizedPlanTaskId = planTaskId?.trim();
     final body = <String, Object?>{
       'pump_start_time': occurredAt.toUtc().toIso8601String(),
       'pump_end_time': endedAt?.toUtc().toIso8601String(),
-      'outputs': [
-        for (final output in outputs)
-          {
-            'breast_side': output.breastSide.apiValue,
-            'volume_ml': output.volumeMl,
-          },
-      ],
+      'milk_volume_ml': milkVolumeMl,
       'duration_seconds': durationSeconds,
-      'is_post_feed_pumping': isPostFeedPumping,
+      'plan_task_id': normalizedPlanTaskId?.isNotEmpty == true
+          ? normalizedPlanTaskId
+          : null,
       'pump_type': 'manual',
       'source': 'manual',
     }..removeWhere((_, value) => value == null);
@@ -564,34 +558,50 @@ class RecordsApiRepository
 }
 
 FeedingRecord _feedingRecord(Map<String, Object?> data) {
-  final feedingMethod = FeedingMethod.tryParse(data['feeding_method']);
-  if (feedingMethod == null) {
-    throw const FormatException('Feeding record feeding_method is invalid.');
+  final feedType = _string(data['feed_type'])?.trim();
+  if (feedType == null || feedType.isEmpty) {
+    throw const FormatException('Feeding record feed_type is missing.');
   }
+  final feedingMethod = FeedingMethod.tryParse(feedType) ?? FeedingMethod.other;
+  final volumeMl = _double(data['volume_ml']);
   return FeedingRecord(
-    id: _string(data['id'] ?? data['recordId']) ?? '',
-    infantId: _string(data['infant_id'] ?? data['infantId'])?.trim(),
+    id: _string(data['id']) ?? '',
+    infantId: _string(data['infant_id'])?.trim(),
     feedingMethod: feedingMethod,
-    milkComponents: _feedingMilkComponents(data['milk_components']),
-    durationSeconds: _int(data['duration_seconds'] ?? data['durationSeconds']),
-    breastSide: FeedingBreastSide.tryParse(
-      data['breast_side'] ?? data['breastSide'],
-    ),
+    milkComponents: volumeMl == null
+        ? const <FeedingMilkComponent>[]
+        : <FeedingMilkComponent>[
+            FeedingMilkComponent(
+              milkSource: MilkSource.unknown,
+              volumeMl: volumeMl,
+            ),
+          ],
+    durationSeconds: _int(data['duration_seconds']),
     occurredAt: _dateTime(data['feed_time']),
   );
 }
 
 PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
+  if (data.containsKey('outputs') && !data.containsKey('milk_volume_ml')) {
+    throw const FormatException(
+      'Pumping record must use the canonical milk_volume_ml field.',
+    );
+  }
+  final volumeMl = _double(data['milk_volume_ml']);
   return PumpMilkRecord(
     id: _id(data['id']),
     pumpType: _string(data['pump_type']) ?? '',
-    outputs: _pumpingOutputs(data['outputs']),
+    outputs: volumeMl == null
+        ? const <PumpingOutput>[]
+        : <PumpingOutput>[
+            PumpingOutput(
+              breastSide: PumpingSide.unassigned,
+              volumeMl: volumeMl,
+            ),
+          ],
     durationSeconds: _int(data['duration_seconds']),
     occurredAt: _dateTime(data['pump_start_time']),
     endedAt: _dateTime(data['pump_end_time']),
-    isPostFeedPumping: data['is_post_feed_pumping'] is bool
-        ? data['is_post_feed_pumping'] as bool
-        : null,
   );
 }
 
@@ -663,24 +673,30 @@ DiaperRecord _diaperRecord(Map<String, Object?> data) {
 }
 
 MilkTrendDay? _milkTrendDay(Map<String, Object?> data) {
-  if (!data.containsKey('measured_volume_ml') ||
-      !data.containsKey('pumping_count') ||
-      !data.containsKey('measured_pumping_count')) {
+  if (!data.containsKey('pumped_milk_volume_ml') ||
+      !data.containsKey('pumping_count')) {
     throw const FormatException(
-      'Milk trend must use measured_volume_ml and measured count fields.',
+      'Milk trend must use pumped_milk_volume_ml and pumping_count.',
     );
   }
   final date = _dateTime(data['date']);
+  final pumpedMilkVolumeMl = _double(data['pumped_milk_volume_ml']);
   final pumpingCount = _int(data['pumping_count']);
-  final measuredPumpingCount = _int(data['measured_pumping_count']);
-  if (date == null || pumpingCount == null || measuredPumpingCount == null) {
+  final measuredOnly = data['measured_only'] ?? true;
+  if (date == null ||
+      pumpedMilkVolumeMl == null ||
+      pumpingCount == null ||
+      measuredOnly is! bool) {
     throw const FormatException('Milk trend fields are invalid.');
   }
   return MilkTrendDay(
     date: DateTime(date.year, date.month, date.day),
-    measuredVolumeMl: _double(data['measured_volume_ml']),
+    // The Product contract reports whether the aggregate contains only
+    // explicitly measured records. A mixed aggregate cannot be presented as
+    // an exact measured total, even though the wire value itself is numeric.
+    measuredVolumeMl: measuredOnly ? pumpedMilkVolumeMl : null,
     pumpingCount: pumpingCount,
-    measuredPumpingCount: measuredPumpingCount,
+    measuredPumpingCount: measuredOnly ? pumpingCount : 0,
   );
 }
 
@@ -700,44 +716,6 @@ GrowthRecord _growthRecord(Map<String, Object?> data) {
       data['measurement_context'],
     ),
   );
-}
-
-List<FeedingMilkComponent> _feedingMilkComponents(Object? value) {
-  if (value is! List) return const <FeedingMilkComponent>[];
-  return value
-      .whereType<Map>()
-      .map((raw) {
-        final data = Map<String, Object?>.from(raw);
-        final source = MilkSource.tryParse(data['milk_source']);
-        if (source == null) {
-          throw const FormatException(
-            'Feeding component milk_source is invalid.',
-          );
-        }
-        return FeedingMilkComponent(
-          milkSource: source,
-          volumeMl: _double(data['volume_ml']),
-        );
-      })
-      .toList(growable: false);
-}
-
-List<PumpingOutput> _pumpingOutputs(Object? value) {
-  if (value is! List) return const <PumpingOutput>[];
-  return value
-      .whereType<Map>()
-      .map((raw) {
-        final data = Map<String, Object?>.from(raw);
-        final side = PumpingSide.tryParse(data['breast_side']);
-        if (side == null) {
-          throw const FormatException('Pumping output breast_side is invalid.');
-        }
-        return PumpingOutput(
-          breastSide: side,
-          volumeMl: _double(data['volume_ml']),
-        );
-      })
-      .toList(growable: false);
 }
 
 FeedingSummary _feedingSummary(Map<String, Object?> data) {

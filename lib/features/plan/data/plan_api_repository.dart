@@ -7,6 +7,9 @@ const planSessionListEndpoint = '/v1/plans/tasks/list';
 String planSessionEndpoint(String sessionId) =>
     '/v1/plans/tasks/${Uri.encodeComponent(sessionId.trim())}';
 
+String planSessionStateEndpoint(String sessionId) =>
+    '${planSessionEndpoint(sessionId)}/state';
+
 class PlanApiRepository
     implements
         PlanRepository,
@@ -93,6 +96,25 @@ class PlanApiRepository
     invalidate();
   }
 
+  @override
+  Future<void> updateSessionState({
+    required String sessionId,
+    required PlanTaskState state,
+  }) async {
+    final normalizedSessionId = sessionId.trim();
+    if (normalizedSessionId.isEmpty) {
+      throw ArgumentError.value(sessionId, 'sessionId', 'must not be empty');
+    }
+    if (transport is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Plan task state updates require PATCH support.');
+    }
+    await (transport as ApiJsonMutationTransport).patchJson(
+      planSessionStateEndpoint(normalizedSessionId),
+      body: {'state': state.name},
+    );
+    invalidate();
+  }
+
   Future<PlanDashboard> _fetchDashboard(DateTime selectedDay) async {
     final planRequest = transport.getJson(
       planListEndpoint,
@@ -107,10 +129,10 @@ class PlanApiRepository
     if (plans.isEmpty) return PlanDashboard.empty(weekOf: selectedDay);
 
     final sessionResponse = (await sessionRequest).unwrap();
-    final activePlanIds = plans.map((plan) => plan.id).toSet();
+    final activePlans = {for (final plan in plans) plan.id: plan};
     final rawSessions =
         _items(sessionResponse, endpoint: planSessionListEndpoint)
-            .map((session) => _rawSession(session, activePlanIds))
+            .map((session) => _rawSession(session, activePlans))
             .whereType<_RawPlanSession>()
             .toList(growable: false)
           ..sort(
@@ -119,11 +141,13 @@ class PlanApiRepository
     final plansWithNextSession = <String>{};
     final sessions = <PlanSession>[];
     for (final session in rawSessions) {
-      final status = session.completed
-          ? PlanSessionStatus.completed
-          : plansWithNextSession.add(session.planId)
-          ? PlanSessionStatus.next
-          : PlanSessionStatus.upcoming;
+      final status = switch (session.state) {
+        PlanTaskState.completed => PlanSessionStatus.completed,
+        PlanTaskState.skipped => PlanSessionStatus.skipped,
+        PlanTaskState.pending when plansWithNextSession.add(session.planId) =>
+          PlanSessionStatus.next,
+        PlanTaskState.pending => PlanSessionStatus.upcoming,
+      };
       sessions.add(
         PlanSession(
           id: session.id,
@@ -131,6 +155,7 @@ class PlanApiRepository
           title: session.title,
           scheduledAt: session.scheduledAt,
           status: status,
+          kind: session.kind,
           valueLabel: session.valueLabel,
         ),
       );
@@ -229,9 +254,9 @@ CarePlan _carePlan(Map<String, Object?> data) {
       payload['weekly_completed_sessions'],
     ),
     weeklyTotalSessions: _optionalPositiveInt(payload['weekly_total_sessions']),
-    startDate: _optionalApiDate(payload['start_date']),
-    endDate: _optionalApiDate(payload['end_date']),
-    durationDays: _optionalPositiveInt(payload['duration_days']),
+    startDate: _optionalApiDate(data['starts_on']),
+    endDate: _optionalApiDate(data['ends_on']),
+    durationDays: _planDurationDays(data, payload),
     goal: _optionalString(payload['goal']),
     basisMode: _optionalString(basis['mode']),
     pumpingSessionsPerDay: pumpingSessions,
@@ -239,12 +264,65 @@ CarePlan _carePlan(Map<String, Object?> data) {
   );
 }
 
+int? _planDurationDays(
+  Map<String, Object?> data,
+  Map<String, Object?> payload,
+) {
+  final explicit = _optionalPositiveInt(payload['duration_days']);
+  if (explicit != null) return explicit;
+  final start = _optionalApiDate(data['starts_on']);
+  final end = _optionalApiDate(data['ends_on']);
+  if (start == null || end == null || end.isBefore(start)) return null;
+  return end.difference(start).inDays + 1;
+}
+
+PlanTaskState _planTaskState(String value) {
+  return switch (value.trim().toLowerCase()) {
+    'pending' => PlanTaskState.pending,
+    'completed' => PlanTaskState.completed,
+    'skipped' => PlanTaskState.skipped,
+    _ => throw FormatException('Unsupported plan task state: $value.'),
+  };
+}
+
+PlanSessionKind _planSessionKind(
+  Map<String, Object?> payload,
+  PlanCategory category,
+) {
+  final value = _optionalString(
+    payload['record_type'] ??
+        payload['task_type'] ??
+        payload['activity_type'] ??
+        payload['kind'],
+  )?.toLowerCase();
+  final explicit = switch (value) {
+    'pump' || 'pumping' || 'breast_pumping' => PlanSessionKind.pumping,
+    'feed' ||
+    'feeding' ||
+    'breastfeeding' ||
+    'bottle' => PlanSessionKind.feeding,
+    'pregnancy' || 'prenatal' => PlanSessionKind.pregnancy,
+    'yoga' || 'recovery_yoga' => PlanSessionKind.yoga,
+    'pelvic_floor' || 'pelvic-floor' => PlanSessionKind.pelvicFloor,
+    _ => null,
+  };
+  if (explicit != null) return explicit;
+  return switch (category) {
+    PlanCategory.pregnancy => PlanSessionKind.pregnancy,
+    PlanCategory.lactation => PlanSessionKind.pumping,
+    PlanCategory.yoga => PlanSessionKind.yoga,
+    PlanCategory.pelvicFloor => PlanSessionKind.pelvicFloor,
+    PlanCategory.other => PlanSessionKind.general,
+  };
+}
+
 _RawPlanSession? _rawSession(
   Map<String, Object?> data,
-  Set<String> activePlanIds,
+  Map<String, CarePlan> activePlans,
 ) {
   final planId = _optionalString(data['plan_id']);
-  if (planId == null || !activePlanIds.contains(planId)) return null;
+  final plan = planId == null ? null : activePlans[planId];
+  if (plan == null) return null;
   final payload = _objectMap(data['payload']);
   final date = _requiredString(data, 'task_date');
   final time = _requiredString(data, 'task_time');
@@ -252,13 +330,14 @@ _RawPlanSession? _rawSession(
   if (parsed == null) {
     throw const FormatException('Plan session has an invalid date or time.');
   }
-  final status = _requiredString(data, 'status').toLowerCase();
+  final state = _planTaskState(_requiredString(data, 'status'));
   return _RawPlanSession(
     id: _requiredString(data, 'id'),
-    planId: planId,
+    planId: plan.id,
     title: _requiredString(data, 'title'),
     scheduledAt: parsed,
-    completed: status == 'completed' || status == 'done',
+    state: state,
+    kind: _planSessionKind(payload, plan.category),
     valueLabel: _optionalString(payload['value_label']),
   );
 }
@@ -269,7 +348,8 @@ class _RawPlanSession {
     required this.planId,
     required this.title,
     required this.scheduledAt,
-    required this.completed,
+    required this.state,
+    required this.kind,
     this.valueLabel,
   });
 
@@ -277,13 +357,17 @@ class _RawPlanSession {
   final String planId;
   final String title;
   final DateTime scheduledAt;
-  final bool completed;
+  final PlanTaskState state;
+  final PlanSessionKind kind;
   final String? valueLabel;
 }
 
 PlanCategory _category(String wireValue) {
   return switch (wireValue.trim().toLowerCase()) {
-    'lactation' || 'breast_pumping' => PlanCategory.lactation,
+    'pregnancy' || 'birth_journey' => PlanCategory.pregnancy,
+    'lactation' ||
+    'breast_pumping' ||
+    'milk_management' => PlanCategory.lactation,
     'yoga' || 'recovery_yoga' => PlanCategory.yoga,
     'pelvic_floor' || 'pelvic-floor' => PlanCategory.pelvicFloor,
     _ => PlanCategory.other,
@@ -291,6 +375,7 @@ PlanCategory _category(String wireValue) {
 }
 
 String _defaultTitle(PlanCategory category) => switch (category) {
+  PlanCategory.pregnancy => 'Pregnancy Plan',
   PlanCategory.lactation => 'Breast Pumping Plan',
   PlanCategory.yoga => 'Yoga',
   PlanCategory.pelvicFloor => 'Pelvic Floor',

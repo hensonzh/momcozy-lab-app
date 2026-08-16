@@ -49,18 +49,16 @@ void main() {
       expect(uploaded.mimeType, isEmpty);
     });
 
-    test('marks agent draft uploads as temporary', () async {
+    test('does not send unsupported upload query parameters', () async {
       final transport = FixtureApiMultipartTransport({'id': 'file-001'});
 
-      await MediaApiRepository(
-        transport: transport,
-      ).uploadFile(file: _file, temporary: true);
+      await MediaApiRepository(transport: transport).uploadFile(file: _file);
 
       expect(transport.lastPath, mediaUploadEndpoint);
-      expect(transport.lastQuery, {'temporary': true});
+      expect(transport.lastQuery, isEmpty);
     });
 
-    test('deletes an abandoned temporary file idempotently', () async {
+    test('deletes an abandoned uploaded file idempotently', () async {
       final mutationTransport = FixtureApiJsonTransport(const {});
       final repository = MediaApiRepository(
         transport: FixtureApiMultipartTransport(const {}),

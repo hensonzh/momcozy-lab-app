@@ -73,7 +73,7 @@ void main() {
       onCreatePlan: () => createCount += 1,
       onOpenCalendar: () => calendarCount += 1,
       onOpenAllPlans: () => allPlansCount += 1,
-      onStartSession: () => pumpCount += 1,
+      onStartPump: () => pumpCount += 1,
       onChat: () => chatCount += 1,
     );
 
@@ -131,7 +131,7 @@ void main() {
       onCreatePlan: () => createCount += 1,
       onOpenCalendar: () => calendarCount += 1,
       onOpenAllPlans: () => allPlansCount += 1,
-      onStartSession: () => pumpCount += 1,
+      onStartPump: () => pumpCount += 1,
       onChat: () => chatCount += 1,
       viewportSize: const Size(390, 1140),
     );
@@ -424,12 +424,12 @@ void main() {
   testWidgets('renders the supplied multi-category daily plan structure', (
     tester,
   ) async {
-    var startCount = 0;
+    PlanSession? startedSession;
     await _pumpPlanPage(
       tester,
       dashboard: _multiCategoryDashboard(now),
       now: now,
-      onStartSession: () => startCount += 1,
+      onStartSession: (session) => startedSession = session,
     );
 
     await expectLater(
@@ -461,7 +461,8 @@ void main() {
     );
     expect(find.byKey(const ValueKey('plan-day-dot-2024-10-21')), findsNothing);
     await tester.tap(find.text('Start'));
-    expect(startCount, 1);
+    expect(startedSession?.id, 'two');
+    expect(startedSession?.kind, PlanSessionKind.pumping);
 
     expect(
       find.byKey(const ValueKey('plan-period-day-selected')),
@@ -508,6 +509,29 @@ void main() {
     expect(find.text('吸奶补录'), findsNothing);
     expect(find.text('喂养记录'), findsNothing);
   });
+
+  testWidgets(
+    'updates a task by stable id through the authoritative state API',
+    (tester) async {
+      final repository = _EditablePlanRepository(_multiCategoryDashboard(now));
+      await _pumpPlanPage(
+        tester,
+        dashboard: repository.dashboard,
+        repository: repository,
+        now: now,
+        viewportSize: const Size(360, 800),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('plan-task-state-two')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Mark completed'));
+      await tester.pumpAndSettle();
+
+      expect(repository.updatedStateSessionId, 'two');
+      expect(repository.updatedState, PlanTaskState.completed);
+      expect(find.byKey(const ValueKey('plan-task-state-two')), findsNothing);
+    },
+  );
 
   testWidgets('multi-category period and plan details change real content', (
     tester,
@@ -704,7 +728,7 @@ void main() {
       dashboard: _singlePlanDashboard(now),
       now: now,
       onBackToPlans: () => backCount += 1,
-      onStartSession: () => startCount += 1,
+      onStartSession: (_) => startCount += 1,
       onManualEdit: () => editCount += 1,
     );
     await tester.tap(find.byKey(const ValueKey('plan-open-details')));
@@ -744,7 +768,7 @@ void main() {
       dashboard: _singlePlanDashboard(now),
       now: now,
       onBackToPlans: () => backCount += 1,
-      onStartSession: () => startCount += 1,
+      onStartSession: (_) => startCount += 1,
       onManualEdit: () => editCount += 1,
       viewportSize: const Size(390, 1100),
     );
@@ -981,7 +1005,8 @@ Future<void> _pumpPlanPage(
   VoidCallback? onOpenAllPlans,
   VoidCallback? onBackToPlans,
   VoidCallback? onChat,
-  VoidCallback? onStartSession,
+  VoidCallback? onStartPump,
+  ValueChanged<PlanSession>? onStartSession,
   VoidCallback? onManualEdit,
   Size viewportSize = const Size(390, 844),
   double devicePixelRatio = 1,
@@ -1004,7 +1029,8 @@ Future<void> _pumpPlanPage(
         onOpenAllPlans: onOpenAllPlans,
         onBackToPlans: onBackToPlans,
         onChat: onChat ?? () {},
-        onStartSession: onStartSession ?? () {},
+        onStartPump: onStartPump ?? () {},
+        onStartSession: onStartSession ?? (_) {},
         onManualEdit: onManualEdit,
       ),
     ),
@@ -1061,6 +1087,7 @@ PlanDashboard _multiCategoryDashboard(DateTime now) {
         title: 'Pumping: Express 20min',
         scheduledAt: DateTime(now.year, now.month, now.day, 11),
         status: PlanSessionStatus.next,
+        kind: PlanSessionKind.pumping,
       ),
       PlanSession(
         id: 'three',
@@ -1086,6 +1113,7 @@ PlanDashboard _mixedPlanDashboard(DateTime now) {
         title: 'Pelvic Floor: Evening Stretches 15min',
         scheduledAt: DateTime(now.year, now.month, now.day, 16),
         status: PlanSessionStatus.next,
+        kind: PlanSessionKind.pelvicFloor,
       ),
     ],
   );
@@ -1199,6 +1227,8 @@ class _EditablePlanRepository
   String? updatedSessionId;
   String? updatedTitle;
   DateTime? updatedAt;
+  String? updatedStateSessionId;
+  PlanTaskState? updatedState;
 
   @override
   Future<PlanDashboard> fetchDashboard({required DateTime weekOf}) async {
@@ -1226,6 +1256,39 @@ class _EditablePlanRepository
               title: title,
               scheduledAt: scheduledAt,
               status: session.status,
+              kind: session.kind,
+              valueLabel: session.valueLabel,
+            )
+          else
+            session,
+      ],
+    );
+  }
+
+  @override
+  Future<void> updateSessionState({
+    required String sessionId,
+    required PlanTaskState state,
+  }) async {
+    updatedStateSessionId = sessionId;
+    updatedState = state;
+    dashboard = PlanDashboard(
+      weekOf: dashboard.weekOf,
+      plans: dashboard.plans,
+      sessions: [
+        for (final session in dashboard.sessions)
+          if (session.id == sessionId)
+            PlanSession(
+              id: session.id,
+              planId: session.planId,
+              title: session.title,
+              scheduledAt: session.scheduledAt,
+              status: switch (state) {
+                PlanTaskState.completed => PlanSessionStatus.completed,
+                PlanTaskState.skipped => PlanSessionStatus.skipped,
+                PlanTaskState.pending => PlanSessionStatus.next,
+              },
+              kind: session.kind,
               valueLabel: session.valueLabel,
             )
           else

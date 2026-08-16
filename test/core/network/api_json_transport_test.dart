@@ -60,10 +60,8 @@ void main() {
         body: {
           'infant_id': 'infant-fixture',
           'feed_time': '2026-06-29T08:00:00Z',
-          'feeding_method': 'bottle',
-          'milk_components': [
-            {'milk_source': 'breast_milk', 'volume_ml': 80},
-          ],
+          'feed_type': 'bottle',
+          'volume_ml': 80,
         },
         headers: {'Idempotency-Key': 'idem-001'},
       );
@@ -80,10 +78,8 @@ void main() {
       expect(jsonDecode(connector.body!) as Map<String, Object?>, {
         'infant_id': 'infant-fixture',
         'feed_time': '2026-06-29T08:00:00Z',
-        'feeding_method': 'bottle',
-        'milk_components': [
-          {'milk_source': 'breast_milk', 'volume_ml': 80},
-        ],
+        'feed_type': 'bottle',
+        'volume_ml': 80,
       });
     });
 

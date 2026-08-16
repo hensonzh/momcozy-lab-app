@@ -13,12 +13,10 @@ class MediaApiRepository implements MediaRepository {
   Future<UploadedMediaFile> uploadFile({
     required ApiUploadFile file,
     String? idempotencyKey,
-    bool temporary = false,
   }) async {
     final normalizedIdempotencyKey = idempotencyKey?.trim();
     final response = await transport.uploadMultipart(
       mediaUploadEndpoint,
-      query: {if (temporary) 'temporary': true},
       headers: {
         if (normalizedIdempotencyKey != null &&
             normalizedIdempotencyKey.isNotEmpty)

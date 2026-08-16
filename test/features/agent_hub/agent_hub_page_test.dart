@@ -2150,7 +2150,6 @@ void main() {
     );
     expect(client.requests.single.images.single.dataUrl, isEmpty);
     expect(mediaRepository.uploadedFiles.single.bytes, isNotEmpty);
-    expect(mediaRepository.temporaryUploads, [true]);
     expect(mediaRepository.deletedFileIds, isEmpty);
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
@@ -2299,11 +2298,10 @@ void main() {
       '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
     );
     expect(mediaRepository.uploadedFiles.single.mimeType, 'application/pdf');
-    expect(mediaRepository.temporaryUploads, [true]);
     expect(find.byKey(const ValueKey('agent-sent-file-0')), findsOneWidget);
   });
 
-  testWidgets('Agent Hub deletes a temporary upload when it is removed', (
+  testWidgets('Agent Hub deletes an abandoned upload when it is removed', (
     tester,
   ) async {
     final mediaRepository = _FakeAgentImageMediaRepository();
@@ -2333,10 +2331,199 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
     await tester.pumpAndSettle();
 
-    expect(mediaRepository.temporaryUploads, [true]);
     expect(mediaRepository.deletedFileIds, [
       '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
     ]);
+  });
+
+  testWidgets(
+    'Agent Hub deletes draft attachments before a synthetic form request',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+      final mediaRepository = _FakeAgentImageMediaRepository();
+      final formEvent = AgentStreamEvent(const {
+        'type': 'artifact.created',
+        'artifact_id': 'attachment-cleanup-form',
+        'payload': {
+          'artifact_type': 'form',
+          'form': {
+            'id': 'hospital_bag_intake',
+            'title': '信息采集',
+            'fields': [
+              {
+                'id': 'due_date_or_week',
+                'label': '预产期或当前孕周',
+                'type': 'text',
+                'required': true,
+                'default_value': '38 周',
+              },
+            ],
+          },
+        },
+      });
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请补充信息。',
+              events: [formEvent],
+            ),
+            mediaRepository: mediaRepository,
+            pickImage: (_) async => const AgentStreamImageInput(
+              dataUrl:
+                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+              mimeType: 'image/png',
+              name: 'discard-before-form.png',
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('agent-attachment-photo-button')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-entry-attachment-cleanup-form'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(
+          const ValueKey('agent-artifact-form-submit-attachment-cleanup-form'),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(mediaRepository.deletedFileIds, [
+        '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+      ]);
+      expect(client.requests, hasLength(1));
+      expect(client.requests.single.images, isEmpty);
+      expect(client.requests.single.files, isEmpty);
+      expect(
+        find.byKey(const ValueKey('agent-image-attachment-chip')),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets('Agent Hub deletes draft attachments before a new session', (
+    tester,
+  ) async {
+    final mediaRepository = _FakeAgentImageMediaRepository();
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          mediaRepository: mediaRepository,
+          pickImage: (_) async => const AgentStreamImageInput(
+            dataUrl:
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+            mimeType: 'image/png',
+            name: 'discard-before-new-session.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pumpAndSettle();
+
+    expect(mediaRepository.deletedFileIds, [
+      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+    ]);
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsNothing,
+    );
+  });
+
+  testWidgets(
+    'Agent Hub never retains a draft reference after deletion succeeds',
+    (tester) async {
+      final mediaRepository = _FakeAgentImageMediaRepository();
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            mediaRepository: mediaRepository,
+            onNewSession: () async => throw StateError('cart clear failed'),
+            pickImage: (_) async => const AgentStreamImageInput(
+              dataUrl:
+                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+              mimeType: 'image/png',
+              name: 'deleted-before-session-failure.png',
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('agent-attachment-photo-button')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+      await tester.pumpAndSettle();
+
+      expect(mediaRepository.deletedFileIds, [
+        '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+      ]);
+      expect(
+        find.byKey(const ValueKey('agent-image-attachment-chip')),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets('Agent Hub preserves a draft when attachment deletion fails', (
+    tester,
+  ) async {
+    final mediaRepository = _FakeAgentImageMediaRepository(
+      deleteFailure: StateError('delete unavailable'),
+    );
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          mediaRepository: mediaRepository,
+          pickImage: (_) async => const AgentStreamImageInput(
+            dataUrl:
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+            mimeType: 'image/png',
+            name: 'preserve-on-delete-failure.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(find.text('附件清理失败，已保留草稿，请重试。'), findsOneWidget);
   });
 
   testWidgets('Agent Hub keeps camera and gallery image sources distinct', (
@@ -3065,7 +3252,7 @@ void main() {
         'tool_call_id': 'tool-media-voice',
         'sequence': 1,
         'payload': {
-          'safe_output': {
+          'output_summary': {
             'media_voice': [
               {
                 'media_id': '/v1/assets/asset-image?kind=image',
@@ -3135,7 +3322,7 @@ void main() {
           'tool_call_id': 'tool-standalone-media-voice',
           'sequence': 1,
           'payload': {
-            'safe_output': {
+            'output_summary': {
               'media_voice': [
                 {
                   'media_id': '/v1/assets/instructional-image',
@@ -3223,7 +3410,7 @@ void main() {
           'tool_call_id': 'tool-deduped-media-voice',
           'sequence': 1,
           'payload': {
-            'safe_output': {
+            'output_summary': {
               'media_voice': [
                 {
                   'media_id': '/v1/assets/valve-image',
@@ -9586,18 +9773,18 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
 }
 
 class _FakeAgentImageMediaRepository implements MediaRepository {
+  _FakeAgentImageMediaRepository({this.deleteFailure});
+
+  final Object? deleteFailure;
   final uploadedFiles = <ApiUploadFile>[];
-  final temporaryUploads = <bool>[];
   final deletedFileIds = <String>[];
 
   @override
   Future<UploadedMediaFile> uploadFile({
     required ApiUploadFile file,
     String? idempotencyKey,
-    bool temporary = false,
   }) async {
     uploadedFiles.add(file);
-    temporaryUploads.add(temporary);
     return const UploadedMediaFile(
       id: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
       name: 'pump-display.png',
@@ -9613,5 +9800,7 @@ class _FakeAgentImageMediaRepository implements MediaRepository {
     String? idempotencyKey,
   }) async {
     deletedFileIds.add(fileId);
+    final failure = deleteFailure;
+    if (failure != null) throw failure;
   }
 }
