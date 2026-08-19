@@ -25,6 +25,7 @@
 - 后端合同交接说明：`backend-contract/api-contract-handoff.md`
 - Flutter client compatibility：`backend-contract/flutter-client-compatibility.md`
 - 合并基线与能力门禁：`flutter/unified-app-integration.md`
+- Unified App 智能体交接：`flutter/unified-app-handoff.md`
 
 Product 和 Agent Runtime 是独立的合同来源。App 提交两份快照，并通过
 `python3 scripts/validate_backend_contract.py` 校验服务归属、鉴权、幂等、
