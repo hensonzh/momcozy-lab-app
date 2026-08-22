@@ -341,7 +341,31 @@ void main() {
       expect(state.textContent, '正在生成');
       expect(state.provisionalTextContent, '正在生成');
       expect(state.lastSequence, isNull);
+      expect(state.lastTransientCursor, '1720000000-1');
       expect(state.events, isEmpty);
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'delta:1720000000-0',
+          'type': 'message.delta',
+          'thread_id': 'thread-transient-001',
+          'run_id': 'run-transient-001',
+          'transient': true,
+          'cursor': '1720000000-0',
+          'payload': {'delta': '正在'},
+        }),
+      );
+      expect(state.lastTransientCursor, '1720000000-1');
+      expect(state.textContent, '正在生成');
+
+      final restored = AgentStreamRunState.fromMap(state.toMap());
+      expect(restored.lastTransientCursor, '1720000000-1');
+      expect(
+        AgentStreamRunState.fromMap(const {
+          'lastTransientCursor': 'not-a-redis-cursor',
+        }).lastTransientCursor,
+        isNull,
+      );
 
       state = state.applyEvent(
         AgentStreamEvent(const {

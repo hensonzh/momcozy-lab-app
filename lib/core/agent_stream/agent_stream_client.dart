@@ -8,6 +8,7 @@ class AgentStreamRequest {
     this.threadId,
     this.runId,
     this.afterSequence = 0,
+    this.afterTransientCursor,
     this.locale = 'en-US',
     this.timezone,
     this.messageSentAt,
@@ -21,6 +22,7 @@ class AgentStreamRequest {
   final String? threadId;
   final String? runId;
   final int afterSequence;
+  final String? afterTransientCursor;
   final String locale;
   final String? timezone;
   final String? messageSentAt;
@@ -47,6 +49,7 @@ class AgentStreamRequest {
   AgentStreamRequest resume({
     required String runId,
     required int afterSequence,
+    String? afterTransientCursor,
     String? threadId,
   }) {
     return AgentStreamRequest(
@@ -54,6 +57,7 @@ class AgentStreamRequest {
       threadId: threadId ?? this.threadId,
       runId: runId,
       afterSequence: afterSequence < 0 ? 0 : afterSequence,
+      afterTransientCursor: afterTransientCursor ?? this.afterTransientCursor,
       locale: locale,
       timezone: timezone,
       messageSentAt: messageSentAt,
@@ -70,6 +74,7 @@ class AgentStreamRequest {
       threadId: threadId,
       runId: runId,
       afterSequence: afterSequence,
+      afterTransientCursor: afterTransientCursor,
       locale: locale,
       timezone: context.timezone,
       messageSentAt: context.messageSentAt,

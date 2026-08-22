@@ -704,11 +704,14 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
         ? existingRunId
         : await _createRun(request);
     final afterSequence = request.afterSequence < 0 ? 0 : request.afterSequence;
+    final afterTransientCursor = request.afterTransientCursor?.trim();
 
     final streamUri = _runScopedUri(runsEndpoint.requestUri, runId, 'stream')
         .replace(
           queryParameters: {
             'after_sequence': afterSequence.toString(),
+            if (afterTransientCursor != null && afterTransientCursor.isNotEmpty)
+              'after_transient_cursor': afterTransientCursor,
             'follow': 'true',
             'limit': '200',
             'poll_interval_seconds': _agentStreamFollowPollIntervalSeconds,

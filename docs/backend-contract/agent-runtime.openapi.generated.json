@@ -770,6 +770,10 @@
             "title": "Actor User Id",
             "type": "string"
           },
+          "agent_name": {
+            "title": "Agent Name",
+            "type": "string"
+          },
           "cancelled_at": {
             "anyOf": [
               {
@@ -827,10 +831,6 @@
             "title": "Runtime Version",
             "type": "string"
           },
-          "skill_id": {
-            "title": "Skill Id",
-            "type": "string"
-          },
           "started_at": {
             "anyOf": [
               {
@@ -864,7 +864,7 @@
           "status",
           "runtime_pattern",
           "runtime_version",
-          "skill_id",
+          "agent_name",
           "request_id",
           "trace_id",
           "error_code"
@@ -2391,6 +2391,17 @@
               "minimum": 0,
               "title": "After Sequence",
               "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after_transient_cursor",
+            "required": false,
+            "schema": {
+              "default": "0-0",
+              "pattern": "^\\d+-\\d+$",
+              "title": "After Transient Cursor",
+              "type": "string"
             }
           },
           {

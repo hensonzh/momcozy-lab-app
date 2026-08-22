@@ -7,6 +7,7 @@ import 'agent_stream_event.dart';
 const _appendOnlyTextStreamSchemaVersion = 'append-only.v1';
 const _maxPendingTextSegments = 64;
 const _unsetCopyValue = Object();
+final _redisStreamCursorPattern = RegExp(r'^\d+-\d+$');
 
 enum AgentStreamRunPhase {
   idle,
@@ -40,6 +41,7 @@ class AgentStreamRunState {
     this.textIntegrityErrorCode,
     this._seenReplayKeys = const <String>{},
     this.lastSequence,
+    this.lastTransientCursor,
     this.errorMessage,
     this.cancelAcknowledged = false,
     this.cancelStatusCode,
@@ -64,6 +66,7 @@ class AgentStreamRunState {
   final String? textIntegrityErrorCode;
   final Set<String> _seenReplayKeys;
   final int? lastSequence;
+  final String? lastTransientCursor;
   final String? errorMessage;
   final bool cancelAcknowledged;
   final int? cancelStatusCode;
@@ -106,7 +109,18 @@ class AgentStreamRunState {
 
   AgentStreamRunState applyEvent(AgentStreamEvent event) {
     if (!_canApplyEvent(event)) return this;
-    if (_hasSeenReplayKey(event)) return this;
+    final eventTransientCursor = _eventTransientCursor(event);
+    if (eventTransientCursor != null &&
+        !_isTransientCursorAfter(eventTransientCursor, lastTransientCursor)) {
+      return this;
+    }
+    final nextTransientCursor = eventTransientCursor ?? lastTransientCursor;
+    if (_hasSeenReplayKey(event)) {
+      return nextTransientCursor == null ||
+              nextTransientCursor == lastTransientCursor
+          ? this
+          : copyWith(lastTransientCursor: nextTransientCursor);
+    }
 
     final type = event.type;
     final nextEvents = _nextRetainedEvents(events, event);
@@ -152,6 +166,7 @@ class AgentStreamRunState {
       completedAssistantMessageReceived: nextCompletedAssistantMessage,
       seenReplayKeys: nextSeenReplayKeys,
       lastSequence: nextSequence,
+      lastTransientCursor: nextTransientCursor,
     );
 
     if (type == 'run.completed') {
@@ -396,6 +411,7 @@ class AgentStreamRunState {
     bool? completedAssistantMessageReceived,
     Set<String>? seenReplayKeys,
     int? lastSequence,
+    String? lastTransientCursor,
     String? errorMessage,
     bool? cancelAcknowledged,
     int? cancelStatusCode,
@@ -429,6 +445,7 @@ class AgentStreamRunState {
           this.completedAssistantMessageReceived,
       seenReplayKeys: seenReplayKeys ?? _seenReplayKeys,
       lastSequence: lastSequence ?? this.lastSequence,
+      lastTransientCursor: lastTransientCursor ?? this.lastTransientCursor,
       errorMessage: errorMessage ?? this.errorMessage,
       cancelAcknowledged: cancelAcknowledged ?? this.cancelAcknowledged,
       cancelStatusCode: cancelStatusCode ?? this.cancelStatusCode,
@@ -465,6 +482,8 @@ class AgentStreamRunState {
       if (_seenReplayKeys.isNotEmpty)
         'seenReplayKeys': _seenReplayKeys.toList(growable: false),
       if (lastSequence != null) 'lastSequence': lastSequence,
+      if (_hasValue(lastTransientCursor))
+        'lastTransientCursor': lastTransientCursor,
       if (_hasValue(errorMessage)) 'errorMessage': errorMessage,
       if (cancelAcknowledged) 'cancelAcknowledged': cancelAcknowledged,
       if (cancelStatusCode != null) 'cancelStatusCode': cancelStatusCode,
@@ -518,12 +537,43 @@ class AgentStreamRunState {
           events.any(_isAssistantCompletedMessage),
       seenReplayKeys: seenReplayKeys,
       lastSequence: _int(map['lastSequence']) ?? _int(map['last_sequence']),
+      lastTransientCursor: _validatedTransientCursor(
+        _string(map['lastTransientCursor']) ??
+            _string(map['last_transient_cursor']),
+      ),
       errorMessage: _string(map['errorMessage']) ?? _string(map['error']),
       cancelAcknowledged: map['cancelAcknowledged'] == true,
       cancelStatusCode:
           _int(map['cancelStatusCode']) ?? _int(map['cancel_status_code']),
     );
   }
+}
+
+String? _eventTransientCursor(AgentStreamEvent event) {
+  if (!event.isTransient) return null;
+  return _validatedTransientCursor(event.cursor);
+}
+
+String? _validatedTransientCursor(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null ||
+      normalized.isEmpty ||
+      !_redisStreamCursorPattern.hasMatch(normalized)) {
+    return null;
+  }
+  return normalized;
+}
+
+bool _isTransientCursorAfter(String candidate, String? current) {
+  if (current == null) return true;
+  final candidateParts = candidate.split('-');
+  final currentParts = current.split('-');
+  final candidateTimestamp = BigInt.parse(candidateParts[0]);
+  final currentTimestamp = BigInt.parse(currentParts[0]);
+  if (candidateTimestamp != currentTimestamp) {
+    return candidateTimestamp > currentTimestamp;
+  }
+  return BigInt.parse(candidateParts[1]) > BigInt.parse(currentParts[1]);
 }
 
 Map<String, AgentStreamEvent> _nextIndexedEvents(

@@ -101,6 +101,7 @@ void main() {
                 runId: 'run-production-001',
                 threadId: 'thread-production-001',
                 afterSequence: 7,
+                afterTransientCursor: '1720000000-7',
               ),
             )
             .toList();
@@ -113,6 +114,7 @@ void main() {
         );
         expect(streamConnector.uri!.queryParameters, {
           'after_sequence': '7',
+          'after_transient_cursor': '1720000000-7',
           'follow': 'true',
           'limit': '200',
           'poll_interval_seconds': '0.01',

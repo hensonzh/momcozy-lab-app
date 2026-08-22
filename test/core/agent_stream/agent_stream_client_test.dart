@@ -119,5 +119,33 @@ void main() {
       ]);
       expect(events.last.isTerminal, isTrue);
     });
+
+    test('preserves both durable and transient resume cursors', () {
+      const request = AgentStreamRequest(
+        message: 'Resume this run.',
+        afterTransientCursor: '1720000000-7',
+      );
+
+      final resumed = request.resume(
+        runId: 'run-1',
+        threadId: 'thread-1',
+        afterSequence: 12,
+        afterTransientCursor: '1720000001-0',
+      );
+
+      expect(resumed.afterSequence, 12);
+      expect(resumed.afterTransientCursor, '1720000001-0');
+      expect(
+        resumed
+            .withRunCreateContext(
+              const AgentRunCreateContext(
+                timezone: 'Asia/Shanghai',
+                messageSentAt: '2026-08-21T12:00:00+08:00',
+              ),
+            )
+            .afterTransientCursor,
+        '1720000001-0',
+      );
+    });
   });
 }
