@@ -139,6 +139,7 @@ class AgentStreamRunner {
               runId: completedRunReplayId,
               threadId: completedRunReplayThreadId,
               afterSequence: 0,
+              afterTransientCursor: state.lastTransientCursor,
             );
             continue;
           }
@@ -209,6 +210,7 @@ class AgentStreamRunner {
                   runId: runId,
                   threadId: snapshot?.threadId ?? state.threadId,
                   afterSequence: 0,
+                  afterTransientCursor: state.lastTransientCursor,
                 );
                 continue;
               }
@@ -264,6 +266,7 @@ class AgentStreamRunner {
             runId: runId,
             threadId: state.threadId,
             afterSequence: state.lastSequence ?? 0,
+            afterTransientCursor: state.lastTransientCursor,
           );
         }
       } finally {
@@ -309,6 +312,7 @@ AgentStreamRequest _withStableIdempotencyKey(AgentStreamRequest request) {
     threadId: request.threadId,
     runId: request.runId,
     afterSequence: request.afterSequence,
+    afterTransientCursor: request.afterTransientCursor,
     locale: request.locale,
     timezone: request.timezone,
     messageSentAt: request.messageSentAt,

@@ -113,6 +113,7 @@ void main() {
         expect(client.requests.last.runId, 'run-fixture-001');
         expect(client.requests.last.threadId, 'thread-fixture-001');
         expect(client.requests.last.afterSequence, 1);
+        expect(client.requests.last.afterTransientCursor, '1-0');
       },
     );
 
@@ -600,6 +601,10 @@ AgentStreamEvent _event({
     'run_id': 'run-fixture-001',
     'message_id': 'msg-reply-001',
     'sequence': ?sequence,
+    if (id.startsWith('delta:')) ...{
+      'transient': true,
+      'cursor': id.substring('delta:'.length),
+    },
     'payload': {
       if (type == 'message.delta') 'text': text,
       if (type == 'message.completed') ...{'role': 'assistant', 'text': text},
