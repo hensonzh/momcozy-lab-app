@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -13,9 +11,6 @@ import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
@@ -64,12 +59,7 @@ void main() {
       ),
     );
 
-    final runtime = await MomCozyApiRuntime.bootstrap(
-      store: store,
-      hospitalBagCartStore: HospitalBagCartStore(
-        persistence: const _EmptyHospitalBagCartPersistence(),
-      ),
-    );
+    final runtime = await MomCozyApiRuntime.bootstrap(store: store);
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
     final eventResult = await runtime.clientEventClient.post(
@@ -88,56 +78,6 @@ void main() {
     expect(eventResult.body?['event_type'], 'runtime_bootstrap_test');
     expect(runtime.observability, same(observed.observability));
   });
-
-  test('runtime bootstrap waits for the active hospital bag cart', () async {
-    final persistence = _DelayedHospitalBagCartPersistence();
-    final cartStore = HospitalBagCartStore(persistence: persistence);
-    final runtimeFuture = MomCozyApiRuntime.bootstrap(
-      store: MemoryMomCozySessionStore(
-        const MomCozySession(
-          status: MomCozySessionStatus.authenticated,
-          userId: 'cart-user',
-          babyId: 'cart-baby',
-          locale: 'zh-CN',
-          accessToken: 'cart-access',
-        ),
-      ),
-      hospitalBagCartStore: cartStore,
-    );
-    var completed = false;
-    unawaited(runtimeFuture.then((_) => completed = true));
-    await Future<void>.delayed(Duration.zero);
-    expect(completed, isFalse);
-
-    final seed = _cartSeed('restored-cart');
-    persistence.readCompleter.complete(
-      HospitalBagCartPersistedState(
-        snapshots: {'artifact:restored-cart': seed.snapshot},
-        customizedCartIds: const {'artifact:restored-cart'},
-        activeCartId: 'artifact:restored-cart',
-      ),
-    );
-    final runtime = await runtimeFuture;
-
-    expect(runtime.hospitalBagCartStore.activeCartId, 'artifact:restored-cart');
-    expect(runtime.hospitalBagCartStore.agentClientContext, isNotNull);
-  });
-
-  test(
-    'runtime bootstrap fails closed after bounded cart restore retries',
-    () async {
-      final persistence = _FailingHospitalBagCartPersistence();
-
-      await expectLater(
-        MomCozyApiRuntime.bootstrap(
-          store: MemoryMomCozySessionStore(),
-          hospitalBagCartStore: HospitalBagCartStore(persistence: persistence),
-        ),
-        throwsStateError,
-      );
-      expect(persistence.readCount, 2);
-    },
-  );
 
   test('runtime can be created directly from session', () {
     final runtime = MomCozyApiRuntime.fromSession(
@@ -204,10 +144,6 @@ void main() {
     expect(
       runtime.agentVoicePlaybackPlayer,
       same(runtime.agentVoicePlaybackPlayer),
-    );
-    expect(
-      runtime.hospitalBagCartRepository,
-      isA<HospitalBagCartApiRepository>(),
     );
     final overviewController = runtime.createProfileOverviewController();
     expect(overviewController.babyId, 'baby-fixture');
@@ -305,23 +241,11 @@ void main() {
       expect(planRepository.snapshotFor(weekOf: fetchedAt), isNotNull);
 
       runtime.handleAgentApplicationEvent(
-        _recordChangedEvent('pregnancy_plan.changed'),
-      );
-      expect(cache.planDashboard, isNull);
-      expect(planRepository.snapshotFor(weekOf: fetchedAt), isNull);
-      expect(invalidationCount, 5);
-
-      cache.planDashboard = OverviewCacheEntry(
-        value: PlanDashboard.empty(weekOf: fetchedAt),
-        fetchedAt: fetchedAt,
-      );
-      await planRepository.fetchDashboard(weekOf: fetchedAt);
-      runtime.handleAgentApplicationEvent(
         _recordChangedEvent('milk_plan.changed'),
       );
       expect(cache.planDashboard, isNull);
       expect(planRepository.snapshotFor(weekOf: fetchedAt), isNull);
-      expect(invalidationCount, 6);
+      expect(invalidationCount, 5);
     },
   );
 
@@ -480,9 +404,7 @@ void main() {
       productAssetRepository: productAssetRepository,
     );
     final controller = MomCozyRuntimeController(runtime);
-    final previousCartStore = runtime.hospitalBagCartStore;
     final previousConsultStore = runtime.ibclcConsultStore;
-    previousCartStore.ingestArtifact(_cartSeed('previous-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -503,17 +425,6 @@ void main() {
     expect(controller.runtime.userId, 'session-user');
     expect(controller.runtime.session.accessToken, 'session-access');
     expect(controller.runtime.observability, same(observability));
-    expect(
-      controller.runtime.hospitalBagCartStore,
-      isNot(same(previousCartStore)),
-    );
-    expect(controller.runtime.hospitalBagCartStore.agentClientContext, isNull);
-    final cartPersistence = controller.runtime.hospitalBagCartStore.persistence;
-    expect(cartPersistence, isA<FlutterSecureHospitalBagCartPersistence>());
-    expect(
-      (cartPersistence! as FlutterSecureHospitalBagCartPersistence).userId,
-      'session-user',
-    );
     expect(
       controller.runtime.ibclcConsultStore,
       isNot(same(previousConsultStore)),
@@ -572,9 +483,7 @@ void main() {
       MomCozyApiRuntime.fromSession(session, observability: observability),
     );
     final store = MemoryMomCozySessionStore(session);
-    final cartStore = controller.runtime.hospitalBagCartStore;
     final consultStore = controller.runtime.ibclcConsultStore;
-    cartStore.ingestArtifact(_cartSeed('same-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -584,12 +493,7 @@ void main() {
 
     expect(notifyCount, 1);
     final autoRefreshRuntime = controller.runtime;
-    expect(controller.runtime.hospitalBagCartStore, same(cartStore));
     expect(controller.runtime.ibclcConsultStore, same(consultStore));
-    expect(
-      controller.runtime.hospitalBagCartStore.agentClientContext,
-      isNotNull,
-    );
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -609,7 +513,6 @@ void main() {
     expect(notifyCount, 1);
     expect(controller.runtime, same(autoRefreshRuntime));
     expect(controller.runtime.currentSession.accessToken, 'fresh-access');
-    expect(controller.runtime.hospitalBagCartStore, same(cartStore));
     expect(controller.runtime.ibclcConsultStore, same(consultStore));
     expect(
       controller.runtime.jsonTransport,
@@ -751,57 +654,6 @@ class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
   Future<void> write(MomCozyVolumeUnit unit) async {
     value = unit;
   }
-}
-
-class _DelayedHospitalBagCartPersistence implements HospitalBagCartPersistence {
-  final Completer<HospitalBagCartPersistedState?> readCompleter =
-      Completer<HospitalBagCartPersistedState?>();
-
-  @override
-  Future<HospitalBagCartPersistedState?> read() => readCompleter.future;
-
-  @override
-  Future<void> write(HospitalBagCartPersistedState state) async {}
-}
-
-class _EmptyHospitalBagCartPersistence implements HospitalBagCartPersistence {
-  const _EmptyHospitalBagCartPersistence();
-
-  @override
-  Future<HospitalBagCartPersistedState?> read() async => null;
-
-  @override
-  Future<void> write(HospitalBagCartPersistedState state) async {}
-}
-
-class _FailingHospitalBagCartPersistence implements HospitalBagCartPersistence {
-  int readCount = 0;
-
-  @override
-  Future<HospitalBagCartPersistedState?> read() async {
-    readCount += 1;
-    throw StateError('secure cart unavailable');
-  }
-
-  @override
-  Future<void> write(HospitalBagCartPersistedState state) async {}
-}
-
-HospitalBagCartArtifactSeed _cartSeed(String artifactId) {
-  return HospitalBagCartArtifactSeed.tryFromCartUpdate(
-    artifactId: artifactId,
-    cartUpdate: {
-      'groups': [
-        {
-          'title': '我的清单',
-          'tone': 'sky',
-          'items': [
-            {'id': 'custom', 'name': '个性化用品', 'qty': 1, 'price': 10},
-          ],
-        },
-      ],
-    },
-  )!;
 }
 
 class _NeverProductAssetConnector implements ProductAssetHttpConnector {

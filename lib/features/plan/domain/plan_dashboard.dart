@@ -21,11 +21,10 @@ abstract interface class PlanSessionMutationRepository {
   });
 }
 
-enum PlanCategory { pregnancy, lactation, yoga, pelvicFloor, other }
+enum PlanCategory { lactation, yoga, pelvicFloor, other }
 
 extension PlanCategoryLabel on PlanCategory {
   String get label => switch (this) {
-    PlanCategory.pregnancy => 'Pregnancy',
     PlanCategory.lactation => 'Lactation',
     PlanCategory.yoga => 'Yoga',
     PlanCategory.pelvicFloor => 'Pelvic Floor',
@@ -37,7 +36,7 @@ enum PlanTaskState { pending, completed, skipped }
 
 enum PlanSessionStatus { completed, skipped, next, upcoming }
 
-enum PlanSessionKind { pumping, feeding, pregnancy, yoga, pelvicFloor, general }
+enum PlanSessionKind { pumping, feeding, yoga, pelvicFloor, general }
 
 @immutable
 class CarePlan {

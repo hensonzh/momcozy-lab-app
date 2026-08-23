@@ -23,32 +23,25 @@ class _BabySvgIcon extends StatelessWidget {
 }
 
 class _BabyDevelopmentPage extends StatelessWidget {
-  const _BabyDevelopmentPage({
-    required this.data,
-    required this.onBack,
-    required this.onStartEducation,
-  });
+  const _BabyDevelopmentPage({required this.data, required this.onBack});
 
   final _MeBabyOverviewData data;
   final VoidCallback onBack;
-  final VoidCallback onStartEducation;
 
   @override
   Widget build(BuildContext context) {
     final overview = data.overview;
-    final week = _confirmedGestationalWeek(overview.data?.mom?.dueDateOrWeek);
+    final baby = overview.data?.baby;
     final isLoading =
         overview.data == null &&
         (overview.phase == OverviewResourcePhase.initial ||
             overview.phase == OverviewResourcePhase.loading);
     final visualizationLabel = isLoading
-        ? 'Loading confirmed week'
-        : week == null
-        ? 'Week not confirmed'
-        : 'Week $week Visualization';
-    final milestoneTitle = week == null
-        ? 'Pregnancy milestones'
-        : 'Week $week Milestones';
+        ? 'Loading baby development'
+        : baby?.ageDays == null
+        ? 'Baby age not recorded'
+        : '${_formatBabyAge(baby!.ageDays)} development overview';
+    const milestoneTitle = 'Development Milestones';
 
     return KeyedSubtree(
       key: const ValueKey('route-page-/baby/development'),
@@ -180,66 +173,6 @@ class _BabyDevelopmentPage extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             _V2Card(
-              cardKey: const ValueKey('baby-development-prenatal-education'),
-              padding: const EdgeInsets.all(18),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(22),
-                    child: Image.asset(
-                      _MeBabyOverviewAssets.prenatalEducation,
-                      width: 78,
-                      height: 78,
-                      fit: BoxFit.cover,
-                      semanticLabel: 'Prenatal education illustration',
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'AI Prenatal Ed',
-                          style: _BabyText.cardTitle,
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Personalized education grounded in confirmed details and cited guidance.',
-                          style: _BabyText.supporting,
-                        ),
-                        const SizedBox(height: 12),
-                        FilledButton.icon(
-                          key: const ValueKey(
-                            'baby-development-start-education',
-                          ),
-                          onPressed: onStartEducation,
-                          iconAlignment: IconAlignment.end,
-                          icon: const Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 18,
-                          ),
-                          label: const Text('Start session'),
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(0, 48),
-                            backgroundColor: _BabyOverviewColors.ink,
-                            foregroundColor: Colors.white,
-                            textStyle: const TextStyle(
-                              fontFamily: MomCozyTypography.bodyFontFamily,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-            _V2Card(
               cardKey: const ValueKey('baby-development-size-weight'),
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
               child: Column(
@@ -251,15 +184,11 @@ class _BabyDevelopmentPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: _BabyDevelopmentMetric(
-                          label: 'Estimated Length',
-                        ),
+                        child: _BabyDevelopmentMetric(label: 'Latest Length'),
                       ),
                       SizedBox(width: 18),
                       Expanded(
-                        child: _BabyDevelopmentMetric(
-                          label: 'Estimated Weight',
-                        ),
+                        child: _BabyDevelopmentMetric(label: 'Latest Weight'),
                       ),
                     ],
                   ),
@@ -358,22 +287,6 @@ class _BabyDevelopmentUnavailableRow extends StatelessWidget {
       ],
     );
   }
-}
-
-int? _confirmedGestationalWeek(String? value) {
-  final normalized = value?.trim();
-  if (normalized == null || normalized.isEmpty) return null;
-  final patterns = [
-    RegExp(r'\b(?:week|wk)\s*[:\-]?\s*(\d{1,2})\b', caseSensitive: false),
-    RegExp(r'\b(\d{1,2})\s*(?:weeks?|wks?)\b', caseSensitive: false),
-    RegExp(r'孕\s*(\d{1,2})\s*周'),
-  ];
-  for (final pattern in patterns) {
-    final match = pattern.firstMatch(normalized);
-    final week = int.tryParse(match?.group(1) ?? '');
-    if (week != null && week >= 1 && week <= 42) return week;
-  }
-  return null;
 }
 
 class _BabyProfileHero extends StatelessWidget {

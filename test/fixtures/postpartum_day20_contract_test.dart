@@ -8,7 +8,6 @@ import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart'
 import 'package:momcozy_flutter_app/features/profile_overview/data/maternal_care_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 
@@ -89,7 +88,6 @@ void main() {
       transport: FixtureApiJsonTransportByPath({
         profileMeEndpoint: _map(fixture['profile']),
         profileInfantsEndpoint: _map(fixture['infants']),
-        profilePregnancyFactEndpoint: const {'items': <Object?>[]},
       }),
       babyId: infantId,
       now: () => DateTime(2026, 8, 8, 12),
@@ -101,7 +99,6 @@ void main() {
       transport: FixtureApiJsonTransport(_map(fixture['body_profile'])),
     ).fetchProfile();
 
-    expect(profile.mom?.stage, MomLifeStage.postpartum);
     expect(profile.mom?.postpartumDay, 20);
     expect(profile.mom?.deliveryType, DeliveryType.vaginal);
     expect(profile.baby?.ageDays, 20);

@@ -284,10 +284,10 @@ void main() {
           'type': 'message.completed',
           'payload': {
             'role': 'assistant',
-            'text': '目前双胎类型确认了吗？',
+            'text': '目前的泌乳支持目标确认了吗？',
             'workflow_reply': {
               'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-              'workflow_type': 'pregnancy_plan',
+              'workflow_type': 'lactation_support',
               'revision': 4,
               'step_token': 'opaque-step-token',
             },
@@ -296,7 +296,7 @@ void main() {
 
         expect(event.workflowReply, {
           'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-          'workflow_type': 'pregnancy_plan',
+          'workflow_type': 'lactation_support',
           'revision': 4,
           'step_token': 'opaque-step-token',
         });

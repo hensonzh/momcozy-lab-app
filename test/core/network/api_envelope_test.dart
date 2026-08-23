@@ -8,7 +8,6 @@ const requiredDomains = <String>[
   'pump',
   'mom_baby',
   'plan',
-  'pregnancy_diary',
   'notify',
   'media',
 ];
@@ -94,8 +93,8 @@ void main() {
 
         expect(aliasString(data, 'display_name', 'displayName'), 'Demo User');
         expect(
-          aliasString(data, 'current_care_stage', 'currentCareStage'),
-          'postpartum',
+          aliasString(data, 'actual_delivery_date', 'actualDeliveryDate'),
+          '2026-07-01',
         );
         expect(
           payload,

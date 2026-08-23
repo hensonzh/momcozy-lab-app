@@ -11,80 +11,27 @@ void main() {
   test('builds the approved sanitized UTC card filename', () {
     expect(
       buildAgentCardExportFilename(
-        cardType: 'birth plan/card',
+        cardType: 'IBCLC consult/card',
         now: DateTime.parse('2026-07-11T23:30:00-08:00'),
       ),
-      'comate-birth-plan-card-2026-07-12.png',
-    );
-  });
-
-  testWidgets('specialized cards no longer expose save controls', (
-    tester,
-  ) async {
-    await _pumpPanel(
-      tester,
-      cards: _exportScopeCards,
-      exportService: _RecordingCardExportService(),
-    );
-
-    expect(find.text('保存图片'), findsNothing);
-    expect(
-      find.byKey(const ValueKey('agent-card-export-journey')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-card-export-birth-plan')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-card-export-hospital-bag')),
-      findsNothing,
+      'comate-ibclc-consult-card-2026-07-12.png',
     );
   });
 
   for (final width in [360.0, 390.0, 430.0]) {
-    testWidgets(
-      'specialized cards fit the $width px viewport without exports',
-      (tester) async {
-        await _pumpPanel(
-          tester,
-          cards: _exportScopeCards,
-          exportService: _RecordingCardExportService(),
-          width: width,
-        );
-
-        expect(tester.takeException(), isNull);
-        expect(find.text('保存图片'), findsNothing);
-      },
-    );
-  }
-
-  testWidgets('journey stages follow legacy expansion rules', (tester) async {
-    await _pumpPanel(
+    testWidgets('supported cards fit the $width px viewport without exports', (
       tester,
-      cards: const [_journeyCard],
-      exportService: _RecordingCardExportService(),
-    );
+    ) async {
+      await _pumpPanel(tester, width: width);
 
-    expect(find.text('完成糖耐检查'), findsOneWidget);
-    expect(find.text('开始整理待产包'), findsNothing);
-
-    await tester.tap(find.text('孕 28-30 周'));
-    await tester.pumpAndSettle();
-    expect(find.text('开始整理待产包'), findsOneWidget);
-
-    await tester.tap(find.text('孕 25-27 周'));
-    await tester.pumpAndSettle();
-    expect(find.text('完成糖耐检查'), findsNothing);
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('保存图片'), findsNothing);
+      expect(find.text('IBCLC 在线咨询'), findsOneWidget);
+    });
+  }
 }
 
-Future<void> _pumpPanel(
-  WidgetTester tester, {
-  required List<AgentArtifactCardView> cards,
-  required AgentCardExportService exportService,
-  double width = 390,
-}) async {
+Future<void> _pumpPanel(WidgetTester tester, {required double width}) async {
   tester.view.physicalSize = Size(width, 1800);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
@@ -97,9 +44,9 @@ Future<void> _pumpPanel(
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(12),
           child: AgentArtifactPanel(
-            cards: cards,
+            cards: const [_ibclcCard],
             onAction: (_) {},
-            cardExportService: exportService,
+            cardExportService: _NoopCardExportService(),
           ),
         ),
       ),
@@ -108,7 +55,7 @@ Future<void> _pumpPanel(
   await tester.pumpAndSettle();
 }
 
-class _RecordingCardExportService implements AgentCardExportService {
+class _NoopCardExportService implements AgentCardExportService {
   @override
   Future<void> sharePng({
     required Uint8List bytes,
@@ -116,67 +63,21 @@ class _RecordingCardExportService implements AgentCardExportService {
   }) async {}
 }
 
-const _exportScopeCards = [_journeyCard, _birthPlanCard, _hospitalBagCard];
-
-const _journeyCard = AgentArtifactCardView(
-  id: 'journey',
-  title: '孕期计划',
-  artifactType: 'birth_journey_plan_card',
-  schemaVersion: '1.0',
-  presentationKind: AgentArtifactPresentationKind.birthJourneyPlanCard,
-  cardJson: {
-    'owner': {'current_week': '孕 25 周'},
-    'todo_plan': {
-      'periods': [
-        {
-          'id': 'current-stage',
-          'title': '孕 25-27 周',
-          'status': 'current',
-          'items': [
-            {'title': '完成糖耐检查'},
-          ],
-        },
-        {
-          'id': 'future-stage',
-          'title': '孕 28-30 周',
-          'items': [
-            {'title': '开始整理待产包'},
-          ],
-        },
-      ],
-    },
-  },
-);
-
-const _birthPlanCard = AgentArtifactCardView(
-  id: 'birth-plan',
-  title: '分娩沟通单',
-  artifactType: 'birth_plan_card',
-  schemaVersion: '1.0',
-  presentationKind: AgentArtifactPresentationKind.birthPlanCard,
-  specializedView: AgentBirthPlanCardView(
-    title: '分娩沟通单',
-    sections: [
-      AgentBirthPlanSectionView(
-        id: 'communication',
-        title: '沟通方式',
-        values: ['每一步操作前先解释'],
-      ),
-    ],
-    medicalNotes: [],
-    disclaimer: '请优先遵循医生和医院建议。',
-  ),
-);
-
-const _hospitalBagCard = AgentArtifactCardView(
-  id: 'hospital-bag',
-  title: '待产包',
-  artifactType: 'hospital_bag_card',
-  schemaVersion: '1.0',
-  presentationKind: AgentArtifactPresentationKind.hospitalBagCard,
-  specializedView: AgentHospitalBagCardView(
-    title: '待产包',
-    subtitle: '住院母婴必备用品',
-    groups: [],
+const _ibclcCard = AgentArtifactCardView(
+  id: 'ibclc',
+  title: 'IBCLC 在线咨询',
+  artifactType: 'ibclc_consult_card',
+  schemaVersion: 'v1',
+  presentationKind: AgentArtifactPresentationKind.ibclcConsultCard,
+  specializedView: AgentIbclcConsultCardView(
+    title: 'IBCLC 在线咨询',
+    consultId: 'ibclc',
+    sourceArtifactId: 'ibclc',
+    consultantName: 'Emily Chen',
+    consultantCredentials: 'IBCLC 国际认证哺乳顾问',
+    consultantExperience: '8 年产后哺乳支持经验',
+    consultantBio: '擅长含乳评估、有效吸吮与母乳移出观察。',
+    chatLabel: '咨询 IBCLC',
+    chatNote: '启动咨询后，会自动将你的问题同步给顾问',
   ),
 );

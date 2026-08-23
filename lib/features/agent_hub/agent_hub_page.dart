@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_work_status_projection.dart';
+import 'package:momcozy_flutter_app/core/migrations/legacy_prenatal_contract_filter.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
@@ -31,7 +32,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_inp
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
@@ -43,7 +43,6 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:video_player/video_player.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -52,10 +51,7 @@ export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
-typedef AgentHubNewSessionHandler = FutureOr<void> Function();
 typedef AgentHubApplicationEventHandler = void Function(AgentStreamEvent event);
-typedef HospitalBagCartUpdateHandler =
-    void Function(HospitalBagCartArtifactSeed seed);
 
 const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
 const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
@@ -235,9 +231,6 @@ class AgentHubPage extends StatefulWidget {
     this.supportTicketSubmitter,
     this.onArtifactAction,
     this.onApplicationEvent,
-    this.onHospitalBagCartUpdate,
-    this.onHospitalBagCartContextRequired,
-    this.onNewSession,
     this.initialComposerText,
     this.initialAutoSend = false,
     this.initialAutoRunRequest,
@@ -272,9 +265,6 @@ class AgentHubPage extends StatefulWidget {
   final SupportTicketSubmitter? supportTicketSubmitter;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubApplicationEventHandler? onApplicationEvent;
-  final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
-  final VoidCallback? onHospitalBagCartContextRequired;
-  final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
   final bool initialAutoSend;
   final AgentHubAutoRunRequest? initialAutoRunRequest;
@@ -312,8 +302,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final List<AgentStreamFileInput> _attachedFiles = <AgentStreamFileInput>[];
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
-  final Set<String> _appliedHospitalBagCartUpdates = <String>{};
-  bool _hospitalBagCartLinkContextApplied = false;
   final ScrollController _chatScrollController = ScrollController();
   final GlobalKey _activeArtifactPanelKey = GlobalKey();
   final ValueNotifier<AgentStreamRunState> _runStateNotifier =
@@ -374,7 +362,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _initialAutoRunInFlight = false;
   bool _dismissComposerKeyboardOnRunAccepted = false;
   String _greeting = agentHubDefaultGreeting;
-  AgentHubGreetingProfile? _profile;
   int _greetingRefreshGeneration = 0;
   int _lastHandledIbclcCompletionRevision = 0;
   int _externalConversationRefreshGeneration = 0;
@@ -386,8 +373,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     super.initState();
     _restoreCachedInteractionState();
     _seedExistingFormPresentations();
-    _applyHospitalBagCartUpdates(_state);
-    _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_handleChatScroll);
@@ -673,10 +658,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       if (shouldRestore) _applyInteractionSnapshot(snapshot!);
       _interactionRestoreResolved = true;
     });
-    if (shouldRestore) {
-      _applyHospitalBagCartUpdates(_state);
-      _applyHospitalBagCartLinkContext(_state);
-    }
     _applyInitialComposerText();
     _scheduleInitialAutoSendIfNeeded();
     _scheduleInitialAutoRunIfNeeded();
@@ -1457,7 +1438,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
         routePath: action.routePath,
         routeExtra: routeState,
         externalUri: action.externalUri,
-        hospitalBagCartSeed: action.hospitalBagCartSeed,
       );
     }
     widget.onArtifactAction?.call(resolvedAction);
@@ -2001,10 +1981,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _sendBestEffortServerCancel(_state, _activeRequest);
       }
       widget.voicePlaybackCoordinator?.cancel();
-      await widget.onNewSession?.call();
-      if (!mounted || operationGeneration != _sessionOperationGeneration) {
-        return;
-      }
       _dismissComposerKeyboardOnRunAccepted = false;
       _cancelRunSubscription();
       _composerController.clear();
@@ -2025,8 +2001,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _activeRequest = null;
         _setVoiceState(const AgentVoiceState());
         _pendingAutoVoiceReplay = null;
-        _appliedHospitalBagCartUpdates.clear();
-        _hospitalBagCartLinkContextApplied = false;
         _resetAutoVoiceProgress();
       });
       _notifyActionStateChanged();
@@ -2034,7 +2008,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _flushPersistentInteractionState();
       unawaited(_refreshGreetingAndMaybePlayVoice());
     } catch (_) {
-      // Keep the current session visible when its durable cart clear fails.
+      // Keep the current session visible when cleanup fails.
     } finally {
       if (operationGeneration == _sessionOperationGeneration) {
         if (mounted) {
@@ -2133,7 +2107,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (loaded) {
       final nextGreeting = agentHubGreetingForProfile(profile);
       setState(() {
-        _profile = profile;
         if (isShowingFreshGreeting) _greeting = nextGreeting;
       });
     }
@@ -2221,20 +2194,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _formPresentationSession.registerLiveFormIds(
       _formArtifactIdsForState(nextState),
     );
-    final artifactProjectionChanged = _artifactProjectionChanged(
-      _state,
-      nextState,
-    );
-    final hospitalBagCartProjectionChanged =
-        artifactProjectionChanged ||
-        _hasNewHospitalBagCartChangedEvent(_state, nextState);
-    if (hospitalBagCartProjectionChanged) {
-      _applyHospitalBagCartUpdates(nextState);
-    }
-    _applyHospitalBagCartLinkContext(
-      nextState,
-      checkArtifacts: artifactProjectionChanged,
-    );
     final previousArtifactId = _latestVisibleArtifactId(_state);
     final nextArtifactId = _latestVisibleArtifactId(nextState);
     final shouldFocusArtifact =
@@ -2284,74 +2243,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     } else if (shouldFollowLatest && !_preserveArtifactFocus) {
       _scheduleScrollToLatest();
     }
-  }
-
-  void _applyHospitalBagCartUpdates(AgentStreamRunState state) {
-    if (_newSessionStartPending) return;
-    final onUpdate = widget.onHospitalBagCartUpdate;
-    if (onUpdate == null) return;
-    for (final card in _artifactCardsFromEvents(
-      _artifactEventsForState(state),
-    )) {
-      if (card.presentationKind !=
-          AgentArtifactPresentationKind.hospitalBagCart) {
-        continue;
-      }
-      final cartUpdate =
-          card.payload['cart_update'] ?? card.payload['cartUpdate'];
-      final seed = HospitalBagCartArtifactSeed.tryFromCartUpdate(
-        artifactId: card.id,
-        cartUpdate: cartUpdate,
-      );
-      if (seed != null) _applyHospitalBagCartSeed(seed, onUpdate);
-    }
-    for (final event in state.events) {
-      if (event.type != 'hospital_bag.cart.changed') continue;
-      final actionId = event.actionId?.trim();
-      if (actionId == null || actionId.isEmpty) continue;
-      final cartUpdate =
-          event.payload['cart_update'] ?? event.payload['cartUpdate'];
-      final seed = HospitalBagCartArtifactSeed.tryFromCartUpdate(
-        artifactId: 'action:$actionId',
-        cartUpdate: cartUpdate,
-      );
-      if (seed != null) _applyHospitalBagCartSeed(seed, onUpdate);
-    }
-  }
-
-  void _applyHospitalBagCartSeed(
-    HospitalBagCartArtifactSeed seed,
-    HospitalBagCartUpdateHandler onUpdate,
-  ) {
-    final signature =
-        '${seed.artifactId}:${jsonEncode(seed.snapshot.toAgentContext())}';
-    if (!_appliedHospitalBagCartUpdates.add(signature)) return;
-    onUpdate(seed);
-  }
-
-  void _applyHospitalBagCartLinkContext(
-    AgentStreamRunState state, {
-    bool checkArtifacts = true,
-  }) {
-    if (_hospitalBagCartLinkContextApplied ||
-        widget.onHospitalBagCartContextRequired == null) {
-      return;
-    }
-    const cartPath = '/hospital-bag-cart';
-    final text = state.textContent;
-    final tailStart = math.max(0, text.length - cartPath.length - 16);
-    final hasTextLink = checkArtifacts
-        ? text.contains(cartPath)
-        : text.indexOf(cartPath, tailStart) >= 0;
-    final hasArtifactLink =
-        checkArtifacts &&
-        _artifactCardsFromEvents(_artifactEventsForState(state)).any(
-          (card) => card.actions.any((action) => action.routePath == cartPath),
-        );
-    final hasCartLink = hasTextLink || hasArtifactLink;
-    if (!hasCartLink) return;
-    _hospitalBagCartLinkContextApplied = true;
-    widget.onHospitalBagCartContextRequired!.call();
   }
 
   Future<bool> _startRun(
@@ -2613,11 +2504,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return null;
     }
     return agentArtifactVoiceFallbackText(
-      _artifactCardsFromEvents(
-        _artifactEventsForState(state),
-        profileDefaults:
-            _profile?.birthPrepDefaults ?? const BirthPrepProfileDefaults(),
-      ),
+      _artifactCardsFromEvents(_artifactEventsForState(state)),
     );
   }
 
@@ -2975,8 +2862,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   Widget build(BuildContext context) {
-    final profileDefaults =
-        _profile?.birthPrepDefaults ?? const BirthPrepProfileDefaults();
     final page = ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
@@ -3107,7 +2992,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       _formSubmissionsNotifier,
                                   formPresentationSession:
                                       _formPresentationSession,
-                                  profileDefaults: profileDefaults,
                                 ),
                               ),
                             if (_historyMessages.isNotEmpty)
@@ -3152,7 +3036,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       localActionStatuses: _localActionStatuses,
                                       productAssetRepository:
                                           widget.productAssetRepository,
-                                      profileDefaults: profileDefaults,
                                       onConfirmAction:
                                           widget.actionClient == null
                                           ? null
@@ -3898,7 +3781,6 @@ class AgentHubHistoryPanel extends StatelessWidget {
     this.onFormSubmit,
     this.formSubmissionsListenable,
     this.formPresentationSession,
-    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final List<AgentHubHistoryMessage> messages;
@@ -3910,7 +3792,6 @@ class AgentHubHistoryPanel extends StatelessWidget {
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
   final AgentArtifactFormPresentationSession? formPresentationSession;
-  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -3928,7 +3809,6 @@ class AgentHubHistoryPanel extends StatelessWidget {
             onFormSubmit: onFormSubmit,
             formSubmissionsListenable: formSubmissionsListenable,
             formPresentationSession: formPresentationSession,
-            profileDefaults: profileDefaults,
           ),
           if (index != messages.length - 1) const SizedBox(height: 20),
         ],
@@ -3948,7 +3828,6 @@ class AgentHubHistorySliver extends StatelessWidget {
     this.onFormSubmit,
     this.formSubmissionsListenable,
     this.formPresentationSession,
-    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final List<AgentHubHistoryMessage> messages;
@@ -3960,7 +3839,6 @@ class AgentHubHistorySliver extends StatelessWidget {
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
   final AgentArtifactFormPresentationSession? formPresentationSession;
-  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -3980,7 +3858,6 @@ class AgentHubHistorySliver extends StatelessWidget {
           onFormSubmit: onFormSubmit,
           formSubmissionsListenable: formSubmissionsListenable,
           formPresentationSession: formPresentationSession,
-          profileDefaults: profileDefaults,
         );
       }, childCount: itemCount),
     );
@@ -3998,7 +3875,6 @@ class _AgentHistoryBubble extends StatelessWidget {
     this.onFormSubmit,
     this.formSubmissionsListenable,
     this.formPresentationSession,
-    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final AgentHubHistoryMessage message;
@@ -4010,7 +3886,6 @@ class _AgentHistoryBubble extends StatelessWidget {
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
   final AgentArtifactFormPresentationSession? formPresentationSession;
-  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -4032,7 +3907,6 @@ class _AgentHistoryBubble extends StatelessWidget {
           formSubmissionsListenable: formSubmissionsListenable,
           formPresentationSession: formPresentationSession,
           allowFormAutoPresentation: false,
-          profileDefaults: profileDefaults,
         );
       }
 
@@ -4205,7 +4079,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     required this.pendingActionIds,
     required this.localActionStatuses,
     this.productAssetRepository,
-    this.profileDefaults = const BirthPrepProfileDefaults(),
     this.onConfirmAction,
     this.onRejectAction,
   });
@@ -4226,7 +4099,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
-  final BirthPrepProfileDefaults profileDefaults;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
@@ -4238,7 +4110,6 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
 class _AgentRunTranscriptListenableState
     extends State<_AgentRunTranscriptListenable> {
   Object? _artifactSourceIdentity;
-  Object? _artifactProfileDefaultsIdentity;
   List<AgentArtifactCardView> _artifactCards = const <AgentArtifactCardView>[];
   Object? _actionSourceIdentity;
   int? _actionRevision;
@@ -4273,7 +4144,6 @@ class _AgentRunTranscriptListenableState
           onQuickReplySelected: widget.onQuickReplySelected,
           pendingActionIds: widget.pendingActionIds,
           productAssetRepository: widget.productAssetRepository,
-          profileDefaults: widget.profileDefaults,
           artifactCards: _artifactCardsForState(state),
           actionCards: _actionCardsForState(state, actionRevision),
           citations: _citationsForState(state),
@@ -4291,16 +4161,11 @@ class _AgentRunTranscriptListenableState
     final identity = state.artifactEvents.isNotEmpty
         ? state.artifactEvents
         : state.events;
-    if (identical(identity, _artifactSourceIdentity) &&
-        identical(widget.profileDefaults, _artifactProfileDefaultsIdentity)) {
+    if (identical(identity, _artifactSourceIdentity)) {
       return _artifactCards;
     }
     _artifactSourceIdentity = identity;
-    _artifactProfileDefaultsIdentity = widget.profileDefaults;
-    _artifactCards = _artifactCardsFromEvents(
-      _artifactEventsForState(state),
-      profileDefaults: widget.profileDefaults,
-    );
+    _artifactCards = _artifactCardsFromEvents(_artifactEventsForState(state));
     return _artifactCards;
   }
 
@@ -4357,7 +4222,6 @@ class AgentRunTranscript extends StatelessWidget {
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
     this.productAssetRepository,
-    this.profileDefaults = const BirthPrepProfileDefaults(),
     this.artifactCards,
     this.actionCards,
     this.citations,
@@ -4381,7 +4245,6 @@ class AgentRunTranscript extends StatelessWidget {
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
-  final BirthPrepProfileDefaults profileDefaults;
   final List<AgentArtifactCardView>? artifactCards;
   final List<AgentActionCardView>? actionCards;
   final List<AgentCitationView>? citations;
@@ -4402,10 +4265,7 @@ class AgentRunTranscript extends StatelessWidget {
     final artifactCards =
         allowsSupplementaryContent && state.canPublishArtifactEvents
         ? this.artifactCards ??
-              _artifactCardsFromEvents(
-                _artifactEventsForState(state),
-                profileDefaults: profileDefaults,
-              )
+              _artifactCardsFromEvents(_artifactEventsForState(state))
         : const <AgentArtifactCardView>[];
     final canShowFormEntries =
         state.hasCompletedAssistantMessage ||
@@ -4446,7 +4306,6 @@ class AgentRunTranscript extends StatelessWidget {
                     runId: state.runId ?? '',
                   ),
                   externalUri: action.externalUri,
-                  hospitalBagCartSeed: action.hospitalBagCartSeed,
                 ),
               );
               return;
@@ -4966,15 +4825,11 @@ class AgentMarkdownText extends StatelessWidget {
     if (!parseMarkdown) {
       return Text(normalized, style: baseStyle);
     }
-    final preparedMarkdown = _prepareAgentMarkdown(
-      replaceCitationLinksWithIndexes(normalized, citations),
+    final markdown = stripRetiredPrenatalLinks(
+      _prepareAgentMarkdown(
+        replaceCitationLinksWithIndexes(normalized, citations),
+      ),
     );
-    final hospitalBagCartUrl = _firstHospitalBagCartPreviewUrl(
-      preparedMarkdown,
-    );
-    final markdown = hospitalBagCartUrl == null
-        ? preparedMarkdown
-        : _stripHospitalBagCartPreviewLinks(preparedMarkdown);
     final markdownBody = markdown.trim().isEmpty
         ? null
         : !_containsMarkdown(markdown)
@@ -4998,10 +4853,7 @@ class AgentMarkdownText extends StatelessWidget {
               final url = href?.trim();
               if (url == null || url.isEmpty) return;
               if (_isRetiredSkillAssetReference(url)) return;
-              if (_isHospitalBagCartPath(url)) {
-                onArtifactAction?.call(AgentArtifactActions.hospitalBagCart);
-                return;
-              }
+              if (isRetiredPrenatalRoute(url)) return;
               if (_openMarkdownMedia(url: url, title: label.trim())) return;
               final target = SafeLinkTarget.tryParse(url);
               if (target == null) return;
@@ -5018,21 +4870,7 @@ class AgentMarkdownText extends StatelessWidget {
             },
           );
 
-    if (hospitalBagCartUrl == null) {
-      return markdownBody ?? Text('', style: baseStyle);
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ?markdownBody,
-        if (markdownBody != null) const SizedBox(height: 8),
-        _AgentHospitalBagCartPreview(
-          onTap: onArtifactAction == null
-              ? null
-              : () => onArtifactAction!(AgentArtifactActions.hospitalBagCart),
-        ),
-      ],
-    );
+    return markdownBody ?? Text('', style: baseStyle);
   }
 
   bool _openMarkdownMedia({required String url, String? title}) {
@@ -5149,143 +4987,6 @@ class AgentMarkdownText extends StatelessWidget {
       r'(^|\n)\s{0,3}#{1,6}\s+|(^|\n)\s*[-*]\s+|(^|\n)\s*\d+\.\s+|\*\*.+?\*\*|`{1,3}|(^|\n)\s{0,3}>\s+|\[[^\]]+\]\([^)]+\)|(^|\n)\|.+\|($|\n)|(^|\n)---($|\n)',
       multiLine: true,
     ).hasMatch(value);
-  }
-}
-
-class _AgentHospitalBagCartPreview extends StatelessWidget {
-  const _AgentHospitalBagCartPreview({this.onTap});
-
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Semantics(
-      button: true,
-      enabled: onTap != null,
-      label: '打开待产包购物车',
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          key: const ValueKey('agent-hospital-bag-cart-preview'),
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: const Color(0xfffff9fb),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xffe8d7df)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x14532f40),
-                  blurRadius: 22,
-                  offset: Offset(0, 8),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 92),
-                child: Stack(
-                  children: [
-                    const Positioned(
-                      left: 0,
-                      top: 0,
-                      bottom: 0,
-                      width: 80,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Color(0xff24889a), Color(0xffd86b91)],
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.shopping_bag_outlined,
-                          size: 32,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 80),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'MOMCOZY CART',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    semanticsLabel: 'Momcozy Cart',
-                                    style: textTheme.labelSmall?.copyWith(
-                                      color: const Color(0xff8a6d7a),
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.2,
-                                      letterSpacing: 0,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '待产包母婴用品一键打包',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: textTheme.labelMedium?.copyWith(
-                                      color: const Color(0xff372330),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.3,
-                                      letterSpacing: 0,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '已把妈妈护理、宝宝出院和母乳喂养用品整理成购物车，方便一起核对下单。',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: textTheme.labelSmall?.copyWith(
-                                      color: const Color(0xff725b67),
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.3,
-                                      letterSpacing: 0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(right: 12),
-                            child: Icon(
-                              Icons.chevron_right_rounded,
-                              size: 16,
-                              color: Color(0xff24889a),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
@@ -5466,66 +5167,6 @@ IconData _mediaIconForKind(String kind) {
   };
 }
 
-bool _isHospitalBagCartPath(String url) {
-  final uri = Uri.tryParse(url.trim());
-  if (uri == null) return false;
-  return uri.path == '/hospital-bag-cart';
-}
-
-String? _firstHospitalBagCartPreviewUrl(String markdown) {
-  for (final match in _hospitalBagCartMarkdownLinkPattern.allMatches(
-    markdown,
-  )) {
-    final url = match.group(1)?.trim();
-    if (url != null && _isHospitalBagCartPath(url)) return url;
-  }
-  for (final match in _hospitalBagCartBareUrlPattern.allMatches(markdown)) {
-    final url = match.group(0)?.trim();
-    if (url != null && _isHospitalBagCartPath(url)) return url;
-  }
-  return null;
-}
-
-String _stripHospitalBagCartPreviewLinks(String markdown) {
-  final withoutStandaloneLines = markdown
-      .split('\n')
-      .where((line) => !_isStandaloneHospitalBagCartLinkLine(line))
-      .join('\n');
-  final withoutMarkdownLinks = withoutStandaloneLines.replaceAllMapped(
-    _hospitalBagCartMarkdownLinkPattern,
-    (match) {
-      final url = match.group(1)?.trim();
-      return url != null && _isHospitalBagCartPath(url)
-          ? ''
-          : match.group(0) ?? '';
-    },
-  );
-  return withoutMarkdownLinks
-      .replaceAllMapped(_hospitalBagCartBareUrlPattern, (match) {
-        final url = match.group(0)?.trim();
-        return url != null && _isHospitalBagCartPath(url)
-            ? ''
-            : match.group(0) ?? '';
-      })
-      .replaceAll(RegExp(r'[ \t]+\n'), '\n')
-      .replaceAll(RegExp(r'\n{3,}'), '\n\n')
-      .trim();
-}
-
-bool _isStandaloneHospitalBagCartLinkLine(String line) {
-  final trimmed = line.trim();
-  if (trimmed.isEmpty) return false;
-  final markdownMatch = _standaloneHospitalBagCartMarkdownLinkPattern
-      .firstMatch(trimmed);
-  final markdownUrl = markdownMatch?.group(1)?.trim();
-  if (markdownUrl != null && _isHospitalBagCartPath(markdownUrl)) return true;
-  final bareMatch = _standaloneHospitalBagCartBareUrlPattern.firstMatch(
-    trimmed,
-  );
-  final bareUrl = bareMatch?.group(1)?.trim();
-  return bareUrl != null && _isHospitalBagCartPath(bareUrl);
-}
-
 bool _isRetiredSkillAssetReference(String url) {
   final uri = Uri.tryParse(url.trim());
   return uri?.path.startsWith('/skill-assets/') == true;
@@ -5544,20 +5185,6 @@ bool _isStableProductAssetAction(AgentArtifactActionView action) {
 }
 
 final _markdownLinkPattern = RegExp(r'(^|[^!])\[([^\]\n]+)\]\(([^)\n]+)\)');
-final _hospitalBagCartMarkdownLinkPattern = RegExp(
-  r'''(?:[*_]{1,3})?\s*\[[^\]\n]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)\s*(?:[*_]{1,3})?''',
-);
-final _standaloneHospitalBagCartMarkdownLinkPattern = RegExp(
-  r'''^(?:[*_]{1,3})?\s*\[[^\]\n]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)\s*(?:[*_]{1,3})?$''',
-);
-final _hospitalBagCartBareUrlPattern = RegExp(
-  r'(?:https?://[^\s)]+|/hospital-bag-cart(?:[?#][^\s)]*)?)',
-  caseSensitive: false,
-);
-final _standaloneHospitalBagCartBareUrlPattern = RegExp(
-  r'^(?:[*_]{1,3})?\s*((?:https?://[^\s)]+|/hospital-bag-cart(?:[?#][^\s)]*)?))\s*(?:[*_]{1,3})?$',
-  caseSensitive: false,
-);
 
 class AgentRunStatusLine extends StatefulWidget {
   const AgentRunStatusLine({super.key, required this.title});
@@ -6837,33 +6464,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 }
 
-bool _artifactProjectionChanged(
-  AgentStreamRunState previous,
-  AgentStreamRunState next,
-) {
-  if (!identical(previous.artifactEvents, next.artifactEvents)) return true;
-  if (!identical(previous.events, next.events) &&
-      next.events.length > previous.events.length) {
-    return next.events
-        .skip(previous.events.length)
-        .any((event) => event.type.startsWith('artifact.'));
-  }
-  return false;
-}
-
-bool _hasNewHospitalBagCartChangedEvent(
-  AgentStreamRunState previous,
-  AgentStreamRunState next,
-) {
-  if (identical(previous.events, next.events) ||
-      next.events.length <= previous.events.length) {
-    return false;
-  }
-  return next.events
-      .skip(previous.events.length)
-      .any((event) => event.type == 'hospital_bag.cart.changed');
-}
-
 bool _hasServerRunSignal(AgentStreamRunState state) {
   return state.runId?.trim().isNotEmpty == true ||
       state.lastSequence != null ||
@@ -6907,13 +6507,9 @@ Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
 }
 
 List<AgentArtifactCardView> _artifactCardsFromEvents(
-  Iterable<AgentStreamEvent> events, {
-  BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
-}) {
-  return AgentArtifactMapper.cardsFromEvents(
-    events,
-    profileDefaults: profileDefaults,
-  );
+  Iterable<AgentStreamEvent> events,
+) {
+  return AgentArtifactMapper.cardsFromEvents(events);
 }
 
 List<AgentActionCardView> _actionCardsFromEvents(

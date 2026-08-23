@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_form_normalizer.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_model.dart';
 
@@ -71,10 +70,6 @@ Map<String, Object?> _canonicalFormValues(Map<String, Object?> values) {
 enum AgentArtifactPresentationKind {
   form,
   supportTicketDraft,
-  birthJourneyPlanCard,
-  birthPlanCard,
-  hospitalBagCard,
-  hospitalBagCart,
   ibclcConsultCard,
   motionAssessmentCard,
   richText,
@@ -178,7 +173,6 @@ class AgentArtifactActionView {
     this.routePath,
     this.routeExtra,
     this.externalUri,
-    this.hospitalBagCartSeed,
   });
 
   final String label;
@@ -188,17 +182,6 @@ class AgentArtifactActionView {
   final String? routePath;
   final Object? routeExtra;
   final Uri? externalUri;
-  final HospitalBagCartArtifactSeed? hospitalBagCartSeed;
-}
-
-abstract final class AgentArtifactActions {
-  static const hospitalBagCart = AgentArtifactActionView(
-    label: '打开待产包购物车',
-    icon: Icons.shopping_cart_outlined,
-    kind: 'artifact',
-    value: '/hospital-bag-cart',
-    routePath: '/hospital-bag-cart',
-  );
 }
 
 ({String groupTitle, String fieldLabel}) _splitFormFieldLabel(String label) {

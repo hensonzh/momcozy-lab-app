@@ -108,48 +108,6 @@ void main() {
       expect(find.text('Yoga'), findsOneWidget);
     });
 
-    testWidgets('Pregnancy uses authoritative gestation and program totals', (
-      tester,
-    ) async {
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(
-          transport: _profileOverviewTransport(
-            profileResponse: const {
-              'user_id': 'profile-overview-user',
-              'display_name': 'Avery',
-              'current_care_stage': 'pregnancy',
-              'expected_due_date': '2026-12-20',
-            },
-            careOverviewResponse: const {
-              'stage': 'pregnancy',
-              'pregnancy': {
-                'state': 'ready',
-                'expected_due_date': '2026-09-25',
-                'gestational_week': 28,
-                'gestational_day': 0,
-                'days_remaining': 84,
-                'trimester': 'third',
-              },
-              'program': {
-                'state': 'ready',
-                'plan_id': 'plan-prenatal',
-                'plan_type': 'prenatal_yoga',
-                'title': 'Prenatal Yoga Program',
-                'completed_sessions': 6,
-                'total_sessions': 12,
-              },
-            },
-          ),
-        ),
-      );
-
-      expect(find.text('Week 28'), findsWidgets);
-      expect(find.text('6 of 12 sessions completed'), findsOneWidget);
-      expect(find.text('84 days to go'), findsOneWidget);
-    });
-
     testWidgets('Custom mom avatar keeps its head below the hero boundary', (
       tester,
     ) async {
@@ -169,8 +127,8 @@ void main() {
         ),
       );
 
-      final avatar = find.byKey(const ValueKey('me-stage-avatar-postpartum'));
-      final hero = find.byKey(const ValueKey('me-stage-hero-postpartum'));
+      final avatar = find.byKey(const ValueKey('me-postpartum-avatar'));
+      final hero = find.byKey(const ValueKey('me-postpartum-hero'));
 
       expect(
         tester.getRect(avatar).top,
@@ -352,7 +310,7 @@ void main() {
       expect(cache.overview?.value.mom?.displayName, 'Updated Avery');
     });
 
-    testWidgets('Me shows the onboarding stage as a locked indicator', (
+    testWidgets('Me shows postpartum as a locked profile indicator', (
       tester,
     ) async {
       final transport = _profileOverviewTransport();
@@ -362,9 +320,7 @@ void main() {
         runtime: _runtime(transport: transport),
       );
 
-      final indicator = find.byKey(
-        const ValueKey('me-current-stage-indicator'),
-      );
+      final indicator = find.byKey(const ValueKey('me-postpartum-indicator'));
       expect(indicator, findsOneWidget);
       final label = find.descendant(
         of: indicator,
@@ -397,180 +353,6 @@ void main() {
       expect(transport.postedBodies, isEmpty);
     });
 
-    testWidgets('Fertility matches the cycle design without invented data', (
-      tester,
-    ) async {
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(
-          transport: _profileOverviewTransport(
-            profileResponse: const {
-              'user_id': 'profile-overview-user',
-              'display_name': 'Avery',
-              'current_care_stage': 'fertility',
-            },
-          ),
-        ),
-      );
-
-      expect(
-        find.byKey(const ValueKey('me-stage-hero-fertility')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('me-stage-tabs-fertility')),
-        findsOneWidget,
-      );
-      expect(find.text('Cycle Tracking'), findsOneWidget);
-      expect(find.text('Cycle'), findsWidgets);
-      expect(find.text('Wellness'), findsWidgets);
-      expect(find.text('Ovulation Prediction'), findsOneWidget);
-      expect(find.text('Cycle records needed'), findsOneWidget);
-      expect(find.textContaining('98%'), findsNothing);
-      expect(find.textContaining('fertile window is open'), findsNothing);
-
-      await expectLater(
-        find.byType(Overlay).first,
-        matchesGoldenFile(
-          '../../goldens/me_baby_overview/fertility_first_screen.png',
-        ),
-      );
-    });
-
-    testWidgets('Pregnancy uses confirmed week and plan sessions', (
-      tester,
-    ) async {
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(
-          transport: _profileOverviewTransport(
-            profileResponse: const {
-              'user_id': 'profile-overview-user',
-              'display_name': 'Avery',
-              'current_care_stage': 'pregnancy',
-              'expected_due_date': '2026-10-09',
-            },
-            planItems: const [
-              {
-                'id': 'prenatal-yoga',
-                'plan_type': 'yoga',
-                'title': 'Prenatal Yoga Program',
-                'summary': 'A confirmed prenatal movement plan',
-                'status': 'active',
-                'payload': <String, Object?>{},
-              },
-            ],
-            planSessionItems: const [
-              {
-                'id': 'session-1',
-                'plan_id': 'prenatal-yoga',
-                'task_date': '2026-07-03',
-                'task_time': '08:00',
-                'title': 'Prenatal breathing',
-                'status': 'completed',
-                'payload': <String, Object?>{},
-              },
-              {
-                'id': 'session-2',
-                'plan_id': 'prenatal-yoga',
-                'task_date': '2026-07-03',
-                'task_time': '17:00',
-                'title': 'Gentle mobility',
-                'status': 'pending',
-                'payload': <String, Object?>{},
-              },
-            ],
-          ),
-        ),
-      );
-
-      expect(
-        find.byKey(const ValueKey('me-stage-hero-pregnancy')),
-        findsOneWidget,
-      );
-      expect(find.text('Prenatal Yoga Program'), findsOneWidget);
-      expect(find.text('1 of 2 sessions completed'), findsOneWidget);
-      expect(find.text('Prenatal'), findsWidgets);
-      expect(find.text('Wellness'), findsWidgets);
-      expect(find.text("Today’s Milestones"), findsOneWidget);
-      expect(find.text('Week 26 of 40'), findsOneWidget);
-      expect(find.text('98 days to go'), findsOneWidget);
-      expect(find.text('Prenatal breathing'), findsOneWidget);
-      expect(find.text('Gentle mobility'), findsOneWidget);
-      expect(find.textContaining('Eggplant'), findsNothing);
-      expect(find.textContaining('14.8'), findsNothing);
-
-      await expectLater(
-        find.byType(Overlay).first,
-        matchesGoldenFile(
-          '../../goldens/me_baby_overview/pregnancy_first_screen.png',
-        ),
-      );
-
-      await tester.tap(
-        find.byKey(const ValueKey('me-baby-overview-open-avatar')),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('me-baby-overview-avatar-expanded')),
-        findsOneWidget,
-      );
-      expect(find.text('Week 26 · Second Trimester'), findsOneWidget);
-      await expectLater(
-        find.byType(Overlay).first,
-        matchesGoldenFile(
-          '../../goldens/me_baby_overview/pregnancy_avatar_state.png',
-        ),
-      );
-    });
-
-    testWidgets('Pregnancy accepts a confirmed gestational week fallback', (
-      tester,
-    ) async {
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(
-          transport: _profileOverviewTransport(
-            profileResponse: const {
-              'user_id': 'profile-overview-user',
-              'display_name': 'Avery',
-              'current_care_stage': 'pregnancy',
-              'birth_prep_due_date_or_week': 'Week 32',
-            },
-          ),
-        ),
-      );
-
-      expect(find.text('Week 32 of 40'), findsOneWidget);
-      expect(find.text('About 56 days to go'), findsOneWidget);
-    });
-
-    testWidgets('Me does not offer a manual selector when stage is missing', (
-      tester,
-    ) async {
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(
-          transport: _profileOverviewTransport(
-            profileResponse: const {
-              'user_id': 'profile-overview-user',
-              'display_name': 'Avery',
-            },
-            infantItems: const [],
-          ),
-        ),
-      );
-
-      expect(find.text('Select Stage'), findsOneWidget);
-      expect(find.text('Complete onboarding to continue'), findsOneWidget);
-      expect(find.text('Postpartum Recovery'), findsNothing);
-      expect(find.byKey(const ValueKey('me-stage-choose')), findsNothing);
-    });
-
     testWidgets('Baby header does not expose the maternal stage selector', (
       tester,
     ) async {
@@ -578,7 +360,7 @@ void main() {
 
       expect(find.text('momcozy'), findsOneWidget);
       expect(
-        find.byKey(const ValueKey('me-current-stage-indicator')),
+        find.byKey(const ValueKey('me-postpartum-indicator')),
         findsNothing,
       );
       expect(
@@ -606,7 +388,7 @@ void main() {
 
       expect(tester.getRect(find.text('momcozy')), babyWordmark);
       final meIndicator = tester.getRect(
-        find.byKey(const ValueKey('me-current-stage-indicator')),
+        find.byKey(const ValueKey('me-postpartum-indicator')),
       );
       final meBell = tester.getRect(
         find.byKey(const ValueKey('me-baby-overview-notification')),
@@ -927,103 +709,6 @@ void main() {
       );
     });
 
-    testWidgets(
-      'Baby Development uses a confirmed gestational week without inventing clinical data',
-      (tester) async {
-        await _pumpApp(
-          tester,
-          initialLocation: '/baby/development',
-          runtime: _runtime(
-            transport: _profileOverviewTransport(
-              profileResponse: const {
-                'user_id': 'profile-overview-user',
-                'display_name': 'Avery',
-                'current_care_stage': 'pregnancy',
-              },
-              pregnancyFactValue: 'Week 28',
-            ),
-          ),
-        );
-
-        expect(
-          find.byKey(const ValueKey('baby-development-page')),
-          findsOneWidget,
-        );
-        expect(find.text('Baby Development'), findsOneWidget);
-        expect(find.text('Week 28 Visualization'), findsOneWidget);
-        expect(find.text('Week 28 Milestones'), findsOneWidget);
-        expect(find.text('Milestone guidance unavailable'), findsOneWidget);
-        expect(find.text('Estimated Length'), findsOneWidget);
-        expect(find.text('Estimated Weight'), findsOneWidget);
-        expect(find.text('Not available'), findsNWidgets(2));
-        expect(find.text('37.6 cm'), findsNothing);
-        expect(find.text('1,005 g'), findsNothing);
-        expect(find.textContaining('55th percentile'), findsNothing);
-        await expectLater(
-          find.byType(Scaffold).first,
-          matchesGoldenFile(
-            '../../goldens/me_baby_overview/baby_development_first_screen.png',
-          ),
-        );
-      },
-    );
-
-    testWidgets('Baby Development is reachable from pregnancy workspace', (
-      tester,
-    ) async {
-      await _pumpApp(
-        tester,
-        initialLocation: '/me',
-        runtime: _runtime(
-          transport: _profileOverviewTransport(
-            profileResponse: const {
-              'user_id': 'profile-overview-user',
-              'display_name': 'Avery',
-              'current_care_stage': 'pregnancy',
-            },
-            pregnancyFactValue: 'Week 28',
-          ),
-        ),
-      );
-
-      expect(
-        find.byKey(const ValueKey('me-stage-pregnancy-development')),
-        findsOneWidget,
-      );
-      await tester.tap(
-        find.byKey(const ValueKey('me-stage-pregnancy-development')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('baby-development-page')),
-        findsOneWidget,
-      );
-      expect(find.text('Week 28 Visualization'), findsOneWidget);
-    });
-
-    testWidgets('Baby Development derives a week from a confirmed due date', (
-      tester,
-    ) async {
-      await _pumpApp(
-        tester,
-        initialLocation: '/baby/development',
-        runtime: _runtime(
-          transport: _profileOverviewTransport(
-            profileResponse: const {
-              'user_id': 'profile-overview-user',
-              'display_name': 'Avery',
-              'current_care_stage': 'pregnancy',
-            },
-            pregnancyFactValue: '2026-10-10',
-          ),
-        ),
-      );
-
-      expect(find.text('Week 25 Visualization'), findsOneWidget);
-      expect(find.textContaining('55th percentile'), findsNothing);
-    });
-
     testWidgets('Baby Development supports narrow screens and large text', (
       tester,
     ) async {
@@ -1032,28 +717,20 @@ void main() {
         initialLocation: '/baby/development',
         viewportSize: const Size(360, 640),
         textScaleFactor: 2,
-        runtime: _runtime(
-          transport: _profileOverviewTransport(
-            profileResponse: const {
-              'user_id': 'profile-overview-user',
-              'display_name': 'Avery',
-              'current_care_stage': 'pregnancy',
-            },
-            pregnancyFactValue: 'Week 28',
-          ),
-        ),
       );
 
       expect(find.text('Baby Development'), findsOneWidget);
+      expect(find.text('12 weeks 4 days development overview'), findsOneWidget);
       await tester.scrollUntilVisible(
-        find.byKey(const ValueKey('baby-development-start-education')),
+        find.byKey(const ValueKey('baby-development-size-weight')),
         180,
         scrollable: find.byType(Scrollable).first,
       );
       expect(
-        find.byKey(const ValueKey('baby-development-start-education')),
+        find.byKey(const ValueKey('baby-development-size-weight')),
         findsOneWidget,
       );
+      expect(find.text('Not available'), findsNWidgets(2));
       expect(tester.takeException(), isNull);
     });
 
@@ -1620,7 +1297,7 @@ void main() {
       },
     );
 
-    testWidgets('Postpartum avatar mode keeps the stage pill understated', (
+    testWidgets('Postpartum avatar mode keeps the profile pill understated', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
@@ -1632,7 +1309,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final stagePill = tester.widget<Material>(
-        find.byKey(const ValueKey('me-current-stage-indicator')),
+        find.byKey(const ValueKey('me-postpartum-indicator')),
       );
       expect(stagePill.color, const Color(0xfff2e9e6));
     });
@@ -1642,8 +1319,8 @@ void main() {
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
 
-      final hero = find.byKey(const ValueKey('me-stage-hero-postpartum'));
-      final avatar = find.byKey(const ValueKey('me-stage-avatar-postpartum'));
+      final hero = find.byKey(const ValueKey('me-postpartum-hero'));
+      final avatar = find.byKey(const ValueKey('me-postpartum-avatar'));
       expect(
         tester.getTopLeft(avatar).dy,
         closeTo(tester.getTopLeft(hero).dy - 18, 0.1),
@@ -1662,15 +1339,15 @@ void main() {
       );
     });
 
-    testWidgets('maternal stage tabs separate visual height from tap target', (
+    testWidgets('postpartum tabs separate visual height from tap target', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
 
-      final tabs = find.byKey(const ValueKey('me-stage-tabs-postpartum'));
+      final tabs = find.byKey(const ValueKey('me-postpartum-tabs'));
       final lactation = find.byKey(const ValueKey('me-section-lactation'));
       final surface = find.byKey(
-        const ValueKey('me-stage-tab-surface-lactation'),
+        const ValueKey('me-postpartum-tab-surface-lactation'),
       );
 
       expect(tester.getSize(tabs).height, 48);
@@ -1680,16 +1357,16 @@ void main() {
     });
 
     testWidgets(
-      'maternal hero keeps compact visuals inside accessible tap targets',
+      'postpartum hero keeps compact visuals inside accessible tap targets',
       (tester) async {
         await _pumpApp(tester, initialLocation: '/me');
 
         final title = tester.widget<Text>(
-          find.byKey(const ValueKey('me-stage-program-title')),
+          find.byKey(const ValueKey('me-postpartum-program-title')),
         );
-        final action = find.byKey(const ValueKey('me-stage-body-profile'));
+        final action = find.byKey(const ValueKey('me-postpartum-body-profile'));
         final surface = find.byKey(
-          const ValueKey('me-stage-body-profile-surface'),
+          const ValueKey('me-postpartum-body-profile-surface'),
         );
 
         expect(title.style?.fontSize, 14);
@@ -2073,12 +1750,14 @@ void main() {
       expect(find.text('No body profile data yet'), findsOneWidget);
     });
 
-    testWidgets('Stage hero Body Profile does not trigger avatar mode', (
+    testWidgets('Postpartum hero Body Profile does not trigger avatar mode', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
 
-      await tester.tap(find.byKey(const ValueKey('me-stage-body-profile')));
+      await tester.tap(
+        find.byKey(const ValueKey('me-postpartum-body-profile')),
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -2227,7 +1906,7 @@ void main() {
 
         expect(
           find.descendant(
-            of: find.byKey(const ValueKey('me-current-stage-indicator')),
+            of: find.byKey(const ValueKey('me-postpartum-indicator')),
             matching: find.byType(FittedBox),
           ),
           findsNothing,
@@ -2563,14 +2242,6 @@ Future<void> _pumpApp(
   await tester.runAsync(() async {
     await Future.wait([
       precacheImage(
-        const AssetImage('assets/images/me_baby_overview/mom_avatar.png'),
-        imageContext,
-      ),
-      precacheImage(
-        const AssetImage('assets/images/me_baby_overview/pregnancy_avatar.png'),
-        imageContext,
-      ),
-      precacheImage(
         const AssetImage('assets/images/me_baby_overview/baby_avatar.png'),
         imageContext,
       ),
@@ -2594,12 +2265,6 @@ Future<void> _pumpApp(
       ),
       precacheImage(
         const AssetImage('assets/images/me_baby_overview/baby_development.png'),
-        imageContext,
-      ),
-      precacheImage(
-        const AssetImage(
-          'assets/images/me_baby_overview/prenatal_education.png',
-        ),
         imageContext,
       ),
       precacheImage(
@@ -2629,7 +2294,6 @@ MomCozyApiRuntime _runtime({
     now: () => DateTime.utc(2026, 7, 3),
     timezoneProvider: () async => 'UTC',
     profileOverviewCache: profileOverviewCache,
-    supportsAgentFacts: true,
   );
 }
 
@@ -2769,7 +2433,6 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
   Map<String, Object?>? profileResponse,
   List<Map<String, Object?>>? milkTrendItems,
   List<Map<String, Object?>>? infantItems,
-  String? pregnancyFactValue,
   List<Map<String, Object?>>? planItems,
   List<Map<String, Object?>>? planSessionItems,
   Map<String, Object?>? careOverviewResponse,
@@ -2785,7 +2448,6 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
           const {
             'user_id': 'profile-overview-user',
             'display_name': 'Avery',
-            'current_care_stage': 'postpartum',
             'actual_delivery_date': '2026-06-12',
           },
       profileInfantsEndpoint: {
@@ -2798,17 +2460,6 @@ FixtureApiJsonTransportByPath _profileOverviewTransport({
                 'birth_date': '2026-04-06',
               },
             ],
-      },
-      profilePregnancyFactEndpoint: {
-        'items': [
-          if (pregnancyFactValue != null)
-            {
-              'fact_key': pregnancyDueDateOrWeekFactKey,
-              'fact_kind': 'verified',
-              'status': 'active',
-              'value': pregnancyFactValue,
-            },
-        ],
       },
       milkTrendsEndpoint: {
         'items':

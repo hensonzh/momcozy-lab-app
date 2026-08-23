@@ -30,17 +30,12 @@ AgentStreamRequest buildSessionAgentHubRequest(
   String message, {
   required MomCozySession session,
   String? threadId,
-  Map<String, Object?>? clientContext,
 }) {
-  final hospitalBagCart = clientContext?['hospital_bag_cart'];
   return AgentStreamRequest(
     threadId: _resolvedThreadId(threadId),
     message: message,
     locale: session.locale,
-    metadata: {
-      'source': 'flutter-agent-hub',
-      if (hospitalBagCart is Map) 'hospital_bag_cart': hospitalBagCart,
-    },
+    metadata: const {'source': 'flutter-agent-hub'},
   );
 }
 

@@ -187,9 +187,6 @@ String _citationDisplayTopic(String title, Uri url) {
   }
   if (lowerTitle.contains('breastfeeding')) return '母乳喂养专业资料';
   if (lowerTitle.contains('infant and child feeding')) return '婴幼儿喂养指导';
-  if (lowerTitle.contains('pregnancy') || lowerTitle.contains('obstetric')) {
-    return '孕产健康专业资料';
-  }
   if (lowerTitle.contains('postpartum')) return '产后健康专业资料';
   if (host.contains('bfmed.org') || host.contains('abm.memberclicks.net')) {
     return 'ABM 哺乳医学资料';

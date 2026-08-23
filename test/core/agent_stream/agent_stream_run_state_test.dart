@@ -484,10 +484,10 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
             'run_id': 'run-workflow-reply-001',
             'payload': {
               'role': 'assistant',
-              'text': '我已经整理好孕期计划信息。',
+              'text': '我已经整理好泌乳支持信息。',
               'workflow_reply': {
                 'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-                'workflow_type': 'pregnancy_plan',
+                'workflow_type': 'lactation_support',
                 'revision': 6,
                 'step_token': 'opaque-step-token',
               },
@@ -499,7 +499,7 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
 
         expect(restored.workflowReply, {
           'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-          'workflow_type': 'pregnancy_plan',
+          'workflow_type': 'lactation_support',
           'revision': 6,
           'step_token': 'opaque-step-token',
         });

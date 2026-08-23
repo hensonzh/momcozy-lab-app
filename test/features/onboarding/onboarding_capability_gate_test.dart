@@ -92,7 +92,7 @@ void main() {
 
     expect(fixture.transport.getPaths, contains(onboardingMeEndpoint));
     expect(
-      find.byKey(const ValueKey('onboarding-stage-fertility')),
+      find.byKey(const ValueKey('onboarding-display-name')),
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('bottom-nav-me')), findsNothing);

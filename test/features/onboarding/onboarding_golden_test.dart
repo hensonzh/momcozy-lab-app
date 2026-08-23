@@ -13,7 +13,7 @@ import '../../support/momcozy_test_fonts.dart';
 void main() {
   setUpAll(loadMomCozyTestFonts);
 
-  testWidgets('new-user stage selection matches the MomCozy visual system', (
+  testWidgets('new-user postpartum basics match the MomCozy visual system', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -54,7 +54,7 @@ void main() {
 
     await expectLater(
       find.byType(OnboardingPage),
-      matchesGoldenFile('../../goldens/onboarding/stage_selection.png'),
+      matchesGoldenFile('../../goldens/onboarding/postpartum_basics.png'),
     );
 
     router.dispose();

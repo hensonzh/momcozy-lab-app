@@ -22,7 +22,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart'
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
@@ -30,7 +29,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_p
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_reader.dart';
@@ -291,7 +289,7 @@ void main() {
     );
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
-      '帮我准备待产包',
+      '帮我整理泌乳支持信息',
     );
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -310,7 +308,7 @@ void main() {
           'artifact_type': 'form',
           'schema_version': '1.0',
           'form': {
-            'id': 'hospital_bag_intake',
+            'id': 'lactation_support_intake',
             'title': '信息采集',
             'fields': [
               for (var index = 0; index < 6; index++)
@@ -394,207 +392,6 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
   });
-
-  testWidgets('Agent Hub ingests a cart artifact before publishing its card', (
-    tester,
-  ) async {
-    final client = _ControllableAgentStreamClient();
-    final cartUpdates = <HospitalBagCartArtifactSeed>[];
-    addTearDown(client.dispose);
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          onHospitalBagCartUpdate: cartUpdates.add,
-        ),
-      ),
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '帮我整理待产包',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pump();
-
-    client.emit(
-      0,
-      AgentStreamEvent(const {
-        'event_id': 'evt-pending-cart-artifact',
-        'type': 'artifact.created',
-        'thread_id': 'thread-pending-cart',
-        'run_id': 'run-pending-cart',
-        'artifact_id': 'pending-cart-artifact',
-        'sequence': 1,
-        'payload': {
-          'artifact_type': 'hospital_bag_card',
-          'assistant_followup': {
-            'kind': 'hospital_bag_cart',
-            'message': '已经为你整理好待产包购物车。',
-          },
-          'cart_update': {
-            'action': 'reset_cart',
-            'groups': [
-              {
-                'title': '妈妈护理',
-                'items': [
-                  {'name': '产褥垫组合装'},
-                ],
-              },
-            ],
-          },
-        },
-      }),
-    );
-    await tester.pump();
-
-    expect(cartUpdates, hasLength(1));
-    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
-
-    client.emit(
-      0,
-      AgentStreamEvent(const {
-        'event_id': 'evt-pending-cart-text',
-        'type': 'message.delta',
-        'thread_id': 'thread-pending-cart',
-        'run_id': 'run-pending-cart',
-        'message_id': 'message-pending-cart',
-        'sequence': 2,
-        'payload': {'text': '我已经根据你的情况整理好了。'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
-    expect(cartUpdates, hasLength(1));
-  });
-
-  testWidgets(
-    'Agent Hub restores the authoritative hospital bag cart changed event without showing an action card',
-    (tester) async {
-      final cartUpdates = <HospitalBagCartArtifactSeed>[];
-      final event = AgentStreamEvent(const {
-        'event_id': 'evt-cart-changed',
-        'type': 'hospital_bag.cart.changed',
-        'thread_id': 'thread-cart-changed',
-        'run_id': 'run-cart-changed',
-        'sequence': 8,
-        'payload': {
-          'action_id': 'action-cart-changed',
-          'operation': 'updated',
-          'source': 'agent_action',
-          'cart_update': {
-            'action': 'reset_cart',
-            'groups': [
-              {
-                'title': '妈妈护理',
-                'items': [
-                  {'id': 'mom-pad', 'name': '产褥垫组合装'},
-                ],
-              },
-            ],
-          },
-        },
-      });
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            state: AgentStreamRunState.fromMap(
-              AgentStreamRunState(
-                phase: AgentStreamRunPhase.finished,
-                events: [event],
-              ).toMap(),
-            ),
-            onHospitalBagCartUpdate: cartUpdates.add,
-          ),
-        ),
-      );
-
-      expect(cartUpdates, hasLength(1));
-      expect(cartUpdates.single.artifactId, 'action:action-cart-changed');
-      expect(cartUpdates.single.snapshot.items.single.name, '产褥垫组合装');
-      expect(find.byKey(const ValueKey('agent-action-panel')), findsNothing);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub applies a hospital bag cart changed event when it arrives during streaming',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      final cartUpdates = <HospitalBagCartArtifactSeed>[];
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            onHospitalBagCartUpdate: cartUpdates.add,
-          ),
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '把待产包预算压低一些',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-streaming-cart-changed',
-          'type': 'hospital_bag.cart.changed',
-          'thread_id': 'thread-streaming-cart-changed',
-          'run_id': 'run-streaming-cart-changed',
-          'sequence': 1,
-          'payload': {
-            'action_id': 'action-streaming-cart-changed',
-            'operation': 'updated',
-            'source': 'agent_action',
-            'cart_update': {
-              'action': 'optimize_budget',
-              'groups': [
-                {
-                  'title': '删减后的清单',
-                  'items': [
-                    {'id': 'kept-item', 'name': '保留用品', 'qty': 1, 'price': 99},
-                  ],
-                },
-              ],
-            },
-          },
-        }),
-      );
-      await tester.pump();
-
-      expect(cartUpdates, hasLength(1));
-      expect(
-        cartUpdates.single.artifactId,
-        'action:action-streaming-cart-changed',
-      );
-      expect(cartUpdates.single.snapshot.items.single.id, 'kept-item');
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-streaming-cart-reply',
-          'type': 'message.completed',
-          'thread_id': 'thread-streaming-cart-changed',
-          'run_id': 'run-streaming-cart-changed',
-          'message_id': 'message-streaming-cart-changed',
-          'sequence': 2,
-          'payload': {'role': 'assistant', 'text': '已经帮你压低预算。'},
-        }),
-      );
-      await tester.pump();
-
-      expect(cartUpdates, hasLength(1));
-    },
-  );
 
   testWidgets(
     'Agent Hub forwards a replay-safe record change application event once',
@@ -848,7 +645,6 @@ void main() {
   testWidgets('Agent Hub restores history and starts a new local session', (
     tester,
   ) async {
-    var newSessionStarted = false;
     final mediaRepository = _FakeAgentImageMediaRepository();
 
     await tester.pumpWidget(
@@ -871,7 +667,6 @@ void main() {
             mimeType: 'image/png',
             name: 'staged-before-new-session.png',
           ),
-          onNewSession: () => newSessionStarted = true,
         ),
       ),
     );
@@ -901,7 +696,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
     await tester.pump();
 
-    expect(newSessionStarted, isTrue);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
     expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-attachment-menu')), findsNothing);
@@ -920,120 +714,6 @@ void main() {
       '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
     ]);
   });
-
-  testWidgets(
-    'Agent Hub locks sending until durable new-session clear finishes',
-    (tester) async {
-      final clearCompleter = Completer<void>();
-      final client = _FixtureAgentStreamClient(const <AgentStreamEvent>[]);
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            historyMessages: const [
-              AgentHubHistoryMessage(
-                role: AgentHubHistoryRole.user,
-                content: '保留到清除真正完成',
-              ),
-            ],
-            runner: AgentStreamRunner(client),
-            onNewSession: () => clearCompleter.future,
-          ),
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '清除期间不能发送',
-      );
-
-      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-      await tester.pump();
-
-      final pendingSendButton = tester.widget<IconButton>(
-        find.byKey(const ValueKey('agent-send-button')),
-      );
-      expect(pendingSendButton.onPressed, isNull);
-      expect(find.text('保留到清除真正完成'), findsOneWidget);
-      expect(client.requests, isEmpty);
-
-      clearCompleter.complete();
-      await tester.pumpAndSettle();
-
-      expect(find.text('保留到清除真正完成'), findsNothing);
-      expect(client.requests, isEmpty);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub ignores late cart updates during durable session clear',
-    (tester) async {
-      final clearCompleter = Completer<void>();
-      final client = _ControllableAgentStreamClient();
-      final cartUpdates = <HospitalBagCartArtifactSeed>[];
-      addTearDown(client.dispose);
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            onNewSession: () => clearCompleter.future,
-            onHospitalBagCartUpdate: cartUpdates.add,
-          ),
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '先生成待产包',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'late-cart-message-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-late-cart',
-          'run_id': 'run-late-cart',
-          'message_id': 'message-late-cart',
-          'sequence': 1,
-          'payload': {'role': 'assistant', 'text': '清单已准备。'},
-        }),
-      );
-      await tester.pump();
-
-      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-      await tester.pump();
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'late-cart-changed',
-          'type': 'hospital_bag.cart.changed',
-          'thread_id': 'thread-late-cart',
-          'run_id': 'run-late-cart',
-          'action_id': 'action-late-cart',
-          'sequence': 2,
-          'payload': {
-            'cart_update': {
-              'groups': [
-                {
-                  'title': '不应恢复',
-                  'items': [
-                    {'id': 'late-item', 'name': '旧会话用品', 'qty': 1},
-                  ],
-                },
-              ],
-            },
-          },
-        }),
-      );
-      await tester.pump();
-
-      expect(cartUpdates, isEmpty);
-
-      clearCompleter.complete();
-      await tester.pumpAndSettle();
-      expect(cartUpdates, isEmpty);
-    },
-  );
 
   testWidgets('Agent Hub virtualizes long history messages', (tester) async {
     tester.view.physicalSize = const Size(390, 640);
@@ -1331,73 +1011,6 @@ void main() {
 
     player.complete();
   });
-
-  testWidgets(
-    'Agent Hub injects late profile defaults without replacing user edits',
-    (tester) async {
-      final profileCompleter = Completer<AgentHubGreetingProfile>();
-      final formEvent = _formArtifactEvent(
-        id: 'profile-default-form',
-        form: {
-          'id': 'birth_journey_basic_info_intake',
-          'title': '孕周与基本情况',
-          'fields': [
-            {'id': 'age', 'label': '年龄', 'type': 'number', 'required': false},
-            {'id': 'birth_hospital', 'label': '建档/生产医院', 'type': 'text'},
-          ],
-        },
-      );
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            greetingProfileLoader: () => profileCompleter.future,
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              textContent: '请确认基本信息。',
-              events: [formEvent],
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      await tester.tap(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-profile-default-form'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final inputs = find.byType(TextFormField);
-      expect(inputs, findsNWidgets(2));
-      await tester.enterText(inputs.at(1), '我手动填的医院');
-      await tester.pump();
-
-      profileCompleter.complete(
-        const AgentHubGreetingProfile(
-          displayName: '小美',
-          age: 31,
-          birthPrepDefaults: BirthPrepProfileDefaults(
-            age: 31,
-            birthHospital: '资料中的医院',
-          ),
-        ),
-      );
-      await tester.pump();
-      await tester.pump();
-      await tester.pump();
-
-      final textFields = tester.widgetList<TextFormField>(inputs).toList();
-      expect(
-        textFields[0].controller?.text ?? textFields[0].initialValue,
-        '31',
-      );
-      expect(
-        textFields[1].controller?.text ?? textFields[1].initialValue,
-        '我手动填的医院',
-      );
-    },
-  );
 
   testWidgets('Agent Hub plays greeting voice for a manual new session', (
     tester,
@@ -1842,14 +1455,10 @@ void main() {
         'artifact_type': 'form',
         'schema_version': '1.0',
         'form': {
-          'id': 'hospital_bag_intake',
+          'id': 'lactation_support_intake',
           'title': '信息采集',
           'fields': [
-            {
-              'id': 'due_date_or_week',
-              'label': '基本信息｜预产期或当前孕周',
-              'type': 'text',
-            },
+            {'id': 'feeding_context', 'label': '基本信息｜泌乳目标', 'type': 'text'},
           ],
         },
       },
@@ -1894,7 +1503,7 @@ void main() {
           'text': '我整理好了。',
           'workflow_reply': {
             'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-            'workflow_type': 'pregnancy_plan',
+            'workflow_type': 'lactation_support',
             'revision': 4,
             'step_token': 'opaque-step-token',
           },
@@ -2173,14 +1782,12 @@ void main() {
   ) async {
     final pickCompleter = Completer<AgentStreamImageInput?>();
     final client = _FixtureAgentStreamClient(const <AgentStreamEvent>[]);
-    var newSessionStarted = false;
 
     await tester.pumpWidget(
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
           pickImage: (_) => pickCompleter.future,
-          onNewSession: () => newSessionStarted = true,
         ),
       ),
     );
@@ -2217,7 +1824,6 @@ void main() {
       isFalse,
     );
     expect(client.requests, isEmpty);
-    expect(newSessionStarted, isFalse);
 
     pickCompleter.complete(
       const AgentStreamImageInput(
@@ -2348,15 +1954,15 @@ void main() {
         'payload': {
           'artifact_type': 'form',
           'form': {
-            'id': 'hospital_bag_intake',
+            'id': 'lactation_support_intake',
             'title': '信息采集',
             'fields': [
               {
-                'id': 'due_date_or_week',
-                'label': '预产期或当前孕周',
+                'id': 'feeding_context',
+                'label': '泌乳目标',
                 'type': 'text',
                 'required': true,
-                'default_value': '38 周',
+                'default_value': '建立规律记录',
               },
             ],
           },
@@ -2460,7 +2066,6 @@ void main() {
         _host(
           AgentHubPage(
             mediaRepository: mediaRepository,
-            onNewSession: () async => throw StateError('cart clear failed'),
             pickImage: (_) async => const AgentStreamImageInput(
               dataUrl:
                   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
@@ -3497,7 +3102,7 @@ void main() {
       );
       await tester.enterText(
         find.byKey(const ValueKey('agent-composer-input')),
-        '帮我整理待产包',
+        '帮我整理泌乳支持信息',
       );
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -3515,14 +3120,10 @@ void main() {
           'payload': {
             'artifact_type': 'rich_text',
             'rich_text': {
-              'title': '待产包清单',
+              'title': '泌乳支持清单',
               'content': '我已经帮你整理好了。',
               'button': [
-                {
-                  'label': '打开待产包购物车',
-                  'action': 'navigate',
-                  'value': '/hospital-bag-cart',
-                },
+                {'label': '打开泌乳计划', 'action': 'navigate', 'value': '/plan'},
               ],
             },
           },
@@ -3548,15 +3149,15 @@ void main() {
 
       expect(player.realtimeSessions, hasLength(1));
       expect(player.realtimeSessions.single.appendedTexts, [
-        '待产包清单 我已经帮你整理好了。',
+        '泌乳支持清单 我已经帮你整理好了。',
       ]);
       expect(
         player.realtimeSessions.single.appendedTexts.single,
-        isNot(contains('打开待产包购物车')),
+        isNot(contains('打开泌乳计划')),
       );
       expect(
         player.realtimeSessions.single.appendedTexts.single,
-        isNot(contains('/hospital-bag-cart')),
+        isNot(contains('/plan')),
       );
       expect(player.realtimeSessions.single.finishCount, 1);
 
@@ -3580,7 +3181,7 @@ void main() {
 
       expect(player.realtimeSessions, hasLength(1));
       expect(player.realtimeSessions.single.appendedTexts, [
-        '待产包清单 我已经帮你整理好了。',
+        '泌乳支持清单 我已经帮你整理好了。',
       ]);
     },
   );
@@ -3599,7 +3200,7 @@ void main() {
           'sequence': 1,
           'payload': {
             'artifact_type': 'rich_text',
-            'rich_text': {'title': '待产包清单', 'content': '我已经帮你整理好了。'},
+            'rich_text': {'title': '泌乳支持清单', 'content': '我已经帮你整理好了。'},
           },
         }),
         AgentStreamEvent(const {
@@ -3633,7 +3234,7 @@ void main() {
       );
       await tester.enterText(
         find.byKey(const ValueKey('agent-composer-input')),
-        '帮我整理待产包',
+        '帮我整理泌乳支持信息',
       );
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -4837,7 +4438,7 @@ void main() {
 
       await tester.enterText(
         find.byKey(const ValueKey('agent-composer-input')),
-        '帮我整理待产包',
+        '帮我整理泌乳支持信息',
       );
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -4858,7 +4459,7 @@ void main() {
         client.requests.last.idempotencyKey,
         client.requests.first.idempotencyKey,
       );
-      expect(find.text('待产包信息表已打开。'), findsOneWidget);
+      expect(find.text('泌乳支持信息表已打开。'), findsOneWidget);
     },
   );
 
@@ -5399,13 +5000,13 @@ void main() {
       'payload': {
         'artifact_type': 'form',
         'form': {
-          'id': 'hospital_bag_intake',
+          'id': 'lactation_support_intake',
           'title': '历史信息采集',
           'submit_label': '确认',
           'fields': [
             {
-              'id': 'due_date_or_week',
-              'label': '预产期或当前孕周',
+              'id': 'feeding_context',
+              'label': '泌乳目标',
               'type': 'text',
               'required': true,
             },
@@ -5431,7 +5032,7 @@ void main() {
         ],
         formSubmissions: {
           'restored-form': AgentArtifactFormSubmission.submitted(
-            values: const {'due_date_or_week': '38 周'},
+            values: const {'feeding_context': '38 周'},
           ),
         },
       ),
@@ -5482,7 +5083,7 @@ void main() {
       );
       await tester.enterText(
         find.byKey(const ValueKey('agent-composer-input')),
-        '帮我准备待产包',
+        '帮我整理泌乳支持信息',
       );
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -5501,12 +5102,12 @@ void main() {
           'payload': {
             'artifact_type': 'form',
             'form': {
-              'id': 'hospital_bag_intake',
-              'title': '待产包信息采集',
+              'id': 'lactation_support_intake',
+              'title': '泌乳支持信息采集',
               'fields': [
                 {
-                  'id': 'due_date_or_week',
-                  'label': '预产期或当前孕周',
+                  'id': 'feeding_context',
+                  'label': '泌乳目标',
                   'type': 'text',
                   'required': true,
                   'default_value': '32 周',
@@ -5628,17 +5229,17 @@ void main() {
     var submitCount = 0;
     const card = AgentArtifactCardView(
       id: 'draft-form',
-      title: '孕期信息采集',
-      description: '用于生成更适合你的孕期计划。',
-      formId: 'birth_journey_basic_info_intake',
+      title: '泌乳支持信息采集',
+      description: '用于整理更适合你的泌乳支持计划。',
+      formId: 'lactation_support_intake',
       presentationKind: AgentArtifactPresentationKind.form,
       formFields: [
         AgentArtifactFormFieldView(
-          id: 'current_week',
-          label: '当前孕周或预产期',
+          id: 'support_goal',
+          label: '当前泌乳目标',
           type: 'text',
           required: true,
-          defaultValue: '32 周',
+          defaultValue: '建立规律记录',
         ),
       ],
     );
@@ -5667,10 +5268,10 @@ void main() {
     await tester.tap(entry);
     await tester.pumpAndSettle();
     final input = find.byKey(
-      const ValueKey('agent-artifact-form-input-draft-form-current_week--1'),
+      const ValueKey('agent-artifact-form-input-draft-form-support_goal--1'),
     );
     expect(input, findsOneWidget);
-    await tester.enterText(input, '35 周');
+    await tester.enterText(input, '每天记录 4 次');
     await tester.pump();
     await tester.tap(
       find.byKey(const ValueKey('agent-artifact-form-cancel-draft-form')),
@@ -5687,12 +5288,12 @@ void main() {
     await tester.pumpAndSettle();
     final reopenedInput = tester.widget<TextFormField>(
       find.byKey(
-        const ValueKey('agent-artifact-form-input-draft-form-current_week--1'),
+        const ValueKey('agent-artifact-form-input-draft-form-support_goal--1'),
       ),
     );
     expect(
       reopenedInput.controller?.text ?? reopenedInput.initialValue,
-      '35 周',
+      '每天记录 4 次',
     );
 
     await tester.enterText(input, '');
@@ -5705,7 +5306,7 @@ void main() {
     await tester.pumpAndSettle();
     final clearedInput = tester.widget<TextFormField>(
       find.byKey(
-        const ValueKey('agent-artifact-form-input-draft-form-current_week--1'),
+        const ValueKey('agent-artifact-form-input-draft-form-support_goal--1'),
       ),
     );
     expect(clearedInput.controller?.text ?? clearedInput.initialValue, isEmpty);
@@ -5719,14 +5320,14 @@ void main() {
         id: 'pending-form',
         title: '信息采集',
         presentationKind: AgentArtifactPresentationKind.form,
-        formId: 'hospital_bag_intake',
+        formId: 'lactation_support_intake',
         formFields: [
           AgentArtifactFormFieldView(
-            id: 'due_date_or_week',
-            label: '预产期或当前孕周',
+            id: 'feeding_context',
+            label: '泌乳目标',
             type: 'text',
             required: true,
-            defaultValue: '38 周',
+            defaultValue: '建立规律记录',
           ),
         ],
       );
@@ -5786,9 +5387,9 @@ void main() {
   ) async {
     final card = AgentArtifactCardView(
       id: 'long-required-form',
-      title: '待产信息采集',
+      title: '恢复支持信息采集',
       presentationKind: AgentArtifactPresentationKind.form,
-      formId: 'hospital_bag_intake',
+      formId: 'lactation_support_intake',
       formFields: [
         for (var index = 0; index < 12; index++)
           AgentArtifactFormFieldView(
@@ -5847,16 +5448,16 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       const card = AgentArtifactCardView(
         id: 'responsive-form',
-        title: '分娩沟通卡信息采集',
+        title: '恢复支持信息采集',
         presentationKind: AgentArtifactPresentationKind.form,
-        formId: 'birth_plan_card_intake',
-        formSubmitLabel: '生成我的沟通卡',
+        formId: 'recovery_support_intake',
+        formSubmitLabel: '生成支持方案',
         formFields: [
           AgentArtifactFormFieldView(
-            id: 'birth_hospital',
-            label: '生产医院',
+            id: 'support_context',
+            label: '主要支持场景',
             type: 'text',
-            defaultValue: '市妇幼保健院',
+            defaultValue: '居家恢复',
           ),
         ],
       );
@@ -5899,7 +5500,7 @@ void main() {
       expect(submitRect.top, greaterThan(cancelRect.bottom));
       expect(cancelRect.left, greaterThanOrEqualTo(dialogRect.left));
       expect(submitRect.right, lessThanOrEqualTo(dialogRect.right));
-      expect(find.text('生成我的沟通卡'), findsOneWidget);
+      expect(find.text('生成支持方案'), findsOneWidget);
     },
   );
 
@@ -6128,286 +5729,7 @@ void main() {
     expect(find.text('确认索引动作'), findsOneWidget);
   });
 
-  testWidgets('Agent Hub renders specialized artifact cards', (tester) async {
-    final state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.finished,
-      textContent: '我整理好了这些卡片。',
-      events: [
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'birth-journey-card',
-          'payload': {
-            'artifact_type': 'birth_journey_plan_card',
-            'card': {
-              'card_type': 'birth_journey_plan_card',
-              'schema_version': '1.0',
-              'card_json': {
-                'title': '孕期计划',
-                'owner': {'current_week': '孕25周', 'birth_path': '顺产'},
-                'todo_plan': {
-                  'periods': [
-                    {
-                      'title': '孕 25-27 周',
-                      'subtitle': '重点完成糖耐和血压复查。',
-                      'status': 'current',
-                      'items': [
-                        {
-                          'title': '做糖耐检查（OGTT）',
-                          'priority_label': '重要',
-                          'reason': '需要连续处理预约、空腹和抽血。',
-                          'steps': ['确认检查时间', '检查结束后及时吃第一餐'],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        }),
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'birth-plan-card',
-          'payload': {
-            'artifact_type': 'birth_plan_card',
-            'card': {
-              'card_type': 'birth_plan_card',
-              'schema_version': '1.0',
-              'card_json': {
-                'title': '分娩沟通单',
-                'communication': ['希望先解释每一步'],
-                'pain_relief': ['优先尝试非药物缓解'],
-                'questions_for_hospital': ['什么情况需要转剖宫产？'],
-                'medical_notes': ['妊娠糖尿病史'],
-              },
-            },
-          },
-        }),
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'hospital-bag-card',
-          'payload': {
-            'artifact_type': 'hospital_bag_card',
-            'card': {
-              'card_type': 'hospital_bag_card',
-              'schema_version': '1.0',
-              'card_json': {
-                'title': '待产包',
-                'packing_groups': [
-                  {
-                    'title': '妈妈住院包',
-                    'items': [
-                      {
-                        'label': '产褥垫组合装',
-                        'quantity': '1包',
-                        'priority': 'must',
-                        'reason': '产后前几天更换频繁',
-                      },
-                    ],
-                  },
-                ],
-                'disclaimer': '以医院实际要求为准。',
-              },
-            },
-          },
-        }),
-      ],
-    );
-
-    await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-birth-journey-card')),
-      findsOneWidget,
-    );
-    expect(find.text('孕期'), findsOneWidget);
-    expect(find.text('孕25周'), findsOneWidget);
-    expect(find.text('孕 25-27 周'), findsOneWidget);
-    expect(find.text('1 个事项'), findsOneWidget);
-    expect(find.text('重要'), findsNothing);
-    expect(find.text('检查结束后及时吃第一餐'), findsOneWidget);
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-birth-plan-card')),
-      findsOneWidget,
-    );
-    expect(find.text('沟通卡片内容'), findsOneWidget);
-    expect(find.text('疼痛缓解'), findsOneWidget);
-    expect(find.text('希望先解释每一步'), findsOneWidget);
-    expect(find.text('医疗或安全信息'), findsOneWidget);
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-hospital-bag-card')),
-      findsOneWidget,
-    );
-    expect(find.text('物品清单'), findsOneWidget);
-    expect(find.text('妈妈住院包'), findsOneWidget);
-    expect(find.text('1项'), findsOneWidget);
-    expect(find.text('1包'), findsOneWidget);
-    expect(find.text('必带'), findsOneWidget);
-    expect(find.text('产后恶露量较多，用来垫床或替代普通卫生巾。'), findsOneWidget);
-    expect(find.text('打开购物车'), findsNothing);
-    expect(find.text('保存图片'), findsNothing);
-    expect(
-      find.byKey(const ValueKey('agent-card-export-birth-journey-card')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-card-export-birth-plan-card')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-card-export-hospital-bag-card')),
-      findsNothing,
-    );
-  });
-
-  testWidgets('Agent Hub renders camelCase specialized artifact fields', (
-    tester,
-  ) async {
-    final state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.finished,
-      textContent: '我整理好了这些卡片。',
-      events: [
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'birth-journey-camel-card',
-          'payload': {
-            'artifact_type': 'birth_journey_plan_card',
-            'card_json': {
-              'title': '孕期计划',
-              'owner': {'currentWeek': '孕26周', 'birthPath': '顺产'},
-              'todoPlan': {
-                'periods': [
-                  {
-                    'title': '孕 26-28 周',
-                    'items': [
-                      {
-                        'title': '复查血压',
-                        'priorityLabel': '建议',
-                        'steps': ['记录早晚血压'],
-                      },
-                    ],
-                  },
-                ],
-              },
-            },
-          },
-        }),
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'birth-plan-camel-card',
-          'payload': {
-            'artifact_type': 'birth_plan_card',
-            'card_json': {
-              'title': '分娩沟通单',
-              'painRelief': ['优先尝试非药物缓解'],
-              'medicalNotes': ['妊娠糖尿病史'],
-            },
-          },
-        }),
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'hospital-bag-camel-card',
-          'payload': {
-            'artifact_type': 'hospital_bag_card',
-            'card_json': {
-              'title': '待产包',
-              'packingGroups': [
-                {
-                  'title': '妈妈住院包',
-                  'items': [
-                    {'label': '产褥垫组合装', 'quantity': '1包', 'priority': 'must'},
-                  ],
-                },
-              ],
-            },
-          },
-        }),
-      ],
-    );
-
-    await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-birth-journey-camel-card')),
-      findsOneWidget,
-    );
-    expect(find.text('孕26周'), findsOneWidget);
-    expect(find.text('顺产'), findsOneWidget);
-    expect(find.text('孕 26-28 周'), findsOneWidget);
-    expect(find.text('建议'), findsNothing);
-    expect(find.text('记录早晚血压'), findsOneWidget);
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-birth-plan-camel-card')),
-      findsOneWidget,
-    );
-    expect(find.text('疼痛缓解'), findsOneWidget);
-    expect(find.text('优先尝试非药物缓解'), findsOneWidget);
-    expect(find.text('医疗或安全信息'), findsOneWidget);
-    expect(find.text('妊娠糖尿病史'), findsOneWidget);
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-hospital-bag-camel-card')),
-      findsOneWidget,
-    );
-    expect(find.text('物品清单'), findsOneWidget);
-    expect(find.text('妈妈住院包'), findsOneWidget);
-    expect(find.text('产褥垫组合装'), findsOneWidget);
-    expect(find.text('1包'), findsOneWidget);
-    expect(find.text('必带'), findsOneWidget);
-  });
-
-  testWidgets(
-    'Agent Hub renders normalized legacy specialized card semantics',
-    (tester) async {
-      final fixture = readFixtureMap(
-        'agent_artifacts/legacy_specialized_cards.json',
-      );
-      final events = (fixture['events'] as List<Object?>)
-          .whereType<Map>()
-          .map((event) => AgentStreamEvent(Map<String, Object?>.from(event)))
-          .toList(growable: false);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              textContent: '我整理好了。',
-              events: events,
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('分娩沟通单'), findsOneWidget);
-      expect(find.text('希望医护先解释每一步'), findsOneWidget);
-      expect(find.text('出生后尽早肌肤接触'), findsOneWidget);
-      expect(
-        find.text('这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。'),
-        findsOneWidget,
-      );
-      expect(find.text('待产包'), findsOneWidget);
-      expect(find.text('证件文件包'), findsOneWidget);
-      expect(find.text('妈妈住院包'), findsOneWidget);
-      expect(find.text('产后回家第一周用品'), findsOneWidget);
-      expect(find.text('身份证'), findsOneWidget);
-      expect(find.text('身份证及复印件'), findsNothing);
-      expect(find.text('原件+复印件'), findsOneWidget);
-
-      await tester.ensureVisible(find.text('妈妈住院包'));
-      await tester.pump();
-      await tester.tap(find.text('妈妈住院包'));
-      await tester.pump();
-
-      expect(find.text('根据住院天数准备，产后更换会更方便。'), findsOneWidget);
-      expect(find.text('你是第一胎加上希望母乳喂养，数量已按这个情况调整'), findsOneWidget);
-    },
-  );
-
-  testWidgets('Agent Hub renders every current production artifact family', (
+  testWidgets('Agent Hub renders the current IBCLC artifact family', (
     tester,
   ) async {
     final actions = <AgentArtifactActionView>[];
@@ -6438,25 +5760,6 @@ void main() {
             'chat': {'label': '开始咨询', 'note': '将同步本轮哺乳背景'},
           },
         ),
-        _productionArtifactEvent(
-          id: 'cart-current',
-          type: 'hospital_bag_cart',
-          payload: {
-            'cart_update': {
-              'message': '已经更新待产包购物车。',
-              'groups': [
-                {
-                  'title': '妈妈护理',
-                  'items': [
-                    {'name': '产褥垫组合装'},
-                    {'name': '一次性内裤'},
-                  ],
-                },
-              ],
-              'totals': {'item_count': 2, 'total': 101.02},
-            },
-          },
-        ),
       ],
     );
 
@@ -6483,15 +5786,6 @@ void main() {
     expect(find.text('12 年经验'), findsOneWidget);
     expect(find.text('擅长含乳支持。'), findsOneWidget);
     expect(find.textContaining('隐私政策'), findsOneWidget);
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-cart-cart-current')),
-      findsOneWidget,
-    );
-    expect(find.text('已经更新待产包购物车。'), findsOneWidget);
-    expect(find.text('妈妈护理'), findsOneWidget);
-    expect(find.text('产褥垫组合装'), findsOneWidget);
-    expect(find.text('共 2 件'), findsOneWidget);
 
     final agreementFinder = find.byKey(
       const ValueKey('agent-ibclc-agreement-ibclc-current'),
@@ -6643,136 +5937,6 @@ void main() {
     expect(routeState.runId, 'run-history');
   });
 
-  testWidgets('Agent Hub keeps long journey and packing sections collapsible', (
-    tester,
-  ) async {
-    final state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.finished,
-      textContent: '计划已经整理好。',
-      events: [
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'journey-collapse',
-          'payload': {
-            'artifact_type': 'birth_journey_plan_card',
-            'card': {
-              'card_type': 'birth_journey_plan_card',
-              'schema_version': '1.0',
-              'card_json': {
-                'title': '孕期计划',
-                'todo_plan': {
-                  'periods': [
-                    {
-                      'title': '当前阶段',
-                      'items': [
-                        {'title': '完成糖耐检查'},
-                      ],
-                    },
-                    {
-                      'title': '下一阶段',
-                      'items': [
-                        {'title': '整理待产包'},
-                      ],
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        }),
-        AgentStreamEvent({
-          'type': 'artifact.created',
-          'artifact_id': 'bag-collapse',
-          'payload': {
-            'artifact_type': 'hospital_bag_card',
-            'card': {
-              'card_type': 'hospital_bag_card',
-              'schema_version': '1.0',
-              'card_json': {
-                'title': '待产包',
-                'packing_groups': [
-                  {
-                    'title': '妈妈住院包',
-                    'items': [
-                      {'label': '产褥垫'},
-                    ],
-                  },
-                  {
-                    'title': '宝宝用品',
-                    'items': [
-                      {'label': '婴儿连体衣'},
-                    ],
-                  },
-                ],
-              },
-            },
-          },
-        }),
-      ],
-    );
-
-    await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(find.text('完成糖耐检查'), findsOneWidget);
-    expect(find.text('整理待产包'), findsNothing);
-    await tester.tap(find.text('下一阶段'));
-    await tester.pump();
-    expect(find.text('整理待产包'), findsOneWidget);
-
-    expect(find.text('产褥垫'), findsOneWidget);
-    expect(find.text('婴儿连体衣'), findsNothing);
-    final babyGroupFinder = find.text('宝宝出院包');
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -240));
-    await tester.pumpAndSettle();
-    await tester.tap(babyGroupFinder);
-    await tester.pump();
-    expect(find.text('婴儿连体衣'), findsOneWidget);
-  });
-
-  testWidgets('Agent Hub activates cart context from a final reply link', (
-    tester,
-  ) async {
-    var activationCount = 0;
-    final actions = <AgentArtifactActionView>[];
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: const AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent:
-                '已经整理好了。\n\n不用一次买完，可以按优先级删减后再决定是否购买。\n\n**[打开待产包购物车](/hospital-bag-cart)**',
-          ),
-          onHospitalBagCartContextRequired: () => activationCount += 1,
-          onArtifactAction: actions.add,
-        ),
-      ),
-    );
-
-    expect(activationCount, 1);
-    await tester.pump();
-    expect(activationCount, 1);
-    expect(find.textContaining('不用一次买完'), findsOneWidget);
-    expect(find.text('打开待产包购物车'), findsNothing);
-    expect(
-      find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
-      findsOneWidget,
-    );
-    expect(find.text('MOMCOZY CART'), findsOneWidget);
-    expect(find.text('待产包母婴用品一键打包'), findsOneWidget);
-
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
-    );
-    await tester.tap(
-      find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
-    );
-    await tester.pump();
-
-    expect(actions, hasLength(1));
-    expect(actions.single.routePath, '/hospital-bag-cart');
-  });
-
   testWidgets(
     'Agent Hub submits a support ticket without a second confirmation',
     (tester) async {
@@ -6919,515 +6083,6 @@ void main() {
     },
   );
 
-  testWidgets('Agent Hub renders legacy service artifact envelopes', (
-    tester,
-  ) async {
-    final actions = <AgentArtifactActionView>[];
-    final cartUpdates = <HospitalBagCartArtifactSeed>[];
-    final client = _ControllableAgentStreamClient();
-    addTearDown(client.dispose);
-    final formEvent = AgentStreamEvent({
-      'type': 'artifact.created',
-      'thread_id': 'thread-legacy-artifact',
-      'run_id': 'run-legacy-artifact',
-      'artifact_id': 'hospital-bag-form',
-      'payload': {
-        'artifact_type': 'form',
-        'form': {
-          'id': 'hospital_bag_intake',
-          'title': '信息采集',
-          'fields': [
-            {
-              'id': 'due_date_or_week',
-              'label': '基本信息｜预产期或当前孕周',
-              'type': 'text',
-              'required': true,
-              'placeholder': '例如：38 周',
-            },
-            {
-              'id': 'birth_path',
-              'label': '生产信息｜分娩方式',
-              'type': 'select',
-              'required': true,
-              'options': ['顺产', '剖宫产', '还不确定'],
-            },
-          ],
-        },
-      },
-    });
-    final planEvent = AgentStreamEvent({
-      'type': 'artifact.created',
-      'thread_id': 'thread-legacy-artifact',
-      'run_id': 'run-legacy-artifact',
-      'artifact_id': 'birth-plan-card',
-      'payload': {
-        'artifact_type': 'birth_journey_plan_card',
-        'card': {
-          'card_type': 'birth_journey_plan_card',
-          'schema_version': '1.0',
-          'card_json': {
-            'title': '孕期计划',
-            'todo_plan': {
-              'periods': [
-                {
-                  'title': '当前阶段',
-                  'items': [
-                    {'title': '整理下次产检要问的问题'},
-                    {'title': '开始整理待产包'},
-                  ],
-                },
-              ],
-            },
-          },
-        },
-      },
-    });
-    final cartEvent = AgentStreamEvent({
-      'type': 'artifact.created',
-      'thread_id': 'thread-legacy-artifact',
-      'run_id': 'run-legacy-artifact',
-      'artifact_id': 'hospital-bag-cart',
-      'payload': {
-        'artifact_type': 'hospital_bag_card',
-        'assistant_followup': {
-          'kind': 'hospital_bag_cart',
-          'message': '**[打开待产包购物车](/hospital-bag-cart)**',
-        },
-        'cart_update': {
-          'action': 'reset_cart',
-          'message': '已经帮你把待产包购物车恢复到默认清单了。',
-          'groups': [
-            {
-              'title': '妈妈护理',
-              'items': [
-                {'name': '产褥垫组合装'},
-                {'name': '一次性内裤'},
-              ],
-            },
-          ],
-          'totals': {'itemCount': 2, 'total': 101.02},
-        },
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '我整理好了。',
-            events: [formEvent, planEvent, cartEvent],
-          ),
-          onArtifactAction: actions.add,
-          onHospitalBagCartUpdate: cartUpdates.add,
-        ),
-      ),
-    );
-
-    final formEntry = find.byKey(
-      const ValueKey('agent-artifact-form-entry-hospital-bag-form'),
-    );
-    expect(formEntry, findsOneWidget);
-    expect(find.text('孕期计划'), findsOneWidget);
-    expect(find.text('当前阶段'), findsOneWidget);
-    expect(find.text('2 个事项'), findsOneWidget);
-    expect(find.text('整理下次产检要问的问题'), findsOneWidget);
-    expect(find.text('开始整理待产包'), findsOneWidget);
-    expect(find.text('已经帮你把待产包购物车恢复到默认清单了。'), findsWidgets);
-    expect(find.text('妈妈护理'), findsOneWidget);
-    expect(find.text('产褥垫组合装'), findsOneWidget);
-    expect(find.text('一次性内裤'), findsOneWidget);
-    expect(find.text('共 2 件'), findsOneWidget);
-    expect(find.text('合计 101.02'), findsOneWidget);
-    expect(find.text('打开购物车'), findsOneWidget);
-    expect(cartUpdates, hasLength(1));
-    expect(cartUpdates.single.snapshot.groups.single.items, hasLength(2));
-
-    await tester.tap(formEntry);
-    await tester.pumpAndSettle();
-    final formFinder = find.byKey(
-      const ValueKey('agent-artifact-form-hospital-bag-form'),
-    );
-    expect(formFinder, findsOneWidget);
-    expect(find.text('基本信息'), findsOneWidget);
-    expect(find.text('预产期或当前孕周'), findsOneWidget);
-    expect(find.text('生产信息'), findsOneWidget);
-    expect(find.text('分娩方式'), findsOneWidget);
-    expect(find.text('必填'), findsNothing);
-    expect(find.text('*'), findsWidgets);
-    expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
-
-    await tester.tap(
-      find.byKey(
-        const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
-      ),
-    );
-    await tester.pump();
-
-    expect(client.requests, isEmpty);
-    expect(find.text('请补充：预产期或当前孕周、分娩方式'), findsOneWidget);
-
-    await tester.enterText(
-      find.descendant(of: formFinder, matching: find.byType(TextFormField)),
-      '38 周',
-    );
-    await tester.pump();
-    await tester.tap(find.byType(DropdownButtonFormField<String>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('顺产').last);
-    await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(
-        const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
-      ),
-    );
-    await tester.pump();
-
-    expect(client.requests, hasLength(1));
-    expect(
-      client.requests.single.message,
-      isNot(contains('confirmed_form_data')),
-    );
-    expect(client.requests.single.message, isNot(contains('due_date_or_week')));
-    expect(client.requests.single.metadata['form_submission'], {
-      'artifact_id': 'hospital-bag-form',
-      'form_id': 'hospital_bag_intake',
-      'values': {'due_date_or_week': '38 周', 'birth_path': '顺产'},
-    });
-    expect(
-      client.requests.single.idempotencyKey,
-      startsWith('agent-form-submit-'),
-    );
-    client.emit(
-      0,
-      AgentStreamEvent(const {
-        'event_id': 'hospital-bag-form-run-queued',
-        'type': 'run.queued',
-        'thread_id': 'thread-legacy-artifact',
-        'run_id': 'run-hospital-bag-form',
-        'sequence': 1,
-      }),
-    );
-    await _pumpFrames(tester, 3);
-    await tester.scrollUntilVisible(
-      find.text('已提交信息采集表单'),
-      -220,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(find.text('已提交信息采集表单'), findsOneWidget);
-    expect(find.text('已提交，可点击查看'), findsOneWidget);
-    await tester.ensureVisible(formEntry);
-    await tester.pumpAndSettle();
-    await tester.tap(formEntry);
-    await tester.pumpAndSettle();
-    expect(find.text('38 周'), findsOneWidget);
-    expect(
-      find.byKey(
-        const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
-      ),
-      findsNothing,
-    );
-    await tester.tap(
-      find.byKey(
-        const ValueKey('agent-artifact-form-cancel-hospital-bag-form'),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(client.requests, hasLength(1));
-
-    final cartActionFinder = find.byKey(
-      const ValueKey('agent-artifact-cart-open-hospital-bag-cart'),
-    );
-    await tester.scrollUntilVisible(
-      cartActionFinder,
-      260,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pump();
-    await tester.tap(cartActionFinder);
-    await tester.pump();
-
-    expect(actions.single.routePath, '/hospital-bag-cart');
-    expect(actions.single.routeExtra, isNull);
-    expect(actions.single.hospitalBagCartSeed, isNotNull);
-    expect(
-      actions.single.hospitalBagCartSeed!.snapshot.groups.single.items,
-      hasLength(2),
-    );
-  });
-
-  testWidgets(
-    'Agent Hub keeps pregnancy plan form analysis and proposal in one trusted multi-turn flow',
-    (tester) async {
-      tester.view.physicalSize = const Size(800, 1200);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-      final formEvent = AgentStreamEvent({
-        'type': 'artifact.created',
-        'thread_id': 'thread-pregnancy-flow',
-        'run_id': 'run-pregnancy-form',
-        'artifact_id': 'pregnancy-intake-form',
-        'payload': {
-          'artifact_type': 'form',
-          'form': {
-            'id': 'birth_journey_basic_info_intake',
-            'title': '孕周与基本情况',
-            'description': '先填写几项基础信息，后面我会按你的情况整理孕期计划。',
-            'fields': [
-              {
-                'id': 'current_week',
-                'label': '当前孕周或预产期',
-                'type': 'text',
-                'required': true,
-                'default_value': '32周',
-              },
-              {
-                'id': 'ivf',
-                'label': '是否 IVF（体外受精）',
-                'type': 'select',
-                'required': true,
-                'options': ['是', '否', '不确定/暂不说'],
-                'default_value': '是',
-              },
-              {
-                'id': 'fetus_count',
-                'label': '单胎/双胎',
-                'type': 'select',
-                'required': true,
-                'options': ['单胎', '双胎', '多胎', '不确定/暂不说'],
-                'default_value': '双胎',
-              },
-              {
-                'id': 'age',
-                'label': '年龄',
-                'type': 'number',
-                'required': true,
-                'default_value': 36,
-              },
-              {
-                'id': 'first_birth',
-                'label': '是否第一胎',
-                'type': 'select',
-                'required': true,
-                'options': ['是', '否', '不确定/暂不说'],
-                'default_value': '是',
-              },
-              {
-                'id': 'birth_path',
-                'label': '计划分娩方式',
-                'type': 'select',
-                'required': true,
-                'options': ['顺产', '剖宫产', '还没确定'],
-                'default_value': '顺产',
-              },
-            ],
-          },
-        },
-      });
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              textContent: '请先完成孕周与基本情况表单。',
-              threadId: 'thread-pregnancy-flow',
-              runId: 'run-pregnancy-form',
-              events: [formEvent],
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      await tester.tap(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-pregnancy-intake-form'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final submit = find.byKey(
-        const ValueKey('agent-artifact-form-submit-pregnancy-intake-form'),
-      );
-      await tester.ensureVisible(submit);
-      await tester.tap(submit);
-      await tester.pump();
-
-      expect(client.requests, hasLength(1));
-      final firstRequest = client.requests.single;
-      expect(firstRequest.threadId, 'thread-pregnancy-flow');
-      expect(firstRequest.message, isNot(contains('32周')));
-      expect(firstRequest.message, isNot(contains('confirmed_form_data')));
-      expect(firstRequest.metadata['form_submission'], {
-        'artifact_id': 'pregnancy-intake-form',
-        'form_id': 'birth_journey_basic_info_intake',
-        'values': {
-          'current_week': '32周',
-          'ivf': '是',
-          'fetus_count': '双胎',
-          'age': 36,
-          'first_birth': '是',
-          'birth_path': '顺产',
-        },
-      });
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'pregnancy-analysis-queued',
-          'type': 'run.queued',
-          'thread_id': 'thread-pregnancy-flow',
-          'run_id': 'run-pregnancy-analysis',
-          'sequence': 1,
-        }),
-      );
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'pregnancy-analysis-message',
-          'type': 'message.completed',
-          'thread_id': 'thread-pregnancy-flow',
-          'run_id': 'run-pregnancy-analysis',
-          'message_id': 'message-pregnancy-analysis',
-          'sequence': 2,
-          'payload': {
-            'role': 'assistant',
-            'text':
-                '双胎和 IVF 会影响复查节奏，我会把胎儿生长观察、孕周口径和入院准备适当前置。还有其他需要补充的信息吗？如果没有，我就基于目前的信息开始为你制定孕期计划啦。',
-            'quick_replies': [
-              {'text': '没有了，开始制定'},
-              {'text': '我想补充一点'},
-              {'text': '稍等我再看看'},
-            ],
-          },
-        }),
-      );
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'pregnancy-analysis-progress',
-          'type': 'run.progress',
-          'thread_id': 'thread-pregnancy-flow',
-          'run_id': 'run-pregnancy-analysis',
-          'sequence': 3,
-          'payload': {'phase': 'response_finalizing'},
-        }),
-      );
-      await _pumpFrames(tester, 2);
-
-      expect(find.textContaining('双胎和 IVF 会影响复查节奏'), findsOneWidget);
-      expect(find.text('已提交，可点击查看'), findsOneWidget);
-      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
-      expect(find.text('猜你想说'), findsNothing);
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'pregnancy-analysis-completed',
-          'type': 'run.completed',
-          'thread_id': 'thread-pregnancy-flow',
-          'run_id': 'run-pregnancy-analysis',
-          'sequence': 4,
-        }),
-      );
-      await _pumpFrames(tester, 4);
-
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '没有了，开始制定',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      expect(client.requests, hasLength(2));
-      expect(client.requests.last.message, '没有了，开始制定');
-      expect(client.requests.last.threadId, 'thread-pregnancy-flow');
-
-      const pregnancyActionId = 'action-pregnancy-plan';
-      client.emit(
-        1,
-        AgentStreamEvent(const {
-          'event_id': 'pregnancy-plan-action',
-          'type': 'action.confirmation_required',
-          'thread_id': 'thread-pregnancy-flow',
-          'run_id': 'run-pregnancy-plan',
-          'sequence': 1,
-          'action_id': pregnancyActionId,
-          'payload': {
-            'action_type': 'pregnancy.plan.create',
-            'action_status': 'confirmation_required',
-            'target_type': 'plan',
-            'side_effect_level': 'medium',
-            'preview_payload': {'title': '孕期计划', 'summary': '从现在到生产前后的阶段计划与待办'},
-          },
-        }),
-      );
-      client.emit(
-        1,
-        AgentStreamEvent({
-          'event_id': 'pregnancy-plan-artifact',
-          'type': 'artifact.created',
-          'thread_id': 'thread-pregnancy-flow',
-          'run_id': 'run-pregnancy-plan',
-          'sequence': 2,
-          'artifact_id': 'pregnancy-plan-card',
-          'payload': {
-            'artifact_type': 'birth_journey_plan_card',
-            'card': {
-              'card_type': 'birth_journey_plan_card',
-              'schema_version': '1.0',
-              'card_json': {
-                'title': '孕期计划',
-                'todo_plan': {
-                  'periods': [
-                    {
-                      'title': '当前阶段｜孕 32 周起',
-                      'items': [
-                        {
-                          'title': '和产科确认个性化复查节奏',
-                          'steps': ['确认孕周口径', '安排胎儿生长复查'],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        }),
-      );
-      client.emit(
-        1,
-        AgentStreamEvent(const {
-          'event_id': 'pregnancy-plan-waiting',
-          'type': 'run.waiting_for_confirmation',
-          'thread_id': 'thread-pregnancy-flow',
-          'run_id': 'run-pregnancy-plan',
-          'sequence': 3,
-          'payload': {'pending_action_id': pregnancyActionId},
-        }),
-      );
-      await _pumpFrames(tester, 4);
-
-      expect(find.text('孕期计划'), findsWidgets);
-      expect(find.text('当前阶段｜孕 32 周起'), findsOneWidget);
-      expect(find.text('和产科确认个性化复查节奏'), findsOneWidget);
-      expect(find.text('确认孕周口径'), findsOneWidget);
-      expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('agent-action-card-$pregnancyActionId')),
-        findsOneWidget,
-      );
-      expect(find.text('等待确认后继续'), findsOneWidget);
-    },
-  );
-
   testWidgets(
     'Agent Hub aligns grouped artifact form defaults other input and submit lock',
     (tester) async {
@@ -7435,22 +6090,22 @@ void main() {
       final card = AgentArtifactCardView(
         id: 'form-alignment',
         title: '信息采集',
-        formId: 'hospital_bag_intake',
+        formId: 'lactation_support_intake',
         formFields: [
           const AgentArtifactFormFieldView(
-            id: 'due_date_or_week',
-            label: '基本信息｜预产期或当前孕周',
+            id: 'feeding_context',
+            label: '基本信息｜泌乳目标',
             type: 'text',
             required: true,
-            defaultValue: '38 周',
-            helpText: '可以填写日期或孕周。',
+            defaultValue: '建立规律记录',
+            helpText: '请填写当前最关注的泌乳目标。',
           ),
           const AgentArtifactFormFieldView(
-            id: 'pregnancy_history',
-            label: '生产信息｜孕产史',
+            id: 'support_preferences',
+            label: '偏好信息｜支持方式',
             type: 'checkbox_group',
             required: true,
-            options: ['一胎', '二胎', '其他'],
+            options: ['图文指导', '提醒', '其他'],
             allowOtherInput: true,
             otherPlaceholder: '请写明需要补充的信息',
             defaultValue: ['其他'],
@@ -7471,16 +6126,16 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('基本信息'), findsOneWidget);
-      expect(find.text('生产信息'), findsOneWidget);
-      expect(find.text('预产期或当前孕周'), findsOneWidget);
-      expect(find.text('孕产史'), findsOneWidget);
-      expect(find.text('基本信息｜预产期或当前孕周'), findsNothing);
-      expect(find.text('38 周'), findsOneWidget);
-      expect(find.text('可以填写日期或孕周。'), findsOneWidget);
+      expect(find.text('偏好信息'), findsOneWidget);
+      expect(find.text('泌乳目标'), findsOneWidget);
+      expect(find.text('支持方式'), findsOneWidget);
+      expect(find.text('基本信息｜泌乳目标'), findsNothing);
+      expect(find.text('建立规律记录'), findsOneWidget);
+      expect(find.text('请填写当前最关注的泌乳目标。'), findsOneWidget);
       expect(find.text('结果卡片'), findsNothing);
       final otherFinder = find.byKey(
         const ValueKey(
-          'agent-artifact-form-other-form-alignment-pregnancy_history',
+          'agent-artifact-form-other-form-alignment-support_preferences',
         ),
       );
       expect(otherFinder, findsOneWidget);
@@ -7494,9 +6149,9 @@ void main() {
       await tester.pump();
 
       expect(actions, isEmpty);
-      expect(find.text('请填写：孕产史的其它内容'), findsOneWidget);
+      expect(find.text('请填写：支持方式的其它内容'), findsOneWidget);
 
-      await tester.enterText(otherFinder, '第一胎剖宫产');
+      await tester.enterText(otherFinder, '希望每天提醒');
       await tester.pump();
       await tester.ensureVisible(submitFinder);
       await tester.pump();
@@ -7504,10 +6159,10 @@ void main() {
       await tester.pump();
 
       expect(actions, hasLength(1));
-      expect(actions.single.value, contains('"due_date_or_week":"38 周"'));
+      expect(actions.single.value, contains('"feeding_context":"建立规律记录"'));
       expect(
         actions.single.value,
-        contains('"pregnancy_history":["其它：第一胎剖宫产"]'),
+        contains('"support_preferences":["其它：希望每天提醒"]'),
       );
       expect(find.text('已提交，可点击查看'), findsOneWidget);
     },
@@ -7520,15 +6175,15 @@ void main() {
       const card = AgentArtifactCardView(
         id: 'retryable-form',
         title: '信息采集',
-        formId: 'hospital_bag_intake',
+        formId: 'lactation_support_intake',
         presentationKind: AgentArtifactPresentationKind.form,
         formFields: [
           AgentArtifactFormFieldView(
-            id: 'due_date_or_week',
-            label: '基本信息｜预产期或当前孕周',
+            id: 'feeding_context',
+            label: '基本信息｜泌乳目标',
             type: 'text',
             required: true,
-            defaultValue: '38 周',
+            defaultValue: '建立规律记录',
           ),
         ],
       );
@@ -7582,15 +6237,15 @@ void main() {
       'payload': {
         'artifact_type': 'form',
         'form': {
-          'id': 'hospital_bag_intake',
+          'id': 'lactation_support_intake',
           'title': '信息采集',
           'fields': [
             {
-              'id': 'due_date_or_week',
-              'label': '预产期或当前孕周',
+              'id': 'feeding_context',
+              'label': '泌乳目标',
               'type': 'text',
               'required': true,
-              'default': '38 周',
+              'default': '建立规律记录',
             },
           ],
         },
@@ -7651,14 +6306,14 @@ void main() {
         'artifact_type': 'form',
         'form': {
           'id': 'packing_intake',
-          'title': '待产包偏好',
+          'title': '泌乳用品偏好',
           'fields': [
             {
               'id': 'packing_items',
               'label': '想加入的物品',
               'type': 'checkbox_group',
               'required': true,
-              'options': ['奶瓶', '尿布', '湿巾'],
+              'options': ['储奶袋', '乳垫', '清洁刷'],
             },
           ],
         },
@@ -7671,7 +6326,7 @@ void main() {
           runner: AgentStreamRunner(client),
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.finished,
-            textContent: '请选择待产包物品。',
+            textContent: '请选择需要的泌乳用品。',
             events: [formEvent],
           ),
         ),
@@ -7682,14 +6337,14 @@ void main() {
       find.byKey(const ValueKey('agent-artifact-form-entry-packing-form')),
     );
     await tester.pumpAndSettle();
-    expect(find.text('奶瓶'), findsOneWidget);
-    expect(find.text('尿布'), findsOneWidget);
+    expect(find.text('储奶袋'), findsOneWidget);
+    expect(find.text('乳垫'), findsOneWidget);
     expect(find.byType(ChoiceChip), findsNothing);
     expect(find.byType(Checkbox), findsNWidgets(3));
 
-    await tester.tap(find.text('奶瓶'));
+    await tester.tap(find.text('储奶袋'));
     await tester.pump();
-    await tester.tap(find.text('尿布'));
+    await tester.tap(find.text('乳垫'));
     await tester.pump();
     await tester.tap(
       find.byKey(const ValueKey('agent-artifact-form-submit-packing-form')),
@@ -7701,7 +6356,7 @@ void main() {
         client.requests.single.metadata['form_submission']!
             as Map<String, Object?>;
     expect(submission['values'], {
-      'packing_items': ['奶瓶', '尿布'],
+      'packing_items': ['储奶袋', '乳垫'],
     });
   });
 
@@ -8273,15 +6928,11 @@ milk_total: 120ml
       });
 
       expect(find.text('打开购物车', findRichText: true), findsNothing);
-      await tester.ensureVisible(
+      expect(
         find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
+        findsNothing,
       );
-      await tester.tap(
-        find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
-      );
-      await tester.pump();
-
-      expect(actions.last.routePath, '/hospital-bag-cart');
+      expect(actions, hasLength(3));
     },
   );
 
@@ -8825,7 +7476,7 @@ milk_total: 120ml
             AgentStreamEvent({
               'type': 'artifact.created',
               'payload': {
-                'semantic': {'label': '孕期计划已经生成啦', 'surface': 'artifact'},
+                'semantic': {'label': '泌乳支持计划已经生成啦', 'surface': 'artifact'},
               },
             }),
           ),
@@ -8833,7 +7484,7 @@ milk_total: 120ml
       ),
     );
 
-    expect(find.text('孕期计划已经生成啦'), findsOneWidget);
+    expect(find.text('泌乳支持计划已经生成啦'), findsOneWidget);
 
     await tester.pumpWidget(
       _host(
@@ -8969,7 +7620,7 @@ milk_total: 120ml
 
       await tester.enterText(
         find.byKey(const ValueKey('agent-composer-input')),
-        '帮我生成待产包',
+        '帮我生成泌乳支持表单',
       );
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -9022,12 +7673,12 @@ milk_total: 120ml
           'thread_id': 'thread-progress',
           'run_id': 'run-progress',
           'sequence': 3,
-          'payload': {'label': '正在生成待产包信息采集表单'},
+          'payload': {'label': '正在生成泌乳支持信息采集表单'},
         }),
       );
       await tester.pump();
 
-      expect(find.text('正在生成待产包信息采集表单'), findsOneWidget);
+      expect(find.text('正在生成泌乳支持信息采集表单'), findsOneWidget);
 
       client.emit(
         0,
@@ -9095,17 +7746,6 @@ milk_total: 120ml
       ),
       findsOneWidget,
     );
-  });
-}
-
-AgentStreamEvent _formArtifactEvent({
-  required String id,
-  required Map<String, Object?> form,
-}) {
-  return AgentStreamEvent({
-    'type': 'artifact.created',
-    'artifact_id': id,
-    'payload': {'artifact_type': 'form', 'form': form},
   });
 }
 
@@ -9452,7 +8092,7 @@ class _RetryBeforeRunCreatedAgentStreamClient implements AgentStreamClient {
       'run_id': 'run-created',
       'message_id': 'msg-created',
       'sequence': 2,
-      'payload': {'role': 'assistant', 'text': '待产包信息表已打开。'},
+      'payload': {'role': 'assistant', 'text': '泌乳支持信息表已打开。'},
     });
     yield AgentStreamEvent(const {
       'event_id': 'evt-run-created-3',

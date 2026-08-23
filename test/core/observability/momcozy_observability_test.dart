@@ -114,7 +114,7 @@ void main() {
         observability: MomCozyObservability(sink: sink),
       );
 
-      await transport.putJson('/v1/pregnancy-diary/entries/2026-07-11');
+      await transport.putJson('/v1/records/feeding/record-001');
       await transport.patchJson('/v1/records/growth/record-001');
       await transport.deleteJson('/v1/plans/plan-001');
 

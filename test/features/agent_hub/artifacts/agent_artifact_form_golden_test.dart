@@ -37,7 +37,7 @@ void main() {
                       const SizedBox(width: 42),
                       Expanded(
                         child: AgentArtifactForm(
-                          card: _hospitalBagForm,
+                          card: _lactationSupportForm,
                           onSubmit: (_) async => true,
                         ),
                       ),
@@ -65,7 +65,7 @@ void main() {
         await expectLater(
           find.byKey(const ValueKey('artifact-form-golden-surface')),
           matchesGoldenFile(
-            '../../../goldens/agent_hub/artifacts/hospital_bag_intake_footer.png',
+            '../../../goldens/agent_hub/artifacts/collection_form_footer.png',
           ),
         );
       }
@@ -97,7 +97,7 @@ void main() {
                     const SizedBox(width: 42),
                     Expanded(
                       child: AgentArtifactPanel(
-                        cards: const [_hospitalBagForm],
+                        cards: const [_lactationSupportForm],
                         onFormSubmit: (_) async => true,
                       ),
                     ),
@@ -120,7 +120,9 @@ void main() {
 
     await tester.tap(
       find.byKey(
-        const ValueKey('agent-artifact-form-entry-hospital-bag-intake-golden'),
+        const ValueKey(
+          'agent-artifact-form-entry-lactation-support-intake-golden',
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -134,64 +136,61 @@ void main() {
   });
 }
 
-const _hospitalBagForm = AgentArtifactCardView(
-  id: 'hospital-bag-intake-golden',
-  title: '信息采集',
-  description: '这些信息将用于生成更适合你的待产包清单。',
+const _lactationSupportForm = AgentArtifactCardView(
+  id: 'lactation-support-intake-golden',
+  title: '哺乳支持信息',
+  description: '这些信息将用于提供更贴合当前情况的哺乳支持。',
   artifactType: 'form',
   schemaVersion: '1.0',
   presentationKind: AgentArtifactPresentationKind.form,
-  formId: 'hospital_bag_intake',
+  formId: 'lactation_support_intake',
   formSubmitLabel: '提交',
   formFields: [
     AgentArtifactFormFieldView(
-      id: 'due_date_or_week',
-      label: '基本信息｜预产期或当前孕周',
-      type: 'text',
+      id: 'baby_age_days',
+      label: '基本信息｜宝宝日龄',
+      type: 'number',
       required: true,
-      placeholder: '例如：2026-08-20 或 32 周',
+      placeholder: '例如：42',
     ),
     AgentArtifactFormFieldView(
-      id: 'first_birth',
-      label: '基本信息｜是否第一胎',
+      id: 'feeding_method',
+      label: '基本信息｜主要喂养方式',
       type: 'select',
       required: true,
-      options: ['是', '否'],
+      options: ['亲喂', '瓶喂母乳', '混合喂养', '配方奶喂养'],
       placeholder: '请选择',
     ),
     AgentArtifactFormFieldView(
-      id: 'fetus_count',
-      label: '基本信息｜单胎或多胎',
-      type: 'select',
-      required: true,
-      options: ['单胎', '双胎', '多胎'],
-      placeholder: '请选择',
-    ),
-    AgentArtifactFormFieldView(
-      id: 'pregnancy_history_or_notes',
-      label: '生产信息｜孕产史或需要注意的信息',
+      id: 'pain_or_discomfort',
+      label: '当前情况｜疼痛或不适',
       type: 'multi_select',
-      options: ['无特殊情况', '妊娠糖尿病', '妊娠高血压', '其它'],
+      options: ['无明显不适', '含乳疼痛', '乳房胀痛', '乳头破损', '其它'],
       allowOtherInput: true,
     ),
     AgentArtifactFormFieldView(
-      id: 'birth_path',
-      label: '生产信息｜分娩方式',
-      type: 'select',
-      required: true,
-      options: ['顺产', '剖宫产', '还不确定'],
+      id: 'feeding_context',
+      label: '当前情况｜补充说明',
+      type: 'textarea',
+      placeholder: '例如：左侧亲喂后持续疼痛',
     ),
     AgentArtifactFormFieldView(
-      id: 'feeding_intention',
-      label: '偏好信息｜喂养意向',
+      id: 'pumping_frequency',
+      label: '当前情况｜每日吸乳次数',
       type: 'select',
-      options: ['母乳喂养', '混合喂养', '配方奶喂养', '还不确定'],
+      options: ['暂不吸乳', '1–3 次', '4–6 次', '7 次及以上'],
+    ),
+    AgentArtifactFormFieldView(
+      id: 'milk_supply_concern',
+      label: '当前情况｜奶量关注',
+      type: 'select',
+      options: ['没有明显担心', '担心偏少', '担心过多', '左右差异明显'],
     ),
     AgentArtifactFormFieldView(
       id: 'return_to_work_timing',
       label: '偏好信息｜预计返工时间',
       type: 'text',
-      placeholder: '例如：产后 6 个月',
+      placeholder: '例如：宝宝 6 个月时',
     ),
     AgentArtifactFormFieldView(
       id: 'support_person',
@@ -203,7 +202,7 @@ const _hospitalBagForm = AgentArtifactCardView(
       id: 'top_worries',
       label: '偏好信息｜最担心的问题',
       type: 'multi_select',
-      options: ['漏带重要物品', '预算超支', '医院临时要求', '产后喂养'],
+      options: ['含乳疼痛', '奶量变化', '吸乳安排', '宝宝摄入'],
     ),
   ],
 );
@@ -213,18 +212,18 @@ const _viewports = [
     label: 'narrow mobile 360x800',
     size: Size(360, 800),
     filePath:
-        '../../../goldens/agent_hub/artifacts/narrow_360x800/hospital_bag_intake.png',
+        '../../../goldens/agent_hub/artifacts/narrow_360x800/collection_form.png',
   ),
   _FormGoldenViewport(
     label: 'compact mobile 390x844',
     size: Size(390, 844),
-    filePath: '../../../goldens/agent_hub/artifacts/hospital_bag_intake.png',
+    filePath: '../../../goldens/agent_hub/artifacts/collection_form.png',
   ),
   _FormGoldenViewport(
     label: 'large mobile 430x932',
     size: Size(430, 932),
     filePath:
-        '../../../goldens/agent_hub/artifacts/large_430x932/hospital_bag_intake.png',
+        '../../../goldens/agent_hub/artifacts/large_430x932/collection_form.png',
   ),
 ];
 

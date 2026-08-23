@@ -23,7 +23,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_page.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_banner.dart';
@@ -1507,11 +1506,8 @@ Widget _buildDefaultAgentHubPage(
         : null,
     greetingProfileLoader:
         runtime.agentHubProfileRepository.fetchGreetingProfile,
-    requestBuilder: (message) => buildSessionAgentHubRequest(
-      message,
-      session: runtime.session,
-      clientContext: runtime.hospitalBagCartStore.agentClientContext,
-    ),
+    requestBuilder: (message) =>
+        buildSessionAgentHubRequest(message, session: runtime.session),
     voicePlaybackCoordinator: voicePlaybackCoordinator,
     voicePlaybackPlayer: runtime.agentVoicePlaybackPlayer,
     pickImage: runtime.agentHubImagePicker,
@@ -1523,14 +1519,6 @@ Widget _buildDefaultAgentHubPage(
     ibclcConsultStore: runtime.ibclcConsultStore,
     supportTicketSubmitter: runtime.supportTicketRepository.submit,
     onApplicationEvent: runtime.handleAgentApplicationEvent,
-    onHospitalBagCartUpdate: (seed) {
-      runtime.hospitalBagCartStore.ingestArtifact(seed);
-    },
-    onHospitalBagCartContextRequired: () {
-      final store = runtime.hospitalBagCartStore;
-      store.activate(store.activeCartId);
-    },
-    onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
     onArtifactAction: (action) => unawaited(
       dispatchAgentArtifactAction(
         context,
@@ -1650,8 +1638,8 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/baby/development',
     title: 'Baby Development',
-    summary: 'Confirmed pregnancy week and prenatal education.',
-    icon: Icons.pregnant_woman_rounded,
+    summary: 'Postpartum growth records and development milestones.',
+    icon: Icons.child_care_rounded,
     accent: Color(0xff862644),
     priority: 'P0',
   ),
@@ -1752,14 +1740,6 @@ const momCozyRoutes = [
     priority: 'TBD',
   ),
   MomCozyRouteConfig(
-    path: '/hospital-bag-cart',
-    title: '待产包',
-    summary: '待产包清单和购物车状态入口。',
-    icon: Icons.shopping_bag_rounded,
-    accent: Color(0xff9b6b2f),
-    priority: 'TBD',
-  ),
-  MomCozyRouteConfig(
     path: '/ibclc-chat.html',
     title: 'IBCLC',
     summary: '哺乳顾问咨询和返回状态恢复入口。',
@@ -1788,7 +1768,6 @@ const momCozyRoutes = [
 const _routesWithoutBottomNavigation = {
   '/calibration',
   '/pump',
-  '/hospital-bag-cart',
   '/ibclc-chat.html',
   '/media-viewer',
   '/motion-assessment',
@@ -1823,14 +1802,6 @@ Future<void> dispatchAgentArtifactAction(
   final path = action.routePath;
   if (path != null && _knownFlutterRoutePaths.contains(path)) {
     Object? routeExtra = action.routeExtra;
-    if (path == '/hospital-bag-cart') {
-      final store = MomCozyRuntimeScope.of(context).hospitalBagCartStore;
-      final seed = action.hospitalBagCartSeed;
-      final cartId = seed == null
-          ? store.activate(store.activeCartId)
-          : store.ingestArtifact(seed);
-      routeExtra = HospitalBagCartRouteState(cartId: cartId);
-    }
     if (path == '/ibclc-chat.html' && routeExtra is IbclcConsultRouteState) {
       MomCozyRuntimeScope.of(
         context,

@@ -313,12 +313,12 @@ void main() {
       formSubmissions: {
         'form-artifact-1': AgentArtifactFormSubmission.submitted(
           values: const {
-            'due_date_or_week': '38 周',
-            'pregnancy_history': ['其它：第一胎剖宫产'],
+            'feeding_goal': '提升日间奶量',
+            'support_preferences': ['其它：需要设备建议'],
           },
         ),
         'form-artifact-pending': AgentArtifactFormSubmission.submitting(
-          values: const {'due_date_or_week': '39 周'},
+          values: const {'feeding_goal': '建立规律记录'},
         ),
       },
     );
@@ -333,8 +333,8 @@ void main() {
     expect(restored.formSubmissions, hasLength(1));
     expect(restored.formSubmissions['form-artifact-1']?.isSubmitted, isTrue);
     expect(
-      restored.formSubmissions['form-artifact-1']?.values['due_date_or_week'],
-      '38 周',
+      restored.formSubmissions['form-artifact-1']?.values['feeding_goal'],
+      '提升日间奶量',
     );
     expect(
       restored.formSubmissions.containsKey('form-artifact-pending'),

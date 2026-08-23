@@ -9,23 +9,23 @@ void main() {
       AgentArtifactCardView(id: 'old', title: '旧卡片', content: '旧内容'),
       AgentArtifactCardView(
         id: 'current',
-        title: '待产包清单',
+        title: '泌乳支持清单',
         content: '我已经帮你整理好了。',
         actions: [
           AgentArtifactActionView(
-            label: '打开待产包购物车',
-            icon: Icons.shopping_cart_outlined,
+            label: '打开泌乳计划',
+            icon: Icons.water_drop_outlined,
             kind: 'navigate',
-            value: '/hospital-bag-cart',
-            routePath: '/hospital-bag-cart',
+            value: '/plan',
+            routePath: '/plan',
           ),
         ],
       ),
     ]);
 
-    expect(text, '待产包清单 我已经帮你整理好了。');
-    expect(text, isNot(contains('打开待产包购物车')));
-    expect(text, isNot(contains('/hospital-bag-cart')));
+    expect(text, '泌乳支持清单 我已经帮你整理好了。');
+    expect(text, isNot(contains('打开泌乳计划')));
+    expect(text, isNot(contains('/plan')));
     expect(text, isNot(contains('旧卡片')));
   });
 
@@ -34,11 +34,11 @@ void main() {
       agentArtifactVoiceFallbackText(const [
         AgentArtifactCardView(
           id: 'form',
-          title: '孕期信息',
+          title: '泌乳支持信息',
           description: '请补充以下信息。',
         ),
       ]),
-      '孕期信息 请补充以下信息。',
+      '泌乳支持信息 请补充以下信息。',
     );
   });
 

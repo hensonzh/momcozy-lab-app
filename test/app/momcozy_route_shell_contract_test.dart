@@ -77,7 +77,6 @@ const _documentedRoutePaths = {
   '/device/manage',
   '/device/user',
   '/w1',
-  '/hospital-bag-cart',
   '/ibclc-chat.html',
   '/media-viewer',
 };

@@ -41,7 +41,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
   int _profileStep = 0;
-  OnboardingProfileDraft? _draft;
+  final OnboardingProfileDraft _draft = OnboardingProfileDraft();
   bool _editingConfirmedProfile = false;
   bool _activatingAvatar = false;
   bool _avatarReturnScheduled = false;
@@ -96,14 +96,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _buildProfileFlow(BuildContext context) {
-    final totalSteps = _draft == null
-        ? null
-        : _totalStepsForStage(_draft!.stage);
     return Column(
       children: [
         _OnboardingHeader(
           step: _profileStep + 1,
-          totalSteps: totalSteps,
+          totalSteps: 4,
           onBack: _profileStep == 0
               ? null
               : () => setState(() {
@@ -115,42 +112,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
             child: switch (_profileStep) {
-              0 => _stageStep(),
-              1 => _basicsStep(),
-              2 when _draft?.stage == OnboardingCareStage.postpartum =>
-                _postpartumDeliveryStep(context),
-              2 => _pregnancyDetailsStep(context),
-              3 => _postpartumBirthStep(),
+              0 => _basicsStep(),
+              1 => _postpartumDeliveryStep(context),
+              2 => _postpartumBirthStep(),
               _ => const SizedBox.shrink(),
             },
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _stageStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const _StepPrompt(
-          title: 'Which stage are you in?',
-          reason:
-              'Your stage helps us show the right home, care plan, and digital companion.',
-        ),
-        const SizedBox(height: 22),
-        for (final stage in OnboardingCareStage.values) ...[
-          _StageCard(
-            stage: stage,
-            selected: _draft?.stage == stage,
-            onTap: () => setState(() {
-              _draft = OnboardingProfileDraft(stage: stage);
-              _profileStep = 1;
-              _validationMessage = '';
-            }),
-          ),
-          const SizedBox(height: 10),
-        ],
       ],
     );
   }
@@ -208,89 +176,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
       setState(() => _validationMessage = 'Enter an age between 12 and 70.');
       return;
     }
-    _draft!
+    _draft
       ..displayName = _nameController.text.trim()
       ..age = age;
-    if (_draft!.stage == OnboardingCareStage.fertility) {
-      setState(() => _validationMessage = '');
-      await _confirmProfile(_draft!);
-      return;
-    }
     setState(() {
-      _profileStep = 2;
+      _profileStep = 1;
       _validationMessage = '';
     });
   }
 
-  Widget _pregnancyDetailsStep(BuildContext context) {
-    final draft = _draft!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const _StepPrompt(
-          title: 'About your pregnancy',
-          reason:
-              'Your current pregnancy week and baby count help us estimate your due date, time guidance, and prepare the right plan.',
-        ),
-        const SizedBox(height: 24),
-        ..._pregnancyFields(context, draft),
-        const SizedBox(height: 26),
-        _errorText(controllerError: true),
-        _PrimaryButton(
-          label: 'Save and continue',
-          loading: widget.controller.busy,
-          onPressed: widget.controller.busy ? null : _submitProfile,
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _pregnancyFields(
-    BuildContext context,
-    OnboardingProfileDraft draft,
-  ) {
-    return [
-      const Text(
-        'Current gestational age',
-        style: TextStyle(
-          color: MomCozyV3Colors.ink,
-          fontSize: 15,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-      const SizedBox(height: 6),
-      const _FieldHint(
-        text:
-            'Choose the pregnancy week confirmed by your clinician or shown on your latest scan.',
-      ),
-      const SizedBox(height: 12),
-      DropdownButtonFormField<int>(
-        key: const ValueKey('onboarding-current-gestational-week'),
-        initialValue: draft.currentGestationalWeek,
-        isExpanded: true,
-        menuMaxHeight: 320,
-        decoration: const InputDecoration(
-          labelText: 'Current pregnancy week *',
-        ),
-        hint: const Text('Select week'),
-        items: [
-          for (var week = 1; week <= 40; week++)
-            DropdownMenuItem(value: week, child: Text('Week $week')),
-        ],
-        onChanged: (value) =>
-            setState(() => draft.currentGestationalWeek = value),
-      ),
-      const SizedBox(height: 16),
-      _CountField(
-        label: 'Expected babies',
-        value: draft.expectedInfantCount,
-        onChanged: (value) => setState(() => draft.expectedInfantCount = value),
-      ),
-    ];
-  }
-
   Widget _postpartumDeliveryStep(BuildContext context) {
-    final draft = _draft!;
+    final draft = _draft;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -328,7 +224,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         const SizedBox(height: 6),
         const _FieldHint(
           text:
-              'How far along the pregnancy was at delivery—for example, 39 weeks + 2 days. Weeks are required; days are optional.',
+              'Gestational age at delivery—for example, 39 weeks + 2 days. Weeks are required; days are optional.',
         ),
         const SizedBox(height: 12),
         Row(
@@ -376,15 +272,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   void _continueFromPostpartumDelivery() {
-    final draft = _draft!;
+    final draft = _draft;
     if (draft.deliveryDate == null) {
       setState(() => _validationMessage = 'Choose your delivery date.');
       return;
     }
     if (draft.gestationalWeeks == null) {
       setState(
-        () => _validationMessage =
-            'Enter how many weeks pregnant you were at delivery.',
+        () => _validationMessage = 'Enter the gestational weeks at delivery.',
       );
       return;
     }
@@ -397,13 +292,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
       return;
     }
     setState(() {
-      _profileStep = 3;
+      _profileStep = 2;
       _validationMessage = '';
     });
   }
 
   Widget _postpartumBirthStep() {
-    final draft = _draft!;
+    final draft = _draft;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -447,32 +342,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _submitProfile() async {
-    final draft = _draft!;
-    if (draft.stage == OnboardingCareStage.pregnancy &&
-        draft.currentGestationalWeek == null) {
-      setState(
-        () => _validationMessage = 'Choose your current pregnancy week.',
-      );
-      return;
-    }
-    if (draft.stage == OnboardingCareStage.pregnancy &&
-        (draft.currentGestationalWeek! < 1 ||
-            draft.currentGestationalWeek! > 40)) {
-      setState(
-        () => _validationMessage = 'Pregnancy week must be between 1 and 40.',
-      );
-      return;
-    }
-    if (draft.stage == OnboardingCareStage.postpartum &&
-        draft.deliveryDate == null) {
+    final draft = _draft;
+    if (draft.deliveryDate == null) {
       setState(() => _validationMessage = 'Choose your delivery date.');
       return;
     }
-    if (draft.stage == OnboardingCareStage.postpartum &&
-        draft.gestationalWeeks == null) {
+    if (draft.gestationalWeeks == null) {
       setState(
-        () => _validationMessage =
-            'Enter how many weeks pregnant you were at delivery.',
+        () => _validationMessage = 'Enter the gestational weeks at delivery.',
       );
       return;
     }
@@ -494,13 +371,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
     setState(() => _editingConfirmedProfile = false);
   }
 
-  int _totalStepsForStage(OnboardingCareStage? stage) => switch (stage) {
-    OnboardingCareStage.fertility => 3,
-    OnboardingCareStage.pregnancy => 4,
-    OnboardingCareStage.postpartum => 5,
-    null => 4,
-  };
-
   Widget _buildAvatarFlow(BuildContext context, OnboardingState state) {
     if (widget.avatarTaskMode &&
         _activatingAvatar &&
@@ -515,9 +385,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
               (widget.avatarTaskMode && state.avatarSetupCompleted
                   ? OnboardingStatus.avatarRequired
                   : state.status);
-    final totalSteps = _totalStepsForStage(state.stage);
-    final canReturnToProfile =
-        _draft != null && !state.canEnterApp && !widget.controller.busy;
+    const totalSteps = 4;
+    final canReturnToProfile = !state.canEnterApp && !widget.controller.busy;
     return Column(
       children: [
         if (widget.avatarTaskMode)
@@ -554,15 +423,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   void _returnToProfileFlow() {
-    final draft = _draft;
-    if (draft == null) return;
     widget.controller.clearError();
     setState(() {
-      _profileStep = switch (draft.stage) {
-        OnboardingCareStage.fertility => 1,
-        OnboardingCareStage.pregnancy => 2,
-        OnboardingCareStage.postpartum => 3,
-      };
+      _profileStep = 2;
       _editingConfirmedProfile = true;
       _validationMessage = '';
     });
@@ -586,7 +449,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               : 'A portrait helps us make your companion feel more like you.',
         ),
         const SizedBox(height: 18),
-        _ReferenceAvatar(stage: state.stage, compact: true),
+        const _ReferenceAvatar(compact: true),
         const SizedBox(height: 18),
         _errorText(controllerError: true),
         _PrimaryButton(
@@ -685,7 +548,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       builder: (context) => AlertDialog(
         title: const Text('Continue with MomCozy character?'),
         content: const Text(
-          'You can use the original character for your current stage instead of creating a personalized one.',
+          'You can use the MomCozy postpartum companion instead of creating a personalized one.',
         ),
         actions: [
           TextButton(
@@ -846,7 +709,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
         if (state.canContinueWithDefault)
           _DefaultAvatarChoiceCard(
             key: const ValueKey('onboarding-avatar-default'),
-            stage: state.stage,
             selected: widget.controller.defaultAvatarSelected,
             onTap: widget.controller.busy || _activatingAvatar
                 ? null
@@ -1756,74 +1618,6 @@ class _AvatarGenerationWaitNote extends StatelessWidget {
   }
 }
 
-class _StageCard extends StatelessWidget {
-  const _StageCard({
-    required this.stage,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final OnboardingCareStage stage;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final icon = switch (stage) {
-      OnboardingCareStage.fertility => Icons.favorite_outline_rounded,
-      OnboardingCareStage.pregnancy => Icons.pregnant_woman_rounded,
-      OnboardingCareStage.postpartum => Icons.child_friendly_rounded,
-    };
-    return Material(
-      color: selected ? MomCozyV3Colors.roseTint : MomCozyV3Colors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: selected ? MomCozyV3Colors.brand : MomCozyV3Colors.divider,
-          width: selected ? 1.8 : 1,
-        ),
-      ),
-      child: InkWell(
-        key: ValueKey('onboarding-stage-${stage.name}'),
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: const BoxDecoration(
-                  color: MomCozyV3Colors.surfaceTint,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: MomCozyV3Colors.brand),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Text(
-                  stage.title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              Icon(
-                selected ? Icons.check_circle_rounded : Icons.circle_outlined,
-                color: selected
-                    ? MomCozyV3Colors.brand
-                    : MomCozyV3Colors.divider,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _DateField extends StatelessWidget {
   const _DateField({
     required this.label,
@@ -1884,9 +1678,8 @@ class _CountField extends StatelessWidget {
 }
 
 class _ReferenceAvatar extends StatelessWidget {
-  const _ReferenceAvatar({required this.stage, this.compact = false});
+  const _ReferenceAvatar({this.compact = false});
 
-  final OnboardingCareStage? stage;
   final bool compact;
 
   @override
@@ -1899,7 +1692,7 @@ class _ReferenceAvatar extends StatelessWidget {
       ),
       padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
       child: Image.asset(
-        _referenceAvatarAsset(stage),
+        _referenceAvatarAsset,
         fit: BoxFit.contain,
         alignment: Alignment.bottomCenter,
         errorBuilder: (context, error, stackTrace) => const Icon(
@@ -2013,12 +1806,10 @@ class _AvatarCandidateCardState extends State<_AvatarCandidateCard> {
 class _DefaultAvatarChoiceCard extends StatelessWidget {
   const _DefaultAvatarChoiceCard({
     super.key,
-    required this.stage,
     required this.selected,
     required this.onTap,
   });
 
-  final OnboardingCareStage? stage;
   final bool selected;
   final VoidCallback? onTap;
 
@@ -2057,7 +1848,7 @@ class _DefaultAvatarChoiceCard extends StatelessWidget {
                     child: ColoredBox(
                       color: MomCozyV3Colors.roseTint,
                       child: Image.asset(
-                        _referenceAvatarAsset(stage),
+                        _referenceAvatarAsset,
                         fit: BoxFit.contain,
                         alignment: Alignment.bottomCenter,
                       ),
@@ -2079,7 +1870,7 @@ class _DefaultAvatarChoiceCard extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Continue with the character for your current stage',
+                        'Continue with the MomCozy postpartum companion',
                         style: TextStyle(
                           color: MomCozyV3Colors.mutedText,
                           fontSize: 12.5,
@@ -2117,13 +1908,8 @@ class _AvatarSelectedMark extends StatelessWidget {
   }
 }
 
-String _referenceAvatarAsset(OnboardingCareStage? stage) => switch (stage) {
-  OnboardingCareStage.pregnancy =>
-    'assets/images/me_baby_overview/pregnancy_avatar.png',
-  OnboardingCareStage.postpartum =>
-    'assets/images/me_baby_overview/postpartum_avatar.png',
-  _ => 'assets/images/me_baby_overview/mom_avatar.png',
-};
+const _referenceAvatarAsset =
+    'assets/images/me_baby_overview/postpartum_avatar.png';
 
 class _GeneratedAvatar extends StatefulWidget {
   const _GeneratedAvatar({

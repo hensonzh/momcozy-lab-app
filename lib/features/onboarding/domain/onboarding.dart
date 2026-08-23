@@ -1,23 +1,5 @@
 import 'dart:typed_data';
 
-enum OnboardingCareStage { fertility, pregnancy, postpartum }
-
-extension OnboardingCareStageValue on OnboardingCareStage {
-  String get apiValue => name;
-
-  String get title => switch (this) {
-    OnboardingCareStage.fertility => 'Planning for pregnancy',
-    OnboardingCareStage.pregnancy => 'Pregnant',
-    OnboardingCareStage.postpartum => 'Postpartum',
-  };
-
-  String get subtitle => switch (this) {
-    OnboardingCareStage.fertility => 'Cycle and preconception support',
-    OnboardingCareStage.pregnancy => 'Guidance through every trimester',
-    OnboardingCareStage.postpartum => 'Recovery, feeding, and baby care',
-  };
-}
-
 enum OnboardingStatus {
   required,
   avatarRequired,
@@ -164,7 +146,6 @@ class OnboardingState {
     required this.profileConfirmed,
     this.canEnterApp = false,
     this.avatarSetupCompleted = false,
-    this.stage,
     this.canContinueWithDefault = false,
     this.primaryInfantId,
     this.activeAvatarFileId,
@@ -184,7 +165,6 @@ class OnboardingState {
       canEnterApp:
           map['can_enter_app'] == true || status == OnboardingStatus.completed,
       avatarSetupCompleted: avatarSetupCompleted,
-      stage: _stage(_nullableString(map['current_stage'])),
       canContinueWithDefault: map['can_continue_with_default'] == true,
       primaryInfantId: _nullableString(map['primary_infant_id']),
       activeAvatarFileId: _nullableString(
@@ -202,7 +182,6 @@ class OnboardingState {
   final bool profileConfirmed;
   final bool canEnterApp;
   final bool avatarSetupCompleted;
-  final OnboardingCareStage? stage;
   final bool canContinueWithDefault;
   final String? primaryInfantId;
   final String? activeAvatarFileId;
@@ -223,11 +202,8 @@ class OnboardingInfantDraft {
 
 class OnboardingProfileDraft {
   OnboardingProfileDraft({
-    required this.stage,
     this.displayName = '',
     this.age,
-    this.currentGestationalWeek,
-    this.expectedInfantCount = 1,
     this.deliveryDate,
     this.gestationalWeeks,
     this.gestationalDays,
@@ -236,11 +212,8 @@ class OnboardingProfileDraft {
     List<OnboardingInfantDraft>? infants,
   }) : infants = infants ?? [OnboardingInfantDraft()];
 
-  OnboardingCareStage stage;
   String displayName;
   int? age;
-  int? currentGestationalWeek;
-  int expectedInfantCount;
   DateTime? deliveryDate;
   int? gestationalWeeks;
   int? gestationalDays;
@@ -259,29 +232,20 @@ class OnboardingProfileDraft {
   }
 
   Map<String, Object?> toMap() {
-    final common = <String, Object?>{
-      'stage': stage.apiValue,
+    return <String, Object?>{
+      // The backend still requires the single supported care-stage value.
+      // It is a transport compatibility field, not an app-side stage model.
+      'stage': 'postpartum',
       'display_name': displayName.trim(),
       'age': age,
-    };
-    return switch (stage) {
-      OnboardingCareStage.fertility => common,
-      OnboardingCareStage.pregnancy => {
-        ...common,
-        'current_gestational_week': currentGestationalWeek!,
-        'expected_infant_count': expectedInfantCount,
+      'delivery_date': _date(deliveryDate!),
+      'delivery_gestational_age': {
+        'weeks': gestationalWeeks!,
+        if (gestationalDays != null) 'days': gestationalDays,
       },
-      OnboardingCareStage.postpartum => {
-        ...common,
-        'delivery_date': _date(deliveryDate!),
-        'delivery_gestational_age': {
-          'weeks': gestationalWeeks!,
-          if (gestationalDays != null) 'days': gestationalDays,
-        },
-        'delivery_type': deliveryType,
-        'infant_count': infantCount,
-        'infants': infants.map((infant) => infant.toMap()).toList(),
-      },
+      'delivery_type': deliveryType,
+      'infant_count': infantCount,
+      'infants': infants.map((infant) => infant.toMap()).toList(),
     };
   }
 }
@@ -317,13 +281,6 @@ OnboardingAvatarGenerationPhase _avatarGenerationPhase(String value) =>
       'failed' => OnboardingAvatarGenerationPhase.failed,
       _ => OnboardingAvatarGenerationPhase.unknown,
     };
-
-OnboardingCareStage? _stage(String? value) => switch (value) {
-  'fertility' => OnboardingCareStage.fertility,
-  'pregnancy' => OnboardingCareStage.pregnancy,
-  'postpartum' => OnboardingCareStage.postpartum,
-  _ => null,
-};
 
 String _string(Object? value) => value is String ? value : '';
 

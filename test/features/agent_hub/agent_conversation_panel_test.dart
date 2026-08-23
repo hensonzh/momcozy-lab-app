@@ -143,15 +143,7 @@ void main() {
     final repository = _FakeConversationRepository();
     final deferredHistory = Completer<AgentConversationHistory>();
     repository.loadCompleter = deferredHistory;
-    var newSessionCalls = 0;
-    await tester.pumpWidget(
-      _host(
-        repository,
-        onNewSession: () async {
-          newSessionCalls += 1;
-        },
-      ),
-    );
+    await tester.pumpWidget(_host(repository));
     await tester.pump(const Duration(milliseconds: 50));
 
     await tester.tap(
@@ -169,7 +161,6 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
     await tester.pump();
-    expect(newSessionCalls, 1);
 
     deferredHistory.complete(repository.history());
     await tester.pumpAndSettle();
@@ -229,16 +220,11 @@ void main() {
 Widget _host(
   AgentConversationRepository repository, {
   AgentStreamRunState state = const AgentStreamRunState(),
-  Future<void> Function()? onNewSession,
 }) {
   return MaterialApp(
     home: Scaffold(
       bottomNavigationBar: const SizedBox(height: 60, child: Text('底部导航')),
-      body: AgentHubPage(
-        state: state,
-        conversationRepository: repository,
-        onNewSession: onNewSession,
-      ),
+      body: AgentHubPage(state: state, conversationRepository: repository),
     ),
   );
 }

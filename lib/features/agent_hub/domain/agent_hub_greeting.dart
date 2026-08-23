@@ -1,5 +1,3 @@
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
-
 const agentHubDefaultGreeting =
     '嗨，我是 Cozymate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
 
@@ -8,13 +6,11 @@ class AgentHubGreetingProfile {
     this.displayName = '',
     this.age,
     this.onboardingSkipped = false,
-    this.birthPrepDefaults = const BirthPrepProfileDefaults(),
   });
 
   final String displayName;
   final int? age;
   final bool onboardingSkipped;
-  final BirthPrepProfileDefaults birthPrepDefaults;
 
   bool get needsOnboarding {
     if (onboardingSkipped) return false;

@@ -130,12 +130,6 @@ final _routeGoldens = [
     pageKey: ValueKey('route-page-/w1'),
   ),
   _RouteGolden(
-    label: 'hospital bag page',
-    path: '/hospital-bag-cart',
-    fileName: 'hospital_bag_page_mobile.png',
-    pageKey: ValueKey('route-page-/hospital-bag-cart'),
-  ),
-  _RouteGolden(
     label: 'ibclc page',
     path: '/ibclc-chat.html',
     fileName: 'ibclc_page_mobile.png',
@@ -234,24 +228,6 @@ const _goldenImageAssets = [
   MomCozyAssets.momcozyLogo,
   MomCozyAssets.pumpM9,
   MomCozyAssets.ibclcConsultantAvatar,
-  'assets/images/hospital_bag_mom_pad.jpg',
-  'assets/images/hospital_bag_mom_sanitary.jpg',
-  'assets/images/hospital_bag_mom_underwear.png',
-  'assets/images/hospital_bag_mom_wipes.jpg',
-  'assets/images/hospital_bag_mom_bottle.jpg',
-  'assets/images/hospital_bag_mom_briefs.png',
-  'assets/images/hospital_bag_baby_diaper.jpg',
-  'assets/images/hospital_bag_baby_wipes.jpg',
-  'assets/images/hospital_bag_baby_towel.jpg',
-  'assets/images/hospital_bag_baby_blanket.jpg',
-  'assets/images/hospital_bag_baby_clothes.jpg',
-  'assets/images/hospital_bag_baby_bath_towel.jpg',
-  'assets/images/hospital_bag_milk_pad.jpg',
-  'assets/images/hospital_bag_milk_cream.jpg',
-  'assets/images/hospital_bag_milk_storage.jpg',
-  'assets/images/hospital_bag_pump_m9.jpg',
-  'assets/images/hospital_bag_milk_bra.jpg',
-  'assets/images/hospital_bag_milk_bottle.jpg',
 ];
 
 MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
@@ -259,7 +235,6 @@ MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
     jsonTransport: FixtureApiJsonTransportByPath({
       profileMeEndpoint: const <String, Object?>{
         'user_id': 'demo-user-fixture',
-        'current_care_stage': 'postpartum',
         'actual_delivery_date': '2026-06-11',
       },
       profileInfantsEndpoint: const <String, Object?>{

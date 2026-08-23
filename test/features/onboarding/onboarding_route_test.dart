@@ -47,7 +47,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.byKey(const ValueKey('onboarding-stage-fertility')),
+      find.byKey(const ValueKey('onboarding-display-name')),
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('bottom-nav-me')), findsNothing);
@@ -110,14 +110,9 @@ void main() {
       MomCozyFlutterApp(router: router, runtimeController: runtimeController),
     );
     await tester.pumpAndSettle();
-    final postpartum = find.byKey(
-      const ValueKey('onboarding-stage-postpartum'),
-    );
-    await tester.ensureVisible(postpartum);
-    await tester.tap(postpartum);
-    await tester.pumpAndSettle();
 
     expect(find.text('A few basics first'), findsOneWidget);
+    expect(find.text('1/4'), findsOneWidget);
     expect(
       find.textContaining('age helps us tailor guidance safely'),
       findsOneWidget,
@@ -133,7 +128,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Tell us about your delivery'), findsOneWidget);
-    expect(find.text('3/5'), findsOneWidget);
+    expect(find.text('2/4'), findsOneWidget);
     expect(find.text('Delivery date'), findsOneWidget);
     expect(find.text('Gestational age at delivery'), findsOneWidget);
     expect(find.text('Weeks *'), findsOneWidget);
@@ -143,7 +138,9 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.textContaining('How far along the pregnancy was at delivery'),
+      find.text(
+        'Gestational age at delivery—for example, 39 weeks + 2 days. Weeks are required; days are optional.',
+      ),
       findsOneWidget,
     );
     expect(find.text('Delivery method (optional)'), findsNothing);
@@ -162,7 +159,7 @@ void main() {
 
     expect(find.text('Tell us about your delivery'), findsOneWidget);
     expect(
-      find.text('Enter how many weeks pregnant you were at delivery.'),
+      find.text('Enter the gestational weeks at delivery.'),
       findsOneWidget,
     );
     expect(find.text('How was your delivery?'), findsNothing);
@@ -176,7 +173,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('How was your delivery?'), findsOneWidget);
-    expect(find.text('4/5'), findsOneWidget);
+    expect(find.text('3/4'), findsOneWidget);
     expect(find.text('Delivery method (optional)'), findsOneWidget);
     expect(find.text('How many babies did you welcome?'), findsOneWidget);
     expect(find.text('Baby 1'), findsNothing);
@@ -191,7 +188,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Create your digital companion'), findsOneWidget);
-    expect(find.text('5/5'), findsOneWidget);
+    expect(find.text('4/4'), findsOneWidget);
     expect(transport.lastBody, {
       'stage': 'postpartum',
       'display_name': 'Mia',
@@ -211,157 +208,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('How was your delivery?'), findsOneWidget);
-    expect(find.text('4/5'), findsOneWidget);
-    expect(find.text('Create your digital companion'), findsNothing);
-
-    router.dispose();
-    onboardingController.dispose();
-    runtimeController.dispose();
-  });
-
-  testWidgets('fertility skips empty details and shows photo use inline', (
-    tester,
-  ) async {
-    final transport = FixtureApiJsonTransportByPath(
-      const {
-        '/v1/onboarding/me': {
-          'status': 'required',
-          'current_step': 'profile',
-          'profile_confirmed': false,
-        },
-      },
-      writeResponsesByPath: const {
-        '/v1/onboarding/me/profile': {
-          'status': 'avatar_required',
-          'current_step': 'avatar',
-          'profile_confirmed': true,
-          'current_stage': 'fertility',
-          'can_continue_with_default': true,
-        },
-      },
-    );
-    final runtimeController = MomCozyRuntimeController(
-      MomCozyApiRuntime(
-        jsonTransport: transport,
-        multipartTransport: FixtureApiMultipartTransport(const {}),
-        session: const MomCozySession(
-          status: MomCozySessionStatus.authenticated,
-          userId: 'new-fertility-user',
-          babyId: '',
-          locale: 'en-US',
-          accessToken: 'access',
-        ),
-      ),
-    );
-    final onboardingController = OnboardingController(
-      runtimeController: runtimeController,
-    );
-    await onboardingController.load();
-    final router = createMomCozyRouter(
-      runtimeController: runtimeController,
-      onboardingController: onboardingController,
-    );
-
-    await tester.pumpWidget(
-      MomCozyFlutterApp(router: router, runtimeController: runtimeController),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('onboarding-stage-fertility')));
-    await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byKey(const ValueKey('onboarding-display-name')),
-      'Ava',
-    );
-    await tester.enterText(find.byKey(const ValueKey('onboarding-age')), '30');
-    await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('You’re all set'), findsNothing);
-    expect(find.text('Create your digital companion'), findsOneWidget);
-    expect(find.text('3/3'), findsOneWidget);
-    expect(
-      find.textContaining('make your companion feel more like you'),
-      findsOneWidget,
-    );
-    expect(find.widgetWithText(FilledButton, 'Upload a photo'), findsOneWidget);
-    expect(
-      find.widgetWithText(TextButton, 'How your photo is used'),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('onboarding-photo-privacy-note')),
-      findsOneWidget,
-    );
-    expect(
-      find.textContaining('used only to create your avatar'),
-      findsOneWidget,
-    );
-    expect(find.text('Take a photo'), findsNothing);
-    expect(find.text('Choose from library'), findsNothing);
-
-    final uploadPhoto = find.widgetWithText(FilledButton, 'Upload a photo');
-    await tester.ensureVisible(uploadPhoto);
-    await tester.tap(uploadPhoto);
-    await tester.pumpAndSettle();
-    expect(find.text('Take a photo'), findsOneWidget);
-    expect(find.text('Choose from library'), findsOneWidget);
-
-    router.dispose();
-    onboardingController.dispose();
-    runtimeController.dispose();
-  });
-
-  testWidgets('pregnancy path asks only relevant questions and explains why', (
-    tester,
-  ) async {
-    final runtimeController = MomCozyRuntimeController(
-      MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransport(const {
-          'status': 'required',
-          'current_step': 'profile',
-          'profile_confirmed': false,
-        }),
-        multipartTransport: FixtureApiMultipartTransport(const {}),
-        session: const MomCozySession(
-          status: MomCozySessionStatus.authenticated,
-          userId: 'new-pregnancy-user',
-          babyId: '',
-          locale: 'en-US',
-          accessToken: 'access',
-        ),
-      ),
-    );
-    final onboardingController = OnboardingController(
-      runtimeController: runtimeController,
-    );
-    await onboardingController.load();
-    final router = createMomCozyRouter(
-      runtimeController: runtimeController,
-      onboardingController: onboardingController,
-    );
-
-    await tester.pumpWidget(
-      MomCozyFlutterApp(router: router, runtimeController: runtimeController),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('onboarding-stage-pregnancy')));
-    await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byKey(const ValueKey('onboarding-display-name')),
-      'Lina',
-    );
-    await tester.enterText(find.byKey(const ValueKey('onboarding-age')), '29');
-    await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('About your pregnancy'), findsOneWidget);
     expect(find.text('3/4'), findsOneWidget);
-    expect(find.text('Current pregnancy week *'), findsOneWidget);
-    expect(find.text('Expected babies'), findsOneWidget);
-    expect(find.textContaining('estimate your due date'), findsOneWidget);
-    expect(find.textContaining('latest scan'), findsOneWidget);
-    expect(find.text('Expected due date'), findsNothing);
-    expect(find.text('Delivery date'), findsNothing);
+    expect(find.text('Create your digital companion'), findsNothing);
 
     router.dispose();
     onboardingController.dispose();

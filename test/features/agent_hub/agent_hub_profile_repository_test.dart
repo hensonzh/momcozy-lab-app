@@ -5,17 +5,14 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting
 import '../../support/fixture_api_transport.dart';
 
 void main() {
-  test(
-    'builds the legacy personalized greeting when name and age are known',
-    () {
-      const profile = AgentHubGreetingProfile(displayName: ' 小美 ', age: 29);
+  test('builds the personalized greeting when name and age are known', () {
+    const profile = AgentHubGreetingProfile(displayName: ' 小美 ', age: 29);
 
-      expect(
-        agentHubGreetingForProfile(profile),
-        '嗨 小美， \n\n今天想聊点什么呢？ \n\n把你现在最关心的事情告诉我就好，我会陪你一起梳理。',
-      );
-    },
-  );
+    expect(
+      agentHubGreetingForProfile(profile),
+      '嗨 小美， \n\n今天想聊点什么呢？ \n\n把你现在最关心的事情告诉我就好，我会陪你一起梳理。',
+    );
+  });
 
   test('keeps the onboarding greeting until both name and age are known', () {
     expect(
@@ -26,84 +23,45 @@ void main() {
     );
   });
 
-  test(
-    'loads greeting and birth-prep defaults from the profile endpoint',
-    () async {
-      final transport = FixtureApiJsonTransport({
-        'user_id': 'user-profile',
-        'display_name': ' 小美 ',
-        'age': 29,
-        'current_care_stage': 'pregnancy',
-        'expected_due_date': '2026-09-12',
-        'profile_onboarding_skipped': false,
-        'birth_prep_fetus_count': '单胎',
-        'birthPrepBirthHospital': '深圳市妇幼',
-        'birth_prep_top_worries': '怕漏买,怕母乳不够',
-      });
-      final repository = AgentHubProfileRepository(transport: transport);
+  test('loads greeting fields from the profile endpoint', () async {
+    final transport = FixtureApiJsonTransport({
+      'user_id': 'user-profile',
+      'display_name': ' 小美 ',
+      'age': '29',
+      'profile_onboarding_skipped': false,
+      'birth_prep_top_worries': 'legacy value that must be ignored',
+    });
+    final repository = AgentHubProfileRepository(transport: transport);
 
-      final profile = await repository.fetchGreetingProfile();
+    final profile = await repository.fetchGreetingProfile();
 
-      expect(transport.lastPath, agentHubProfileEndpoint);
-      expect(profile.displayName, '小美');
-      expect(profile.age, 29);
-      expect(profile.needsOnboarding, isFalse);
-      expect(profile.birthPrepDefaults.toFormDefaultValues(), {
-        'age': 29,
-        'due_date_or_week': '2026-09-12',
-        'fetus_count': '单胎',
-        'birth_hospital': '深圳市妇幼',
-        'birth_setting': '深圳市妇幼',
-        'top_worries': '怕漏买,怕母乳不够',
-      });
-    },
-  );
+    expect(transport.lastPath, agentHubProfileEndpoint);
+    expect(profile.displayName, '小美');
+    expect(profile.age, 29);
+    expect(profile.needsOnboarding, isFalse);
+  });
 
   test('accepts the split Product API profile schema', () async {
     final repository = AgentHubProfileRepository(
-      transport: FixtureApiJsonTransport({
-        'preferred_name': ' 小美 ',
-        'age': 29,
-        'estimated_due_date': '2026-09-12',
-      }),
+      transport: FixtureApiJsonTransport({'preferred_name': ' 小美 ', 'age': 29}),
     );
 
     final profile = await repository.fetchGreetingProfile();
 
     expect(profile.displayName, '小美');
     expect(profile.age, 29);
-    expect(profile.birthPrepDefaults.dueDateOrWeek, '2026-09-12');
   });
 
-  test('does not prefill pregnancy dates from a postpartum profile', () async {
-    final repository = AgentHubProfileRepository(
-      transport: FixtureApiJsonTransport({
-        'display_name': '小美',
-        'age': 29,
-        'current_care_stage': 'postpartum',
-        'expected_due_date': '2026-09-12',
-        'actual_delivery_date': '2026-07-01',
-      }),
-    );
-
-    final profile = await repository.fetchGreetingProfile();
-
-    expect(profile.birthPrepDefaults.dueDateOrWeek, isNull);
-  });
-
-  test('drops legacy placeholder defaults', () async {
+  test('honors an explicit onboarding skip', () async {
     final repository = AgentHubProfileRepository(
       transport: FixtureApiJsonTransport({
         'display_name': '',
-        'age': null,
-        'birth_prep_due_date_or_week': '待确认',
-        'birth_prep_birth_path': 'to confirm',
-        'birth_prep_support_person': '还没想好',
+        'profile_onboarding_skipped': true,
       }),
     );
 
     final profile = await repository.fetchGreetingProfile();
 
-    expect(profile.birthPrepDefaults.toFormDefaultValues(), isEmpty);
+    expect(profile.needsOnboarding, isFalse);
   });
 }

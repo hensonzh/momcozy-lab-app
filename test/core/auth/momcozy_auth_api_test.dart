@@ -442,8 +442,8 @@ void main() {
         );
 
         final putResponse = await transport.putJson(
-          '/v1/pregnancy-diary/entries/2026-07-11',
-          body: const {'mood': '平稳'},
+          '/v1/records/feeding/record-001',
+          body: const {'volume_ml': 120},
         );
         final patchResponse = await transport.patchJson(
           '/v1/plans/tasks/task-001/completion',
@@ -455,8 +455,8 @@ void main() {
         expect(patchResponse['operation'], 'patch');
         expect(deleteResponse['operation'], 'delete');
         expect(mutationTransport.paths, [
-          '/v1/pregnancy-diary/entries/2026-07-11',
-          '/v1/pregnancy-diary/entries/2026-07-11',
+          '/v1/records/feeding/record-001',
+          '/v1/records/feeding/record-001',
           '/v1/plans/tasks/task-001/completion',
           '/v1/plans/tasks/task-001/completion',
           '/v1/plans/plan-001',
