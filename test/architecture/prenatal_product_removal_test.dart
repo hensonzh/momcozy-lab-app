@@ -86,6 +86,16 @@ void main() {
     expect(violations, isEmpty, reason: violations.join('\n'));
   });
 
+  test('Agent Runtime contract has no retired hospital bag context', () {
+    final contract = File(
+      '${root.path}/docs/backend-contract/agent-runtime.openapi.generated.json',
+    ).readAsStringSync();
+
+    expect(contract, isNot(contains('hospital_bag_cart')));
+    expect(contract, isNot(contains('HospitalBagCart')));
+    expect(contract, isNot(contains('HospitalBagCurrency')));
+  });
+
   test('postpartum delivery and infant history remain first-class data', () {
     final onboarding = File(
       '${root.path}/lib/features/onboarding/domain/onboarding.dart',
