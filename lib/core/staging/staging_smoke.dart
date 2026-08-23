@@ -5,8 +5,6 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
@@ -214,10 +212,6 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
     _PlanProbe(config, PlanApiRepository(transport: jsonTransport)),
     _RecordsProbe(config, RecordsApiRepository(transport: jsonTransport)),
     _PumpWorkstateProbe(PumpWorkstateApiRepository(transport: jsonTransport)),
-    _HospitalBagProbe(
-      config,
-      HospitalBagCartApiRepository(transport: jsonTransport),
-    ),
     _MediaUploadProbe(
       config,
       MediaApiRepository(transport: multipartTransport),
@@ -313,43 +307,6 @@ class _PumpWorkstateProbe implements StagingSmokeProbe {
   Future<void> run() async {
     await repository.uploadWorkstate(
       left: const PumpSideWorkstate(state: 1, mode: 'staging_smoke', level: 1),
-    );
-  }
-}
-
-class _HospitalBagProbe implements StagingSmokeProbe {
-  const _HospitalBagProbe(this.config, this.repository);
-
-  final StagingSmokeConfig config;
-  final HospitalBagCartApiRepository repository;
-
-  @override
-  String get name => 'hospital-bag /v1/plans';
-
-  @override
-  bool get requiresMutation => true;
-
-  @override
-  bool get requiresAgentStream => false;
-
-  @override
-  Future<void> run() async {
-    await repository.syncCart(
-      cart: HospitalBagCartSnapshot.fromGroups(const [
-        HospitalBagCartGroup(
-          title: 'Staging smoke',
-          tone: HospitalBagCartTone.sky,
-          items: [
-            HospitalBagCartItem(
-              id: 'flutter-staging-smoke',
-              name: 'Flutter staging smoke',
-              desc: 'Production cart contract probe',
-              qty: 1,
-              price: 0,
-            ),
-          ],
-        ),
-      ]),
     );
   }
 }

@@ -77,8 +77,8 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final isCollection = _isCollectionForm(widget.card.formId);
     final groups = _formFieldGroups(widget.card);
+    final isCollection = groups.any((group) => group.title.isNotEmpty);
     final content = Padding(
       padding: widget.dialogMode
           ? EdgeInsets.zero
@@ -114,11 +114,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
             if (groups[index].title.isNotEmpty)
               _ArtifactFormGroup(
                 title: groups[index].title,
-                tone: _groupTone(
-                  formId: widget.card.formId,
-                  title: groups[index].title,
-                  index: index,
-                ),
+                tone: _groupTone(index: index),
                 compact: widget.dialogMode,
                 children: [
                   for (
@@ -967,7 +963,7 @@ class _ArtifactFormGroupTone {
   final Color title;
 }
 
-const _hospitalBagTones = [
+const _formGroupTones = [
   _ArtifactFormGroupTone(
     background: Color(0xfffff6f8),
     border: Color(0xffefd6de),
@@ -994,78 +990,17 @@ const _hospitalBagTones = [
   ),
 ];
 
-const _birthPlanTones = [
-  _ArtifactFormGroupTone(
-    background: Color(0xfff3fbf8),
-    border: Color(0xffd7e8e4),
-    divider: Color(0xffc8e2dc),
-    title: Color(0xff236357),
-  ),
-  _ArtifactFormGroupTone(
-    background: Color(0xfffff5f8),
-    border: Color(0xffead6e0),
-    divider: Color(0xffeccbd8),
-    title: Color(0xff7a3150),
-  ),
-  _ArtifactFormGroupTone(
-    background: Color(0xfff5f7ff),
-    border: Color(0xffd9e0f4),
-    divider: Color(0xffcbd6f2),
-    title: Color(0xff354f95),
-  ),
-  _ArtifactFormGroupTone(
-    background: Color(0xfffff8ee),
-    border: Color(0xffeadcc8),
-    divider: Color(0xffead7bb),
-    title: Color(0xff7a5425),
-  ),
-  _ArtifactFormGroupTone(
-    background: Color(0xfff3faff),
-    border: Color(0xffd8e6ee),
-    divider: Color(0xffcbe0ea),
-    title: Color(0xff2b6077),
-  ),
-];
-
-bool _isCollectionForm(String? formId) {
-  return formId == 'hospital_bag_intake' ||
-      formId == 'birth_plan_card_intake' ||
-      formId == 'birth_journey_basic_info_intake';
-}
-
-_ArtifactFormGroupTone _groupTone({
-  required String? formId,
-  required String title,
-  required int index,
-}) {
-  final tones = formId == 'birth_plan_card_intake'
-      ? _birthPlanTones
-      : _hospitalBagTones;
-  final titleIndexes = formId == 'birth_plan_card_intake'
-      ? const {
-          '基本信息': 0,
-          '支持与沟通': 1,
-          '生产过程': 2,
-          '疼痛和舒适': 3,
-          '宝宝出生后': 4,
-          '临时变化': 5,
-          '提前问医院': 6,
-          '舒适与计划变化': 3,
-          '医院确认与安全': 6,
-        }
-      : const {'基本信息': 0, '生产信息': 1, '医院信息': 2, '偏好信息': 3};
-  final toneIndex = titleIndexes[title] ?? index;
-  return tones[toneIndex % tones.length];
+_ArtifactFormGroupTone _groupTone({required int index}) {
+  return _formGroupTones[index % _formGroupTones.length];
 }
 
 List<_ArtifactFormFieldGroup> _formFieldGroups(AgentArtifactCardView card) {
   if (card.formFields.isEmpty) return const <_ArtifactFormFieldGroup>[];
-  final forceBasicInfoGroup = card.formId == 'birth_journey_basic_info_intake';
   final groups = <_ArtifactFormFieldGroup>[];
   final groupIndexes = <String, int>{};
 
   for (final field in card.formFields) {
-    final title = forceBasicInfoGroup ? '基本信息' : field.groupTitle;
+    final title = field.groupTitle;
     final key = title.isEmpty ? '__ungrouped' : title;
     final existingIndex = groupIndexes[key];
     if (existingIndex == null) {

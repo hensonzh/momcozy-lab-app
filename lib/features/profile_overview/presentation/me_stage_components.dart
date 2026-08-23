@@ -2,13 +2,11 @@ part of 'me_baby_overview_page.dart';
 
 class _MomAvatarImage extends StatefulWidget {
   const _MomAvatarImage({
-    required this.stage,
     required this.fileId,
     required this.fit,
     required this.alignment,
   });
 
-  final MomLifeStage stage;
   final String? fileId;
   final BoxFit fit;
   final AlignmentGeometry alignment;
@@ -72,12 +70,11 @@ class _MomAvatarImageState extends State<_MomAvatarImage> {
   }
 
   Widget _defaultAvatar() {
-    final asset = switch (widget.stage) {
-      MomLifeStage.pregnancy => _MeBabyOverviewAssets.pregnancyAvatar,
-      MomLifeStage.postpartum => _MeBabyOverviewAssets.postpartumAvatar,
-      MomLifeStage.fertility => _MeBabyOverviewAssets.momAvatar,
-    };
-    return Image.asset(asset, fit: widget.fit, alignment: widget.alignment);
+    return Image.asset(
+      _MeBabyOverviewAssets.postpartumAvatar,
+      fit: widget.fit,
+      alignment: widget.alignment,
+    );
   }
 }
 
@@ -86,15 +83,15 @@ class _CustomAvatarPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
+    return const DecoratedBox(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [Color(0x14B15B74), Color(0x2E932C4A)],
         ),
       ),
-      child: const Center(
+      child: Center(
         child: SizedBox.square(
           dimension: 76,
           child: DecoratedBox(
@@ -116,16 +113,14 @@ class _CustomAvatarPlaceholder extends StatelessWidget {
   }
 }
 
-class _MomStageWorkspace extends StatelessWidget {
-  const _MomStageWorkspace({
-    required this.stage,
+class _MomPostpartumWorkspace extends StatelessWidget {
+  const _MomPostpartumWorkspace({
     required this.data,
     required this.selectedSection,
     required this.onSelected,
     required this.onOpenAvatar,
   });
 
-  final MomLifeStage stage;
   final _MeBabyOverviewData data;
   final String selectedSection;
   final ValueChanged<String> onSelected;
@@ -136,18 +131,10 @@ class _MomStageWorkspace extends StatelessWidget {
     final showAvatar = MediaQuery.textScalerOf(context).scale(1) <= 1.35;
     final avatarFileId = data.activeAvatarFileId;
     final hasCustomAvatar = avatarFileId?.trim().isNotEmpty == true;
-    final defaultAvatarTop = switch (stage) {
-      MomLifeStage.pregnancy => -16.0,
-      MomLifeStage.postpartum => -18.0,
-      MomLifeStage.fertility => -30.0,
-    };
-    final defaultAvatarHeight = stage == MomLifeStage.pregnancy ? 290.0 : 304.0;
-    final avatarTop = hasCustomAvatar ? 4.0 : defaultAvatarTop;
-    final avatarHeight = hasCustomAvatar
-        ? defaultAvatarTop + defaultAvatarHeight - avatarTop
-        : defaultAvatarHeight;
+    final avatarTop = hasCustomAvatar ? 4.0 : -18.0;
+    final avatarHeight = hasCustomAvatar ? 282.0 : 304.0;
     return Column(
-      key: ValueKey('me-stage-workspace-${stage.wireValue}'),
+      key: const ValueKey('me-postpartum-workspace'),
       children: [
         Stack(
           clipBehavior: Clip.none,
@@ -156,8 +143,7 @@ class _MomStageWorkspace extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: _MomStageHero(
-                    stage: stage,
+                  child: _MomPostpartumHero(
                     data: data,
                     onOpenAvatar: onOpenAvatar,
                   ),
@@ -168,30 +154,26 @@ class _MomStageWorkspace extends StatelessWidget {
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: _MomStageTabs(
-                      stage: stage,
+                    child: _MomPostpartumTabs(
                       selected: selectedSection,
                       onSelected: onSelected,
                     ),
                   ),
-                if (stage == MomLifeStage.postpartum) ...[
-                  const SizedBox(height: 10),
-                  _StagePageIndicator(
-                    selected: selectedSection == 'recovery' ? 1 : 0,
-                  ),
-                ],
+                const SizedBox(height: 10),
+                _PostpartumPageIndicator(
+                  selected: selectedSection == 'recovery' ? 1 : 0,
+                ),
               ],
             ),
             if (showAvatar)
               Positioned(
-                right: stage == MomLifeStage.pregnancy ? -28 : -18,
+                right: -18,
                 top: avatarTop,
-                width: stage == MomLifeStage.pregnancy ? 218 : 210,
+                width: 210,
                 height: avatarHeight,
                 child: IgnorePointer(
-                  key: ValueKey('me-stage-avatar-${stage.wireValue}'),
+                  key: const ValueKey('me-postpartum-avatar'),
                   child: _MomAvatarImage(
-                    stage: stage,
                     fileId: avatarFileId,
                     alignment: Alignment.bottomCenter,
                     fit: BoxFit.contain,
@@ -203,48 +185,40 @@ class _MomStageWorkspace extends StatelessWidget {
                 left: 6,
                 right: 6,
                 top: 207,
-                child: _MomStageTabs(
-                  stage: stage,
+                child: _MomPostpartumTabs(
                   selected: selectedSection,
                   onSelected: onSelected,
                 ),
               ),
           ],
         ),
-        SizedBox(height: stage == MomLifeStage.postpartum ? 21 : 25),
-        _MomStageContent(stage: stage, section: selectedSection, data: data),
+        const SizedBox(height: 21),
+        _MeContent(section: selectedSection, data: data),
       ],
     );
   }
 }
 
-class _MomStageHero extends StatelessWidget {
-  const _MomStageHero({
-    required this.stage,
-    required this.data,
-    required this.onOpenAvatar,
-  });
+class _MomPostpartumHero extends StatelessWidget {
+  const _MomPostpartumHero({required this.data, required this.onOpenAvatar});
 
-  final MomLifeStage stage;
   final _MeBabyOverviewData data;
   final VoidCallback onOpenAvatar;
 
   @override
   Widget build(BuildContext context) {
-    final program = _stageProgram(stage, data);
-    final textScale = MediaQuery.textScalerOf(context).scale(1);
-    final expandedText = textScale > 1.35;
-    final heroHeight = expandedText ? 326.0 : 186.0;
+    final program = _postpartumProgram(data);
+    final expandedText = MediaQuery.textScalerOf(context).scale(1) > 1.35;
     return Semantics(
       key: const ValueKey('me-baby-overview-open-avatar'),
-      label: 'View ${stage.label} avatar',
+      label: 'View postpartum avatar',
       button: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onOpenAvatar,
         child: SizedBox(
-          key: ValueKey('me-stage-hero-${stage.wireValue}'),
-          height: heroHeight,
+          key: const ValueKey('me-postpartum-hero'),
+          height: expandedText ? 326 : 186,
           width: double.infinity,
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -263,7 +237,7 @@ class _MomStageHero extends StatelessWidget {
                     children: [
                       Text(
                         program.title,
-                        key: const ValueKey('me-stage-program-title'),
+                        key: const ValueKey('me-postpartum-program-title'),
                         maxLines: expandedText ? 3 : 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -322,13 +296,13 @@ class _BodyProfileButton extends StatelessWidget {
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(18),
           child: InkWell(
-            key: const ValueKey('me-stage-body-profile'),
+            key: const ValueKey('me-postpartum-body-profile'),
             borderRadius: BorderRadius.circular(18),
             onTap: () => context.go('/more/body-profile'),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Ink(
-                key: const ValueKey('me-stage-body-profile-surface'),
+                key: const ValueKey('me-postpartum-body-profile-surface'),
                 height: surfaceHeight,
                 padding: EdgeInsets.symmetric(horizontal: compact ? 14 : 12),
                 decoration: BoxDecoration(
@@ -344,7 +318,6 @@ class _BodyProfileButton extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Flexible(
                       child: Text(
@@ -409,87 +382,45 @@ class _ProgramProgress extends StatelessWidget {
   }
 }
 
-class _StageProgram {
-  const _StageProgram({
+class _PostpartumProgram {
+  const _PostpartumProgram({
     required this.title,
     required this.progressLabel,
     required this.progress,
-    this.plan,
-    this.sessions = const <PlanSession>[],
   });
 
   final String title;
   final String progressLabel;
   final double? progress;
-  final CarePlan? plan;
-  final List<PlanSession> sessions;
 }
 
-_StageProgram _stageProgram(MomLifeStage stage, _MeBabyOverviewData data) {
+_PostpartumProgram _postpartumProgram(_MeBabyOverviewData data) {
   final dashboard = data.plans.data;
   final plans = dashboard?.plans ?? const <CarePlan>[];
-  final authoritative = data.maternalCareOverview.data;
-  if (authoritative?.stage == stage) {
-    final progress = authoritative?.program;
-    if (progress == null) {
-      return _StageProgram(
-        title: stage == MomLifeStage.pregnancy
-            ? 'Prenatal Program'
-            : stage == MomLifeStage.postpartum
-            ? 'Postpartum Recovery'
-            : 'Cycle Tracking',
-        progressLabel: 'No active program yet',
-        progress: null,
-      );
-    }
-    final selected = plans
-        .where((plan) => plan.id == progress.planId)
-        .firstOrNull;
-    final sessions = selected == null
-        ? const <PlanSession>[]
-        : dashboard!.sessionsFor(selected.id);
-    final total = progress.totalSessions;
-    return _StageProgram(
-      title: progress.title,
+  final authoritative = data.maternalCareOverview.data?.program;
+  if (authoritative != null) {
+    final total = authoritative.totalSessions;
+    return _PostpartumProgram(
+      title: authoritative.title,
       progressLabel: total == 0
           ? 'No sessions scheduled yet'
-          : '${progress.completedSessions} of $total sessions completed',
-      progress: total == 0 ? null : progress.completedSessions / total,
-      plan: selected,
-      sessions: sessions,
+          : '${authoritative.completedSessions} of $total sessions completed',
+      progress: total == 0 ? null : authoritative.completedSessions / total,
     );
   }
-  if (stage == MomLifeStage.fertility) {
-    return const _StageProgram(
-      title: 'Cycle Tracking',
-      progressLabel: 'Cycle data not connected',
-      progress: null,
-    );
-  }
-  CarePlan? selected;
-  if (stage == MomLifeStage.pregnancy) {
-    selected = plans
-        .where((plan) => plan.category == PlanCategory.yoga)
-        .firstOrNull;
-    selected ??= plans
-        .where((plan) => plan.category == PlanCategory.other)
-        .firstOrNull;
-  } else {
-    selected = plans
-        .where((plan) => plan.category == PlanCategory.pelvicFloor)
-        .firstOrNull;
-    selected ??= plans
-        .where((plan) => plan.category == PlanCategory.yoga)
-        .firstOrNull;
-  }
+
+  CarePlan? selected = plans
+      .where((plan) => plan.category == PlanCategory.pelvicFloor)
+      .firstOrNull;
+  selected ??= plans
+      .where((plan) => plan.category == PlanCategory.yoga)
+      .firstOrNull;
   if (selected == null) {
     final loading =
         data.plans.phase == OverviewResourcePhase.initial ||
         data.plans.phase == OverviewResourcePhase.loading;
-    return _StageProgram(
-      title: stage == MomLifeStage.pregnancy
-          ? 'Prenatal Program'
-          : 'Postpartum Recovery',
+    return _PostpartumProgram(
+      title: 'Postpartum Recovery',
       progressLabel: loading
           ? 'Loading active program…'
           : data.plans.hasError
@@ -503,52 +434,36 @@ _StageProgram _stageProgram(MomLifeStage stage, _MeBabyOverviewData data) {
       .where((session) => session.status == PlanSessionStatus.completed)
       .length;
   final total = sessions.length;
-  return _StageProgram(
+  return _PostpartumProgram(
     title: selected.title,
     progressLabel: total == 0
         ? 'Open Plan to view sessions'
         : '$completed of $total sessions completed',
     progress: total == 0 ? null : completed / total,
-    plan: selected,
-    sessions: sessions,
   );
 }
 
-class _MomStageTabs extends StatelessWidget {
-  const _MomStageTabs({
-    required this.stage,
-    required this.selected,
-    required this.onSelected,
-  });
+class _MomPostpartumTabs extends StatelessWidget {
+  const _MomPostpartumTabs({required this.selected, required this.onSelected});
 
-  final MomLifeStage stage;
   final String selected;
   final ValueChanged<String> onSelected;
+
   @override
   Widget build(BuildContext context) {
-    final sections = switch (stage) {
-      MomLifeStage.fertility => const [
-        ('cycle', 'Cycle', Icons.radio_button_checked_rounded),
-        ('wellness', 'Wellness', Icons.favorite_border_rounded),
-      ],
-      MomLifeStage.pregnancy => const [
-        ('prenatal', 'Prenatal', Icons.calendar_today_outlined),
-        ('wellness', 'Wellness', Icons.favorite_border_rounded),
-      ],
-      MomLifeStage.postpartum => const [
-        ('lactation', 'Lactation', Icons.water_drop_outlined),
-        ('recovery', 'Recovery', Icons.accessibility_new_rounded),
-      ],
-    };
+    const sections = [
+      ('lactation', 'Lactation', Icons.water_drop_outlined),
+      ('recovery', 'Recovery', Icons.accessibility_new_rounded),
+    ];
     return SizedBox(
-      key: ValueKey('me-stage-tabs-${stage.wireValue}'),
+      key: const ValueKey('me-postpartum-tabs'),
       height: 48,
       child: Row(
         children: [
           for (var index = 0; index < sections.length; index += 1) ...[
             if (index > 0) const SizedBox(width: 10),
             Expanded(
-              child: _MomStageTab(
+              child: _MomPostpartumTab(
                 section: sections[index].$1,
                 label: sections[index].$2,
                 icon: sections[index].$3,
@@ -563,8 +478,8 @@ class _MomStageTabs extends StatelessWidget {
   }
 }
 
-class _MomStageTab extends StatelessWidget {
-  const _MomStageTab({
+class _MomPostpartumTab extends StatelessWidget {
+  const _MomPostpartumTab({
     required this.section,
     required this.label,
     required this.icon,
@@ -594,7 +509,7 @@ class _MomStageTab extends StatelessWidget {
           onTap: onTap,
           child: Center(
             child: Ink(
-              key: ValueKey('me-stage-tab-surface-$section'),
+              key: ValueKey('me-postpartum-tab-surface-$section'),
               height: 36,
               decoration: BoxDecoration(
                 color: selected
@@ -620,7 +535,6 @@ class _MomStageTab extends StatelessWidget {
                         label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
                         style: TextStyle(
                           color: selected
                               ? Colors.white
@@ -641,8 +555,8 @@ class _MomStageTab extends StatelessWidget {
   }
 }
 
-class _StagePageIndicator extends StatelessWidget {
-  const _StagePageIndicator({required this.selected});
+class _PostpartumPageIndicator extends StatelessWidget {
+  const _PostpartumPageIndicator({required this.selected});
 
   final int selected;
 
@@ -667,432 +581,6 @@ class _StagePageIndicator extends StatelessWidget {
       ],
     );
   }
-}
-
-class _MomStageContent extends StatelessWidget {
-  const _MomStageContent({
-    required this.stage,
-    required this.section,
-    required this.data,
-  });
-
-  final MomLifeStage stage;
-  final String section;
-  final _MeBabyOverviewData data;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (stage) {
-      MomLifeStage.fertility =>
-        section == 'wellness'
-            ? _StageWellnessContent(stage: stage)
-            : _FertilityCycleContent(data: data),
-      MomLifeStage.pregnancy =>
-        section == 'wellness'
-            ? _StageWellnessContent(stage: stage)
-            : _PregnancyPrenatalContent(data: data),
-      MomLifeStage.postpartum => _MeContent(section: section, data: data),
-    };
-  }
-}
-
-class _FertilityCycleContent extends StatelessWidget {
-  const _FertilityCycleContent({required this.data});
-
-  final _MeBabyOverviewData data;
-
-  @override
-  Widget build(BuildContext context) {
-    return _V2Card(
-      cardKey: const ValueKey('me-fertility-cycle-card'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Color(0xffdf6a91),
-                  shape: BoxShape.circle,
-                ),
-                child: SizedBox.square(dimension: 14),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Ovulation Prediction',
-                  style: _MeBabyOverviewText.cardTitle,
-                ),
-              ),
-              Text(
-                'NOT READY',
-                style: TextStyle(
-                  color: Color(0xffdf6a91),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xfffff3f6),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.local_florist_rounded,
-                  color: Color(0xffdf6a91),
-                  size: 30,
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Cycle records needed',
-                        style: TextStyle(
-                          color: _MeBabyOverviewColors.ink,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Add confirmed period dates before predictions are shown.',
-                        style: _MeBabyOverviewText.supporting,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(color: _MeBabyOverviewColors.line, height: 30),
-          _CalendarStrip(today: data.now),
-        ],
-      ),
-    );
-  }
-}
-
-class _CalendarStrip extends StatelessWidget {
-  const _CalendarStrip({required this.today});
-
-  final DateTime today;
-
-  @override
-  Widget build(BuildContext context) {
-    final localToday = DateTime(today.year, today.month, today.day);
-    final dates = [
-      for (var offset = -3; offset <= 3; offset += 1)
-        localToday.add(Duration(days: offset)),
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                '${_monthName(localToday.month).toUpperCase()} ${localToday.year}',
-                style: const TextStyle(
-                  color: _MeBabyOverviewColors.wine,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            const Text('Calendar', style: _MeBabyOverviewText.supporting),
-          ],
-        ),
-        const SizedBox(height: 14),
-        Row(
-          children: [
-            for (final date in dates)
-              Expanded(
-                child: _CalendarDay(
-                  date: date,
-                  selected: _sameCalendarDay(date, localToday),
-                ),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _CalendarDay extends StatelessWidget {
-  const _CalendarDay({required this.date, required this.selected});
-
-  final DateTime date;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          const ['M', 'T', 'W', 'T', 'F', 'S', 'S'][date.weekday - 1],
-          style: _MeBabyOverviewText.supporting,
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: 38,
-          height: 38,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? const Color(0xffdf6a91) : Colors.transparent,
-            shape: BoxShape.circle,
-          ),
-          child: Text(
-            '${date.day}',
-            style: TextStyle(
-              color: selected ? Colors.white : _MeBabyOverviewColors.ink,
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PregnancyPrenatalContent extends StatelessWidget {
-  const _PregnancyPrenatalContent({required this.data});
-
-  final _MeBabyOverviewData data;
-
-  @override
-  Widget build(BuildContext context) {
-    final pregnancy = _pregnancyProgress(data);
-    final program = _stageProgram(MomLifeStage.pregnancy, data);
-    return Semantics(
-      button: true,
-      label: 'Open Baby Development',
-      child: GestureDetector(
-        key: const ValueKey('me-stage-pregnancy-development'),
-        behavior: HitTestBehavior.opaque,
-        onTap: () => context.push('/baby/development'),
-        child: _V2Card(
-          cardKey: const ValueKey('me-pregnancy-milestones-card'),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: _MeBabyOverviewColors.wine,
-                      shape: BoxShape.circle,
-                    ),
-                    child: SizedBox.square(dimension: 14),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Today’s Milestones',
-                      style: _MeBabyOverviewText.cardTitle,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              if (pregnancy == null)
-                const _PregnancyEmptyState()
-              else ...[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: _MeBabyOverviewColors.pill,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Icon(
-                        Icons.child_friendly_rounded,
-                        color: _MeBabyOverviewColors.wine,
-                        size: 32,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Week ${pregnancy.week}',
-                            style: const TextStyle(
-                              color: _MeBabyOverviewColors.ink,
-                              fontSize: 25,
-                              height: 1,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          const SizedBox(height: 7),
-                          const Text(
-                            'Based on your confirmed due date',
-                            style: _MeBabyOverviewText.supporting,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Week ${pregnancy.week} of 40',
-                        style: const TextStyle(
-                          color: _MeBabyOverviewColors.ink,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      pregnancy.hasConfirmedDueDate
-                          ? '${pregnancy.daysRemaining} days to go'
-                          : 'About ${pregnancy.daysRemaining} days to go',
-                      style: _MeBabyOverviewText.supporting,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 9),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    minHeight: 7,
-                    value: pregnancy.week / 40,
-                    color: _MeBabyOverviewColors.wine,
-                    backgroundColor: _MeBabyOverviewColors.line,
-                  ),
-                ),
-              ],
-              const Divider(color: _MeBabyOverviewColors.line, height: 30),
-              const Text(
-                'TODAY’S PLAN',
-                style: TextStyle(
-                  color: _MeBabyOverviewColors.wine,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              const SizedBox(height: 12),
-              if (program.sessions.isEmpty)
-                const Text(
-                  'No confirmed milestones or appointments for today.',
-                  style: _MeBabyOverviewText.supporting,
-                )
-              else
-                for (final session in program.sessions.take(3)) ...[
-                  _PlanSessionRow(session: session),
-                  if (session != program.sessions.take(3).last)
-                    const SizedBox(height: 10),
-                ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PregnancyEmptyState extends StatelessWidget {
-  const _PregnancyEmptyState();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _MeBabyOverviewColors.pill,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: const Row(
-        children: [
-          Icon(
-            Icons.calendar_month_outlined,
-            color: _MeBabyOverviewColors.wine,
-            size: 30,
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Add a confirmed due date to see gestational progress.',
-              style: _MeBabyOverviewText.supporting,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PlanSessionRow extends StatelessWidget {
-  const _PlanSessionRow({required this.session});
-
-  final PlanSession session;
-
-  @override
-  Widget build(BuildContext context) {
-    final completed = session.status == PlanSessionStatus.completed;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          completed ? Icons.check_circle_rounded : Icons.circle_outlined,
-          color: completed
-              ? _MeBabyOverviewColors.wine
-              : _MeBabyOverviewColors.mutedText,
-          size: 22,
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            session.title,
-            style: TextStyle(
-              color: completed
-                  ? _MeBabyOverviewColors.ink
-                  : _MeBabyOverviewColors.mutedText,
-              fontSize: 15,
-              height: 1.25,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PregnancyProgress {
-  const _PregnancyProgress({
-    required this.week,
-    required this.daysRemaining,
-    required this.trimester,
-    required this.hasConfirmedDueDate,
-  });
-
-  final int week;
-  final int daysRemaining;
-  final String trimester;
-  final bool hasConfirmedDueDate;
 }
 
 class _RecoveryStatusCard extends StatelessWidget {
@@ -1204,187 +692,14 @@ class _EmptyRecoveryRingPainter extends CustomPainter {
   bool shouldRepaint(covariant _EmptyRecoveryRingPainter oldDelegate) => false;
 }
 
-_PregnancyProgress? _pregnancyProgress(_MeBabyOverviewData data) {
-  final authoritative = data.maternalCareOverview.data;
-  if (authoritative?.stage == MomLifeStage.pregnancy) {
-    final progress = authoritative?.pregnancy;
-    if (progress?.state != PregnancyProgressState.ready ||
-        progress?.gestationalWeek == null ||
-        progress?.daysRemaining == null ||
-        progress?.trimester == null) {
-      return null;
-    }
-    return _PregnancyProgress(
-      week: progress!.gestationalWeek!,
-      daysRemaining: progress.daysRemaining!,
-      trimester: progress.trimester!.label,
-      hasConfirmedDueDate: true,
-    );
-  }
-  final mom = data.overview.data?.mom;
-  final dueDate = mom?.expectedDueDate;
-  int week;
-  int daysRemaining;
-  final hasConfirmedDueDate = dueDate != null;
-  if (dueDate != null) {
-    final today = DateTime(data.now.year, data.now.month, data.now.day);
-    final due = DateTime(dueDate.year, dueDate.month, dueDate.day);
-    daysRemaining = due.difference(today).inDays;
-    if (daysRemaining < 0 || daysRemaining > 280) return null;
-    week = ((280 - daysRemaining) ~/ 7).clamp(0, 40);
-  } else {
-    final confirmed = mom?.dueDateOrWeek?.trim();
-    final match = confirmed == null
-        ? null
-        : RegExp(r'(?<!\d)([0-3]?\d|40)(?!\d)').firstMatch(confirmed);
-    final parsedWeek = int.tryParse(match?.group(1) ?? '');
-    if (parsedWeek == null || parsedWeek < 0 || parsedWeek > 40) return null;
-    week = parsedWeek;
-    daysRemaining = (40 - week) * 7;
-  }
-  final trimester = week <= 13
-      ? 'First Trimester'
-      : week <= 27
-      ? 'Second Trimester'
-      : 'Third Trimester';
-  return _PregnancyProgress(
-    week: week,
-    daysRemaining: daysRemaining,
-    trimester: trimester,
-    hasConfirmedDueDate: hasConfirmedDueDate,
-  );
-}
-
-class _StageWellnessContent extends StatelessWidget {
-  const _StageWellnessContent({required this.stage});
-
-  final MomLifeStage stage;
-
-  @override
-  Widget build(BuildContext context) {
-    final pregnancy = stage == MomLifeStage.pregnancy;
-    return Column(
-      key: ValueKey('me-stage-wellness-${stage.wireValue}'),
-      children: [
-        _StageActionCard(
-          actionKey: ValueKey('me-stage-${stage.wireValue}-plan'),
-          icon: Icons.event_note_rounded,
-          title: pregnancy ? 'Pregnancy Plan' : 'Wellness Plan',
-          subtitle: pregnancy
-              ? 'Review confirmed prenatal tasks and sessions'
-              : 'Organize preparation and wellness tasks',
-          actionLabel: 'Open Plan',
-          onTap: () => context.go('/plan'),
-        ),
-        const SizedBox(height: 14),
-        _StageActionCard(
-          actionKey: ValueKey('me-stage-${stage.wireValue}-cozymate'),
-          icon: Icons.auto_awesome_rounded,
-          title: 'Cozymate',
-          subtitle: pregnancy
-              ? 'Ask about prenatal care with cited guidance'
-              : 'Ask about fertility and preconception care',
-          actionLabel: 'Ask Cozymate',
-          onTap: () => context.go('/'),
-        ),
-      ],
-    );
-  }
-}
-
-class _StageActionCard extends StatelessWidget {
-  const _StageActionCard({
-    required this.actionKey,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.actionLabel,
-    required this.onTap,
-  });
-
-  final Key actionKey;
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String actionLabel;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: '$title. $subtitle. $actionLabel',
-      child: Material(
-        key: actionKey,
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(26),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(26),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 112),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  DecoratedBox(
-                    decoration: const BoxDecoration(
-                      color: _MeBabyOverviewColors.pill,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(13),
-                      child: Icon(
-                        icon,
-                        color: _MeBabyOverviewColors.wine,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(title, style: _MeBabyOverviewText.cardTitle),
-                        const SizedBox(height: 5),
-                        Text(subtitle, style: _MeBabyOverviewText.supporting),
-                        const SizedBox(height: 8),
-                        Text(
-                          actionLabel,
-                          style: const TextStyle(
-                            color: _MeBabyOverviewColors.wine,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    color: _MeBabyOverviewColors.wine,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MomAvatarStage extends StatelessWidget {
-  const _MomAvatarStage({
-    required this.stage,
+class _MomPostpartumAvatarStage extends StatelessWidget {
+  const _MomPostpartumAvatarStage({
     required this.data,
     required this.selectedSection,
     required this.onClose,
     required this.onSelected,
   });
 
-  final MomLifeStage stage;
   final _MeBabyOverviewData data;
   final String selectedSection;
   final VoidCallback onClose;
@@ -1392,15 +707,7 @@ class _MomAvatarStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final program = _stageProgram(stage, data);
-    final pregnancy = stage == MomLifeStage.pregnancy
-        ? _pregnancyProgress(data)
-        : null;
-    final chipLabel = pregnancy == null
-        ? stage == MomLifeStage.fertility
-              ? 'Cycle data not connected'
-              : stage.label
-        : 'Week ${pregnancy.week} · ${pregnancy.trimester}';
+    final program = _postpartumProgram(data);
     return ColoredBox(
       color: _MeBabyOverviewColors.background,
       child: LayoutBuilder(
@@ -1410,8 +717,8 @@ class _MomAvatarStage extends StatelessWidget {
             children: [
               Positioned.fill(
                 bottom: compact ? 92 : 116,
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
+                child: const DecoratedBox(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -1421,12 +728,11 @@ class _MomAvatarStage extends StatelessWidget {
                 ),
               ),
               Positioned(
-                left: stage == MomLifeStage.pregnancy ? -24 : -4,
-                right: stage == MomLifeStage.pregnancy ? -24 : -4,
+                left: -4,
+                right: -4,
                 top: compact ? 0 : 16,
                 bottom: compact ? 118 : 126,
                 child: _MomAvatarImage(
-                  stage: stage,
                   fileId: data.activeAvatarFileId,
                   fit: BoxFit.contain,
                   alignment: Alignment.topCenter,
@@ -1459,14 +765,14 @@ class _MomAvatarStage extends StatelessWidget {
                         color: _MeBabyOverviewColors.wine,
                         borderRadius: BorderRadius.circular(22),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 14,
                           vertical: 8,
                         ),
                         child: Text(
-                          chipLabel,
-                          style: const TextStyle(
+                          'Postpartum',
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w800,
@@ -1544,8 +850,7 @@ class _MomAvatarStage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    _MomStageTabs(
-                      stage: stage,
+                    _MomPostpartumTabs(
                       selected: selectedSection,
                       onSelected: onSelected,
                     ),
@@ -1558,23 +863,6 @@ class _MomAvatarStage extends StatelessWidget {
       ),
     );
   }
-}
-
-String _monthName(int month) {
-  return const [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ][month - 1];
 }
 
 bool _sameCalendarDay(DateTime left, DateTime right) {

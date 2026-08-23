@@ -1,47 +1,6 @@
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
-
-const _hospitalBagFormFieldIds = <String>{
-  'due_date_or_week',
-  'first_birth',
-  'fetus_count',
-  'pregnancy_history_or_notes',
-  'birth_path',
-  'feeding_intention',
-  'return_to_work_timing',
-  'support_person',
-  'budget_preference',
-  'top_worries',
-};
-
-const _hospitalBagDetectorFieldIds = <String>{
-  'fetus_count',
-  'return_to_work_timing',
-  'budget_preference',
-  'top_worries',
-};
-
-const _removedHospitalBagFieldIds = <String>{
-  'hospital_rules_or_notes',
-  'existing_checklist_or_photo_note',
-};
-
-const _birthJourneyRequiredFieldIds = <String>{
-  'current_week',
-  'ivf',
-  'fetus_count',
-  'age',
-  'first_birth',
-  'birth_path',
-};
-
-Map<String, Object?> normalizeAgentArtifactForm(
-  Map<String, Object?> form, {
-  BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
-}) {
+Map<String, Object?> normalizeAgentArtifactForm(Map<String, Object?> form) {
   if (form.isEmpty) return form;
-  final normalizedForm = Map<String, Object?>.from(form);
-  final formId = canonicalAgentFormId(_string(form['id']));
-  final profileValues = profileDefaults.toFormDefaultValues();
+  final normalized = Map<String, Object?>.from(form);
   final formValues = _canonicalDefaultValues(
     form['default_values'] ?? form['defaultValues'],
   );
@@ -52,12 +11,12 @@ Map<String, Object?> normalizeAgentArtifactForm(
       if (rawField is! Map) continue;
       final field = Map<String, Object?>.from(rawField);
       final id = canonicalAgentFormFieldId(_string(field['id']));
+      if (id.isEmpty) continue;
       field['id'] = id;
       final defaultValue = _firstValidDefault([
         field['default_value'],
         field['defaultValue'],
         formValues[id],
-        profileValues[id],
       ]);
       field.remove('defaultValue');
       if (defaultValue == null) {
@@ -69,75 +28,34 @@ Map<String, Object?> normalizeAgentArtifactForm(
     }
   }
 
-  final isBirthPlan = formId == 'birth_plan_card_intake';
-  final isBirthJourneyBasic = formId == 'birth_journey_basic_info_intake';
-  final isHospitalBag =
-      formId == 'hospital_bag_intake' ||
-      (!isBirthPlan &&
-          !isBirthJourneyBasic &&
-          _looksLikeHospitalBagForm(fields));
-
-  normalizedForm['id'] = isHospitalBag ? 'hospital_bag_intake' : formId;
-  normalizedForm.remove('defaultValues');
-  normalizedForm['default_values'] = {...profileValues, ...formValues};
-
-  if (isHospitalBag || isBirthPlan) {
-    normalizedForm['title'] = '信息采集';
-    normalizedForm['description'] = '';
-  }
-
-  final normalizedFields = <Map<String, Object?>>[];
-  for (final field in fields) {
-    final id = _string(field['id']);
-    if (isHospitalBag && _removedHospitalBagFieldIds.contains(id)) continue;
-    var next = Map<String, Object?>.from(field);
-    if (isHospitalBag) next = _normalizeHospitalBagField(next);
-    if (isBirthPlan) next = _normalizeBirthPlanField(next);
-    if (isBirthJourneyBasic && _birthJourneyRequiredFieldIds.contains(id)) {
-      next['required'] = true;
-    }
-    normalizedFields.add(next);
-  }
-  normalizedForm['fields'] = normalizedFields;
-  return normalizedForm;
+  normalized['id'] = canonicalAgentFormId(_string(form['id']));
+  normalized.remove('defaultValues');
+  normalized['default_values'] = formValues;
+  normalized['fields'] = fields;
+  return normalized;
 }
 
-Map<String, Object?> _normalizeHospitalBagField(Map<String, Object?> field) {
-  final id = _string(field['id']);
-  if (id == 'due_date_or_week') {
-    field['label'] = _nonEmptyString(field['label']) ?? '基本信息｜预产期或当前孕周';
-    field['type'] = 'text';
-    field['placeholder'] =
-        _nonEmptyString(field['placeholder']) ?? '例如：2026-06-12 或 37 周';
-  }
-  if (id == 'pregnancy_history_or_notes' && field['options'] is List) {
-    field['options'] = List<Object?>.from(field['options'] as List)
-      ..removeWhere((option) => option?.toString().trim() == '计划剖宫产');
-  }
-  if (id == 'birth_path') {
-    field['label'] = _replaceFieldLabel(field['label'], '分娩方式');
-    field['default_value'] = _normalizedBirthPath(field['default_value']);
-  }
-  field.remove('helpText');
-  field['help_text'] = '';
-  return field;
-}
+String canonicalAgentFormId(String value) => _snakeCase(value);
 
-Map<String, Object?> _normalizeBirthPlanField(Map<String, Object?> field) {
-  if (_string(field['id']) == 'birth_path') {
-    field['label'] = _replaceFieldLabel(field['label'], '医生目前建议的生产方式');
-    field['options'] = const ['顺产', '剖宫产', '还没确定'];
-    field['default_value'] = _normalizedBirthPath(field['default_value']);
-  }
-  field.remove('helpText');
-  field['help_text'] = '';
-  return field;
-}
+String canonicalAgentFormFieldId(String value) => _snakeCase(value);
 
-bool _looksLikeHospitalBagForm(List<Map<String, Object?>> fields) {
-  final ids = fields.map((field) => _string(field['id'])).toSet();
-  final matched = ids.where(_hospitalBagFormFieldIds.contains).length;
-  return matched >= 2 && ids.any(_hospitalBagDetectorFieldIds.contains);
+bool hasAgentFormDefaultValue(Object? value) {
+  if (value is List) return value.any(hasAgentFormDefaultValue);
+  if (value is Map) return value.values.any(hasAgentFormDefaultValue);
+  if (value == null) return false;
+  final normalized = value.toString().trim().toLowerCase();
+  return !const <String>{
+    '',
+    'to confirm',
+    '待确认',
+    '未确定',
+    '不确定',
+    '还不确定',
+    '还没确定',
+    '还没想好',
+    'none',
+    'n/a',
+  }.contains(normalized);
 }
 
 Map<String, Object?> _canonicalDefaultValues(Object? value) {
@@ -158,32 +76,16 @@ Object? _firstValidDefault(List<Object?> values) {
   return null;
 }
 
-Object? _normalizedBirthPath(Object? value) {
-  final normalized = value?.toString().trim() ?? '';
-  if (const <String>{
-    '计划剖宫产',
-    '剖腹产',
-    'planned_c_section',
-    'c_section',
-    'c-section',
-    'cesarean',
-  }.contains(normalized)) {
-    return '剖宫产';
-  }
-  return value;
-}
-
-String _replaceFieldLabel(Object? value, String fieldLabel) {
-  final label = _string(value).trim();
-  final separatorIndex = label.indexOf('｜');
-  if (separatorIndex <= 0) return fieldLabel;
-  final group = label.substring(0, separatorIndex).trim();
-  return group.isEmpty ? fieldLabel : '$group｜$fieldLabel';
-}
-
-String? _nonEmptyString(Object? value) {
-  final normalized = _string(value).trim();
-  return normalized.isEmpty ? null : normalized;
+String _snakeCase(String value) {
+  final trimmed = value.trim();
+  if (trimmed.isEmpty) return '';
+  return trimmed
+      .replaceAllMapped(
+        RegExp(r'([a-z0-9])([A-Z])'),
+        (match) => '${match.group(1)}_${match.group(2)}',
+      )
+      .replaceAll(RegExp(r'[\s\-]+'), '_')
+      .toLowerCase();
 }
 
 String _string(Object? value) => value is String ? value : '';

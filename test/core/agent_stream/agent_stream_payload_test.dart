@@ -36,45 +36,6 @@ void main() {
       expect(payload.containsKey('user_id'), isFalse);
     });
 
-    test('forwards the active hospital bag cart as client context', () {
-      final payload = buildProductionAgentRunPayload(
-        const AgentStreamRequest(
-          message: '把吸奶器删掉',
-          locale: 'zh-CN',
-          metadata: {
-            'source': 'flutter-agent-hub',
-            'hospital_bag_cart': {
-              'groups': [
-                {
-                  'title': '母乳喂养',
-                  'tone': 'sky',
-                  'items': [
-                    {
-                      'id': 'pump-custom',
-                      'name': '个性化吸奶器',
-                      'desc': '当前购物车商品',
-                      'qty': 1,
-                      'price': 999.0,
-                    },
-                  ],
-                },
-              ],
-              'totals': {'itemCount': 1, 'total': 919.08},
-            },
-          },
-        ),
-      );
-
-      final context = payload['client_context']! as Map<String, Object?>;
-      final cart = context['hospital_bag_cart']! as Map<String, Object?>;
-      final groups = cart['groups']! as List<Object?>;
-      final group = groups.single! as Map<String, Object?>;
-      final items = group['items']! as List<Object?>;
-
-      expect(context['locale'], 'zh-CN');
-      expect((items.single! as Map<String, Object?>)['id'], 'pump-custom');
-    });
-
     test('forwards a stable caller-provided run idempotency key', () {
       final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(
@@ -93,7 +54,7 @@ void main() {
           metadata: {
             'workflow_reply': {
               'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-              'workflow_type': 'pregnancy_plan',
+              'workflow_type': 'legacy_workflow',
               'revision': 4,
               'step_token': 'opaque-step-token',
             },
@@ -206,12 +167,12 @@ void main() {
       () {
         final payload = buildProductionAgentRunPayload(
           const AgentStreamRequest(
-            message: '我已提交待产包信息采集表单。',
+            message: '我已提交吸乳咨询信息表单。',
             metadata: {
               'form_submission': {
                 'artifact_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-                'form_id': 'hospital_bag_intake',
-                'values': {'due_date_or_week': '38 周', 'birth_path': '顺产'},
+                'form_id': 'lactation_support_intake',
+                'values': {'feeding_context': '左侧含乳疼痛', 'top_worries': '吸吮效率'},
               },
             },
           ),
@@ -222,10 +183,10 @@ void main() {
         expect(submission, {
           'type': 'form_submission',
           'artifact_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-          'form_id': 'hospital_bag_intake',
-          'values': {'due_date_or_week': '38 周', 'birth_path': '顺产'},
+          'form_id': 'lactation_support_intake',
+          'values': {'feeding_context': '左侧含乳疼痛', 'top_worries': '吸吮效率'},
         });
-        expect(payload['message'], '我已提交待产包信息采集表单。');
+        expect(payload['message'], '我已提交吸乳咨询信息表单。');
         final clientContext =
             payload['client_context']! as Map<String, Object?>;
         expect(clientContext['locale'], 'en-US');

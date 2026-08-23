@@ -5,7 +5,7 @@
 `tool/staging_smoke.dart` 用于在不连接真机、不连接真泵的前提下，验证 Flutter runtime 可以直接访问后端 staging：
 
 - 只读 HTTP：Status、Schedule、Records。
-- 显式启用后才执行的写入类探针：Pump workstate、client-event、Hospital Bag cart、Media upload。
+- 显式启用后才执行的写入类探针：Pump workstate、client-event、Media upload。
 - 显式启用后才执行的 Agent SSE 文本流探针。
 
 默认不运行真实后端请求，避免本地和 CI 在没有凭证时误写数据。

@@ -1,32 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:momcozy_flutter_app/core/migrations/legacy_prenatal_contract_filter.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_form_normalizer.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_mapper.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 
 class AgentArtifactMapper {
   const AgentArtifactMapper._();
 
   static List<AgentArtifactCardView> cardsFromEvents(
-    Iterable<AgentStreamEvent> events, {
-    BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
-  }) {
+    Iterable<AgentStreamEvent> events,
+  ) {
     final cards = <String, AgentArtifactCardView>{};
     for (final event in events) {
-      final card = cardFromEvent(event, profileDefaults: profileDefaults);
+      final card = cardFromEvent(event);
       if (card != null) cards[card.id] = card;
     }
     return List<AgentArtifactCardView>.unmodifiable(cards.values);
   }
 
-  static AgentArtifactCardView? cardFromEvent(
-    AgentStreamEvent event, {
-    BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
-  }) {
+  static AgentArtifactCardView? cardFromEvent(AgentStreamEvent event) {
     if (event.type != 'artifact.created' && event.type != 'artifact.updated') {
       return null;
     }
@@ -42,6 +37,7 @@ class AgentArtifactMapper {
       _stringField(payload, 'artifact_type', 'artifactType'),
       _stringField(artifact, 'artifact_type', 'artifactType'),
     ]);
+    if (isRetiredPrenatalArtifactType(artifactType)) return null;
     final isSupportTicket = _isSupportTicketType(artifactType);
     final supportTicket = isSupportTicket
         ? _firstMap([
@@ -87,18 +83,8 @@ class AgentArtifactMapper {
             _mapField(payload, 'form'),
             _mapField(artifact, 'form'),
           ]);
-    final form = normalizeAgentArtifactForm(
-      rawForm,
-      profileDefaults: profileDefaults,
-    );
-    final cartUpdate = _firstMap([
-      _mapField(artifactPayload, 'cart_update', 'cartUpdate'),
-      _mapField(payload, 'cart_update', 'cartUpdate'),
-    ]);
-    final assistantFollowup = _firstMap([
-      _mapField(artifactPayload, 'assistant_followup', 'assistantFollowup'),
-      _mapField(payload, 'assistant_followup', 'assistantFollowup'),
-    ]);
+    if (isRetiredPrenatalForm(rawForm)) return null;
+    final form = normalizeAgentArtifactForm(rawForm);
     final explicitArtifactId = _firstNonEmpty([
       _stringField(event.raw, 'artifact_id', 'artifactId'),
       _stringField(payload, 'artifact_id', 'artifactId'),
@@ -138,7 +124,6 @@ class AgentArtifactMapper {
       schemaVersion: schemaVersion,
       cardJson: cardJson,
       hasForm: form.isNotEmpty,
-      hasCartUpdate: cartUpdate.isNotEmpty,
     );
     final specializedView = mapAgentSpecializedCard(
       presentationKind: presentationKind,
@@ -165,7 +150,6 @@ class AgentArtifactMapper {
       _stringField(effectivePayload, 'summary'),
       _stringField(payload, 'content'),
       _stringField(payload, 'summary'),
-      _stringField(assistantFollowup, 'message'),
     ]);
     final status = _firstNonEmpty([
       _stringField(cardJson, 'status_label', 'statusLabel'),
@@ -175,7 +159,6 @@ class AgentArtifactMapper {
     final formFields = _formFields(form);
     final rows = <String>[
       ..._cardJsonRows(cardJson),
-      ..._cartUpdateRows(cartUpdate),
       ..._stringList(cardJson['steps']),
       ..._stringList(effectivePayload['steps']),
       ..._richTextCardRows(richText['card']),
@@ -185,11 +168,6 @@ class AgentArtifactMapper {
       ..._referenceActionsFromRichText(richText),
       ..._semanticActions(richText['action'], event),
       ..._semanticActions(payload['actions'], event),
-      ..._assistantFollowupActions(
-        assistantFollowup,
-        artifactId: artifactId,
-        cartUpdate: cartUpdate,
-      ),
     ];
 
     if (specializedView == null &&
@@ -233,7 +211,6 @@ AgentArtifactPresentationKind _presentationKind({
   required String schemaVersion,
   required Map<String, Object?> cardJson,
   required bool hasForm,
-  required bool hasCartUpdate,
 }) {
   if (!_isSupportedSchemaVersion(schemaVersion)) {
     return AgentArtifactPresentationKind.unsupported;
@@ -244,26 +221,7 @@ AgentArtifactPresentationKind _presentationKind({
   if (hasForm || artifactType == 'form') {
     return AgentArtifactPresentationKind.form;
   }
-  if (hasCartUpdate || artifactType == 'hospital_bag_cart') {
-    return AgentArtifactPresentationKind.hospitalBagCart;
-  }
   return switch (cardType ?? artifactType) {
-    'birth_journey_plan_card'
-        when cardJson.containsKey('todo_plan') ||
-            cardJson.containsKey('todoPlan') ||
-            cardJson.containsKey('owner') =>
-      AgentArtifactPresentationKind.birthJourneyPlanCard,
-    'birth_plan_card'
-        when cardJson.containsKey('communication') ||
-            cardJson.containsKey('pain_relief') ||
-            cardJson.containsKey('painRelief') ||
-            cardJson.containsKey('medical_notes') ||
-            cardJson.containsKey('medicalNotes') =>
-      AgentArtifactPresentationKind.birthPlanCard,
-    'hospital_bag_card'
-        when cardJson.containsKey('packing_groups') ||
-            cardJson.containsKey('packingGroups') =>
-      AgentArtifactPresentationKind.hospitalBagCard,
     'ibclc_consult' ||
     'ibclc_consult_card' => AgentArtifactPresentationKind.ibclcConsultCard,
     'motion_assessment_card' =>
@@ -286,9 +244,6 @@ Map<String, Object?> _directCardPayload(
   Map<String, Object?> payload,
 ) {
   return switch (artifactType) {
-    'birth_journey_plan_card' ||
-    'birth_plan_card' ||
-    'hospital_bag_card' ||
     'ibclc_consult' ||
     'ibclc_consult_card' ||
     'motion_assessment_card' => payload,
@@ -450,90 +405,12 @@ bool _isSupportTicketType(String? artifactType) {
 List<String> _cardJsonRows(Map<String, Object?> cardJson) {
   if (cardJson.isEmpty) return const <String>[];
   final rows = <String>[];
-  final owner = _mapField(cardJson, 'owner');
-  if (owner.isNotEmpty) {
-    final values = owner.entries
-        .where((entry) => _displayString(entry.value) != null)
-        .take(5)
-        .map((entry) => '${entry.key}: ${_displayString(entry.value)}')
-        .join('｜');
-    if (values.isNotEmpty) rows.add(values);
-  }
-  rows.addAll(
-    _packingGroupRows(cardJson['packing_groups'] ?? cardJson['packingGroups']),
-  );
-  rows.addAll(_todoPlanRows(cardJson['todo_plan'] ?? cardJson['todoPlan']));
   rows.addAll(_stringList(cardJson['timeline']).take(4));
   rows.addAll(
     _stringList(
       cardJson['personalized_notes'] ?? cardJson['personalizedNotes'],
     ).take(4),
   );
-  return rows;
-}
-
-List<String> _packingGroupRows(Object? rawGroups) {
-  if (rawGroups is! List) return const <String>[];
-  final rows = <String>[];
-  for (final rawGroup in rawGroups.take(6)) {
-    if (rawGroup is! Map) continue;
-    final group = Map<String, Object?>.from(rawGroup);
-    final title = _stringField(group, 'title');
-    final items = group['items'];
-    if (title == null || items is! List) continue;
-    final labels = items
-        .whereType<Map>()
-        .map((item) => Map<String, Object?>.from(item))
-        .map(
-          (item) => _stringField(item, 'label') ?? _stringField(item, 'name'),
-        )
-        .whereType<String>()
-        .take(5)
-        .join('、');
-    rows.add(labels.isEmpty ? title : '$title：$labels');
-  }
-  return rows;
-}
-
-List<String> _todoPlanRows(Object? rawTodoPlan) {
-  if (rawTodoPlan is! Map) return const <String>[];
-  final periods = rawTodoPlan['periods'];
-  if (periods is! List) return const <String>[];
-  final rows = <String>[];
-  for (final rawPeriod in periods.take(4)) {
-    if (rawPeriod is! Map) continue;
-    final period = Map<String, Object?>.from(rawPeriod);
-    final title = _stringField(period, 'title') ?? '阶段';
-    final items = period['items'];
-    if (items is! List) {
-      rows.add(title);
-      continue;
-    }
-    final itemTitles = items
-        .whereType<Map>()
-        .map((item) => _stringField(Map<String, Object?>.from(item), 'title'))
-        .whereType<String>()
-        .take(4)
-        .join('、');
-    rows.add(itemTitles.isEmpty ? title : '$title：$itemTitles');
-  }
-  return rows;
-}
-
-List<String> _cartUpdateRows(Map<String, Object?> cartUpdate) {
-  if (cartUpdate.isEmpty) return const <String>[];
-  final rows = <String>[];
-  final message = _stringField(cartUpdate, 'message');
-  if (message != null) rows.add(message);
-  rows.addAll(_packingGroupRows(cartUpdate['groups']));
-  final totals = _mapField(cartUpdate, 'totals');
-  if (totals.isNotEmpty) {
-    final itemCount = totals['item_count'] ?? totals['itemCount'];
-    final total = totals['total'] ?? totals['subtotal'];
-    if (itemCount != null || total != null) {
-      rows.add('购物车合计：${itemCount ?? '-'} 件｜${total ?? '-'}');
-    }
-  }
   return rows;
 }
 
@@ -699,31 +576,6 @@ List<AgentArtifactActionView> _semanticActions(
       .toList(growable: false);
 }
 
-List<AgentArtifactActionView> _assistantFollowupActions(
-  Map<String, Object?> assistantFollowup, {
-  required String artifactId,
-  required Map<String, Object?> cartUpdate,
-}) {
-  final kind = _stringField(assistantFollowup, 'kind');
-  final route = _markdownLinkPath(_stringField(assistantFollowup, 'message'));
-  if (kind != 'hospital_bag_cart' && route != '/hospital-bag-cart') {
-    return const <AgentArtifactActionView>[];
-  }
-  return [
-    AgentArtifactActionView(
-      label: '打开待产包购物车',
-      icon: _actionIcon('artifact'),
-      kind: 'artifact',
-      value: route ?? '/hospital-bag-cart',
-      routePath: route ?? '/hospital-bag-cart',
-      hospitalBagCartSeed: HospitalBagCartArtifactSeed.tryFromCartUpdate(
-        artifactId: artifactId,
-        cartUpdate: cartUpdate,
-      ),
-    ),
-  ];
-}
-
 IconData _actionIcon(String? kind) {
   return switch (kind) {
     'doc' || 'document' || 'pdf' => Icons.description_outlined,
@@ -798,17 +650,6 @@ String? _mediaViewerKind({required String? kind, required String url}) {
   return null;
 }
 
-String? _safeSameOriginPath(String? value) {
-  return SafeLinkTarget.tryParse(value)?.internalPath;
-}
-
-String? _markdownLinkPath(String? value) {
-  final normalized = value?.trim();
-  if (normalized == null || normalized.isEmpty) return null;
-  final match = RegExp(r'\[[^\]]+\]\(([^)]+)\)').firstMatch(normalized);
-  return match == null ? null : _safeSameOriginPath(match.group(1));
-}
-
 String _citationLabel(Object? rawIndex, String title) {
   final index = switch (rawIndex) {
     int value => value.toString(),
@@ -828,9 +669,6 @@ String _artifactSubject(String? type) {
   return switch (type) {
     'form' => '信息采集',
     'support_ticket' || 'support_ticket_draft' => '售后工单',
-    'birth_journey_plan_card' => '孕期计划',
-    'birth_plan_card' => '分娩计划',
-    'hospital_bag_card' || 'hospital_bag_cart' => '待产包',
     'ibclc_consult_card' => 'IBCLC 咨询入口',
     _ => '结果',
   };
@@ -866,13 +704,6 @@ List<String> _stringList(Object? value) {
       .map((item) => item.trim())
       .where((item) => item.isNotEmpty)
       .toList(growable: false);
-}
-
-String? _displayString(Object? value) {
-  if (value == null) return null;
-  if (value is String) return value.trim().isEmpty ? null : value.trim();
-  if (value is num || value is bool) return value.toString();
-  return null;
 }
 
 String? _combineLabelValue(String? label, String? value) {

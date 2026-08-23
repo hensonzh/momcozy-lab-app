@@ -26,8 +26,6 @@ import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dar
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_file_cache.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/notifications/data/notifications_api_repository.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_finalization_store.dart';
@@ -89,7 +87,6 @@ class MomCozyApiRuntime {
     pumpNativeRuntimeCoordinatorFactory,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
-    HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
     MediaContentRepository? mediaContentRepository,
@@ -98,7 +95,6 @@ class MomCozyApiRuntime {
     DateTime Function()? now,
     Future<String> Function()? timezoneProvider,
     this.supportsSessionAutoRefresh = false,
-    this.supportsAgentFacts = false,
     this._currentSessionProvider,
     this.agentStreamUnauthorizedHandler,
   }) : agentJsonTransport = agentJsonTransport ?? jsonTransport,
@@ -125,16 +121,8 @@ class MomCozyApiRuntime {
              upload: AndroidPumpAgentUploadPlatform(),
            )),
        observability = observability ?? MomCozyObservability(),
-       hospitalBagCartStore =
-           hospitalBagCartStore ??
-           HospitalBagCartStore(
-             persistence: FlutterSecureHospitalBagCartPersistence(
-               userId: session?.userId ?? userId ?? _defaultUserId,
-             ),
-           ),
        now = now ?? DateTime.now,
        timezoneProvider = timezoneProvider ?? _deviceTimezone {
-    unawaited(this.hospitalBagCartStore.restore().then<void>((_) {}));
     this.ibclcConsultStore =
         ibclcConsultStore ??
         IbclcConsultStore(
@@ -178,7 +166,6 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
-    HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
     MediaContentRepository? mediaContentRepository,
@@ -204,7 +191,6 @@ class MomCozyApiRuntime {
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
-      hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
       mediaContentRepository: mediaContentRepository,
@@ -222,7 +208,6 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
-    HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     ProfileOverviewCache? profileOverviewCache,
     MediaContentRepository? mediaContentRepository,
@@ -331,7 +316,6 @@ class MomCozyApiRuntime {
       observability: runtimeObservability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
-      hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
       mediaContentRepository: mediaContentRepository,
@@ -366,7 +350,6 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
-    HospitalBagCartStore? hospitalBagCartStore,
   }) async {
     final manager = MomCozySessionManager(
       store: store,
@@ -392,16 +375,7 @@ class MomCozyApiRuntime {
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
-      hospitalBagCartStore: hospitalBagCartStore,
     );
-    var cartRestored = await runtime.hospitalBagCartStore.restore();
-    if (!cartRestored) {
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-      cartRestored = await runtime.hospitalBagCartStore.restore();
-    }
-    if (!cartRestored) {
-      throw StateError('Hospital bag cart recovery is unavailable.');
-    }
     return runtime;
   }
 
@@ -409,13 +383,11 @@ class MomCozyApiRuntime {
   final ApiJsonTransport agentJsonTransport;
   final MomCozySession session;
   final MomCozyObservability observability;
-  final HospitalBagCartStore hospitalBagCartStore;
   late final IbclcConsultStore ibclcConsultStore;
   late final ProfileOverviewCache profileOverviewCache;
   final DateTime Function() now;
   final Future<String> Function() timezoneProvider;
   final bool supportsSessionAutoRefresh;
-  final bool supportsAgentFacts;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
   final MomCozySession Function()? _currentSessionProvider;
   final AgentStreamClientEventClient Function() _clientEventClientFactory;
@@ -470,13 +442,13 @@ class MomCozyApiRuntime {
       'records.diaper.changed' => const <ProfileOverviewResourceKey>[
         ProfileOverviewResourceKey.diapers,
       ],
-      'pregnancy_plan.changed' || 'milk_plan.changed' =>
-        const <ProfileOverviewResourceKey>[ProfileOverviewResourceKey.plans],
+      'milk_plan.changed' => const <ProfileOverviewResourceKey>[
+        ProfileOverviewResourceKey.plans,
+      ],
       _ => const <ProfileOverviewResourceKey>[],
     };
     profileOverviewCache.invalidate(resources);
-    if (event.type == 'pregnancy_plan.changed' ||
-        event.type == 'milk_plan.changed') {
+    if (event.type == 'milk_plan.changed') {
       _planRepository?.invalidate();
     }
   }
@@ -530,7 +502,6 @@ class MomCozyApiRuntime {
   ProfileOverviewApiRepository get profileOverviewRepository {
     return ProfileOverviewApiRepository(
       transport: jsonTransport,
-      factTransport: supportsAgentFacts ? agentJsonTransport : null,
       babyId: currentSession.babyId,
       now: now,
     );
@@ -610,7 +581,6 @@ class MomCozyApiRuntime {
     return ProfileOverviewController(
       profileOverviewRepository: ProfileOverviewApiRepository(
         transport: jsonTransport,
-        factTransport: supportsAgentFacts ? agentJsonTransport : null,
         babyId: selectedBabyId,
         now: now,
       ),
@@ -698,10 +668,6 @@ class MomCozyApiRuntime {
     return (_agentHubPlatformDocumentPicker ??=
             AgentHubPlatformDocumentPicker())
         .pick;
-  }
-
-  HospitalBagCartApiRepository get hospitalBagCartRepository {
-    return HospitalBagCartApiRepository(transport: jsonTransport);
   }
 
   PumpWorkstateApiRepository get pumpWorkstateRepository {
@@ -838,9 +804,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
   MomCozyApiRuntime _runtimeForSession(MomCozySession session) {
     final store = _autoRefreshStore;
     final currentSession = _currentSession;
-    final hospitalBagCartStore = session.userId == currentSession.userId
-        ? _runtime.hospitalBagCartStore
-        : null;
     final ibclcConsultStore = session.userId == currentSession.userId
         ? _runtime.ibclcConsultStore
         : null;
@@ -868,7 +831,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
         productAssetRepository: _runtime._hasInjectedProductAssetRepository
             ? _runtime._productAssetRepository
             : null,
-        hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
         profileOverviewCache: profileOverviewCache,
         mediaContentRepository: mediaContentRepository,
@@ -884,7 +846,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
       productAssetRepository: _runtime._hasInjectedProductAssetRepository
           ? _runtime._productAssetRepository
           : null,
-      hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       profileOverviewCache: profileOverviewCache,
       mediaContentRepository: mediaContentRepository,

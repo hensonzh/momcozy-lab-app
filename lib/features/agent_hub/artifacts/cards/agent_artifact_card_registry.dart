@@ -3,7 +3,6 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 class AgentArtifactCardRegistry {
   const AgentArtifactCardRegistry._();
@@ -31,10 +30,6 @@ class AgentArtifactCardRegistry {
                 onAction: onAction,
               )
             : null,
-      AgentArtifactPresentationKind.hospitalBagCart => _HospitalBagCartCard(
-        card: card,
-        onAction: onAction,
-      ),
       _ => null,
     };
   }
@@ -88,19 +83,16 @@ class _ArtifactCardSurface extends StatelessWidget {
     required this.icon,
     required this.accent,
     required this.children,
-    this.subtitle,
   });
 
   final AgentArtifactCardView card;
   final IconData icon;
   final Color accent;
-  final String? subtitle;
   final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final hasSubtitle = subtitle?.trim().isNotEmpty ?? false;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: const Color(0xfffffdfc),
@@ -120,9 +112,7 @@ class _ArtifactCardSurface extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
-              crossAxisAlignment: hasSubtitle
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 DecoratedBox(
                   decoration: BoxDecoration(
@@ -136,28 +126,13 @@ class _ArtifactCardSurface extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        card.title,
-                        style: textTheme.titleMedium?.copyWith(
-                          color: const Color(0xff2f1f29),
-                          fontWeight: FontWeight.w900,
-                          height: 1.2,
-                        ),
-                      ),
-                      if (hasSubtitle) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle!,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: const Color(0xff8b7581),
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ],
+                  child: Text(
+                    card.title,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: const Color(0xff2f1f29),
+                      fontWeight: FontWeight.w900,
+                      height: 1.2,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -482,221 +457,6 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
   }
 }
 
-class _HospitalBagCartCard extends StatelessWidget {
-  const _HospitalBagCartCard({required this.card, this.onAction});
-
-  final AgentArtifactCardView card;
-  final ValueChanged<AgentArtifactActionView>? onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    final cartUpdate = _map(
-      card.payload['cart_update'] ?? card.payload['cartUpdate'],
-    );
-    final groups = _objectList(cartUpdate['groups']);
-    final totals = _map(cartUpdate['totals']);
-    final itemCount = _text(totals['item_count'] ?? totals['itemCount']);
-    final total = _text(totals['total'] ?? totals['subtotal']);
-
-    return KeyedSubtree(
-      key: ValueKey('agent-artifact-cart-${card.id}'),
-      child: _ArtifactCardSurface(
-        card: card,
-        icon: Icons.shopping_bag_outlined,
-        accent: const Color(0xff9b6b2f),
-        subtitle: _text(cartUpdate['message']) ?? card.content,
-        children: [
-          for (var index = 0; index < groups.length; index++) ...[
-            _CartGroup(
-              key: ValueKey(
-                'cart-group:${_text(groups[index]['id']) ?? _text(groups[index]['title']) ?? index}',
-              ),
-              group: groups[index],
-            ),
-            if (index < groups.length - 1) const SizedBox(height: 8),
-          ],
-          if (itemCount != null || total != null) ...[
-            if (groups.isNotEmpty) const SizedBox(height: 12),
-            Row(
-              children: [
-                if (itemCount != null)
-                  _ArtifactTag(
-                    label: '共 $itemCount 件',
-                    color: const Color(0xff7a5425),
-                    background: const Color(0xfffff3df),
-                  ),
-                const Spacer(),
-                if (total != null)
-                  Text(
-                    '合计 $total',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: const Color(0xff7a5425),
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-              ],
-            ),
-          ],
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 44,
-            child: OutlinedButton.icon(
-              key: ValueKey('agent-artifact-cart-open-${card.id}'),
-              onPressed: onAction == null ? null : _openCart,
-              icon: const Icon(Icons.shopping_cart_outlined, size: 18),
-              label: const Text('打开购物车'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xff7a5425),
-                side: const BorderSide(color: Color(0xffd9bd91)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _openCart() {
-    final cartUpdate = _map(
-      card.payload['cart_update'] ?? card.payload['cartUpdate'],
-    );
-    onAction?.call(
-      AgentArtifactActionView(
-        label: '打开购物车',
-        icon: Icons.shopping_cart_outlined,
-        kind: 'artifact',
-        value: '/hospital-bag-cart',
-        routePath: '/hospital-bag-cart',
-        hospitalBagCartSeed: HospitalBagCartArtifactSeed.tryFromCartUpdate(
-          artifactId: card.id,
-          cartUpdate: cartUpdate,
-        ),
-      ),
-    );
-  }
-}
-
-class _CartGroup extends StatefulWidget {
-  const _CartGroup({super.key, required this.group});
-
-  final Map<String, Object?> group;
-
-  @override
-  State<_CartGroup> createState() => _CartGroupState();
-}
-
-class _CartGroupState extends State<_CartGroup> {
-  bool _expanded = true;
-
-  @override
-  Widget build(BuildContext context) {
-    final title = _text(widget.group['title']) ?? '待产包';
-    final items = _objectList(widget.group['items']);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        InkWell(
-          onTap: () => setState(() => _expanded = !_expanded),
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: const Color(0xff4b2638),
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                Text(
-                  '${items.length} 项',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: const Color(0xff8b7581),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  _expanded
-                      ? Icons.expand_less_rounded
-                      : Icons.expand_more_rounded,
-                  color: const Color(0xff8b7581),
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (_expanded)
-          for (final item in items)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 6),
-                    child: Icon(
-                      Icons.circle,
-                      size: 6,
-                      color: Color(0xffc19058),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _text(item['name'] ?? item['label']) ?? '物品',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xff5c4852),
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-      ],
-    );
-  }
-}
-
-class _ArtifactTag extends StatelessWidget {
-  const _ArtifactTag({
-    required this.label,
-    required this.color,
-    required this.background,
-  });
-
-  final String label;
-  final Color color;
-  final Color background;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: color,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _IbclcConsultantTag extends StatelessWidget {
   const _IbclcConsultantTag({
     required this.label,
@@ -730,28 +490,4 @@ class _IbclcConsultantTag extends StatelessWidget {
       ),
     );
   }
-}
-
-String? _text(Object? value) {
-  if (value == null) return null;
-  if (value is String) {
-    final normalized = value.trim();
-    return normalized.isEmpty ? null : normalized;
-  }
-  if (value is num || value is bool) return value.toString();
-  return null;
-}
-
-Map<String, Object?> _map(Object? value) {
-  return value is Map
-      ? Map<String, Object?>.from(value)
-      : const <String, Object?>{};
-}
-
-List<Map<String, Object?>> _objectList(Object? value) {
-  if (value is! List) return const <Map<String, Object?>>[];
-  return value
-      .whereType<Map>()
-      .map((item) => Map<String, Object?>.from(item))
-      .toList(growable: false);
 }

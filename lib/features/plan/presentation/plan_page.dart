@@ -1442,7 +1442,6 @@ class _PlanCategoryChip extends StatelessWidget {
             width: showPlanTitle
                 ? null
                 : switch (plan.category) {
-                    PlanCategory.pregnancy => 90,
                     PlanCategory.lactation => 84,
                     PlanCategory.yoga => 58,
                     PlanCategory.pelvicFloor => 97,

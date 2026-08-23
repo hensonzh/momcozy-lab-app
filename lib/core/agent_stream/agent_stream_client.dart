@@ -248,9 +248,6 @@ Map<String, Object?> buildProductionAgentRunPayload(
   );
   final normalizedTimezone = request.timezone?.trim();
   final normalizedMessageSentAt = request.messageSentAt?.trim();
-  final hospitalBagCart = _productionHospitalBagCart(
-    request.metadata['hospital_bag_cart'],
-  );
   final clientContext = <String, Object?>{
     if (normalizedLocale.isNotEmpty) 'locale': normalizedLocale,
     if (normalizedTimezone != null && normalizedTimezone.isNotEmpty)
@@ -259,9 +256,6 @@ Map<String, Object?> buildProductionAgentRunPayload(
       'message_sent_at': normalizedMessageSentAt,
   };
   if (normalizedSource != null) clientContext['source'] = normalizedSource;
-  if (hospitalBagCart != null) {
-    clientContext['hospital_bag_cart'] = hospitalBagCart;
-  }
 
   return {
     if (threadId != null && threadId.isNotEmpty && _looksLikeUuid(threadId))
@@ -279,139 +273,6 @@ String? _productionClientContextString(Object? value) {
   if (value is! String) return null;
   final normalized = value.trim();
   return normalized.isEmpty ? null : normalized;
-}
-
-Map<String, Object?>? _productionHospitalBagCart(Object? value) {
-  if (value == null) return null;
-  final cart = _stringKeyedMap(value);
-  if (cart == null) {
-    throw const AgentStreamPayloadException('Invalid hospital bag cart.');
-  }
-  final rawGroups = cart['groups'];
-  final rawTotals = cart['totals'];
-  if (rawGroups is! List || rawTotals is! Map) {
-    throw const AgentStreamPayloadException('Invalid hospital bag cart.');
-  }
-
-  return {
-    'groups': rawGroups
-        .map(_productionHospitalBagCartGroup)
-        .toList(growable: false),
-    'totals': _productionHospitalBagCartTotals(rawTotals),
-  };
-}
-
-Map<String, Object?> _productionHospitalBagCartGroup(Object? value) {
-  final group = _stringKeyedMap(value);
-  final rawItems = group?['items'];
-  if (group == null || rawItems is! List) {
-    throw const AgentStreamPayloadException('Invalid hospital bag cart group.');
-  }
-  return {
-    ..._allowedFields(group, const {'title', 'tone'}),
-    'items': rawItems
-        .map(_productionHospitalBagCartItem)
-        .toList(growable: false),
-  };
-}
-
-Map<String, Object?> _productionHospitalBagCartItem(Object? value) {
-  final item = _stringKeyedMap(value);
-  if (item == null) {
-    throw const AgentStreamPayloadException('Invalid hospital bag cart item.');
-  }
-  return _allowedFields(item, const {
-    'id',
-    'name',
-    'desc',
-    'qty',
-    'price',
-    'currency',
-    'price_label',
-    'sale_price_label',
-    'official_price_usd',
-    'sale_price_usd',
-    'exchange_rate_usd_cny',
-    'product_url',
-    'image_url',
-    'image_alt',
-    'sku_id',
-    'model',
-    'keywords',
-  });
-}
-
-Map<String, Object?> _productionHospitalBagCartTotals(Object? value) {
-  final totals = _stringKeyedMap(value);
-  if (totals == null) {
-    throw const AgentStreamPayloadException(
-      'Invalid hospital bag cart totals.',
-    );
-  }
-  final result = _allowedFields(totals, const {
-    'currency',
-    'subtotal',
-    'itemCount',
-    'discount',
-    'shipping',
-    'total',
-    'exchange_rate_usd_cny',
-    'converted_usd_subtotal',
-    'mixed_currency',
-  });
-  if (!totals.containsKey('itemCount') && totals.containsKey('item_count')) {
-    result['itemCount'] = totals['item_count'];
-  }
-  final rawCurrencyTotals = totals['currency_totals'];
-  if (rawCurrencyTotals != null) {
-    if (rawCurrencyTotals is! List) {
-      throw const AgentStreamPayloadException(
-        'Invalid hospital bag cart currency totals.',
-      );
-    }
-    result['currency_totals'] = rawCurrencyTotals
-        .map((value) {
-          final currencyTotal = _stringKeyedMap(value);
-          if (currencyTotal == null) {
-            throw const AgentStreamPayloadException(
-              'Invalid hospital bag cart currency total.',
-            );
-          }
-          final result = _allowedFields(currencyTotal, const {
-            'currency',
-            'subtotal',
-            'itemCount',
-            'discount',
-            'shipping',
-            'total',
-          });
-          if (!currencyTotal.containsKey('itemCount') &&
-              currencyTotal.containsKey('item_count')) {
-            result['itemCount'] = currencyTotal['item_count'];
-          }
-          return result;
-        })
-        .toList(growable: false);
-  }
-  return result;
-}
-
-Map<String, Object?> _allowedFields(
-  Map<String, Object?> source,
-  Set<String> allowed,
-) => {
-  for (final entry in source.entries)
-    if (allowed.contains(entry.key)) entry.key: entry.value,
-};
-
-Map<String, Object?>? _stringKeyedMap(Object? value) {
-  if (value is! Map) return null;
-  final result = <String, Object?>{};
-  for (final entry in value.entries) {
-    if (entry.key is! String) return null;
-    result[entry.key as String] = entry.value;
-  }
-  return result;
 }
 
 Map<String, Object?>? _productionFormSubmissionAttachment(

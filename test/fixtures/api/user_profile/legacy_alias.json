@@ -15,7 +15,7 @@
       "error": 0,
       "userId": "demo-user-fixture",
       "displayName": "Demo User",
-      "currentCareStage": "postpartum"
+      "actualDeliveryDate": "2026-07-01"
     }
   }
 }

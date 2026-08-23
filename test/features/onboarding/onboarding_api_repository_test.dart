@@ -87,7 +87,6 @@ void main() {
       multipartTransport: FixtureApiMultipartTransport(const {}),
     );
     final draft = OnboardingProfileDraft(
-      stage: OnboardingCareStage.postpartum,
       displayName: 'Mia',
       age: 32,
       deliveryDate: DateTime(2026, 7, 19),
@@ -119,37 +118,6 @@ void main() {
       ],
     });
     expect(state.status, OnboardingStatus.avatarRequired);
-  });
-
-  test('serializes the current pregnancy week instead of a due date', () async {
-    final transport = FixtureApiJsonTransport(const {
-      'status': 'avatar_required',
-      'current_step': 'avatar',
-      'current_stage': 'pregnancy',
-      'profile_confirmed': true,
-    });
-    final repository = OnboardingApiRepository(
-      transport: transport,
-      multipartTransport: FixtureApiMultipartTransport(const {}),
-    );
-    final draft = OnboardingProfileDraft(
-      stage: OnboardingCareStage.pregnancy,
-      displayName: 'Mia',
-      age: 32,
-      currentGestationalWeek: 24,
-      expectedInfantCount: 2,
-    );
-
-    await repository.confirmProfile(draft);
-
-    expect(transport.lastBody, {
-      'stage': 'pregnancy',
-      'display_name': 'Mia',
-      'age': 32,
-      'current_gestational_week': 24,
-      'expected_infant_count': 2,
-    });
-    expect(transport.lastBody, isNot(contains('expected_due_date')));
   });
 
   test('uploads portrait to dedicated endpoint before generation', () async {

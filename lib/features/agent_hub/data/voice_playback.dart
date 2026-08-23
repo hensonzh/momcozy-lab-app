@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:momcozy_flutter_app/core/migrations/legacy_prenatal_contract_filter.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
@@ -41,7 +42,6 @@ final _voiceStreamTrailingUrlLikePattern = RegExp(
   r'''(^|[\s(（\[])((?:(?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)$''',
   caseSensitive: false,
 );
-const _hospitalBagCartVoicePath = '/hospital-bag-cart';
 
 abstract interface class AgentVoicePcmPlayer {
   Future<void> start({int sampleRate, int channels});
@@ -546,6 +546,7 @@ String _stripVoiceLinks(
   ) {
     final alt = (match.group(1) ?? '').trim();
     final destination = _voiceLinkDestination(match.group(2));
+    if (isRetiredPrenatalRoute(destination)) return ' ';
     final narration = _resolveMediaVoiceNarration(
       destination,
       alt: alt,
@@ -562,6 +563,7 @@ String _stripVoiceLinks(
   ) {
     final label = (match.group(1) ?? '').trim();
     final destination = _voiceLinkDestination(match.group(2));
+    if (isRetiredPrenatalRoute(destination)) return ' ';
     final narration = _resolveMediaVoiceNarration(
       destination,
       alt: label,
@@ -572,7 +574,6 @@ String _stripVoiceLinks(
       return narration.text == null ? ' ' : ' ${narration.text} ';
     }
     if (label.isEmpty || _isVoiceUrlLike(label)) return ' ';
-    if (_isHospitalBagCartVoiceUrl(destination)) return ' ';
     return ' $label ';
   });
   normalized = normalized.replaceAllMapped(RegExp(r'\[([^\]]+)]\(\s*$'), (
@@ -747,14 +748,6 @@ String _stripVoiceMarkupAndSymbols(String text) {
 
 bool _isVoiceUrlLike(String value) {
   return _voiceBareDomainLikePattern.hasMatch(value.trim());
-}
-
-bool _isHospitalBagCartVoiceUrl(String value) {
-  final raw = value.trim().split(RegExp(r'\s+')).first;
-  if (raw.isEmpty) return false;
-  final path = Uri.tryParse(raw)?.path;
-  if (path != null && path.isNotEmpty) return path == _hospitalBagCartVoicePath;
-  return raw.split(RegExp(r'[?#]')).first == _hospitalBagCartVoicePath;
 }
 
 int _voiceChunkLimit(int maxChars, int textLength) {

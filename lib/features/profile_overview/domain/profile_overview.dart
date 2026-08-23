@@ -1,5 +1,4 @@
 import 'package:momcozy_flutter_app/features/profile_overview/domain/delivery_type.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 
 abstract interface class ProfileOverviewRepository {
   Future<ProfileOverview> fetchOverview();
@@ -34,36 +33,17 @@ class ProfileOverview {
 class MomProfileOverview {
   const MomProfileOverview({
     this.displayName,
-    this.stage,
     this.postpartumDay,
-    this.expectedDueDate,
     this.actualDeliveryDate,
     this.deliveryType,
-    this.dueDateOrWeek,
     this.avatarFileId,
   });
 
   final String? displayName;
-  final MomLifeStage? stage;
   final int? postpartumDay;
-  final DateTime? expectedDueDate;
   final DateTime? actualDeliveryDate;
   final DeliveryType? deliveryType;
-  final String? dueDateOrWeek;
   final String? avatarFileId;
-
-  MomProfileOverview copyWith({MomLifeStage? stage}) {
-    return MomProfileOverview(
-      displayName: displayName,
-      stage: stage ?? this.stage,
-      postpartumDay: postpartumDay,
-      expectedDueDate: expectedDueDate,
-      actualDeliveryDate: actualDeliveryDate,
-      deliveryType: deliveryType,
-      dueDateOrWeek: dueDateOrWeek,
-      avatarFileId: avatarFileId,
-    );
-  }
 }
 
 class BabyProfileOverview {

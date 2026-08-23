@@ -97,13 +97,13 @@ void main() {
       );
 
       final putResponse = await transport.putJson(
-        '/v1/pregnancy-diary/entries/2026-07-11',
-        body: {'mood': '平稳'},
+        '/v1/records/feeding/record-001',
+        body: {'volume_ml': 120},
       );
       expect(putResponse, {'id': 'record-001'});
       expect(connector.method, 'PUT');
       expect(jsonDecode(connector.body!) as Map<String, Object?>, {
-        'mood': '平稳',
+        'volume_ml': 120,
       });
 
       final patchResponse = await transport.patchJson(

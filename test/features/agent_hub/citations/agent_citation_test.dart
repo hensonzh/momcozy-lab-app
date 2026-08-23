@@ -80,7 +80,7 @@ void main() {
               'citations': [
                 {
                   'url': 'https://www.acog.org/womens-health',
-                  'title': 'Pregnancy guidance',
+                  'title': 'Postpartum guidance',
                   'displayText': 'ACOG 资料',
                 },
               ],

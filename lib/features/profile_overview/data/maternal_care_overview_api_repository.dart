@@ -1,6 +1,5 @@
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 
 const maternalCareOverviewEndpoint = '/v1/care-overview/me';
 
@@ -21,42 +20,7 @@ class MaternalCareOverviewApiRepository
 }
 
 MaternalCareOverview _overview(Map<String, Object?> data) {
-  return MaternalCareOverview(
-    stage: MomLifeStage.tryParse(data['stage']),
-    pregnancy: _pregnancy(_mapOrNull(data['pregnancy'])),
-    program: _program(_mapOrNull(data['program'])),
-  );
-}
-
-PregnancyProgress? _pregnancy(Map<String, Object?>? data) {
-  if (data == null) return null;
-  final state = switch (_requiredString(data, 'state')) {
-    'ready' => PregnancyProgressState.ready,
-    'missing_due_date' => PregnancyProgressState.missingDueDate,
-    'out_of_range' => PregnancyProgressState.outOfRange,
-    _ => throw const FormatException('Unknown pregnancy progress state.'),
-  };
-  if (state != PregnancyProgressState.ready) {
-    return PregnancyProgress(state: state);
-  }
-  final week = _integer(data['gestational_week']);
-  final daysRemaining = _integer(data['days_remaining']);
-  final trimester = _trimester(data['trimester']);
-  if (week == null ||
-      week < 0 ||
-      week > 40 ||
-      daysRemaining == null ||
-      daysRemaining < 0 ||
-      daysRemaining > 280 ||
-      trimester == null) {
-    throw const FormatException('Ready pregnancy progress is incomplete.');
-  }
-  return PregnancyProgress(
-    state: state,
-    gestationalWeek: week,
-    daysRemaining: daysRemaining,
-    trimester: trimester,
-  );
+  return MaternalCareOverview(program: _program(_mapOrNull(data['program'])));
 }
 
 MaternalProgramProgress? _program(Map<String, Object?>? data) {
@@ -77,13 +41,6 @@ MaternalProgramProgress? _program(Map<String, Object?>? data) {
     totalSessions: total,
   );
 }
-
-PregnancyTrimester? _trimester(Object? value) => switch (value) {
-  'first' => PregnancyTrimester.first,
-  'second' => PregnancyTrimester.second,
-  'third' => PregnancyTrimester.third,
-  _ => null,
-};
 
 Map<String, Object?>? _mapOrNull(Object? value) {
   return value is Map ? Map<String, Object?>.from(value) : null;

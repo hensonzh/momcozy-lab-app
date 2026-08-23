@@ -3,7 +3,6 @@ import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
@@ -184,45 +183,41 @@ void main() {
       );
     });
 
-    test('Me exposes confirmed active plans to the stage workspace', () async {
-      final plans = _FakePlanRepository(
-        PlanDashboard(
-          weekOf: DateTime(2026, 7, 11),
-          plans: const [
-            CarePlan(
-              id: 'prenatal-yoga',
-              category: PlanCategory.yoga,
-              title: 'Prenatal Yoga Program',
-              summary: 'Confirmed plan',
-            ),
-          ],
-        ),
-      );
-      final controller = _controller(planRepository: plans);
-      addTearDown(controller.dispose);
+    test(
+      'Me exposes confirmed active plans to the postpartum workspace',
+      () async {
+        final plans = _FakePlanRepository(
+          PlanDashboard(
+            weekOf: DateTime(2026, 7, 11),
+            plans: const [
+              CarePlan(
+                id: 'postpartum-yoga',
+                category: PlanCategory.yoga,
+                title: 'Postpartum Yoga Program',
+                summary: 'Confirmed plan',
+              ),
+            ],
+          ),
+        );
+        final controller = _controller(planRepository: plans);
+        addTearDown(controller.dispose);
 
-      await controller.initialize();
+        await controller.initialize();
 
-      expect(plans.requestedDay, DateTime(2026, 7, 11));
-      expect(
-        controller.plans.value.data?.plans.single.title,
-        'Prenatal Yoga Program',
-      );
-    });
+        expect(plans.requestedDay, DateTime(2026, 7, 11));
+        expect(
+          controller.plans.value.data?.plans.single.title,
+          'Postpartum Yoga Program',
+        );
+      },
+    );
 
     test('Me loads the authoritative maternal care overview', () async {
       final careOverviewRepository = _FakeMaternalCareOverviewRepository(
         const MaternalCareOverview(
-          stage: MomLifeStage.pregnancy,
-          pregnancy: PregnancyProgress(
-            state: PregnancyProgressState.ready,
-            gestationalWeek: 28,
-            daysRemaining: 84,
-            trimester: PregnancyTrimester.third,
-          ),
           program: MaternalProgramProgress(
-            planId: 'prenatal-yoga',
-            title: 'Prenatal Yoga Program',
+            planId: 'postpartum-yoga',
+            title: 'Postpartum Yoga Program',
             completedSessions: 6,
             totalSessions: 12,
           ),
@@ -242,8 +237,8 @@ void main() {
         OverviewResourcePhase.data,
       );
       expect(
-        controller.maternalCareOverview.value.data?.pregnancy?.gestationalWeek,
-        28,
+        controller.maternalCareOverview.value.data?.program?.planId,
+        'postpartum-yoga',
       );
     });
 
@@ -364,7 +359,7 @@ void main() {
       expect(controller.milkTrends.value.data, same(previous));
     });
 
-    test('a successful profile without a stage stays unselected', () async {
+    test('a successful empty profile stays available', () async {
       final controller = _controller(
         overviewRepository: _FakeProfileOverviewRepository(
           overview: const ProfileOverview(),
@@ -374,11 +369,11 @@ void main() {
 
       await controller.initialize();
 
-      expect(controller.careStage.value.isResolved, isTrue);
-      expect(controller.careStage.value.stage, isNull);
+      expect(controller.overview.value.phase, OverviewResourcePhase.data);
+      expect(controller.overview.value.data?.isEmpty, isTrue);
     });
 
-    test('a failed profile read never invents a postpartum stage', () async {
+    test('a failed profile read remains an overview error', () async {
       final controller = _controller(
         overviewRepository: _FakeProfileOverviewRepository(
           fetchError: StateError('offline'),
@@ -389,9 +384,6 @@ void main() {
       await controller.initialize();
 
       expect(controller.overview.value.hasError, isTrue);
-      expect(controller.careStage.value.isResolved, isFalse);
-      expect(controller.careStage.value.stage, isNull);
-      expect(controller.careStage.value.error, isNotNull);
     });
 
     test('Baby scopes feeding reads to the current session infant', () async {
@@ -657,10 +649,7 @@ class _FakeProfileOverviewRepository implements ProfileOverviewRepository {
   _FakeProfileOverviewRepository({
     this.fetchError,
     this.overview = const ProfileOverview(
-      mom: MomProfileOverview(
-        stage: MomLifeStage.postpartum,
-        postpartumDay: 42,
-      ),
+      mom: MomProfileOverview(postpartumDay: 42, actualDeliveryDate: null),
       baby: BabyProfileOverview(id: 'baby-001', nickname: 'Mia', ageDays: 42),
     ),
   });

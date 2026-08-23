@@ -1,4 +1,5 @@
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/migrations/legacy_prenatal_contract_filter.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 
 const planListEndpoint = '/v1/plans';
@@ -125,7 +126,7 @@ class PlanApiRepository
     final plans = _items(
       planResponse,
       endpoint: planListEndpoint,
-    ).map(_carePlan).toList(growable: false);
+    ).where(_isSupportedPlan).map(_carePlan).toList(growable: false);
     if (plans.isEmpty) return PlanDashboard.empty(weekOf: selectedDay);
 
     final sessionResponse = (await sessionRequest).unwrap();
@@ -301,14 +302,12 @@ PlanSessionKind _planSessionKind(
     'feeding' ||
     'breastfeeding' ||
     'bottle' => PlanSessionKind.feeding,
-    'pregnancy' || 'prenatal' => PlanSessionKind.pregnancy,
     'yoga' || 'recovery_yoga' => PlanSessionKind.yoga,
     'pelvic_floor' || 'pelvic-floor' => PlanSessionKind.pelvicFloor,
     _ => null,
   };
   if (explicit != null) return explicit;
   return switch (category) {
-    PlanCategory.pregnancy => PlanSessionKind.pregnancy,
     PlanCategory.lactation => PlanSessionKind.pumping,
     PlanCategory.yoga => PlanSessionKind.yoga,
     PlanCategory.pelvicFloor => PlanSessionKind.pelvicFloor,
@@ -324,6 +323,7 @@ _RawPlanSession? _rawSession(
   final plan = planId == null ? null : activePlans[planId];
   if (plan == null) return null;
   final payload = _objectMap(data['payload']);
+  if (isRetiredPrenatalPlanPayload(payload)) return null;
   final date = _requiredString(data, 'task_date');
   final time = _requiredString(data, 'task_time');
   final parsed = DateTime.tryParse('${date}T$time:00');
@@ -364,7 +364,6 @@ class _RawPlanSession {
 
 PlanCategory _category(String wireValue) {
   return switch (wireValue.trim().toLowerCase()) {
-    'pregnancy' || 'birth_journey' => PlanCategory.pregnancy,
     'lactation' ||
     'breast_pumping' ||
     'milk_management' => PlanCategory.lactation,
@@ -375,12 +374,15 @@ PlanCategory _category(String wireValue) {
 }
 
 String _defaultTitle(PlanCategory category) => switch (category) {
-  PlanCategory.pregnancy => 'Pregnancy Plan',
   PlanCategory.lactation => 'Breast Pumping Plan',
   PlanCategory.yoga => 'Yoga',
   PlanCategory.pelvicFloor => 'Pelvic Floor',
   PlanCategory.other => 'Plan',
 };
+
+bool _isSupportedPlan(Map<String, Object?> data) {
+  return !isRetiredPrenatalPlanType(data['plan_type']);
+}
 
 List<Map<String, Object?>> _items(
   Map<String, Object?> response, {

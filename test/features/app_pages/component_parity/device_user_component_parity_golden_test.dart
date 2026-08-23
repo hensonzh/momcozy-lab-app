@@ -31,7 +31,7 @@ void main() {
       final formCard = find.byKey(const ValueKey('device-user-form-card'));
       expect(formCard, findsOneWidget);
       expect(find.text('用户名'), findsOneWidget);
-      expect(find.text('用户类型'), findsOneWidget);
+      expect(find.text('用户类型'), findsNothing);
       expect(find.text('删除用户'), findsOneWidget);
       expect(find.text('切换用户'), findsOneWidget);
 

@@ -10,9 +10,6 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
-import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
@@ -53,8 +50,6 @@ void main() {
           expect(find.text('用户参数配置'), findsWidgets);
         } else if (route.path == '/community') {
           expect(find.text('社区功能还在建设中哦～'), findsWidgets);
-        } else if (route.path == '/hospital-bag-cart') {
-          expect(find.text('待产包一键打包'), findsWidgets);
         } else if (route.path == '/ibclc-chat.html') {
           expect(find.text('IBCLC 在线咨询'), findsWidgets);
         } else if (route.path == '/media-viewer') {
@@ -486,9 +481,9 @@ void main() {
           'items': [
             {
               'id': 'f495db63-28a7-4b7d-a688-b294fab40226',
-              'plan_type': 'pregnancy',
-              'title': 'Pregnancy Plan',
-              'summary': 'Daily prenatal guidance',
+              'plan_type': 'yoga',
+              'title': 'Recovery Yoga Plan',
+              'summary': 'Postpartum recovery guidance',
               'status': 'active',
               'payload': <String, Object?>{},
             },
@@ -501,9 +496,9 @@ void main() {
               'plan_id': 'f495db63-28a7-4b7d-a688-b294fab40226',
               'task_date': '2026-07-01',
               'task_time': '08:00',
-              'title': 'Prenatal breathing practice',
+              'title': 'Gentle recovery practice',
               'status': 'pending',
-              'payload': {'activity_type': 'pregnancy'},
+              'payload': {'activity_type': 'yoga'},
             },
           ],
         },
@@ -535,7 +530,7 @@ void main() {
       final autoRun = extra['agentAutoRun']! as Map;
       expect(
         autoRun['requestMessage'],
-        'Guide me through "Prenatal breathing practice".',
+        'Guide me through "Gentle recovery practice".',
       );
       expect(autoRun['idempotencyKey'], 'plan-task-start:$taskId');
       expect(autoRun['metadata'], {'source': 'plan_task:$taskId'});
@@ -1508,331 +1503,6 @@ void main() {
       expect(completed['metadata'], containsPair('thread_id', 'thread-route'));
     });
 
-    testWidgets('hospital bag page syncs cart changes through repository', (
-      tester,
-    ) async {
-      final transport = FixtureApiJsonTransportByPath({
-        hospitalBagCartUpdateEndpoint: const {
-          'status': 200,
-          'data': {'message': '购物车已同步', 'synced_count': 17},
-        },
-      });
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/hospital-bag-cart'),
-          jsonTransport: transport,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('hospital-bag-item-count-chip')),
-        findsOneWidget,
-      );
-      expect(find.text('18 件'), findsOneWidget);
-      expect(find.textContaining('已含组合优惠'), findsOneWidget);
-      expect(find.text('产褥垫组合装'), findsOneWidget);
-
-      await tester.longPress(find.text('产褥垫组合装'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('购物车已同步'), findsOneWidget);
-      expect(find.text('17 件'), findsOneWidget);
-
-      final cartPayload =
-          transport.postedBodies.last['payload']! as Map<String, Object?>;
-      final items = List<Object?>.from(cartPayload['items']! as List);
-      expect(items, hasLength(17));
-      expect(
-        items.whereType<Map>().map((item) => item['id']),
-        isNot(contains('mom-pad')),
-      );
-    });
-
-    testWidgets('hospital bag page deletes items and restores defaults', (
-      tester,
-    ) async {
-      final transport = FixtureApiJsonTransportByPath({
-        hospitalBagCartUpdateEndpoint: const {
-          'id': 'cart-plan-001',
-          'owner_user_id': 'demo-user-fixture',
-          'plan_type': 'hospital_bag_cart',
-          'title': 'Hospital bag cart',
-          'summary': '清单已同步',
-          'status': 'active',
-          'source': 'flutter',
-          'payload': {
-            'items': <Object?>[
-              {'id': 'pump', 'title': '吸奶器和配件', 'packed': true},
-              {'id': 'pads', 'title': '产后护理用品', 'packed': false},
-            ],
-          },
-        },
-      });
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/hospital-bag-cart'),
-          jsonTransport: transport,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.longPress(find.text('产褥垫组合装'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('产褥垫组合装'), findsNothing);
-      expect(find.text('清单已同步'), findsOneWidget);
-
-      expect(transport.lastHeaders?['Idempotency-Key'], isNotEmpty);
-      expect(transport.postedBodies.last['user_id'], isNull);
-      expect(
-        transport.postedBodies.last,
-        containsPair('plan_type', 'hospital_bag_cart'),
-      );
-      final deletedPayload =
-          transport.postedBodies.last['payload']! as Map<String, Object?>;
-      final deletedItems = List<Object?>.from(deletedPayload['items']! as List);
-      expect(deletedItems, hasLength(17));
-      expect(
-        deletedItems.whereType<Map>().map((item) => item['id']),
-        isNot(contains('mom-pad')),
-      );
-
-      await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
-      await tester.pumpAndSettle();
-
-      await _scrollToText(tester, '产褥垫组合装');
-      expect(find.text('产褥垫组合装'), findsOneWidget);
-      final restoredPayload =
-          transport.postedBodies.last['payload']! as Map<String, Object?>;
-      final restoredItems = List<Object?>.from(
-        restoredPayload['items']! as List,
-      );
-      expect(restoredItems, hasLength(18));
-    });
-
-    testWidgets('hospital bag page handles sync failure and default restore', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/hospital-bag-cart'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            hospitalBagCartUpdateEndpoint: const {
-              'http_status': 500,
-              'status_text': 'Server Error',
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.longPress(find.text('产褥垫组合装'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('本地清单已更新，稍后重试同步。'), findsOneWidget);
-
-      await tester.pumpWidget(const SizedBox.shrink());
-      await tester.pumpAndSettle();
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/hospital-bag-cart'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            hospitalBagCartUpdateEndpoint: const {
-              'id': 'cart-plan-001',
-              'owner_user_id': 'demo-user-fixture',
-              'plan_type': 'hospital_bag_cart',
-              'title': 'Hospital bag cart',
-              'summary': '默认清单已恢复',
-              'status': 'active',
-              'source': 'flutter',
-              'payload': {
-                'items': <Object?>[
-                  {'id': 'pump', 'title': '吸奶器和配件', 'packed': true},
-                  {'id': 'pads', 'title': '产后护理用品', 'packed': true},
-                  {'id': 'baby', 'title': '宝宝衣物', 'packed': false},
-                ],
-              },
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.longPress(find.text('产褥垫组合装'));
-      await tester.pumpAndSettle();
-      expect(find.text('产褥垫组合装'), findsNothing);
-
-      await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
-      await tester.pumpAndSettle();
-
-      expect(find.text('默认清单已恢复'), findsOneWidget);
-      await _scrollToText(tester, '产褥垫组合装');
-      expect(find.text('产褥垫组合装'), findsOneWidget);
-    });
-
-    testWidgets(
-      'hospital bag page owns the artifact cart without default overwrite',
-      (tester) async {
-        final store = HospitalBagCartStore();
-        final cartId = store.ingestArtifact(
-          HospitalBagCartArtifactSeed.tryFromCartUpdate(
-            artifactId: 'personalized-page-cart',
-            cartUpdate: {
-              'groups': [
-                {
-                  'title': '我的清单',
-                  'tone': 'mint',
-                  'items': [
-                    {
-                      'id': 'custom-one',
-                      'name': '个性化用品 A',
-                      'desc': '准备删除',
-                      'qty': 1,
-                      'price': 88.0,
-                    },
-                    {
-                      'id': 'custom-two',
-                      'name': '个性化用品 B',
-                      'desc': '继续保留',
-                      'qty': 2,
-                      'price': 66.0,
-                    },
-                  ],
-                },
-              ],
-            },
-          )!,
-        );
-        final transport = FixtureApiJsonTransportByPath({
-          hospitalBagCartUpdateEndpoint: const {
-            'id': 'cart-plan-personalized',
-            'owner_user_id': 'demo-user-fixture',
-            'plan_type': 'hospital_bag_cart',
-            'title': 'Hospital bag cart',
-            'summary': '个性化清单已同步',
-            'status': 'active',
-            'source': 'flutter',
-            'payload': {'items': <Object?>[]},
-          },
-        });
-
-        await tester.pumpWidget(
-          _FeaturePageHost(
-            route: _route('/hospital-bag-cart'),
-            routeExtra: HospitalBagCartRouteState(cartId: cartId),
-            hospitalBagCartStore: store,
-            jsonTransport: transport,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(find.text('个性化用品 A'), findsOneWidget);
-        expect(find.text('个性化用品 B'), findsOneWidget);
-        expect(find.text('产褥垫组合装'), findsNothing);
-        expect(find.text('3 件'), findsOneWidget);
-
-        await tester.longPress(find.text('个性化用品 A'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('个性化用品 A'), findsNothing);
-        expect(find.text('个性化用品 B'), findsOneWidget);
-        expect(
-          store.snapshot(cartId).groups.single.items.single.id,
-          'custom-two',
-        );
-        final payload =
-            transport.postedBodies.last['payload']! as Map<String, Object?>;
-        final groups = payload['groups']! as List;
-        final items = (groups.single as Map)['items']! as List;
-        expect(items, hasLength(1));
-        expect((items.single as Map)['id'], 'custom-two');
-        expect((payload['totals'] as Map)['itemCount'], 2);
-
-        await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
-        await tester.pumpAndSettle();
-
-        expect(store.snapshot(cartId).totals.itemCount, 18);
-        await _scrollToText(tester, '产褥垫组合装');
-        expect(find.text('产褥垫组合装'), findsOneWidget);
-      },
-    );
-
-    testWidgets(
-      'hospital bag page follows an authoritative Agent cart update while open',
-      (tester) async {
-        final store = HospitalBagCartStore();
-        final initialCartId = store.ingestArtifact(
-          HospitalBagCartArtifactSeed.tryFromCartUpdate(
-            artifactId: 'initial-cart',
-            cartUpdate: {
-              'groups': [
-                {
-                  'title': '原始清单',
-                  'items': [
-                    {
-                      'id': 'original-item',
-                      'name': '原始用品',
-                      'qty': 1,
-                      'price': 299,
-                    },
-                  ],
-                },
-              ],
-            },
-          )!,
-        );
-
-        await tester.pumpWidget(
-          _FeaturePageHost(
-            route: _route('/hospital-bag-cart'),
-            routeExtra: HospitalBagCartRouteState(cartId: initialCartId),
-            hospitalBagCartStore: store,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(find.text('原始用品'), findsOneWidget);
-        expect(find.text('删减后保留用品'), findsNothing);
-
-        final updatedCartId = store.ingestArtifact(
-          HospitalBagCartArtifactSeed.tryFromCartUpdate(
-            artifactId: 'action:budget-update',
-            cartUpdate: {
-              'groups': [
-                {
-                  'title': '删减后的清单',
-                  'items': [
-                    {
-                      'id': 'kept-item',
-                      'name': '删减后保留用品',
-                      'qty': 1,
-                      'price': 99,
-                    },
-                  ],
-                },
-              ],
-            },
-          )!,
-        );
-        await tester.pump();
-
-        expect(store.activeCartId, updatedCartId);
-        expect(find.text('原始用品'), findsNothing);
-        expect(find.text('删减后保留用品'), findsOneWidget);
-        expect(
-          find.descendant(
-            of: find.byKey(const ValueKey('hospital-bag-item-count-chip')),
-            matching: find.text('1 件'),
-          ),
-          findsOneWidget,
-        );
-      },
-    );
-
     testWidgets('device subpages mirror reminder and user config routes', (
       tester,
     ) async {
@@ -1869,14 +1539,14 @@ void main() {
 
       expect(find.text('用户参数配置'), findsOneWidget);
       expect(find.text('用户名'), findsOneWidget);
-      expect(find.text('用户类型'), findsOneWidget);
+      expect(find.text('用户类型'), findsNothing);
       expect(
         find.byKey(const ValueKey('device-user-list-button')),
         findsOneWidget,
       );
       expect(
         find.byKey(const ValueKey('device-user-stage-menu-icon')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(find.text('删除用户'), findsOneWidget);
       expect(find.text('切换用户'), findsOneWidget);
@@ -1943,18 +1613,6 @@ Future<void> _tapScrollableText(WidgetTester tester, String text) async {
   await tester.tap(finder);
 }
 
-Future<void> _tapScrollableWidgetWithText(
-  WidgetTester tester,
-  Type widgetType,
-  String text,
-) async {
-  final finder = find.widgetWithText(widgetType, text);
-  await _scrollToFinder(tester, finder);
-  await tester.ensureVisible(finder);
-  await tester.pumpAndSettle();
-  await tester.tap(finder);
-}
-
 Future<void> _tapDeviceQuickMenuItem(WidgetTester tester, String label) async {
   await tester.tap(find.byTooltip('打开设备快捷菜单'));
   await tester.pumpAndSettle();
@@ -2013,7 +1671,6 @@ class _FeaturePageHost extends StatelessWidget {
     this.blePlatform,
     this.pumpProtocolPlatform,
     this.routeExtra,
-    this.hospitalBagCartStore,
     this.ibclcConsultStore,
     this.onLogout,
   });
@@ -2024,7 +1681,6 @@ class _FeaturePageHost extends StatelessWidget {
   final BlePlatform? blePlatform;
   final PumpProtocolPlatform? pumpProtocolPlatform;
   final Object? routeExtra;
-  final HospitalBagCartStore? hospitalBagCartStore;
   final IbclcConsultStore? ibclcConsultStore;
   final Future<void> Function()? onLogout;
 
@@ -2036,7 +1692,6 @@ class _FeaturePageHost extends StatelessWidget {
         jsonTransport: jsonTransport,
         blePlatform: blePlatform,
         pumpProtocolPlatform: pumpProtocolPlatform,
-        hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
       ),
       child: MaterialApp(
@@ -2118,7 +1773,6 @@ MomCozyApiRuntime _appRuntime({
   FixtureApiJsonTransportByPath? jsonTransport,
   BlePlatform? blePlatform,
   ProductAssetRepository? productAssetRepository,
-  HospitalBagCartStore? hospitalBagCartStore,
   IbclcConsultStore? ibclcConsultStore,
   String userId = 'demo-user-fixture',
 }) {
@@ -2128,7 +1782,6 @@ MomCozyApiRuntime _appRuntime({
         FixtureApiJsonTransportByPath({
           profileMeEndpoint: const <String, Object?>{
             'user_id': 'demo-user-fixture',
-            'current_care_stage': 'postpartum',
             'actual_delivery_date': '2026-06-11',
           },
           profileInfantsEndpoint: const <String, Object?>{
@@ -2226,7 +1879,6 @@ MomCozyApiRuntime _appRuntime({
         clientEventClient ?? const AgentStreamClientEventClient(sent: false),
     agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     productAssetRepository: productAssetRepository,
-    hospitalBagCartStore: hospitalBagCartStore,
     ibclcConsultStore: ibclcConsultStore,
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/mom_life_stage.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/maternal_care_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
@@ -36,18 +35,6 @@ class ProfileOverviewResource<T> {
   bool get isLoading => phase == OverviewResourcePhase.loading;
   bool get hasError => phase == OverviewResourcePhase.error;
   bool get isUnavailable => phase == OverviewResourcePhase.unavailable;
-}
-
-class CareStageSelectionState {
-  const CareStageSelectionState({
-    this.stage,
-    this.isResolved = false,
-    this.error,
-  });
-
-  final MomLifeStage? stage;
-  final bool isResolved;
-  final Object? error;
 }
 
 class RecordMutationState {
@@ -160,20 +147,6 @@ class ProfileOverviewController {
           ? const ProfileOverviewResource.initial()
           : ProfileOverviewResource.data(this.cache.planDashboard!.value),
     );
-    final cachedStage =
-        (extendedProductResourcesEnabled
-            ? this.cache.maternalCareOverview?.value.stage
-            : null) ??
-        this.cache.overview?.value.mom?.stage;
-    careStage = ValueNotifier<CareStageSelectionState>(
-      CareStageSelectionState(
-        stage: cachedStage,
-        isResolved:
-            this.cache.overview != null ||
-            (extendedProductResourcesEnabled &&
-                this.cache.maternalCareOverview != null),
-      ),
-    );
     recordMutation = ValueNotifier<RecordMutationState>(
       const RecordMutationState(),
     );
@@ -226,7 +199,6 @@ class ProfileOverviewController {
   late final ValueNotifier<ProfileOverviewResource<List<GrowthRecord>>>
   growthRecords;
   late final ValueNotifier<ProfileOverviewResource<PlanDashboard>> plans;
-  late final ValueNotifier<CareStageSelectionState> careStage;
   late final ValueNotifier<RecordMutationState> recordMutation;
 
   final Map<ProfileOverviewResourceKey, Future<void>> _activeResourceLoads = {};
@@ -404,21 +376,6 @@ class ProfileOverviewController {
             if (resolvedBabyId?.isNotEmpty == true) {
               _recordsBabyId = resolvedBabyId!;
             }
-            if (identity == ProfileIdentity.mom) {
-              careStage.value = CareStageSelectionState(
-                stage: value.mom?.stage,
-                isResolved: true,
-              );
-            }
-          },
-          onError: (error) {
-            if (identity == ProfileIdentity.mom) {
-              careStage.value = CareStageSelectionState(
-                stage: careStage.value.stage,
-                isResolved: careStage.value.isResolved,
-                error: error,
-              );
-            }
           },
         );
       case ProfileOverviewResourceKey.maternalCareOverview:
@@ -435,12 +392,6 @@ class ProfileOverviewController {
               value: value,
               fetchedAt: now(),
             );
-            if (identity == ProfileIdentity.mom && value.stage != null) {
-              careStage.value = CareStageSelectionState(
-                stage: value.stage,
-                isResolved: true,
-              );
-            }
           },
         );
       case ProfileOverviewResourceKey.feeding:
@@ -959,7 +910,6 @@ class ProfileOverviewController {
     diaperRecords.dispose();
     growthRecords.dispose();
     plans.dispose();
-    careStage.dispose();
     recordMutation.dispose();
   }
 }
