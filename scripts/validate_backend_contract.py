@@ -175,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         "backend-contract: validated "
         f"{len(smoke_flows.get('flows', []))} smoke flows against "
-        f"{len(service_paths[PRODUCT_SERVICE])} Product paths and "
+        f"{len(service_paths[PRODUCT_SERVICE])} Product Backend paths and "
         f"{len(service_paths[AGENT_RUNTIME_SERVICE])} Agent Runtime paths"
     )
     return 0
@@ -214,7 +214,7 @@ def _validate_service_boundaries(
     )
     for path in product_agent_paths:
         errors.append(
-            f"Product OpenAPI must not expose Agent Runtime path: {path}"
+            f"Product Backend OpenAPI must not expose Agent Runtime path: {path}"
         )
 
     runtime_exempt_paths = {"/v1/health/live", "/v1/health/ready"}
@@ -226,7 +226,7 @@ def _validate_service_boundaries(
     )
     for path in invalid_runtime_paths:
         errors.append(
-            f"Agent Runtime OpenAPI contains Product-owned path: {path}"
+            f"Agent Runtime OpenAPI contains Product Backend-owned path: {path}"
         )
     return errors
 

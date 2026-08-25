@@ -3,13 +3,12 @@
 ## 命令
 
 ```bash
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 make flutter-release-gate
 ```
 
-`example.test` 是文档占位域名，实际执行发布 gate 时必须替换为已验收的
-staging 服务地址。
+上述两个地址是当前 staging 的固定 SNI 入口；构建时必须同时显式提供。
 
 该 gate 会在仓库根目录顺序执行：
 
@@ -24,18 +23,18 @@ dart run tool/staging_smoke.dart
 node scripts/build-flutter-android-apk.mjs --mode debug --flavor local
 node scripts/build-flutter-android-apk.mjs --mode release --flavor staging \
   --dart-define=MOMCOZY_ENV=staging \
-  --dart-define=MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
+  --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 所有受支持的打包封装都会执行同一套 API 配置校验。`local` 缺省注入 Product
-`http://127.0.0.1:8769` 与 Agent `http://127.0.0.1:8010`；`staging` 和
+Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`staging` 和
 `production` 必须显式提供两个非空、非 loopback HTTPS URL，否则在运行
 Flutter/Gradle 前失败。可用下面的命令只检查 release gate 配置：
 
 ```bash
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 node scripts/run-flutter-release-gate.mjs --check-config
 ```
 
@@ -58,8 +57,8 @@ cd android
 ## 内测构建与发布
 
 ```bash
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 ./scripts/build-flutter-app.sh
 ```
 
@@ -70,8 +69,8 @@ GitHub Pages 极简下载页。APK 不进入 Git 历史。
 只生成本地产物、不上传：
 
 ```bash
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 MOMCOZY_SKIP_UPLOAD=1 ./scripts/build-flutter-app.sh
 ```
 
@@ -102,8 +101,8 @@ MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD
 强制要求 release signing：
 
 ```bash
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 MOMCOZY_REQUIRE_RELEASE_SIGNING=1 make flutter-release-gate
 ```
 
@@ -111,14 +110,20 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 make flutter-release-gate
 
 ## 内测证书信任
 
-当前内测包会在以下条件全部满足时加载随包证书：
+当前内测包会在以下条件全部满足时加载随包内部 CA：
 
 - `MOMCOZY_ENV=staging`
 - API 使用 `https`
-- API 主机为 `lute-momcozylab.luteos.cloud`
+- API 主机为 `backend-test.lute-momcozylab.luteos.cloud` 或
+  `agent-test.lute-momcozylab.luteos.cloud`
 - API 端口为 `8443`
 
-该方案只是将指定自签名证书加入 Dart 网络栈的信任根，不会关闭主机名、有效期或证书链校验，也不会影响 `local` 和 `production` 构建。证书有效期截至 2026-08-15；服务器证书续签或替换后，必须同步替换 `assets/certificates/lute-momcozylab-staging.pem` 并重新构建内测包。
+该方案只是将 `MomCozy Staging Internal CA` 加入 Dart 网络栈的信任根，不会关闭
+主机名、有效期或证书链校验，也不会影响 `local` 和 `production` 构建。服务端叶子
+证书必须包含两个新域名的 SAN。只要叶子证书仍由该 CA 签发，正常续签不要求重建
+App；CA 轮换时才需要替换
+`assets/certificates/momcozy-staging-internal-ca.pem` 并重新构建内测包。当前 CA
+有效期截至 2036-08-13。
 
 ## 当前边界
 

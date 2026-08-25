@@ -19,18 +19,22 @@ void main() {
     final enabled = await configureStagingCertificateTrust();
     expect(enabled, isTrue);
 
-    final client = HttpClient();
-    try {
-      final request = await client.getUrl(
-        Uri.parse('https://lute-momcozylab.luteos.cloud:8443/v1/health/live'),
-      );
-      final response = await request.close();
-      final body = await response.transform(utf8.decoder).join();
+    for (final host in stagingCertificateHosts) {
+      final client = HttpClient();
+      try {
+        final request = await client.getUrl(
+          Uri.parse('https://$host:8443/v1/health/live'),
+        );
+        final response = await request.close();
+        final body = await response.transform(utf8.decoder).join();
 
-      expect(response.statusCode, HttpStatus.ok);
-      expect(jsonDecode(body), <String, Object?>{'status': 'ok'});
-    } finally {
-      client.close(force: true);
+        expect(response.statusCode, HttpStatus.ok, reason: host);
+        expect(jsonDecode(body), <String, Object?>{
+          'status': 'ok',
+        }, reason: host);
+      } finally {
+        client.close(force: true);
+      }
     }
   });
 

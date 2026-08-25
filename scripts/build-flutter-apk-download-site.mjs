@@ -31,7 +31,7 @@ Environment:
                                 e.g. hensonzh/momcozy-lab-releases.
   MOMCOZY_APK_FLAVOR            local | staging | production. Default: staging
   MOMCOZY_APK_MODE              debug | release. Default: release
-  MOMCOZY_API_BASE_URL          Product API URL. Required outside local.
+  MOMCOZY_API_BASE_URL          Product Backend API URL. Required outside local.
   MOMCOZY_AGENT_API_BASE_URL    Agent Runtime API URL. Required outside local.
   MOMCOZY_APK_INPUT             Existing APK path. When set, skips Flutter build.
   MOMCOZY_SKIP_APK_BUILD        Set to 1 to use the expected APK output path without building.

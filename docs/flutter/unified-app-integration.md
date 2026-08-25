@@ -8,32 +8,33 @@ as an all-or-nothing winner.
 - Existing app baseline: `pre-merge-current-20260815`
 - MomCozyApp product baseline: `pre-merge-momcozyapp-20260815`
 - Integration branch: `integration/unified-app`
-- Product snapshot SHA-256: `6467b3007bd43009949fdcc0e8f8e61b66d44b74611c9afdf63d97af8fddcc72`
-- Agent Runtime snapshot SHA-256: `7feb27ebafd21dfcf69612678d81435e8cc89db14fbf2d6973b9945a5d4a7e7f`
+- Product Backend snapshot SHA-256: `71fd45937c95310798d626bd306ef940f36b4d5639aeb2582d89aba9471ceb57`
+- Agent Runtime snapshot SHA-256: `b98e8d9941e3b1926028f7dce94ad335457866e94b2dfdd3dd84610591b95ff9`
 
 The MomCozyApp tree owns the current product shell, visual design, new feature
 modules, motion assessment, media, Agent conversation UI, and native pose
 capabilities. The existing app baseline remains authoritative for deployed
-Product/Agent service boundaries and the Agent Runtime request/event contract.
+Product Backend and Agent Runtime service boundaries and the Agent Runtime
+request/event contract.
 
 ## Contract ownership
 
 | Boundary | Authority | App rule |
 | --- | --- | --- |
-| Product HTTP API | `product.openapi.generated.json` | Use `MOMCOZY_API_BASE_URL`. |
+| Product Backend HTTP API | `product.openapi.generated.json` | Use `MOMCOZY_API_BASE_URL`. |
 | Agent Runtime HTTP/SSE API | `agent-runtime.openapi.generated.json` | Use `MOMCOZY_AGENT_API_BASE_URL` for every `/v1/agent/*` request. |
 | Agent run creation | Agent Runtime snapshot | Send `runtime_pattern: proprietary_runtime` and typed attachment references. |
-| Authentication/session | Product API plus App secure store | Keep the atomic secure payload and one refresh coordinator. |
+| Authentication/session | Product Backend plus App secure store | Keep the atomic secure payload and one refresh coordinator. |
 | Product UI and routes | MomCozyApp | Keep `/status -> /me` and `/schedule -> /plan` compatibility redirects. |
 
 The old unified `openapi.generated.json` is intentionally removed. It hid
-service ownership and allowed Agent routes to be sent to the Product origin.
+service ownership and allowed Agent Runtime routes to be sent to the Product Backend origin.
 The frozen snapshots above are this App release's compatibility boundary;
 moving backend `main` branches are not silently substituted during App CI.
 
 ## Compatibility gates
 
-The Product backend snapshot does not yet expose every endpoint implemented by
+The Product Backend snapshot does not yet expose every endpoint implemented by
 the newer product UI. Unsupported launch-blocking behavior is therefore off by
 default and must be enabled explicitly after staging contract verification.
 

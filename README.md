@@ -2,6 +2,11 @@
 
 Production Flutter client for MomCozyApp.
 
+Human-facing documentation uses the canonical service names `Product Backend
+(backend/)` and `Agent Runtime (agent/)`. Existing build variables
+`MOMCOZY_API_BASE_URL` and `MOMCOZY_AGENT_API_BASE_URL` remain stable
+compatibility names.
+
 The Flutter application now lives directly at the repository root. Supporting
 documentation remains under `docs/`, automation under `scripts/`, and Flutter
 tests plus shared fixtures under `test/`.
@@ -53,8 +58,8 @@ flutter test
 flutter build apk --debug --flavor local
 flutter build apk --release --flavor staging \
   --dart-define=MOMCOZY_ENV=staging \
-  --dart-define=MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
+  --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 邀请码登录本地联调用父目录命令：
@@ -63,7 +68,8 @@ flutter build apk --release --flavor staging \
 make flutter-invite-dev
 ```
 
-该命令默认将 Product 和 Agent 分别连接到 `http://10.0.2.2:8000` 与
+该命令默认将 Product Backend 和 Agent Runtime 分别连接到
+`http://10.0.2.2:8000` 与
 `http://10.0.2.2:8010`，不会传入 `MOMCOZY_API_TOKEN` 或
 `MOMCOZY_REFRESH_TOKEN`，并会先清理 local flavor 安装包，确保进入邀请码登录页。
 如需覆盖模拟器或后端地址：
@@ -85,13 +91,13 @@ flutter run \
   --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user
 ```
 
-Product 请求始终使用 `MOMCOZY_API_BASE_URL`；所有 `/v1/agent/*` HTTP/SSE
-请求使用独立的 `MOMCOZY_AGENT_API_BASE_URL`。Android 真机不能使用
+Product Backend 请求始终使用 `MOMCOZY_API_BASE_URL`；所有 Agent Runtime
+`/v1/agent/*` HTTP/SSE 请求使用独立的 `MOMCOZY_AGENT_API_BASE_URL`。Android 真机不能使用
 `127.0.0.1` 访问电脑上的服务，需要改成手机可访问的局域网或公网地址；
 Android emulator 可使用 `10.0.2.2`。
 
 当前部署契约使用 `runtime_pattern: proprietary_runtime`。客户端不会把 Product
-和 Agent OpenAPI 合并成一个服务，也不会把 bearer token 放进 URL。
+Backend 和 Agent Runtime OpenAPI 合并成一个服务，也不会把 bearer token 放进 URL。
 
 Current Android package IDs:
 
@@ -103,7 +109,7 @@ Current Android package IDs:
 
 ## New-user onboarding
 
-Backend-driven onboarding is capability-gated while the split Product contract
+Onboarding driven by Product Backend is capability-gated while the split Product Backend contract
 is being rolled out. It is disabled by default, so a missing onboarding endpoint
 cannot block login or the main App shell. Enable it only in a compatible
 environment with `--dart-define=MOMCOZY_ENABLE_ONBOARDING=true`. When enabled,
@@ -140,7 +146,7 @@ available in staging:
   contract does not expose `GET /v1/agent/threads/{thread_id}/history` yet.
 - `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API=true` enables Body Profile and Motion
   Assessment routes and extended Me/Baby resources that depend on the extended
-  Product API. By default, the supported profile, feeding, growth, milk-trend,
+  Product Backend API. By default, the supported profile, feeding, growth, milk-trend,
   and plan data remains available while unsupported summaries show an explicit
   unavailable state.
 

@@ -7,32 +7,39 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('staging certificate trust', () {
-    test('only enables the exact staging HTTPS endpoint', () {
-      expect(
-        shouldEnableStagingCertificateTrust(
-          environment: 'staging',
-          apiBaseUri: Uri.parse('https://lute-momcozylab.luteos.cloud:8443'),
-        ),
-        isTrue,
-      );
+    test('only enables the two exact staging HTTPS endpoints', () {
+      for (final host in stagingCertificateHosts) {
+        expect(
+          shouldEnableStagingCertificateTrust(
+            environment: 'staging',
+            apiBaseUri: Uri.parse('https://$host:8443'),
+          ),
+          isTrue,
+          reason: host,
+        );
+      }
 
       for (final candidate in <({String environment, String apiBaseUrl})>[
         (
           environment: 'production',
-          apiBaseUrl: 'https://lute-momcozylab.luteos.cloud:8443',
+          apiBaseUrl: 'https://backend-test.lute-momcozylab.luteos.cloud:8443',
         ),
         (
           environment: 'local',
+          apiBaseUrl: 'https://agent-test.lute-momcozylab.luteos.cloud:8443',
+        ),
+        (
+          environment: 'staging',
           apiBaseUrl: 'https://lute-momcozylab.luteos.cloud:8443',
         ),
         (environment: 'staging', apiBaseUrl: 'https://api.example.test:8443'),
         (
           environment: 'staging',
-          apiBaseUrl: 'https://lute-momcozylab.luteos.cloud',
+          apiBaseUrl: 'https://backend-test.lute-momcozylab.luteos.cloud',
         ),
         (
           environment: 'staging',
-          apiBaseUrl: 'http://lute-momcozylab.luteos.cloud:8443',
+          apiBaseUrl: 'http://backend-test.lute-momcozylab.luteos.cloud:8443',
         ),
       ]) {
         expect(
@@ -52,7 +59,7 @@ void main() {
 
       final enabled = await configureStagingCertificateTrust(
         environment: 'production',
-        apiBaseUrl: 'https://lute-momcozylab.luteos.cloud:8443',
+        apiBaseUrl: 'https://backend-test.lute-momcozylab.luteos.cloud:8443',
         certificateLoader: (_) async {
           loaderCalled = true;
           throw StateError('certificate must not be loaded');
@@ -72,7 +79,7 @@ void main() {
 
         final enabled = await configureStagingCertificateTrust(
           environment: 'staging',
-          apiBaseUrl: 'https://lute-momcozylab.luteos.cloud:8443',
+          apiBaseUrl: 'https://backend-test.lute-momcozylab.luteos.cloud:8443',
           securityContextInstaller: (context) => installedContext = context,
         );
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { X509Certificate } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,6 +11,9 @@ const read = (relativePath) =>
   readFileSync(path.join(projectRoot, relativePath), "utf8");
 
 const failures = [];
+const stagingCaPath = "assets/certificates/momcozy-staging-internal-ca.pem";
+const stagingCaFingerprint =
+  "B2:1B:37:43:4D:40:47:DC:83:FE:B9:E0:DB:E7:F7:D7:C2:55:81:E9:4A:AB:0B:18:AE:63:AF:1C:E5:D1:9F:78";
 
 const requireContains = (relativePath, needle, description) => {
   if (!read(relativePath).includes(needle)) {
@@ -43,6 +47,37 @@ requireContains(
   "normalized == 'message'",
   "Log redactor must redact free-form message content",
 );
+requireContains(
+  "lib/core/network/staging_certificate_trust.dart",
+  "backend-test.lute-momcozylab.luteos.cloud",
+  "Staging trust must allow the Product Backend SNI host",
+);
+requireContains(
+  "lib/core/network/staging_certificate_trust.dart",
+  "agent-test.lute-momcozylab.luteos.cloud",
+  "Staging trust must allow the Agent Runtime SNI host",
+);
+requireContains(
+  "lib/core/network/staging_certificate_trust.dart",
+  stagingCaPath,
+  "Staging trust must load the internal CA asset",
+);
+forbidContains(
+  "lib/core/network/staging_certificate_trust.dart",
+  "lute-momcozylab-staging.pem",
+  "Staging trust must not load the retired leaf certificate",
+);
+
+const stagingCa = new X509Certificate(read(stagingCaPath));
+if (!stagingCa.ca) {
+  failures.push(`${stagingCaPath} must be a CA certificate`);
+}
+if (stagingCa.fingerprint256 !== stagingCaFingerprint) {
+  failures.push(`${stagingCaPath} fingerprint does not match the reviewed CA`);
+}
+if (Date.parse(stagingCa.validTo) <= Date.now()) {
+  failures.push(`${stagingCaPath} is expired`);
+}
 
 if (failures.length > 0) {
   console.error("Flutter security privacy check failed:");

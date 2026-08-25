@@ -18,12 +18,12 @@ gh auth login
 然后执行：
 
 ```bash
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 ./scripts/build-flutter-app.sh
 ```
 
-上面的 `example.test` 仅表示占位地址，发布前必须替换为已验收的真实服务地址。
+上面的两个地址是当前 staging 已配置的固定 SNI 服务地址。
 
 默认配置：
 
@@ -34,16 +34,16 @@ Variant:   staging release
 ```
 
 `staging` 和 `production` 没有 API 默认值：必须显式提供两个非空、非
-loopback 的 HTTPS 地址，即 Product `MOMCOZY_API_BASE_URL` 与 Agent
-Runtime `MOMCOZY_AGENT_API_BASE_URL`。两者可以使用同一主机，但仍必须分别配置。
-`local` 构建缺省使用 Product `http://127.0.0.1:8769` 和 Agent
+loopback 的 HTTPS 地址，即 Product Backend `MOMCOZY_API_BASE_URL` 与 Agent
+Runtime `MOMCOZY_AGENT_API_BASE_URL`。两者必须分别配置。
+`local` 构建缺省使用 Product Backend `http://127.0.0.1:8769` 和 Agent Runtime
 `http://127.0.0.1:8010`。
 
 只校验配置、不安装依赖或启动构建：
 
 ```bash
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 ./scripts/build-flutter-app.sh --check-config
 ```
 
@@ -65,8 +65,8 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
 以下 staging 示例假定已经导出两个 API 环境变量：
 
 ```bash
-export MOMCOZY_API_BASE_URL=https://product-staging.example.test
-export MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
+export MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443
+export MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 ```bash
@@ -91,8 +91,8 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 \
 ```bash
 MOMCOZY_GITHUB_RELEASE_REPO=hensonzh/momcozy-lab-releases \
 MOMCOZY_DOWNLOAD_BASE_URL=https://hensonzh.github.io/momcozy-lab-releases \
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 make flutter-apk-download-site
 ```
 

@@ -153,7 +153,7 @@ const flutterArgs = [
 
 console.log(`Starting Flutter invite-login dev app on ${deviceId}`);
 console.log(`Backend API: ${apiBaseUrl}`);
-console.log(`Agent API: ${agentApiBaseUrl}`);
+console.log(`Agent Runtime API: ${agentApiBaseUrl}`);
 console.log("No bootstrap API token will be passed; the app should open the invite login page.");
 
 const result = spawnSync("flutter", flutterArgs, {

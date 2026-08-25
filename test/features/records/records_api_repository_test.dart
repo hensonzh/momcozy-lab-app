@@ -854,7 +854,7 @@ void main() {
     });
 
     test(
-      'write adapters stay within the frozen Product OpenAPI schemas',
+      'write adapters stay within the frozen Product Backend OpenAPI schemas',
       () async {
         final schemas = _productSchemas();
         final feedingTransport = FixtureApiJsonTransport({
