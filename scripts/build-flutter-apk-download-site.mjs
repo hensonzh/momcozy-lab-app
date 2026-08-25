@@ -29,7 +29,7 @@ Environment:
                                 Default: ${defaultBaseUrl}
   MOMCOZY_GITHUB_RELEASE_REPO   Public GitHub repository used for APK release assets,
                                 e.g. hensonzh/momcozy-lab-releases.
-  MOMCOZY_APK_FLAVOR            local | staging | production. Default: staging
+  MOMCOZY_APK_FLAVOR            local | staging | unified | production. Default: unified
   MOMCOZY_APK_MODE              debug | release. Default: release
   MOMCOZY_API_BASE_URL          Product Backend API URL. Required outside local.
   MOMCOZY_AGENT_API_BASE_URL    Agent Runtime API URL. Required outside local.
@@ -43,8 +43,9 @@ Environment:
   process.exit(0);
 }
 
-const flavor = envText("MOMCOZY_APK_FLAVOR", "staging");
+const flavor = envText("MOMCOZY_APK_FLAVOR", "unified");
 const mode = envText("MOMCOZY_APK_MODE", "release");
+const runtimeEnvironment = flavor === "unified" ? "staging" : flavor;
 let dartDefines;
 try {
   assertMode(mode);
@@ -90,9 +91,20 @@ const apkInput = envText("MOMCOZY_APK_INPUT", "");
 const skipBuild = envFlag("MOMCOZY_SKIP_APK_BUILD");
 const buildApkPath =
   apkInput || path.join(flutterAppDir, "build", "app", "outputs", "flutter-apk", `app-${flavor}-${mode}.apk`);
-const artifactName = `momcozy-android-${flavor}-${version.versionName}-${version.buildNumber}.apk`;
+const artifactName =
+  flavor === "unified"
+    ? `momcozy-unified-android-staging-${version.versionName}-${version.buildNumber}.apk`
+    : `momcozy-android-${flavor}-${version.versionName}-${version.buildNumber}.apk`;
 const artifactPath = path.join(releaseDir, artifactName);
-const githubReleaseTag = `android-v${version.versionName}-${version.buildNumber}`;
+const provenanceFile = `${artifactName}.provenance.json`;
+const githubReleaseTag =
+  flavor === "unified"
+    ? `unified-android-v${version.versionName}-${version.buildNumber}`
+    : `android-v${version.versionName}-${version.buildNumber}`;
+const sourceServices = {
+  productBackend: releaseServiceIdentity("MOMCOZY_BACKEND"),
+  agentRuntime: releaseServiceIdentity("MOMCOZY_AGENT"),
+};
 
 assertGithubReleaseRepo(githubReleaseRepo);
 checkReleaseSigning({ mode });
@@ -117,7 +129,10 @@ const apkBytes = await readFile(artifactPath);
 const apkInfo = await stat(artifactPath);
 const sha256 = crypto.createHash("sha256").update(apkBytes).digest("hex");
 const generatedAt = new Date().toISOString();
-const gitCommit = gitShortHead();
+const gitCommit = gitHead();
+const signingCertSha256 = optionalSha256(
+  "MOMCOZY_APK_SIGNING_CERT_SHA256",
+);
 const apkPath = `releases/${artifactName}`;
 const apkUrl = githubReleaseRepo
   ? `https://github.com/${githubReleaseRepo}/releases/download/${githubReleaseTag}/${artifactName}`
@@ -128,6 +143,7 @@ const manifest = {
   app: qrLabel,
   platform: "android",
   flavor,
+  runtimeEnvironment,
   mode,
   versionName: version.versionName,
   buildNumber: version.buildNumber,
@@ -142,11 +158,20 @@ const manifest = {
   sizeBytes: apkInfo.size,
   generatedAt,
   gitCommit,
+  signingCertSha256,
   githubReleaseRepo: githubReleaseRepo || null,
   githubReleaseTag: githubReleaseRepo ? githubReleaseTag : null,
+  provenanceFile,
+  sourceServices,
 };
 
+const { generatedAt: _generatedAt, ...immutableProvenance } = manifest;
+
 await writeFile(path.join(releaseDir, `${artifactName}.sha256`), `${sha256}  ${artifactName}\n`);
+await writeFile(
+  path.join(releaseDir, provenanceFile),
+  JSON.stringify(immutableProvenance, null, 2) + "\n",
+);
 await writeFile(
   path.join(assetDir, qrFileName),
   renderQrCodeSvg(apkUrl, qrLabel),
@@ -166,7 +191,7 @@ console.log(`SHA256: ${sha256}`);
 function buildApk({ flavor, mode, dartDefines }) {
   const env = buildToolchainEnv();
   const buildDartDefines = [
-    `MOMCOZY_ENV=${flavor}`,
+    `MOMCOZY_ENV=${runtimeEnvironment}`,
     ...dartDefines,
   ];
   const args = [
@@ -377,12 +402,21 @@ function escapeXml(value) {
   return escapeHtml(value).replace(/'/g, "&apos;");
 }
 
-function gitShortHead() {
-  const result = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
+function gitHead() {
+  const result = spawnSync("git", ["rev-parse", "HEAD"], {
     cwd: projectRoot,
     encoding: "utf8",
   });
   return result.status === 0 ? result.stdout.trim() : "";
+}
+
+function optionalSha256(name) {
+  const value = envText(name, "");
+  if (!value) return null;
+  if (!/^[0-9a-f]{64}$/.test(value)) {
+    throw new Error(`${name} must be 64 lowercase hex characters.`);
+  }
+  return value;
 }
 
 function checkReleaseSigning({ mode }) {
@@ -428,7 +462,7 @@ function assertMode(value) {
 }
 
 function assertFlavor(value) {
-  if (!["local", "staging", "production"].includes(value)) {
+  if (!["local", "staging", "unified", "production"].includes(value)) {
     throw new Error(`Unsupported MOMCOZY_APK_FLAVOR: ${value}`);
   }
 }
@@ -437,6 +471,25 @@ function assertGithubReleaseRepo(value) {
   if (value && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(value)) {
     throw new Error(`Invalid MOMCOZY_GITHUB_RELEASE_REPO: ${value}`);
   }
+}
+
+function releaseServiceIdentity(prefix) {
+  const values = {
+    commit: envText(`${prefix}_COMMIT_SHA`, ""),
+    imageDigest: envText(`${prefix}_IMAGE_DIGEST`, ""),
+    openapiSha256: envText(`${prefix}_OPENAPI_SHA256`, ""),
+  };
+  if (Object.values(values).every((value) => !value)) return null;
+  if (!/^[0-9a-f]{40}$/.test(values.commit)) {
+    throw new Error(`${prefix}_COMMIT_SHA must be a full lowercase commit SHA.`);
+  }
+  if (!/^sha256:[0-9a-f]{64}$/.test(values.imageDigest)) {
+    throw new Error(`${prefix}_IMAGE_DIGEST must be a sha256 digest.`);
+  }
+  if (!/^[0-9a-f]{64}$/.test(values.openapiSha256)) {
+    throw new Error(`${prefix}_OPENAPI_SHA256 must be 64 lowercase hex characters.`);
+  }
+  return values;
 }
 
 function expandHome(value) {

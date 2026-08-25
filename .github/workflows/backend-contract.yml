@@ -46,6 +46,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install build-script dependencies
+        run: npm ci --ignore-scripts
+
       - name: Test contract and release config validators
         run: python3 -m unittest discover -s scripts/tests -p 'test_*.py'
 

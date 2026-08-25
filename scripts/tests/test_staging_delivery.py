@@ -1,0 +1,195 @@
+import hashlib
+import json
+import os
+import re
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[2]
+APP_CI = ROOT / ".github" / "workflows" / "app-ci.yml"
+STAGING_RELEASE = ROOT / ".github" / "workflows" / "app-staging-release.yml"
+
+
+class StagingDeliveryContractTest(unittest.TestCase):
+    def test_unified_flavor_is_install_and_publish_isolated(self) -> None:
+        gradle = (ROOT / "android" / "app" / "build.gradle.kts").read_text()
+        packaging = (ROOT / "scripts" / "check-flutter-android-packaging.mjs").read_text()
+        pubspec = (ROOT / "pubspec.yaml").read_text()
+
+        self.assertRegex(
+            gradle,
+            r'create\("unified"\)[\s\S]*applicationIdSuffix = "\.unified"',
+        )
+        self.assertIn("android/app/src/unified/res/values/strings.xml", packaging)
+        version_match = re.search(r"^version:\s*[^+\s]+\+(\d+)$", pubspec, re.MULTILINE)
+        self.assertIsNotNone(version_match)
+        self.assertGreaterEqual(int(version_match.group(1)), 56)
+
+    def test_unified_api_config_uses_staging_network_rules(self) -> None:
+        env = os.environ.copy()
+        env.update(
+            {
+                "MOMCOZY_APK_FLAVOR": "unified",
+                "MOMCOZY_API_BASE_URL": "https://backend.example.test:8443",
+                "MOMCOZY_AGENT_API_BASE_URL": "https://agent.example.test:8443",
+            }
+        )
+        result = subprocess.run(
+            ["bash", "scripts/build-flutter-app.sh", "--check-config"],
+            cwd=ROOT,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Variant:     unified release", result.stdout)
+
+    def test_publish_script_never_clobbers_and_only_writes_unified_namespace(self) -> None:
+        script = (ROOT / "scripts" / "build-flutter-app.sh").read_text()
+        packager = (
+            ROOT / "scripts" / "build-flutter-apk-download-site.mjs"
+        ).read_text()
+
+        self.assertNotIn("--clobber", script)
+        self.assertIn("MOMCOZY_APK_INPUT", script + packager)
+        self.assertIn("unified-android-v", packager)
+        self.assertIn("momcozy-unified-android-staging", packager)
+        self.assertIn('pages_namespace="unified"', script)
+        self.assertNotIn('"${pages_checkout}/index.html"', script)
+
+    def test_prebuilt_unified_apk_manifest_records_runtime_and_service_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary_path = Path(temporary)
+            apk_input = temporary_path / "verified.apk"
+            apk_input.write_bytes(b"verified-unified-apk")
+            dist = temporary_path / "dist"
+            env = os.environ.copy()
+            env.update(
+                {
+                    "MOMCOZY_APK_FLAVOR": "unified",
+                    "MOMCOZY_APK_MODE": "release",
+                    "MOMCOZY_APK_INPUT": str(apk_input),
+                    "MOMCOZY_DOWNLOAD_DIST": str(dist),
+                    "MOMCOZY_DOWNLOAD_BASE_URL": "https://download.example.test/unified",
+                    "MOMCOZY_GITHUB_RELEASE_REPO": "example/releases",
+                    "MOMCOZY_API_BASE_URL": "https://backend.example.test:8443",
+                    "MOMCOZY_AGENT_API_BASE_URL": "https://agent.example.test:8443",
+                    "MOMCOZY_BACKEND_COMMIT_SHA": "a" * 40,
+                    "MOMCOZY_BACKEND_IMAGE_DIGEST": "sha256:" + "b" * 64,
+                    "MOMCOZY_BACKEND_OPENAPI_SHA256": "c" * 64,
+                    "MOMCOZY_AGENT_COMMIT_SHA": "d" * 40,
+                    "MOMCOZY_AGENT_IMAGE_DIGEST": "sha256:" + "e" * 64,
+                    "MOMCOZY_AGENT_OPENAPI_SHA256": "f" * 64,
+                    "MOMCOZY_APK_SIGNING_CERT_SHA256": "1" * 64,
+                }
+            )
+            env.pop("MOMCOZY_REQUIRE_RELEASE_SIGNING", None)
+
+            result = subprocess.run(
+                ["node", "scripts/build-flutter-apk-download-site.mjs"],
+                cwd=ROOT,
+                env=env,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            manifest = json.loads((dist / "manifest.json").read_text())
+            self.assertEqual(manifest["flavor"], "unified")
+            self.assertEqual(manifest["runtimeEnvironment"], "staging")
+            self.assertEqual(
+                manifest["githubReleaseTag"], "unified-android-v1.0.0-56"
+            )
+            self.assertEqual(
+                manifest["apkFile"],
+                "momcozy-unified-android-staging-1.0.0-56.apk",
+            )
+            self.assertEqual(
+                manifest["sha256"], hashlib.sha256(apk_input.read_bytes()).hexdigest()
+            )
+            self.assertEqual(
+                manifest["sourceServices"]["productBackend"]["commit"],
+                "a" * 40,
+            )
+            self.assertEqual(
+                manifest["sourceServices"]["agentRuntime"]["imageDigest"],
+                "sha256:" + "e" * 64,
+            )
+            self.assertEqual(manifest["signingCertSha256"], "1" * 64)
+            self.assertRegex(manifest["gitCommit"], r"^[0-9a-f]{40}$")
+            provenance = json.loads(
+                (dist / "releases" / manifest["provenanceFile"]).read_text()
+            )
+            self.assertNotIn("generatedAt", provenance)
+            self.assertEqual(provenance["sha256"], manifest["sha256"])
+            self.assertEqual(
+                provenance["sourceServices"], manifest["sourceServices"]
+            )
+
+    def test_app_ci_runs_flutter_gates_and_builds_a_staging_shaped_artifact(self) -> None:
+        workflow = APP_CI.read_text()
+
+        for required in (
+            "flutter-version: 3.44.4",
+            "dart format --output=none --set-exit-if-changed",
+            "flutter analyze --no-pub",
+            "flutter test --no-pub",
+            "--flavor unified",
+            "actions/upload-artifact@",
+        ):
+            self.assertIn(required, workflow)
+
+    def test_staging_release_requires_signing_live_join_and_prebuilt_publication(self) -> None:
+        workflow = STAGING_RELEASE.read_text()
+
+        for required in (
+            "workflow_dispatch:",
+            "name: staging",
+            "group: momcozy-lab-app-staging",
+            "MOMCOZY_REQUIRE_RELEASE_SIGNING: \"1\"",
+            "MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER: \"1\"",
+            "MOMCOZY_STAGING_SMOKE: \"1\"",
+            "MOMCOZY_STAGING_SMOKE_AGENT: \"1\"",
+            "MOMCOZY_APK_FLAVOR: unified",
+            "MOMCOZY_APK_INPUT",
+            "backend_openapi_sha256",
+            "agent_openapi_sha256",
+            "sha256sum",
+            "provenanceFile",
+        ):
+            self.assertIn(required, workflow)
+
+    def test_release_gate_fails_closed_when_live_join_is_required_but_disabled(self) -> None:
+        env = os.environ.copy()
+        env.update(
+            {
+                "MOMCOZY_APK_FLAVOR": "unified",
+                "MOMCOZY_API_BASE_URL": "https://backend.example.test:8443",
+                "MOMCOZY_AGENT_API_BASE_URL": "https://agent.example.test:8443",
+                "MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER": "1",
+            }
+        )
+        env.pop("MOMCOZY_STAGING_SMOKE", None)
+        env.pop("MOMCOZY_STAGING_SMOKE_AGENT", None)
+
+        result = subprocess.run(
+            ["node", "scripts/run-flutter-release-gate.mjs", "--check-config"],
+            cwd=ROOT,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("MOMCOZY_STAGING_SMOKE", result.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -16,20 +16,20 @@ make flutter-release-gate
 node scripts/check-flutter-android-packaging.mjs
 node scripts/check-flutter-security-privacy.mjs
 flutter pub get
-dart format --set-exit-if-changed lib test integration_test tool
+dart format --output=none --set-exit-if-changed lib test integration_test tool
 flutter analyze
 flutter test
 dart run tool/staging_smoke.dart
 node scripts/build-flutter-android-apk.mjs --mode debug --flavor local
-node scripts/build-flutter-android-apk.mjs --mode release --flavor staging \
+node scripts/build-flutter-android-apk.mjs --mode release --flavor unified \
   --dart-define=MOMCOZY_ENV=staging \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 所有受支持的打包封装都会执行同一套 API 配置校验。`local` 缺省注入 Product
-Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`staging` 和
-`production` 必须显式提供两个非空、非 loopback HTTPS URL，否则在运行
+Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`staging`、
+`unified` 和 `production` 必须显式提供两个非空、非 loopback HTTPS URL，否则在运行
 Flutter/Gradle 前失败。可用下面的命令只检查 release gate 配置：
 
 ```bash
@@ -39,6 +39,9 @@ node scripts/run-flutter-release-gate.mjs --check-config
 ```
 
 `tool/staging_smoke.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
+受保护的 staging 发布还设置 `MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER=1`，此时
+`MOMCOZY_STAGING_SMOKE` 和 `MOMCOZY_STAGING_SMOKE_AGENT` 必须同时为 `1`，否则
+即使使用 `--check-config` 也会 fail closed。
 
 `scripts/build-flutter-android-apk.mjs` 在构建 release APK 前会执行 `flutter clean` 和 `flutter pub get`，避免分发包复用上一源码版本的 AOT 快照。debug 构建仍保留增量构建以缩短本地开发反馈时间。
 
@@ -62,9 +65,11 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 ./scripts/build-flutter-app.sh
 ```
 
-该脚本默认将 APK 和 SHA256 文件上传到公开仓库
+该脚本默认构建 `unified` flavor，并将 APK、SHA256 和 immutable provenance JSON
+上传到公开仓库
 `hensonzh/momcozy-lab-releases` 的 GitHub Release，并更新同仓库的
-GitHub Pages 极简下载页。APK 不进入 Git 历史。
+GitHub Pages `/unified/` 下载页。APK 不进入 Git 历史。已存在的 release tag
+只能接受三份文件逐字一致，脚本不会覆盖资产。
 
 只生成本地产物、不上传：
 
@@ -83,6 +88,7 @@ MOMCOZY_SKIP_UPLOAD=1 ./scripts/build-flutter-app.sh
 |---|---|---|
 | `local` | `com.momcozymai.app.flutterpoc.local` | 本地开发和 debug smoke。 |
 | `staging` | `com.momcozymai.app.flutterpoc.staging` | 后端 staging / internal distribution smoke。 |
+| `unified` | `com.momcozymai.app.flutterpoc.unified` | 受保护的内测分发；安装身份独立，runtime 使用 staging。 |
 | `production` | `com.momcozymai.app.flutterpoc` | Flutter production-shaped artifact；包名变更须经过独立发布审批。 |
 
 ## Release Signing

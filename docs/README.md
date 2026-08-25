@@ -13,6 +13,7 @@
 ## 常用入口
 
 - Flutter Android 打包策略：`flutter/android-packaging.md`
+- Flutter CI/CD 与 staging 发布：`flutter/ci-cd.md`
 - Android APK GitHub Releases 分发：`flutter/android-apk-github-releases.md`
 - Flutter 发布 gate：`flutter/release-gate.md`
 - Flutter 安全隐私 gate：`flutter/security-privacy-gates.md`

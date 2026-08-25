@@ -44,9 +44,10 @@ make flutter-emulator-smoke
 Pinned versions live in [`flutter-toolchain.json`](flutter-toolchain.json);
 `make flutter-check` validates the local SDK/JDK/Android directories and versions against that file.
 `make flutter-release-gate` runs the non-device release gate: format, analyze,
-tests, staging smoke harness, local debug APK, and staging release APK. It
+tests, staging smoke harness, local debug APK, and unified release APK. It
 requires explicit HTTPS, non-loopback `MOMCOZY_API_BASE_URL` and
-`MOMCOZY_AGENT_API_BASE_URL` values for the staging artifact.
+`MOMCOZY_AGENT_API_BASE_URL` values. The unified flavor is an isolated install
+identity whose runtime environment remains staging.
 `make flutter-emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `build/emulator-smoke/`, and checks the process/window/crash log.
 
 Direct Flutter commands also run from the repository root:
@@ -56,7 +57,7 @@ flutter pub get
 flutter analyze
 flutter test
 flutter build apk --debug --flavor local
-flutter build apk --release --flavor staging \
+flutter build apk --release --flavor unified \
   --dart-define=MOMCOZY_ENV=staging \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
@@ -103,9 +104,11 @@ Current Android package IDs:
 
 - `local` applicationId: `com.momcozymai.app.flutterpoc.local`
 - `staging` applicationId: `com.momcozymai.app.flutterpoc.staging`
+- `unified` applicationId: `com.momcozymai.app.flutterpoc.unified`
 - `production` applicationId: `com.momcozymai.app.flutterpoc`
 - Packaging policy: [docs/flutter/android-packaging.md](docs/flutter/android-packaging.md)
 - Release gate: [docs/flutter/release-gate.md](docs/flutter/release-gate.md)
+- CI/CD: [docs/flutter/ci-cd.md](docs/flutter/ci-cd.md)
 
 ## New-user onboarding
 
@@ -131,7 +134,7 @@ only when **both** `MOMCOZY_ENABLE_ONBOARDING=true` and
 `MOMCOZY_ENABLE_RELEASE_RESET=true` are supplied as `--dart-define` values.
 Enabling the reset flag alone has no effect. With both flags enabled, startup
 compares the installed runtime version and build number (for example
-`1.0.0+55`) with the last launched release. A changed release clears the local
+`1.0.0+56`) with the last launched release. A changed release clears the local
 session, all user-scoped secure storage, generated-card/product media caches,
 and prior onboarding completion markers while preserving the device ID and
 last invite code. After the user signs in, the App performs the matching

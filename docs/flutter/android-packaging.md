@@ -2,23 +2,24 @@
 
 ## 当前策略
 
-当前 Flutter 客户端保持既有 appId，并通过 flavor 隔离 local、staging 和 production-shaped 构建。
+当前 Flutter 客户端保持既有 production-shaped appId，并通过 flavor 隔离 local、staging、unified 和 production-shaped 构建。
 
 | 项目 | 当前值 |
 | --- | --- |
 | Flutter local appId | `com.momcozymai.app.flutterpoc.local` |
 | Flutter staging appId | `com.momcozymai.app.flutterpoc.staging` |
+| Flutter unified appId | `com.momcozymai.app.flutterpoc.unified` |
 | Flutter production-shaped appId | `com.momcozymai.app.flutterpoc` |
 | Flutter namespace | `com.momcozymai.momcozy_flutter_app` |
-| App label | 当前三个 flavor 统一为 `Momcozy Lab`；安装隔离仍由 appId 保证。 |
+| App label | 当前四个 flavor 统一为 `Momcozy Lab`；安装隔离仍由 appId 保证。 |
 | Debug signing | 使用 Android debug keystore，仅用于本机和真机 smoke。 |
 | Release signing | 通过环境变量注入；未注入时 release build 使用 debug signing，仅允许作为本地 smoke artifact。 |
-| Gradle flavor | 已启用 `local`、`staging`、`production` 三个 flavor。 |
+| Gradle flavor | 已启用 `local`、`staging`、`unified`、`production` 四个 flavor。 |
 
 ## 为什么当前 appId 保持不变
 
 - 避免未规划的包迁移破坏用户已安装数据、通知、权限和 BLE 绑定状态。
-- local、staging 和 production flavor 仍有清晰的安装与发布边界。
+- local、staging、unified 和 production flavor 仍有清晰的安装与发布边界。
 
 ## Flavor 矩阵
 
@@ -27,6 +28,7 @@
 ```text
 local: 本地开发和 debug smoke，独立 appId。
 staging: 后端 staging / internal distribution smoke，独立 appId。
+unified: 受保护内测分发，独立 appId；网络和证书 runtime 固定为 staging。
 production: production-shaped artifact；保持当前基础 appId。
 ```
 
@@ -42,14 +44,14 @@ production: production-shaped artifact；保持当前基础 appId。
 
 ## AppId / Deep Link / FileProvider 矩阵
 
-| 项目 | Flutter local | Flutter staging | Flutter production-shaped |
-| --- | --- | --- | --- |
-| Application ID | `com.momcozymai.app.flutterpoc.local` | `com.momcozymai.app.flutterpoc.staging` | `com.momcozymai.app.flutterpoc` |
-| Launcher label | `Momcozy Lab` | `Momcozy Lab` | `Momcozy Lab` |
-| Deep link / custom scheme | 未声明 | 未声明 | 未声明 |
-| FileProvider authority | 未声明 | 未声明 | 未声明 |
-| Notification owner | Flutter foreground service notification，独立 appId scope | 同左 | 同左 |
-| 数据作用域 | flavor 独立安装与存储 | 同左 | production scope |
+| 项目 | Flutter local | Flutter staging | Flutter unified | Flutter production-shaped |
+| --- | --- | --- | --- | --- |
+| Application ID | `com.momcozymai.app.flutterpoc.local` | `com.momcozymai.app.flutterpoc.staging` | `com.momcozymai.app.flutterpoc.unified` | `com.momcozymai.app.flutterpoc` |
+| Launcher label | `Momcozy Lab` | `Momcozy Lab` | `Momcozy Lab` | `Momcozy Lab` |
+| Deep link / custom scheme | 未声明 | 未声明 | 未声明 | 未声明 |
+| FileProvider authority | 未声明 | 未声明 | 未声明 | 未声明 |
+| Notification owner | Flutter foreground service notification，独立 appId scope | 同左 | 同左 | 同左 |
+| 数据作用域 | flavor 独立安装与存储 | 同左 | 同左 | production scope |
 
 静态校验命令：
 
@@ -83,7 +85,7 @@ Android 构建继续使用固定版本的 MediaPipe Pose Landmarker Lite 模型�
 MOMCOZY_POSE_MODEL_FILE=/absolute/path/to/pose_landmarker_lite.task \
   node scripts/build-flutter-android-apk.mjs \
     --mode release \
-    --flavor staging \
+    --flavor unified \
     --dart-define=MOMCOZY_ENV=staging \
     --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
     --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
@@ -110,7 +112,7 @@ node scripts/build-flutter-android-apk.mjs \
 
 node scripts/build-flutter-android-apk.mjs \
   --mode release \
-  --flavor staging \
+  --flavor unified \
   --dart-define=MOMCOZY_ENV=staging \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
@@ -118,12 +120,12 @@ node scripts/build-flutter-android-apk.mjs \
 
 低层 APK、下载页和一键发布封装共享同一配置校验。`local` 缺省注入 Product
 `http://127.0.0.1:8769` 与 Agent `http://127.0.0.1:8010`；`staging` /
-`production` 必须显式传入两个非 loopback HTTPS URL。直接调用裸
+`unified` / `production` 必须显式传入两个非 loopback HTTPS URL。直接调用裸
 `flutter build` 不具备这层 fail-closed 门禁，不应用于分发产物。
 
 当前本机验证：
 
 ```text
 [x] local debug APK `build/app/outputs/flutter-apk/app-local-debug.apk` 可生成
-[x] staging release APK `build/app/outputs/flutter-apk/app-staging-release.apk` 可生成
+[x] unified release APK `build/app/outputs/flutter-apk/app-unified-release.apk` 由受保护发布 gate 生成
 ```

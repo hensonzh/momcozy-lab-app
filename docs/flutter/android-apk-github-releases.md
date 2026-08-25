@@ -28,12 +28,12 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 默认配置：
 
 ```text
-Download:  https://hensonzh.github.io/momcozy-lab-releases
+Download:  https://hensonzh.github.io/momcozy-lab-releases/unified
 Releases:  hensonzh/momcozy-lab-releases
-Variant:   staging release
+Variant:   unified release (staging runtime)
 ```
 
-`staging` 和 `production` 没有 API 默认值：必须显式提供两个非空、非
+`staging`、`unified` 和 `production` 没有 API 默认值：必须显式提供两个非空、非
 loopback 的 HTTPS 地址，即 Product Backend `MOMCOZY_API_BASE_URL` 与 Agent
 Runtime `MOMCOZY_AGENT_API_BASE_URL`。两者必须分别配置。
 `local` 构建缺省使用 Product Backend `http://127.0.0.1:8769` 和 Agent Runtime
@@ -51,12 +51,14 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 
 1. 构建 Flutter APK。
 2. 生成极简下载页、manifest 和带 “Momcozy Lab” 文本的二维码。
-3. 创建或更新 `android-v<version>-<build>` GitHub Release。
-4. 将 APK 和 SHA256 文件上传为 Release 资产。
-5. 更新公开仓库根目录中的 GitHub Pages 文件。
+3. 创建 `unified-android-v<version>-<build>` GitHub Release。
+4. 将 APK、SHA256 和 immutable provenance JSON 上传为 Release 资产。
+5. 更新公开仓库 `/unified/` 目录中的 GitHub Pages 文件。
 6. 输出 App 发布链接和邀请码管理后台链接。
 
-每次发布前必须增加 `pubspec.yaml` 中的构建号，避免覆盖已经分发的版本。当前内测阶段，
+已存在 tag 时会校验同名 APK、SHA256 和 provenance 是否逐字一致；脚本不会覆盖或
+修改已有资产。每次发布
+前必须增加 `pubspec.yaml` 中的构建号，避免覆盖已经分发的版本。当前内测阶段，
 `版本号+构建号` 同时也是账号数据重置边界：用户首次启动新构建会退出账号，重新登录后
 清空该账号的云端业务数据并统一进入 onboarding；同一构建重复启动不会再次清理。
 
@@ -107,8 +109,9 @@ dist/android-apk/
   index.html
   manifest.json
   assets/momcozy-lab-download-qr.svg
-  releases/momcozy-android-staging-1.0.0-8.apk
-  releases/momcozy-android-staging-1.0.0-8.apk.sha256
+  releases/momcozy-unified-android-staging-1.0.0-56.apk
+  releases/momcozy-unified-android-staging-1.0.0-56.apk.sha256
+  releases/momcozy-unified-android-staging-1.0.0-56.apk.provenance.json
 ```
 
 ## 验证
@@ -116,9 +119,12 @@ dist/android-apk/
 发布后确认：
 
 - GitHub Pages 页面只显示简短说明、版本号和二维码。
+- 页面、manifest 和二维码只写入 `/unified/` 命名空间。
 - `manifest.json` 中的 `apkUrl` 指向当前 GitHub Release 资产。
 - 点击或扫描二维码会跳转到 `github.com/.../releases/download/...`。
 - APK 下载支持中断恢复，SHA256 与本地产物一致。
+- Release provenance 中的 App/服务 commit、镜像 digest、OpenAPI hash、签名证书和
+  APK hash 与本次受保护发布输入一致。
 - Android 安装时允许来自当前浏览器的未知来源安装。
 
 ## 注意事项

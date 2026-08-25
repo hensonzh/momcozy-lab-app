@@ -16,7 +16,7 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
   MOMCOZY_AGENT_API_BASE_URL=https://agent.example.test \\
   make flutter-release-gate
 
-Use --check-config to validate the required staging URLs without running the gate.`);
+Use --check-config to validate the required staging URLs and join barrier without running the gate.`);
   process.exit(0);
 }
 
@@ -63,11 +63,28 @@ const hasReleaseSigning = signingKeys.every((key) =>
 );
 const requiresReleaseSigning =
   String(env.MOMCOZY_REQUIRE_RELEASE_SIGNING || "").trim() === "1";
+const requiresStagingJoinBarrier =
+  String(env.MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER || "").trim() === "1";
+const releaseFlavor = String(env.MOMCOZY_APK_FLAVOR || "unified").trim();
+const runtimeEnvironment = releaseFlavor === "unified" ? "staging" : releaseFlavor;
+
+if (requiresStagingJoinBarrier) {
+  const missingSmokeFlags = [
+    "MOMCOZY_STAGING_SMOKE",
+    "MOMCOZY_STAGING_SMOKE_AGENT",
+  ].filter((key) => String(env[key] || "").trim() !== "1");
+  if (missingSmokeFlags.length > 0) {
+    console.error(
+      `FAIL staging join barrier requires ${missingSmokeFlags.join(" and ")} to be 1.`,
+    );
+    process.exit(1);
+  }
+}
 
 let stagingApiDartDefines;
 try {
   stagingApiDartDefines = withFlutterApiDartDefines({
-    flavor: "staging",
+    flavor: releaseFlavor,
     dartDefines: [
       `MOMCOZY_API_BASE_URL=${env.MOMCOZY_API_BASE_URL || ""}`,
       `MOMCOZY_AGENT_API_BASE_URL=${env.MOMCOZY_AGENT_API_BASE_URL || ""}`,
@@ -79,7 +96,9 @@ try {
 }
 
 if (process.argv.includes("--check-config")) {
-  console.log("Flutter release gate staging API config is valid.");
+  console.log(
+    `Flutter release gate config is valid for ${releaseFlavor} (${runtimeEnvironment} runtime).`,
+  );
   process.exit(0);
 }
 
@@ -106,6 +125,7 @@ const steps = [
     "dart",
     [
       "format",
+      "--output=none",
       "--set-exit-if-changed",
       "lib",
       "test",
@@ -114,8 +134,8 @@ const steps = [
     ],
     flutterAppDir,
   ],
-  ["flutter", ["analyze"], flutterAppDir],
-  ["flutter", ["test"], flutterAppDir],
+  ["flutter", ["analyze", "--no-pub"], flutterAppDir],
+  ["flutter", ["test", "--no-pub"], flutterAppDir],
   ["dart", ["run", "tool/staging_smoke.dart"], flutterAppDir],
   [
     "node",
@@ -135,8 +155,8 @@ const steps = [
       "--mode",
       "release",
       "--flavor",
-      "staging",
-      "--dart-define=MOMCOZY_ENV=staging",
+      releaseFlavor,
+      `--dart-define=MOMCOZY_ENV=${runtimeEnvironment}`,
       ...stagingApiDartDefines.map((define) => `--dart-define=${define}`),
     ],
     projectRoot,

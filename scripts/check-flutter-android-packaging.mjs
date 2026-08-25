@@ -55,6 +55,11 @@ matches(
   /create\("staging"\)[\s\S]*applicationIdSuffix = "\.staging"/,
   "Flutter staging flavor keeps a staging suffix",
 );
+matches(
+  "android/app/build.gradle.kts",
+  /create\("unified"\)[\s\S]*applicationIdSuffix = "\.unified"/,
+  "Flutter unified release flavor keeps its own install identity",
+);
 contains(
   "android/app/build.gradle.kts",
   'proguardFiles("proguard-rules.pro")',
@@ -119,6 +124,11 @@ contains(
   "android/app/src/staging/res/values/strings.xml",
   "<string name=\"app_name\">Momcozy Lab</string>",
   "Flutter staging label matches current unified branding",
+);
+contains(
+  "android/app/src/unified/res/values/strings.xml",
+  "<string name=\"app_name\">Momcozy Lab</string>",
+  "Flutter unified label matches current unified branding",
 );
 contains(
   "android/app/src/production/res/values/strings.xml",
