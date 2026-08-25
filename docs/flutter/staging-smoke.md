@@ -24,7 +24,7 @@ dart run tool/staging_smoke.dart
 
 ```bash
 MOMCOZY_STAGING_SMOKE=1 \
-MOMCOZY_API_BASE_URL=https://staging-api.example.com \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
 MOMCOZY_API_TOKEN=replace-with-staging-token \
 MOMCOZY_DEFAULT_USER_ID=replace-with-staging-user \
 MOMCOZY_DEFAULT_BABY_ID=replace-with-staging-baby \
@@ -41,7 +41,7 @@ MOMCOZY_STAGING_SMOKE_MUTATE=1
 
 ```bash
 MOMCOZY_STAGING_SMOKE_AGENT=1
-MOMCOZY_AGENT_API_BASE_URL=https://staging-agent.example.com
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 ## 退出码
@@ -55,5 +55,5 @@ MOMCOZY_AGENT_API_BASE_URL=https://staging-agent.example.com
 - smoke 失败信息会脱敏 Bearer token 和 `token=` query 参数。
 - 写入类探针必须显式设置 `MOMCOZY_STAGING_SMOKE_MUTATE=1`。
 - Agent 文本流必须显式设置 `MOMCOZY_STAGING_SMOKE_AGENT=1`。
-- Product 和 Agent 探针分别使用 `MOMCOZY_API_BASE_URL` 与
+- Product Backend 和 Agent Runtime 探针分别使用 `MOMCOZY_API_BASE_URL` 与
   `MOMCOZY_AGENT_API_BASE_URL`，不会把两个服务折叠到同一 origin。

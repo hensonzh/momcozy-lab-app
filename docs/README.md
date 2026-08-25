@@ -20,13 +20,13 @@
 - Flutter 真机与真泵 smoke：`flutter/p0-smoke-checklist.md`
 - App UI/UX V3 更新方案：`flutter/ui-ux-v3-update-plan.md`
 - BLE 设备协议：`device/设备APP蓝牙通信协议.md`
-- Product 合同快照：`backend-contract/product.openapi.generated.json`
+- Product Backend 合同快照：`backend-contract/product.openapi.generated.json`
 - Agent Runtime 合同快照：`backend-contract/agent-runtime.openapi.generated.json`
 - 后端合同交接说明：`backend-contract/api-contract-handoff.md`
 - Flutter client compatibility：`backend-contract/flutter-client-compatibility.md`
 - 合并基线与能力门禁：`flutter/unified-app-integration.md`
 
-Product 和 Agent Runtime 是独立的合同来源。App 提交两份快照，并通过
+Product Backend 和 Agent Runtime 是独立的合同来源。App 提交两份快照，并通过
 `python3 scripts/validate_backend_contract.py` 校验服务归属、鉴权、幂等、
-查询参数和 Agent runtime pattern；任何一侧的破坏性变更都需要协调 App
+查询参数和 Agent Runtime pattern；任何一侧的破坏性变更都需要协调 App
 版本和兼容窗口。

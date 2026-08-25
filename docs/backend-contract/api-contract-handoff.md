@@ -1,13 +1,13 @@
-# Production Backend API Contract Handoff
+# Product Backend API Contract Handoff
 
-This handoff is the human-readable companion to the Product and Agent Runtime
+This handoff is the human-readable companion to the Product Backend and Agent Runtime
 OpenAPI snapshots.
 
 ## Contract Sources
 
-- Product snapshot: `product.openapi.generated.json`
+- Product Backend snapshot: `product.openapi.generated.json`
 - Agent Runtime snapshot: `agent-runtime.openapi.generated.json`
-- Product API surface catalog: maintained by the Product backend repository.
+- Product Backend API surface catalog: maintained by the `backend/` repository.
 - Export command: `make backend-export-contracts`
 - Runtime base path: `/v1`
 - Error model: stable `{ "error": { "code", "message", "request_id", "details?" } }`
@@ -28,7 +28,7 @@ Flutter should only integrate routes marked `public_app_api` and the specific
 
 Update flow for API changes:
 
-1. Export OpenAPI from the owning Product or Agent Runtime service.
+1. Export OpenAPI from the owning Product Backend or Agent Runtime service.
 2. Replace only that service's Flutter snapshot.
 3. Run contract tests.
 
@@ -84,10 +84,10 @@ not send `user_id` as an authority. Service-created notifications are the only
 current public route that accepts a target `owner_user_id`, and it requires
 `X-Service-Key`.
 
-## Agent Streaming
+## Agent Runtime Streaming
 
 - Agent Runtime base is configured independently through
-  `MOMCOZY_AGENT_API_BASE_URL`; Product and file-upload requests continue to
+  `MOMCOZY_AGENT_API_BASE_URL`; Product Backend and file-upload requests continue to
   use `MOMCOZY_API_BASE_URL`.
 - Replay page: `GET /v1/agent/runs/{run_id}/events`
 - SSE replay stream: `GET /v1/agent/runs/{run_id}/stream`
@@ -135,7 +135,7 @@ names.
 The canonical tool result remains runtime/model state and is not a mobile
 response contract.
 
-## Agent Action Events
+## Agent Runtime Action Events
 
 Action events use `action_id` as the reducer key. `action.confirmation_required`
 includes user-visible `preview_payload` plus action metadata:

@@ -50,8 +50,12 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         result = self.run_build_config(flavor="local")
 
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("Product API: http://127.0.0.1:8769", result.stdout)
-        self.assertIn("Agent API:   http://127.0.0.1:8010", result.stdout)
+        self.assertIn(
+            "Product Backend API: http://127.0.0.1:8769", result.stdout
+        )
+        self.assertIn(
+            "Agent Runtime API:   http://127.0.0.1:8010", result.stdout
+        )
 
     def test_staging_and_production_require_both_urls(self) -> None:
         cases = (
@@ -149,11 +153,11 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(
-            "Product API: https://services.example.test/product",
+            "Product Backend API: https://services.example.test/product",
             result.stdout,
         )
         self.assertIn(
-            "Agent API:   https://services.example.test/agent",
+            "Agent Runtime API:   https://services.example.test/agent",
             result.stdout,
         )
 

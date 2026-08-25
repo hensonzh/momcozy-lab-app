@@ -11,10 +11,15 @@ const _configuredApiBaseUrl = String.fromEnvironment(
   defaultValue: 'http://127.0.0.1:8769',
 );
 
-const stagingCertificateHost = 'lute-momcozylab.luteos.cloud';
+const stagingProductBackendHost = 'backend-test.lute-momcozylab.luteos.cloud';
+const stagingAgentRuntimeHost = 'agent-test.lute-momcozylab.luteos.cloud';
+const stagingCertificateHosts = <String>{
+  stagingProductBackendHost,
+  stagingAgentRuntimeHost,
+};
 const stagingCertificatePort = 8443;
 const stagingCertificateAssetPath =
-    'assets/certificates/lute-momcozylab-staging.pem';
+    'assets/certificates/momcozy-staging-internal-ca.pem';
 
 typedef CertificateAssetLoader = Future<Uint8List> Function(String assetPath);
 typedef SecurityContextInstaller = void Function(SecurityContext context);
@@ -25,12 +30,13 @@ bool shouldEnableStagingCertificateTrust({
 }) {
   return environment.trim().toLowerCase() == 'staging' &&
       apiBaseUri.scheme.toLowerCase() == 'https' &&
-      apiBaseUri.host.toLowerCase() == stagingCertificateHost &&
+      stagingCertificateHosts.contains(apiBaseUri.host.toLowerCase()) &&
       apiBaseUri.port == stagingCertificatePort;
 }
 
-/// Adds the internal staging certificate to Dart's trusted roots only for the
-/// exact staging API endpoint. Hostname, validity, and chain checks remain on.
+/// Adds the internal staging CA to Dart's trusted roots only when bootstrapping
+/// one of the approved staging endpoints. Hostname, validity, and chain checks
+/// remain enabled for every request.
 Future<bool> configureStagingCertificateTrust({
   String environment = _configuredEnvironment,
   String apiBaseUrl = _configuredApiBaseUrl,

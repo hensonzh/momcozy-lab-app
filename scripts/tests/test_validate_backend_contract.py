@@ -29,8 +29,10 @@ class SplitBackendContractTest(unittest.TestCase):
         self.assertEqual(
             errors,
             [
-                "Product OpenAPI must not expose Agent Runtime path: /v1/agent/runs",
-                "Agent Runtime OpenAPI contains Product-owned path: /v1/profile/me",
+                "Product Backend OpenAPI must not expose Agent Runtime path: "
+                "/v1/agent/runs",
+                "Agent Runtime OpenAPI contains Product Backend-owned path: "
+                "/v1/profile/me",
             ],
         )
 

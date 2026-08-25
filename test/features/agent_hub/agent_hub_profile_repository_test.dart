@@ -41,7 +41,7 @@ void main() {
     expect(profile.needsOnboarding, isFalse);
   });
 
-  test('accepts the split Product API profile schema', () async {
+  test('accepts the split Product Backend API profile schema', () async {
     final repository = AgentHubProfileRepository(
       transport: FixtureApiJsonTransport({'preferred_name': ' 小美 ', 'age': 29}),
     );

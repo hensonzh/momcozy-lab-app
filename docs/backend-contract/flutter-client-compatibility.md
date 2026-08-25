@@ -6,7 +6,7 @@ contracts are not compatibility targets.
 
 ## Source Of Truth
 
-- Product schema: `product.openapi.generated.json`
+- Product Backend schema: `product.openapi.generated.json`
 - Agent Runtime schema: `agent-runtime.openapi.generated.json`
 - Handoff: `api-contract-handoff.md`
 - Smoke flows: `flutter-smoke-flows.json`
@@ -56,7 +56,7 @@ versioning plan.
 ## Mobile Client Requirements
 
 - Send user auth through `Authorization` headers.
-- Use `MOMCOZY_API_BASE_URL` for Product APIs and
+- Use `MOMCOZY_API_BASE_URL` for Product Backend APIs and
   `MOMCOZY_AGENT_API_BASE_URL` for every `/v1/agent/*` request.
 - Send `runtime_pattern: proprietary_runtime` when creating an Agent Run.
 - Never put access tokens, refresh tokens, or service keys in URLs.

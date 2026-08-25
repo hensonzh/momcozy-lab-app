@@ -21,7 +21,7 @@ QR code under dist/android-apk/, uploads the APK to GitHub Releases and publishe
 the download page through GitHub Pages.
 
 Environment overrides:
-  MOMCOZY_API_BASE_URL           Product API compiled into the Flutter App.
+  MOMCOZY_API_BASE_URL           Product Backend API compiled into the Flutter App.
   MOMCOZY_AGENT_API_BASE_URL     Agent Runtime API compiled into the Flutter App.
   MOMCOZY_DOWNLOAD_BASE_URL      Public GitHub Pages URL for the download page.
   MOMCOZY_GITHUB_RELEASE_REPO    Public owner/repository for Releases and Pages.
@@ -88,8 +88,8 @@ node "${SCRIPT_DIR}/flutter-api-config.mjs" validate \
 
 if [[ "${check_config}" == "1" ]]; then
   printf 'Flutter build config is valid.\n'
-  printf '  Product API: %s\n' "${api_base_url}"
-  printf '  Agent API:   %s\n' "${agent_api_base_url}"
+  printf '  Product Backend API: %s\n' "${api_base_url}"
+  printf '  Agent Runtime API:   %s\n' "${agent_api_base_url}"
   printf '  Variant:     %s %s\n' "${apk_flavor}" "${apk_mode}"
   exit 0
 fi
@@ -107,8 +107,8 @@ export MOMCOZY_APK_FLAVOR="${apk_flavor}"
 export MOMCOZY_APK_MODE="${apk_mode}"
 
 printf 'Building Momcozy Lab Flutter App\n'
-printf '  Product API: %s\n' "${api_base_url}"
-printf '  Agent API:   %s\n' "${agent_api_base_url}"
+printf '  Product Backend API: %s\n' "${api_base_url}"
+printf '  Agent Runtime API:   %s\n' "${agent_api_base_url}"
 printf '  Download:    %s\n' "${download_base_url}"
 printf '  Releases:    %s\n' "${github_release_repo}"
 printf '  Variant:     %s %s\n' "${apk_flavor}" "${apk_mode}"

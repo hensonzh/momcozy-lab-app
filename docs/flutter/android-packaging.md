@@ -85,8 +85,8 @@ MOMCOZY_POSE_MODEL_FILE=/absolute/path/to/pose_landmarker_lite.task \
     --mode release \
     --flavor staging \
     --dart-define=MOMCOZY_ENV=staging \
-    --dart-define=MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-    --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
+    --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+    --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 本地文件仍必须匹配 Gradle 配置中的固定 SHA-256；离线模式下既没有有效缓存、也没有提供该变量时，构建会快速失败，不会隐式访问网络。
@@ -96,8 +96,8 @@ CI / internal distribution 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制缺�
 ## 当前构建命令
 
 ```bash
-MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test \
+MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 \
 make flutter-release-gate
 ```
 
@@ -112,8 +112,8 @@ node scripts/build-flutter-android-apk.mjs \
   --mode release \
   --flavor staging \
   --dart-define=MOMCOZY_ENV=staging \
-  --dart-define=MOMCOZY_API_BASE_URL=https://product-staging.example.test \
-  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-staging.example.test
+  --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
+  --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 低层 APK、下载页和一键发布封装共享同一配置校验。`local` 缺省注入 Product
