@@ -11,7 +11,7 @@ const flutterAppDir = projectRoot;
 
 if (process.argv.includes("--help")) {
   console.log(`Usage:
-  node scripts/build-flutter-android-apk.mjs [--check-config] --mode <debug|release> --flavor <local|staging|production> [--dart-define=KEY=VALUE]
+  node scripts/build-flutter-android-apk.mjs [--check-config] --mode <debug|release> --flavor <local|staging|unified|production> [--dart-define=KEY=VALUE]
 `);
   process.exit(0);
 }
@@ -123,7 +123,7 @@ function parseArgs(args) {
   if (!["debug", "release"].includes(mode)) {
     fail(`Unsupported or missing --mode: ${mode || "(empty)"}`);
   }
-  if (!["local", "staging", "production"].includes(flavor)) {
+  if (!["local", "staging", "unified", "production"].includes(flavor)) {
     fail(`Unsupported or missing --flavor: ${flavor || "(empty)"}`);
   }
   if (dartDefines.some((value) => !value.includes("="))) {

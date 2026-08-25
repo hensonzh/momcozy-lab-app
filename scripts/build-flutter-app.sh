@@ -25,7 +25,7 @@ Environment overrides:
   MOMCOZY_AGENT_API_BASE_URL     Agent Runtime API compiled into the Flutter App.
   MOMCOZY_DOWNLOAD_BASE_URL      Public GitHub Pages URL for the download page.
   MOMCOZY_GITHUB_RELEASE_REPO    Public owner/repository for Releases and Pages.
-  MOMCOZY_APK_FLAVOR             local | staging | production (default: staging).
+  MOMCOZY_APK_FLAVOR             local | staging | unified | production (default: unified).
   MOMCOZY_APK_MODE               debug | release (default: release).
   MOMCOZY_EXTRA_DART_DEFINES     Extra comma-separated KEY=VALUE definitions;
                                   the two API URL keys are reserved.
@@ -63,9 +63,10 @@ cd "${PROJECT_ROOT}"
 check_config="${check_config:-0}"
 download_base_url="${MOMCOZY_DOWNLOAD_BASE_URL:-${DEFAULT_DOWNLOAD_BASE_URL}}"
 github_release_repo="${MOMCOZY_GITHUB_RELEASE_REPO:-${DEFAULT_GITHUB_RELEASE_REPO}}"
-apk_flavor="${MOMCOZY_APK_FLAVOR:-staging}"
+apk_flavor="${MOMCOZY_APK_FLAVOR:-unified}"
 apk_mode="${MOMCOZY_APK_MODE:-release}"
 skip_upload="${MOMCOZY_SKIP_UPLOAD:-0}"
+pages_namespace="unified"
 
 if [[ "${apk_flavor}" == "local" ]]; then
   api_base_url="${MOMCOZY_API_BASE_URL:-${DEFAULT_LOCAL_API_BASE_URL}}"
@@ -78,6 +79,15 @@ fi
 if [[ "${skip_upload}" != "0" && "${skip_upload}" != "1" ]]; then
   printf 'MOMCOZY_SKIP_UPLOAD must be 0 or 1.\n' >&2
   exit 2
+fi
+
+if [[ "${check_config}" != "1" && "${skip_upload}" == "0" && "${apk_flavor}" != "unified" ]]; then
+  printf 'Only the unified flavor may be published. Set MOMCOZY_SKIP_UPLOAD=1 for other flavors.\n' >&2
+  exit 2
+fi
+
+if [[ "${apk_flavor}" == "unified" && "${download_base_url%/}" != */"${pages_namespace}" ]]; then
+  download_base_url="${download_base_url%/}/${pages_namespace}"
 fi
 
 node "${SCRIPT_DIR}/flutter-api-config.mjs" validate \
@@ -149,30 +159,58 @@ apk_file="$(read_manifest_field apkFile)"
 release_tag="$(read_manifest_field githubReleaseTag)"
 version_name="$(read_manifest_field versionName)"
 build_number="$(read_manifest_field buildNumber)"
+provenance_file="$(read_manifest_field provenanceFile)"
 apk_path="${PROJECT_ROOT}/dist/android-apk/releases/${apk_file}"
 checksum_path="${apk_path}.sha256"
+provenance_path="${PROJECT_ROOT}/dist/android-apk/releases/${provenance_file}"
 release_title="Momcozy Lab Android ${version_name} (${build_number})"
 release_notes="Momcozy Lab Android 内测版 ${version_name} (${build_number})。"
+pages_checkout=""
+existing_release_dir=""
+cleanup() {
+  if [[ -n "${pages_checkout}" ]]; then
+    rm -rf "${pages_checkout}"
+  fi
+  if [[ -n "${existing_release_dir}" ]]; then
+    rm -rf "${existing_release_dir}"
+  fi
+}
+trap cleanup EXIT
 
 printf '\nPublishing APK to GitHub Release %s\n' "${release_tag}"
 if gh release view "${release_tag}" --repo "${github_release_repo}" >/dev/null 2>&1; then
-  gh release upload \
-    "${release_tag}" \
-    "${apk_path}" \
-    "${checksum_path}" \
-    --repo "${github_release_repo}" \
-    --clobber
-  gh release edit \
+  existing_release_dir="$(mktemp -d "${TMPDIR:-/tmp}/momcozy-release.XXXXXX")"
+  if ! gh release download \
     "${release_tag}" \
     --repo "${github_release_repo}" \
-    --title "${release_title}" \
-    --notes "${release_notes}" \
-    --latest
+    --pattern "${apk_file}" \
+    --pattern "${apk_file}.sha256" \
+    --pattern "${provenance_file}" \
+    --dir "${existing_release_dir}"; then
+    printf 'Release %s already exists without the complete immutable bundle; refusing to mutate it.\n' "${release_tag}" >&2
+    exit 1
+  fi
+  if ! cmp -s "${apk_path}" "${existing_release_dir}/${apk_file}"; then
+    printf 'Release %s already points to different APK bytes; increment the build number.\n' "${release_tag}" >&2
+    exit 1
+  fi
+  if [[ ! -f "${existing_release_dir}/${apk_file}.sha256" ]] || \
+    ! cmp -s "${checksum_path}" "${existing_release_dir}/${apk_file}.sha256"; then
+    printf 'Release %s has a missing or different checksum asset; refusing to mutate it.\n' "${release_tag}" >&2
+    exit 1
+  fi
+  if [[ ! -f "${existing_release_dir}/${provenance_file}" ]] || \
+    ! cmp -s "${provenance_path}" "${existing_release_dir}/${provenance_file}"; then
+    printf 'Release %s has different provenance; increment the build number.\n' "${release_tag}" >&2
+    exit 1
+  fi
+  printf 'Release already contains the identical APK; publication is idempotent.\n'
 else
   gh release create \
     "${release_tag}" \
     "${apk_path}" \
     "${checksum_path}" \
+    "${provenance_path}" \
     --repo "${github_release_repo}" \
     --target main \
     --title "${release_title}" \
@@ -181,26 +219,22 @@ else
 fi
 
 pages_checkout="$(mktemp -d "${TMPDIR:-/tmp}/momcozy-pages.XXXXXX")"
-cleanup() {
-  rm -rf "${pages_checkout}"
-}
-trap cleanup EXIT
 
 printf '\nPublishing download page to GitHub Pages\n'
-git clone --depth 1 "git@github.com:${github_release_repo}.git" "${pages_checkout}"
-mkdir -p "${pages_checkout}/assets"
-cp "${PROJECT_ROOT}/dist/android-apk/index.html" "${pages_checkout}/index.html"
-cp "${PROJECT_ROOT}/dist/android-apk/manifest.json" "${pages_checkout}/manifest.json"
+gh repo clone "${github_release_repo}" "${pages_checkout}" -- --depth 1
+mkdir -p "${pages_checkout}/${pages_namespace}/assets"
+cp "${PROJECT_ROOT}/dist/android-apk/index.html" "${pages_checkout}/${pages_namespace}/index.html"
+cp "${PROJECT_ROOT}/dist/android-apk/manifest.json" "${pages_checkout}/${pages_namespace}/manifest.json"
 cp \
   "${PROJECT_ROOT}/dist/android-apk/assets/momcozy-lab-download-qr.svg" \
-  "${pages_checkout}/assets/momcozy-lab-download-qr.svg"
+  "${pages_checkout}/${pages_namespace}/assets/momcozy-lab-download-qr.svg"
 touch "${pages_checkout}/.nojekyll"
 
 git -C "${pages_checkout}" add \
   .nojekyll \
-  index.html \
-  manifest.json \
-  assets/momcozy-lab-download-qr.svg
+  "${pages_namespace}/index.html" \
+  "${pages_namespace}/manifest.json" \
+  "${pages_namespace}/assets/momcozy-lab-download-qr.svg"
 
 if ! git -C "${pages_checkout}" diff --cached --quiet; then
   github_login="$(gh api user --jq .login)"

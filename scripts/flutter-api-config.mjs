@@ -8,14 +8,19 @@ export const AGENT_API_DEFINE = "MOMCOZY_AGENT_API_BASE_URL";
 export const DEFAULT_LOCAL_PRODUCT_API_URL = "http://127.0.0.1:8769";
 export const DEFAULT_LOCAL_AGENT_API_URL = "http://127.0.0.1:8010";
 
-const supportedFlavors = new Set(["local", "staging", "production"]);
+const supportedFlavors = new Set([
+  "local",
+  "staging",
+  "unified",
+  "production",
+]);
 const reservedApiDefines = new Set([PRODUCT_API_DEFINE, AGENT_API_DEFINE]);
 
 export function resolveFlutterApiConfig({ flavor, productUrl, agentUrl }) {
   const normalizedFlavor = String(flavor || "").trim();
   if (!supportedFlavors.has(normalizedFlavor)) {
     throw new Error(
-      `Unsupported flavor: ${normalizedFlavor || "(empty)"}. Expected local, staging, or production.`,
+      `Unsupported flavor: ${normalizedFlavor || "(empty)"}. Expected local, staging, unified, or production.`,
     );
   }
 
@@ -194,12 +199,12 @@ function parseCliArgs(args) {
 function printHelp() {
   console.log(`Usage:
   node scripts/flutter-api-config.mjs validate \\
-    --flavor <local|staging|production> \\
+    --flavor <local|staging|unified|production> \\
     --product-url <url> --agent-url <url> \\
     [--extra-dart-defines <KEY=VALUE,...>]
 
-local accepts omitted URLs and uses loopback defaults. staging and production
-require both HTTPS URLs and reject loopback or unspecified hosts.`);
+local accepts omitted URLs and uses loopback defaults. staging, unified, and
+production require both HTTPS URLs and reject loopback or unspecified hosts.`);
 }
 
 const isMain =
