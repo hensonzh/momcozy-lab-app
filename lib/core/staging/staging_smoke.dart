@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
@@ -214,7 +216,10 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
     _PumpWorkstateProbe(PumpWorkstateApiRepository(transport: jsonTransport)),
     _MediaUploadProbe(
       config,
-      MediaApiRepository(transport: multipartTransport),
+      MediaApiRepository(
+        transport: multipartTransport,
+        mutationTransport: jsonTransport,
+      ),
     ),
     _AgentSseProbe(config, agentEndpoint),
   ];
@@ -328,14 +333,44 @@ class _MediaUploadProbe implements StagingSmokeProbe {
 
   @override
   Future<void> run() async {
-    await repository.uploadFile(
-      file: const ApiUploadFile(
-        name: 'flutter-staging-smoke.txt',
-        mimeType: 'text/plain',
-        sizeBytes: 13,
-        bytes: [102, 108, 117, 116, 116, 101, 114, 45, 115, 109, 111, 107, 101],
-      ),
-    );
+    const bytes = [
+      102,
+      108,
+      117,
+      116,
+      116,
+      101,
+      114,
+      45,
+      115,
+      109,
+      111,
+      107,
+      101,
+    ];
+    String? fileId;
+    try {
+      final uploaded = await repository.uploadFile(
+        file: const ApiUploadFile(
+          name: 'flutter-staging-smoke.txt',
+          mimeType: 'text/plain',
+          sizeBytes: 13,
+          bytes: bytes,
+        ),
+      );
+      fileId = uploaded.id.trim();
+      if (fileId.isEmpty) {
+        throw StateError('object storage probe upload returned no file id');
+      }
+      final loaded = await _readUploadedFile(config, fileId);
+      if (!_sameBytes(loaded, bytes)) {
+        throw StateError('object storage probe read returned different bytes');
+      }
+    } finally {
+      if (fileId != null && fileId.isNotEmpty) {
+        await repository.deleteFile(fileId: fileId);
+      }
+    }
   }
 }
 
@@ -362,19 +397,81 @@ class _AgentSseProbe implements StagingSmokeProbe {
         payloadFactory: buildProductionAgentRunPayload,
       ),
     );
-    final event = await client
-        .stream(
-          AgentStreamRequest(
-            locale: config.session.locale,
-            message: 'Reply with a short staging smoke acknowledgement.',
-            metadata: const {'source': 'flutter_staging_smoke'},
-          ),
-        )
-        .firstWhere((event) => event.isTerminal);
-    if (!event.isTerminal) {
-      throw StateError('agent stream did not reach a terminal event');
-    }
+    await validateSuccessfulAgentSmoke(
+      client.stream(
+        AgentStreamRequest(
+          locale: config.session.locale,
+          message: 'Reply with a short staging smoke acknowledgement.',
+          metadata: const {'source': 'flutter_staging_smoke'},
+        ),
+      ),
+    );
   }
+}
+
+Future<void> validateSuccessfulAgentSmoke(
+  Stream<AgentStreamEvent> events,
+) async {
+  var receivedAssistantResponse = false;
+  await for (final event in events) {
+    if (event.type == 'message.completed' &&
+        event.role == 'assistant' &&
+        (event.completedText?.trim().isNotEmpty ?? false)) {
+      receivedAssistantResponse = true;
+    }
+    if (!event.isTerminal) continue;
+    if (event.type != 'run.completed') {
+      throw StateError('agent smoke ended with ${event.type}');
+    }
+    if (!receivedAssistantResponse) {
+      throw StateError(
+        'agent smoke completed without a non-empty assistant response',
+      );
+    }
+    return;
+  }
+  throw StateError('agent stream ended without run.completed');
+}
+
+Future<List<int>> _readUploadedFile(
+  StagingSmokeConfig config,
+  String fileId,
+) async {
+  final client = HttpClient();
+  try {
+    final uri = _appendPath(
+      config.apiBaseUri,
+      '/v1/files/${Uri.encodeComponent(fileId)}/content',
+    );
+    final request = await client.getUrl(uri);
+    request.headers.set(
+      HttpHeaders.authorizationHeader,
+      'Bearer ${config.session.accessToken}',
+    );
+    request.headers.set('X-Momcozy-Client', 'flutter-staging-smoke');
+    final response = await request.close();
+    final bytes = await response.fold<List<int>>(<int>[], (collected, chunk) {
+      collected.addAll(chunk);
+      return collected;
+    });
+    if (response.statusCode != HttpStatus.ok) {
+      throw HttpException(
+        'object storage probe read failed with ${response.statusCode}',
+        uri: uri,
+      );
+    }
+    return bytes;
+  } finally {
+    client.close(force: true);
+  }
+}
+
+bool _sameBytes(List<int> left, List<int> right) {
+  if (left.length != right.length) return false;
+  for (var index = 0; index < left.length; index += 1) {
+    if (left[index] != right[index]) return false;
+  }
+  return true;
 }
 
 String _envOrDefault(Map<String, String> env, String key, String fallback) {

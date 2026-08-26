@@ -5,7 +5,8 @@
 `tool/staging_smoke.dart` 用于在不连接真机、不连接真泵的前提下，验证 Flutter runtime 可以直接访问后端 staging：
 
 - 只读 HTTP：Status、Schedule、Records。
-- 显式启用后才执行的写入类探针：Pump workstate、client-event、Media upload。
+- 显式启用后才执行的写入类探针：Pump workstate、client-event，以及 Media
+  upload/read/byte-compare/delete 的完整对象存储闭环。
 - 显式启用后才执行的 Agent SSE 文本流探针。
 
 默认不运行真实后端请求，避免本地和 CI 在没有凭证时误写数据。
@@ -55,5 +56,7 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 - smoke 失败信息会脱敏 Bearer token 和 `token=` query 参数。
 - 写入类探针必须显式设置 `MOMCOZY_STAGING_SMOKE_MUTATE=1`。
 - Agent 文本流必须显式设置 `MOMCOZY_STAGING_SMOKE_AGENT=1`。
+- Agent 探针只接受带非空 assistant response 的 `run.completed`；`run.failed`、
+  `run.cancelled`、`run.expired` 等终态均失败。
 - Product Backend 和 Agent Runtime 探针分别使用 `MOMCOZY_API_BASE_URL` 与
   `MOMCOZY_AGENT_API_BASE_URL`，不会把两个服务折叠到同一 origin。

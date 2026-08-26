@@ -155,6 +155,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
             "MOMCOZY_REQUIRE_RELEASE_SIGNING: \"1\"",
             "MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER: \"1\"",
             "MOMCOZY_STAGING_SMOKE: \"1\"",
+            "MOMCOZY_STAGING_SMOKE_MUTATE: \"1\"",
             "MOMCOZY_STAGING_SMOKE_AGENT: \"1\"",
             "MOMCOZY_APK_FLAVOR: unified",
             "MOMCOZY_APK_INPUT",
@@ -162,8 +163,26 @@ class StagingDeliveryContractTest(unittest.TestCase):
             "agent_openapi_sha256",
             "sha256sum",
             "provenanceFile",
+            "STAGING_SMOKE_INVITE_CODE",
+            "STAGING_SMOKE_DEVICE_ID",
+            "/v1/auth/invite-login",
+            "/usr/bin/flock",
+            "staging-release.lock",
+            "Fetch the currently deployed service manifests again under the lock",
         ):
             self.assertIn(required, workflow)
+
+        self.assertNotIn("STAGING_APP_API_TOKEN", workflow)
+        self.assertIn("github.ref == 'refs/heads/main'", workflow)
+        for run_block in workflow.split("run: |")[1:]:
+            self.assertNotIn("${{ inputs.", run_block)
+        self.assertNotIn("subosito/flutter-action@v2", workflow)
+        self.assertIn(
+            "subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+            workflow,
+        )
+        dependabot = (ROOT / ".github" / "dependabot.yml").read_text()
+        self.assertIn("package-ecosystem: github-actions", dependabot)
 
     def test_release_gate_fails_closed_when_live_join_is_required_but_disabled(self) -> None:
         env = os.environ.copy()

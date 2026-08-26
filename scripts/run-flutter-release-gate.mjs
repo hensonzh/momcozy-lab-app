@@ -71,6 +71,7 @@ const runtimeEnvironment = releaseFlavor === "unified" ? "staging" : releaseFlav
 if (requiresStagingJoinBarrier) {
   const missingSmokeFlags = [
     "MOMCOZY_STAGING_SMOKE",
+    "MOMCOZY_STAGING_SMOKE_MUTATE",
     "MOMCOZY_STAGING_SMOKE_AGENT",
   ].filter((key) => String(env[key] || "").trim() !== "1");
   if (missingSmokeFlags.length > 0) {
@@ -118,9 +119,12 @@ if (!hasReleaseSigning) {
 }
 
 const steps = [
+  ["flutter", ["pub", "get"], flutterAppDir],
+  // The access token is deliberately issued immediately before this gate.
+  // Keep the live smoke before the long static/test/build sequence.
+  ["dart", ["run", "tool/staging_smoke.dart"], flutterAppDir],
   ["node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot],
   ["node", ["scripts/check-flutter-security-privacy.mjs"], projectRoot],
-  ["flutter", ["pub", "get"], flutterAppDir],
   [
     "dart",
     [
@@ -136,7 +140,6 @@ const steps = [
   ],
   ["flutter", ["analyze", "--no-pub"], flutterAppDir],
   ["flutter", ["test", "--no-pub"], flutterAppDir],
-  ["dart", ["run", "tool/staging_smoke.dart"], flutterAppDir],
   [
     "node",
     [

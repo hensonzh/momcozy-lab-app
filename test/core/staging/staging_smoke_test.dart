@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/staging/staging_smoke.dart';
 
@@ -85,6 +86,51 @@ void main() {
     expect(report.failedCount, 1);
     expect(report.results.single.message, isNot(contains('secret-token')));
   });
+
+  test(
+    'agent smoke accepts only completed runs with an assistant response',
+    () async {
+      await expectLater(
+        validateSuccessfulAgentSmoke(
+          Stream.fromIterable([
+            AgentStreamEvent(const {
+              'type': 'message.completed',
+              'payload': {'role': 'assistant', 'text': 'staging is healthy'},
+            }),
+            AgentStreamEvent(const {'type': 'run.completed'}),
+          ]),
+        ),
+        completes,
+      );
+    },
+  );
+
+  test('agent smoke rejects failed terminal events', () async {
+    await expectLater(
+      validateSuccessfulAgentSmoke(
+        Stream.value(AgentStreamEvent(const {'type': 'run.failed'})),
+      ),
+      throwsA(isA<StateError>()),
+    );
+  });
+
+  test(
+    'agent smoke rejects completed runs without a non-empty assistant response',
+    () async {
+      await expectLater(
+        validateSuccessfulAgentSmoke(
+          Stream.fromIterable([
+            AgentStreamEvent(const {
+              'type': 'message.completed',
+              'payload': {'role': 'assistant', 'text': '   '},
+            }),
+            AgentStreamEvent(const {'type': 'run.completed'}),
+          ]),
+        ),
+        throwsA(isA<StateError>()),
+      );
+    },
+  );
 }
 
 StagingSmokeConfig _config({
