@@ -191,7 +191,6 @@ class StagingDeliveryContractTest(unittest.TestCase):
             "STAGING_APPROVERS",
             "STAGING_APPROVAL_ISSUE",
             "/approve-staging",
-            "GITHUB_TRIGGERING_ACTOR",
             "needs: approve",
             "ref: ${{ github.sha }}",
             "while :; do sleep 60; done",
@@ -199,6 +198,8 @@ class StagingDeliveryContractTest(unittest.TestCase):
             self.assertIn(required, workflow)
 
         self.assertNotIn("STAGING_APP_API_TOKEN", workflow)
+        self.assertNotIn("GITHUB_TRIGGERING_ACTOR", workflow)
+        self.assertNotIn("Ignoring self-approval", workflow)
         self.assertNotIn("ref: main", workflow)
         self.assertNotIn("exec sleep 2700", workflow)
         self.assertNotIn("mkfifo", workflow)

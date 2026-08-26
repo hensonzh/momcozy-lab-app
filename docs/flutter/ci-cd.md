@@ -29,13 +29,15 @@ reviewers，因此不能把空的 environment 当成审批门禁。每个仓库�
 审批 issue，并设置两个 repository variables：
 
 - `STAGING_APPROVAL_ISSUE`：审批 issue 编号；
-- `STAGING_APPROVERS`：逗号分隔的 GitHub reviewer login 白名单。
+- `STAGING_APPROVERS`：逗号分隔的 GitHub operator login 白名单。
 
-仓库必须至少有一位独立 reviewer collaborator；当前只有单一 collaborator 时发布会保持关闭。
-独立 approval job 不读取发布 secret，并等待白名单内且不同于原始/重跑发起人的用户在
-该 issue 下发送 job summary 展示的完整 `/approve-staging ...` 命令。命令绑定 repository、
-run ID、attempt 和触发 SHA；缺少变量、发起人自批或 30 分钟内未批准都会 fail closed。
+独立 approval job 不读取发布 secret，并等待白名单操作者在该 issue 下发送 job summary
+展示的完整 `/approve-staging ...` 命令。发起人可以完成这次独立的二次确认，这与未启用
+prevent-self-review 的 GitHub required reviewer 语义一致。命令绑定 repository、run ID、
+attempt 和触发 SHA；缺少变量或 30 分钟内未批准都会 fail closed。
 发布 job 始终 checkout 审批时的 `github.sha`，不会在等待期间漂移到更新的 `main`。
+三个远程仓库当前均使用审批 issue `#1`、`STAGING_APPROVAL_ISSUE=1` 和
+`STAGING_APPROVERS=hensonzh`；`staging` environment 仅记录部署，不承担审批语义。
 
 配置以下 staging environment secret；若当前套餐不支持 private environment secret，
 则配置为 repository secret：
