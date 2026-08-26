@@ -23,21 +23,21 @@ CI 不签正式包、不写 GitHub Releases、不更新 Pages，也不部署后�
 ## 受保护的 Staging 发布
 
 `.github/workflows/app-staging-release.yml` 只能手动触发，使用 GitHub
-`staging` environment 和串行 concurrency。应为该 environment 配置 required
-reviewer，并设置：
+`staging` environment 和串行 concurrency，且只接受从 `main` 分支发起。应为该
+environment 配置 required reviewer，并设置：
 
 - `FLUTTER_RELEASE_KEYSTORE_BASE64`
 - `FLUTTER_RELEASE_STORE_PASSWORD`
 - `FLUTTER_RELEASE_KEY_ALIAS`
 - `FLUTTER_RELEASE_KEY_PASSWORD`
-- `STAGING_APP_API_TOKEN`
-- `STAGING_APP_USER_ID`
+- `STAGING_SMOKE_INVITE_CODE`，仅绑定隔离的 smoke 账号
+- `STAGING_SMOKE_DEVICE_ID`
 - `STAGING_APP_BABY_ID`
 - `RELEASES_GH_TOKEN`，仅授予 `hensonzh/momcozy-lab-releases` 所需的
   Releases/Contents 权限
 - `STAGING_SSH_HOST`、`STAGING_SSH_PORT`、`STAGING_SSH_USER`、
-  `STAGING_SSH_PRIVATE_KEY`、`STAGING_SSH_KNOWN_HOSTS`，只读获取当前两份
-  `/opt/momcozy-lab/current/*/release-manifest.json`
+  `STAGING_SSH_PRIVATE_KEY`、`STAGING_SSH_KNOWN_HOSTS`，读取当前两份
+  `/opt/momcozy-lab/current/*/release-manifest.json` 并获取共享 staging 发布锁
 
 手动输入必须来自已经部署的两份服务 release manifest：
 
@@ -46,9 +46,16 @@ reviewer，并设置：
 
 工作流会先校验 full commit/digest 格式，通过已验证 host key 的 SSH 读取当前部署
 manifest 并与全部输入逐项比对，确认 OpenAPI hash 与 App 固定快照一致，再通过内置
-staging CA 下载两个公网 `/openapi.json` 并做 JSON 语义等价校验。之后强制正式签名，
-记录签名证书 SHA-256，并同时启用 Product smoke 与 Agent SSE smoke；任一 smoke
-被关闭或失败都不会构建可发布结果。
+staging CA 下载两个公网 `/openapi.json` 并做 JSON 语义等价校验。耗时依赖安装完成后，
+工作流才用隔离账号即时 invite-login，并立刻执行 live smoke，不保存会在 15 分钟后
+过期的 access token。之后强制正式签名，记录签名证书 SHA-256，并同时启用 Product
+读写/对象存储 smoke 与 Agent SSE smoke；Agent 必须出现非空 assistant 响应并以
+`run.completed` 结束，任一失败终态都阻止发布。
+
+发布已构建 APK 前，工作流在宿主机获取与两个服务发布相同的 `flock`，重新读取两份
+current manifest，并验证 Agent 记录的 Product 依赖恰好等于当前 Product 身份。这样
+三个仓库各自的 GitHub concurrency 不能造成跨仓库竞态。Flutter setup 的外部 Action
+固定到完整 commit，由依赖更新流程显式升级。
 
 release gate 只构建一次 `app-unified-release.apk`。发布步骤通过
 `MOMCOZY_APK_INPUT` 复用这同一文件，生成 SHA-256、下载页和包含 App commit、

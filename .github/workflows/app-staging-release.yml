@@ -37,8 +37,9 @@ concurrency:
 
 jobs:
   release:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     environment:
       name: staging
       url: https://hensonzh.github.io/momcozy-lab-releases/unified/
@@ -50,6 +51,7 @@ jobs:
       MOMCOZY_REQUIRE_RELEASE_SIGNING: "1"
       MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER: "1"
       MOMCOZY_STAGING_SMOKE: "1"
+      MOMCOZY_STAGING_SMOKE_MUTATE: "1"
       MOMCOZY_STAGING_SMOKE_AGENT: "1"
       MOMCOZY_BACKEND_COMMIT_SHA: ${{ inputs.backend_commit_sha }}
       MOMCOZY_BACKEND_IMAGE_DIGEST: ${{ inputs.backend_image_digest }}
@@ -59,8 +61,11 @@ jobs:
       MOMCOZY_AGENT_OPENAPI_SHA256: ${{ inputs.agent_openapi_sha256 }}
       MOMCOZY_FLUTTER_RELEASE_STORE_FILE: ${{ runner.temp }}/momcozy-release.jks
       SSL_CERT_FILE: ${{ github.workspace }}/assets/certificates/momcozy-staging-internal-ca.pem
+      STAGING_RELEASE_LOCK: /opt/momcozy-lab/shared/staging-release.lock
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -74,7 +79,7 @@ jobs:
           java-version: "17"
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
         with:
           flutter-version: 3.44.4
           channel: stable
@@ -86,8 +91,10 @@ jobs:
           node-version: "20"
           cache: npm
 
-      - name: Install build dependencies
-        run: npm ci --ignore-scripts
+      - name: Install build dependencies before issuing short-lived credentials
+        run: |
+          npm ci --ignore-scripts
+          flutter pub get
 
       - name: Materialize the protected Android signing key
         env:
@@ -97,7 +104,7 @@ jobs:
           printf '%s' "${FLUTTER_RELEASE_KEYSTORE_BASE64}" | base64 --decode > "${MOMCOZY_FLUTTER_RELEASE_STORE_FILE}"
           chmod 0600 "${MOMCOZY_FLUTTER_RELEASE_STORE_FILE}"
 
-      - name: Trust the bundled staging CA for Dart live-smoke requests
+      - name: Trust the bundled staging CA for live-smoke requests
         run: |
           sudo install -m 0644 "${SSL_CERT_FILE}" /usr/local/share/ca-certificates/momcozy-staging.crt
           sudo update-ca-certificates
@@ -127,46 +134,9 @@ jobs:
 
       - name: Validate immutable service identities and live OpenAPI contracts
         run: |
-          [[ "${MOMCOZY_BACKEND_COMMIT_SHA}" =~ ^[0-9a-f]{40}$ ]]
-          [[ "${MOMCOZY_AGENT_COMMIT_SHA}" =~ ^[0-9a-f]{40}$ ]]
-          [[ "${MOMCOZY_BACKEND_IMAGE_DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
-          [[ "${MOMCOZY_AGENT_IMAGE_DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
-          [[ "${MOMCOZY_BACKEND_OPENAPI_SHA256}" =~ ^[0-9a-f]{64}$ ]]
-          [[ "${MOMCOZY_AGENT_OPENAPI_SHA256}" =~ ^[0-9a-f]{64}$ ]]
-          python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          checks = (
-              (
-                  Path("/tmp/backend-release-manifest.json"),
-                  "product-backend",
-                  "MOMCOZY_BACKEND_COMMIT_SHA",
-                  "MOMCOZY_BACKEND_IMAGE_DIGEST",
-                  "MOMCOZY_BACKEND_OPENAPI_SHA256",
-              ),
-              (
-                  Path("/tmp/agent-release-manifest.json"),
-                  "agent-runtime",
-                  "MOMCOZY_AGENT_COMMIT_SHA",
-                  "MOMCOZY_AGENT_IMAGE_DIGEST",
-                  "MOMCOZY_AGENT_OPENAPI_SHA256",
-              ),
-          )
-          for path, service, commit_env, digest_env, openapi_env in checks:
-              manifest = json.loads(path.read_text())
-              expected = {
-                  "service": service,
-                  "environment": "staging",
-                  "commit": os.environ[commit_env],
-                  "image_digest": os.environ[digest_env],
-                  "openapi_sha256": os.environ[openapi_env],
-              }
-              observed = {key: manifest.get(key) for key in expected}
-              if observed != expected:
-                  raise SystemExit(f"{path} does not match dispatch inputs: {observed}")
-          PY
+          python3 scripts/validate_staging_service_manifests.py \
+            --backend /tmp/backend-release-manifest.json \
+            --agent /tmp/agent-release-manifest.json
           curl --fail --silent --show-error --retry 3 \
             --cacert "${SSL_CERT_FILE}" \
             "${MOMCOZY_API_BASE_URL}/openapi.json" \
@@ -190,13 +160,58 @@ jobs:
                   raise SystemExit(f"live OpenAPI does not match {pinned_path}")
           PY
 
+      - name: Obtain a fresh isolated-account access token immediately before smoke
+        env:
+          STAGING_SMOKE_INVITE_CODE: ${{ secrets.STAGING_SMOKE_INVITE_CODE }}
+          STAGING_SMOKE_DEVICE_ID: ${{ secrets.STAGING_SMOKE_DEVICE_ID }}
+        run: |
+          test -n "${STAGING_SMOKE_INVITE_CODE}"
+          test -n "${STAGING_SMOKE_DEVICE_ID}"
+          request_file="${RUNNER_TEMP}/staging-smoke-login-request.json"
+          response_file="${RUNNER_TEMP}/staging-smoke-login-response.json"
+          install -m 0600 /dev/null "${request_file}"
+          REQUEST_FILE="${request_file}" python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          Path(os.environ["REQUEST_FILE"]).write_text(json.dumps({
+              "invite_code": os.environ["STAGING_SMOKE_INVITE_CODE"],
+              "device_id": os.environ["STAGING_SMOKE_DEVICE_ID"],
+          }))
+          PY
+          install -m 0600 /dev/null "${response_file}"
+          curl --fail-with-body --silent --show-error \
+            --cacert "${SSL_CERT_FILE}" \
+            --header "Content-Type: application/json" \
+            --data-binary "@${request_file}" \
+            "${MOMCOZY_API_BASE_URL}/v1/auth/invite-login" \
+            --output "${response_file}"
+          AUTH_RESPONSE_FILE="${response_file}" python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          payload = json.loads(Path(os.environ["AUTH_RESPONSE_FILE"]).read_text())
+          token = str(payload.get("access_token", "")).strip()
+          user_id = str((payload.get("user") or {}).get("id", "")).strip()
+          if not token or "\n" in token:
+              raise SystemExit("invite login returned no safe access token")
+          if not re.fullmatch(r"[0-9a-fA-F-]{36}", user_id):
+              raise SystemExit("invite login returned no user id")
+          print(f"::add-mask::{token}")
+          with Path(os.environ["GITHUB_ENV"]).open("a") as output:
+              output.write(f"MOMCOZY_API_TOKEN={token}\n")
+              output.write(f"MOMCOZY_DEFAULT_USER_ID={user_id}\n")
+          PY
+          rm -f "${request_file}" "${response_file}"
+
       - name: Run the signed release gate and live Product-Agent join smoke
         env:
           MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD: ${{ secrets.FLUTTER_RELEASE_STORE_PASSWORD }}
           MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS: ${{ secrets.FLUTTER_RELEASE_KEY_ALIAS }}
           MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD: ${{ secrets.FLUTTER_RELEASE_KEY_PASSWORD }}
-          MOMCOZY_API_TOKEN: ${{ secrets.STAGING_APP_API_TOKEN }}
-          MOMCOZY_DEFAULT_USER_ID: ${{ secrets.STAGING_APP_USER_ID }}
           MOMCOZY_DEFAULT_BABY_ID: ${{ secrets.STAGING_APP_BABY_ID }}
         run: node scripts/run-flutter-release-gate.mjs
 
@@ -215,9 +230,12 @@ jobs:
           [[ "${signing_cert_sha256}" =~ ^[0-9a-f]{64}$ ]]
           printf 'MOMCOZY_APK_SIGNING_CERT_SHA256=%s\n' "${signing_cert_sha256}" >> "${GITHUB_ENV}"
 
-      - name: Publish the exact APK built by the release gate
+      - name: Fetch the currently deployed service manifests again under the lock and publish
         env:
           GH_TOKEN: ${{ secrets.RELEASES_GH_TOKEN }}
+          STAGING_SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+          STAGING_SSH_PORT: ${{ secrets.STAGING_SSH_PORT }}
+          STAGING_SSH_USER: ${{ secrets.STAGING_SSH_USER }}
           MOMCOZY_APK_INPUT: ${{ github.workspace }}/build/app/outputs/flutter-apk/app-unified-release.apk
           MOMCOZY_SKIP_NPM_CI: "1"
           MOMCOZY_GITHUB_RELEASE_REPO: hensonzh/momcozy-lab-releases
@@ -225,7 +243,46 @@ jobs:
           MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD: ${{ secrets.FLUTTER_RELEASE_STORE_PASSWORD }}
           MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS: ${{ secrets.FLUTTER_RELEASE_KEY_ALIAS }}
           MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD: ${{ secrets.FLUTTER_RELEASE_KEY_PASSWORD }}
-        run: bash scripts/build-flutter-app.sh
+        run: |
+          lock_marker="${RUNNER_TEMP}/staging-release-lock.marker"
+          lock_log="${RUNNER_TEMP}/staging-release-lock.log"
+          install -m 0600 /dev/null "${lock_marker}"
+          install -m 0600 /dev/null "${lock_log}"
+          lock_pid=""
+          release_lock() {
+            if [[ -n "${lock_pid}" ]] && kill -0 "${lock_pid}" 2>/dev/null; then
+              kill "${lock_pid}" 2>/dev/null || true
+              wait "${lock_pid}" 2>/dev/null || true
+            fi
+          }
+          trap release_lock EXIT
+          ssh -p "${STAGING_SSH_PORT}" "${STAGING_SSH_USER}@${STAGING_SSH_HOST}" \
+            "/usr/bin/flock --exclusive --timeout 1800 '${STAGING_RELEASE_LOCK}' sh -c 'printf \"locked\\n\"; exec sleep 2700'" \
+            > "${lock_marker}" 2> "${lock_log}" &
+          lock_pid="$!"
+          for _attempt in $(seq 1 1800); do
+            if grep -qx locked "${lock_marker}"; then
+              break
+            fi
+            if ! kill -0 "${lock_pid}" 2>/dev/null; then
+              cat "${lock_log}" >&2
+              exit 1
+            fi
+            sleep 1
+          done
+          grep -qx locked "${lock_marker}"
+
+          scp -P "${STAGING_SSH_PORT}" \
+            "${STAGING_SSH_USER}@${STAGING_SSH_HOST}:/opt/momcozy-lab/current/backend/release-manifest.json" \
+            /tmp/backend-release-manifest-final.json
+          scp -P "${STAGING_SSH_PORT}" \
+            "${STAGING_SSH_USER}@${STAGING_SSH_HOST}:/opt/momcozy-lab/current/agent/release-manifest.json" \
+            /tmp/agent-release-manifest-final.json
+          python3 scripts/validate_staging_service_manifests.py \
+            --backend /tmp/backend-release-manifest-final.json \
+            --agent /tmp/agent-release-manifest-final.json
+          bash scripts/build-flutter-app.sh
+          kill -0 "${lock_pid}"
 
       - name: Record and upload the published immutable artifact
         run: |
@@ -242,7 +299,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Remove the signing key
+      - name: Remove signing and SSH material
         if: always()
         run: |
           rm -f "${MOMCOZY_FLUTTER_RELEASE_STORE_FILE}"
