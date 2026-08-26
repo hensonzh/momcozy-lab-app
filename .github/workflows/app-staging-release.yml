@@ -30,13 +30,84 @@ on:
 
 permissions:
   contents: read
+  issues: read
 
 concurrency:
   group: momcozy-lab-app-staging
   cancel-in-progress: false
 
 jobs:
+  approve:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Wait for independent staging approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STAGING_APPROVERS: ${{ vars.STAGING_APPROVERS }}
+          STAGING_APPROVAL_ISSUE: ${{ vars.STAGING_APPROVAL_ISSUE }}
+        run: |
+          set -euo pipefail
+          [[ "${STAGING_APPROVAL_ISSUE}" =~ ^[1-9][0-9]*$ ]] || {
+            echo "STAGING_APPROVAL_ISSUE must name the repository's approval issue." >&2
+            exit 1
+          }
+
+          IFS=',' read -r -a raw_approvers <<< "${STAGING_APPROVERS}"
+          normalized_approvers=","
+          for raw_approver in "${raw_approvers[@]}"; do
+            approver="${raw_approver//[[:space:]]/}"
+            approver="${approver,,}"
+            [[ "${approver}" =~ ^[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$ ]] || {
+              echo "STAGING_APPROVERS must be a comma-separated GitHub login allowlist." >&2
+              exit 1
+            }
+            normalized_approvers+="${approver},"
+          done
+          [[ "${normalized_approvers}" != "," ]] || {
+            echo "STAGING_APPROVERS must contain at least one GitHub login." >&2
+            exit 1
+          }
+
+          expected_approval="/approve-staging ${GITHUB_REPOSITORY} ${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT} ${GITHUB_SHA}"
+          printf 'Waiting for an allowlisted reviewer other than %s to comment:\n%s\n' \
+            "${GITHUB_ACTOR}" "${expected_approval}"
+          printf 'Approval command: `%s`\n' "${expected_approval}" >> "${GITHUB_STEP_SUMMARY}"
+
+          deadline=$((SECONDS + 1800))
+          actor="${GITHUB_ACTOR,,}"
+          triggering_actor="${GITHUB_TRIGGERING_ACTOR,,}"
+          while (( SECONDS < deadline )); do
+            candidate_output="$(
+              EXPECTED_APPROVAL="${expected_approval}" gh api --paginate \
+                "repos/${GITHUB_REPOSITORY}/issues/${STAGING_APPROVAL_ISSUE}/comments?per_page=100" \
+                --jq '.[] | select(.body == env.EXPECTED_APPROVAL) | .user.login'
+            )"
+            approved_by=""
+            while IFS= read -r candidate; do
+              [[ -n "${candidate}" ]] || continue
+              candidate="${candidate,,}"
+              if [[ "${candidate}" == "${actor}" || "${candidate}" == "${triggering_actor}" ]]; then
+                echo "Ignoring self-approval from ${candidate}." >&2
+              elif [[ "${normalized_approvers}" == *",${candidate},"* ]]; then
+                approved_by="${candidate}"
+                break
+              else
+                echo "Ignoring approval from non-allowlisted user ${candidate}." >&2
+              fi
+            done <<< "${candidate_output}"
+            if [[ -n "${approved_by}" ]]; then
+              echo "Staging delivery approved by ${approved_by}."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Timed out waiting for independent staging approval." >&2
+          exit 1
+
   release:
+    needs: approve
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 75
@@ -59,13 +130,17 @@ jobs:
       MOMCOZY_AGENT_COMMIT_SHA: ${{ inputs.agent_commit_sha }}
       MOMCOZY_AGENT_IMAGE_DIGEST: ${{ inputs.agent_image_digest }}
       MOMCOZY_AGENT_OPENAPI_SHA256: ${{ inputs.agent_openapi_sha256 }}
-      MOMCOZY_FLUTTER_RELEASE_STORE_FILE: ${{ runner.temp }}/momcozy-release.jks
       SSL_CERT_FILE: ${{ github.workspace }}/assets/certificates/momcozy-staging-internal-ca.pem
       STAGING_RELEASE_LOCK: /opt/momcozy-lab/shared/staging-release.lock
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.sha }}
+
+      - name: Configure runner-scoped paths
+        env:
+          RELEASE_STORE_FILE: ${{ runner.temp }}/momcozy-release.jks
+        run: printf 'MOMCOZY_FLUTTER_RELEASE_STORE_FILE=%s\n' "${RELEASE_STORE_FILE}" >> "${GITHUB_ENV}"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -256,8 +331,11 @@ jobs:
             fi
           }
           trap release_lock EXIT
-          ssh -p "${STAGING_SSH_PORT}" "${STAGING_SSH_USER}@${STAGING_SSH_HOST}" \
-            "/usr/bin/flock --exclusive --timeout 1800 '${STAGING_RELEASE_LOCK}' sh -c 'printf \"locked\\n\"; exec sleep 2700'" \
+          ssh \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=2 \
+            -p "${STAGING_SSH_PORT}" "${STAGING_SSH_USER}@${STAGING_SSH_HOST}" \
+            "/usr/bin/flock --exclusive --timeout 1800 '${STAGING_RELEASE_LOCK}' sh -c 'printf \"locked\\n\"; trap \"exit 0\" HUP INT TERM; while :; do sleep 60; done'" \
             > "${lock_marker}" 2> "${lock_log}" &
           lock_pid="$!"
           for _attempt in $(seq 1 1800); do

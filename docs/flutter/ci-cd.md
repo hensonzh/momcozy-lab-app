@@ -23,8 +23,22 @@ CI 不签正式包、不写 GitHub Releases、不更新 Pages，也不部署后�
 ## 受保护的 Staging 发布
 
 `.github/workflows/app-staging-release.yml` 只能手动触发，使用 GitHub
-`staging` environment 和串行 concurrency，且只接受从 `main` 分支发起。应为该
-environment 配置 required reviewer，并设置：
+`staging` environment 记录部署、使用串行 concurrency，且只接受从 `main` 分支发起。
+当前三个仓库均为 private，现有 GitHub 套餐不支持 private repository required
+reviewers，因此不能把空的 environment 当成审批门禁。每个仓库需要先创建一个固定的
+审批 issue，并设置两个 repository variables：
+
+- `STAGING_APPROVAL_ISSUE`：审批 issue 编号；
+- `STAGING_APPROVERS`：逗号分隔的 GitHub reviewer login 白名单。
+
+仓库必须至少有一位独立 reviewer collaborator；当前只有单一 collaborator 时发布会保持关闭。
+独立 approval job 不读取发布 secret，并等待白名单内且不同于原始/重跑发起人的用户在
+该 issue 下发送 job summary 展示的完整 `/approve-staging ...` 命令。命令绑定 repository、
+run ID、attempt 和触发 SHA；缺少变量、发起人自批或 30 分钟内未批准都会 fail closed。
+发布 job 始终 checkout 审批时的 `github.sha`，不会在等待期间漂移到更新的 `main`。
+
+配置以下 staging environment secret；若当前套餐不支持 private environment secret，
+则配置为 repository secret：
 
 - `FLUTTER_RELEASE_KEYSTORE_BASE64`
 - `FLUTTER_RELEASE_STORE_PASSWORD`
@@ -55,7 +69,8 @@ staging CA 下载两个公网 `/openapi.json` 并做 JSON 语义等价校验。�
 发布已构建 APK 前，工作流在宿主机获取与两个服务发布相同的 `flock`，重新读取两份
 current manifest，并验证 Agent 记录的 Product 依赖恰好等于当前 Product 身份。这样
 三个仓库各自的 GitHub concurrency 不能造成跨仓库竞态。Flutter setup 的外部 Action
-固定到完整 commit，由依赖更新流程显式升级。
+固定到完整 commit，由依赖更新流程显式升级。宿主机锁由长连接 SSH holder 持有，并由
+本地 `EXIT` cleanup 主动终止：发布脚本结束或 runner 中断即释放，不使用会提前到期的固定租期。
 
 release gate 只构建一次 `app-unified-release.apk`。发布步骤通过
 `MOMCOZY_APK_INPUT` 复用这同一文件，生成 SHA-256、下载页和包含 App commit、
@@ -71,6 +86,10 @@ momcozy-unified-android-staging-<version>-<build>.apk
 App commit、服务 commit/digest/OpenAPI hash、签名证书和 APK hash。已存在 tag 时，
 脚本只接受三份文件逐字相同；任一内容不同都会失败并要求增加 build number，绝不
 覆盖资产。Pages 只写 `/unified/` 命名空间，不改动仓库根页面或其他项目目录。
+`momcozy-lab-releases` 的 Pages 必须由管理员预先配置为从 `main` 分支根目录发布；
+发布脚本不会调用 Pages/Administration API。脚本只在临时 clone 内配置
+`gh auth git-credential`，让原生 `git push` 使用 `RELEASES_GH_TOKEN`，不修改 runner
+之外的全局 git 配置。
 
 ## 版本、回滚与边界
 

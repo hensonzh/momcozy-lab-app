@@ -13,6 +13,22 @@ APP_CI = ROOT / ".github" / "workflows" / "app-ci.yml"
 STAGING_RELEASE = ROOT / ".github" / "workflows" / "app-staging-release.yml"
 
 
+def _literal_run_blocks(workflow: str) -> list[str]:
+    lines = workflow.splitlines()
+    blocks: list[str] = []
+    for index, line in enumerate(lines):
+        if line.strip() != "run: |":
+            continue
+        indentation = len(line) - len(line.lstrip())
+        block: list[str] = []
+        for candidate in lines[index + 1 :]:
+            if candidate and len(candidate) - len(candidate.lstrip()) <= indentation:
+                break
+            block.append(candidate)
+        blocks.append("\n".join(block))
+    return blocks
+
+
 class StagingDeliveryContractTest(unittest.TestCase):
     def test_unified_flavor_is_install_and_publish_isolated(self) -> None:
         gradle = (ROOT / "android" / "app" / "build.gradle.kts").read_text()
@@ -61,6 +77,8 @@ class StagingDeliveryContractTest(unittest.TestCase):
         self.assertIn("momcozy-unified-android-staging", packager)
         self.assertIn('pages_namespace="unified"', script)
         self.assertNotIn('"${pages_checkout}/index.html"', script)
+        self.assertIn("gh auth git-credential", script)
+        self.assertNotIn('repos/${github_release_repo}/pages', script)
 
     def test_prebuilt_unified_apk_manifest_records_runtime_and_service_identity(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -169,12 +187,30 @@ class StagingDeliveryContractTest(unittest.TestCase):
             "/usr/bin/flock",
             "staging-release.lock",
             "Fetch the currently deployed service manifests again under the lock",
+            "Wait for independent staging approval",
+            "STAGING_APPROVERS",
+            "STAGING_APPROVAL_ISSUE",
+            "/approve-staging",
+            "GITHUB_TRIGGERING_ACTOR",
+            "needs: approve",
+            "ref: ${{ github.sha }}",
+            "while :; do sleep 60; done",
         ):
             self.assertIn(required, workflow)
 
         self.assertNotIn("STAGING_APP_API_TOKEN", workflow)
+        self.assertNotIn("ref: main", workflow)
+        self.assertNotIn("exec sleep 2700", workflow)
+        self.assertNotIn("mkfifo", workflow)
+        self.assertNotIn(
+            "MOMCOZY_FLUTTER_RELEASE_STORE_FILE: ${{ runner.temp }}", workflow
+        )
+        self.assertIn(
+            "RELEASE_STORE_FILE: ${{ runner.temp }}/momcozy-release.jks",
+            workflow,
+        )
         self.assertIn("github.ref == 'refs/heads/main'", workflow)
-        for run_block in workflow.split("run: |")[1:]:
+        for run_block in _literal_run_blocks(workflow):
             self.assertNotIn("${{ inputs.", run_block)
         self.assertNotIn("subosito/flutter-action@v2", workflow)
         self.assertIn(
