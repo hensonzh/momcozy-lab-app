@@ -222,6 +222,8 @@ pages_checkout="$(mktemp -d "${TMPDIR:-/tmp}/momcozy-pages.XXXXXX")"
 
 printf '\nPublishing download page to GitHub Pages\n'
 gh repo clone "${github_release_repo}" "${pages_checkout}" -- --depth 1
+git -C "${pages_checkout}" config --local credential.helper ""
+git -C "${pages_checkout}" config --local --add credential.helper "!gh auth git-credential"
 mkdir -p "${pages_checkout}/${pages_namespace}/assets"
 cp "${PROJECT_ROOT}/dist/android-apk/index.html" "${pages_checkout}/${pages_namespace}/index.html"
 cp "${PROJECT_ROOT}/dist/android-apk/manifest.json" "${pages_checkout}/${pages_namespace}/manifest.json"
@@ -242,16 +244,6 @@ if ! git -C "${pages_checkout}" diff --cached --quiet; then
   git -C "${pages_checkout}" config user.email "${github_login}@users.noreply.github.com"
   git -C "${pages_checkout}" commit -m "release: Android ${version_name} (${build_number})"
   git -C "${pages_checkout}" push origin main
-fi
-
-if ! gh api "repos/${github_release_repo}/pages" >/dev/null 2>&1; then
-  gh api \
-    --method POST \
-    "repos/${github_release_repo}/pages" \
-    -f build_type=legacy \
-    -f 'source[branch]=main' \
-    -f 'source[path]=/' \
-    >/dev/null
 fi
 
 printf '\nDeployment succeeded.\n'
