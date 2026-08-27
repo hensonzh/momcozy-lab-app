@@ -6,33 +6,32 @@ import 'package:flutter_test/flutter_test.dart';
 
 const _toleranceEnvironmentKey = 'MOMCOZY_GOLDEN_PRECISION_TOLERANCE';
 
+bool get isMomcozyTolerantGoldenComparator =>
+    goldenFileComparator is _TolerantGoldenFileComparator;
+
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
-  final previousComparator = goldenFileComparator;
-  try {
-    final configuredTolerance = Platform.environment[_toleranceEnvironmentKey];
-    if (configuredTolerance != null) {
-      final precisionTolerance = double.tryParse(configuredTolerance);
-      if (precisionTolerance == null ||
-          precisionTolerance < 0 ||
-          precisionTolerance > 1) {
-        throw FormatException(
-          '$_toleranceEnvironmentKey must be a number between 0 and 1.',
-        );
-      }
-      if (previousComparator is! LocalFileComparator) {
-        throw StateError(
-          'Golden tolerance requires Flutter LocalFileComparator.',
-        );
-      }
-      goldenFileComparator = _TolerantGoldenFileComparator(
-        previousComparator.basedir.resolve('momcozy_golden_test.dart'),
-        precisionTolerance: precisionTolerance,
+  final configuredTolerance = Platform.environment[_toleranceEnvironmentKey];
+  if (configuredTolerance != null) {
+    final precisionTolerance = double.tryParse(configuredTolerance);
+    if (precisionTolerance == null ||
+        precisionTolerance < 0 ||
+        precisionTolerance > 1) {
+      throw FormatException(
+        '$_toleranceEnvironmentKey must be a number between 0 and 1.',
       );
     }
-    await testMain();
-  } finally {
-    goldenFileComparator = previousComparator;
+    final previousComparator = goldenFileComparator;
+    if (previousComparator is! LocalFileComparator) {
+      throw StateError(
+        'Golden tolerance requires Flutter LocalFileComparator.',
+      );
+    }
+    goldenFileComparator = _TolerantGoldenFileComparator(
+      previousComparator.basedir.resolve('momcozy_golden_test.dart'),
+      precisionTolerance: precisionTolerance,
+    );
   }
+  await testMain();
 }
 
 class _TolerantGoldenFileComparator extends LocalFileComparator {
