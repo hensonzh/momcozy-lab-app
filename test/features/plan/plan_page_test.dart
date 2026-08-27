@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/plan/presentation/plan_page.dart';
 
+import '../../support/golden_cases.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -58,7 +59,7 @@ void main() {
     expect(find.text('No Plans Yet'), findsOneWidget);
   });
 
-  testWidgets('renders the supplied empty-plan structure without legacy UI', (
+  goldenTest('renders the supplied empty-plan structure without legacy UI', (
     tester,
   ) async {
     var createCount = 0;
@@ -322,7 +323,7 @@ void main() {
     expect(find.text('Today'), findsNothing);
   });
 
-  testWidgets('a future generated plan is shown as upcoming, not day one', (
+  goldenTest('a future generated plan is shown as upcoming, not day one', (
     tester,
   ) async {
     final today = DateTime(2026, 8, 10);
@@ -421,7 +422,7 @@ void main() {
     },
   );
 
-  testWidgets('renders the supplied multi-category daily plan structure', (
+  goldenTest('renders the supplied multi-category daily plan structure', (
     tester,
   ) async {
     PlanSession? startedSession;
@@ -717,7 +718,7 @@ void main() {
     expect(find.byKey(const ValueKey('plan-manual-edit-sheet')), findsNothing);
   });
 
-  testWidgets('renders the supplied single-plan detail structure', (
+  goldenTest('renders the supplied single-plan detail structure', (
     tester,
   ) async {
     var backCount = 0;
@@ -885,7 +886,7 @@ void main() {
     );
   }
 
-  testWidgets('renders deterministic 2x design comparison fixtures', (
+  goldenTest('renders deterministic 2x design comparison fixtures', (
     tester,
   ) async {
     for (final designCase in [

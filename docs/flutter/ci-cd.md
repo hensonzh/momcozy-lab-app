@@ -14,11 +14,15 @@ Python 3.13。门禁包括：
 
 1. 构建脚本与双服务 OpenAPI 快照契约测试；
 2. Android packaging 与安全隐私静态检查；
-3. `dart format`、`flutter analyze --no-pub`、`flutter test --no-pub`；
-4. 使用两个 staging HTTPS 地址构建 `unified` debug smoke APK；
-5. 将该 APK 保存为短期 workflow artifact。
+3. `dart format`、`flutter analyze --no-pub`，并在 Linux 跑完整非视觉测试；
+4. 在独立的 macOS 15 job 上跑标记为 `golden` 的视觉基线测试；
+5. 使用两个 staging HTTPS 地址构建 `unified` debug smoke APK；
+6. 将该 APK 保存为短期 workflow artifact。
 
-CI 不签正式包、不写 GitHub Releases、不更新 Pages，也不部署后端。
+golden 基线以 macOS + 固定 Flutter 3.44.4 为规范渲染环境，避免 Linux 字体与
+Skia 栅格差异产生伪失败。发布 workflow 复用已由主干 CI 验证的视觉结果，因此其
+Linux release gate 运行 `flutter test --no-pub --exclude-tags=golden`。CI 不签正式包、
+不写 GitHub Releases、不更新 Pages，也不部署后端。
 
 ## 受保护的 Staging 发布
 

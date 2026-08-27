@@ -163,6 +163,38 @@ class StagingDeliveryContractTest(unittest.TestCase):
         ):
             self.assertIn(required, workflow)
 
+    def test_golden_tests_use_the_canonical_macos_lane(self) -> None:
+        workflow = APP_CI.read_text()
+        release_gate = (ROOT / "scripts" / "run-flutter-release-gate.mjs").read_text()
+        test_config = (ROOT / "dart_test.yaml").read_text()
+
+        self.assertIn("flutter test --no-pub --exclude-tags=golden", workflow)
+        self.assertIn("runs-on: macos-15", workflow)
+        self.assertIn("flutter test --no-pub --tags=golden", workflow)
+        self.assertIn(
+            '["flutter", ["test", "--no-pub", "--exclude-tags=golden"]',
+            release_gate,
+        )
+        self.assertIn("golden: {}", test_config)
+
+        pure_golden_tests = sorted((ROOT / "test").rglob("*_golden_test.dart"))
+        self.assertTrue(pure_golden_tests)
+        for path in pure_golden_tests:
+            self.assertIn("@Tags(['golden'])", path.read_text(), str(path))
+
+        mixed_golden_counts = {
+            "test/features/more/more_profile_page_test.dart": 5,
+            "test/features/plan/plan_page_test.dart": 5,
+            "test/features/profile_overview/me_baby_overview_page_test.dart": 14,
+        }
+        for relative_path, expected_count in mixed_golden_counts.items():
+            source = (ROOT / relative_path).read_text()
+            self.assertEqual(
+                source.count("goldenTest("),
+                expected_count,
+                relative_path,
+            )
+
     def test_staging_release_requires_signing_live_join_and_prebuilt_publication(self) -> None:
         workflow = STAGING_RELEASE.read_text()
 

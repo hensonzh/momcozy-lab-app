@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/features/profile_overview/presentation/profi
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/golden_cases.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -1935,7 +1936,7 @@ void main() {
       },
     );
 
-    testWidgets('Me matches the approved first-screen visual baseline', (
+    goldenTest('Me matches the approved first-screen visual baseline', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
@@ -1946,7 +1947,7 @@ void main() {
       );
     });
 
-    testWidgets('Me unmeasured milk uses an explicit visual empty state', (
+    goldenTest('Me unmeasured milk uses an explicit visual empty state', (
       tester,
     ) async {
       await _pumpApp(
@@ -1974,7 +1975,7 @@ void main() {
       );
     });
 
-    testWidgets('Me recovery matches the honest visual baseline', (
+    goldenTest('Me recovery matches the honest visual baseline', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
@@ -1993,7 +1994,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby matches the approved first-screen visual baseline', (
+    goldenTest('Baby matches the approved first-screen visual baseline', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/baby');
@@ -2006,7 +2007,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby first screen matches its narrow visual baseline', (
+    goldenTest('Baby first screen matches its narrow visual baseline', (
       tester,
     ) async {
       await _pumpApp(
@@ -2023,7 +2024,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby sleep landing matches its visual baseline', (
+    goldenTest('Baby sleep landing matches its visual baseline', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/baby');
@@ -2038,7 +2039,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby sleep empty state matches its visual baseline', (
+    goldenTest('Baby sleep empty state matches its visual baseline', (
       tester,
     ) async {
       await _pumpApp(
@@ -2059,7 +2060,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby feeding detail matches its visual baseline', (
+    goldenTest('Baby feeding detail matches its visual baseline', (
       tester,
     ) async {
       await _pumpApp(
@@ -2078,7 +2079,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby diaper detail matches its visual baseline', (
+    goldenTest('Baby diaper detail matches its visual baseline', (
       tester,
     ) async {
       await _pumpApp(
@@ -2097,9 +2098,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby sleep detail matches its visual baseline', (
-      tester,
-    ) async {
+    goldenTest('Baby sleep detail matches its visual baseline', (tester) async {
       await _pumpApp(
         tester,
         initialLocation: '/baby',
@@ -2118,7 +2117,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby add record sheet matches its visual baseline', (
+    goldenTest('Baby add record sheet matches its visual baseline', (
       tester,
     ) async {
       await _pumpApp(
@@ -2139,7 +2138,7 @@ void main() {
       );
     });
 
-    testWidgets('Me add record sheet matches its visual baseline', (
+    goldenTest('Me add record sheet matches its visual baseline', (
       tester,
     ) async {
       await _pumpApp(
@@ -2160,7 +2159,7 @@ void main() {
       );
     });
 
-    testWidgets('Me avatar state matches the approved visual baseline', (
+    goldenTest('Me avatar state matches the approved visual baseline', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/me');
@@ -2176,7 +2175,7 @@ void main() {
       );
     });
 
-    testWidgets('Baby avatar state matches the approved visual baseline', (
+    goldenTest('Baby avatar state matches the approved visual baseline', (
       tester,
     ) async {
       await _pumpApp(tester, initialLocation: '/baby');

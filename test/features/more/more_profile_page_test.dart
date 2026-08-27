@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/features/body_profile/data/body_profile_api_
 
 import '../../support/momcozy_test_fonts.dart';
 import '../../support/fixture_api_transport.dart';
+import '../../support/golden_cases.dart';
 
 void main() {
   setUpAll(loadMomCozyTestFonts);
@@ -267,7 +268,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('More matches the approved overview visual baseline', (
+  goldenTest('More matches the approved overview visual baseline', (
     tester,
   ) async {
     await _pumpApp(
@@ -282,7 +283,7 @@ void main() {
     );
   });
 
-  testWidgets('More editor matches the approved visual baseline', (
+  goldenTest('More editor matches the approved visual baseline', (
     tester,
   ) async {
     await _pumpApp(
@@ -297,7 +298,7 @@ void main() {
     );
   });
 
-  testWidgets('Pain Map matches the approved visual baseline', (tester) async {
+  goldenTest('Pain Map matches the approved visual baseline', (tester) async {
     await _pumpApp(
       tester,
       initialLocation: '/more/body-profile/edit',
@@ -317,7 +318,7 @@ void main() {
     );
   });
 
-  testWidgets('Pain Map matches the 390px visual baseline', (tester) async {
+  goldenTest('Pain Map matches the 390px visual baseline', (tester) async {
     await _pumpApp(
       tester,
       initialLocation: '/more/body-profile/edit',
@@ -338,7 +339,7 @@ void main() {
     );
   });
 
-  testWidgets('Pain Map matches the 200 percent text visual baseline', (
+  goldenTest('Pain Map matches the 200 percent text visual baseline', (
     tester,
   ) async {
     tester.platformDispatcher.textScaleFactorTestValue = 2;

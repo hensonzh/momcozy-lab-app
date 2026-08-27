@@ -139,7 +139,7 @@ const steps = [
     flutterAppDir,
   ],
   ["flutter", ["analyze", "--no-pub"], flutterAppDir],
-  ["flutter", ["test", "--no-pub"], flutterAppDir],
+  ["flutter", ["test", "--no-pub", "--exclude-tags=golden"], flutterAppDir],
   [
     "node",
     [
