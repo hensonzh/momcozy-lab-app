@@ -195,4 +195,7 @@ Remaining device-lab gap:
 
 - Add fixtures before feature UI: BLE protocol, Agent SSE stream, API envelope, and route intents.
 - Keep native Android capabilities behind typed platform interfaces.
-- `android/gradle.properties` pins `android.aapt2FromMavenOverride` to SDK build-tools 36.0.0 because Maven AAPT2 9.0.1 fails to start on this machine.
+- Keep `android/gradle.properties` host-portable. If Maven AAPT2 cannot start on a
+  particular development machine, put `android.aapt2FromMavenOverride` with that
+  machine's SDK path in the user's `~/.gradle/gradle.properties`; never commit the
+  workstation-specific path.
