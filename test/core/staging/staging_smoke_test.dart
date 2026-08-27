@@ -48,6 +48,18 @@ void main() {
   });
 
   test(
+    'headless smoke builds Agent context without platform plugins',
+    () async {
+      final context = await buildStagingSmokeRunCreateContextProvider(
+        now: () => DateTime.utc(2026, 8, 27, 4, 15),
+      ).load();
+
+      expect(context.timezone, 'UTC');
+      expect(context.messageSentAt, '2026-08-27T04:15:00+00:00');
+    },
+  );
+
+  test(
     'runner gates mutating and agent probes behind explicit flags',
     () async {
       final readOnly = _FakeProbe(name: 'read-only');

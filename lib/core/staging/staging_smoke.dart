@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:momcozy_flutter_app/core/agent_stream/agent_run_create_context.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
@@ -225,6 +226,15 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
   ];
 }
 
+AgentRunCreateContextProvider buildStagingSmokeRunCreateContextProvider({
+  DateTime Function()? now,
+}) {
+  return PlatformAgentRunCreateContextProvider(
+    timezoneLoader: () async => 'UTC',
+    now: now,
+  );
+}
+
 class _ProfileOverviewProbe implements StagingSmokeProbe {
   const _ProfileOverviewProbe(this.config, this.repository);
 
@@ -395,6 +405,7 @@ class _AgentSseProbe implements StagingSmokeProbe {
       ProductionAgentSseTransport(
         runsEndpoint: endpoint,
         payloadFactory: buildProductionAgentRunPayload,
+        runCreateContextProvider: buildStagingSmokeRunCreateContextProvider(),
       ),
     );
     await validateSuccessfulAgentSmoke(

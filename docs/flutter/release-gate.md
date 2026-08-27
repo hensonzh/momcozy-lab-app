@@ -19,7 +19,7 @@ flutter pub get
 dart format --output=none --set-exit-if-changed lib test integration_test tool
 flutter analyze
 flutter test
-dart run tool/staging_smoke.dart
+flutter test --no-pub tool/staging_smoke_test.dart
 node scripts/build-flutter-android-apk.mjs --mode debug --flavor local
 node scripts/build-flutter-android-apk.mjs --mode release --flavor unified \
   --dart-define=MOMCOZY_ENV=staging \
@@ -38,7 +38,7 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 node scripts/run-flutter-release-gate.mjs --check-config
 ```
 
-`tool/staging_smoke.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
+`tool/staging_smoke_test.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
 受保护的 staging 发布还设置 `MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER=1`，此时
 `MOMCOZY_STAGING_SMOKE` 和 `MOMCOZY_STAGING_SMOKE_AGENT` 必须同时为 `1`，否则
 即使使用 `--check-config` 也会 fail closed。

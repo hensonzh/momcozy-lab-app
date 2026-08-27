@@ -209,6 +209,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
 
     def test_live_staging_smoke_runs_inside_the_flutter_test_runtime(self) -> None:
         release_gate = (ROOT / "scripts" / "run-flutter-release-gate.mjs").read_text()
+        smoke_source = (ROOT / "lib" / "core" / "staging" / "staging_smoke.dart").read_text()
 
         self.assertIn(
             '["flutter", ["test", "--no-pub", "tool/staging_smoke_test.dart"]',
@@ -216,6 +217,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
         )
         self.assertNotIn('["dart", ["run", "tool/staging_smoke.dart"]', release_gate)
         self.assertTrue((ROOT / "tool" / "staging_smoke_test.dart").is_file())
+        self.assertIn("buildStagingSmokeRunCreateContextProvider", smoke_source)
 
     def test_staging_release_requires_signing_live_join_and_prebuilt_publication(self) -> None:
         workflow = STAGING_RELEASE.read_text()
@@ -252,6 +254,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
             self.assertIn(required, workflow)
 
         self.assertNotIn("STAGING_APP_API_TOKEN", workflow)
+        self.assertNotIn("STAGING_APP_BABY_ID", workflow)
         self.assertNotIn("GITHUB_TRIGGERING_ACTOR", workflow)
         self.assertNotIn("Ignoring self-approval", workflow)
         self.assertNotIn("ref: main", workflow)
@@ -268,6 +271,9 @@ class StagingDeliveryContractTest(unittest.TestCase):
         for run_block in _literal_run_blocks(workflow):
             self.assertNotIn("${{ inputs.", run_block)
         self.assertNotIn("subosito/flutter-action@v2", workflow)
+        self.assertIn("Resolve or provision the isolated smoke infant", workflow)
+        self.assertIn("/v1/profile/infants", workflow)
+        self.assertIn("Idempotency-Key", workflow)
         self.assertIn(
             "subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
             workflow,

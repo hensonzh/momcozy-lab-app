@@ -2,7 +2,7 @@
 
 ## 目标
 
-`tool/staging_smoke.dart` 用于在不连接真机、不连接真泵的前提下，验证 Flutter runtime 可以直接访问后端 staging：
+`tool/staging_smoke_test.dart` 用于在不连接真机、不连接真泵的前提下，验证 Flutter runtime 可以直接访问后端 staging：
 
 - 只读 HTTP：Status、Schedule、Records。
 - 显式启用后才执行的写入类探针：Pump workstate、client-event，以及 Media
@@ -14,7 +14,7 @@
 ## 本地命令
 
 ```bash
-dart run tool/staging_smoke.dart
+flutter test --no-pub tool/staging_smoke_test.dart
 ```
 
 默认输出应为 skipped。
@@ -29,7 +29,7 @@ MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
 MOMCOZY_API_TOKEN=replace-with-staging-token \
 MOMCOZY_DEFAULT_USER_ID=replace-with-staging-user \
 MOMCOZY_DEFAULT_BABY_ID=replace-with-staging-baby \
-dart run tool/staging_smoke.dart
+flutter test --no-pub tool/staging_smoke_test.dart
 ```
 
 包含写入探针：
