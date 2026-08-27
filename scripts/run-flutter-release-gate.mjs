@@ -122,7 +122,7 @@ const steps = [
   ["flutter", ["pub", "get"], flutterAppDir],
   // The access token is deliberately issued immediately before this gate.
   // Keep the live smoke before the long static/test/build sequence.
-  ["dart", ["run", "tool/staging_smoke.dart"], flutterAppDir],
+  ["flutter", ["test", "--no-pub", "tool/staging_smoke_test.dart"], flutterAppDir],
   ["node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot],
   ["node", ["scripts/check-flutter-security-privacy.mjs"], projectRoot],
   [
