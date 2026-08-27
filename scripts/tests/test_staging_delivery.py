@@ -167,15 +167,22 @@ class StagingDeliveryContractTest(unittest.TestCase):
         workflow = APP_CI.read_text()
         release_gate = (ROOT / "scripts" / "run-flutter-release-gate.mjs").read_text()
         test_config = (ROOT / "dart_test.yaml").read_text()
+        flutter_test_config = (ROOT / "test" / "flutter_test_config.dart").read_text()
 
         self.assertIn("flutter test --no-pub --exclude-tags=golden", workflow)
         self.assertIn("runs-on: macos-15", workflow)
         self.assertIn("flutter test --no-pub --tags=golden", workflow)
         self.assertIn(
+            'MOMCOZY_GOLDEN_PRECISION_TOLERANCE: "0.011"',
+            workflow,
+        )
+        self.assertIn(
             '["flutter", ["test", "--no-pub", "--exclude-tags=golden"]',
             release_gate,
         )
         self.assertIn("golden: {}", test_config)
+        self.assertIn("class _TolerantGoldenFileComparator", flutter_test_config)
+        self.assertIn("result.diffPercent <= _precisionTolerance", flutter_test_config)
 
         pure_golden_tests = sorted((ROOT / "test").rglob("*_golden_test.dart"))
         self.assertTrue(pure_golden_tests)

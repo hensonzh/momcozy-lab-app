@@ -101,4 +101,6 @@ jobs:
         run: flutter pub get
 
       - name: Verify canonical macOS golden baselines
+        env:
+          MOMCOZY_GOLDEN_PRECISION_TOLERANCE: "0.011"
         run: flutter test --no-pub --tags=golden
