@@ -54,7 +54,6 @@ attempt 和触发 SHA；缺少变量或 30 分钟内未批准都会 fail closed�
 - `FLUTTER_RELEASE_KEY_PASSWORD`
 - `STAGING_SMOKE_INVITE_CODE`，仅绑定隔离的 smoke 账号
 - `STAGING_SMOKE_DEVICE_ID`
-- `STAGING_APP_BABY_ID`
 - `RELEASES_GH_TOKEN`，仅授予 `hensonzh/momcozy-lab-releases` 所需的
   Releases/Contents 权限
 - `STAGING_SSH_HOST`、`STAGING_SSH_PORT`、`STAGING_SSH_USER`、
@@ -70,7 +69,9 @@ attempt 和触发 SHA；缺少变量或 30 分钟内未批准都会 fail closed�
 manifest 并与全部输入逐项比对，确认 OpenAPI hash 与 App 固定快照一致，再通过内置
 staging CA 下载两个公网 `/openapi.json` 并做 JSON 语义等价校验。耗时依赖安装完成后，
 工作流才用隔离账号即时 invite-login，并立刻执行 live smoke，不保存会在 15 分钟后
-过期的 access token。之后强制正式签名，记录签名证书 SHA-256，并同时启用 Product
+过期的 access token。工作流会查询该账号的 infant；首次运行时通过固定幂等键创建一条
+专用 smoke infant，后续直接复用其 ID，不维护容易与账号所有权漂移的 Baby ID secret。
+之后强制正式签名，记录签名证书 SHA-256，并同时启用 Product
 读写/对象存储 smoke 与 Agent SSE smoke；Agent 必须出现非空 assistant 响应并以
 `run.completed` 结束，任一失败终态都阻止发布。
 
