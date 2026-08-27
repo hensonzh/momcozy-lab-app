@@ -19,10 +19,12 @@ Python 3.13。门禁包括：
 5. 使用两个 staging HTTPS 地址构建 `unified` debug smoke APK；
 6. 将该 APK 保存为短期 workflow artifact。
 
-golden 基线以 macOS + 固定 Flutter 3.44.4 为规范渲染环境，避免 Linux 字体与
-Skia 栅格差异产生伪失败。发布 workflow 复用已由主干 CI 验证的视觉结果，因此其
-Linux release gate 运行 `flutter test --no-pub --exclude-tags=golden`。CI 不签正式包、
-不写 GitHub Releases、不更新 Pages，也不部署后端。
+golden 基线以 macOS + 固定 Flutter 3.44.4 为规范渲染环境。Hosted macOS 的芯片和
+系统栅格器仍可能与基线生成机产生少量抗锯齿差异，因此该 job 通过 Flutter 官方
+`GoldenFileComparator` 扩展接受最多 1.1% 的像素差异；本地未设置该容差，仍执行严格
+逐像素比较。发布 workflow 复用已由主干 CI 验证的视觉结果，因此其 Linux release gate
+运行 `flutter test --no-pub --exclude-tags=golden`。CI 不签正式包、不写 GitHub
+Releases、不更新 Pages，也不部署后端。
 
 ## 受保护的 Staging 发布
 
