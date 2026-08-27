@@ -207,6 +207,16 @@ class StagingDeliveryContractTest(unittest.TestCase):
                 relative_path,
             )
 
+    def test_live_staging_smoke_runs_inside_the_flutter_test_runtime(self) -> None:
+        release_gate = (ROOT / "scripts" / "run-flutter-release-gate.mjs").read_text()
+
+        self.assertIn(
+            '["flutter", ["test", "--no-pub", "tool/staging_smoke_test.dart"]',
+            release_gate,
+        )
+        self.assertNotIn('["dart", ["run", "tool/staging_smoke.dart"]', release_gate)
+        self.assertTrue((ROOT / "tool" / "staging_smoke_test.dart").is_file())
+
     def test_staging_release_requires_signing_live_join_and_prebuilt_publication(self) -> None:
         workflow = STAGING_RELEASE.read_text()
 
