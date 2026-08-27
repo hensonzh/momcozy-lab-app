@@ -163,6 +163,11 @@ class StagingDeliveryContractTest(unittest.TestCase):
         ):
             self.assertIn(required, workflow)
 
+    def test_android_gradle_properties_do_not_pin_a_host_aapt2_path(self) -> None:
+        properties = (ROOT / "android" / "gradle.properties").read_text()
+
+        self.assertNotIn("android.aapt2FromMavenOverride", properties)
+
     def test_golden_tests_use_the_canonical_macos_lane(self) -> None:
         workflow = APP_CI.read_text()
         release_gate = (ROOT / "scripts" / "run-flutter-release-gate.mjs").read_text()
