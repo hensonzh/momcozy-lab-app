@@ -14,7 +14,7 @@ MomCozy App 会处理妈妈、宝宝、泵奶、喂养、成长、健康问题�
 [x] Native fake failure stream 使用统一脱敏工具
 [x] HTTP/SSE/WS/voice client 接入统一脱敏工具后才能输出请求日志；release gate 已加入 `make flutter-security-check`
 [x] Android platform channel event/failure log 不输出原始 device id、pump request body 或通知正文；release gate 已加入静态检查
-[x] token/secret 不落普通 preferences；Flutter session bootstrap 已接入 secure storage，dart-define 仅作为 dev/staging fallback
+[x] token/secret 不落普通 preferences；Flutter session bootstrap 已接入 secure storage，dart-define 仅作为 dev/test fallback
 [x] crash/perf report 接入前必须有敏感字段 denylist；`redactCrashReport()`/`redactCrashContext()` 已覆盖 free-form message、用户、会话、设备、健康容器
 [x] Flutter telemetry / diagnostics 接入前必须走统一脱敏事件模型；`MomCozyObservability` 已覆盖 route、API、Agent lifecycle、feature event 和 non-fatal event，默认 Noop sink 不外发
 [x] fixtures、golden、截图不得包含真实用户数据；`fixture_privacy_test.dart` 已纳入完整 Flutter test gate

@@ -10,7 +10,6 @@ export const DEFAULT_LOCAL_AGENT_API_URL = "http://127.0.0.1:8010";
 
 const supportedFlavors = new Set([
   "local",
-  "staging",
   "unified",
   "production",
 ]);
@@ -20,7 +19,7 @@ export function resolveFlutterApiConfig({ flavor, productUrl, agentUrl }) {
   const normalizedFlavor = String(flavor || "").trim();
   if (!supportedFlavors.has(normalizedFlavor)) {
     throw new Error(
-      `Unsupported flavor: ${normalizedFlavor || "(empty)"}. Expected local, staging, unified, or production.`,
+      `Unsupported flavor: ${normalizedFlavor || "(empty)"}. Expected local, unified, or production.`,
     );
   }
 
@@ -199,12 +198,12 @@ function parseCliArgs(args) {
 function printHelp() {
   console.log(`Usage:
   node scripts/flutter-api-config.mjs validate \\
-    --flavor <local|staging|unified|production> \\
+    --flavor <local|unified|production> \\
     --product-url <url> --agent-url <url> \\
     [--extra-dart-defines <KEY=VALUE,...>]
 
-local accepts omitted URLs and uses loopback defaults. staging, unified, and
-production require both HTTPS URLs and reject loopback or unspecified hosts.`);
+local accepts omitted URLs and uses loopback defaults. unified and production
+require both HTTPS URLs and reject loopback or unspecified hosts.`);
 }
 
 const isMain =

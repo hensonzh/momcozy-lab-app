@@ -50,10 +50,10 @@ matches(
   /create\("local"\)[\s\S]*applicationIdSuffix = "\.local"/,
   "Flutter local flavor keeps a local suffix",
 );
-matches(
+notMatches(
   "android/app/build.gradle.kts",
-  /create\("staging"\)[\s\S]*applicationIdSuffix = "\.staging"/,
-  "Flutter staging flavor keeps a staging suffix",
+  /create\("(?:test|staging)"\)/,
+  "Flutter keeps test as runtime metadata instead of a redundant install flavor",
 );
 matches(
   "android/app/build.gradle.kts",
@@ -119,11 +119,6 @@ contains(
   "android/app/src/local/res/values/strings.xml",
   "<string name=\"app_name\">Momcozy Lab</string>",
   "Flutter local label matches current unified branding",
-);
-contains(
-  "android/app/src/staging/res/values/strings.xml",
-  "<string name=\"app_name\">Momcozy Lab</string>",
-  "Flutter staging label matches current unified branding",
 );
 contains(
   "android/app/src/unified/res/values/strings.xml",

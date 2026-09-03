@@ -14,7 +14,7 @@ void main() {
       for (final path in [
         'android/app/src/main/res/values/strings.xml',
         'android/app/src/local/res/values/strings.xml',
-        'android/app/src/staging/res/values/strings.xml',
+        'android/app/src/unified/res/values/strings.xml',
         'android/app/src/production/res/values/strings.xml',
       ]) {
         final strings = File(path).readAsStringSync();

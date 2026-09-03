@@ -15,8 +15,8 @@ import 'package:momcozy_flutter_app/features/records/data/records_api_repository
 import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
 
-class StagingSmokeConfig {
-  const StagingSmokeConfig({
+class TestSmokeConfig {
+  const TestSmokeConfig({
     required this.enabled,
     required this.apiBaseUri,
     required this.agentRunsUri,
@@ -26,17 +26,17 @@ class StagingSmokeConfig {
     this.timeout = const Duration(seconds: 12),
   });
 
-  factory StagingSmokeConfig.fromEnvironment(Map<String, String> env) {
+  factory TestSmokeConfig.fromEnvironment(Map<String, String> env) {
     final apiBase = Uri.parse(
       _envOrDefault(env, 'MOMCOZY_API_BASE_URL', 'http://127.0.0.1:8769'),
     );
     final agentBase = Uri.parse(
       _envOrDefault(env, 'MOMCOZY_AGENT_API_BASE_URL', 'http://127.0.0.1:8010'),
     );
-    return StagingSmokeConfig(
-      enabled: _flag(env, 'MOMCOZY_STAGING_SMOKE'),
-      includeMutating: _flag(env, 'MOMCOZY_STAGING_SMOKE_MUTATE'),
-      includeAgentStream: _flag(env, 'MOMCOZY_STAGING_SMOKE_AGENT'),
+    return TestSmokeConfig(
+      enabled: _flag(env, 'MOMCOZY_TEST_SMOKE'),
+      includeMutating: _flag(env, 'MOMCOZY_TEST_SMOKE_MUTATE'),
+      includeAgentStream: _flag(env, 'MOMCOZY_TEST_SMOKE_AGENT'),
       apiBaseUri: apiBase,
       agentRunsUri: _appendPath(agentBase, '/v1/agent/runs'),
       session: MomCozySession.fromEnvironment(
@@ -66,7 +66,7 @@ Uri _appendPath(Uri base, String path) {
   return base.replace(path: '$basePath$suffix');
 }
 
-abstract interface class StagingSmokeProbe {
+abstract interface class TestSmokeProbe {
   String get name;
 
   bool get requiresMutation;
@@ -76,8 +76,8 @@ abstract interface class StagingSmokeProbe {
   Future<void> run();
 }
 
-class StagingSmokeProbeResult {
-  const StagingSmokeProbeResult({
+class TestSmokeProbeResult {
+  const TestSmokeProbeResult({
     required this.name,
     required this.status,
     required this.elapsed,
@@ -85,23 +85,23 @@ class StagingSmokeProbeResult {
   });
 
   final String name;
-  final StagingSmokeStatus status;
+  final TestSmokeStatus status;
   final Duration elapsed;
   final String? message;
 
-  bool get passed => status == StagingSmokeStatus.passed;
+  bool get passed => status == TestSmokeStatus.passed;
 
-  bool get failed => status == StagingSmokeStatus.failed;
+  bool get failed => status == TestSmokeStatus.failed;
 
-  bool get skipped => status == StagingSmokeStatus.skipped;
+  bool get skipped => status == TestSmokeStatus.skipped;
 }
 
-enum StagingSmokeStatus { passed, failed, skipped }
+enum TestSmokeStatus { passed, failed, skipped }
 
-class StagingSmokeReport {
-  const StagingSmokeReport(this.results);
+class TestSmokeReport {
+  const TestSmokeReport(this.results);
 
-  final List<StagingSmokeProbeResult> results;
+  final List<TestSmokeProbeResult> results;
 
   bool get hasFailures => results.any((result) => result.failed);
 
@@ -112,44 +112,44 @@ class StagingSmokeReport {
   int get failedCount => results.where((result) => result.failed).length;
 }
 
-class StagingSmokeRunner {
-  const StagingSmokeRunner({required this.config, required this.probes});
+class TestSmokeRunner {
+  const TestSmokeRunner({required this.config, required this.probes});
 
-  final StagingSmokeConfig config;
-  final List<StagingSmokeProbe> probes;
+  final TestSmokeConfig config;
+  final List<TestSmokeProbe> probes;
 
-  Future<StagingSmokeReport> run() async {
+  Future<TestSmokeReport> run() async {
     if (!config.enabled) {
-      return StagingSmokeReport([
-        StagingSmokeProbeResult(
-          name: 'staging smoke disabled',
-          status: StagingSmokeStatus.skipped,
+      return TestSmokeReport([
+        TestSmokeProbeResult(
+          name: 'test smoke disabled',
+          status: TestSmokeStatus.skipped,
           elapsed: Duration.zero,
-          message: 'Set MOMCOZY_STAGING_SMOKE=1 to run against a backend.',
+          message: 'Set MOMCOZY_TEST_SMOKE=1 to run against a backend.',
         ),
       ]);
     }
 
-    final results = <StagingSmokeProbeResult>[];
+    final results = <TestSmokeProbeResult>[];
     for (final probe in probes) {
       if (probe.requiresMutation && !config.includeMutating) {
         results.add(
-          StagingSmokeProbeResult(
+          TestSmokeProbeResult(
             name: probe.name,
-            status: StagingSmokeStatus.skipped,
+            status: TestSmokeStatus.skipped,
             elapsed: Duration.zero,
-            message: 'Set MOMCOZY_STAGING_SMOKE_MUTATE=1 to run this probe.',
+            message: 'Set MOMCOZY_TEST_SMOKE_MUTATE=1 to run this probe.',
           ),
         );
         continue;
       }
       if (probe.requiresAgentStream && !config.includeAgentStream) {
         results.add(
-          StagingSmokeProbeResult(
+          TestSmokeProbeResult(
             name: probe.name,
-            status: StagingSmokeStatus.skipped,
+            status: TestSmokeStatus.skipped,
             elapsed: Duration.zero,
-            message: 'Set MOMCOZY_STAGING_SMOKE_AGENT=1 to run this probe.',
+            message: 'Set MOMCOZY_TEST_SMOKE_AGENT=1 to run this probe.',
           ),
         );
         continue;
@@ -160,18 +160,18 @@ class StagingSmokeRunner {
         await probe.run().timeout(config.timeout);
         stopwatch.stop();
         results.add(
-          StagingSmokeProbeResult(
+          TestSmokeProbeResult(
             name: probe.name,
-            status: StagingSmokeStatus.passed,
+            status: TestSmokeStatus.passed,
             elapsed: stopwatch.elapsed,
           ),
         );
       } catch (error) {
         stopwatch.stop();
         results.add(
-          StagingSmokeProbeResult(
+          TestSmokeProbeResult(
             name: probe.name,
-            status: StagingSmokeStatus.failed,
+            status: TestSmokeStatus.failed,
             elapsed: stopwatch.elapsed,
             message: _redactSmokeError(error),
           ),
@@ -179,14 +179,12 @@ class StagingSmokeRunner {
       }
     }
 
-    return StagingSmokeReport(results);
+    return TestSmokeReport(results);
   }
 }
 
-List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
-  StagingSmokeConfig config,
-) {
-  final headers = const {'X-Momcozy-Client': 'flutter-staging-smoke'};
+List<TestSmokeProbe> buildDefaultTestSmokeProbes(TestSmokeConfig config) {
+  final headers = const {'X-Momcozy-Client': 'flutter-test-smoke'};
   final token = config.session.accessToken;
   final jsonTransport = IoApiJsonTransport(
     baseUri: config.apiBaseUri,
@@ -226,7 +224,7 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
   ];
 }
 
-AgentRunCreateContextProvider buildStagingSmokeRunCreateContextProvider({
+AgentRunCreateContextProvider buildTestSmokeRunCreateContextProvider({
   DateTime Function()? now,
 }) {
   return PlatformAgentRunCreateContextProvider(
@@ -235,10 +233,10 @@ AgentRunCreateContextProvider buildStagingSmokeRunCreateContextProvider({
   );
 }
 
-class _ProfileOverviewProbe implements StagingSmokeProbe {
+class _ProfileOverviewProbe implements TestSmokeProbe {
   const _ProfileOverviewProbe(this.config, this.repository);
 
-  final StagingSmokeConfig config;
+  final TestSmokeConfig config;
   final ProfileOverviewApiRepository repository;
 
   @override
@@ -256,10 +254,10 @@ class _ProfileOverviewProbe implements StagingSmokeProbe {
   }
 }
 
-class _PlanProbe implements StagingSmokeProbe {
+class _PlanProbe implements TestSmokeProbe {
   const _PlanProbe(this.config, this.repository);
 
-  final StagingSmokeConfig config;
+  final TestSmokeConfig config;
   final PlanApiRepository repository;
 
   @override
@@ -277,10 +275,10 @@ class _PlanProbe implements StagingSmokeProbe {
   }
 }
 
-class _RecordsProbe implements StagingSmokeProbe {
+class _RecordsProbe implements TestSmokeProbe {
   const _RecordsProbe(this.config, this.repository);
 
-  final StagingSmokeConfig config;
+  final TestSmokeConfig config;
   final RecordsApiRepository repository;
 
   @override
@@ -304,7 +302,7 @@ class _RecordsProbe implements StagingSmokeProbe {
   }
 }
 
-class _PumpWorkstateProbe implements StagingSmokeProbe {
+class _PumpWorkstateProbe implements TestSmokeProbe {
   const _PumpWorkstateProbe(this.repository);
 
   final PumpWorkstateApiRepository repository;
@@ -321,15 +319,15 @@ class _PumpWorkstateProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     await repository.uploadWorkstate(
-      left: const PumpSideWorkstate(state: 1, mode: 'staging_smoke', level: 1),
+      left: const PumpSideWorkstate(state: 1, mode: 'test_smoke', level: 1),
     );
   }
 }
 
-class _MediaUploadProbe implements StagingSmokeProbe {
+class _MediaUploadProbe implements TestSmokeProbe {
   const _MediaUploadProbe(this.config, this.repository);
 
-  final StagingSmokeConfig config;
+  final TestSmokeConfig config;
   final MediaApiRepository repository;
 
   @override
@@ -362,7 +360,7 @@ class _MediaUploadProbe implements StagingSmokeProbe {
     try {
       final uploaded = await repository.uploadFile(
         file: const ApiUploadFile(
-          name: 'flutter-staging-smoke.txt',
+          name: 'flutter-test-smoke.txt',
           mimeType: 'text/plain',
           sizeBytes: 13,
           bytes: bytes,
@@ -384,10 +382,10 @@ class _MediaUploadProbe implements StagingSmokeProbe {
   }
 }
 
-class _AgentSseProbe implements StagingSmokeProbe {
+class _AgentSseProbe implements TestSmokeProbe {
   const _AgentSseProbe(this.config, this.endpoint);
 
-  final StagingSmokeConfig config;
+  final TestSmokeConfig config;
   final AgentStreamEndpoint endpoint;
 
   @override
@@ -405,15 +403,15 @@ class _AgentSseProbe implements StagingSmokeProbe {
       ProductionAgentSseTransport(
         runsEndpoint: endpoint,
         payloadFactory: buildProductionAgentRunPayload,
-        runCreateContextProvider: buildStagingSmokeRunCreateContextProvider(),
+        runCreateContextProvider: buildTestSmokeRunCreateContextProvider(),
       ),
     );
     await validateSuccessfulAgentSmoke(
       client.stream(
         AgentStreamRequest(
           locale: config.session.locale,
-          message: 'Reply with a short staging smoke acknowledgement.',
-          metadata: const {'source': 'flutter_staging_smoke'},
+          message: 'Reply with a short test smoke acknowledgement.',
+          metadata: const {'source': 'flutter_test_smoke'},
         ),
       ),
     );
@@ -445,7 +443,7 @@ Future<void> validateSuccessfulAgentSmoke(
 }
 
 Future<List<int>> _readUploadedFile(
-  StagingSmokeConfig config,
+  TestSmokeConfig config,
   String fileId,
 ) async {
   final client = HttpClient();
@@ -459,7 +457,7 @@ Future<List<int>> _readUploadedFile(
       HttpHeaders.authorizationHeader,
       'Bearer ${config.session.accessToken}',
     );
-    request.headers.set('X-Momcozy-Client', 'flutter-staging-smoke');
+    request.headers.set('X-Momcozy-Client', 'flutter-test-smoke');
     final response = await request.close();
     final bytes = await response.fold<List<int>>(<int>[], (collected, chunk) {
       collected.addAll(chunk);

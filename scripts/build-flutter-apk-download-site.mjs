@@ -29,7 +29,7 @@ Environment:
                                 Default: ${defaultBaseUrl}
   MOMCOZY_GITHUB_RELEASE_REPO   Public GitHub repository used for APK release assets,
                                 e.g. hensonzh/momcozy-lab-releases.
-  MOMCOZY_APK_FLAVOR            local | staging | unified | production. Default: unified
+  MOMCOZY_APK_FLAVOR            local | unified | production. Default: unified
   MOMCOZY_APK_MODE              debug | release. Default: release
   MOMCOZY_API_BASE_URL          Product Backend API URL. Required outside local.
   MOMCOZY_AGENT_API_BASE_URL    Agent Runtime API URL. Required outside local.
@@ -45,7 +45,7 @@ Environment:
 
 const flavor = envText("MOMCOZY_APK_FLAVOR", "unified");
 const mode = envText("MOMCOZY_APK_MODE", "release");
-const runtimeEnvironment = flavor === "unified" ? "staging" : flavor;
+const runtimeEnvironment = flavor === "unified" ? "test" : flavor;
 let dartDefines;
 try {
   assertMode(mode);
@@ -93,7 +93,7 @@ const buildApkPath =
   apkInput || path.join(flutterAppDir, "build", "app", "outputs", "flutter-apk", `app-${flavor}-${mode}.apk`);
 const artifactName =
   flavor === "unified"
-    ? `momcozy-unified-android-staging-${version.versionName}-${version.buildNumber}.apk`
+    ? `momcozy-unified-android-test-${version.versionName}-${version.buildNumber}.apk`
     : `momcozy-android-${flavor}-${version.versionName}-${version.buildNumber}.apk`;
 const artifactPath = path.join(releaseDir, artifactName);
 const provenanceFile = `${artifactName}.provenance.json`;
@@ -462,7 +462,7 @@ function assertMode(value) {
 }
 
 function assertFlavor(value) {
-  if (!["local", "staging", "unified", "production"].includes(value)) {
+  if (!["local", "unified", "production"].includes(value)) {
     throw new Error(`Unsupported MOMCOZY_APK_FLAVOR: ${value}`);
   }
 }

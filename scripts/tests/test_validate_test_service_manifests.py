@@ -3,12 +3,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.validate_staging_service_manifests import (
-    validate_staging_service_manifests,
+from scripts.validate_test_service_manifests import (
+    validate_test_service_manifests,
 )
 
 
-class ValidateStagingServiceManifestsTest(unittest.TestCase):
+class ValidateTestServiceManifestsTest(unittest.TestCase):
     def test_requires_exact_joined_service_identity(self) -> None:
         environment = {
             "MOMCOZY_BACKEND_COMMIT_SHA": "a" * 40,
@@ -26,7 +26,7 @@ class ValidateStagingServiceManifestsTest(unittest.TestCase):
                 json.dumps(
                     {
                         "service": "product-backend",
-                        "environment": "staging",
+                        "environment": "test",
                         "commit": "a" * 40,
                         "image_digest": "sha256:" + "b" * 64,
                         "openapi_sha256": "c" * 64,
@@ -35,7 +35,7 @@ class ValidateStagingServiceManifestsTest(unittest.TestCase):
             )
             agent_payload = {
                 "service": "agent-runtime",
-                "environment": "staging",
+                "environment": "test",
                 "commit": "d" * 40,
                 "image_digest": "sha256:" + "e" * 64,
                 "openapi_sha256": "f" * 64,
@@ -47,7 +47,7 @@ class ValidateStagingServiceManifestsTest(unittest.TestCase):
             }
             agent.write_text(json.dumps(agent_payload))
 
-            validate_staging_service_manifests(
+            validate_test_service_manifests(
                 backend_path=backend,
                 agent_path=agent,
                 environment=environment,
@@ -56,7 +56,7 @@ class ValidateStagingServiceManifestsTest(unittest.TestCase):
             agent_payload["product_backend"]["commit"] = "0" * 40
             agent.write_text(json.dumps(agent_payload))
             with self.assertRaisesRegex(ValueError, "not promoted"):
-                validate_staging_service_manifests(
+                validate_test_service_manifests(
                     backend_path=backend,
                     agent_path=agent,
                     environment=environment,

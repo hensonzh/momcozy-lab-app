@@ -57,10 +57,10 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
             "Agent Runtime API:   http://127.0.0.1:8010", result.stdout
         )
 
-    def test_staging_and_production_require_both_urls(self) -> None:
+    def test_unified_and_production_require_both_urls(self) -> None:
         cases = (
-            ("staging", "https://product.example.test", None, "MOMCOZY_AGENT_API_BASE_URL"),
-            ("staging", None, "https://agent.example.test", "MOMCOZY_API_BASE_URL"),
+            ("unified", "https://product.example.test", None, "MOMCOZY_AGENT_API_BASE_URL"),
+            ("unified", None, "https://agent.example.test", "MOMCOZY_API_BASE_URL"),
             ("production", None, "https://agent.example.test", "MOMCOZY_API_BASE_URL"),
             ("production", "https://product.example.test", None, "MOMCOZY_AGENT_API_BASE_URL"),
         )
@@ -76,10 +76,10 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(missing_name, result.stderr)
 
-    def test_staging_and_production_reject_loopback_for_either_url(self) -> None:
+    def test_unified_and_production_reject_loopback_for_either_url(self) -> None:
         cases = (
             (
-                "staging",
+                "unified",
                 "http://127.42.0.7:8769",
                 "https://services.example.test/agent",
                 "MOMCOZY_API_BASE_URL",
@@ -91,7 +91,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 "MOMCOZY_AGENT_API_BASE_URL",
             ),
             (
-                "staging",
+                "unified",
                 "https://services.example.test/product",
                 "http://0.0.0.0:8010",
                 "MOMCOZY_AGENT_API_BASE_URL",
@@ -116,10 +116,10 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 self.assertIn(rejected_name, result.stderr)
                 self.assertIn("loopback", result.stderr.lower())
 
-    def test_staging_and_production_require_https_for_both_urls(self) -> None:
+    def test_unified_and_production_require_https_for_both_urls(self) -> None:
         cases = (
             (
-                "staging",
+                "unified",
                 "http://product.example.test",
                 "https://agent.example.test",
                 "MOMCOZY_API_BASE_URL",
@@ -144,9 +144,9 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 self.assertIn(rejected_name, result.stderr)
                 self.assertIn("HTTPS", result.stderr)
 
-    def test_staging_accepts_valid_product_and_agent_urls_on_same_host(self) -> None:
+    def test_unified_accepts_valid_product_and_agent_urls_on_same_host(self) -> None:
         result = self.run_build_config(
-            flavor="staging",
+            flavor="unified",
             product_url="https://services.example.test/product",
             agent_url="https://services.example.test/agent",
         )
@@ -168,7 +168,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         ):
             with self.subTest(reserved_name=reserved_name):
                 result = self.run_build_config(
-                    flavor="staging",
+                    flavor="unified",
                     product_url="https://product.example.test",
                     agent_url="https://agent.example.test",
                     extra_defines=f"FEATURE_FLAG=1,{reserved_name}=http://127.0.0.1:1",
@@ -187,7 +187,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 "--mode",
                 "release",
                 "--flavor",
-                "staging",
+                "unified",
             ],
             cwd=PROJECT_ROOT,
             env=self.clean_env(),
@@ -216,7 +216,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         self.assertIn("MOMCOZY_API_BASE_URL", result.stderr)
         self.assertNotIn("Missing Node build dependencies", result.stderr)
 
-    def test_release_gate_requires_explicit_staging_urls_before_steps(self) -> None:
+    def test_release_gate_requires_explicit_test_urls_before_steps(self) -> None:
         result = subprocess.run(
             ["node", "scripts/run-flutter-release-gate.mjs", "--check-config"],
             cwd=PROJECT_ROOT,
@@ -250,7 +250,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         self.assertEqual(local_apk.returncode, 0, local_apk.stderr)
 
         download_env = self.clean_env()
-        download_env["MOMCOZY_APK_FLAVOR"] = "staging"
+        download_env["MOMCOZY_APK_FLAVOR"] = "unified"
         download_env["MOMCOZY_API_BASE_URL"] = (
             "https://services.example.test/product"
         )
@@ -284,7 +284,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
 
     def test_download_wrapper_rejects_duplicate_reserved_defines(self) -> None:
         env = self.clean_env()
-        env["MOMCOZY_APK_FLAVOR"] = "staging"
+        env["MOMCOZY_APK_FLAVOR"] = "unified"
         env["MOMCOZY_API_BASE_URL"] = "https://product.example.test"
         env["MOMCOZY_AGENT_API_BASE_URL"] = "https://agent.example.test"
         env["MOMCOZY_APK_DART_DEFINES"] = (

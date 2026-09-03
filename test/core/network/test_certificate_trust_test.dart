@@ -1,17 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/network/staging_certificate_trust.dart';
+import 'package:momcozy_flutter_app/core/network/test_certificate_trust.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('staging certificate trust', () {
-    test('only enables the two exact staging HTTPS endpoints', () {
-      for (final host in stagingCertificateHosts) {
+  group('test certificate trust', () {
+    test('only enables the two exact test HTTPS endpoints', () {
+      for (final host in testCertificateHosts) {
         expect(
-          shouldEnableStagingCertificateTrust(
-            environment: 'staging',
+          shouldEnableTestCertificateTrust(
+            environment: 'test',
             apiBaseUri: Uri.parse('https://$host:8443'),
           ),
           isTrue,
@@ -29,21 +29,21 @@ void main() {
           apiBaseUrl: 'https://agent-test.lute-momcozylab.luteos.cloud:8443',
         ),
         (
-          environment: 'staging',
+          environment: 'test',
           apiBaseUrl: 'https://lute-momcozylab.luteos.cloud:8443',
         ),
-        (environment: 'staging', apiBaseUrl: 'https://api.example.test:8443'),
+        (environment: 'test', apiBaseUrl: 'https://api.example.test:8443'),
         (
-          environment: 'staging',
+          environment: 'test',
           apiBaseUrl: 'https://backend-test.lute-momcozylab.luteos.cloud',
         ),
         (
-          environment: 'staging',
+          environment: 'test',
           apiBaseUrl: 'http://backend-test.lute-momcozylab.luteos.cloud:8443',
         ),
       ]) {
         expect(
-          shouldEnableStagingCertificateTrust(
+          shouldEnableTestCertificateTrust(
             environment: candidate.environment,
             apiBaseUri: Uri.parse(candidate.apiBaseUrl),
           ),
@@ -53,11 +53,11 @@ void main() {
       }
     });
 
-    test('does not load or install trust outside the staging target', () async {
+    test('does not load or install trust outside the test target', () async {
       var loaderCalled = false;
       var installerCalled = false;
 
-      final enabled = await configureStagingCertificateTrust(
+      final enabled = await configureTestCertificateTrust(
         environment: 'production',
         apiBaseUrl: 'https://backend-test.lute-momcozylab.luteos.cloud:8443',
         certificateLoader: (_) async {
@@ -77,8 +77,8 @@ void main() {
       () async {
         SecurityContext? installedContext;
 
-        final enabled = await configureStagingCertificateTrust(
-          environment: 'staging',
+        final enabled = await configureTestCertificateTrust(
+          environment: 'test',
           apiBaseUrl: 'https://backend-test.lute-momcozylab.luteos.cloud:8443',
           securityContextInstaller: (context) => installedContext = context,
         );

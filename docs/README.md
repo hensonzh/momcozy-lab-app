@@ -8,16 +8,16 @@
 | --- | --- |
 | `backend-contract/` | 随后端发布同步、供 Flutter 校验使用的 OpenAPI 和 smoke flows 机器契约。 |
 | `device/` | 硬件设备协议资料，例如 BLE 通信协议。 |
-| `flutter/` | Flutter 工程化、打包、发布 gate、安全隐私和 staging smoke 文档。 |
+| `flutter/` | Flutter 工程化、打包、发布 gate、安全隐私和 test smoke 文档。 |
 
 ## 常用入口
 
 - Flutter Android 打包策略：`flutter/android-packaging.md`
-- Flutter CI/CD 与 staging 发布：`flutter/ci-cd.md`
+- Flutter CI/CD 与 test 发布：`flutter/ci-cd.md`
 - Android APK GitHub Releases 分发：`flutter/android-apk-github-releases.md`
 - Flutter 发布 gate：`flutter/release-gate.md`
 - Flutter 安全隐私 gate：`flutter/security-privacy-gates.md`
-- Flutter staging smoke：`flutter/staging-smoke.md`
+- Flutter test smoke：`flutter/test-smoke.md`
 - Flutter 真机与真泵 smoke：`flutter/p0-smoke-checklist.md`
 - App UI/UX V3 更新方案：`flutter/ui-ux-v3-update-plan.md`
 - BLE 设备协议：`device/设备APP蓝牙通信协议.md`

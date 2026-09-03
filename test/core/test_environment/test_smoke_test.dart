@@ -1,14 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/core/staging/staging_smoke.dart';
+import 'package:momcozy_flutter_app/core/test_environment/test_smoke.dart';
 
 void main() {
-  test('StagingSmokeConfig reads env flags and session context', () {
-    final config = StagingSmokeConfig.fromEnvironment({
-      'MOMCOZY_STAGING_SMOKE': '1',
-      'MOMCOZY_STAGING_SMOKE_MUTATE': 'true',
-      'MOMCOZY_STAGING_SMOKE_AGENT': 'yes',
+  test('TestSmokeConfig reads env flags and session context', () {
+    final config = TestSmokeConfig.fromEnvironment({
+      'MOMCOZY_TEST_SMOKE': '1',
+      'MOMCOZY_TEST_SMOKE_MUTATE': 'true',
+      'MOMCOZY_TEST_SMOKE_AGENT': 'yes',
       'MOMCOZY_API_BASE_URL': 'https://api.example.test/base',
       'MOMCOZY_AGENT_API_BASE_URL': 'https://agent.example.test/runtime',
       'MOMCOZY_API_TOKEN': ' secret-token ',
@@ -33,8 +33,8 @@ void main() {
     expect(config.session.refreshToken, 'refresh-token');
   });
 
-  test('runner skips every probe when staging smoke is disabled', () async {
-    final runner = StagingSmokeRunner(
+  test('runner skips every probe when test smoke is disabled', () async {
+    final runner = TestSmokeRunner(
       config: _config(enabled: false),
       probes: [_FakeProbe(name: 'read-only')],
     );
@@ -44,13 +44,13 @@ void main() {
     expect(report.passedCount, 0);
     expect(report.skippedCount, 1);
     expect(report.failedCount, 0);
-    expect(report.results.single.name, 'staging smoke disabled');
+    expect(report.results.single.name, 'test smoke disabled');
   });
 
   test(
     'headless smoke builds Agent context without platform plugins',
     () async {
-      final context = await buildStagingSmokeRunCreateContextProvider(
+      final context = await buildTestSmokeRunCreateContextProvider(
         now: () => DateTime.utc(2026, 8, 27, 4, 15),
       ).load();
 
@@ -65,7 +65,7 @@ void main() {
       final readOnly = _FakeProbe(name: 'read-only');
       final mutating = _FakeProbe(name: 'mutating', requiresMutation: true);
       final agent = _FakeProbe(name: 'agent', requiresAgentStream: true);
-      final runner = StagingSmokeRunner(
+      final runner = TestSmokeRunner(
         config: _config(enabled: true),
         probes: [readOnly, mutating, agent],
       );
@@ -82,7 +82,7 @@ void main() {
   );
 
   test('runner records failures without leaking bearer tokens', () async {
-    final runner = StagingSmokeRunner(
+    final runner = TestSmokeRunner(
       config: _config(enabled: true),
       probes: [
         _FakeProbe(
@@ -107,7 +107,7 @@ void main() {
           Stream.fromIterable([
             AgentStreamEvent(const {
               'type': 'message.completed',
-              'payload': {'role': 'assistant', 'text': 'staging is healthy'},
+              'payload': {'role': 'assistant', 'text': 'test is healthy'},
             }),
             AgentStreamEvent(const {'type': 'run.completed'}),
           ]),
@@ -145,12 +145,12 @@ void main() {
   );
 }
 
-StagingSmokeConfig _config({
+TestSmokeConfig _config({
   required bool enabled,
   bool includeMutating = false,
   bool includeAgentStream = false,
 }) {
-  return StagingSmokeConfig(
+  return TestSmokeConfig(
     enabled: enabled,
     includeMutating: includeMutating,
     includeAgentStream: includeAgentStream,
@@ -166,7 +166,7 @@ StagingSmokeConfig _config({
   );
 }
 
-class _FakeProbe implements StagingSmokeProbe {
+class _FakeProbe implements TestSmokeProbe {
   _FakeProbe({
     required this.name,
     this.requiresMutation = false,

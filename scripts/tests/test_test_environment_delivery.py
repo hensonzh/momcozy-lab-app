@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 APP_CI = ROOT / ".github" / "workflows" / "app-ci.yml"
-STAGING_RELEASE = ROOT / ".github" / "workflows" / "app-staging-release.yml"
+TEST_RELEASE = ROOT / ".github" / "workflows" / "app-test-release.yml"
 
 
 def _literal_run_blocks(workflow: str) -> list[str]:
@@ -29,7 +29,7 @@ def _literal_run_blocks(workflow: str) -> list[str]:
     return blocks
 
 
-class StagingDeliveryContractTest(unittest.TestCase):
+class TestDeliveryContractTest(unittest.TestCase):
     def test_unified_flavor_is_install_and_publish_isolated(self) -> None:
         gradle = (ROOT / "android" / "app" / "build.gradle.kts").read_text()
         packaging = (ROOT / "scripts" / "check-flutter-android-packaging.mjs").read_text()
@@ -44,7 +44,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
         self.assertIsNotNone(version_match)
         self.assertGreaterEqual(int(version_match.group(1)), 56)
 
-    def test_unified_api_config_uses_staging_network_rules(self) -> None:
+    def test_unified_api_config_uses_test_network_rules(self) -> None:
         env = os.environ.copy()
         env.update(
             {
@@ -74,7 +74,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
         self.assertNotIn("--clobber", script)
         self.assertIn("MOMCOZY_APK_INPUT", script + packager)
         self.assertIn("unified-android-v", packager)
-        self.assertIn("momcozy-unified-android-staging", packager)
+        self.assertIn("momcozy-unified-android-test", packager)
         self.assertIn('pages_namespace="unified"', script)
         self.assertNotIn('"${pages_checkout}/index.html"', script)
         self.assertIn("gh auth git-credential", script)
@@ -120,13 +120,13 @@ class StagingDeliveryContractTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             manifest = json.loads((dist / "manifest.json").read_text())
             self.assertEqual(manifest["flavor"], "unified")
-            self.assertEqual(manifest["runtimeEnvironment"], "staging")
+            self.assertEqual(manifest["runtimeEnvironment"], "test")
             self.assertEqual(
                 manifest["githubReleaseTag"], "unified-android-v1.0.0-56"
             )
             self.assertEqual(
                 manifest["apkFile"],
-                "momcozy-unified-android-staging-1.0.0-56.apk",
+                "momcozy-unified-android-test-1.0.0-56.apk",
             )
             self.assertEqual(
                 manifest["sha256"], hashlib.sha256(apk_input.read_bytes()).hexdigest()
@@ -150,7 +150,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
                 provenance["sourceServices"], manifest["sourceServices"]
             )
 
-    def test_app_ci_runs_flutter_gates_and_builds_a_staging_shaped_artifact(self) -> None:
+    def test_app_ci_runs_flutter_gates_and_builds_a_test_shaped_artifact(self) -> None:
         workflow = APP_CI.read_text()
 
         for required in (
@@ -207,54 +207,58 @@ class StagingDeliveryContractTest(unittest.TestCase):
                 relative_path,
             )
 
-    def test_live_staging_smoke_runs_inside_the_flutter_test_runtime(self) -> None:
+    def test_live_test_smoke_runs_inside_the_flutter_test_runtime(self) -> None:
         release_gate = (ROOT / "scripts" / "run-flutter-release-gate.mjs").read_text()
-        smoke_source = (ROOT / "lib" / "core" / "staging" / "staging_smoke.dart").read_text()
+        smoke_source = (
+            ROOT / "lib" / "core" / "test_environment" / "test_smoke.dart"
+        ).read_text()
 
         self.assertIn(
-            '["flutter", ["test", "--no-pub", "tool/staging_smoke_test.dart"]',
+            '["flutter", ["test", "--no-pub", "tool/test_environment_smoke_test.dart"]',
             release_gate,
         )
-        self.assertNotIn('["dart", ["run", "tool/staging_smoke.dart"]', release_gate)
-        self.assertTrue((ROOT / "tool" / "staging_smoke_test.dart").is_file())
-        self.assertIn("buildStagingSmokeRunCreateContextProvider", smoke_source)
+        self.assertNotIn('["dart", ["run", "tool/test_environment_smoke.dart"]', release_gate)
+        self.assertTrue(
+            (ROOT / "tool" / "test_environment_smoke_test.dart").is_file()
+        )
+        self.assertIn("buildTestSmokeRunCreateContextProvider", smoke_source)
 
-    def test_staging_release_requires_signing_live_join_and_prebuilt_publication(self) -> None:
-        workflow = STAGING_RELEASE.read_text()
+    def test_test_release_requires_signing_live_join_and_prebuilt_publication(self) -> None:
+        workflow = TEST_RELEASE.read_text()
 
         for required in (
             "workflow_dispatch:",
-            "name: staging",
-            "group: momcozy-lab-app-staging",
+            "name: test",
+            "group: momcozy-lab-app-test",
             "MOMCOZY_REQUIRE_RELEASE_SIGNING: \"1\"",
-            "MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER: \"1\"",
-            "MOMCOZY_STAGING_SMOKE: \"1\"",
-            "MOMCOZY_STAGING_SMOKE_MUTATE: \"1\"",
-            "MOMCOZY_STAGING_SMOKE_AGENT: \"1\"",
+            "MOMCOZY_REQUIRE_TEST_JOIN_BARRIER: \"1\"",
+            "MOMCOZY_TEST_SMOKE: \"1\"",
+            "MOMCOZY_TEST_SMOKE_MUTATE: \"1\"",
+            "MOMCOZY_TEST_SMOKE_AGENT: \"1\"",
             "MOMCOZY_APK_FLAVOR: unified",
             "MOMCOZY_APK_INPUT",
             "backend_openapi_sha256",
             "agent_openapi_sha256",
             "sha256sum",
             "provenanceFile",
-            "STAGING_SMOKE_INVITE_CODE",
-            "STAGING_SMOKE_DEVICE_ID",
+            "TEST_SMOKE_INVITE_CODE",
+            "TEST_SMOKE_DEVICE_ID",
             "/v1/auth/invite-login",
             "/usr/bin/flock",
-            "staging-release.lock",
+            "test-release.lock",
             "Fetch the currently deployed service manifests again under the lock",
-            "Wait for independent staging approval",
-            "STAGING_APPROVERS",
-            "STAGING_APPROVAL_ISSUE",
-            "/approve-staging",
+            "Wait for independent test approval",
+            "TEST_APPROVERS",
+            "TEST_APPROVAL_ISSUE",
+            "/approve-test",
             "needs: approve",
             "ref: ${{ github.sha }}",
             "while :; do sleep 60; done",
         ):
             self.assertIn(required, workflow)
 
-        self.assertNotIn("STAGING_APP_API_TOKEN", workflow)
-        self.assertNotIn("STAGING_APP_BABY_ID", workflow)
+        self.assertNotIn("TEST_APP_API_TOKEN", workflow)
+        self.assertNotIn("TEST_APP_BABY_ID", workflow)
         self.assertNotIn("GITHUB_TRIGGERING_ACTOR", workflow)
         self.assertNotIn("Ignoring self-approval", workflow)
         self.assertNotIn("ref: main", workflow)
@@ -288,11 +292,11 @@ class StagingDeliveryContractTest(unittest.TestCase):
                 "MOMCOZY_APK_FLAVOR": "unified",
                 "MOMCOZY_API_BASE_URL": "https://backend.example.test:8443",
                 "MOMCOZY_AGENT_API_BASE_URL": "https://agent.example.test:8443",
-                "MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER": "1",
+                "MOMCOZY_REQUIRE_TEST_JOIN_BARRIER": "1",
             }
         )
-        env.pop("MOMCOZY_STAGING_SMOKE", None)
-        env.pop("MOMCOZY_STAGING_SMOKE_AGENT", None)
+        env.pop("MOMCOZY_TEST_SMOKE", None)
+        env.pop("MOMCOZY_TEST_SMOKE_AGENT", None)
 
         result = subprocess.run(
             ["node", "scripts/run-flutter-release-gate.mjs", "--check-config"],
@@ -304,7 +308,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
         )
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("MOMCOZY_STAGING_SMOKE", result.stderr)
+        self.assertIn("MOMCOZY_TEST_SMOKE", result.stderr)
 
 
 if __name__ == "__main__":

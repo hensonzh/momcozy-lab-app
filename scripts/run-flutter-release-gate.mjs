@@ -16,7 +16,7 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
   MOMCOZY_AGENT_API_BASE_URL=https://agent.example.test \\
   make flutter-release-gate
 
-Use --check-config to validate the required staging URLs and join barrier without running the gate.`);
+Use --check-config to validate the required test URLs and join barrier without running the gate.`);
   process.exit(0);
 }
 
@@ -63,28 +63,28 @@ const hasReleaseSigning = signingKeys.every((key) =>
 );
 const requiresReleaseSigning =
   String(env.MOMCOZY_REQUIRE_RELEASE_SIGNING || "").trim() === "1";
-const requiresStagingJoinBarrier =
-  String(env.MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER || "").trim() === "1";
+const requiresTestJoinBarrier =
+  String(env.MOMCOZY_REQUIRE_TEST_JOIN_BARRIER || "").trim() === "1";
 const releaseFlavor = String(env.MOMCOZY_APK_FLAVOR || "unified").trim();
-const runtimeEnvironment = releaseFlavor === "unified" ? "staging" : releaseFlavor;
+const runtimeEnvironment = releaseFlavor === "unified" ? "test" : releaseFlavor;
 
-if (requiresStagingJoinBarrier) {
+if (requiresTestJoinBarrier) {
   const missingSmokeFlags = [
-    "MOMCOZY_STAGING_SMOKE",
-    "MOMCOZY_STAGING_SMOKE_MUTATE",
-    "MOMCOZY_STAGING_SMOKE_AGENT",
+    "MOMCOZY_TEST_SMOKE",
+    "MOMCOZY_TEST_SMOKE_MUTATE",
+    "MOMCOZY_TEST_SMOKE_AGENT",
   ].filter((key) => String(env[key] || "").trim() !== "1");
   if (missingSmokeFlags.length > 0) {
     console.error(
-      `FAIL staging join barrier requires ${missingSmokeFlags.join(" and ")} to be 1.`,
+      `FAIL test join barrier requires ${missingSmokeFlags.join(" and ")} to be 1.`,
     );
     process.exit(1);
   }
 }
 
-let stagingApiDartDefines;
+let testApiDartDefines;
 try {
-  stagingApiDartDefines = withFlutterApiDartDefines({
+  testApiDartDefines = withFlutterApiDartDefines({
     flavor: releaseFlavor,
     dartDefines: [
       `MOMCOZY_API_BASE_URL=${env.MOMCOZY_API_BASE_URL || ""}`,
@@ -122,7 +122,7 @@ const steps = [
   ["flutter", ["pub", "get"], flutterAppDir],
   // The access token is deliberately issued immediately before this gate.
   // Keep the live smoke before the long static/test/build sequence.
-  ["flutter", ["test", "--no-pub", "tool/staging_smoke_test.dart"], flutterAppDir],
+  ["flutter", ["test", "--no-pub", "tool/test_environment_smoke_test.dart"], flutterAppDir],
   ["node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot],
   ["node", ["scripts/check-flutter-security-privacy.mjs"], projectRoot],
   [
@@ -160,7 +160,7 @@ const steps = [
       "--flavor",
       releaseFlavor,
       `--dart-define=MOMCOZY_ENV=${runtimeEnvironment}`,
-      ...stagingApiDartDefines.map((define) => `--dart-define=${define}`),
+      ...testApiDartDefines.map((define) => `--dart-define=${define}`),
     ],
     projectRoot,
   ],

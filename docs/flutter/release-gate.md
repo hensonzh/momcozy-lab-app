@@ -8,7 +8,7 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 make flutter-release-gate
 ```
 
-上述两个地址是当前 staging 的固定 SNI 入口；构建时必须同时显式提供。
+上述两个地址是当前 test 的固定 SNI 入口；构建时必须同时显式提供。
 
 该 gate 会在仓库根目录顺序执行：
 
@@ -19,17 +19,17 @@ flutter pub get
 dart format --output=none --set-exit-if-changed lib test integration_test tool
 flutter analyze
 flutter test
-flutter test --no-pub tool/staging_smoke_test.dart
+flutter test --no-pub tool/test_environment_smoke_test.dart
 node scripts/build-flutter-android-apk.mjs --mode debug --flavor local
 node scripts/build-flutter-android-apk.mjs --mode release --flavor unified \
-  --dart-define=MOMCOZY_ENV=staging \
+  --dart-define=MOMCOZY_ENV=test \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 所有受支持的打包封装都会执行同一套 API 配置校验。`local` 缺省注入 Product
-Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`staging`、
-`unified` 和 `production` 必须显式提供两个非空、非 loopback HTTPS URL，否则在运行
+Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`unified`
+和 `production` 必须显式提供两个非空、非 loopback HTTPS URL，否则在运行
 Flutter/Gradle 前失败。可用下面的命令只检查 release gate 配置：
 
 ```bash
@@ -38,9 +38,9 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 node scripts/run-flutter-release-gate.mjs --check-config
 ```
 
-`tool/staging_smoke_test.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
-受保护的 staging 发布还设置 `MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER=1`，此时
-`MOMCOZY_STAGING_SMOKE` 和 `MOMCOZY_STAGING_SMOKE_AGENT` 必须同时为 `1`，否则
+`tool/test_environment_smoke_test.dart` 默认安全 skip；只有设置 `MOMCOZY_TEST_SMOKE=1` 才会直连后端。
+受保护的 test 发布还设置 `MOMCOZY_REQUIRE_TEST_JOIN_BARRIER=1`，此时
+`MOMCOZY_TEST_SMOKE` 和 `MOMCOZY_TEST_SMOKE_AGENT` 必须同时为 `1`，否则
 即使使用 `--check-config` 也会 fail closed。
 
 `scripts/build-flutter-android-apk.mjs` 在构建 release APK 前会执行 `flutter clean` 和 `flutter pub get`，避免分发包复用上一源码版本的 AOT 快照。debug 构建仍保留增量构建以缩短本地开发反馈时间。
@@ -51,7 +51,7 @@ node scripts/run-flutter-release-gate.mjs --check-config
 
 ```bash
 cd android
-./gradlew app:clean app:connectedStagingReleaseAndroidTest --no-build-cache \
+./gradlew app:clean app:connectedTestReleaseAndroidTest --no-build-cache \
   -Ptarget="$(pwd)/../integration_test/motion_pose_android_test.dart"
 ```
 
@@ -87,8 +87,7 @@ MOMCOZY_SKIP_UPLOAD=1 ./scripts/build-flutter-app.sh
 | Flavor | Application ID | 用途 |
 |---|---|---|
 | `local` | `com.momcozymai.app.flutterpoc.local` | 本地开发和 debug smoke。 |
-| `staging` | `com.momcozymai.app.flutterpoc.staging` | 后端 staging / internal distribution smoke。 |
-| `unified` | `com.momcozymai.app.flutterpoc.unified` | 受保护的内测分发；安装身份独立，runtime 使用 staging。 |
+| `unified` | `com.momcozymai.app.flutterpoc.unified` | 受保护的内测分发；安装身份独立，runtime 使用 test。 |
 | `production` | `com.momcozymai.app.flutterpoc` | Flutter production-shaped artifact；包名变更须经过独立发布审批。 |
 
 ## Release Signing
@@ -118,22 +117,24 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 make flutter-release-gate
 
 当前内测包会在以下条件全部满足时加载随包内部 CA：
 
-- `MOMCOZY_ENV=staging`
+- `MOMCOZY_ENV=test`
 - API 使用 `https`
 - API 主机为 `backend-test.lute-momcozylab.luteos.cloud` 或
   `agent-test.lute-momcozylab.luteos.cloud`
 - API 端口为 `8443`
 
-该方案只是将 `MomCozy Staging Internal CA` 加入 Dart 网络栈的信任根，不会关闭
+该方案只是将仓库内的测试环境 CA 加入 Dart 网络栈的信任根，不会关闭
 主机名、有效期或证书链校验，也不会影响 `local` 和 `production` 构建。服务端叶子
 证书必须包含两个新域名的 SAN。只要叶子证书仍由该 CA 签发，正常续签不要求重建
 App；CA 轮换时才需要替换
-`assets/certificates/momcozy-staging-internal-ca.pem` 并重新构建内测包。当前 CA
-有效期截至 2036-08-13。
+`assets/certificates/momcozy-test-internal-ca.pem` 并重新构建内测包。当前 CA
+有效期截至 2036-08-13。为兼容已经安装的 build 56，证书内容和指纹暂不轮换，
+因此其 X.509 subject 仍保留历史名称 `MomCozy Staging Internal CA`；该名称不再代表
+当前运行环境。
 
 ## 当前边界
 
-- 该 gate 覆盖非真机构建、静态检查、单元/widget/fixture 测试和 staging smoke harness。
+- 该 gate 覆盖非真机构建、静态检查、单元/widget/fixture 测试和 test smoke harness。
 - 该 gate 静态校验 Flutter appId、FileProvider authority 和外部 deep link 边界。
 - 根 release gate 仅覆盖当前 Flutter 客户端及其原生集成。
 - 真机安装、BLE、通知、后台服务、Doze、电池优化和真泵行为仍属于 L4 device lab。

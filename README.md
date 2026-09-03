@@ -44,10 +44,10 @@ make flutter-emulator-smoke
 Pinned versions live in [`flutter-toolchain.json`](flutter-toolchain.json);
 `make flutter-check` validates the local SDK/JDK/Android directories and versions against that file.
 `make flutter-release-gate` runs the non-device release gate: format, analyze,
-tests, staging smoke harness, local debug APK, and unified release APK. It
+tests, test smoke harness, local debug APK, and unified release APK. It
 requires explicit HTTPS, non-loopback `MOMCOZY_API_BASE_URL` and
 `MOMCOZY_AGENT_API_BASE_URL` values. The unified flavor is an isolated install
-identity whose runtime environment remains staging.
+identity whose runtime environment remains test.
 `make flutter-emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `build/emulator-smoke/`, and checks the process/window/crash log.
 
 Direct Flutter commands also run from the repository root:
@@ -58,7 +58,7 @@ flutter analyze
 flutter test
 flutter build apk --debug --flavor local
 flutter build apk --release --flavor unified \
-  --dart-define=MOMCOZY_ENV=staging \
+  --dart-define=MOMCOZY_ENV=test \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
@@ -103,8 +103,7 @@ Backend 和 Agent Runtime OpenAPI 合并成一个服务，也不会把 bearer to
 Current Android package IDs:
 
 - `local` applicationId: `com.momcozymai.app.flutterpoc.local`
-- `staging` applicationId: `com.momcozymai.app.flutterpoc.staging`
-- `unified` applicationId: `com.momcozymai.app.flutterpoc.unified`
+- `unified` applicationId: `com.momcozymai.app.flutterpoc.unified`（测试环境分发）
 - `production` applicationId: `com.momcozymai.app.flutterpoc`
 - Packaging policy: [docs/flutter/android-packaging.md](docs/flutter/android-packaging.md)
 - Release gate: [docs/flutter/release-gate.md](docs/flutter/release-gate.md)
@@ -143,7 +142,7 @@ behind the onboarding gate. Completion is recorded per user, so another
 account on the same device still receives its own reset and onboarding flow.
 
 Two additional rollout flags fail closed until their backend schemas are
-available in staging:
+available in test:
 
 - `MOMCOZY_ENABLE_AGENT_HISTORY` must remain disabled: the frozen Agent Runtime
   contract does not expose `GET /v1/agent/threads/{thread_id}/history` yet.
@@ -165,7 +164,7 @@ Current Dart test coverage:
 - API envelope fixtures distinguish success, business errors, HTTP errors, and legacy snake/camel aliases.
 - Agent voice fixtures cover STT multipart chunk transcription, timeout fallback, realtime PCM stream cancellation, realtime voice session frames, and WebSocket disconnect behavior.
 - Agent Hub widget tests cover composer text send, image attachment payloads, voice transcription fill-in, stop, retry, and user-facing work progress.
-- Staging smoke CLI validates env parsing, safe default skip, optional staging HTTP/client-event/media upload probes, and optional Agent SSE probe.
+- Test smoke CLI validates env parsing, safe default skip, optional test HTTP/client-event/media upload probes, and optional Agent SSE probe.
 - Privacy fixtures cover shared log redaction for sensitive keys and URL query parameters.
 - BLE fixtures cover request packet goldens, standalone hex files, valid/invalid frame parsing, parser edge cases, cross-platform parity cases, and side mapping.
 - Route intent fixtures cover native notification navigation plus unsafe/unknown fallback routes.

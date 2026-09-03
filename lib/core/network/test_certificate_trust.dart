@@ -11,33 +11,33 @@ const _configuredApiBaseUrl = String.fromEnvironment(
   defaultValue: 'http://127.0.0.1:8769',
 );
 
-const stagingProductBackendHost = 'backend-test.lute-momcozylab.luteos.cloud';
-const stagingAgentRuntimeHost = 'agent-test.lute-momcozylab.luteos.cloud';
-const stagingCertificateHosts = <String>{
-  stagingProductBackendHost,
-  stagingAgentRuntimeHost,
+const testProductBackendHost = 'backend-test.lute-momcozylab.luteos.cloud';
+const testAgentRuntimeHost = 'agent-test.lute-momcozylab.luteos.cloud';
+const testCertificateHosts = <String>{
+  testProductBackendHost,
+  testAgentRuntimeHost,
 };
-const stagingCertificatePort = 8443;
-const stagingCertificateAssetPath =
-    'assets/certificates/momcozy-staging-internal-ca.pem';
+const testCertificatePort = 8443;
+const testCertificateAssetPath =
+    'assets/certificates/momcozy-test-internal-ca.pem';
 
 typedef CertificateAssetLoader = Future<Uint8List> Function(String assetPath);
 typedef SecurityContextInstaller = void Function(SecurityContext context);
 
-bool shouldEnableStagingCertificateTrust({
+bool shouldEnableTestCertificateTrust({
   required String environment,
   required Uri apiBaseUri,
 }) {
-  return environment.trim().toLowerCase() == 'staging' &&
+  return environment.trim().toLowerCase() == 'test' &&
       apiBaseUri.scheme.toLowerCase() == 'https' &&
-      stagingCertificateHosts.contains(apiBaseUri.host.toLowerCase()) &&
-      apiBaseUri.port == stagingCertificatePort;
+      testCertificateHosts.contains(apiBaseUri.host.toLowerCase()) &&
+      apiBaseUri.port == testCertificatePort;
 }
 
-/// Adds the internal staging CA to Dart's trusted roots only when bootstrapping
-/// one of the approved staging endpoints. Hostname, validity, and chain checks
+/// Adds the internal test CA to Dart's trusted roots only when bootstrapping
+/// one of the approved test endpoints. Hostname, validity, and chain checks
 /// remain enabled for every request.
-Future<bool> configureStagingCertificateTrust({
+Future<bool> configureTestCertificateTrust({
   String environment = _configuredEnvironment,
   String apiBaseUrl = _configuredApiBaseUrl,
   CertificateAssetLoader? certificateLoader,
@@ -45,7 +45,7 @@ Future<bool> configureStagingCertificateTrust({
 }) async {
   final apiBaseUri = Uri.tryParse(apiBaseUrl);
   if (apiBaseUri == null ||
-      !shouldEnableStagingCertificateTrust(
+      !shouldEnableTestCertificateTrust(
         environment: environment,
         apiBaseUri: apiBaseUri,
       )) {
@@ -53,7 +53,7 @@ Future<bool> configureStagingCertificateTrust({
   }
 
   final certificateBytes = await (certificateLoader ?? _loadCertificateAsset)(
-    stagingCertificateAssetPath,
+    testCertificateAssetPath,
   );
   final context = SecurityContext(withTrustedRoots: true)
     ..setTrustedCertificatesBytes(certificateBytes);
@@ -67,11 +67,11 @@ Future<Uint8List> _loadCertificateAsset(String assetPath) async {
 }
 
 void _installGlobalSecurityContext(SecurityContext context) {
-  HttpOverrides.global = _StagingCertificateHttpOverrides(context);
+  HttpOverrides.global = _TestCertificateHttpOverrides(context);
 }
 
-final class _StagingCertificateHttpOverrides extends HttpOverrides {
-  _StagingCertificateHttpOverrides(this._securityContext);
+final class _TestCertificateHttpOverrides extends HttpOverrides {
+  _TestCertificateHttpOverrides(this._securityContext);
 
   final SecurityContext _securityContext;
 

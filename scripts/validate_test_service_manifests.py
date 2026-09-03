@@ -13,7 +13,7 @@ IMAGE_DIGEST = re.compile(r"^sha256:[0-9a-f]{64}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
-def validate_staging_service_manifests(
+def validate_test_service_manifests(
     *,
     backend_path: Path,
     agent_path: Path,
@@ -79,7 +79,7 @@ def _validate_identity(
         "image_digest": manifest.get("image_digest"),
         "openapi_sha256": manifest.get("openapi_sha256"),
     }
-    if manifest.get("service") != service or manifest.get("environment") != "staging":
+    if manifest.get("service") != service or manifest.get("environment") != "test":
         raise ValueError(f"{path} has the wrong service/environment identity")
     if observed != expected:
         raise ValueError(f"{path} does not match the requested identity: {observed}")
@@ -97,7 +97,7 @@ def main() -> None:
     parser.add_argument("--backend", type=Path, required=True)
     parser.add_argument("--agent", type=Path, required=True)
     args = parser.parse_args()
-    validate_staging_service_manifests(
+    validate_test_service_manifests(
         backend_path=args.backend,
         agent_path=args.agent,
         environment=os.environ,

@@ -67,12 +67,12 @@ jobs:
       - name: Test
         run: flutter test --no-pub --exclude-tags=golden
 
-      - name: Build a staging-shaped unified smoke APK
+      - name: Build a test-shaped unified smoke APK
         run: |
           node scripts/build-flutter-android-apk.mjs \
             --mode debug \
             --flavor unified \
-            --dart-define=MOMCOZY_ENV=staging \
+            --dart-define=MOMCOZY_ENV=test \
             --dart-define=MOMCOZY_API_BASE_URL="${MOMCOZY_API_BASE_URL}" \
             --dart-define=MOMCOZY_AGENT_API_BASE_URL="${MOMCOZY_AGENT_API_BASE_URL}"
 
