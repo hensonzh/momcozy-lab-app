@@ -25,7 +25,7 @@ Environment overrides:
   MOMCOZY_AGENT_API_BASE_URL     Agent Runtime API compiled into the Flutter App.
   MOMCOZY_DOWNLOAD_BASE_URL      Public GitHub Pages URL for the download page.
   MOMCOZY_GITHUB_RELEASE_REPO    Public owner/repository for Releases and Pages.
-  MOMCOZY_APK_FLAVOR             local | staging | unified | production (default: unified).
+  MOMCOZY_APK_FLAVOR             local | unified | production (default: unified).
   MOMCOZY_APK_MODE               debug | release (default: release).
   MOMCOZY_EXTRA_DART_DEFINES     Extra comma-separated KEY=VALUE definitions;
                                   the two API URL keys are reserved.

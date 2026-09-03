@@ -8,18 +8,18 @@ import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_sto
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/network/staging_certificate_trust.dart';
+import 'package:momcozy_flutter_app/core/network/test_certificate_trust.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('staging certificate reaches the live health endpoint', (
+  testWidgets('test certificate reaches the live health endpoint', (
     tester,
   ) async {
-    final enabled = await configureStagingCertificateTrust();
+    final enabled = await configureTestCertificateTrust();
     expect(enabled, isTrue);
 
-    for (final host in stagingCertificateHosts) {
+    for (final host in testCertificateHosts) {
       final client = HttpClient();
       try {
         final request = await client.getUrl(
@@ -41,7 +41,7 @@ void main() {
   testWidgets('invite login reaches the API after device ID bootstrap', (
     tester,
   ) async {
-    final enabled = await configureStagingCertificateTrust();
+    final enabled = await configureTestCertificateTrust();
     expect(enabled, isTrue);
 
     final runtime = await MomCozyApiRuntime.bootstrap();

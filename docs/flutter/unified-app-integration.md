@@ -36,7 +36,7 @@ moving backend `main` branches are not silently substituted during App CI.
 
 The Product Backend snapshot does not yet expose every endpoint implemented by
 the newer product UI. Unsupported launch-blocking behavior is therefore off by
-default and must be enabled explicitly after staging contract verification.
+default and must be enabled explicitly after test contract verification.
 
 - `MOMCOZY_ENABLE_ONBOARDING`: enables the backend-driven onboarding gate.
 - `MOMCOZY_ENABLE_RELEASE_RESET`: opts into the internal-test release reset,
@@ -45,7 +45,7 @@ default and must be enabled explicitly after staging contract verification.
 - `MOMCOZY_ENABLE_AGENT_HISTORY`: must remain disabled for this baseline. The
   frozen Agent Runtime OpenAPI does not expose
   `GET /v1/agent/threads/{thread_id}/history`; enable it only after that endpoint
-  and its response schema pass staging contract verification.
+  and its response schema pass test contract verification.
 - `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API`: enables Body Profile and Motion
   Assessment routes plus extended Me/Baby resources only after their Product
   endpoints are verified.
@@ -81,8 +81,8 @@ resources must not become authentication or app-shell prerequisites.
 
 1. Validate both OpenAPI snapshots and smoke-flow service ownership.
 2. Run Flutter format, analyzer, unit/widget tests, and contract tests.
-3. Build at least a local debug APK and a staging release APK.
+3. Build at least a local debug APK and a unified release APK targeting test.
 4. Run real-device checks for MotionPose, camera/microphone permissions, BLE,
    Agent SSE reconnect/cancel, secure-session upgrade, and login/logout.
-5. Enable gated backend capabilities only after the matching staging endpoints
+5. Enable gated backend capabilities only after the matching test endpoints
    and response schemas pass contract smoke tests.

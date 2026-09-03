@@ -23,17 +23,17 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 ./scripts/build-flutter-app.sh
 ```
 
-上面的两个地址是当前 staging 已配置的固定 SNI 服务地址。
+上面的两个地址是当前 test 已配置的固定 SNI 服务地址。
 
 默认配置：
 
 ```text
 Download:  https://hensonzh.github.io/momcozy-lab-releases/unified
 Releases:  hensonzh/momcozy-lab-releases
-Variant:   unified release (staging runtime)
+Variant:   unified release (test runtime)
 ```
 
-`staging`、`unified` 和 `production` 没有 API 默认值：必须显式提供两个非空、非
+`unified` 和 `production` 没有 API 默认值：必须显式提供两个非空、非
 loopback 的 HTTPS 地址，即 Product Backend `MOMCOZY_API_BASE_URL` 与 Agent
 Runtime `MOMCOZY_AGENT_API_BASE_URL`。两者必须分别配置。
 `local` 构建缺省使用 Product Backend `http://127.0.0.1:8769` 和 Agent Runtime
@@ -64,7 +64,7 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 
 ## 常用参数
 
-以下 staging 示例假定已经导出两个 API 环境变量：
+以下 test 示例假定已经导出两个 API 环境变量：
 
 ```bash
 export MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443
@@ -109,10 +109,13 @@ dist/android-apk/
   index.html
   manifest.json
   assets/momcozy-lab-download-qr.svg
-  releases/momcozy-unified-android-staging-1.0.0-56.apk
-  releases/momcozy-unified-android-staging-1.0.0-56.apk.sha256
-  releases/momcozy-unified-android-staging-1.0.0-56.apk.provenance.json
+  releases/momcozy-unified-android-test-<version>-<build>.apk
+  releases/momcozy-unified-android-test-<version>-<build>.apk.sha256
+  releases/momcozy-unified-android-test-<version>-<build>.apk.provenance.json
 ```
+
+已发布的 build 56 继续保留历史 `staging` 资产名和 provenance，不做覆盖或改名；下一次
+发布必须先递增 build number，届时新资产才使用上述 `test` 命名。
 
 ## 验证
 

@@ -21,7 +21,8 @@ void main() {
       contains('applicationId = "com.momcozymai.app.flutterpoc"'),
     );
     expect(androidBuild, contains('applicationIdSuffix = ".local"'));
-    expect(androidBuild, contains('applicationIdSuffix = ".staging"'));
+    expect(androidBuild, contains('applicationIdSuffix = ".unified"'));
+    expect(androidBuild, isNot(contains('create("test")')));
 
     final xcodeProject = File(
       'ios/Runner.xcodeproj/project.pbxproj',

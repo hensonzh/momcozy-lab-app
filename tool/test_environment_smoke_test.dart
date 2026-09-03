@@ -1,24 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/staging/staging_smoke.dart';
+import 'package:momcozy_flutter_app/core/test_environment/test_smoke.dart';
 
 void main() {
   test(
-    'live Product Backend and Agent Runtime staging smoke',
+    'live Product Backend and Agent Runtime test smoke',
     () async {
-      final config = StagingSmokeConfig.fromEnvironment(Platform.environment);
-      final runner = StagingSmokeRunner(
+      final config = TestSmokeConfig.fromEnvironment(Platform.environment);
+      final runner = TestSmokeRunner(
         config: config,
-        probes: buildDefaultStagingSmokeProbes(config),
+        probes: buildDefaultTestSmokeProbes(config),
       );
 
       final report = await runner.run();
       for (final result in report.results) {
         final marker = switch (result.status) {
-          StagingSmokeStatus.passed => 'PASS',
-          StagingSmokeStatus.failed => 'FAIL',
-          StagingSmokeStatus.skipped => 'SKIP',
+          TestSmokeStatus.passed => 'PASS',
+          TestSmokeStatus.failed => 'FAIL',
+          TestSmokeStatus.skipped => 'SKIP',
         };
         final elapsedMs = result.elapsed.inMilliseconds;
         final message = result.message == null ? '' : ' - ${result.message}';
@@ -33,7 +33,7 @@ void main() {
         report.hasFailures,
         isFalse,
         reason:
-            'One or more live staging probes failed; see the redacted '
+            'One or more live test probes failed; see the redacted '
             'probe report above.',
       );
     },

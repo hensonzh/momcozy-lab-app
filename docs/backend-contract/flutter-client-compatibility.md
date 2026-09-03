@@ -111,7 +111,7 @@ versioning plan.
 
 1. Export OpenAPI.
 2. Regenerate or validate the Flutter typed client.
-3. Run Flutter smoke flows against staging.
+3. Run Flutter smoke flows against test.
 4. Verify no token appears in URLs or crash logs.
 5. Verify retryable writes preserve idempotency keys across app retries.
 6. Verify agent event reducers use stable IDs such as `run_id`, `event_id`,
