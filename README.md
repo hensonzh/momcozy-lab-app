@@ -133,7 +133,7 @@ only when **both** `MOMCOZY_ENABLE_ONBOARDING=true` and
 `MOMCOZY_ENABLE_RELEASE_RESET=true` are supplied as `--dart-define` values.
 Enabling the reset flag alone has no effect. With both flags enabled, startup
 compares the installed runtime version and build number (for example
-`1.0.0+56`) with the last launched release. A changed release clears the local
+`1.0.0+57`) with the last launched release. A changed release clears the local
 session, all user-scoped secure storage, generated-card/product media caches,
 and prior onboarding completion markers while preserving the device ID and
 last invite code. After the user signs in, the App performs the matching
