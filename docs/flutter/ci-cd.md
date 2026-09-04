@@ -79,8 +79,10 @@ test CA 下载两个公网 `/openapi.json` 并做 JSON 语义等价校验。耗�
 发布已构建 APK 前，工作流在宿主机获取与两个服务发布相同的 `flock`，重新读取两份
 current manifest，并验证 Agent 记录的 Product 依赖恰好等于当前 Product 身份。这样
 三个仓库各自的 GitHub concurrency 不能造成跨仓库竞态。Flutter setup 的外部 Action
-固定到完整 commit，由依赖更新流程显式升级。宿主机锁由长连接 SSH holder 持有，并由
-本地 `EXIT` cleanup 主动终止：发布脚本结束或 runner 中断即释放，不使用会提前到期的固定租期。
+固定到完整 commit，由依赖更新流程显式升级。宿主机锁由 SSH 会话绑定的 holder 持有：
+远端命令在 SSH stdin EOF 时退出并释放 `flock`，工作流用 runner 临时目录中的 0600 FIFO
+保持 stdin；`EXIT` cleanup 先停止 FIFO writer，再回收 SSH。发布脚本结束或 runner 中断
+都不会留下脱离会话的 holder，也不使用会提前到期的固定租期。
 
 release gate 只构建一次 `app-unified-release.apk`。发布步骤通过
 `MOMCOZY_APK_INPUT` 复用这同一文件，生成 SHA-256、下载页和包含 App commit、

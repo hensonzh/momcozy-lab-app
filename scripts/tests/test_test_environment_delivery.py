@@ -253,7 +253,11 @@ class TestDeliveryContractTest(unittest.TestCase):
             "/approve-test",
             "needs: approve",
             "ref: ${{ github.sha }}",
-            "while :; do sleep 60; done",
+            "mkfifo -m 0600",
+            "cat >/dev/null",
+            "tail -f /dev/null",
+            "lock_stdin_pid",
+            'exec tail -f /dev/null > "${lock_stdin}"',
         ):
             self.assertIn(required, workflow)
 
@@ -263,7 +267,12 @@ class TestDeliveryContractTest(unittest.TestCase):
         self.assertNotIn("Ignoring self-approval", workflow)
         self.assertNotIn("ref: main", workflow)
         self.assertNotIn("exec sleep 2700", workflow)
-        self.assertNotIn("mkfifo", workflow)
+        self.assertNotIn("while :; do sleep 60; done", workflow)
+        self.assertLess(
+            workflow.index('kill "${lock_stdin_pid}"'),
+            workflow.index('kill "${lock_pid}"'),
+        )
+        self.assertIn('rm -f "${lock_stdin}"', workflow)
         self.assertNotIn(
             "MOMCOZY_FLUTTER_RELEASE_STORE_FILE: ${{ runner.temp }}", workflow
         )
