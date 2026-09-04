@@ -416,7 +416,7 @@ jobs:
           test -f "dist/android-apk/releases/${provenance_file}"
 
       - name: Upload the release bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: momcozy-unified-release-${{ github.sha }}
           path: dist/android-apk

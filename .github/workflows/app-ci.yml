@@ -77,7 +77,7 @@ jobs:
             --dart-define=MOMCOZY_AGENT_API_BASE_URL="${MOMCOZY_AGENT_API_BASE_URL}"
 
       - name: Upload the verified APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: momcozy-unified-smoke-${{ github.sha }}
           path: build/app/outputs/flutter-apk/app-unified-debug.apk
