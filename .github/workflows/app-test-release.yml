@@ -128,7 +128,7 @@ jobs:
       SSL_CERT_FILE: ${{ github.workspace }}/assets/certificates/momcozy-test-internal-ca.pem
       TEST_RELEASE_LOCK: /opt/momcozy-lab/shared/test-release.lock
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}
 
