@@ -367,21 +367,39 @@ jobs:
         run: |
           lock_marker="${RUNNER_TEMP}/test-release-lock.marker"
           lock_log="${RUNNER_TEMP}/test-release-lock.log"
+          lock_stdin="${RUNNER_TEMP}/test-release-lock.stdin"
           install -m 0600 /dev/null "${lock_marker}"
           install -m 0600 /dev/null "${lock_log}"
+          rm -f "${lock_stdin}"
+          mkfifo -m 0600 "${lock_stdin}"
           lock_pid=""
+          lock_stdin_pid=""
           release_lock() {
+            # Stop the dedicated FIFO writer first. This sends EOF through SSH;
+            # the remote `cat` exits and releases flock before SSH is reaped.
+            if [[ -n "${lock_stdin_pid}" ]] && kill -0 "${lock_stdin_pid}" 2>/dev/null; then
+              kill "${lock_stdin_pid}" 2>/dev/null || true
+              wait "${lock_stdin_pid}" 2>/dev/null || true
+            fi
             if [[ -n "${lock_pid}" ]] && kill -0 "${lock_pid}" 2>/dev/null; then
               kill "${lock_pid}" 2>/dev/null || true
               wait "${lock_pid}" 2>/dev/null || true
             fi
+            rm -f "${lock_stdin}"
           }
           trap release_lock EXIT
+          # This sibling process owns the FIFO writer, so SSH never inherits it.
+          # Killing it in cleanup closes the remote stdin deterministically.
+          (
+            exec tail -f /dev/null > "${lock_stdin}"
+          ) &
+          lock_stdin_pid="$!"
           ssh \
             -o ServerAliveInterval=15 \
             -o ServerAliveCountMax=2 \
             -p "${TEST_SSH_PORT}" "${TEST_SSH_USER}@${TEST_SSH_HOST}" \
-            "/usr/bin/flock --exclusive --timeout 1800 '${TEST_RELEASE_LOCK}' sh -c 'printf \"locked\\n\"; trap \"exit 0\" HUP INT TERM; while :; do sleep 60; done'" \
+            "/usr/bin/flock --exclusive --timeout 1800 '${TEST_RELEASE_LOCK}' sh -c 'printf \"locked\\n\"; trap \"exit 0\" HUP INT TERM; cat >/dev/null'" \
+            < "${lock_stdin}" \
             > "${lock_marker}" 2> "${lock_log}" &
           lock_pid="$!"
           for _attempt in $(seq 1 1800); do
