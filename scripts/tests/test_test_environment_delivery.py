@@ -122,11 +122,11 @@ class TestDeliveryContractTest(unittest.TestCase):
             self.assertEqual(manifest["flavor"], "unified")
             self.assertEqual(manifest["runtimeEnvironment"], "test")
             self.assertEqual(
-                manifest["githubReleaseTag"], "unified-android-v1.0.0-56"
+                manifest["githubReleaseTag"], "unified-android-v1.0.0-57"
             )
             self.assertEqual(
                 manifest["apkFile"],
-                "momcozy-unified-android-test-1.0.0-56.apk",
+                "momcozy-unified-android-test-1.0.0-57.apk",
             )
             self.assertEqual(
                 manifest["sha256"], hashlib.sha256(apk_input.read_bytes()).hexdigest()
