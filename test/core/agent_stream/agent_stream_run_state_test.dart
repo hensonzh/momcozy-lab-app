@@ -6,6 +6,54 @@ import '../../support/fixture_reader.dart';
 
 void main() {
   group('AgentStreamRunState', () {
+    test('withdrawal clears text and integrity state, survives reconnect and ignores late deltas', () {
+      var state = const AgentStreamRunState().start();
+      state = state.applyEvent(_indexedDelta(index: 0, delta: 'A', prefixHash: _sha256A));
+      state = state.applyEvent(_indexedDelta(index: 2, delta: 'C', prefixHash: _sha256Abc));
+      expect(state.hasTextSegmentGap, isTrue);
+      final withdrawn = AgentStreamEvent({
+        'type': 'message.withdrawn', 'sequence': 5,
+        'payload': {'message_id': state.messageId, 'replacement': true},
+      });
+      state = state.applyEvent(withdrawn);
+      expect(state.textContent, '');
+      expect(state.provisionalTextContent, '');
+      expect(state.textStreamId, isNull);
+      expect(state.nextTextSegmentIndex, 0);
+      expect(state.pendingTextSegments, isEmpty);
+      expect(state.textIntegrityErrorCode, isNull);
+      state = AgentStreamRunState.fromMap(state.toMap());
+      state = state.applyEvent(_indexedDelta(index: 1, delta: 'B', prefixHash: _sha256Ab));
+      expect(state.textContent, '');
+      state = state.applyEvent(AgentStreamEvent({
+        'type': 'message.completed', 'sequence': 6,
+        'payload': {'message_id': state.messageId, 'role': 'assistant', 'text': 'Safe fallback', 'replacement': true},
+      }));
+      expect(state.textContent, 'Safe fallback');
+      // The transient withdrawal may arrive after durable completion.
+      state = state.applyEvent(AgentStreamEvent({
+        'type': 'message.withdrawn', 'transient': true, 'event_id': 'withdraw-late',
+        'payload': {'message_id': state.messageId, 'replacement': true},
+      }));
+      state = state.applyEvent(_indexedDelta(index: 2, delta: 'C', prefixHash: _sha256Abc));
+      expect(state.textContent, 'Safe fallback');
+    });
+
+    test('masked final repairs stream without receiving withdrawal event', () {
+      var state = const AgentStreamRunState().start();
+      state = state.applyEvent(AgentStreamEvent(const {
+        'type': 'message.delta', 'payload': {'delta': 'Call 13812345678'},
+      }));
+      state = state.applyEvent(AgentStreamEvent(const {
+        'type': 'message.completed',
+        'payload': {'role': 'assistant', 'text': 'Call 138****5678', 'replacement': true},
+      }));
+      expect(state.textContent, 'Call 138****5678');
+      expect(state.textIntegrityErrorCode, isNull);
+      expect(state.provisionalTextContent, '');
+      expect(state.pendingTextSegments, isEmpty);
+    });
+
     test('accumulates streamed text and finishes on terminal events', () {
       var state = const AgentStreamRunState().start();
 
@@ -414,7 +462,7 @@ void main() {
       expect(state.provisionalTextContent, '');
     });
 
-    test('does not replace streamed text on completed mismatch', () {
+    test('replaces streamed text with authoritative completed text', () {
       var state = const AgentStreamRunState().start();
 
       state = state.applyEvent(
@@ -438,6 +486,7 @@ void main() {
           'payload': {
             'role': 'assistant',
             'text': '后端最终清洗后的不同回复',
+            'replacement': true,
             'quick_replies': [
               {'text': '继续聊这个'},
               {'text': '给我更多细节'},
@@ -447,7 +496,8 @@ void main() {
         }),
       );
 
-      expect(state.textContent, '用户已经看到的回复');
+      expect(state.textContent, '后端最终清洗后的不同回复');
+      expect(state.textIntegrityErrorCode, isNull);
       expect(state.provisionalTextContent, '');
       expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
@@ -506,7 +556,7 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
       },
     );
 
-    test('does not replace indexed streamed text on completed mismatch', () {
+    test('replaces stale streamed text on completed mismatch', () {
       var state = const AgentStreamRunState().start();
 
       state = state.applyEvent(
@@ -527,11 +577,11 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
           'run_id': 'run-stale-001',
           'message_id': 'msg-stale-001',
           'sequence': 3,
-          'payload': {'role': 'assistant', 'text': '重试后的完整回复'},
+          'payload': {'role': 'assistant', 'text': '重试后的完整回复', 'replacement': true},
         }),
       );
 
-      expect(state.textContent, '旧的 partial');
+      expect(state.textContent, '重试后的完整回复');
       expect(state.provisionalTextContent, '');
     });
 
