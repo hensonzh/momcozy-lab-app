@@ -45,6 +45,7 @@ class AgentStreamRunState {
     this.errorMessage,
     this.cancelAcknowledged = false,
     this.cancelStatusCode,
+    this.withdrawnMessageId,
   });
 
   final AgentStreamRunPhase phase;
@@ -70,6 +71,7 @@ class AgentStreamRunState {
   final String? errorMessage;
   final bool cancelAcknowledged;
   final int? cancelStatusCode;
+  final String? withdrawnMessageId;
 
   bool get isActive =>
       phase == AgentStreamRunPhase.streaming ||
@@ -123,6 +125,8 @@ class AgentStreamRunState {
     }
 
     final type = event.type;
+    if (type == 'message.withdrawn' && hasCompletedAssistantMessage) return this;
+    if (withdrawnMessageId != null && type == 'message.delta') return this;
     final nextEvents = _nextRetainedEvents(events, event);
     final textUpdate = _nextTextStream(event);
     final nextQuickReplies = _nextQuickReplies(event);
@@ -143,6 +147,24 @@ class AgentStreamRunState {
     );
     final nextActionEvents = _nextVisibleActionEvents(actionEvents, event);
     final nextSequence = _maxSequence(lastSequence, event.sequence);
+
+    if (type == 'message.withdrawn') {
+      final withdrawnId = event.messageId ?? messageId;
+      return copyWith(
+        phase: AgentStreamRunPhase.streaming,
+        events: nextEvents,
+        messageId: withdrawnId,
+        textContent: '',
+        provisionalTextContent: '',
+        textStreamId: null,
+        nextTextSegmentIndex: 0,
+        pendingTextSegments: const <int, AgentStreamEvent>{},
+        textIntegrityErrorCode: null,
+        withdrawnMessageId: withdrawnId,
+        lastSequence: nextSequence,
+        lastTransientCursor: nextTransientCursor,
+      );
+    }
 
     final nextState = copyWith(
       phase: AgentStreamRunPhase.streaming,
@@ -198,6 +220,7 @@ class AgentStreamRunState {
   }
 
   bool _canApplyEvent(AgentStreamEvent event) {
+    if (event.type == 'message.withdrawn') return true;
     if (isActive) return true;
     if (phase != AgentStreamRunPhase.waitingForConfirmation) return false;
     return event.type.startsWith('action.') ||
@@ -227,6 +250,7 @@ class AgentStreamRunState {
     }
     if (event.type == 'message.completed' && event.role != 'user') {
       final completedText = event.completedText ?? '';
+      final isReplacement = event.payload['replacement'] == true;
       final completedStreamId = event.messageStreamId;
       final hasConflict =
           textContent.isNotEmpty &&
@@ -236,8 +260,12 @@ class AgentStreamRunState {
           textStreamId != null &&
           completedStreamId != null &&
           textStreamId != completedStreamId;
-      final nextText = _finalizedTextContent(textContent, completedText);
-      final integrityError = hasConflict
+      final nextText = isReplacement
+          ? completedText
+          : _finalizedTextContent(textContent, completedText);
+      final integrityError = isReplacement
+          ? null
+          : hasConflict
           ? 'completed_text_mismatch'
           : hasStreamIdConflict
           ? 'message_stream_id_mismatch'
@@ -415,6 +443,7 @@ class AgentStreamRunState {
     String? errorMessage,
     bool? cancelAcknowledged,
     int? cancelStatusCode,
+    String? withdrawnMessageId,
   }) {
     return AgentStreamRunState(
       phase: phase ?? this.phase,
@@ -449,6 +478,7 @@ class AgentStreamRunState {
       errorMessage: errorMessage ?? this.errorMessage,
       cancelAcknowledged: cancelAcknowledged ?? this.cancelAcknowledged,
       cancelStatusCode: cancelStatusCode ?? this.cancelStatusCode,
+      withdrawnMessageId: withdrawnMessageId ?? this.withdrawnMessageId,
     );
   }
 
@@ -487,6 +517,7 @@ class AgentStreamRunState {
       if (_hasValue(errorMessage)) 'errorMessage': errorMessage,
       if (cancelAcknowledged) 'cancelAcknowledged': cancelAcknowledged,
       if (cancelStatusCode != null) 'cancelStatusCode': cancelStatusCode,
+      if (_hasValue(withdrawnMessageId)) 'withdrawnMessageId': withdrawnMessageId,
     };
   }
 
@@ -545,6 +576,7 @@ class AgentStreamRunState {
       cancelAcknowledged: map['cancelAcknowledged'] == true,
       cancelStatusCode:
           _int(map['cancelStatusCode']) ?? _int(map['cancel_status_code']),
+      withdrawnMessageId: _string(map['withdrawnMessageId']) ?? _string(map['withdrawn_message_id']),
     );
   }
 }
