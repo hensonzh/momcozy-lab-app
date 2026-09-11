@@ -196,7 +196,24 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                         },
                       ),
                     ],
-                    const SizedBox(height: MomCozySpacing.section),
+                    if (_step == _AuthStep.login)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _busy
+                              ? null
+                              : () => _navigate(_AuthStep.forgot),
+                          style: TextButton.styleFrom(
+                            foregroundColor: MomCozyColors.textSecondary,
+                          ),
+                          child: const Text('Forgot password?'),
+                        ),
+                      ),
+                    SizedBox(
+                      height: _step == _AuthStep.login
+                          ? MomCozySpacing.compact
+                          : MomCozySpacing.section,
+                    ),
                     MomCozyPrimaryButton(
                       key: const ValueKey('auth-submit-button'),
                       onPressed: _busy ? null : _submit,
@@ -204,32 +221,47 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                       child: Text(_submitLabel),
                     ),
                     if (_step == _AuthStep.login) ...[
-                      TextButton(
-                        onPressed: _busy
-                            ? null
-                            : () => _navigate(_AuthStep.forgot),
-                        child: const Text('Forgot password?'),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: MomCozySpacing.page,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(child: Divider()),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: MomCozySpacing.content,
+                              ),
+                              child: Text('or'),
+                            ),
+                            Expanded(child: Divider()),
+                          ],
+                        ),
                       ),
                       OutlinedButton(
                         key: const ValueKey('auth-google-button'),
                         onPressed: _busy ? null : _google,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MomCozyColors.textPrimary,
+                        ),
                         child: const Text('Continue with Google'),
                       ),
-                      TextButton(
-                        onPressed: _busy
-                            ? null
-                            : () => _navigate(_AuthStep.register),
-                        child: const Text('Create an account'),
-                      ),
-                      TextButton(
-                        onPressed: _busy
-                            ? null
-                            : () => _navigate(
-                                _AuthStep.verify,
-                                message:
-                                    'Enter your email and request a new verification code.',
-                              ),
-                        child: const Text('Verify an existing account'),
+                      const SizedBox(height: MomCozySpacing.page),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            'New here?',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          TextButton(
+                            onPressed: _busy
+                                ? null
+                                : () => _navigate(_AuthStep.register),
+                            child: const Text('Create an account'),
+                          ),
+                        ],
                       ),
                     ] else ...[
                       if (usesCode)
