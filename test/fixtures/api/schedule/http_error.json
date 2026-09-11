@@ -1,0 +1,22 @@
+{
+  "domain": "schedule",
+  "endpoint": "/v1/schedule",
+  "method": "GET",
+  "request": {
+    "query": {
+      "start_date": "2026-09-01",
+      "end_date": "2026-10-12",
+      "timezone": "Asia/Shanghai"
+    }
+  },
+  "variant": "http_error",
+  "response": {
+    "http_status": 502,
+    "status_text": "Bad Gateway",
+    "request_id": "req-fixture-schedule-http-error",
+    "body": {
+      "error": "bad_gateway",
+      "message": "schedule unavailable"
+    }
+  }
+}

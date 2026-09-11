@@ -8,8 +8,8 @@ as an all-or-nothing winner.
 - Existing app baseline: `pre-merge-current-20260815`
 - MomCozyApp product baseline: `pre-merge-momcozyapp-20260815`
 - Integration branch: `integration/unified-app`
-- Product Backend snapshot SHA-256: `71fd45937c95310798d626bd306ef940f36b4d5639aeb2582d89aba9471ceb57`
-- Agent Runtime snapshot SHA-256: `b98e8d9941e3b1926028f7dce94ad335457866e94b2dfdd3dd84610591b95ff9`
+- Product Backend snapshot SHA-256: `a999ac4eb3867ccbfc0dcdba62fed9a457d99e2f779f6d7f9280e280f495db0d`
+- Agent Runtime snapshot SHA-256: `ba66d9b95d7828fc441ed039770989c44edcc4e7f61c06a79bd2f3e28c452771`
 
 The MomCozyApp tree owns the current product shell, visual design, new feature
 modules, motion assessment, media, Agent conversation UI, and native pose
@@ -25,7 +25,7 @@ request/event contract.
 | Agent Runtime HTTP/SSE API | `agent-runtime.openapi.generated.json` | Use `MOMCOZY_AGENT_API_BASE_URL` for every `/v1/agent/*` request. |
 | Agent run creation | Agent Runtime snapshot | Send `runtime_pattern: proprietary_runtime` and typed attachment references. |
 | Authentication/session | Product Backend plus App secure store | Keep the atomic secure payload and one refresh coordinator. |
-| Product UI and routes | MomCozyApp | Keep `/status -> /me` and `/schedule -> /plan` compatibility redirects. |
+| Product UI and routes | MomCozyApp | Keep `/me`, `/baby`, `/schedule`, `/more`, and `/` as the canonical app routes. |
 
 The old unified `openapi.generated.json` is intentionally removed. It hid
 service ownership and allowed Agent Runtime routes to be sent to the Product Backend origin.
@@ -46,9 +46,8 @@ default and must be enabled explicitly after test contract verification.
   frozen Agent Runtime OpenAPI does not expose
   `GET /v1/agent/threads/{thread_id}/history`; enable it only after that endpoint
   and its response schema pass test contract verification.
-- `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API`: enables Body Profile and Motion
-  Assessment routes plus extended Me/Baby resources only after their Product
-  endpoints are verified.
+- `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API`: enables Motion Assessment and other
+  optional resources only after their Product endpoints are verified.
 
 Release-reset startup behavior is intentionally conjunctive:
 
@@ -62,11 +61,11 @@ Release-reset startup behavior is intentionally conjunctive:
 The same resource-level gate covers `/v1/care-overview/me`,
 `/v1/records/feeding-summary`, `/v1/records/water`,
 `/v1/records/water-trends`, `/v1/records/vitals`, `/v1/records/sleep`, and
-`/v1/records/diaper`. With the flag off, `/me`, `/baby`, and the compatibility
-redirect `/status -> /me` still load snapshot-supported profile, feeding,
-growth, milk-trend, and plan resources; extended cards render an explicit
-unavailable/empty state and make no request to those gated paths. These
-resources must not become authentication or app-shell prerequisites.
+`/v1/records/diaper`. With the flag off, `/me`, `/baby`, and `/schedule` still load
+snapshot-supported profile, feeding, growth, milk-trend, and schedule
+resources; extended cards render an explicit unavailable/empty state and make
+no request to those gated paths. These resources must not become
+authentication or app-shell prerequisites.
 
 ## Merge rules
 

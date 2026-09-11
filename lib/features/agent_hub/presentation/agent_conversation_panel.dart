@@ -2,7 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/widgets/product_feedback.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 
 typedef AgentConversationSelected = Future<bool> Function(String threadId);
@@ -23,7 +24,7 @@ Future<void> showAgentConversationPanel({
     useRootNavigator: true,
     barrierDismissible: true,
     barrierLabel: barrierLabel,
-    barrierColor: const Color(0x520f0a0d),
+    barrierColor: MomCozyColors.overlay,
     transitionDuration: const Duration(milliseconds: 240),
     pageBuilder: (context, animation, secondaryAnimation) {
       final screenWidth = MediaQuery.sizeOf(context).width;
@@ -159,10 +160,10 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
       child: Material(
         color: MomCozyColors.background,
         elevation: 18,
-        shadowColor: const Color(0x40000000),
+        shadowColor: MomCozyColors.overlay,
         borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(22),
-          bottomRight: Radius.circular(22),
+          topRight: Radius.circular(MomCozyRadii.sheet),
+          bottomRight: Radius.circular(MomCozyRadii.sheet),
         ),
         clipBehavior: Clip.antiAlias,
         child: SafeArea(
@@ -176,9 +177,9 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
                     Expanded(
                       child: Text(
                         '会话历史',
-                        style: Theme.of(context).textTheme.titleMedium
+                        style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
-                              color: const Color(0xff3f3038),
+                              color: MomCozyColors.foreground,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -192,7 +193,7 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
                   ],
                 ),
               ),
-              const Divider(height: 1, color: Color(0x66eadde2)),
+              const Divider(height: 1, color: MomCozyColors.border),
               if (!canSwitch)
                 const Padding(
                   padding: EdgeInsets.fromLTRB(20, 12, 20, 4),
@@ -200,7 +201,7 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
                     '回复完成后可切换会话',
                     style: TextStyle(
                       color: MomCozyColors.mutedForeground,
-                      fontSize: 12,
+                      fontSize: MomCozyTypography.captionSize,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -216,25 +217,25 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
   Widget _buildContent(BuildContext context, {required bool canSwitch}) {
     final conversations = _conversations;
     if (conversations == null && _loadError == null) {
-      return const Center(
-        child: CircularProgressIndicator(
-          key: ValueKey('agent-conversation-loading'),
-          strokeWidth: 2.5,
-        ),
+      return const ProductLoadingView(
+        key: ValueKey('agent-conversation-loading'),
       );
     }
     if (conversations == null) {
-      return _ConversationPanelMessage(
-        icon: Icons.cloud_off_outlined,
-        title: '暂时无法加载会话',
-        actionLabel: '重试',
-        onAction: _load,
+      return Center(
+        child: ProductEmptyView(
+          icon: Icons.cloud_off_outlined,
+          title: '暂时无法加载会话',
+          action: TextButton(onPressed: _load, child: const Text('重试')),
+        ),
       );
     }
     if (conversations.isEmpty) {
-      return const _ConversationPanelMessage(
-        icon: Icons.chat_bubble_outline_rounded,
-        title: '还没有历史会话',
+      return const Center(
+        child: ProductEmptyView(
+          icon: Icons.chat_bubble_outline_rounded,
+          title: '还没有历史会话',
+        ),
       );
     }
 
@@ -247,8 +248,8 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
             child: Text(
               '无法打开该会话，请重试',
               style: TextStyle(
-                color: Color(0xffb64b4b),
-                fontSize: 12,
+                color: MomCozyColors.danger,
+                fontSize: MomCozyTypography.captionSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -268,12 +269,12 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
                 button: true,
                 child: Material(
                   color: isCurrent
-                      ? const Color(0xfff2e6e9)
+                      ? MomCozyColors.roseSoft
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(MomCozyRadii.control),
                   child: InkWell(
                     key: ValueKey('agent-conversation-${conversation.id}'),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(MomCozyRadii.control),
                     onTap: isLoading || (!canSwitch && !isCurrent)
                         ? null
                         : () => _select(conversation),
@@ -290,7 +291,7 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
                                 : Icons.chat_bubble_outline_rounded,
                             size: 18,
                             color: isCurrent
-                                ? const Color(0xff7a5360)
+                                ? MomCozyColors.primaryDark
                                 : MomCozyColors.mutedForeground,
                           ),
                           const SizedBox(width: 10),
@@ -303,8 +304,8 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: Color(0xff3f3038),
-                                    fontSize: 14,
+                                    color: MomCozyColors.foreground,
+                                    fontSize: MomCozyTypography.bodySize,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -313,7 +314,7 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
                                   _formatUpdatedAt(conversation.updatedAt),
                                   style: const TextStyle(
                                     color: MomCozyColors.mutedForeground,
-                                    fontSize: 11,
+                                    fontSize: MomCozyTypography.labelSize,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -340,49 +341,6 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _ConversationPanelMessage extends StatelessWidget {
-  const _ConversationPanelMessage({
-    required this.icon,
-    required this.title,
-    this.actionLabel,
-    this.onAction,
-  });
-
-  final IconData icon;
-  final String title;
-  final String? actionLabel;
-  final VoidCallback? onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 28, color: MomCozyColors.mutedForeground),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: MomCozyColors.mutedForeground,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 12),
-              TextButton(onPressed: onAction, child: Text(actionLabel!)),
-            ],
-          ],
-        ),
-      ),
     );
   }
 }

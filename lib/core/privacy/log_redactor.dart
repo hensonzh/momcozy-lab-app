@@ -98,8 +98,7 @@ bool isSensitiveLogKey(String key) {
       normalized == 'babyhealth' ||
       normalized == 'pumpmilkrecords' ||
       normalized == 'feedingrecords' ||
-      normalized == 'growthrecords' ||
-      normalized == 'pregnancydiary';
+      normalized == 'growthrecords';
 }
 
 bool _isAllowedCrashContextKey(String key) {

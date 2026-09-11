@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:momcozy_flutter_app/core/migrations/legacy_prenatal_contract_filter.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
@@ -546,7 +545,6 @@ String _stripVoiceLinks(
   ) {
     final alt = (match.group(1) ?? '').trim();
     final destination = _voiceLinkDestination(match.group(2));
-    if (isRetiredPrenatalRoute(destination)) return ' ';
     final narration = _resolveMediaVoiceNarration(
       destination,
       alt: alt,
@@ -563,7 +561,6 @@ String _stripVoiceLinks(
   ) {
     final label = (match.group(1) ?? '').trim();
     final destination = _voiceLinkDestination(match.group(2));
-    if (isRetiredPrenatalRoute(destination)) return ' ';
     final narration = _resolveMediaVoiceNarration(
       destination,
       alt: label,

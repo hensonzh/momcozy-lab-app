@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form.dart';
 
@@ -238,19 +239,12 @@ class _AgentArtifactFormEntryState extends State<AgentArtifactFormEntry> {
         child: InkWell(
           key: ValueKey('agent-artifact-form-entry-${widget.card.id}'),
           onTap: _loading || isSubmitting ? null : _openDialog,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(MomCozyRadii.card),
           child: Ink(
             decoration: BoxDecoration(
-              color: const Color(0xfffffbfc),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xffe7dce1)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x10532f40),
-                  blurRadius: 18,
-                  offset: Offset(0, 6),
-                ),
-              ],
+              color: MomCozyColors.card,
+              borderRadius: BorderRadius.circular(MomCozyRadii.card),
+              border: Border.all(color: MomCozyColors.border),
             ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 84),
@@ -260,16 +254,16 @@ class _AgentArtifactFormEntryState extends State<AgentArtifactFormEntry> {
                     width: 62,
                     height: 84,
                     decoration: const BoxDecoration(
-                      color: Color(0xffedf7f5),
+                      color: MomCozyColors.violetSoft,
                       borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(7),
+                        left: Radius.circular(MomCozyRadii.card),
                       ),
                     ),
                     alignment: Alignment.center,
                     child: const Icon(
                       Icons.assignment_outlined,
                       size: 28,
-                      color: Color(0xff247b76),
+                      color: MomCozyColors.primary,
                     ),
                   ),
                   Expanded(
@@ -286,8 +280,8 @@ class _AgentArtifactFormEntryState extends State<AgentArtifactFormEntry> {
                             '信息采集',
                             style: Theme.of(context).textTheme.labelSmall
                                 ?.copyWith(
-                                  color: const Color(0xff8a6d7a),
-                                  fontSize: 10,
+                                  color: MomCozyColors.mutedForeground,
+                                  fontSize: MomCozyTypography.microSize,
                                   fontWeight: FontWeight.w600,
                                 ),
                           ),
@@ -298,21 +292,21 @@ class _AgentArtifactFormEntryState extends State<AgentArtifactFormEntry> {
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.labelLarge
                                 ?.copyWith(
-                                  color: const Color(0xff372330),
-                                  fontSize: 13,
+                                  color: MomCozyColors.foreground,
+                                  fontSize: MomCozyTypography.secondarySize,
                                   fontWeight: FontWeight.w700,
                                   height: 1.25,
                                 ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: MomCozySpacing.xs),
                           Text(
                             subtitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.labelSmall
                                 ?.copyWith(
-                                  color: const Color(0xff725b67),
-                                  fontSize: 11,
+                                  color: MomCozyColors.mutedForeground,
+                                  fontSize: MomCozyTypography.labelSize,
                                   fontWeight: FontWeight.w400,
                                 ),
                           ),
@@ -330,7 +324,7 @@ class _AgentArtifactFormEntryState extends State<AgentArtifactFormEntry> {
                             dimension: 18,
                             child: const CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Color(0xff247b76),
+                              color: MomCozyColors.primary,
                             ),
                           )
                         : Icon(
@@ -338,7 +332,7 @@ class _AgentArtifactFormEntryState extends State<AgentArtifactFormEntry> {
                                 ? Icons.check_circle_outline_rounded
                                 : Icons.chevron_right_rounded,
                             size: 19,
-                            color: const Color(0xff247b76),
+                            color: MomCozyColors.primary,
                           ),
                   ),
                 ],
@@ -415,8 +409,7 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
       key: ValueKey('agent-artifact-form-cancel-${widget.card.id}'),
       onPressed: isSubmitting ? null : () => Navigator.of(context).pop(),
       style: OutlinedButton.styleFrom(
-        minimumSize: const Size(82, 44),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        minimumSize: const Size(82, MomCozyLayout.buttonHeight),
       ),
       child: Text(isSubmitted ? '关闭' : '取消'),
     );
@@ -430,16 +423,14 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
       key: ValueKey('agent-artifact-form-submit-${widget.card.id}'),
       onPressed: !canSubmit || isSubmitting ? null : _submit,
       style: FilledButton.styleFrom(
-        minimumSize: const Size(96, 44),
-        backgroundColor: const Color(0xff247b76),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        minimumSize: const Size(96, MomCozyLayout.buttonHeight),
       ),
       icon: isSubmitting
           ? const SizedBox.square(
               dimension: 16,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white,
+                color: MomCozyColors.card,
               ),
             )
           : const Icon(Icons.check_rounded, size: 18),
@@ -479,7 +470,7 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
             children: [
               cancelButton,
               if (submitButton != null) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: MomCozySpacing.compact),
                 submitButton,
               ],
             ],
@@ -491,7 +482,7 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
           children: [
             cancelButton,
             if (submitButton != null) ...[
-              const SizedBox(width: 10),
+              const SizedBox(width: MomCozySpacing.statusGap),
               Flexible(child: submitButton),
             ],
           ],
@@ -511,27 +502,16 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
       child: Dialog(
         key: ValueKey('agent-artifact-form-dialog-${widget.card.id}'),
         insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        backgroundColor: Colors.transparent,
+        clipBehavior: Clip.antiAlias,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: 440,
+            maxWidth: MomCozyLayout.maxAppWidth,
             maxHeight: mediaQuery.size.height * 0.8,
           ),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: const Color(0xfffffdfd),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xffe7dce1)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x24532f40),
-                  blurRadius: 32,
-                  offset: Offset(0, 14),
-                ),
-              ],
-            ),
+          child: Padding(
+            padding: EdgeInsets.zero,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(13),
+              borderRadius: BorderRadius.circular(MomCozyRadii.dialog),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -545,16 +525,18 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
                           height: 34,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: const Color(0xffedf7f5),
-                            borderRadius: BorderRadius.circular(8),
+                            color: MomCozyColors.violetSoft,
+                            borderRadius: BorderRadius.circular(
+                              MomCozyRadii.badge,
+                            ),
                           ),
                           child: const Icon(
                             Icons.assignment_outlined,
                             size: 19,
-                            color: Color(0xff247b76),
+                            color: MomCozyColors.primary,
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: MomCozySpacing.statusGap),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -563,8 +545,8 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
                                 widget.card.title,
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(
-                                      color: const Color(0xff30232a),
-                                      fontSize: 16,
+                                      color: MomCozyColors.foreground,
+                                      fontSize: MomCozyTypography.headingSize,
                                       fontWeight: FontWeight.w700,
                                       height: 1.3,
                                     ),
@@ -582,36 +564,28 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
                       ],
                     ),
                   ),
-                  const Divider(height: 1, color: Color(0xffeee4e8)),
+                  const Divider(height: 1, color: MomCozyColors.border),
                   Flexible(
                     child: SingleChildScrollView(
                       key: ValueKey(
                         'agent-artifact-form-scroll-${widget.card.id}',
                       ),
                       controller: _scrollController,
-                      padding: const EdgeInsets.all(16),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                          textTheme: Theme.of(context).textTheme.apply(
-                            bodyColor: const Color(0xff30232a),
-                            fontSizeFactor: 0.92,
-                          ),
-                        ),
-                        child: AgentArtifactForm(
-                          key: _formKey,
-                          card: widget.card,
-                          onAction: widget.onAction,
-                          onSubmit: widget.onSubmit,
-                          submission: widget.submission,
-                          initialDraftValues: widget.initialDraftValues,
-                          onDraftChanged: widget.onDraftChanged,
-                          onSubmitted: widget.onSubmitted,
-                          dialogMode: true,
-                        ),
+                      padding: const EdgeInsets.all(MomCozySpacing.page),
+                      child: AgentArtifactForm(
+                        key: _formKey,
+                        card: widget.card,
+                        onAction: widget.onAction,
+                        onSubmit: widget.onSubmit,
+                        submission: widget.submission,
+                        initialDraftValues: widget.initialDraftValues,
+                        onDraftChanged: widget.onDraftChanged,
+                        onSubmitted: widget.onSubmitted,
+                        dialogMode: true,
                       ),
                     ),
                   ),
-                  const Divider(height: 1, color: Color(0xffeee4e8)),
+                  const Divider(height: 1, color: MomCozyColors.border),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
                     child: _buildFooterActions(

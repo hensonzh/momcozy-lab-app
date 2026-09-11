@@ -11,9 +11,9 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/card_export.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_conversation_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
@@ -21,7 +21,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart'
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
-import 'package:momcozy_flutter_app/features/body_profile/data/body_profile_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_file_cache.dart';
@@ -32,12 +31,9 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_asses
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_voice_signaling.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
-import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/data/maternal_care_overview_api_repository.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_controller.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
+import 'package:momcozy_flutter_app/modules/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/services/care/care_api_repository.dart';
+import 'package:momcozy_flutter_app/domain/care/care_order.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -87,8 +83,6 @@ class MomCozyApiRuntime {
     pumpNativeRuntimeCoordinatorFactory,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
-    IbclcConsultStore? ibclcConsultStore,
-    ProfileOverviewCache? profileOverviewCache,
     MediaContentRepository? mediaContentRepository,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
@@ -123,26 +117,6 @@ class MomCozyApiRuntime {
        observability = observability ?? MomCozyObservability(),
        now = now ?? DateTime.now,
        timezoneProvider = timezoneProvider ?? _deviceTimezone {
-    this.ibclcConsultStore =
-        ibclcConsultStore ??
-        IbclcConsultStore(
-          persistence: FlutterSecureIbclcConsultPersistence(
-            userId: this.session.userId,
-          ),
-          now: this.now,
-        );
-    unawaited(this.ibclcConsultStore.restore());
-    this.profileOverviewCache =
-        profileOverviewCache?.matches(
-              ownerUserId: this.session.userId,
-              babyId: this.session.babyId,
-            ) ==
-            true
-        ? profileOverviewCache!
-        : ProfileOverviewCache(
-            ownerUserId: this.session.userId,
-            babyId: this.session.babyId,
-          );
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
@@ -166,8 +140,6 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
-    IbclcConsultStore? ibclcConsultStore,
-    ProfileOverviewCache? profileOverviewCache,
     MediaContentRepository? mediaContentRepository,
     String? userId,
     String? babyId,
@@ -191,8 +163,6 @@ class MomCozyApiRuntime {
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
-      ibclcConsultStore: ibclcConsultStore,
-      profileOverviewCache: profileOverviewCache,
       mediaContentRepository: mediaContentRepository,
     );
   }
@@ -208,8 +178,6 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
-    IbclcConsultStore? ibclcConsultStore,
-    ProfileOverviewCache? profileOverviewCache,
     MediaContentRepository? mediaContentRepository,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozySessionStore? sessionStore,
@@ -316,8 +284,6 @@ class MomCozyApiRuntime {
       observability: runtimeObservability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
-      ibclcConsultStore: ibclcConsultStore,
-      profileOverviewCache: profileOverviewCache,
       mediaContentRepository: mediaContentRepository,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       currentSessionProvider: sessionProvider,
@@ -339,6 +305,7 @@ class MomCozyApiRuntime {
   }
 
   static Future<MomCozyApiRuntime> bootstrap({
+    MomCozyAuthApiRepository? authRepository,
     MomCozySessionStore store = const FlutterSecureMomCozySessionStore(),
     MomCozySession? environmentSession,
     ApiJsonTransport? jsonTransport,
@@ -376,6 +343,29 @@ class MomCozyApiRuntime {
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
     );
+    try {
+      final restored = await MomCozySessionRestorer(
+        authRepository: authRepository ?? runtime.authRepository,
+        store: store,
+      ).restore(session);
+      if (!identical(restored, session)) {
+        return MomCozyApiRuntime.fromSession(
+          restored,
+          jsonTransport: jsonTransport,
+          agentJsonTransport: agentJsonTransport,
+          clientEventClient: clientEventClient,
+          multipartTransport: multipartTransport,
+          blePlatform: blePlatform,
+          pumpProtocolPlatform: pumpProtocolPlatform,
+          observability: observability,
+          agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+          productAssetRepository: productAssetRepository,
+        );
+      }
+    } catch (_) {
+      // Transient network/storage failure keeps the durable session for retry.
+      // Every API still checks server-side account and session state.
+    }
     return runtime;
   }
 
@@ -383,8 +373,6 @@ class MomCozyApiRuntime {
   final ApiJsonTransport agentJsonTransport;
   final MomCozySession session;
   final MomCozyObservability observability;
-  late final IbclcConsultStore ibclcConsultStore;
-  late final ProfileOverviewCache profileOverviewCache;
   final DateTime Function() now;
   final Future<String> Function() timezoneProvider;
   final bool supportsSessionAutoRefresh;
@@ -403,7 +391,7 @@ class MomCozyApiRuntime {
   AgentHubPlatformDocumentPicker? _agentHubPlatformDocumentPicker;
   ProductAssetRepository? _productAssetRepository;
   MediaContentRepository? _mediaContentRepository;
-  PlanApiRepository? _planRepository;
+  ScheduleApiRepository? _scheduleRepository;
   MotionAssessmentApiRepository? _motionAssessmentRepository;
   String? _motionAssessmentRepositoryUserId;
   VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
@@ -426,32 +414,7 @@ class MomCozyApiRuntime {
 
   Uri get agentApiBaseUri => Uri.parse(_defaultAgentApiBaseUrl);
 
-  void handleAgentApplicationEvent(AgentStreamEvent event) {
-    final resources = switch (event.type) {
-      'records.pumping.changed' => const <ProfileOverviewResourceKey>[
-        ProfileOverviewResourceKey.milkTrends,
-      ],
-      'records.feeding.changed' => const <ProfileOverviewResourceKey>[
-        ProfileOverviewResourceKey.feeding,
-        ProfileOverviewResourceKey.feedingSummary,
-      ],
-      'records.growth.changed' => const <ProfileOverviewResourceKey>[
-        ProfileOverviewResourceKey.growth,
-        ProfileOverviewResourceKey.feedingSummary,
-      ],
-      'records.diaper.changed' => const <ProfileOverviewResourceKey>[
-        ProfileOverviewResourceKey.diapers,
-      ],
-      'milk_plan.changed' => const <ProfileOverviewResourceKey>[
-        ProfileOverviewResourceKey.plans,
-      ],
-      _ => const <ProfileOverviewResourceKey>[],
-    };
-    profileOverviewCache.invalidate(resources);
-    if (event.type == 'milk_plan.changed') {
-      _planRepository?.invalidate();
-    }
-  }
+  void handleAgentApplicationEvent(AgentStreamEvent event) {}
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();
@@ -499,18 +462,6 @@ class MomCozyApiRuntime {
     );
   }
 
-  ProfileOverviewApiRepository get profileOverviewRepository {
-    return ProfileOverviewApiRepository(
-      transport: jsonTransport,
-      babyId: currentSession.babyId,
-      now: now,
-    );
-  }
-
-  MaternalCareOverviewApiRepository get maternalCareOverviewRepository {
-    return MaternalCareOverviewApiRepository(transport: jsonTransport);
-  }
-
   AgentHubProfileRepository get agentHubProfileRepository {
     return AgentHubProfileRepository(transport: jsonTransport);
   }
@@ -523,9 +474,11 @@ class MomCozyApiRuntime {
     return SupportTicketApiRepository(transport: jsonTransport);
   }
 
-  PlanApiRepository get planRepository {
-    return _planRepository ??= PlanApiRepository(transport: jsonTransport);
-  }
+  ScheduleRepository get scheduleRepository =>
+      _scheduleRepository ??= ScheduleApiRepository(transport: jsonTransport);
+
+  CareRepository get careRepository =>
+      CareApiRepository(transport: jsonTransport);
 
   RecordsApiRepository get recordsRepository {
     return RecordsApiRepository(transport: jsonTransport);
@@ -558,62 +511,9 @@ class MomCozyApiRuntime {
     );
   }
 
-  BodyProfileApiRepository get bodyProfileRepository {
-    return BodyProfileApiRepository(transport: jsonTransport);
-  }
-
   VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
     return _volumeUnitPreferenceStore ??=
         FlutterSecureVolumeUnitPreferenceStore(userId: currentSession.userId);
-  }
-
-  ProfileOverviewController createProfileOverviewController({
-    ProfileIdentity initialIdentity = ProfileIdentity.mom,
-    String? babyId,
-    Future<void> Function(String babyId)? onBabyIdResolved,
-    bool extendedProductResourcesEnabled = false,
-  }) {
-    final requestedBabyId = babyId?.trim();
-    final selectedBabyId = requestedBabyId?.isNotEmpty == true
-        ? requestedBabyId!
-        : currentSession.babyId;
-    final records = recordsRepository;
-    return ProfileOverviewController(
-      profileOverviewRepository: ProfileOverviewApiRepository(
-        transport: jsonTransport,
-        babyId: selectedBabyId,
-        now: now,
-      ),
-      feedingRepository: records,
-      pumpMilkRepository: records,
-      milkTrendRepository: records,
-      growthRepository: records,
-      waterRepository: extendedProductResourcesEnabled ? records : null,
-      waterTrendRepository: extendedProductResourcesEnabled ? records : null,
-      vitalRepository: extendedProductResourcesEnabled ? records : null,
-      sleepRepository: extendedProductResourcesEnabled ? records : null,
-      diaperRepository: extendedProductResourcesEnabled ? records : null,
-      maternalCareOverviewRepository: extendedProductResourcesEnabled
-          ? maternalCareOverviewRepository
-          : null,
-      planRepository: planRepository,
-      cache:
-          profileOverviewCache.matches(
-            ownerUserId: currentSession.userId,
-            babyId: selectedBabyId,
-          )
-          ? profileOverviewCache
-          : ProfileOverviewCache(
-              ownerUserId: currentSession.userId,
-              babyId: selectedBabyId,
-            ),
-      babyId: selectedBabyId,
-      onBabyIdResolved: onBabyIdResolved,
-      identity: initialIdentity,
-      extendedProductResourcesEnabled: extendedProductResourcesEnabled,
-      timezoneProvider: timezoneProvider,
-      now: now,
-    );
   }
 
   MediaApiRepository get mediaRepository {
@@ -721,10 +621,38 @@ class MomCozyRuntimeController extends ChangeNotifier {
   MomCozyApiRuntime _runtime;
   MomCozySession _currentSession;
   MomCozySessionStore? _autoRefreshStore;
+  int _sessionGeneration = 0;
+  Future<void> _sessionWrites = Future<void>.value();
+
+  Future<void> _serializeSessionWrite(Future<void> Function() write) {
+    final next = _sessionWrites.then((_) => write());
+    _sessionWrites = next.catchError((Object _) {});
+    return next;
+  }
+
+  Future<void> saveAuthenticatedSession(
+    MomCozySession session, {
+    required MomCozySessionStore sessionStore,
+  }) async {
+    final generation = ++_sessionGeneration;
+    await _serializeSessionWrite(() async {
+      if (generation != _sessionGeneration) {
+        throw StateError('Session changed.');
+      }
+      await sessionStore.writeSession(session);
+      if (generation != _sessionGeneration) {
+        throw StateError('Session changed.');
+      }
+      replaceRuntime(_runtimeForSession(session));
+    });
+  }
 
   MomCozyApiRuntime get runtime => _runtime;
 
   MomCozySession get currentSession => _currentSession;
+
+  /// Changes on login/logout, not access-token rotation or baby selection.
+  int get sessionGeneration => _sessionGeneration;
 
   void replaceRuntime(MomCozyApiRuntime runtime) {
     if (identical(_runtime, runtime)) return;
@@ -734,6 +662,10 @@ class MomCozyRuntimeController extends ChangeNotifier {
   }
 
   void replaceSession(MomCozySession session) {
+    if (_currentSession.isAuthenticated != session.isAuthenticated ||
+        _currentSession.userId != session.userId) {
+      ++_sessionGeneration;
+    }
     if (_canReplaceSessionInPlace(session)) {
       _currentSession = session;
       return;
@@ -751,33 +683,35 @@ class MomCozyRuntimeController extends ChangeNotifier {
         current.locale == next.locale;
   }
 
-  Future<void> logout({required MomCozySessionStore sessionStore}) async {
+  Future<void> logout({
+    required MomCozySessionStore sessionStore,
+    bool revokeRemote = true,
+  }) async {
     final runtime = _runtime;
-    final currentSession = runtime.currentSession;
-    unawaited(_revokeRemoteSession(runtime));
-
-    final sessionManager = MomCozySessionManager(
-      store: sessionStore,
-      environmentSession: currentSession.loggedOut(),
-    );
-    final anonymousSession = await sessionManager.logout(currentSession);
-    replaceSession(anonymousSession);
-  }
-
-  Future<void> _revokeRemoteSession(MomCozyApiRuntime runtime) async {
-    try {
-      await runtime.authRepository.logout().timeout(const Duration(seconds: 5));
-    } catch (error, stackTrace) {
-      runtime.observability.recordNonFatal(
-        error,
-        stackTrace: stackTrace,
-        context: const {
-          'feature': 'auth',
-          'operation': 'remote_logout',
-          'localLogoutContinued': true,
-        },
+    final session = _currentSession;
+    ++_sessionGeneration;
+    replaceSession(session.loggedOut());
+    final local = _serializeSessionWrite(() async {
+      final manager = MomCozySessionManager(
+        store: sessionStore,
+        environmentSession: session.loggedOut(),
       );
-    }
+      await manager.logout(session);
+      if (runtime.supportsSessionAutoRefresh) {
+        await Future.wait([
+          ProductAssetFileCache().clear(),
+          const PlatformAgentCardExportService().clear(),
+        ]);
+      }
+    });
+    // Possession of a refresh token can revoke its whole device session even
+    // when the access token expired or a refresh rotated this token concurrently.
+    final remote = revokeRemote && session.refreshToken != null
+        ? runtime.authRepository
+              .logoutSession(session.refreshToken!)
+              .timeout(const Duration(seconds: 8))
+        : Future<void>.value();
+    await Future.wait([local, remote]);
   }
 
   void enableSessionAutoRefresh(MomCozySessionStore store) {
@@ -796,25 +730,24 @@ class MomCozyRuntimeController extends ChangeNotifier {
     if (store == null) {
       throw StateError('Session persistence is not available.');
     }
-    final next = _currentSession.copyWith(babyId: selectedBabyId);
-    await store.writeSession(next);
-    replaceSession(next);
+    final generation = _sessionGeneration;
+    await _serializeSessionWrite(() async {
+      if (generation != _sessionGeneration || !_currentSession.isAuthenticated) {
+        return;
+      }
+      final next = _currentSession.copyWith(babyId: selectedBabyId);
+      await store.writeSession(next);
+      if (generation == _sessionGeneration) replaceSession(next);
+    });
   }
 
   MomCozyApiRuntime _runtimeForSession(MomCozySession session) {
     final store = _autoRefreshStore;
     final currentSession = _currentSession;
-    final ibclcConsultStore = session.userId == currentSession.userId
-        ? _runtime.ibclcConsultStore
-        : null;
     final sameAuthenticatedAccount =
         session.isAuthenticated &&
         currentSession.isAuthenticated &&
         session.userId == currentSession.userId;
-    final profileOverviewCache =
-        sameAuthenticatedAccount && session.babyId == currentSession.babyId
-        ? _runtime.profileOverviewCache
-        : null;
     final volumeUnitPreferenceStore = sameAuthenticatedAccount
         ? _runtime.volumeUnitPreferenceStore
         : null;
@@ -831,12 +764,11 @@ class MomCozyRuntimeController extends ChangeNotifier {
         productAssetRepository: _runtime._hasInjectedProductAssetRepository
             ? _runtime._productAssetRepository
             : null,
-        ibclcConsultStore: ibclcConsultStore,
-        profileOverviewCache: profileOverviewCache,
         mediaContentRepository: mediaContentRepository,
         volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       );
     }
+    final generation = _sessionGeneration;
     return MomCozyApiRuntime.fromSession(
       session,
       observability: _runtime.observability,
@@ -846,15 +778,39 @@ class MomCozyRuntimeController extends ChangeNotifier {
       productAssetRepository: _runtime._hasInjectedProductAssetRepository
           ? _runtime._productAssetRepository
           : null,
-      ibclcConsultStore: ibclcConsultStore,
-      profileOverviewCache: profileOverviewCache,
       mediaContentRepository: mediaContentRepository,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
-      sessionStore: store,
+      sessionStore: _GuardedSessionStore(
+        store,
+        isCurrent: () => generation == _sessionGeneration,
+        serialize: _serializeSessionWrite,
+      ),
       sessionProvider: () => _currentSession,
       onSessionChanged: (next) async {
+        if (generation != _sessionGeneration) return;
         replaceSession(next);
       },
     );
   }
+}
+
+class _GuardedSessionStore implements MomCozySessionStore {
+  _GuardedSessionStore(
+    this.inner, {
+    required this.isCurrent,
+    required this.serialize,
+  });
+  final MomCozySessionStore inner;
+  final bool Function() isCurrent;
+  final Future<void> Function(Future<void> Function()) serialize;
+  @override
+  Future<MomCozySession?> readSession() => inner.readSession();
+  @override
+  Future<void> clearSession() => serialize(inner.clearSession);
+  @override
+  Future<void> writeSession(MomCozySession session) => serialize(() async {
+    if (!isCurrent()) throw StateError('Session changed.');
+    await inner.writeSession(session);
+    if (!isCurrent()) throw StateError('Session changed.');
+  });
 }

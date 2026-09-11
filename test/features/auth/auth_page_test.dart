@@ -360,6 +360,7 @@ GoRouter _authRouter({
       GoRoute(
         path: '/login',
         builder: (context, state) => MomCozyAuthPage(
+          internalInviteOnly: true,
           runtimeController: controller,
           sessionStore: store,
           authDeviceIdStore: _FixedAuthDeviceIdStore(deviceId),

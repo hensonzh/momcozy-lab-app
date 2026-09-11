@@ -46,9 +46,8 @@ void main() {
     const capabilities = MomCozyAppCapabilities();
 
     expect(capabilities.isRouteEnabled('/'), isTrue);
-    expect(capabilities.isRouteEnabled('/plan'), isTrue);
-    expect(capabilities.isRouteEnabled('/more'), isFalse);
-    expect(capabilities.isRouteEnabled('/more/body-profile/edit'), isFalse);
+    expect(capabilities.isRouteEnabled('/schedule'), isTrue);
+    expect(capabilities.isRouteEnabled('/more'), isTrue);
     expect(capabilities.isRouteEnabled('/motion-assessment'), isFalse);
   });
 

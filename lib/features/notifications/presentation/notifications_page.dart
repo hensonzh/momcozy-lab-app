@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import '../../../shared/widgets/momcozy_components.dart';
+import '../../../shared/widgets/product_feedback.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/notifications/domain/momcozy_notification.dart';
 import 'package:momcozy_flutter_app/features/notifications/presentation/notifications_controller.dart';
 
@@ -10,10 +12,16 @@ class NotificationsPage extends StatefulWidget {
     super.key,
     required this.repository,
     required this.onBack,
+    this.controller,
+    this.onOpen,
+    this.onSettings,
     DateTime Function()? now,
   }) : now = now ?? DateTime.now;
 
   final NotificationsRepository repository;
+  final NotificationsController? controller;
+  final Future<void> Function(String)? onOpen;
+  final VoidCallback? onSettings;
   final VoidCallback onBack;
   final DateTime Function() now;
 
@@ -22,9 +30,9 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  late final NotificationsController _controller = NotificationsController(
-    repository: widget.repository,
-  );
+  late final NotificationsController _controller =
+      widget.controller ??
+      NotificationsController(repository: widget.repository);
 
   @override
   void initState() {
@@ -34,15 +42,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: MomCozyV3Colors.background,
-      child: SafeArea(
+    return Material(
+      color: MomCozyColors.background,
+      child: MomCozyPageBody(
         child: AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
@@ -53,7 +61,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               child: ListView(
                 key: const ValueKey('route-page-/notifications'),
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 112),
+                padding: MomCozyInsets.page,
                 children: [
                   _NotificationsHeader(
                     unreadCount: state.unreadCount,
@@ -61,18 +69,43 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     onBack: widget.onBack,
                     onRefresh: () => unawaited(_controller.load()),
                   ),
-                  const SizedBox(height: 20),
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: MomCozySpacing.compact,
+                    children: [
+                      TextButton(
+                        onPressed:
+                            state.unreadCount == 0 || state.busyIds.isNotEmpty
+                            ? null
+                            : () => unawaited(_controller.markAllRead()),
+                        child: const Text('Mark all read'),
+                      ),
+                      if (widget.onSettings != null)
+                        IconButton(
+                          tooltip: 'Notification settings',
+                          onPressed: widget.onSettings,
+                          icon: const Icon(Icons.settings_outlined),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: MomCozySpacing.card),
                   if (state.error != null) ...[
                     _NotificationsErrorBanner(
                       onRetry: () => unawaited(_controller.load()),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: MomCozySpacing.headingGap),
                   ],
                   if (state.phase == NotificationsPhase.loading &&
                       state.notifications.isEmpty)
-                    const _NotificationsLoadingState()
+                    const ProductLoadingView()
                   else if (state.notifications.isEmpty)
-                    const _NotificationsEmptyState()
+                    const ProductEmptyView(
+                      title: 'No notifications yet',
+                      description:
+                          'Confirmed reminders and updates will appear here.',
+                      icon: Icons.notifications_none_rounded,
+                    )
                   else
                     for (
                       var index = 0;
@@ -90,15 +123,30 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           state.notifications[index].id,
                         ),
                         onOpen: () => unawaited(
-                          _controller.markRead(state.notifications[index].id),
+                          widget.onOpen?.call(state.notifications[index].id) ??
+                              _controller.markRead(
+                                state.notifications[index].id,
+                              ),
                         ),
                         onArchive: () => unawaited(
                           _controller.archive(state.notifications[index].id),
                         ),
                       ),
                       if (index < state.notifications.length - 1)
-                        const SizedBox(height: 12),
+                        const SizedBox(height: MomCozySpacing.content),
                     ],
+                  if (state.nextCursor != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: OutlinedButton(
+                        onPressed: state.loadingMore
+                            ? null
+                            : () => unawaited(_controller.loadMore()),
+                        child: Text(
+                          state.loadingMore ? 'Loading…' : 'Load more',
+                        ),
+                      ),
+                    ),
                 ],
               ),
             );
@@ -135,13 +183,13 @@ class _NotificationsHeader extends StatelessWidget {
               onPressed: onBack,
               icon: const Icon(Icons.arrow_back_rounded),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: MomCozySpacing.xs),
             Expanded(
               child: Text(
                 'Notifications',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: MomCozyV3Colors.ink,
-                  fontWeight: FontWeight.w800,
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -151,7 +199,7 @@ class _NotificationsHeader extends StatelessWidget {
               onPressed: loading ? null : onRefresh,
               icon: loading
                   ? const SizedBox.square(
-                      dimension: 20,
+                      dimension: MomCozyIconSizes.medium,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.refresh_rounded),
@@ -191,163 +239,101 @@ class _NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final unread = notification.isUnread;
-    return Material(
-      color: unread ? MomCozyV3Colors.roseTint : MomCozyV3Colors.surface,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        key: ValueKey('notification-item-${notification.id}'),
-        borderRadius: BorderRadius.circular(22),
-        onTap: busy ? null : onOpen,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: unread
-                  ? MomCozyColors.primary.withValues(alpha: 0.24)
-                  : MomCozyColors.border,
+    return MomCozySurface(
+      key: ValueKey('notification-item-${notification.id}'),
+      color: unread ? MomCozyColors.roseSoft : MomCozyColors.raised,
+      padding: MomCozyInsets.compactCard,
+      onTap: busy ? null : onOpen,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox.square(
+            dimension: MomCozyTapTargets.minimum,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: MomCozyColors.raised,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _notificationIcon(notification.type),
+                color: MomCozyColors.primary,
+                size: MomCozyIconSizes.standard,
+              ),
             ),
-            borderRadius: BorderRadius.circular(22),
           ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
-            child: Row(
+          const SizedBox(width: MomCozySpacing.content),
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox.square(
-                  dimension: 44,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _notificationIcon(notification.type),
-                      color: MomCozyColors.primary,
-                      size: 22,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          if (unread) ...[
-                            const SizedBox.square(
-                              dimension: 8,
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: MomCozyColors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 7),
-                          ],
-                          Expanded(
-                            child: Text(
-                              notification.title.isEmpty
-                                  ? 'Momcozy update'
-                                  : notification.title,
-                              style: Theme.of(context).textTheme.titleSmall
-                                  ?.copyWith(
-                                    color: MomCozyV3Colors.ink,
-                                    fontWeight: unread
-                                        ? FontWeight.w800
-                                        : FontWeight.w700,
-                                  ),
-                            ),
+                Row(
+                  children: [
+                    if (unread) ...[
+                      const SizedBox.square(
+                        dimension: 8,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: MomCozyColors.primary,
+                            shape: BoxShape.circle,
                           ),
-                        ],
+                        ),
                       ),
-                      if (notification.body.isNotEmpty) ...[
-                        const SizedBox(height: 5),
-                        Text(
-                          notification.body,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: MomCozyColors.mutedForeground,
-                                height: 1.35,
-                              ),
-                        ),
-                      ],
-                      if (timestamp.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          timestamp,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: MomCozyColors.mutedForeground),
-                        ),
-                      ],
+                      const SizedBox(width: MomCozySpacing.compact),
                     ],
-                  ),
-                ),
-                busy
-                    ? const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: SizedBox.square(
-                          dimension: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                    Expanded(
+                      child: Text(
+                        notification.title.isEmpty
+                            ? 'Momcozy update'
+                            : notification.title,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: unread
+                              ? FontWeight.w700
+                              : FontWeight.w600,
                         ),
-                      )
-                    : IconButton(
-                        key: ValueKey(
-                          'notification-archive-${notification.id}',
-                        ),
-                        tooltip: 'Archive notification',
-                        onPressed: onArchive,
-                        icon: const Icon(Icons.archive_outlined, size: 21),
                       ),
+                    ),
+                  ],
+                ),
+                if (notification.body.isNotEmpty) ...[
+                  const SizedBox(height: MomCozySpacing.xs),
+                  Text(
+                    notification.body,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+                if (timestamp.isNotEmpty) ...[
+                  const SizedBox(height: MomCozySpacing.compact),
+                  Text(
+                    timestamp,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NotificationsLoadingState extends StatelessWidget {
-  const _NotificationsLoadingState();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(top: 72),
-      child: Center(child: CircularProgressIndicator()),
-    );
-  }
-}
-
-class _NotificationsEmptyState extends StatelessWidget {
-  const _NotificationsEmptyState();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 60),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.notifications_none_rounded,
-            size: 46,
-            color: MomCozyColors.mutedForeground,
-          ),
-          const SizedBox(height: 14),
-          Text(
-            'No notifications yet',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: MomCozyV3Colors.ink,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Confirmed reminders and updates will appear here.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: MomCozyColors.mutedForeground),
-          ),
+          busy
+              ? const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: SizedBox.square(
+                    dimension: MomCozyIconSizes.medium,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              : IconButton(
+                  key: ValueKey('notification-archive-${notification.id}'),
+                  tooltip: 'Archive notification',
+                  onPressed: onArchive,
+                  icon: const Icon(
+                    Icons.archive_outlined,
+                    size: MomCozyIconSizes.medium,
+                  ),
+                ),
         ],
       ),
     );
@@ -361,17 +347,19 @@ class _NotificationsErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: MomCozyV3Colors.roseTint,
-      borderRadius: BorderRadius.circular(18),
-      child: ListTile(
-        leading: const Icon(
-          Icons.cloud_off_outlined,
-          color: MomCozyColors.primary,
-        ),
-        title: const Text('Couldn’t refresh notifications'),
-        subtitle: const Text('Previously loaded updates remain visible.'),
-        trailing: TextButton(onPressed: onRetry, child: const Text('Retry')),
+    return MomCozySurface(
+      color: MomCozyColors.amberSoft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Couldn’t refresh notifications',
+            style: MomCozyTypography.title,
+          ),
+          const SizedBox(height: MomCozySpacing.compact),
+          const Text('Previously loaded updates remain visible.'),
+          TextButton(onPressed: onRetry, child: const Text('Retry')),
+        ],
       ),
     );
   }

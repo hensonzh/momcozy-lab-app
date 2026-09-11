@@ -90,8 +90,6 @@ void main() {
       displayName: 'Mia',
       age: 32,
       deliveryDate: DateTime(2026, 7, 19),
-      gestationalWeeks: 39,
-      gestationalDays: 2,
       deliveryType: 'cesarean',
       infantCount: 2,
       infants: [
@@ -109,7 +107,6 @@ void main() {
       'display_name': 'Mia',
       'age': 32,
       'delivery_date': '2026-07-19',
-      'delivery_gestational_age': {'weeks': 39, 'days': 2},
       'delivery_type': 'cesarean',
       'infant_count': 2,
       'infants': [

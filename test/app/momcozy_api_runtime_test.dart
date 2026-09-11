@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
@@ -14,13 +13,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart'
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
-import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
-import 'package:momcozy_flutter_app/features/plan/domain/plan_dashboard.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_overview.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/domain/profile_identity.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/presentation/profile_overview_cache.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
 
@@ -59,7 +51,7 @@ void main() {
       ),
     );
 
-    final runtime = await MomCozyApiRuntime.bootstrap(store: store);
+    final runtime = await MomCozyApiRuntime.bootstrap(store: store, authRepository: MomCozyAuthApiRepository(transport: FixtureApiJsonTransport({'id': 'secure-user', 'account_status': 'active'})));
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
     final eventResult = await runtime.clientEventClient.post(
@@ -119,17 +111,10 @@ void main() {
       volumeUnitPreferenceStore: volumePreferences,
     );
 
-    expect(
-      runtime.profileOverviewRepository,
-      isA<ProfileOverviewApiRepository>(),
-    );
     expect(runtime.agentHubProfileRepository, isA<AgentHubProfileRepository>());
     expect(runtime.agentConversationRepository.transport, same(agentTransport));
     expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
-    final planRepository = runtime.planRepository;
-    expect(planRepository, isA<PlanApiRepository>());
-    expect(planRepository.transport, same(transport));
-    expect(runtime.planRepository, same(planRepository));
+    expect(runtime.scheduleRepository, isNotNull);
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.volumeUnitPreferenceStore, same(volumePreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
@@ -145,109 +130,7 @@ void main() {
       runtime.agentVoicePlaybackPlayer,
       same(runtime.agentVoicePlaybackPlayer),
     );
-    final overviewController = runtime.createProfileOverviewController();
-    expect(overviewController.babyId, 'baby-fixture');
-    expect(overviewController.identity, ProfileIdentity.mom);
-    overviewController.dispose();
   });
-
-  test(
-    'agent record change events invalidate only dependent overview caches',
-    () async {
-      final fetchedAt = DateTime(2026, 8, 10, 10);
-      final cache =
-          ProfileOverviewCache(
-              ownerUserId: 'user-fixture',
-              babyId: 'baby-fixture',
-            )
-            ..overview = OverviewCacheEntry(
-              value: const ProfileOverview(),
-              fetchedAt: fetchedAt,
-            )
-            ..feedingRecords = OverviewCacheEntry(
-              value: const <FeedingRecord>[],
-              fetchedAt: fetchedAt,
-            )
-            ..feedingSummary = OverviewCacheEntry(
-              value: _emptyFeedingSummary,
-              fetchedAt: fetchedAt,
-            )
-            ..milkTrends = OverviewCacheEntry(
-              value: <MilkTrendDay>[
-                MilkTrendDay(
-                  date: fetchedAt,
-                  measuredVolumeMl: 90,
-                  pumpingCount: 1,
-                  measuredPumpingCount: 1,
-                ),
-              ],
-              fetchedAt: fetchedAt,
-            )
-            ..growthRecords = OverviewCacheEntry(
-              value: const <GrowthRecord>[],
-              fetchedAt: fetchedAt,
-            )
-            ..diaperRecords = OverviewCacheEntry(
-              value: const <DiaperRecord>[],
-              fetchedAt: fetchedAt,
-            );
-      final runtime = MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransport({'items': <Object?>[]}),
-        userId: 'user-fixture',
-        babyId: 'baby-fixture',
-        locale: 'zh-CN',
-        profileOverviewCache: cache,
-      );
-      var invalidationCount = 0;
-      cache.addListener(() => invalidationCount += 1);
-      addTearDown(cache.dispose);
-
-      runtime.handleAgentApplicationEvent(
-        _recordChangedEvent('records.pumping.changed'),
-      );
-      expect(cache.milkTrends, isNull);
-      expect(cache.feedingRecords, isNotNull);
-
-      runtime.handleAgentApplicationEvent(
-        _recordChangedEvent('records.feeding.changed'),
-      );
-      expect(cache.feedingRecords, isNull);
-      expect(cache.feedingSummary, isNull);
-      expect(cache.growthRecords, isNotNull);
-
-      cache.feedingSummary = OverviewCacheEntry(
-        value: _emptyFeedingSummary,
-        fetchedAt: fetchedAt,
-      );
-      runtime.handleAgentApplicationEvent(
-        _recordChangedEvent('records.growth.changed'),
-      );
-      expect(cache.growthRecords, isNull);
-      expect(cache.feedingSummary, isNull);
-
-      runtime.handleAgentApplicationEvent(
-        _recordChangedEvent('records.diaper.changed'),
-      );
-      expect(cache.diaperRecords, isNull);
-      expect(cache.overview, isNotNull);
-      expect(invalidationCount, 4);
-
-      cache.planDashboard = OverviewCacheEntry(
-        value: PlanDashboard.empty(weekOf: fetchedAt),
-        fetchedAt: fetchedAt,
-      );
-      final planRepository = runtime.planRepository;
-      await planRepository.fetchDashboard(weekOf: fetchedAt);
-      expect(planRepository.snapshotFor(weekOf: fetchedAt), isNotNull);
-
-      runtime.handleAgentApplicationEvent(
-        _recordChangedEvent('milk_plan.changed'),
-      );
-      expect(cache.planDashboard, isNull);
-      expect(planRepository.snapshotFor(weekOf: fetchedAt), isNull);
-      expect(invalidationCount, 5);
-    },
-  );
 
   test('runtime exposes an injected multipart transport lazily', () async {
     final multipart = FixtureApiMultipartTransport({
@@ -404,7 +287,6 @@ void main() {
       productAssetRepository: productAssetRepository,
     );
     final controller = MomCozyRuntimeController(runtime);
-    final previousConsultStore = runtime.ibclcConsultStore;
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -425,10 +307,6 @@ void main() {
     expect(controller.runtime.userId, 'session-user');
     expect(controller.runtime.session.accessToken, 'session-access');
     expect(controller.runtime.observability, same(observability));
-    expect(
-      controller.runtime.ibclcConsultStore,
-      isNot(same(previousConsultStore)),
-    );
     expect(
       controller.runtime.productAssetRepository,
       same(productAssetRepository),
@@ -483,7 +361,6 @@ void main() {
       MomCozyApiRuntime.fromSession(session, observability: observability),
     );
     final store = MemoryMomCozySessionStore(session);
-    final consultStore = controller.runtime.ibclcConsultStore;
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -493,7 +370,6 @@ void main() {
 
     expect(notifyCount, 1);
     final autoRefreshRuntime = controller.runtime;
-    expect(controller.runtime.ibclcConsultStore, same(consultStore));
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -513,7 +389,6 @@ void main() {
     expect(notifyCount, 1);
     expect(controller.runtime, same(autoRefreshRuntime));
     expect(controller.runtime.currentSession.accessToken, 'fresh-access');
-    expect(controller.runtime.ibclcConsultStore, same(consultStore));
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -593,56 +468,6 @@ void main() {
     },
   );
 }
-
-AgentStreamEvent _recordChangedEvent(String type) {
-  return AgentStreamEvent({
-    'event_id': 'event-$type',
-    'type': type,
-    'thread_id': 'thread-record-change',
-    'run_id': 'run-record-change',
-    'sequence': 1,
-    'payload': {
-      'operation': 'created',
-      'record_id': 'record-001',
-      'source': 'agent_action',
-    },
-  });
-}
-
-const _emptyFeedingSummary = FeedingSummary(
-  days: 7,
-  timezone: 'Asia/Shanghai',
-  feedingCount: 0,
-  measuredVolumeCount: 0,
-  measuredVolumeMl: 0,
-  averageMeasuredVolumeMl: null,
-  feedingMethodCounts: <FeedingMethod, int>{},
-  milkSourceVolumesMl: <MilkSource, double>{},
-  latestFeedingAt: null,
-  completedDays: CompletedFeedingDays(
-    windowDays: 7,
-    recordedDays: 0,
-    measuredDays: 0,
-    averageVolumePerMeasuredDayMl: null,
-    averageFeedingsPerRecordedDay: null,
-    dailySeries: <FeedingTrendDay>[],
-  ),
-  comparison: MilkWindowComparison(
-    status: 'insufficient_data',
-    currentAverageVolumePerMeasuredDayMl: null,
-    previousAverageVolumePerMeasuredDayMl: null,
-    changePercent: null,
-    currentMeasuredDays: 0,
-    previousMeasuredDays: 0,
-    minimumMeasuredDays: 2,
-  ),
-  intakeEvaluationContext: IntakeEvaluationContext(
-    status: IntakeEvaluationStatus.insufficientData,
-    reasonCode: 'insufficient_data',
-    growthMeasurementDate: null,
-    chronologicalAgeDays: null,
-  ),
-);
 
 class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
   MomCozyVolumeUnit? value;

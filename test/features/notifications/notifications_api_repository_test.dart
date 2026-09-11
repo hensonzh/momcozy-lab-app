@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:momcozy_flutter_app/features/notifications/domain/notification_permission.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/notifications/data/notifications_api_repository.dart';
 
@@ -5,6 +8,63 @@ import '../../support/fixture_api_transport.dart';
 
 void main() {
   group('NotificationsApiRepository', () {
+    test(
+      'registration uses the actual OpenAPI field names and never selects an owner',
+      () async {
+        final transport = FixtureApiJsonTransport({
+          'binding_id': 'binding',
+          'token_registered': true,
+        });
+        await NotificationsApiRepository(
+          transport: transport,
+        ).registerInstallation(
+          id: 'installation',
+          secret: 'secret',
+          revision: 7,
+          platform: 'android',
+          permission: NotificationPermission.authorized,
+          locale: 'en',
+          token: 'device-token',
+        );
+        final schema =
+            jsonDecode(
+                  File(
+                    'docs/backend-contract/product.openapi.generated.json',
+                  ).readAsStringSync(),
+                )
+                as Map;
+        final write =
+            schema['components']['schemas']['PushInstallationWrite'] as Map;
+        expect(
+          transport.lastBody!.keys,
+          containsAll((write['required'] as List).cast<String>()),
+        );
+        expect(
+          transport.lastBody!.keys.every(
+            (key) => (write['properties'] as Map).containsKey(key),
+          ),
+          isTrue,
+        );
+        expect(transport.lastBody!['revision'], 7);
+        expect(transport.lastBody!.containsKey('owner_user_id'), isFalse);
+      },
+    );
+    test(
+      'pagination preserves backend unread totals beyond the current page',
+      () async {
+        final transport = FixtureApiJsonTransport({
+          'items': [],
+          'unread_count': 67,
+          'next_cursor': 'next',
+        });
+        final page = await NotificationsApiRepository(
+          transport: transport,
+        ).fetchPage(cursor: 'previous', limit: 20);
+        expect(page.unreadCount, 67);
+        expect(page.nextCursor, 'next');
+        expect(transport.lastQuery, {'limit': 20, 'cursor': 'previous'});
+      },
+    );
     test(
       'maps the owner inbox and preserves the public query contract',
       () async {

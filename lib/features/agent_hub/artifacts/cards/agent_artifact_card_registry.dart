@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/widgets/momcozy_components.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
 
 class AgentArtifactCardRegistry {
   const AgentArtifactCardRegistry._();
@@ -52,7 +51,7 @@ class _MotionAssessmentCard extends StatelessWidget {
     return _ArtifactCardSurface(
       card: card,
       icon: Icons.accessibility_new_rounded,
-      accent: const Color(0xff8c4768),
+      accent: MomCozyColors.primary,
       children: [
         FilledButton.icon(
           onPressed: () {
@@ -93,21 +92,10 @@ class _ArtifactCardSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: const Color(0xfffffdfc),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xffeadfe5)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12412a34),
-            blurRadius: 30,
-            offset: Offset(0, 12),
-          ),
-        ],
-      ),
+    return MomCozySurface(
+      padding: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(MomCozySpacing.page),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -117,25 +105,25 @@ class _ArtifactCardSurface extends StatelessWidget {
                 DecoratedBox(
                   decoration: BoxDecoration(
                     color: accent.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(MomCozyRadii.control),
                   ),
                   child: SizedBox.square(
                     dimension: 44,
                     child: Icon(icon, color: accent, size: 22),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: MomCozySpacing.content),
                 Expanded(
                   child: Text(
                     card.title,
                     style: textTheme.titleMedium?.copyWith(
-                      color: const Color(0xff2f1f29),
-                      fontWeight: FontWeight.w900,
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w700,
                       height: 1.2,
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: MomCozySpacing.compact),
                 Image.asset(
                   MomCozyAssets.momcozyLogo,
                   width: 68,
@@ -145,7 +133,7 @@ class _ArtifactCardSurface extends StatelessWidget {
               ],
             ),
             if (children.isNotEmpty) ...[
-              const SizedBox(height: 14),
+              const SizedBox(height: MomCozySpacing.headingGap),
               ...children,
             ],
           ],
@@ -185,28 +173,16 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
   @override
   Widget build(BuildContext context) {
     final data = widget.data;
-    final completed =
-        IbclcConsultStoreScope.maybeOf(context)?.isCompleted(data.consultId) ??
-        false;
+    // Completion is owned by the service/appointment backend. The Agent Hub
+    // only hands the user into that flow and never persists a local consult.
     final textTheme = Theme.of(context).textTheme;
 
     return KeyedSubtree(
       key: ValueKey('agent-artifact-ibclc-${widget.card.id}'),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: const Color(0xfffbfdfc),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xffd6dde5)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0d000000),
-              blurRadius: 2,
-              offset: Offset(0, 1),
-            ),
-          ],
-        ),
+      child: MomCozySurface(
+        padding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.all(18),
+          padding: MomCozyInsets.card,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -215,16 +191,16 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                   const Icon(
                     Icons.monitor_heart_outlined,
                     size: 22,
-                    color: Color(0xff177a89),
+                    color: MomCozyColors.primary,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: MomCozySpacing.compact),
                   Expanded(
                     child: Text(
                       data.title,
                       style: textTheme.headlineSmall?.copyWith(
-                        color: const Color(0xff142726),
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                        color: MomCozyColors.foreground,
+                        fontSize: MomCozyTypography.sectionSize,
+                        fontWeight: FontWeight.w700,
                         height: 1.15,
                         letterSpacing: 0,
                       ),
@@ -232,16 +208,16 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: MomCozySpacing.headingGap),
               DecoratedBox(
                 key: ValueKey('agent-ibclc-consultant-${widget.card.id}'),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xffd6dde5)),
+                  color: MomCozyColors.card,
+                  borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                  border: Border.all(color: MomCozyColors.border),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(MomCozySpacing.content),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -257,7 +233,7 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: MomCozySpacing.content),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,9 +241,9 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                             Text(
                               data.consultantName,
                               style: textTheme.titleMedium?.copyWith(
-                                color: const Color(0xff182b2a),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
+                                color: MomCozyColors.foreground,
+                                fontSize: MomCozyTypography.titleSize,
+                                fontWeight: FontWeight.w700,
                                 height: 1.2,
                                 letterSpacing: 0,
                               ),
@@ -277,16 +253,16 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                               spacing: 6,
                               runSpacing: 6,
                               children: [
-                                _IbclcConsultantTag(
-                                  label: data.consultantCredentials,
-                                  color: const Color(0xff1a6863),
-                                  background: const Color(0xffe9f3f1),
+                                MomCozyBadge(
+                                  data.consultantCredentials,
+                                  color: MomCozyColors.care,
+                                  background: MomCozyColors.careSoft,
                                 ),
                                 if (data.consultantExperience != null)
-                                  _IbclcConsultantTag(
-                                    label: data.consultantExperience!,
-                                    color: const Color(0xff7a4260),
-                                    background: const Color(0xfff4edf1),
+                                  MomCozyBadge(
+                                    data.consultantExperience!,
+                                    color: MomCozyColors.primaryDark,
+                                    background: MomCozyColors.roseSoft,
                                   ),
                               ],
                             ),
@@ -295,8 +271,8 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                               Text(
                                 data.consultantBio!,
                                 style: textTheme.bodyMedium?.copyWith(
-                                  color: const Color(0xff60706e),
-                                  fontSize: 13,
+                                  color: MomCozyColors.mutedForeground,
+                                  fontSize: MomCozyTypography.secondarySize,
                                   fontWeight: FontWeight.w400,
                                   height: 1.45,
                                   letterSpacing: 0,
@@ -310,14 +286,14 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                   ),
                 ),
               ),
-              if (!completed) ...[
-                const SizedBox(height: 14),
+              ...[
+                const SizedBox(height: MomCozySpacing.headingGap),
                 DecoratedBox(
                   key: ValueKey('agent-ibclc-consent-${widget.card.id}'),
                   decoration: BoxDecoration(
-                    color: const Color(0xfff6fbfa),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: const Color(0xffdbe7e4)),
+                    color: MomCozyColors.careSoft,
+                    borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                    border: Border.all(color: MomCozyColors.border),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -331,14 +307,16 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                           onTap: () => setState(() {
                             _agreementAccepted = !_agreementAccepted;
                           }),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(
+                            MomCozyRadii.badge,
+                          ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 1),
                                 child: SizedBox.square(
-                                  dimension: 16,
+                                  dimension: MomCozyTapTargets.minimum,
                                   child: Checkbox(
                                     key: ValueKey(
                                       'agent-ibclc-agreement-${widget.card.id}',
@@ -347,26 +325,16 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                                     onChanged: (value) => setState(() {
                                       _agreementAccepted = value ?? false;
                                     }),
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    visualDensity: VisualDensity.compact,
-                                    activeColor: const Color(0xff177a89),
-                                    side: const BorderSide(
-                                      color: Color(0xffb9cbc8),
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: MomCozySpacing.compact),
                               Expanded(
                                 child: Text(
                                   '我已阅读并同意《隐私政策》和《服务协议》',
                                   style: textTheme.bodySmall?.copyWith(
-                                    color: const Color(0xff586967),
-                                    fontSize: 12,
+                                    color: MomCozyColors.mutedForeground,
+                                    fontSize: MomCozyTypography.captionSize,
                                     fontWeight: FontWeight.w700,
                                     height: 1.45,
                                     letterSpacing: 0,
@@ -381,8 +349,8 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                           child: Text(
                             data.chatNote,
                             style: textTheme.labelSmall?.copyWith(
-                              color: const Color(0xff71807d),
-                              fontSize: 11,
+                              color: MomCozyColors.mutedForeground,
+                              fontSize: MomCozyTypography.labelSize,
                               fontWeight: FontWeight.w400,
                               height: 1.45,
                               letterSpacing: 0,
@@ -394,33 +362,20 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                   ),
                 ),
               ],
-              const SizedBox(height: 14),
+              const SizedBox(height: MomCozySpacing.headingGap),
               SizedBox(
-                height: 46,
                 child: FilledButton(
                   key: ValueKey('agent-ibclc-open-${widget.card.id}'),
-                  onPressed:
-                      !completed &&
-                          _agreementAccepted &&
-                          widget.onAction != null
+                  onPressed: _agreementAccepted && widget.onAction != null
                       ? _openConsult
                       : null,
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xff177a89),
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: const Color(0xffd7dfdd),
-                    disabledForegroundColor: const Color(0xff778683),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    textStyle: textTheme.labelLarge?.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    minimumSize: const Size(
+                      0,
+                      MomCozyLayout.primaryButtonHeight,
                     ),
                   ),
-                  child: Text(completed ? '咨询结束' : data.chatLabel),
+                  child: Text(data.chatLabel),
                 ),
               ),
             ],
@@ -436,57 +391,8 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
         label: '咨询 IBCLC',
         icon: Icons.chat_bubble_outline_rounded,
         kind: 'artifact',
-        value: '/ibclc-chat.html',
-        routePath: '/ibclc-chat.html',
-        routeExtra: IbclcConsultRouteDraft(
-          consultId: widget.data.consultId,
-          sourceArtifactId: widget.data.sourceArtifactId,
-          consultantName: widget.data.consultantName,
-          consultantCredentials: widget.data.consultantCredentials,
-          consultantExperience: widget.data.consultantExperience ?? '',
-          consultantBio: widget.data.consultantBio ?? '',
-          chatLabel: widget.data.chatLabel,
-          chatNote: widget.data.chatNote,
-          reason: widget.data.reason ?? '',
-          feedingContext: widget.data.feedingContext ?? '',
-          urgency: widget.data.urgency,
-          preferredLanguage: widget.data.preferredLanguage ?? '',
-        ),
-      ),
-    );
-  }
-}
-
-class _IbclcConsultantTag extends StatelessWidget {
-  const _IbclcConsultantTag({
-    required this.label,
-    required this.color,
-    required this.background,
-  });
-
-  final String label;
-  final Color color;
-  final Color background;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: color,
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            height: 1,
-            letterSpacing: 0,
-          ),
-        ),
+        value: '/services',
+        routePath: '/services',
       ),
     );
   }

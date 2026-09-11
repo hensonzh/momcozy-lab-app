@@ -1,6 +1,6 @@
 {
   "id": "route-media-viewer-and-ibclc-return-intents",
-  "description": "Media viewer and IBCLC return flow map to typed route intents with safe URL handling.",
+  "description": "Media viewer and IBCLC service handoff map to typed route intents with safe URL handling.",
   "input": {
     "mediaLinks": [
       {
@@ -21,7 +21,7 @@
     ],
     "ibclc": {
       "start": {
-        "baseUrl": "/ibclc-chat.html",
+        "baseUrl": "/services",
         "consultId": "consult-001",
         "threadId": "thread-ibclc-001",
         "returnTo": "/me",
@@ -66,8 +66,8 @@
       }
     },
     {
-      "type": "OpenIbclcChat",
-      "path": "/ibclc-chat.html",
+      "type": "OpenServiceCatalog",
+      "path": "/services",
       "payload": {
         "consultId": "consult-001",
         "threadId": "thread-ibclc-001",
@@ -87,18 +87,11 @@
       "consume": "once"
     }
   ],
-  "sideEffects": {
-    "ibclcStorage": [
-      "momcozy_ibclc_consult_completed updated",
-      "momcozy_ibclc_consult_completions append unique consult id",
-      "momcozy_ibclc_return_viewport cleared after restore"
-    ]
-  },
+  "sideEffects": {},
   "assertions": [
     "retired skill-assets media URLs fail closed before the media viewer",
     "unsupported doc kind does not navigate",
     "IBCLC return_to must be same-origin path",
-    "IBCLC viewport restore expires after 10 minutes",
-    "IBCLC completion dedupes by consult_id before appending history"
+    "IBCLC booking context is handed to the service catalog without local consultation state"
   ]
 }

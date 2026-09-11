@@ -5,28 +5,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 
 void main() {
   group('AgentArtifactMapper', () {
-    test('filters retired prenatal artifacts and forms', () {
-      final cards = AgentArtifactMapper.cardsFromEvents([
-        _artifactEvent(
-          id: 'retired-card',
-          type: 'hospital_bag_card',
-          payload: {'title': 'Retired card'},
-        ),
-        _formEvent(
-          id: 'retired-form',
-          form: const {
-            'id': 'birthPlanCardIntake',
-            'title': 'Retired form',
-            'fields': [
-              {'id': 'details', 'label': 'Details', 'type': 'text'},
-            ],
-          },
-        ),
-      ]);
-
-      expect(cards, isEmpty);
-    });
-
     test('retains the current IBCLC artifact payload', () {
       final cards = AgentArtifactMapper.cardsFromEvents([
         _artifactEvent(

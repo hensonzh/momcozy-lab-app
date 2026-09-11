@@ -1,6 +1,6 @@
 {
   "id": "route-agent-artifact-and-feature-navigation-intents",
-  "description": "Agent artifacts and feature-to-feature navigation produce typed intents instead of raw routes.",
+  "description": "Agent and feature navigation use canonical Flutter route intents.",
   "input": {
     "events": [
       {
@@ -9,10 +9,6 @@
           "label": "View Plan →",
           "action": "open-schedule"
         }
-      },
-      {
-        "source": "AgentHub calibration card",
-        "route": "/calibration"
       },
       {
         "source": "Plan adjust button",
@@ -24,22 +20,10 @@
         }
       },
       {
-        "source": "Device start pump without calibration",
-        "route": "/calibration"
-      },
-      {
-        "source": "Pump session missing connected device",
-        "route": "/device"
-      },
-      {
-        "source": "Calibration auto start",
-        "route": "/pump?from=calibration&autoStarted=1"
-      },
-      {
         "source": "Inline maternity flow",
         "customEvent": {
           "name": "navigate-to",
-          "detail": "/plan"
+          "detail": "/schedule"
         }
       },
       {
@@ -52,18 +36,11 @@
   },
   "expectedIntents": [
     {
-      "type": "OpenPlanFromAgent",
-      "path": "/plan",
+      "type": "OpenScheduleFromAgent",
+      "path": "/schedule",
       "payload": {
         "source": "agentBubbleLink",
         "action": "open-schedule"
-      }
-    },
-    {
-      "type": "OpenCalibrationFromAgent",
-      "path": "/calibration",
-      "payload": {
-        "source": "agentArtifact"
       }
     },
     {
@@ -75,30 +52,8 @@
       }
     },
     {
-      "type": "OpenCalibrationRequired",
-      "path": "/calibration",
-      "payload": {
-        "source": "deviceStartPump"
-      }
-    },
-    {
-      "type": "OpenDeviceRequired",
-      "path": "/device",
-      "payload": {
-        "source": "pumpSession"
-      }
-    },
-    {
-      "type": "OpenPumpSession",
-      "path": "/pump",
-      "payload": {
-        "from": "calibration",
-        "autoStarted": true
-      }
-    },
-    {
-      "type": "OpenPlan",
-      "path": "/plan",
+      "type": "OpenSchedule",
+      "path": "/schedule",
       "payload": {
         "source": "inlineFlow"
       }
@@ -115,7 +70,6 @@
     "query params are converted to typed flags",
     "agentPrefill is stored as a typed payload instead of untyped router state",
     "custom DOM events are removed from Flutter design and replaced with an app event bus",
-    "device/calibration/pump gating reasons are preserved for analytics and UI copy",
-    "unknown agent artifact route falls back to AgentArtifactRouteIntent with raw value logged in diagnostics"
+    "unknown agent artifact routes fall back to an AgentArtifactRouteIntent with raw value logged in diagnostics"
   ]
 }

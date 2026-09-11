@@ -8,14 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_work_status_projection.dart';
-import 'package:momcozy_flutter_app/core/migrations/legacy_prenatal_contract_filter.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
@@ -26,19 +25,16 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_conversation_panel.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
@@ -216,6 +212,7 @@ class AgentHubPage extends StatefulWidget {
     this.actionClient,
     this.clientEventClient,
     this.conversationRepository,
+    this.initialConversationId,
     this.interactionStateStore,
     this.greetingProfileLoader,
     this.requestBuilder = buildDefaultAgentHubRequest,
@@ -227,7 +224,6 @@ class AgentHubPage extends StatefulWidget {
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
     this.productAssetRepository,
-    this.ibclcConsultStore,
     this.supportTicketSubmitter,
     this.onArtifactAction,
     this.onApplicationEvent,
@@ -250,6 +246,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentStreamActionClient? actionClient;
   final AgentStreamClientEventClient? clientEventClient;
   final AgentConversationRepository? conversationRepository;
+  final String? initialConversationId;
   final AgentHubInteractionStateStore? interactionStateStore;
   final AgentHubGreetingProfileLoader? greetingProfileLoader;
   final AgentHubRequestBuilder requestBuilder;
@@ -261,7 +258,6 @@ class AgentHubPage extends StatefulWidget {
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
   final ProductAssetRepository? productAssetRepository;
-  final IbclcConsultStore? ibclcConsultStore;
   final SupportTicketSubmitter? supportTicketSubmitter;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubApplicationEventHandler? onApplicationEvent;
@@ -363,9 +359,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _dismissComposerKeyboardOnRunAccepted = false;
   String _greeting = agentHubDefaultGreeting;
   int _greetingRefreshGeneration = 0;
-  int _lastHandledIbclcCompletionRevision = 0;
   int _externalConversationRefreshGeneration = 0;
   String? _consumedExternalConversationRefreshKey;
+  String? _consumedInitialConversationId;
   bool _externalConversationRefreshPending = false;
 
   @override
@@ -377,13 +373,16 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_handleChatScroll);
     _syncVoicePlaybackIdleSubscription();
-    _syncIbclcConsultStore(null, widget.ibclcConsultStore);
     _initializeInteractionState();
   }
 
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialConversationId != widget.initialConversationId &&
+        _interactionRestoreResolved) {
+      _scheduleInitialConversation();
+    }
     if (_interactionState == null &&
         oldWidget.state != widget.state &&
         (widget.runner == null || !_state.isActive)) {
@@ -420,12 +419,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
       _syncVoicePlaybackIdleSubscription();
     }
-    if (oldWidget.ibclcConsultStore != widget.ibclcConsultStore) {
-      _syncIbclcConsultStore(
-        oldWidget.ibclcConsultStore,
-        widget.ibclcConsultStore,
-      );
-    }
   }
 
   @override
@@ -433,7 +426,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _externalConversationRefreshGeneration += 1;
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
-    widget.ibclcConsultStore?.removeListener(_handleIbclcConsultStoreChanged);
     _persistInteractionState();
     _flushPersistentInteractionState();
     _composerController.removeListener(_persistInteractionState);
@@ -473,35 +465,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
         }
         _tryRunPendingAutoVoiceReplay();
       });
-    });
-  }
-
-  void _syncIbclcConsultStore(
-    IbclcConsultStore? oldStore,
-    IbclcConsultStore? newStore,
-  ) {
-    oldStore?.removeListener(_handleIbclcConsultStoreChanged);
-    _lastHandledIbclcCompletionRevision = newStore?.completionRevision ?? 0;
-    newStore?.addListener(_handleIbclcConsultStoreChanged);
-  }
-
-  void _handleIbclcConsultStoreChanged() {
-    final store = widget.ibclcConsultStore;
-    if (store == null ||
-        store.completionRevision <= _lastHandledIbclcCompletionRevision) {
-      return;
-    }
-    _lastHandledIbclcCompletionRevision = store.completionRevision;
-    final routeState = store.lastCompletedRouteState;
-    if (routeState == null || routeState.returnPath != '/') return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_chatScrollController.hasClients) return;
-      final position = _chatScrollController.position;
-      final offset = routeState.returnScrollOffset
-          .clamp(0.0, position.maxScrollExtent)
-          .toDouble();
-      position.jumpTo(offset);
-      _updateLatestButtonVisibility();
     });
   }
 
@@ -666,7 +629,34 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _scheduleInitialInteractionPostFrame(scrollToLatest: shouldRestore);
   }
 
+  void _scheduleInitialConversation() {
+    final id = widget.initialConversationId?.trim();
+    if (id == null || id.isEmpty || id == _consumedInitialConversationId) {
+      return;
+    }
+    _consumedInitialConversationId = id;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final opened = await _switchConversation(id);
+      if (!opened && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Could not open this conversation.'),
+            action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                _consumedInitialConversationId = null;
+                _scheduleInitialConversation();
+              },
+            ),
+          ),
+        );
+      }
+    });
+  }
+
   void _scheduleInitialInteractionPostFrame({bool scrollToLatest = false}) {
+    _scheduleInitialConversation();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_interactionRestoreResolved) return;
       _updateLatestButtonVisibility();
@@ -1409,38 +1399,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         !_isStableProductAssetAction(action)) {
       return;
     }
-    var resolvedAction = action;
-    if (action.routePath == '/ibclc-chat.html') {
-      final rawExtra = action.routeExtra;
-      final fallbackState = rawExtra is IbclcConsultRouteDraft
-          ? rawExtra.resolve(
-              threadId: _state.threadId ?? _activeRequest?.threadId ?? '',
-              runId: _state.runId ?? _activeRequest?.runId ?? '',
-            )
-          : rawExtra is IbclcConsultRouteState
-          ? rawExtra
-          : null;
-      final routeState = fallbackState?.withReturnContext(
-        returnPath: '/',
-        returnScrollOffset: _chatScrollController.hasClients
-            ? _chatScrollController.offset
-            : 0,
-      );
-      if (routeState == null) {
-        widget.onArtifactAction?.call(action);
-        return;
-      }
-      resolvedAction = AgentArtifactActionView(
-        label: action.label,
-        icon: action.icon,
-        kind: action.kind,
-        value: action.value,
-        routePath: action.routePath,
-        routeExtra: routeState,
-        externalUri: action.externalUri,
-      );
-    }
-    widget.onArtifactAction?.call(resolvedAction);
+    widget.onArtifactAction?.call(action);
   }
 
   Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) async {
@@ -2918,9 +2877,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xfffff1f4),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xffffd5df)),
+                    color: MomCozyColors.roseSoft,
+                    borderRadius: BorderRadius.circular(MomCozyRadii.card),
+                    border: Border.all(color: MomCozyColors.border),
                   ),
                   child: const Row(
                     children: [
@@ -2938,7 +2897,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                           '正在生成本次体态评估反馈…',
                           style: TextStyle(
                             color: MomCozyColors.foreground,
-                            fontSize: 13,
+                            fontSize: MomCozyTypography.secondarySize,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -2975,9 +2934,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
                             if (_historyMessages.isNotEmpty)
                               SliverPadding(
                                 padding: const EdgeInsets.fromLTRB(
-                                  12,
-                                  14,
-                                  12,
+                                  MomCozySpacing.pageGutter,
+                                  MomCozySpacing.headingGap,
+                                  MomCozySpacing.pageGutter,
                                   0,
                                 ),
                                 sliver: AgentHubHistorySliver(
@@ -3001,10 +2960,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
                             if (_interactionRestoreResolved)
                               SliverPadding(
                                 padding: EdgeInsets.fromLTRB(
-                                  12,
-                                  _historyMessages.isEmpty ? 14 : 0,
-                                  12,
-                                  24,
+                                  MomCozySpacing.pageGutter,
+                                  _historyMessages.isEmpty
+                                      ? MomCozySpacing.headingGap
+                                      : 0,
+                                  MomCozySpacing.pageGutter,
+                                  MomCozySpacing.section,
                                 ),
                                 sliver: SliverToBoxAdapter(
                                   child: ConstrainedBox(
@@ -3137,10 +3098,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ],
       ),
     );
-    final consultStore = widget.ibclcConsultStore;
-    return consultStore == null
-        ? page
-        : IbclcConsultStoreScope(store: consultStore, child: page);
+    return page;
   }
 }
 
@@ -3169,7 +3127,12 @@ class AgentHubTopBar extends StatelessWidget {
         color: MomCozyColors.background.withValues(alpha: 0.9),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
+        padding: const EdgeInsets.fromLTRB(
+          MomCozySpacing.pageGutter,
+          MomCozySpacing.section,
+          MomCozySpacing.pageGutter,
+          MomCozySpacing.compact,
+        ),
         child: Row(
           children: [
             SizedBox(
@@ -3184,7 +3147,7 @@ class AgentHubTopBar extends StatelessWidget {
                         onPressed: onOpenConversations,
                         icon: const Icon(Icons.menu_rounded, size: 20),
                         tooltip: '打开会话历史',
-                        color: MomCozyV3Colors.ink,
+                        color: MomCozyColors.foreground,
                         style: IconButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           fixedSize: const Size.square(
@@ -3219,12 +3182,12 @@ class AgentHubTopBar extends StatelessWidget {
                       ),
                       tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
                       color: autoVoiceEnabled
-                          ? Colors.black
+                          ? MomCozyColors.foreground
                           : MomCozyColors.background,
                       style: IconButton.styleFrom(
                         backgroundColor: autoVoiceEnabled
                             ? Colors.transparent
-                            : const Color(0xff7a6670),
+                            : MomCozyColors.mutedForeground,
                         fixedSize: const Size.square(MomCozyTapTargets.minimum),
                         minimumSize: const Size.square(
                           MomCozyTapTargets.minimum,
@@ -3239,7 +3202,7 @@ class AgentHubTopBar extends StatelessWidget {
                       onPressed: isRunning ? null : onNewSession,
                       icon: const Icon(Icons.add_rounded, size: 16),
                       tooltip: '新建会话',
-                      color: const Color(0xff3b2f36),
+                      color: MomCozyColors.foreground,
                       style: IconButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         fixedSize: const Size.square(MomCozyTapTargets.minimum),
@@ -3430,8 +3393,8 @@ class _AgentResponseLightRailPainter extends CustomPainter {
         center: const Alignment(0, -0.82),
         radius: 1.15,
         colors: [
-          const Color(0xffffeef5).withValues(alpha: opacity * 1.10),
-          const Color(0xffecacc3).withValues(alpha: opacity * 0.44),
+          MomCozyColors.violetSoft.withValues(alpha: opacity * 1.10),
+          MomCozyColors.violet.withValues(alpha: opacity * 0.44),
           Colors.transparent,
         ],
         stops: const [0, 0.34, 1],
@@ -3444,7 +3407,7 @@ class _AgentResponseLightRailPainter extends CustomPainter {
         end: Alignment.bottomCenter,
         colors: [
           Colors.transparent,
-          const Color(0xffffe8f0).withValues(alpha: opacity * 0.42),
+          MomCozyColors.violetSoft.withValues(alpha: opacity * 0.42),
         ],
       ).createShader(rect);
     canvas.drawRect(rect, lowerPaint);
@@ -3464,12 +3427,12 @@ class _AgentResponseLightRailPainter extends CustomPainter {
       transform: GradientRotation(progress * math.pi * 2),
       colors: [
         Colors.transparent,
-        const Color(0xfff6d2de).withValues(alpha: 0.34 * modeStrength),
-        const Color(0xffdc7897).withValues(alpha: 0.82 * modeStrength),
+        MomCozyColors.violetSoft.withValues(alpha: 0.34 * modeStrength),
+        MomCozyColors.violet.withValues(alpha: 0.82 * modeStrength),
         Colors.white.withValues(alpha: 0.92 * modeStrength),
-        const Color(0xffe4a060).withValues(alpha: 0.54 * modeStrength),
+        MomCozyColors.warm.withValues(alpha: 0.54 * modeStrength),
         Colors.transparent,
-        const Color(0xff7dbcb1).withValues(alpha: 0.42 * modeStrength),
+        MomCozyColors.care.withValues(alpha: 0.42 * modeStrength),
         Colors.white.withValues(alpha: 0.60 * modeStrength),
         Colors.transparent,
       ],
@@ -3480,7 +3443,7 @@ class _AgentResponseLightRailPainter extends CustomPainter {
     final sideGlowPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = mode == _AgentResponseLightRailMode.loop ? 9 : 7
-      ..color = const Color(0xffd67697).withValues(
+      ..color = MomCozyColors.violet.withValues(
         alpha: (mode == _AgentResponseLightRailMode.loop ? 0.14 : 0.08),
       )
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
@@ -3504,7 +3467,10 @@ class _AgentHubTopFade extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [MomCozyColors.background, Color(0x00fff8f6)],
+          colors: [
+            MomCozyColors.background,
+            MomCozyColors.transparentBackground,
+          ],
         ),
       ),
     );
@@ -3892,7 +3858,7 @@ class _AgentHistoryBubble extends StatelessWidget {
     final isUser = message.role == AgentHubHistoryRole.user;
     final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
       height: 1.45,
-      color: isUser ? const Color(0xff75545f) : const Color(0xff3f3038),
+      color: isUser ? MomCozyColors.primaryDark : MomCozyColors.foreground,
       fontWeight: FontWeight.w500,
     );
 
@@ -3934,14 +3900,14 @@ class _AgentHistoryBubble extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 294),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: const Color(0xfff8f0f1),
+              color: MomCozyColors.roseSoft,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18),
-                topRight: Radius.circular(18),
-                bottomLeft: Radius.circular(18),
-                bottomRight: Radius.circular(7),
+                topLeft: Radius.circular(MomCozyRadii.card),
+                topRight: Radius.circular(MomCozyRadii.card),
+                bottomLeft: Radius.circular(MomCozyRadii.card),
+                bottomRight: Radius.circular(MomCozyRadii.badge),
               ),
-              border: Border.all(color: const Color(0x73eadde2)),
+              border: Border.all(color: MomCozyColors.border),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -4002,7 +3968,7 @@ class AgentRunPhaseBadge extends StatelessWidget {
               _phaseLabel,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: foreground,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
@@ -4291,25 +4257,6 @@ class AgentRunTranscript extends StatelessWidget {
     final artifactActionForState = onArtifactAction == null
         ? null
         : (AgentArtifactActionView action) {
-            if (action.routePath == '/ibclc-chat.html' &&
-                action.routeExtra is IbclcConsultRouteDraft) {
-              final draft = action.routeExtra! as IbclcConsultRouteDraft;
-              onArtifactAction!(
-                AgentArtifactActionView(
-                  label: action.label,
-                  icon: action.icon,
-                  kind: action.kind,
-                  value: action.value,
-                  routePath: action.routePath,
-                  routeExtra: draft.resolve(
-                    threadId: state.threadId ?? '',
-                    runId: state.runId ?? '',
-                  ),
-                  externalUri: action.externalUri,
-                ),
-              );
-              return;
-            }
             onArtifactAction!(action);
           };
     final shouldRenderQuickReplies =
@@ -4328,8 +4275,8 @@ class AgentRunTranscript extends StatelessWidget {
       color:
           state.phase == AgentStreamRunPhase.error ||
               state.phase == AgentStreamRunPhase.disconnected
-          ? const Color(0xffb64b4b)
-          : const Color(0xff3f3038),
+          ? MomCozyColors.danger
+          : MomCozyColors.foreground,
       fontWeight: FontWeight.w400,
     );
 
@@ -4559,13 +4506,13 @@ class AgentQuickRepliesBar extends StatelessWidget {
 
     final textTheme = Theme.of(context).textTheme;
     final labelStyle = textTheme.labelSmall?.copyWith(
-      color: const Color(0xff9b7a84),
+      color: MomCozyColors.mutedForeground,
       fontWeight: FontWeight.w600,
       height: 1,
     );
     final replyStyle = textTheme.bodySmall?.copyWith(
-      color: const Color(0xff4a3a40),
-      fontSize: 13,
+      color: MomCozyColors.foreground,
+      fontSize: MomCozyTypography.secondarySize,
       fontWeight: FontWeight.w600,
       height: 1.22,
     );
@@ -4584,7 +4531,7 @@ class AgentQuickRepliesBar extends StatelessWidget {
                 width: 16,
                 height: 1,
                 decoration: BoxDecoration(
-                  color: const Color(0xffdbc3cb),
+                  color: MomCozyColors.border,
                   borderRadius: BorderRadius.circular(MomCozyRadii.pill),
                 ),
               ),
@@ -4634,16 +4581,16 @@ class _AgentQuickReplyPill extends StatelessWidget {
       child: InkWell(
         onTap: () => onSelected(text),
         borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        splashColor: const Color(0xfff8edf2),
-        highlightColor: const Color(0xfff8edf2).withValues(alpha: 0.58),
+        splashColor: MomCozyColors.roseSoft,
+        highlightColor: MomCozyColors.roseSoft.withValues(alpha: 0.58),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 34, maxWidth: 260),
           child: Ink(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
-              color: const Color(0x9effffff),
+              color: MomCozyColors.card,
               borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-              border: Border.all(color: const Color(0xffeadde2)),
+              border: Border.all(color: MomCozyColors.border),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -4661,7 +4608,7 @@ class _AgentQuickReplyPill extends StatelessWidget {
                   Icons.chevron_right_rounded,
                   key: ValueKey('agent-quick-reply-chevron'),
                   size: 16,
-                  color: Color(0xffb78294),
+                  color: MomCozyColors.primary,
                 ),
               ],
             ),
@@ -4689,14 +4636,14 @@ class AgentCitationList extends StatelessWidget {
           children: [
             const SizedBox(
               width: 16,
-              child: Divider(height: 1, color: Color(0xffdbc3cb)),
+              child: Divider(height: 1, color: MomCozyColors.border),
             ),
             const SizedBox(width: 6),
             Text(
               '专业信息源',
               style: textTheme.labelSmall?.copyWith(
-                color: const Color(0xff8f7a84),
-                fontSize: 10,
+                color: MomCozyColors.mutedForeground,
+                fontSize: MomCozyTypography.microSize,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -4742,8 +4689,8 @@ class _AgentCitationLink extends StatelessWidget {
           child: Text(
             '[${citation.index}]',
             style: textTheme.labelSmall?.copyWith(
-              color: const Color(0xffaa929f),
-              fontSize: 11,
+              color: MomCozyColors.mutedForeground,
+              fontSize: MomCozyTypography.labelSize,
               height: 1.35,
             ),
           ),
@@ -4762,11 +4709,11 @@ class _AgentCitationLink extends StatelessWidget {
                     citation.displayText,
                     overflow: TextOverflow.visible,
                     style: textTheme.labelSmall?.copyWith(
-                      color: const Color(0xff3d7d85),
-                      fontSize: 11,
+                      color: MomCozyColors.blue,
+                      fontSize: MomCozyTypography.labelSize,
                       height: 1.35,
                       decoration: TextDecoration.underline,
-                      decorationColor: const Color(0xffb8d7d4),
+                      decorationColor: MomCozyColors.border,
                     ),
                   ),
                   if (_citationMetadata(citation) case final metadata?) ...[
@@ -4775,7 +4722,7 @@ class _AgentCitationLink extends StatelessWidget {
                       metadata,
                       style: textTheme.labelSmall?.copyWith(
                         color: MomCozyColors.mutedForeground,
-                        fontSize: 10,
+                        fontSize: MomCozyTypography.microSize,
                         height: 1.3,
                       ),
                     ),
@@ -4825,10 +4772,8 @@ class AgentMarkdownText extends StatelessWidget {
     if (!parseMarkdown) {
       return Text(normalized, style: baseStyle);
     }
-    final markdown = stripRetiredPrenatalLinks(
-      _prepareAgentMarkdown(
-        replaceCitationLinksWithIndexes(normalized, citations),
-      ),
+    final markdown = _prepareAgentMarkdown(
+      replaceCitationLinksWithIndexes(normalized, citations),
     );
     final markdownBody = markdown.trim().isEmpty
         ? null
@@ -4853,7 +4798,6 @@ class AgentMarkdownText extends StatelessWidget {
               final url = href?.trim();
               if (url == null || url.isEmpty) return;
               if (_isRetiredSkillAssetReference(url)) return;
-              if (isRetiredPrenatalRoute(url)) return;
               if (_openMarkdownMedia(url: url, title: label.trim())) return;
               final target = SafeLinkTarget.tryParse(url);
               if (target == null) return;
@@ -4899,7 +4843,6 @@ class AgentMarkdownText extends StatelessWidget {
     TextStyle? baseStyle,
   ) {
     final theme = Theme.of(context);
-    final baseFontSize = baseStyle?.fontSize ?? 14;
     final paragraphStyle = theme.textTheme.bodyMedium
         ?.merge(baseStyle)
         .copyWith(height: 1.42);
@@ -4909,13 +4852,13 @@ class AgentMarkdownText extends StatelessWidget {
     final headingBase = paragraphStyle?.copyWith(
       height: 1.28,
       color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w900,
+      fontWeight: FontWeight.w700,
     );
     final codeStyle = paragraphStyle?.copyWith(
       color: MomCozyColors.foreground,
       backgroundColor: MomCozyColors.muted.withValues(alpha: 0.52),
       fontFamily: 'monospace',
-      fontSize: baseFontSize * 0.92,
+      fontSize: MomCozyTypography.secondarySize,
       height: 1.36,
     );
 
@@ -4924,19 +4867,19 @@ class AgentMarkdownText extends StatelessWidget {
       pPadding: EdgeInsets.zero,
       a: paragraphStyle?.copyWith(
         color: MomCozyColors.primary,
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w700,
         decoration: TextDecoration.none,
       ),
       strong: paragraphStyle?.copyWith(
         color: MomCozyColors.foreground,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
       ),
       em: paragraphStyle?.copyWith(fontStyle: FontStyle.italic),
       del: mutedStyle?.copyWith(decoration: TextDecoration.lineThrough),
-      h1: headingBase?.copyWith(fontSize: baseFontSize + 6),
-      h2: headingBase?.copyWith(fontSize: baseFontSize + 4),
-      h3: headingBase?.copyWith(fontSize: baseFontSize + 2),
-      h4: headingBase?.copyWith(fontSize: baseFontSize + 1),
+      h1: headingBase?.copyWith(fontSize: MomCozyTypography.headingSize),
+      h2: headingBase?.copyWith(fontSize: MomCozyTypography.sectionSize),
+      h3: headingBase?.copyWith(fontSize: MomCozyTypography.titleSize),
+      h4: headingBase?.copyWith(fontSize: MomCozyTypography.bodySize),
       h5: headingBase,
       h6: headingBase,
       h1Padding: const EdgeInsets.only(bottom: 6),
@@ -4949,7 +4892,7 @@ class AgentMarkdownText extends StatelessWidget {
       codeblockPadding: const EdgeInsets.all(10),
       codeblockDecoration: BoxDecoration(
         color: MomCozyColors.muted.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
         border: Border.all(color: MomCozyColors.border),
       ),
       blockSpacing: 10,
@@ -4960,7 +4903,7 @@ class AgentMarkdownText extends StatelessWidget {
       blockquotePadding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
       blockquoteDecoration: BoxDecoration(
         color: MomCozyColors.secondary.withValues(alpha: 0.28),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
         border: const Border(
           left: BorderSide(color: MomCozyColors.primary, width: 3),
         ),
@@ -4970,7 +4913,7 @@ class AgentMarkdownText extends StatelessWidget {
       ),
       tableHead: paragraphStyle?.copyWith(
         color: MomCozyColors.foreground,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
       ),
       tableBody: paragraphStyle,
       tableBorder: TableBorder.all(color: MomCozyColors.border),
@@ -5021,9 +4964,9 @@ class _AgentMarkdownImage extends StatelessWidget {
       child: InkWell(
         key: ValueKey('agent-markdown-image-$url'),
         onTap: productAsset == null ? null : onTap,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
           child: ConstrainedBox(
             constraints: const BoxConstraints(
               minHeight: 112,
@@ -5097,7 +5040,7 @@ class _AgentMarkdownImagePlaceholder extends StatelessWidget {
               textAlign: TextAlign.center,
               style: textTheme.labelMedium?.copyWith(
                 color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 6),
@@ -5232,13 +5175,13 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
           sweepKey: const ValueKey('agent-run-status-title-sweep'),
           animation: _sweepController,
           colors: const [
-            Color(0xff9a7a86),
-            Color(0xff5d3f4d),
-            Color(0xff9a7a86),
+            MomCozyColors.violet,
+            MomCozyColors.primaryDark,
+            MomCozyColors.violet,
           ],
           style: textTheme.labelSmall?.copyWith(
             height: 1.45,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -5333,13 +5276,13 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
           sweepKey: const ValueKey('agent-thinking-note'),
           animation: _sweepController,
           colors: const [
-            Color(0xff98a3af),
-            Color(0xff2d3745),
-            Color(0xff98a3af),
+            MomCozyColors.mutedForeground,
+            MomCozyColors.foreground,
+            MomCozyColors.mutedForeground,
           ],
           style: textTheme.labelSmall?.copyWith(
             height: 1.45,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -5509,8 +5452,8 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
     final showSpeakingVideo = shouldAnimate && isSpeakingMode;
     final showThinkingVideo = shouldAnimate && isThinkingMode;
     final ringColor = isSpeakingMode
-        ? const Color(0xffaa647d)
-        : const Color(0xff8bbdb5);
+        ? MomCozyColors.violet
+        : MomCozyColors.care;
     final activeAvatarKey = showSpeakingVideo
         ? 'agent-assistant-avatar-speaking-media'
         : showThinkingVideo
@@ -5575,13 +5518,7 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
           DecoratedBox(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xff754c5e).withValues(alpha: 0.12),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+              boxShadow: MomCozyShadows.soft,
             ),
             child: ClipOval(
               child: Stack(
@@ -5647,7 +5584,7 @@ class AgentActionPanel extends StatelessWidget {
           '待处理动作',
           style: textTheme.labelLarge?.copyWith(
             color: colorScheme.onSurface,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 8),
@@ -5656,7 +5593,7 @@ class AgentActionPanel extends StatelessWidget {
             key: ValueKey('agent-action-card-${action.id}'),
             decoration: BoxDecoration(
               color: colorScheme.tertiaryContainer.withValues(alpha: 0.38),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
               border: Border.all(color: colorScheme.outlineVariant),
             ),
             child: Padding(
@@ -5678,7 +5615,7 @@ class AgentActionPanel extends StatelessWidget {
                           action.title,
                           style: textTheme.titleSmall?.copyWith(
                             color: colorScheme.onSurface,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
@@ -5687,7 +5624,7 @@ class AgentActionPanel extends StatelessWidget {
                         action.statusLabel,
                         style: textTheme.labelSmall?.copyWith(
                           color: action.color(colorScheme),
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
@@ -5698,7 +5635,7 @@ class AgentActionPanel extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: MomCozyV3Colors.roseTint,
+                          color: MomCozyColors.roseSoft,
                           borderRadius: BorderRadius.circular(
                             MomCozyRadii.pill,
                           ),
@@ -5711,9 +5648,9 @@ class AgentActionPanel extends StatelessWidget {
                           child: Text(
                             action.actionTypeLabel!,
                             style: const TextStyle(
-                              color: MomCozyV3Colors.brand,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                              color: MomCozyColors.primaryDark,
+                              fontSize: MomCozyTypography.labelSize,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
@@ -5736,9 +5673,11 @@ class AgentActionPanel extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: MomCozyV3Colors.surface,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: MomCozyV3Colors.roseTint),
+                        color: MomCozyColors.raised,
+                        borderRadius: BorderRadius.circular(
+                          MomCozyRadii.control,
+                        ),
+                        border: Border.all(color: MomCozyColors.roseSoft),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -5751,7 +5690,7 @@ class AgentActionPanel extends StatelessWidget {
                             Text(
                               action.previewRows[index],
                               style: textTheme.bodySmall?.copyWith(
-                                color: MomCozyV3Colors.ink,
+                                color: MomCozyColors.foreground,
                                 height: 1.4,
                               ),
                             ),
@@ -5974,7 +5913,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       style: MenuItemButton.styleFrom(
         minimumSize: const Size(220, 60),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        ),
       ),
       child: Row(
         children: [
@@ -5994,7 +5935,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
             style: const TextStyle(
               fontFamily: MomCozyTypography.fontFamily,
               fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-              fontSize: 17,
+              fontSize: MomCozyTypography.bodyLargeSize,
               fontWeight: FontWeight.w600,
               color: MomCozyColors.foreground,
             ),
@@ -6027,13 +5968,15 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     const inputTextStyle = TextStyle(
       fontFamily: MomCozyTypography.fontFamily,
       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-      fontSize: 14,
+      fontSize: MomCozyTypography.bodySize,
       height: 1.6,
     );
 
     return Padding(
       key: const ValueKey('agent-composer-bar'),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(
+        horizontal: MomCozySpacing.pageGutter,
+      ),
       child: DecoratedBox(
         decoration: const BoxDecoration(color: MomCozyColors.background),
         child: Column(
@@ -6201,7 +6144,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                     hintStyle: TextStyle(
                       fontFamily: MomCozyTypography.fontFamily,
                       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-                      fontSize: 14,
+                      fontSize: MomCozyTypography.bodySize,
                       height: 1.6,
                       color: MomCozyColors.mutedForeground.withValues(
                         alpha: 0.82,
@@ -6219,17 +6162,11 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   key: const ValueKey('agent-composer-surface'),
                   decoration: BoxDecoration(
                     color: MomCozyColors.card.withValues(alpha: 0.88),
-                    borderRadius: BorderRadius.circular(22),
+                    borderRadius: BorderRadius.circular(MomCozyRadii.featured),
                     border: Border.all(
                       color: MomCozyColors.border.withValues(alpha: 0.64),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xff754c5e).withValues(alpha: 0.08),
-                        blurRadius: 18,
-                        offset: const Offset(0, 9),
-                      ),
-                    ],
+                    boxShadow: MomCozyShadows.soft,
                   ),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(
@@ -6255,7 +6192,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                               ),
                               shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
+                                  borderRadius: BorderRadius.circular(
+                                    MomCozyRadii.sheet,
+                                  ),
                                   side: BorderSide(
                                     color: MomCozyColors.border.withValues(
                                       alpha: 0.62,
@@ -6265,7 +6204,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                               ),
                               elevation: const WidgetStatePropertyAll(12),
                               shadowColor: WidgetStatePropertyAll(
-                                const Color(0xff754c5e).withValues(alpha: 0.2),
+                                MomCozyColors.foreground.withValues(alpha: 0.2),
                               ),
                             ),
                             menuChildren: [

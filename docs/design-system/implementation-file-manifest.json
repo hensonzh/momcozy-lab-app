@@ -1,0 +1,336 @@
+{
+  "scope": "In-progress UI source changes against the saved pre-UI worktree, not Git HEAD. Does not prove completion or include tests/docs/goldens. Regenerate after subsequent phases.",
+  "baseline": "/tmp/momcozy-me-design-baseline-20260911/source-sha256.json",
+  "files": [
+    {
+      "path": "lib/app/mom_bottom_navigation.dart",
+      "status": "modified",
+      "baseline_sha256": "2aa570490bc82a78b3260b17e39c43b2509c6a3a3b3645b7c2e36b34f5f02ba9",
+      "current_sha256": "7526453ee77f5e19818dbd270cd8ef70988e0d8452203f7c01c71f909f1dd483"
+    },
+    {
+      "path": "lib/app/momcozy_app.dart",
+      "status": "modified",
+      "baseline_sha256": "7f94855384c7b218e8a6ecb9d016f19b50118db55a0372cfba24e65b39aa9ded",
+      "current_sha256": "ceeb878d658662cd81f788296641a1a9dcbd2188a56b1e9deac3137c6879547e"
+    },
+    {
+      "path": "lib/features/agent_hub/agent_hub_page.dart",
+      "status": "modified",
+      "baseline_sha256": "7b4706aaf2dc461531bfa69dd822095638cdf190658b9f0c4a6cb19a8f188966",
+      "current_sha256": "59f460c447205fcea6d5c5bcb472d30a55f69c69f01e74d29e88119909fb9b1e"
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "status": "modified",
+      "baseline_sha256": "19313b74afe22e76d3eeac4583ed81eef3587ed0d4877e9124e7f8ef8c3df76e",
+      "current_sha256": "d425d08378721358edbd1cb786d31a0106e4ad7ba4db63503f8b0d3ab5f3f539"
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+      "status": "modified",
+      "baseline_sha256": "4c591209591cc017423fcd2d117aed0676f682b1a3afc819e6bdc895912bd230",
+      "current_sha256": "97729d9730c4c72d1621e2e1f90afbba72e0ff085ad48efdb51735d599b197ca"
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart",
+      "status": "modified",
+      "baseline_sha256": "951204a6ff62ab934044790064349ec5287644ad26b8ecc532194c89affa3bc6",
+      "current_sha256": "cf909653b49e2c688fd9ee7d4ea4c9120ac7c40f5d4864d6c2a0d7afd02525c8"
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "status": "modified",
+      "baseline_sha256": "69f6a72a23ed2b4e2806849c93711ab236ef6b398c5c53f0291ea5935d0fce55",
+      "current_sha256": "dc8768fc47f47a856269b7fba0a1ff9b1d21b1f69da3b50c81d6504c7dbfcfa2"
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "status": "modified",
+      "baseline_sha256": "e0c80ccba2de51d33cdf00a67c6a55057e05013b3619236239b27931e81144f5",
+      "current_sha256": "28cc91b4d3d6a7c16cfa08b3596a299f53678d66b3c5a2dded482f6135ac46f7"
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_file_previews.dart",
+      "status": "modified",
+      "baseline_sha256": "db8283ef1efa20c2142ec89332f057b413f1f4c711ca736715816da244dbee6d",
+      "current_sha256": "ed7ae9ce9ceb0234fde4e3320c455bef73dc9a7debdf365689b44d4d33b85e3e"
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "status": "modified",
+      "baseline_sha256": "7dbf0de32d55127c2bce243e6d65f112a96779c67512c9022c01b3e35253167e",
+      "current_sha256": "709447f0e5b0f2e098783903c54955f985e796c168db89c7489eed51f5b301a3"
+    },
+    {
+      "path": "lib/features/auth/presentation/account_page.dart",
+      "status": "modified",
+      "baseline_sha256": "c8667f10d1ea89cfae07de69c9ad7c03f66c898bdfaa90ce7a9514787a014cf7",
+      "current_sha256": "7c1d29fba292f704c99994f571e9ca50c339c0206aab00c4f9d1f656fa55cfd3"
+    },
+    {
+      "path": "lib/features/auth/presentation/auth_page.dart",
+      "status": "modified",
+      "baseline_sha256": "e52c638f12f26d140bd49ec5eb43588dec6ab8c5d337c9eb71304667c61efe9f",
+      "current_sha256": "38dbab9d6dd9ec115ab1c4347972662b4692b8562f079406ebf42675efb64d97"
+    },
+    {
+      "path": "lib/features/auth/presentation/invite_auth_page.dart",
+      "status": "modified",
+      "baseline_sha256": "01856043b1ff7ae5922cb34a7cc4d96fd0386b12b9208a41e3780d731d74821e",
+      "current_sha256": "710723141037521f92939cb71946b0ff7edac86df35a91dc243e93b3eaa45edb"
+    },
+    {
+      "path": "lib/features/notifications/presentation/notification_permission_dialogs.dart",
+      "status": "modified",
+      "baseline_sha256": "cfa0b7d73ffaf77f90883c3e6ca7bc037064698f2288d7b1a6aa7d654a4df16d",
+      "current_sha256": "abb00fb1c97e849e15478c43158d1e68f8b3fa54e86140a5e7fdc6fe9cde2219"
+    },
+    {
+      "path": "lib/features/notifications/presentation/notification_settings_page.dart",
+      "status": "modified",
+      "baseline_sha256": "b9be8dee32793ca2c366c977cd037ac7fbd5c2e9ae00d10ce093d63026561ca1",
+      "current_sha256": "d40444670a3e01e0ff3fc92a4073af0cdfd6472b7d3cfb81c0fbd05f0847cb5a"
+    },
+    {
+      "path": "lib/features/notifications/presentation/notifications_page.dart",
+      "status": "modified",
+      "baseline_sha256": "1165c58a148b994c80f8f00cd9d1a8149f1213cd993565ddd540640356819fc2",
+      "current_sha256": "1b3e6e989edacd0fc66abe94e1cf6fe2455aae9bddef59411ab4b90d226817cb"
+    },
+    {
+      "path": "lib/features/onboarding/presentation/avatar_task_banner.dart",
+      "status": "modified",
+      "baseline_sha256": "c3c1936012a80d726f6f473c296c70a048749a6d5415ca4575f067b976f4355a",
+      "current_sha256": "c5793b7288903ba13c6eae475722b884b721c9e2ea94c8ea3f80b3fbc90e0f74"
+    },
+    {
+      "path": "lib/features/onboarding/presentation/onboarding_page.dart",
+      "status": "modified",
+      "baseline_sha256": "2e9a747c833680bc61fa7a9358d90259b7bb2914a82975f7db17e05bde2de80b",
+      "current_sha256": "d76111a134914938f4e6b463c2fa727fd3f9f265b4652b3eb6a9fe54e2f16506"
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_growth_curve.dart",
+      "status": "modified",
+      "baseline_sha256": "f48a09d97cee1bfeba6b6cf4bc6a9c21f8c456b60b14b803c2a172d461e5fcfc",
+      "current_sha256": "872fb280981c6ec38162f6ec64b859955ddfec814a9aef417c36057c179ac5d9"
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_home_page.dart",
+      "status": "modified",
+      "baseline_sha256": "d33af724e2a191cdbce4d3b2f7fd8020e5796ab6ad81ef150a8520a40fa626b0",
+      "current_sha256": "286f752e05840456026518a70b25ac9b3a917a35ce98cfe3374432d2c519c39c"
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_overview_cards.dart",
+      "status": "modified",
+      "baseline_sha256": "23f8716c8ee70998c95289a04a35df45322fea067ba711edc18ec3ca70348897",
+      "current_sha256": "eb5418ed9c21afee07a7b1c8e26a4e3570f9c9582f9f7fb5d7ba745f14249611"
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_profile_editor.dart",
+      "status": "modified",
+      "baseline_sha256": "707fbd661da56bd92e02bd03dfa288a7025c747934068326e74f8e41393fe5f7",
+      "current_sha256": "d00d4dee865198d3daa08806c5679d5aaedb7076d8d77d8854842f8b54f60d48"
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_record_editor.dart",
+      "status": "modified",
+      "baseline_sha256": "8797b04c7bfbccaa4ddc77c271abeeadee00d3b10d9152ff252af1e00928d127",
+      "current_sha256": "8572513b8cea87c2a76da399dc42b3e59c87a88832e4cb48529ffb8cb5d14b21"
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_record_fields.dart",
+      "status": "modified",
+      "baseline_sha256": "21ca217044c77fc8518d99ff897276d2954cdd9d6d486e9f7dd79ae89d7e7091",
+      "current_sha256": "9a8ea6a28d960ae7ed66f91e4d272f1686cfe23c4f07cdf3125aa87c430d917e"
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_records_page.dart",
+      "status": "modified",
+      "baseline_sha256": "bddbed81449f4800d0df043e3898953f4e08a6793a126518cee5f523602dc6f2",
+      "current_sha256": "4488f14fae7f8da0dde56124350e42bb7bef4fb8cfe4a2b878ac995bffb0e5bc"
+    },
+    {
+      "path": "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "status": "modified",
+      "baseline_sha256": "51afeb0d08aaa74f0767e6a00e7a4376c323af1fa0b7f2fd842c0d8b4fb51c19",
+      "current_sha256": "5bb481ae46a9d7f1f1f9287b36d84ca4ed79e0e7a485edddce3778dbc31b84b8"
+    },
+    {
+      "path": "lib/modules/consultation/presentation/room_page.dart",
+      "status": "modified",
+      "baseline_sha256": "2ea6412843b14c6527a40b224c26cadecc92f901e6e9052adecf3e1b75cc667e",
+      "current_sha256": "f5dfdf69004bcaf96cf9140e7b33c248c438f49ae07926bf3fa5d58391407d90"
+    },
+    {
+      "path": "lib/modules/consultation/presentation/video_stage.dart",
+      "status": "modified",
+      "baseline_sha256": "00b6e238eafdcfb496307fc36a43b338fd1726052b6cd01384ef55710668d01f",
+      "current_sha256": "4e6144b7cb58ba39960e4429968541f7726092b1f7ebd434e747e51f894cf55d"
+    },
+    {
+      "path": "lib/modules/mom/presentation/diary_fields.dart",
+      "status": "modified",
+      "baseline_sha256": "39b6b16d41c135958f0254f2661e5ec82f9f82ac3a90a1480bed1fa3cae5cc89",
+      "current_sha256": "ecd4d1774b9a05929b297244a61b77d886b8336a422f11a07c4be71ba795a55c"
+    },
+    {
+      "path": "lib/modules/mom/presentation/lactation_chart.dart",
+      "status": "modified",
+      "baseline_sha256": "21178afb65f3c9da09b69edccd164650b734805b6171301e1246a4f428a5a2b6",
+      "current_sha256": "9cc044b685769afbbb20ec1e57e80b1e6bb19502558ae5532cec0c0a7257a61e"
+    },
+    {
+      "path": "lib/modules/mom/presentation/lactation_page.dart",
+      "status": "modified",
+      "baseline_sha256": "ebd7e01d081f48f99b87c996ce02bc25dbd94af11969945c766ed16e50a0ad6d",
+      "current_sha256": "174ccdf91ff3e9a03f15f0b49fae2e28fd921c5c38491981e5ac1bcfe7681e60"
+    },
+    {
+      "path": "lib/modules/mom/presentation/lactation_panel.dart",
+      "status": "modified",
+      "baseline_sha256": "9c4c3b160a18d6e65db0837ced89badad462413ae81e7e699303e58eed5eae0f",
+      "current_sha256": "dcdbdb48eb80f1df5d75ac52ba183cd2f663089b50cdc91fa7ae84fe8d148d07"
+    },
+    {
+      "path": "lib/modules/mom/presentation/mother_diary_editor.dart",
+      "status": "modified",
+      "baseline_sha256": "5e4b071057a4c3ee2934768bc73764378ce4785a6e9321df8c49c6bc448b8d7a",
+      "current_sha256": "86e19f0dbcb727dc51bfd1d7d9e11179abb44cb0be161ada390c86301890207b"
+    },
+    {
+      "path": "lib/modules/mom/presentation/mother_diary_page.dart",
+      "status": "modified",
+      "baseline_sha256": "f4be9898379cc6eb3dab7610f399ff8400be4de7245a599f2a7124b54a04ac5e",
+      "current_sha256": "a141d72248cef3d54219f426b231d14a23c0e8a147985f45a5f5e2142dc1054e"
+    },
+    {
+      "path": "lib/modules/mom/presentation/mother_home_page.dart",
+      "status": "modified",
+      "baseline_sha256": "964c53390605acd25428621d006492d87af919cecb4288ba4b061e2abcab8368",
+      "current_sha256": "1b1feb507338dd11efb021b2866bef104628bbe39e38e776716d656c5c9d0c8c"
+    },
+    {
+      "path": "lib/modules/mom/presentation/mother_status_card.dart",
+      "status": "modified",
+      "baseline_sha256": "6f91c7ba64ae5b3158ae6275340ba48bab8ee6112ecebaffb5fd86a52e3f3645",
+      "current_sha256": "676539f325015410a5f71da1be97d9d11374a55957003528a1d0e22199dc29da"
+    },
+    {
+      "path": "lib/modules/profile/presentation/more_page.dart",
+      "status": "modified",
+      "baseline_sha256": "84e9022c93d8db06b74dd9775c85e4d350dde2a59d05bf27411b5fe6cd2f3cf5",
+      "current_sha256": "b0e1e0215e429691dcde792c9a2ea694809a0a67744336e3f671a7b190d3aefd"
+    },
+    {
+      "path": "lib/modules/schedule/presentation/schedule_page.dart",
+      "status": "modified",
+      "baseline_sha256": "2a3327558c9d1323c1d94a826d62d649ea16f7581044a8f2f75d56de47c56459",
+      "current_sha256": "4f6e3b60038d87a33c84f4087b9df8bbb7fe260ce696f9b6d2c1cfb19642f321"
+    },
+    {
+      "path": "lib/modules/services/presentation/appointment_detail_page.dart",
+      "status": "modified",
+      "baseline_sha256": "9806b3f254ed86012438f6eac1aec487441b4f21004e5b8607f4d457b9de1b74",
+      "current_sha256": "1a6f84d51a3ee0eab9458294d7f4f27905d5d32fa354385c051dbbc49162a27b"
+    },
+    {
+      "path": "lib/modules/services/presentation/appointment_summary.dart",
+      "status": "modified",
+      "baseline_sha256": "205fbd57b7c8623901c8df4f2d0e26c4afc1205581d62a4d16296f8c2eab5037",
+      "current_sha256": "c740da88f401612a4464f3b2acdeab257b2cbe5d24d177b7321b888996ab3a59"
+    },
+    {
+      "path": "lib/modules/services/presentation/booking_page.dart",
+      "status": "modified",
+      "baseline_sha256": "0b83c4b6a33dbe3ab51d632baae8029d8475ceb3d4537d5f770219ca5a303fe2",
+      "current_sha256": "4505f4208a9b410447e573d4279357d42771d1309105bed6a5fcb3d7fc48cf9a"
+    },
+    {
+      "path": "lib/modules/services/presentation/consultation_summary_page.dart",
+      "status": "modified",
+      "baseline_sha256": "74afd8ed787912462a823d2e1e13fc58c887d7861eefa0371ad8c44328064356",
+      "current_sha256": "5ad211a53da12bdb7e7db7ac2bdafdcfb2025d6fb49f1bcbbba74e83525b1f13"
+    },
+    {
+      "path": "lib/modules/services/presentation/expert_support_section.dart",
+      "status": "modified",
+      "baseline_sha256": "edd2ddf5dde1c3ae0a7fd605c7c358ea0d605c8764e28ca31920a11c37d52851",
+      "current_sha256": "5e366619ae459ce1a201465082cddba0074ad9b03ad4e92d7416746bb1f9705a"
+    },
+    {
+      "path": "lib/modules/services/presentation/intake_page.dart",
+      "status": "modified",
+      "baseline_sha256": "6c38b086bd74e993b7118958425ff9932f8eb9e2a4583971de8d7d8f08288353",
+      "current_sha256": "275d6fdcb108d81ef87d9042cb96a9f643df7612a5d7b390e93d878a9bdca8e3"
+    },
+    {
+      "path": "lib/modules/services/presentation/service_catalog_page.dart",
+      "status": "modified",
+      "baseline_sha256": "f5ee3656486c74f3231bb590ae63939e3e352900fbf5f56a40227a051d978b96",
+      "current_sha256": "a281c544ba36cee0414bf3faa166deb9aa2147c4b5bf60d64ba840f36686e38e"
+    },
+    {
+      "path": "lib/modules/services/presentation/service_package_page.dart",
+      "status": "modified",
+      "baseline_sha256": "df9a34a82e15e213755d599ea2adaa6e28694b3b31255c27086dc0ee3287bb8f",
+      "current_sha256": "6a8d2b34bd9634257b2c9e970c30b785088e71ae4fec7fa59adf414896306219"
+    },
+    {
+      "path": "lib/modules/services/presentation/service_progress_page.dart",
+      "status": "modified",
+      "baseline_sha256": "3a50d701b21c63cde229f55ad3c399a4b1f4652dfc949aec822f3ca93f9ea19d",
+      "current_sha256": "365569e0d6f343ad4dea7dcfb4c7d564428e5cebbda39298630fa512827d2e45"
+    },
+    {
+      "path": "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "status": "modified",
+      "baseline_sha256": "7107480e6f7a6668da9ab9602821940d1486cbae4c3f3666da7d0ae680cf8e2c",
+      "current_sha256": "a4a0a6bf9c600b28176a74696be67564595fe16df38474555ec7787d6f514a28"
+    },
+    {
+      "path": "lib/shared/design_system/momcozy_design_system.dart",
+      "status": "modified",
+      "baseline_sha256": "98cca73afad6fb28f9fa8d147dacec0fd846688506d52b877db5761f423d67e7",
+      "current_sha256": "22c8bb203021b238fa96c36468eb0d95692c695c8add300545076f1809c3c153"
+    },
+    {
+      "path": "lib/shared/design_system/momcozy_theme.dart",
+      "status": "modified",
+      "baseline_sha256": "7cd0721ba951f7f7d6f2e0cb3ec93e0539df2e0cbc1b260f6ebedcda746f4493",
+      "current_sha256": "24133d18a0cbc1f5d1968adef06e696130ee90c3c607949a1d95b090e7c48b56"
+    },
+    {
+      "path": "lib/shared/widgets/choice_field.dart",
+      "status": "modified",
+      "baseline_sha256": "097ebb456c6089eb6be2203dcce2b8c874208e5c63b0a02b89922131e3a14060",
+      "current_sha256": "89c7a38567815b413e7b97a3c51a9f93ea3da534c69dd6be5d1a867825a77902"
+    },
+    {
+      "path": "lib/shared/widgets/confirm_discard.dart",
+      "status": "modified",
+      "baseline_sha256": "031e0ec19d8b3c53d6cd609fabca709b9f50ae177fe52366c06a07fba1bc833f",
+      "current_sha256": "5ebc7ffb905845e23b08693f2866269c6cbe4ddb981c814f7c12677ca5282b4a"
+    },
+    {
+      "path": "lib/shared/widgets/knowledge_banner.dart",
+      "status": "modified",
+      "baseline_sha256": "1c48bce602e3e71cbbe447b9c70ae7bc7e31ba6e8bdc70a249e2404c9f5e3ec2",
+      "current_sha256": "3739ea70602ccd5130dad3819f559c713db075bf58fe44d6f24cdc24fbb58f08"
+    },
+    {
+      "path": "lib/shared/widgets/momcozy_components.dart",
+      "status": "added",
+      "baseline_sha256": null,
+      "current_sha256": "9e69659e1ef2b36fdd8e763455f63b1b7548e69145416baa18ca4be17603c376"
+    },
+    {
+      "path": "lib/shared/widgets/product_feedback.dart",
+      "status": "modified",
+      "baseline_sha256": "ac9fe12180917a4edfd5cdecdc520fef7fc38c26e7656109bb476b6d88d3529c",
+      "current_sha256": "ee35c52e7edfdd13ee0667fd9a4404323f7015ea601ada98485ce49322092971"
+    }
+  ]
+}

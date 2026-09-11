@@ -1,4 +1,7 @@
 abstract interface class NotificationsRepository {
+  Future<NotificationPageData> fetchPage({String? cursor, int limit = 30});
+  Future<void> markAllRead();
+  Future<NotificationOpenTarget> openNotification(String notificationId);
   Future<List<MomCozyNotification>> fetchNotifications({
     String? status,
     int limit = 100,
@@ -38,4 +41,21 @@ class MomCozyNotification {
   final DateTime? readAt;
 
   bool get isUnread => status.toLowerCase() == 'unread';
+}
+
+class NotificationPageData {
+  const NotificationPageData({
+    required this.items,
+    required this.unreadCount,
+    this.nextCursor,
+  });
+  final List<MomCozyNotification> items;
+  final int unreadCount;
+  final String? nextCursor;
+}
+
+class NotificationOpenTarget {
+  const NotificationOpenTarget({required this.notification, this.route});
+  final MomCozyNotification notification;
+  final String? route;
 }

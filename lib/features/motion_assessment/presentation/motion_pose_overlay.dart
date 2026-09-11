@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/domain/motion_pose.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_preview_transform.dart';
 
@@ -193,12 +194,12 @@ class MotionSkeletonPainter extends CustomPainter {
   final MotionPoseObservation? observation;
 
   static const _minimumConfidence = 0.5;
-  static const _leftColor = Color(0xff51e1d2);
-  static const _rightColor = Color(0xffff79ae);
-  static const _centerColor = Color(0xffffd166);
+  static const _leftColor = MomCozyColors.motionLeft;
+  static const _rightColor = MomCozyColors.motionRight;
+  static const _centerColor = MomCozyColors.motionCenter;
   static const _multiplePoseColors = <Color>[
-    Color(0xffffa14a),
-    Color(0xffa993ff),
+    MomCozyColors.motionPersonFirst,
+    MomCozyColors.motionPersonSecond,
   ];
 
   @override
@@ -220,7 +221,7 @@ class MotionSkeletonPainter extends CustomPainter {
       ..strokeWidth = 3;
     final jointGlow = Paint()..style = PaintingStyle.fill;
     final jointHalo = Paint()
-      ..color = Colors.white.withValues(alpha: 0.96)
+      ..color = MomCozyColors.onMedia.withValues(alpha: 0.96)
       ..style = PaintingStyle.fill;
     final joint = Paint()..style = PaintingStyle.fill;
 

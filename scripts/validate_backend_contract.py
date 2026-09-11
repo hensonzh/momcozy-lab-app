@@ -21,6 +21,11 @@ REQUIRED_AGENT_RUNTIME_PATTERN = "proprietary_runtime"
 
 REQUIRED_OPENAPI_PATHS = {
     PRODUCT_SERVICE: {
+        "/v1/auth/register",
+        "/v1/auth/verify-email",
+        "/v1/auth/google",
+        "/v1/auth/reset-password",
+        "/v1/auth/me",
         "/v1/auth/signup",
         "/v1/auth/login",
         "/v1/auth/invite-login",
@@ -31,7 +36,7 @@ REQUIRED_OPENAPI_PATHS = {
         "/v1/records/feeding",
         "/v1/records/pumping",
         "/v1/records/growth",
-        "/v1/plans",
+        "/v1/schedule",
         "/v1/speech/transcribe-chunk",
         "/v1/realtime-voice-stream",
     },
@@ -50,12 +55,12 @@ REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS = {
     (AGENT_RUNTIME_SERVICE, "POST", "/v1/agent/actions/{action_id}/confirm"),
 }
 REQUIRED_OPENAPI_OPERATIONS = {
-    (PRODUCT_SERVICE, "POST", "/v1/pregnancy-diary/entries"),
-    (PRODUCT_SERVICE, "PATCH", "/v1/pregnancy-diary/entries/{entry_date}"),
-    (PRODUCT_SERVICE, "DELETE", "/v1/pregnancy-diary/entries/{entry_date}"),
+    (PRODUCT_SERVICE, "GET", "/v1/schedule"),
+    (PRODUCT_SERVICE, "POST", "/v1/schedule/personal"),
+    (PRODUCT_SERVICE, "PATCH", "/v1/schedule/personal/{task_id}"),
 }
 REQUIRED_QUERY_KEYS = {
-    (PRODUCT_SERVICE, "/v1/plans"): {"plan_type", "status"},
+    (PRODUCT_SERVICE, "/v1/schedule"): {"start_date", "end_date", "timezone"},
     (
         AGENT_RUNTIME_SERVICE,
         "/v1/agent/runs/{run_id}/stream",
@@ -70,6 +75,10 @@ FORBIDDEN_QUERY_KEYS = {
     "token",
 }
 AUTH_EXEMPT_PATHS = {
+    ("/v1/auth/register", "POST"), ("/v1/auth/verify-email", "POST"),
+    ("/v1/auth/resend-verification", "POST"), ("/v1/auth/forgot-password", "POST"),
+    ("/v1/auth/reset-password", "POST"), ("/v1/auth/google", "POST"),
+    ("/v1/auth/logout-session", "POST"),
     ("/v1/auth/signup", "POST"),
     ("/v1/auth/login", "POST"),
     ("/v1/auth/invite-login", "POST"),
@@ -218,6 +227,14 @@ def _validate_service_boundaries(
         )
 
     runtime_exempt_paths = {"/v1/health/live", "/v1/health/ready"}
+    # Care report generation is an Agent Runtime execution boundary called by
+    # Product workers with a dedicated service key; it is not a mobile API.
+    runtime_exempt_paths.update(
+        {
+            "/v1/internal/care-reports/generate",
+            "/v1/internal/care-reports/sources",
+        }
+    )
     invalid_runtime_paths = sorted(
         str(path)
         for path in service_paths[AGENT_RUNTIME_SERVICE]

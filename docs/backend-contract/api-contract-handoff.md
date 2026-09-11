@@ -151,33 +151,18 @@ path.
 Action API responses likewise expose preview/status metadata only. They do not
 return server-side `apply_payload` or action idempotency keys.
 
-The confirmed `pregnancy.plan.create` apply path also emits the durable
-application event `pregnancy_plan.changed` after the authoritative Plan and
-action result are committed. Its payload is intentionally limited to
-`operation=created`, opaque `plan_id`, `plan_type=pregnancy`,
-`source=agent_action`, and the generic outbox-added `action_id`. Preview,
-confirmation, rejection, and failed apply states do not emit this business
-event, and it never contains the personalized card, plan context, or health
-facts. Clients use it only as an invalidation/notification signal and reload the
-owner-scoped resource through
-`GET /v1/plans?plan_type=pregnancy&status=active`.
-
-Plan responses may include optional `starts_on` and `ends_on` lifecycle dates.
-Expired active plans are excluded from current lists and schedule timelines.
-
-New `milk_management` plan creation is retired. Existing owner-scoped milk
-plans remain readable, updatable, deletable, and available to schedule-task
-management. Their changes emit `milk_plan.changed` with operations such as
-`updated`, `deleted`, or `rescheduled`; clients use the event only to invalidate
-and reload authoritative plan/task data. The App does not render the retired
-milk-plan creation preview or card artifact families.
+Schedule and care-plan changes are exposed through the current owner-scoped
+Schedule projection. The App reads `GET /v1/schedule` for a bounded calendar
+range, creates or edits personal entries through `/v1/schedule/personal`, and
+updates published care-task progress through the documentation endpoint. The
+projection includes only the latest published client-facing plan and never
+includes private clinical notes.
 
 ## Diary
 
 The persisted diary resource is generic. Durable `diary.changed` events carry
 only mutation metadata and are used by the App to invalidate and reload its
-authoritative daily diary view. The existing pregnancy-diary HTTP endpoints
-remain the current Flutter adapter over that resource.
+authoritative daily diary view. The current mother-diary HTTP resource is the sole Flutter adapter over that resource.
 
 ## Files
 
@@ -188,25 +173,11 @@ storage provider.
 ## Schedule And Plan Progress
 
 Schedule resources are owner-scoped and never accept a mobile-provided
-`user_id` as authority:
-
-- `GET /v1/plans?plan_type=milk_management&status=active` loads plan context.
-- `GET /v1/plans/tasks/list?task_date=YYYY-MM-DD` loads the selected day.
-- `POST /v1/plans/tasks`, `PATCH/DELETE /v1/plans/tasks/{task_id}` implement
-  task creation and editing.
-- `PATCH /v1/plans/tasks/{task_id}/state` accepts the typed states `pending`,
-  `completed`, and `skipped`.
-- Pumping and feeding creates accept optional `plan_task_id`. When present,
-  record creation and task completion happen in the same database transaction;
-  the record create remains retry-safe through `Idempotency-Key`.
-
-Pregnancy-card todos are not `PlanTask` rows. New pregnancy plan payloads
-persist a stable `item_id` on every structured todo. Clients update one item via
-`PATCH /v1/plans/{plan_id}/todos/{item_id}/completion` with
-`{completed, expected_version}` and an `Idempotency-Key`. The response is the
-complete authoritative `PlanRead` with an incremented `version`. A stale write
-returns `version_conflict`; an old item without `item_id` remains read-only and
-returns `todo_item_not_found`. Clients must never match todo items by title.
+`user_id` as authority. The response aggregates personal calendar entries,
+appointments, service periods, and the latest published plan tasks. Date ranges
+are half-open and bounded to the requested IANA timezone. Personal entries use
+`Idempotency-Key` on creation and the returned `updated_at` on edits/deletes;
+stale writes return `version_conflict`.
 
 ## Product Assets
 
@@ -247,7 +218,7 @@ Flutter repositories should be generated from or validated against the OpenAPI
 snapshot. Do not build new client code against legacy raw response shapes.
 
 Use `docs/backend-contract/flutter-smoke-flows.json` as the initial integration
-smoke fixture for auth, core records/plans/files, agent replay, and voice
+smoke fixture for auth, core records/schedule/files, agent replay, and voice
 contract checks.
 Use `docs/backend-contract/flutter-client-compatibility.md` for generated
 client regeneration and breaking-change rules.

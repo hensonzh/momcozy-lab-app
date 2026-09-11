@@ -1,12 +1,139 @@
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/notifications/domain/momcozy_notification.dart';
 
+import '../domain/notification_delivery_repository.dart';
+import '../domain/notification_permission.dart';
+
 const notificationsEndpoint = '/v1/notifications';
 
-class NotificationsApiRepository implements NotificationsRepository {
+class NotificationsApiRepository
+    implements NotificationsRepository, NotificationDeliveryRepository {
   const NotificationsApiRepository({required this.transport});
 
   final ApiJsonTransport transport;
+
+  @override
+  Future<NotificationPageData> fetchPage({
+    String? cursor,
+    int limit = 30,
+  }) async {
+    final response = await transport.getJson(
+      notificationsEndpoint,
+      query: {'limit': limit, 'cursor': ?cursor},
+    );
+    final items = response['items'];
+    final count = response['unread_count'];
+    if (items is! List || count is! int || count < 0) {
+      throw const FormatException('Incomplete notification page.');
+    }
+    return NotificationPageData(
+      items: items
+          .whereType<Map>()
+          .map((item) => _notification(Map<String, Object?>.from(item)))
+          .whereType<MomCozyNotification>()
+          .toList(),
+      unreadCount: count,
+      nextCursor: response['next_cursor'] as String?,
+    );
+  }
+
+  @override
+  Future<void> markAllRead() async {
+    await transport.postJson('$notificationsEndpoint/read-all');
+  }
+
+  @override
+  Future<NotificationOpenTarget> openNotification(String notificationId) async {
+    final response = await transport.postJson(
+      '$notificationsEndpoint/${Uri.encodeComponent(notificationId)}/open',
+    );
+    final raw = response['notification'];
+    final notification = raw is Map
+        ? _notification(Map<String, Object?>.from(raw))
+        : null;
+    if (notification == null) {
+      throw const FormatException('Incomplete notification target.');
+    }
+    return NotificationOpenTarget(
+      notification: notification,
+      route: response['resource_available'] == true
+          ? response['route'] as String?
+          : null,
+    );
+  }
+
+  @override
+  Future<PushRegistration> registerInstallation({
+    required String id,
+    required String secret,
+    required int revision,
+    required String platform,
+    required NotificationPermission permission,
+    required String locale,
+    String? token,
+  }) async {
+    final value = await transport.postJson(
+      '$notificationsEndpoint/installations',
+      body: {
+        'installation_id': id,
+        'installation_secret': secret,
+        'revision': revision,
+        'platform': platform,
+        'permission': permission.wire,
+        'locale': locale,
+        'token': ?token,
+      },
+    );
+    return PushRegistration(
+      bindingId: value['binding_id']! as String,
+      tokenRegistered: value['token_registered'] == true,
+      pushAvailable: value['push_available'] == true,
+    );
+  }
+
+  @override
+  Future<void> detachInstallation({
+    required String id,
+    required String secret,
+  }) async {
+    await transport.postJson(
+      '$notificationsEndpoint/installations/$id/detach',
+      body: {'installation_secret': secret},
+    );
+  }
+
+  @override
+  Future<Map<String, bool>> preferences() async => Map<String, bool>.from(
+    await transport.getJson('$notificationsEndpoint/preferences'),
+  );
+  @override
+  Future<Map<String, bool>> setPreference(
+    String category, {
+    required bool enabled,
+    String? installationId,
+  }) async => Map<String, bool>.from(
+    await _mutationTransport.patchJson(
+      '$notificationsEndpoint/preferences/${Uri.encodeComponent(category)}',
+      body: {'enabled': enabled, 'installation_id': ?installationId},
+    ),
+  );
+  @override
+  Future<AppointmentReminder> reminder(String appointmentId) async => _reminder(
+    await transport.getJson(
+      '$notificationsEndpoint/appointments/${Uri.encodeComponent(appointmentId)}/reminder',
+    ),
+  );
+  @override
+  Future<AppointmentReminder> setReminder(
+    String appointmentId, {
+    required bool enabled,
+    String? installationId,
+  }) async => _reminder(
+    await _mutationTransport.putJson(
+      '$notificationsEndpoint/appointments/${Uri.encodeComponent(appointmentId)}/reminder',
+      body: {'enabled': enabled, 'installation_id': ?installationId},
+    ),
+  );
 
   @override
   Future<List<MomCozyNotification>> fetchNotifications({
@@ -87,3 +214,10 @@ String _text(Object? value) => value is String ? value.trim() : '';
 DateTime? _dateTime(Object? value) {
   return value is String ? DateTime.tryParse(value) : null;
 }
+
+AppointmentReminder _reminder(Map<String, Object?> value) =>
+    AppointmentReminder(
+      enabled: value['enabled'] == true,
+      status: value['status']! as String,
+      triggerAt: _dateTime(value['trigger_at']),
+    );

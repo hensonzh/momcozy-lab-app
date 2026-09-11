@@ -3,7 +3,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/widgets/momcozy_components.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart';
@@ -105,15 +106,11 @@ class _AgentArtifactGenericCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return DecoratedBox(
+    return MomCozySurface(
       key: ValueKey('agent-artifact-card-${card.id}'),
-      decoration: BoxDecoration(
-        color: MomCozyColors.roseSoft.withValues(alpha: 0.54),
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.74)),
-      ),
+      padding: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: MomCozyInsets.compactCard,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -259,7 +256,7 @@ class _AgentExportableArtifactCardState
     return RepaintBoundary(
       key: _captureBoundaryKey,
       child: ColoredBox(
-        color: Colors.white,
+        color: MomCozyColors.card,
         child: widget.builder(exportControl),
       ),
     );
@@ -322,15 +319,11 @@ class _AgentUnsupportedArtifactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return DecoratedBox(
+    return MomCozySurface(
       key: ValueKey('agent-artifact-unsupported-${card.id}'),
-      decoration: BoxDecoration(
-        color: MomCozyColors.raised,
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        border: Border.all(color: MomCozyColors.border),
-      ),
+      padding: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: MomCozyInsets.compactCard,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

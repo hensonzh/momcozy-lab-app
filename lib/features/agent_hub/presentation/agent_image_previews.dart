@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 
 typedef AgentImageContentLoader = Future<Uint8List> Function(String fileId);
@@ -39,7 +39,7 @@ class AgentSentImages extends StatelessWidget {
                 loadImageContent: loadImageContent,
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(MomCozyRadii.control),
                 child: SizedBox(
                   width: itemWidth,
                   height: itemHeight,
@@ -80,7 +80,7 @@ class AgentComposerImageAttachment extends StatelessWidget {
         children: [
           Positioned.fill(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: MomCozyColors.muted,
@@ -104,14 +104,16 @@ class AgentComposerImageAttachment extends StatelessWidget {
               onPressed: onRemove,
               icon: const Icon(Icons.close_rounded, size: 14),
               tooltip: '移除图片',
-              color: Colors.white,
+              color: MomCozyColors.onMedia,
               style: IconButton.styleFrom(
                 fixedSize: const Size.square(24),
                 minimumSize: const Size.square(24),
                 maximumSize: const Size.square(24),
                 padding: EdgeInsets.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                backgroundColor: Colors.black.withValues(alpha: 0.52),
+                backgroundColor: MomCozyColors.mediaBackground.withValues(
+                  alpha: 0.52,
+                ),
               ),
             ),
           ),
@@ -128,10 +130,10 @@ Future<void> _showSentImage(
 }) {
   return showDialog<void>(
     context: context,
-    barrierColor: Colors.black.withValues(alpha: 0.92),
+    barrierColor: MomCozyColors.mediaBackground.withValues(alpha: 0.92),
     builder: (dialogContext) {
       return Dialog.fullscreen(
-        backgroundColor: Colors.black,
+        backgroundColor: MomCozyColors.mediaBackground,
         child: SafeArea(
           child: Stack(
             children: [
@@ -155,9 +157,11 @@ Future<void> _showSentImage(
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   icon: const Icon(Icons.close_rounded),
                   tooltip: '关闭',
-                  color: Colors.white,
+                  color: MomCozyColors.onMedia,
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.black.withValues(alpha: 0.5),
+                    backgroundColor: MomCozyColors.mediaBackground.withValues(
+                      alpha: 0.5,
+                    ),
                   ),
                 ),
               ),
@@ -337,7 +341,7 @@ class _AgentImageFallback extends StatelessWidget {
                   Text(
                     '点击查看',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: MomCozyTypography.captionSize,
                       color: MomCozyColors.mutedForeground,
                     ),
                   ),

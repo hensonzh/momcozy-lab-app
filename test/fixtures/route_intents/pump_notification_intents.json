@@ -1,6 +1,6 @@
 {
   "id": "route-pump-notification-intents",
-  "description": "Pump foreground and auto-end notifications become typed route intents.",
+  "description": "Lactation foreground and auto-end notifications become typed route intents.",
   "input": {
     "pendingNavigatePayloads": [
       {
@@ -17,8 +17,8 @@
   },
   "expectedIntents": [
     {
-      "type": "OpenPumpSession",
-      "path": "/pump",
+      "type": "OpenLactation",
+      "path": "/me/lactation",
       "payload": {
         "source": "pumpForegroundNotification"
       },

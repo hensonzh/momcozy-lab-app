@@ -62,10 +62,10 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
   final cleanPath = uri?.path ?? _stripQuery(path);
   final notify = _decodeObject(_string(payload['notifyJson']));
 
-  if (cleanPath == '/plan' || cleanPath == '/schedule') {
+  if (cleanPath == '/schedule') {
     return const RouteIntent(
-      type: 'OpenPlan',
-      path: '/plan',
+      type: 'OpenSchedule',
+      path: '/schedule',
       payload: {'source': 'native-navigation'},
       consume: 'once',
     );
@@ -73,8 +73,8 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
 
   if (cleanPath == '/pump' && notify == null) {
     return const RouteIntent(
-      type: 'OpenPumpSession',
-      path: '/pump',
+      type: 'OpenLactation',
+      path: '/me/lactation',
       payload: {'source': 'pumpForegroundNotification'},
       consume: 'once',
     );
@@ -90,15 +90,6 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
         'source': 'pumpAutoEndNotification',
         'dedupe': 'tryRunPumpAutoEndOffPumpTeardownOnce',
       },
-      consume: 'once',
-    );
-  }
-
-  if (cleanPath == '/status') {
-    return const RouteIntent(
-      type: 'OpenMe',
-      path: '/me',
-      payload: {'source': 'legacy-status-route'},
       consume: 'once',
     );
   }
@@ -190,10 +181,8 @@ List<RouteIntent> _routeIntentsFromIbclc(Map<String, Object?> input) {
   if (start != null) {
     intents.add(
       RouteIntent(
-        type: 'OpenIbclcChat',
-        path:
-            _safeSameOriginPath(_string(start['baseUrl'])) ??
-            '/ibclc-chat.html',
+        type: 'OpenServiceCatalog',
+        path: '/services',
         payload: {
           'consultId': _string(start['consultId']) ?? '',
           'threadId': _string(start['threadId']) ?? '',
@@ -230,13 +219,12 @@ List<RouteIntent> _routeIntentsFromIbclc(Map<String, Object?> input) {
 }
 
 RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
-  final source = _string(event['source']) ?? '';
   final link = _record(event['link']);
   final linkAction = _string(link?['action']);
   if (linkAction == 'open-schedule') {
     return const RouteIntent(
-      type: 'OpenPlanFromAgent',
-      path: '/plan',
+      type: 'OpenScheduleFromAgent',
+      path: '/schedule',
       payload: {'source': 'agentBubbleLink', 'action': 'open-schedule'},
     );
   }
@@ -256,10 +244,10 @@ RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
   final customEvent = _record(event['customEvent']);
   final customEventName = _string(customEvent?['name']);
   if (customEventName == 'navigate-to' &&
-      const {'/schedule', '/plan'}.contains(_string(customEvent?['detail']))) {
+      _string(customEvent?['detail']) == '/schedule') {
     return const RouteIntent(
-      type: 'OpenPlan',
-      path: '/plan',
+      type: 'OpenSchedule',
+      path: '/schedule',
       payload: {'source': 'inlineFlow'},
     );
   }
@@ -273,45 +261,6 @@ RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
 
   final route = _string(event['route']);
   if (route == null || route.isEmpty) return null;
-  final uri = Uri.tryParse(route);
-  final cleanPath = uri?.path ?? _stripQuery(route);
-
-  if (source == 'AgentHub calibration card' && cleanPath == '/calibration') {
-    return const RouteIntent(
-      type: 'OpenCalibrationFromAgent',
-      path: '/calibration',
-      payload: {'source': 'agentArtifact'},
-    );
-  }
-  if (source == 'Device start pump without calibration' &&
-      cleanPath == '/calibration') {
-    return const RouteIntent(
-      type: 'OpenCalibrationRequired',
-      path: '/calibration',
-      payload: {'source': 'deviceStartPump'},
-    );
-  }
-  if (source == 'Pump session missing connected device' &&
-      cleanPath == '/device') {
-    return const RouteIntent(
-      type: 'OpenDeviceRequired',
-      path: '/device',
-      payload: {'source': 'pumpSession'},
-    );
-  }
-  if (source == 'Calibration auto start' && cleanPath == '/pump') {
-    final payload = <String, Object?>{
-      'autoStarted': uri?.queryParameters['autoStarted'] == '1',
-    };
-    final from = uri?.queryParameters['from'];
-    if (from != null) payload['from'] = from;
-    return RouteIntent(
-      type: 'OpenPumpSession',
-      path: '/pump',
-      payload: payload,
-    );
-  }
-
   return RouteIntent(
     type: 'AgentArtifactRouteIntent',
     payload: {'rawRoute': route, 'status': 'unknown'},

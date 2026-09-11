@@ -148,9 +148,9 @@ class MomCozySessionManager {
   }
 
   Future<MomCozySession> logout(MomCozySession current) async {
+    await store.clearSession();
     await scopedCacheStore.clearUserScope(current.userId);
     await scopedCacheStore.clearNativePendingState();
-    await store.clearSession();
     return current.loggedOut();
   }
 

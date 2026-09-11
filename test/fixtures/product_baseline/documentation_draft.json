@@ -1,0 +1,87 @@
+{
+  "appointment": {
+    "id": "4b5b532f-153f-4d48-9800-a1fa7dc8f8a0",
+    "episode_id": "dbe8b807-43c0-4d54-ae40-2a9f0b10269c",
+    "provider_id": "694bad2d-d302-4704-a56a-331d9db7c404",
+    "provider_name": "Test IBCLC",
+    "starts_at": "2026-09-10T16:00:00Z",
+    "ends_at": "2026-09-10T17:00:00Z",
+    "timezone": "America/Los_Angeles",
+    "region": "CA",
+    "status": "completed",
+    "hold_expires_at": "2026-09-09T12:10:00Z",
+    "version": 4,
+    "intake_version": 0,
+    "confirmed_at": "2026-09-09T12:00:00Z",
+    "cancelled_at": null
+  },
+  "consultation": {
+    "id": "17f383df-dc12-4791-8ec4-90affe45f2bc",
+    "appointment_id": "4b5b532f-153f-4d48-9800-a1fa7dc8f8a0",
+    "episode_id": "dbe8b807-43c0-4d54-ae40-2a9f0b10269c",
+    "version": 3,
+    "status": "note_pending",
+    "room_status": "closing",
+    "video_provider": "sandbox",
+    "started_at": "2026-09-10T15:55:00Z",
+    "ended_at": "2026-09-10T15:55:00Z",
+    "end_reason": "completed"
+  },
+  "note": {
+    "id": "f211e2a3-2d91-46db-bfbb-fad0fb00a6ef",
+    "consultation_id": "17f383df-dc12-4791-8ec4-90affe45f2bc",
+    "author_id": "694bad2d-d302-4704-a56a-331d9db7c404",
+    "revises_id": null,
+    "amendment_reason": "",
+    "revision": 1,
+    "version": 1,
+    "status": "draft",
+    "signed_at": null,
+    "updated_at": "2026-09-10T15:55:00Z",
+    "content": {
+      "subjective": "Private report from the client",
+      "objective": "Private observations",
+      "assessment": "Professional assessment",
+      "plan": "Professional next steps"
+    }
+  },
+  "note_history": [
+    {
+      "id": "f211e2a3-2d91-46db-bfbb-fad0fb00a6ef",
+      "consultation_id": "17f383df-dc12-4791-8ec4-90affe45f2bc",
+      "author_id": "694bad2d-d302-4704-a56a-331d9db7c404",
+      "revises_id": null,
+      "amendment_reason": "",
+      "revision": 1,
+      "version": 1,
+      "status": "draft",
+      "signed_at": null,
+      "updated_at": "2026-09-10T15:55:00Z"
+    }
+  ],
+  "plan": {
+    "id": "1d4e209f-00fd-4ac5-b833-3a9ca32f855f",
+    "consultation_id": "17f383df-dc12-4791-8ec4-90affe45f2bc",
+    "version": 1,
+    "published_revision": 0,
+    "content": {
+      "title": "Our next steps",
+      "summary": "Published client-facing summary",
+      "goals": [
+        "Review progress together"
+      ],
+      "tasks": [
+        {
+          "source_key": "log-observation",
+          "title": "Record an observation",
+          "description": "Record the agreed observation.",
+          "category": "观察",
+          "due_label": "今天",
+          "scheduled_date": null
+        }
+      ]
+    },
+    "updated_at": "2026-09-10T15:55:00Z"
+  },
+  "publication": null
+}

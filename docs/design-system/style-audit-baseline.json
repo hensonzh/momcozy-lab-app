@@ -1,0 +1,1062 @@
+[
+  {
+    "path": "lib/app/ibclc/workbench_shell.dart",
+    "colors": {},
+    "font_sizes": {
+      "12": 3,
+      "11": 1,
+      "13": 1,
+      "14": 1,
+      "10": 1
+    },
+    "radii": {
+      "11": 1,
+      "12": 1
+    }
+  },
+  {
+    "path": "lib/app/mom_bottom_navigation.dart",
+    "colors": {
+      "transparent": 1,
+      "ff93818e": 2
+    },
+    "font_sizes": {
+      "10": 2
+    },
+    "radii": {
+      "15": 1
+    }
+  },
+  {
+    "path": "lib/app/momcozy_app.dart",
+    "colors": {
+      "ff7f6a75": 1,
+      "ff9f6378": 1,
+      "ff862644": 3,
+      "ffb2773b": 1,
+      "ffa21849": 1,
+      "ff6b6da8": 1
+    },
+    "font_sizes": {},
+    "radii": {}
+  },
+  {
+    "path": "lib/features/agent_hub/agent_hub_page.dart",
+    "colors": {
+      "fffff1f4": 1,
+      "ffffd5df": 1,
+      "transparent": 11,
+      "black": 1,
+      "ff7a6670": 1,
+      "ff3b2f36": 1,
+      "ffffeef5": 1,
+      "ffecacc3": 1,
+      "ffffe8f0": 1,
+      "fff6d2de": 1,
+      "ffdc7897": 1,
+      "white": 2,
+      "ffe4a060": 1,
+      "ff7dbcb1": 1,
+      "ffd67697": 1,
+      "00fff8f6": 1,
+      "ff75545f": 1,
+      "ff3f3038": 2,
+      "fff8f0f1": 1,
+      "73eadde2": 1,
+      "ffb64b4b": 1,
+      "ff9b7a84": 1,
+      "ff4a3a40": 1,
+      "ffdbc3cb": 2,
+      "fff8edf2": 2,
+      "9effffff": 1,
+      "ffeadde2": 1,
+      "ffb78294": 1,
+      "ff8f7a84": 1,
+      "ffaa929f": 1,
+      "ff3d7d85": 1,
+      "ffb8d7d4": 1,
+      "ff9a7a86": 2,
+      "ff5d3f4d": 1,
+      "ff98a3af": 2,
+      "ff2d3745": 1,
+      "ffaa647d": 1,
+      "ff8bbdb5": 1,
+      "ff754c5e": 3
+    },
+    "font_sizes": {
+      "13": 2,
+      "10": 2,
+      "11": 3,
+      "17": 1,
+      "14": 2
+    },
+    "radii": {
+      "14": 1,
+      "8": 5,
+      "10": 1,
+      "16": 1,
+      "22": 1,
+      "24": 1
+    }
+  },
+  {
+    "path": "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+    "colors": {
+      "white": 1
+    },
+    "font_sizes": {},
+    "radii": {}
+  },
+  {
+    "path": "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+    "colors": {
+      "ff8c4768": 1,
+      "fffffdfc": 1,
+      "ffeadfe5": 1,
+      "12412a34": 1,
+      "ff2f1f29": 1,
+      "fffbfdfc": 1,
+      "ffd6dde5": 2,
+      "0d000000": 1,
+      "ff177a89": 3,
+      "ff142726": 1,
+      "white": 2,
+      "ff182b2a": 1,
+      "ff1a6863": 1,
+      "ffe9f3f1": 1,
+      "ff7a4260": 1,
+      "fff4edf1": 1,
+      "ff60706e": 1,
+      "fff6fbfa": 1,
+      "ffdbe7e4": 1,
+      "ffb9cbc8": 1,
+      "ff586967": 1,
+      "ff71807d": 1,
+      "ffd7dfdd": 1,
+      "ff778683": 1
+    },
+    "font_sizes": {
+      "22": 1,
+      "16": 1,
+      "13": 1,
+      "12": 1,
+      "11": 2,
+      "14": 1
+    },
+    "radii": {
+      "22": 1,
+      "16": 1,
+      "14": 1,
+      "12": 2,
+      "10": 1,
+      "6": 1,
+      "3": 1,
+      "999": 1
+    }
+  },
+  {
+    "path": "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart",
+    "colors": {
+      "ff171717": 3,
+      "ff525252": 2,
+      "ff207d93": 5,
+      "white": 4,
+      "ffd4d4d4": 1,
+      "ff55727a": 1,
+      "ff737373": 2,
+      "ff9db7bd": 1,
+      "fffffdfc": 1,
+      "ffeadfe5": 1,
+      "0f412a34": 1,
+      "ffe5e5e5": 3,
+      "ff8a737c": 1,
+      "ffd84c5f": 1,
+      "fffbfaf9": 1,
+      "fffff6f8": 1,
+      "ffefd6de": 1,
+      "ffecced8": 1,
+      "ff743149": 1,
+      "fff4fbf6": 1,
+      "ffd8e8de": 1,
+      "ffcfe5d7": 1,
+      "ff27634d": 1,
+      "fff3f8ff": 1,
+      "ffd7e2f3": 1,
+      "ffcbdcf2": 1,
+      "ff2c5c92": 1,
+      "fffff8ee": 1,
+      "ffeadcc8": 1,
+      "ffead7bb": 1,
+      "ff7a5425": 1
+    },
+    "font_sizes": {
+      "14": 1,
+      "12": 1
+    },
+    "radii": {
+      "14": 6,
+      "12": 2,
+      "18": 1
+    }
+  },
+  {
+    "path": "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+    "colors": {
+      "transparent": 2,
+      "fffffbfc": 1,
+      "ffe7dce1": 2,
+      "10532f40": 1,
+      "ffedf7f5": 2,
+      "ff247b76": 5,
+      "ff8a6d7a": 1,
+      "ff372330": 1,
+      "ff725b67": 1,
+      "white": 1,
+      "fffffdfd": 1,
+      "24532f40": 1,
+      "ff30232a": 2,
+      "ffeee4e8": 2
+    },
+    "font_sizes": {
+      "10": 1,
+      "13": 1,
+      "11": 1,
+      "16": 1
+    },
+    "radii": {
+      "8": 5,
+      "14": 1,
+      "13": 1
+    }
+  },
+  {
+    "path": "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+    "colors": {
+      "520f0a0d": 1,
+      "40000000": 1,
+      "ff3f3038": 2,
+      "66eadde2": 1,
+      "ffb64b4b": 1,
+      "fff2e6e9": 1,
+      "transparent": 1,
+      "ff7a5360": 1
+    },
+    "font_sizes": {
+      "12": 2,
+      "14": 1,
+      "11": 1,
+      "13": 1
+    },
+    "radii": {
+      "14": 2
+    }
+  },
+  {
+    "path": "lib/features/agent_hub/presentation/agent_file_previews.dart",
+    "colors": {},
+    "font_sizes": {},
+    "radii": {
+      "12": 2,
+      "10": 1
+    }
+  },
+  {
+    "path": "lib/features/agent_hub/presentation/agent_image_previews.dart",
+    "colors": {
+      "white": 2,
+      "black": 4
+    },
+    "font_sizes": {
+      "12": 1
+    },
+    "radii": {
+      "12": 1,
+      "8": 1
+    }
+  },
+  {
+    "path": "lib/features/media/presentation/media_viewer_page.dart",
+    "colors": {
+      "33000000": 1,
+      "black": 2,
+      "b3ffffff": 2
+    },
+    "font_sizes": {
+      "14": 2
+    },
+    "radii": {}
+  },
+  {
+    "path": "lib/features/media/presentation/product_asset_video_player.dart",
+    "colors": {
+      "black": 4,
+      "b3ffffff": 5,
+      "white": 7,
+      "99000000": 1,
+      "a6000000": 1,
+      "66ffffff": 1,
+      "33ffffff": 1
+    },
+    "font_sizes": {
+      "14": 2,
+      "12": 1
+    },
+    "radii": {
+      "8": 2
+    }
+  },
+  {
+    "path": "lib/features/motion_assessment/data/motion_pose_platform.dart",
+    "colors": {
+      "black": 1,
+      "white": 1
+    },
+    "font_sizes": {},
+    "radii": {}
+  },
+  {
+    "path": "lib/features/motion_assessment/presentation/motion_assessment_page.dart",
+    "colors": {
+      "black": 4,
+      "white": 5,
+      "orangeAccent": 1,
+      "ff51e1d2": 1,
+      "ff2b2024": 1,
+      "ffffc2cf": 1
+    },
+    "font_sizes": {
+      "16": 1
+    },
+    "radii": {
+      "4": 1,
+      "24": 1
+    }
+  },
+  {
+    "path": "lib/features/motion_assessment/presentation/motion_pose_overlay.dart",
+    "colors": {
+      "ff51e1d2": 1,
+      "ffff79ae": 1,
+      "ffffd166": 1,
+      "ffffa14a": 1,
+      "ffa993ff": 1,
+      "white": 1
+    },
+    "font_sizes": {},
+    "radii": {}
+  },
+  {
+    "path": "lib/features/notifications/presentation/notifications_page.dart",
+    "colors": {
+      "white": 1
+    },
+    "font_sizes": {},
+    "radii": {
+      "22": 3,
+      "18": 1
+    }
+  },
+  {
+    "path": "lib/features/onboarding/presentation/avatar_task_banner.dart",
+    "colors": {
+      "white": 3,
+      "fffff2e4": 1,
+      "ffe8f5ea": 1,
+      "transparent": 1
+    },
+    "font_sizes": {
+      "14.5": 1,
+      "12.5": 1
+    },
+    "radii": {
+      "18": 2
+    }
+  },
+  {
+    "path": "lib/features/onboarding/presentation/onboarding_page.dart",
+    "colors": {
+      "ffffecec": 1,
+      "ffe8f5ea": 1,
+      "white": 4,
+      "transparent": 2
+    },
+    "font_sizes": {
+      "12.5": 3,
+      "20": 1,
+      "24": 1,
+      "18": 1,
+      "27": 1,
+      "29": 2,
+      "14": 1,
+      "15": 3,
+      "12": 1,
+      "14.5": 1,
+      "13": 2,
+      "16": 1
+    },
+    "radii": {
+      "12": 1,
+      "99": 1,
+      "14": 2,
+      "22": 3,
+      "20": 3,
+      "16": 1,
+      "28": 1
+    }
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_growth_curve.dart",
+    "colors": {
+      "transparent": 1,
+      "ffa0928f": 1,
+      "ffeee5e2": 1,
+      "ffe7f1ed": 1,
+      "ffc9dcd5": 1,
+      "ff302b2c": 2
+    },
+    "font_sizes": {
+      "13": 1,
+      "10": 3,
+      "12": 1,
+      "11": 1
+    },
+    "radii": {
+      "14": 1,
+      "11": 1
+    }
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_home_page.dart",
+    "colors": {
+      "ff857167": 1,
+      "ff7d5c83": 1,
+      "fff0e7f1": 1
+    },
+    "font_sizes": {
+      "12": 1,
+      "26": 2,
+      "10": 2,
+      "11": 1
+    },
+    "radii": {
+      "12": 1,
+      "20": 2
+    }
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_overview_cards.dart",
+    "colors": {
+      "ff7d6a89": 1,
+      "transparent": 1
+    },
+    "font_sizes": {
+      "14": 2,
+      "11": 2,
+      "13": 1,
+      "10": 2,
+      "16": 1,
+      "17": 1,
+      "9": 1,
+      "12": 1
+    },
+    "radii": {
+      "12": 7,
+      "9": 2,
+      "16": 1,
+      "15": 1,
+      "8": 1
+    }
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_profile_editor.dart",
+    "colors": {},
+    "font_sizes": {
+      "19": 1,
+      "12": 2
+    },
+    "radii": {
+      "22": 1
+    }
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_record_editor.dart",
+    "colors": {},
+    "font_sizes": {
+      "19": 1,
+      "12": 1
+    },
+    "radii": {
+      "22": 1
+    }
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_record_fields.dart",
+    "colors": {},
+    "font_sizes": {
+      "12": 4
+    },
+    "radii": {
+      "14": 1
+    }
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_records_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "18": 1,
+      "12": 2
+    },
+    "radii": {
+      "12": 1
+    }
+  },
+  {
+    "path": "lib/modules/consultation/presentation/device_check_dialog.dart",
+    "colors": {
+      "ff2b373c": 1,
+      "white": 1
+    },
+    "font_sizes": {
+      "13": 2,
+      "12": 2
+    },
+    "radii": {
+      "14": 1,
+      "8": 1
+    }
+  },
+  {
+    "path": "lib/modules/consultation/presentation/room_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "13": 2,
+      "22": 1,
+      "12": 4,
+      "10": 1,
+      "18": 1
+    },
+    "radii": {
+      "12": 1,
+      "99": 1
+    }
+  },
+  {
+    "path": "lib/modules/consultation/presentation/video_stage.dart",
+    "colors": {
+      "ff2b373c": 1,
+      "ff43575f": 2,
+      "white": 3,
+      "ffd8e0e4": 1,
+      "ffe0e7ea": 2,
+      "ff849298": 1
+    },
+    "font_sizes": {
+      "18": 1,
+      "12": 2,
+      "10": 1,
+      "11": 1
+    },
+    "radii": {
+      "22": 1,
+      "14": 3
+    }
+  },
+  {
+    "path": "lib/modules/ibclc/appointments/presentation/appointments_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "11": 4,
+      "13": 4,
+      "12": 3
+    },
+    "radii": {}
+  },
+  {
+    "path": "lib/modules/ibclc/appointments/presentation/intake_review_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "18": 2,
+      "12": 1
+    },
+    "radii": {}
+  },
+  {
+    "path": "lib/modules/ibclc/auth/presentation/workbench_login_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "13": 1,
+      "26": 1,
+      "12": 1
+    },
+    "radii": {}
+  },
+  {
+    "path": "lib/modules/ibclc/documentation/presentation/documentation_editors.dart",
+    "colors": {},
+    "font_sizes": {
+      "14": 1
+    },
+    "radii": {
+      "12": 1
+    }
+  },
+  {
+    "path": "lib/modules/ibclc/documentation/presentation/documentation_page.dart",
+    "colors": {},
+    "font_sizes": {},
+    "radii": {
+      "18": 1,
+      "10": 1
+    }
+  },
+  {
+    "path": "lib/modules/ibclc/followup/presentation/followups_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "12": 3,
+      "17": 1
+    },
+    "radii": {}
+  },
+  {
+    "path": "lib/modules/ibclc/reminders/presentation/reminders_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "16": 3,
+      "13": 2,
+      "12": 1,
+      "11": 1
+    },
+    "radii": {
+      "18": 1,
+      "12": 1
+    }
+  },
+  {
+    "path": "lib/modules/ibclc/reports/presentation/report_content.dart",
+    "colors": {},
+    "font_sizes": {
+      "17": 1,
+      "12": 5,
+      "13": 1
+    },
+    "radii": {
+      "10": 1,
+      "14": 1
+    }
+  },
+  {
+    "path": "lib/modules/ibclc/reports/presentation/report_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "13": 3,
+      "12": 2
+    },
+    "radii": {
+      "12": 1
+    }
+  },
+  {
+    "path": "lib/modules/ibclc/schedule/presentation/calendar_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "16": 1,
+      "12": 4,
+      "17": 2,
+      "10": 4,
+      "11": 1
+    },
+    "radii": {
+      "8": 2
+    }
+  },
+  {
+    "path": "lib/modules/ibclc/shared/workbench_widgets.dart",
+    "colors": {},
+    "font_sizes": {
+      "26": 1,
+      "13": 1,
+      "12": 2,
+      "11": 1
+    },
+    "radii": {
+      "8": 1
+    }
+  },
+  {
+    "path": "lib/modules/ibclc/users/presentation/clients_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "17": 1,
+      "12": 2,
+      "13": 2,
+      "20": 1,
+      "18": 1
+    },
+    "radii": {}
+  },
+  {
+    "path": "lib/modules/mom/presentation/lactation_chart.dart",
+    "colors": {
+      "ff3b2c23": 1,
+      "fffff8f1": 1,
+      "ffcdbbae": 1,
+      "12fff4e5": 1,
+      "ff9d8877": 2,
+      "73967c69": 1,
+      "80f2c49d": 1,
+      "00f2c49d": 1,
+      "ffe9bb91": 1,
+      "ffd9b394": 1,
+      "fff0c6a3": 1
+    },
+    "font_sizes": {
+      "17": 2,
+      "12": 2,
+      "54": 1,
+      "13": 1,
+      "10": 2
+    },
+    "radii": {
+      "8": 1
+    }
+  },
+  {
+    "path": "lib/modules/mom/presentation/lactation_panel.dart",
+    "colors": {
+      "003b2c23": 1
+    },
+    "font_sizes": {
+      "22": 2,
+      "12": 5,
+      "17": 2,
+      "14": 1,
+      "10": 1
+    },
+    "radii": {
+      "13": 1
+    }
+  },
+  {
+    "path": "lib/modules/mom/presentation/mother_diary_editor.dart",
+    "colors": {},
+    "font_sizes": {
+      "22": 1
+    },
+    "radii": {
+      "22": 1
+    }
+  },
+  {
+    "path": "lib/modules/mom/presentation/mother_home_page.dart",
+    "colors": {
+      "ff857167": 1,
+      "ff685647": 1
+    },
+    "font_sizes": {
+      "26": 1,
+      "11": 2,
+      "19": 1
+    },
+    "radii": {
+      "18": 1
+    }
+  },
+  {
+    "path": "lib/modules/mom/presentation/mother_status_card.dart",
+    "colors": {
+      "fff4eee6": 1,
+      "ffefe6d9": 1,
+      "fff5efe5": 1,
+      "fff7f0e6": 1,
+      "fff8ece6": 1,
+      "fff4e3dc": 1,
+      "fff8eee7": 1,
+      "fff3e5df": 1,
+      "transparent": 1,
+      "ff60544b": 1,
+      "ff705b4a": 1,
+      "ff3b322b": 1,
+      "ff817167": 1,
+      "b8fffbed": 1,
+      "80f3dfbe": 1,
+      "33fff9ef": 1,
+      "a6fff9f1": 1
+    },
+    "font_sizes": {
+      "13": 2,
+      "10": 1
+    },
+    "radii": {
+      "22": 1
+    }
+  },
+  {
+    "path": "lib/modules/profile/presentation/more_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "22": 1
+    },
+    "radii": {}
+  },
+  {
+    "path": "lib/modules/schedule/presentation/schedule_page.dart",
+    "colors": {
+      "white": 2
+    },
+    "font_sizes": {
+      "12": 1
+    },
+    "radii": {
+      "12": 2
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/appointment_summary.dart",
+    "colors": {},
+    "font_sizes": {
+      "12": 2,
+      "18": 1,
+      "17": 1,
+      "11": 1
+    },
+    "radii": {
+      "22": 1
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/booking_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "12": 5,
+      "19": 1,
+      "23": 1,
+      "13": 2,
+      "11": 1,
+      "17": 1
+    },
+    "radii": {
+      "14": 1,
+      "18": 3,
+      "22": 1
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/consultation_summary_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "13": 2,
+      "27": 1,
+      "15": 1,
+      "12": 6,
+      "21": 1,
+      "16": 1,
+      "14": 1,
+      "18": 1,
+      "11": 1
+    },
+    "radii": {
+      "20": 1,
+      "8": 1,
+      "14": 1
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/expert_support_section.dart",
+    "colors": {
+      "ff685647": 1
+    },
+    "font_sizes": {
+      "19": 1,
+      "12": 2,
+      "16": 1,
+      "11": 3,
+      "23": 1
+    },
+    "radii": {
+      "20": 1
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/intake_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "12": 3,
+      "17": 3,
+      "13": 1,
+      "14": 2
+    },
+    "radii": {
+      "20": 1
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/service_catalog_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "21": 1,
+      "24": 1,
+      "13": 1,
+      "12": 2
+    },
+    "radii": {
+      "20": 1
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/service_package_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "25": 1,
+      "15": 1,
+      "28": 1,
+      "18": 1,
+      "14": 1
+    },
+    "radii": {
+      "20": 1
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/service_progress_page.dart",
+    "colors": {},
+    "font_sizes": {
+      "25": 1,
+      "12": 1,
+      "11": 1,
+      "13": 1
+    },
+    "radii": {
+      "16": 1
+    }
+  },
+  {
+    "path": "lib/modules/services/presentation/service_purchase_dialog.dart",
+    "colors": {},
+    "font_sizes": {
+      "21": 1,
+      "13": 1,
+      "12": 2,
+      "22": 1,
+      "18": 2
+    },
+    "radii": {
+      "12": 1
+    }
+  },
+  {
+    "path": "lib/shared/design_system/momcozy_design_system.dart",
+    "colors": {
+      "fffaf7f3": 1,
+      "ff302a29": 1,
+      "fffffefc": 2,
+      "ffb45870": 1,
+      "ff8e3f54": 1,
+      "fff6e7eb": 1,
+      "fff3eeea": 2,
+      "ff786f6c": 1,
+      "ffe5dad4": 1,
+      "ffdca47a": 1,
+      "ff4d846f": 1,
+      "ffe6f1ec": 1,
+      "ffa7783a": 1,
+      "fff6eddc": 1,
+      "ff8752c7": 1,
+      "fff3ebf9": 1,
+      "ff587d9c": 1,
+      "ffe8f0f6": 1,
+      "ffb44b4f": 2,
+      "fff5f1ed": 1,
+      "24392832": 1,
+      "1f392832": 1
+    },
+    "font_sizes": {},
+    "radii": {}
+  },
+  {
+    "path": "lib/shared/design_system/momcozy_theme.dart",
+    "colors": {
+      "ffdc2626": 1,
+      "ffffe4e6": 1,
+      "transparent": 1
+    },
+    "font_sizes": {
+      "13": 1
+    },
+    "radii": {
+      "5": 1
+    }
+  },
+  {
+    "path": "lib/shared/widgets/choice_field.dart",
+    "colors": {},
+    "font_sizes": {
+      "16": 1,
+      "14": 1
+    },
+    "radii": {}
+  },
+  {
+    "path": "lib/shared/widgets/knowledge_banner.dart",
+    "colors": {
+      "transparent": 2,
+      "fffcf9fc": 1,
+      "fff3ebf9": 1,
+      "ffe5d4f5": 1,
+      "00e5d4f5": 1,
+      "fff9e7e2": 1,
+      "00f9e7e2": 1,
+      "ff715487": 1,
+      "ff352d40": 1,
+      "ff6b5c76": 1,
+      "ffeee5f5": 1,
+      "white": 2,
+      "59ffffff": 1,
+      "1f8752c7": 1,
+      "ffc8dde0": 2,
+      "ffeaf2f3": 1,
+      "fff5f9f9": 1,
+      "fffbf8f5": 1,
+      "8cfffefc": 1,
+      "ff3e626c": 2,
+      "ff7f7375": 1
+    },
+    "font_sizes": {
+      "11": 1,
+      "19": 1,
+      "12": 2,
+      "10": 2,
+      "17": 1,
+      "16": 1,
+      "22": 1
+    },
+    "radii": {
+      "18": 3
+    }
+  },
+  {
+    "path": "lib/shared/widgets/month_selector.dart",
+    "colors": {
+      "transparent": 1,
+      "white": 1
+    },
+    "font_sizes": {
+      "14": 1,
+      "11": 1,
+      "12": 1
+    },
+    "radii": {
+      "8": 1
+    }
+  },
+  {
+    "path": "lib/shared/widgets/product_feedback.dart",
+    "colors": {},
+    "font_sizes": {
+      "16": 1
+    },
+    "radii": {
+      "12": 1
+    }
+  }
+]

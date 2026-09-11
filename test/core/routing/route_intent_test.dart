@@ -5,39 +5,34 @@ import '../../support/fixture_reader.dart';
 
 void main() {
   group('Route intent fixtures', () {
-    test(
-      'keeps retired events generic and migrates old status links to Me',
-      () {
-        const retiredEvents = ['summary', 'mom_baby', 'health_issue'];
+    test('keeps retired events generic and rejects retired status routes', () {
+      const retiredEvents = ['summary', 'mom_baby', 'health_issue'];
 
-        for (final event in retiredEvents) {
-          final actual = routeIntentFromNativeNotification({
-            'path': '/',
-            'notifyJson': '{"event":"$event","body":"retired"}',
-          });
-
-          expect(actual?.type, 'OpenAgentHub', reason: event);
-          expect(actual?.path, '/', reason: event);
-          expect(actual?.payload, isEmpty, reason: event);
-        }
-
-        final legacyStatus = routeIntentFromNativeNotification({
-          'path': '/status?mmcNotify=growth',
-          'notifyJson': '{"event":"grown"}',
+      for (final event in retiredEvents) {
+        final actual = routeIntentFromNativeNotification({
+          'path': '/',
+          'notifyJson': '{"event":"$event","body":"retired"}',
         });
 
-        expect(legacyStatus?.type, 'OpenMe');
-        expect(legacyStatus?.path, '/me');
-        expect(legacyStatus?.payload, const {'source': 'legacy-status-route'});
-        expect(legacyStatus?.consume, 'once');
-      },
-    );
+        expect(actual?.type, 'OpenAgentHub', reason: event);
+        expect(actual?.path, '/', reason: event);
+        expect(actual?.payload, isEmpty, reason: event);
+      }
 
-    test('maps native Plan navigation to the canonical Plan route', () {
-      final intent = routeIntentFromNativeNotification({'path': '/plan'});
+      final legacyStatus = routeIntentFromNativeNotification({
+        'path': '/status?mmcNotify=growth',
+        'notifyJson': '{"event":"grown"}',
+      });
 
-      expect(intent?.type, 'OpenPlan');
-      expect(intent?.path, '/plan');
+      expect(legacyStatus?.type, 'NotFoundIntent');
+      expect(legacyStatus?.path, '/status');
+    });
+
+    test('maps native Schedule navigation to the canonical Schedule route', () {
+      final intent = routeIntentFromNativeNotification({'path': '/schedule'});
+
+      expect(intent?.type, 'OpenSchedule');
+      expect(intent?.path, '/schedule');
       expect(intent?.payload, const {'source': 'native-navigation'});
       expect(intent?.consume, 'once');
     });
@@ -75,7 +70,7 @@ void main() {
       },
     );
 
-    test('map pump pending navigation payloads to one-shot intents', () {
+    test('map legacy pump notifications to the lactation surface', () {
       final fixture = readFixtureMap(
         'route_intents/pump_notification_intents.json',
       );

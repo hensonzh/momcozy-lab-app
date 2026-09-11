@@ -7,6 +7,8 @@ import 'package:video_player/video_player.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fake_video_player_platform.dart';
+import '../../support/momcozy_test_fonts.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 
 void main() {
   late VideoPlayerPlatform previousPlatform;
@@ -21,6 +23,107 @@ void main() {
   tearDown(() {
     VideoPlayerPlatform.instance = previousPlatform;
   });
+
+  for (final width in [320.0, 390.0, 430.0]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets(
+        'video long duration, controls and fullscreen $width / $scale',
+        (tester) async {
+          await loadMomCozyTestFonts();
+          tester.view.physicalSize = Size(width, 844);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          videoPlatform = FakeVideoPlayerPlatform(
+            initializations: [
+              const FakeVideoInitialization.success(
+                duration: Duration(hours: 12, minutes: 34, seconds: 56),
+              ),
+            ],
+          );
+          VideoPlayerPlatform.instance = videoPlatform;
+          await tester.pumpWidget(
+            MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: momCozyTheme(),
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(scale)),
+                child: child!,
+              ),
+              home: Scaffold(
+                body: ProductAssetVideoPlayer(
+                  reference: ProductAssetReference.tryParse(
+                    '/v1/assets/asset-video?kind=video',
+                  )!,
+                  repository: _repository(),
+                ),
+              ),
+            ),
+          );
+          await _pumpUntilFound(
+            tester,
+            find.byKey(const ValueKey('product-asset-video-player')),
+          );
+          expect(tester.takeException(), isNull);
+          if (scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/media-video-${width.toInt()}.png',
+              ),
+            );
+          }
+          await tester.tap(
+            find.byKey(const ValueKey('product-asset-video-play-pause')),
+          );
+          await tester.pump();
+          expect(videoPlatform.playedIds, [1]);
+          await tester.tap(
+            find.byKey(const ValueKey('product-asset-video-play-pause')),
+          );
+          await tester.pump();
+          expect(videoPlatform.pausedIds, contains(1));
+          await tester.tap(
+            find.byKey(const ValueKey('product-asset-video-progress')),
+          );
+          await tester.pump();
+          expect(videoPlatform.seekCommands, isNotEmpty);
+          await tester.tap(
+            find.byKey(const ValueKey('product-asset-video-volume')),
+          );
+          await tester.pump();
+          expect(videoPlatform.volumeCommands, contains((1, 0.0)));
+          await tester.tap(
+            find.byKey(const ValueKey('product-asset-video-fullscreen')),
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          if (scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/media-fullscreen-${width.toInt()}.png',
+              ),
+            );
+          }
+          await tester.tap(
+            find
+                .byKey(const ValueKey('product-asset-video-exit-fullscreen'))
+                .first,
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.byKey(const ValueKey('product-asset-video-immersive')),
+            findsNothing,
+          );
+          await tester.pumpWidget(const SizedBox());
+          await _pumpUntil(tester, () => videoPlatform.disposedIds.contains(1));
+        },
+      );
+    }
+  }
 
   test('fake platform supports a successful controller lifecycle', () async {
     final controller = VideoPlayerController.networkUrl(
