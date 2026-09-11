@@ -57,7 +57,7 @@
       ]
     },
     {
-      "name": "core_records_plans_files",
+      "name": "core_records_schedule_files",
       "service": "product",
       "steps": [
         {
@@ -85,14 +85,9 @@
           }
         },
         {
-          "method": "POST",
-          "path": "/v1/plans",
-          "headers": ["${auth_header}", "${idempotency_header}"],
-          "body": {
-            "plan_type": "birth_journey",
-            "title": "Smoke plan",
-            "source": "smoke"
-          }
+          "method": "GET",
+          "path": "/v1/schedule?start_date=${today}&end_date=${tomorrow}&timezone=UTC",
+          "headers": ["${auth_header}"]
         },
         {
           "method": "GET",

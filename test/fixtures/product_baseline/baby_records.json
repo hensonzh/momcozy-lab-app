@@ -1,0 +1,88 @@
+{
+  "items": [
+    {
+      "id": "76d4c697-ae8a-40f1-88cd-709028d803b0",
+      "baby_id": "5d56ff19-4f29-4414-9554-a125669a314b",
+      "version": 1,
+      "observation": {
+        "occurred_at": "2026-09-01T08:00:00Z",
+        "note": "合成测试记录",
+        "kind": "feeding",
+        "method": "expressed_milk",
+        "side": null,
+        "volume_ml": 60.0,
+        "duration_minutes": null
+      },
+      "deleted_at": null,
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-09-01T12:00:00Z"
+    },
+    {
+      "id": "7e0ec939-4ae7-45cc-a6bc-aed8b3c66920",
+      "baby_id": "5d56ff19-4f29-4414-9554-a125669a314b",
+      "version": 1,
+      "observation": {
+        "occurred_at": "2026-09-01T08:00:00Z",
+        "note": "",
+        "kind": "diaper",
+        "diaper_kind": "both",
+        "color": "yellow",
+        "consistency": "loose",
+        "signs": []
+      },
+      "deleted_at": null,
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-09-01T12:00:00Z"
+    },
+    {
+      "id": "271fe238-fa0b-40a8-a47f-a13fe8b1ec5a",
+      "baby_id": "5d56ff19-4f29-4414-9554-a125669a314b",
+      "version": 1,
+      "observation": {
+        "occurred_at": "2026-09-01T06:00:00Z",
+        "note": "",
+        "kind": "sleep",
+        "ended_at": "2026-09-01T07:30:00Z"
+      },
+      "deleted_at": null,
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-09-01T12:00:00Z"
+    },
+    {
+      "id": "352c2006-50cd-478a-b0da-32fb865dde73",
+      "baby_id": "5d56ff19-4f29-4414-9554-a125669a314b",
+      "version": 1,
+      "observation": {
+        "recorded_on": "2026-09-01",
+        "timezone": "Asia/Shanghai",
+        "kind": "development",
+        "item_id": "looks-at-face",
+        "status": "observed",
+        "label": "看向靠近的脸"
+      },
+      "deleted_at": null,
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-09-01T12:00:00Z"
+    },
+    {
+      "id": "3ccfab97-7500-4b29-b064-cf0c4c25f140",
+      "baby_id": "5d56ff19-4f29-4414-9554-a125669a314b",
+      "version": 1,
+      "observation": {
+        "recorded_on": "2026-09-01",
+        "timezone": "Asia/Shanghai",
+        "kind": "growth",
+        "metric": "weight",
+        "value": 4.2,
+        "unit": "kg"
+      },
+      "deleted_at": null,
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-09-01T12:00:00Z"
+    }
+  ],
+  "total": 5,
+  "offset": 0,
+  "limit": 100,
+  "server_time": "2026-09-01T12:00:00Z"
+}

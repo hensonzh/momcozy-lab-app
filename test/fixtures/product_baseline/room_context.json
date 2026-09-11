@@ -1,0 +1,31 @@
+{
+  "appointment": {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "episode_id": "00000000-0000-0000-0000-000000000002",
+    "provider_id": "00000000-0000-0000-0000-000000000003",
+    "provider_name": "Test IBCLC",
+    "starts_at": "2026-09-08T16:00:00Z",
+    "ends_at": "2026-09-08T17:00:00Z",
+    "timezone": "America/Los_Angeles",
+    "region": "CA",
+    "status": "confirmed",
+    "hold_expires_at": "2026-09-08T15:10:00Z",
+    "version": 2,
+    "intake_version": 0,
+    "confirmed_at": "2026-09-08T15:00:00Z",
+    "cancelled_at": null
+  },
+  "viewer_role": "mom",
+  "consultation": null,
+  "participants": [],
+  "intake_ready": true,
+  "case_consent": true,
+  "video_consent": false,
+  "location": null,
+  "opens_at": "2026-09-08T15:50:00Z",
+  "closes_at": "2026-09-08T17:15:00Z",
+  "server_time": "2026-09-08T15:55:00Z",
+  "demo_early_join": false,
+  "video_provider": "sandbox",
+  "consent_policy_version": "2026-09-08"
+}

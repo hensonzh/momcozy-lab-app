@@ -1,3 +1,4 @@
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -6,8 +7,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
@@ -16,13 +16,11 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
@@ -56,6 +54,15 @@ void main() {
         reason: '$asset should replace the old GIF avatar asset',
       );
     }
+  });
+
+  testWidgets('notification conversation target opens the requested owned thread', (tester) async {
+    const state = AgentStreamRunState(phase: AgentStreamRunPhase.finished, threadId: 'notification-thread', runId: 'notification-run', textContent: 'Saved conversation update');
+    final repository = _SequencedConversationRepository([_conversationHistory(state)]);
+    await tester.pumpWidget(_host(AgentHubPage(initialConversationId: 'notification-thread', conversationRepository: repository)));
+    await tester.pumpAndSettle();
+    expect(repository.loadCalls, 1);
+    expect(find.text('Saved conversation update'), findsOneWidget);
   });
 
   testWidgets('Agent Hub renders idle composer state', (tester) async {
@@ -3123,7 +3130,7 @@ void main() {
               'title': '泌乳支持清单',
               'content': '我已经帮你整理好了。',
               'button': [
-                {'label': '打开泌乳计划', 'action': 'navigate', 'value': '/plan'},
+                {'label': '打开泌乳计划', 'action': 'navigate', 'value': '/schedule'},
               ],
             },
           },
@@ -3157,7 +3164,7 @@ void main() {
       );
       expect(
         player.realtimeSessions.single.appendedTexts.single,
-        isNot(contains('/plan')),
+        isNot(contains('/schedule')),
       );
       expect(player.realtimeSessions.single.finishCount, 1);
 
@@ -5729,214 +5736,6 @@ void main() {
     expect(find.text('确认索引动作'), findsOneWidget);
   });
 
-  testWidgets('Agent Hub renders the current IBCLC artifact family', (
-    tester,
-  ) async {
-    final actions = <AgentArtifactActionView>[];
-    final consultStore = IbclcConsultStore.inMemory(
-      now: () => DateTime.utc(2026, 7, 11),
-    );
-    final state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.finished,
-      textContent: '我整理好了。',
-      threadId: 'thread-current',
-      runId: 'run-current',
-      events: [
-        _productionArtifactEvent(
-          id: 'ibclc-current',
-          type: 'ibclc_consult_card',
-          payload: {
-            'title': 'IBCLC 咨询入口',
-            'consult_id': 'consult-current',
-            'reason': '含乳疼痛',
-            'feeding_context': '左侧喂养后持续疼痛。',
-            'urgency': 'soon',
-            'consultant': {
-              'name': 'Lin Zhao',
-              'credentials': 'IBCLC, RN',
-              'experience': '12 年经验',
-              'bio': 'IBCLC 国际认证哺乳顾问，擅长含乳支持。',
-            },
-            'chat': {'label': '开始咨询', 'note': '将同步本轮哺乳背景'},
-          },
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: state,
-          ibclcConsultStore: consultStore,
-          onArtifactAction: actions.add,
-        ),
-      ),
-    );
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-ibclc-ibclc-current')),
-      findsOneWidget,
-    );
-    expect(find.text('IBCLC 咨询入口'), findsOneWidget);
-    expect(find.text('含乳疼痛'), findsNothing);
-    expect(find.text('左侧喂养后持续疼痛。'), findsNothing);
-    expect(find.text('建议尽快咨询'), findsNothing);
-    expect(find.text('Lin Zhao'), findsOneWidget);
-    expect(find.text('IBCLC, RN'), findsOneWidget);
-    expect(find.text('12 年经验'), findsOneWidget);
-    expect(find.text('擅长含乳支持。'), findsOneWidget);
-    expect(find.textContaining('隐私政策'), findsOneWidget);
-
-    final agreementFinder = find.byKey(
-      const ValueKey('agent-ibclc-agreement-ibclc-current'),
-    );
-    await tester.scrollUntilVisible(
-      agreementFinder,
-      -240,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(agreementFinder);
-    await tester.pump();
-    final consultFinder = find.byKey(
-      const ValueKey('agent-ibclc-open-ibclc-current'),
-    );
-    expect(
-      find.descendant(
-        of: consultFinder,
-        matching: find.byIcon(Icons.chat_bubble_outline_rounded),
-      ),
-      findsNothing,
-    );
-    await tester.tap(consultFinder);
-    await tester.pump();
-
-    expect(actions.single.routePath, '/ibclc-chat.html');
-    final routeState = actions.single.routeExtra as IbclcConsultRouteState;
-    expect(routeState.consultId, 'consult-current');
-    expect(routeState.sourceArtifactId, 'ibclc-current');
-    expect(routeState.threadId, 'thread-current');
-    expect(routeState.runId, 'run-current');
-    expect(routeState.returnPath, '/');
-    expect(routeState.reason, '含乳疼痛');
-    expect(routeState.feedingContext, '左侧喂养后持续疼痛。');
-
-    await consultStore.markCompleted(routeState);
-    await tester.pump();
-
-    expect(find.text('咨询结束'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-ibclc-agreement-ibclc-current')),
-      findsNothing,
-    );
-  });
-
-  testWidgets('Agent Hub restores the IBCLC return scroll offset', (
-    tester,
-  ) async {
-    final consultStore = IbclcConsultStore.inMemory(
-      now: () => DateTime.utc(2026, 7, 11),
-    );
-    final history = List<AgentHubHistoryMessage>.generate(
-      32,
-      (index) => AgentHubHistoryMessage(
-        role: index.isEven
-            ? AgentHubHistoryRole.user
-            : AgentHubHistoryRole.assistant,
-        content: '第 $index 条历史消息，用于验证咨询返回后的滚动锚点。',
-      ),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(historyMessages: history, ibclcConsultStore: consultStore),
-      ),
-    );
-    await tester.pump();
-
-    final scrollable = tester.state<ScrollableState>(
-      find.byType(Scrollable).first,
-    );
-    final position = scrollable.position;
-    expect(position.maxScrollExtent, greaterThan(240));
-    position.jumpTo(240);
-    await tester.pump();
-    const routeState = IbclcConsultRouteState(
-      consultId: 'consult-scroll',
-      sourceArtifactId: 'artifact-scroll',
-      returnPath: '/',
-      returnScrollOffset: 240,
-    );
-    consultStore.beginConsult(routeState);
-    position.jumpTo(0);
-
-    await consultStore.markCompleted(routeState);
-    await tester.pump();
-    await tester.pump();
-
-    expect(position.pixels, closeTo(240, 0.1));
-  });
-
-  testWidgets('Agent Hub keeps the historical IBCLC run context', (
-    tester,
-  ) async {
-    final actions = <AgentArtifactActionView>[];
-    final historicalState = AgentStreamRunState(
-      phase: AgentStreamRunPhase.finished,
-      textContent: '可以开始咨询。',
-      threadId: 'thread-history',
-      runId: 'run-history',
-      events: [
-        _productionArtifactEvent(
-          id: 'ibclc-history',
-          type: 'ibclc_consult_card',
-          payload: {
-            'title': 'IBCLC 咨询入口',
-            'consult_id': 'consult-history',
-            'reason': '含乳疼痛',
-          },
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: const AgentStreamRunState(
-            phase: AgentStreamRunPhase.idle,
-            threadId: 'thread-current',
-            runId: 'run-current',
-          ),
-          historyMessages: [
-            AgentHubHistoryMessage(
-              role: AgentHubHistoryRole.assistant,
-              content: '可以开始咨询。',
-              runState: historicalState,
-            ),
-          ],
-          ibclcConsultStore: IbclcConsultStore.inMemory(),
-          onArtifactAction: actions.add,
-        ),
-      ),
-    );
-    await tester.pump();
-
-    final agreement = find.byKey(
-      const ValueKey('agent-ibclc-agreement-ibclc-history'),
-    );
-    await tester.ensureVisible(agreement);
-    await tester.tap(agreement);
-    await tester.pump();
-    await tester.tap(
-      find.byKey(const ValueKey('agent-ibclc-open-ibclc-history')),
-    );
-    await tester.pump();
-
-    final routeState = actions.single.routeExtra as IbclcConsultRouteState;
-    expect(routeState.consultId, 'consult-history');
-    expect(routeState.threadId, 'thread-history');
-    expect(routeState.runId, 'run-history');
-  });
-
   testWidgets(
     'Agent Hub submits a support ticket without a second confirmation',
     (tester) async {
@@ -6876,7 +6675,6 @@ milk_total: 120ml
 
 [打开视频]($videoUrl)
 
-[打开购物车](/hospital-bag-cart)
 ''';
 
       await tester.pumpWidget(
@@ -6927,11 +6725,6 @@ milk_total: 120ml
         'title': '打开视频',
       });
 
-      expect(find.text('打开购物车', findRichText: true), findsNothing);
-      expect(
-        find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
-        findsNothing,
-      );
       expect(actions, hasLength(3));
     },
   );

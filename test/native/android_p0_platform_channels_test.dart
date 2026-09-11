@@ -292,7 +292,7 @@ void main() {
               channel.name,
               channel.codec.encodeMethodCall(
                 const MethodCall('activeRoute', {
-                  'path': '/plan',
+                  'path': '/schedule',
                   'notifyJson': {'event': 'plan_updated'},
                   'autoEndTeardown': false,
                 }),
@@ -315,7 +315,7 @@ void main() {
           'notifyJson': {'event': 'pump'},
         });
         expect(routes.single.toMap(), {
-          'path': '/plan',
+          'path': '/schedule',
           'notifyJson': {'event': 'plan_updated'},
         });
 

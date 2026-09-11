@@ -16,6 +16,12 @@ Future<void> loadMomCozyTestFonts() async {
     ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
 
   await Future.wait([
+    (FontLoader(
+      'Manrope',
+    )..addFont(rootBundle.load('assets/fonts/Manrope.ttf'))).load(),
+    (FontLoader(
+      'DMSans',
+    )..addFont(rootBundle.load('assets/fonts/DMSans.ttf'))).load(),
     figtree.load(),
     rubik.load(),
     quicksand.load(),

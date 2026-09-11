@@ -43,6 +43,30 @@ class _FakeNotificationsRepository implements NotificationsRepository {
   Object? error;
   String? readNotificationId;
   String? archivedNotificationId;
+  @override
+  Future<NotificationPageData> fetchPage({
+    String? cursor,
+    int limit = 30,
+  }) async => NotificationPageData(
+    items: await fetchNotifications(),
+    unreadCount: readNotificationId == null && archivedNotificationId == null
+        ? 1
+        : 0,
+  );
+  @override
+  Future<void> markAllRead() async {
+    readNotificationId = 'notification-1';
+  }
+
+  @override
+  Future<NotificationOpenTarget> openNotification(
+    String notificationId,
+  ) async => NotificationOpenTarget(
+    notification: await setReadState(
+      notificationId: notificationId,
+      read: true,
+    ),
+  );
 
   @override
   Future<List<MomCozyNotification>> fetchNotifications({

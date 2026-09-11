@@ -130,17 +130,8 @@ void main() {
     expect(find.text('Tell us about your delivery'), findsOneWidget);
     expect(find.text('2/4'), findsOneWidget);
     expect(find.text('Delivery date'), findsOneWidget);
-    expect(find.text('Gestational age at delivery'), findsOneWidget);
-    expect(find.text('Weeks *'), findsOneWidget);
-    expect(find.text('Days'), findsOneWidget);
     expect(
-      find.textContaining('personalize your postpartum recovery'),
-      findsOneWidget,
-    );
-    expect(
-      find.text(
-        'Gestational age at delivery—for example, 39 weeks + 2 days. Weeks are required; days are optional.',
-      ),
+      find.textContaining('personalize postpartum recovery'),
       findsOneWidget,
     );
     expect(find.text('Delivery method (optional)'), findsNothing);
@@ -148,25 +139,10 @@ void main() {
 
     await tester.tap(find.text('Choose date'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('OK'));
+    await tester.tap(find.text('确定'));
     await tester.pumpAndSettle();
     final deliveryContinue = find.byKey(
       const ValueKey('onboarding-postpartum-delivery-continue'),
-    );
-    await tester.ensureVisible(deliveryContinue);
-    await tester.tap(deliveryContinue);
-    await tester.pumpAndSettle();
-
-    expect(find.text('Tell us about your delivery'), findsOneWidget);
-    expect(
-      find.text('Enter the gestational weeks at delivery.'),
-      findsOneWidget,
-    );
-    expect(find.text('How was your delivery?'), findsNothing);
-
-    await tester.enterText(
-      find.byKey(const ValueKey('onboarding-gestational-weeks')),
-      '39',
     );
     await tester.ensureVisible(deliveryContinue);
     await tester.tap(deliveryContinue);
@@ -194,7 +170,6 @@ void main() {
       'display_name': 'Mia',
       'age': 32,
       'delivery_date': isA<String>(),
-      'delivery_gestational_age': {'weeks': 39},
       'delivery_type': null,
       'infant_count': 1,
       'infants': [
@@ -473,6 +448,7 @@ void main() {
       completionDisplayDuration: const Duration(minutes: 1),
     );
     final router = createMomCozyRouter(
+      initialLocation: '/',
       runtimeController: runtimeController,
       onboardingController: onboardingController,
       avatarTaskController: taskController,

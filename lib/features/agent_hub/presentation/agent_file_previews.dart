@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 
 class AgentComposerFileAttachment extends StatelessWidget {
@@ -22,7 +22,7 @@ class AgentComposerFileAttachment extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),
       decoration: BoxDecoration(
         color: MomCozyColors.card,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
         border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.72)),
       ),
       child: Row(
@@ -30,7 +30,7 @@ class AgentComposerFileAttachment extends StatelessWidget {
           DecoratedBox(
             decoration: BoxDecoration(
               color: MomCozyColors.muted,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
             ),
             child: const SizedBox.square(
               dimension: 42,
@@ -97,7 +97,7 @@ class AgentSentFiles extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
             decoration: BoxDecoration(
               color: MomCozyColors.card.withValues(alpha: 0.78),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(MomCozyRadii.control),
               border: Border.all(
                 color: MomCozyColors.border.withValues(alpha: 0.72),
               ),

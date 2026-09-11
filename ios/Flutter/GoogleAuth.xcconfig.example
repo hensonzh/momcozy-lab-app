@@ -1,0 +1,2 @@
+// Copy to GoogleAuth.xcconfig and supply the iOS reversed client ID.
+MOMCOZY_GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.REPLACE_WITH_IOS_CLIENT_ID

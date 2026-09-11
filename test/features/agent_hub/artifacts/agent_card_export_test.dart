@@ -1,8 +1,8 @@
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';

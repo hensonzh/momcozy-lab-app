@@ -73,14 +73,14 @@ void main() {
           'growth_records': [
             {'weight_g': 6200, 'height_cm': 64.5},
           ],
-          'pregnancyDiary': {'mood': 'tired'},
+          'careDiary': {'mood': 'tired'},
           'milkMl': 42,
         };
 
         expect(redactLogMap(payload), {
           'healthData': '***',
           'growth_records': '***',
-          'pregnancyDiary': '***',
+          'careDiary': {'mood': 'tired'},
           'milkMl': 42,
         });
       },

@@ -1,0 +1,25 @@
+{
+  "domain": "schedule",
+  "endpoint": "/v1/schedule",
+  "method": "GET",
+  "request": {
+    "query": {
+      "start_date": "2026-09-01",
+      "end_date": "2026-10-12",
+      "timezone": "Asia/Shanghai"
+    }
+  },
+  "variant": "success",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "personal": [],
+      "appointments": [],
+      "plans": [],
+      "episodes": [],
+      "server_time": "2026-09-09T02:00:00Z",
+      "has_more": false
+    }
+  }
+}

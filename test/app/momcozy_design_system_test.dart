@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 
 void main() {
-  test('V3 semantic tokens match the approved brand baseline', () {
-    expect(MomCozyV3Colors.brand, const Color(0xff7a2840));
-    expect(MomCozyV3Colors.ink, const Color(0xff1a1a1a));
-    expect(MomCozyV3Colors.background, const Color(0xfffbf5f3));
-    expect(MomCozyV3Colors.surface, Colors.white);
-    expect(MomCozyV3Colors.roseTint, const Color(0xfff5e6eb));
-    expect(MomCozyV3Colors.success, const Color(0xff4caf50));
+  test('semantic colors match the approved product design', () {
+    expect(MomCozyColors.primaryDark, const Color(0xff8e3f54));
+    expect(MomCozyColors.foreground, const Color(0xff302a29));
+    expect(MomCozyColors.background, const Color(0xfffaf7f3));
+    expect(MomCozyColors.raised, const Color(0xfffffefc));
+    expect(MomCozyColors.roseSoft, const Color(0xfff6e7eb));
+    expect(MomCozyColors.care, const Color(0xff4d846f));
     expect(MomCozySpacing.page, 16);
     expect(MomCozyTapTargets.minimum, 44);
   });

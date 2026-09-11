@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 
 AgentSpecializedArtifactView? mapAgentSpecializedCard({
   required AgentArtifactPresentationKind presentationKind,
@@ -84,7 +83,7 @@ AgentIbclcConsultCardView _ibclcConsultCard(
       ? explicitConsultId
       : consultIdFallbackArtifactId.trim().isNotEmpty
       ? consultIdFallbackArtifactId.trim()
-      : stableIbclcConsultId(jsonEncode(source));
+      : _stableIbclcConsultId(jsonEncode(source));
   final rawBio = _text(consultant['bio']);
   final consultantBio = rawBio
       .replaceFirst(RegExp(r'^(?:IBCLC\s*)?国际认证[哺泌]乳顾问[，,、。\s]*'), '')
@@ -132,6 +131,15 @@ String _firstText(Map<String, Object?> map, List<String> keys) {
     if (value.isNotEmpty) return value;
   }
   return '';
+}
+
+String _stableIbclcConsultId(String seed) {
+  var hash = 0x811c9dc5;
+  for (final codeUnit in seed.codeUnits) {
+    hash ^= codeUnit;
+    hash = (hash * 0x01000193) & 0xffffffff;
+  }
+  return 'ibclc_${hash.toRadixString(16).padLeft(8, '0')}';
 }
 
 String _text(Object? value) => value is String ? value.trim() : '';

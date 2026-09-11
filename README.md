@@ -1,5 +1,7 @@
 # MomCozy Flutter App
 
+IBCLC 使用独立 Flutter 入口 `lib/main_ibclc.dart`；本地运行与当前实现范围见 [工作台说明](docs/ibclc-workbench.md)。完整重构状态见 [产品基线清单](docs/product-baseline-refactor.md)。
+
 Production Flutter client for MomCozyApp.
 
 Human-facing documentation uses the canonical service names `Product Backend
@@ -146,10 +148,10 @@ available in test:
 
 - `MOMCOZY_ENABLE_AGENT_HISTORY` must remain disabled: the frozen Agent Runtime
   contract does not expose `GET /v1/agent/threads/{thread_id}/history` yet.
-- `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API=true` enables Body Profile and Motion
-  Assessment routes and extended Me/Baby resources that depend on the extended
-  Product Backend API. By default, the supported profile, feeding, growth, milk-trend,
-  and plan data remains available while unsupported summaries show an explicit
+- `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API=true` enables Motion Assessment routes
+  and other optional resources that depend on the extended Product Backend API.
+  By default, the supported profile, feeding, growth, milk-trend, and Schedule
+  data remains available while unsupported summaries show an explicit
   unavailable state.
 
 See [the integration baseline](docs/flutter/unified-app-integration.md) for

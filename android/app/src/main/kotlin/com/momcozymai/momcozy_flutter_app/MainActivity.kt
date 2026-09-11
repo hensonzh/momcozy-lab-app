@@ -39,6 +39,7 @@ class MainActivity : FlutterActivity() {
     private lateinit var pumpAgentUploadHandler: PumpAgentUploadChannelHandler
     private lateinit var pumpAgentBackgroundRunner: PumpAgentBackgroundRunner
     private lateinit var motionPosePlugin: MotionPosePlugin
+    private lateinit var notificationPermissionPlugin: NotificationPermissionPlugin
     private var scanCallback: ScanCallback? = null
     private val gatts = mutableMapOf<String, BluetoothGatt>()
     private val connectResults = mutableMapOf<String, MethodChannel.Result>()
@@ -91,6 +92,7 @@ class MainActivity : FlutterActivity() {
         }
         pumpAgentUploadChannel.setMethodCallHandler(pumpAgentUploadHandler::handle)
         motionPosePlugin = MotionPosePlugin(this, flutterEngine)
+        notificationPermissionPlugin = NotificationPermissionPlugin(this, flutterEngine.dartExecutor.binaryMessenger)
         handleLaunchNavigationIntent(intent)
     }
 
@@ -209,6 +211,7 @@ class MainActivity : FlutterActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (::notificationPermissionPlugin.isInitialized && notificationPermissionPlugin.handlePermissionResult(requestCode)) return
         when (requestCode) {
             REQUEST_BLE_PERMISSIONS -> {
                 pendingBlePermissionResult?.success(
@@ -839,6 +842,7 @@ class MainActivity : FlutterActivity() {
     private fun requestNotificationPermissionIfNeeded(result: MethodChannel.Result): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return false
         if (hasNotificationPermission()) return false
+        if (::notificationPermissionPlugin.isInitialized && notificationPermissionPlugin.permission() == "denied") return false
         if (pendingNotificationPermissionResult != null) {
             result.error(
                 "permission_request_in_progress",
@@ -848,6 +852,7 @@ class MainActivity : FlutterActivity() {
             return true
         }
         pendingNotificationPermissionResult = result
+        if (::notificationPermissionPlugin.isInitialized) notificationPermissionPlugin.notePermissionRequested()
         requestPermissions(
             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
             REQUEST_NOTIFICATION_PERMISSION
@@ -856,8 +861,9 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun hasNotificationPermission(): Boolean {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        return androidx.core.app.NotificationManagerCompat.from(this).areNotificationsEnabled() &&
+            (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
     }
 
     private fun startVoicePcmPlayback(

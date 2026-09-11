@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
-import 'package:momcozy_flutter_app/core/migrations/legacy_prenatal_contract_filter.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_form_normalizer.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -37,7 +36,6 @@ class AgentArtifactMapper {
       _stringField(payload, 'artifact_type', 'artifactType'),
       _stringField(artifact, 'artifact_type', 'artifactType'),
     ]);
-    if (isRetiredPrenatalArtifactType(artifactType)) return null;
     final isSupportTicket = _isSupportTicketType(artifactType);
     final supportTicket = isSupportTicket
         ? _firstMap([
@@ -83,7 +81,6 @@ class AgentArtifactMapper {
             _mapField(payload, 'form'),
             _mapField(artifact, 'form'),
           ]);
-    if (isRetiredPrenatalForm(rawForm)) return null;
     final form = normalizeAgentArtifactForm(rawForm);
     final explicitArtifactId = _firstNonEmpty([
       _stringField(event.raw, 'artifact_id', 'artifactId'),

@@ -1,0 +1,21 @@
+{
+  "domain": "schedule",
+  "endpoint": "/v1/schedule",
+  "method": "GET",
+  "request": {
+    "query": {
+      "start_date": "2026-09-01",
+      "end_date": "2026-10-12",
+      "timezone": "Asia/Shanghai"
+    }
+  },
+  "variant": "partial",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "personal": [],
+      "appointments": []
+    }
+  }
+}

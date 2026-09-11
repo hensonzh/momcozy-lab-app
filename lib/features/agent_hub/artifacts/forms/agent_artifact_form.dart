@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/widgets/momcozy_components.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 class AgentArtifactForm extends StatefulWidget {
@@ -92,18 +93,18 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
               style:
                   (isCollection ? textTheme.titleLarge : textTheme.titleMedium)
                       ?.copyWith(
-                        color: const Color(0xff171717),
+                        color: MomCozyColors.foreground,
                         fontWeight: FontWeight.w700,
                         height: 1.25,
                       ),
             ),
             if (widget.card.description case final description?
                 when description.trim().isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: MomCozySpacing.compact),
               Text(
                 description,
                 style: textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xff525252),
+                  color: MomCozyColors.mutedForeground,
                   height: 1.55,
                 ),
               ),
@@ -124,7 +125,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
                   ) ...[
                     _buildField(context, groups[index].fields[fieldIndex]),
                     if (fieldIndex < groups[index].fields.length - 1)
-                      const SizedBox(height: 12),
+                      const SizedBox(height: MomCozySpacing.content),
                   ],
                 ],
               )
@@ -136,7 +137,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
               ) ...[
                 _buildField(context, groups[index].fields[fieldIndex]),
                 if (fieldIndex < groups[index].fields.length - 1)
-                  const SizedBox(height: 12),
+                  const SizedBox(height: MomCozySpacing.content),
               ],
             if (index < groups.length - 1)
               SizedBox(
@@ -144,7 +145,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
               ),
           ],
           if (_submitError != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: MomCozySpacing.content),
             Text(
               _submitError!,
               key: ValueKey('agent-artifact-form-error-${widget.card.id}'),
@@ -155,37 +156,24 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
             ),
           ],
           if (!widget.dialogMode) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: MomCozySpacing.page),
             SizedBox(
               width: double.infinity,
-              height: 48,
               child: FilledButton.icon(
                 key: ValueKey('agent-artifact-form-submit-${widget.card.id}'),
                 onPressed: !_canSubmit || _isLocked ? null : submit,
                 icon: _submitIcon(),
                 label: Text(_submitLabel()),
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xff207d93),
+                  minimumSize: const Size(0, MomCozyLayout.primaryButtonHeight),
                   disabledBackgroundColor:
                       _effectivePhase == _AgentArtifactFormPhase.submitted
-                      ? Colors.white
-                      : const Color(0xffd4d4d4),
+                      ? MomCozyColors.card
+                      : MomCozyColors.disabled,
                   disabledForegroundColor:
                       _effectivePhase == _AgentArtifactFormPhase.submitted
-                      ? const Color(0xff55727a)
-                      : const Color(0xff737373),
-                  foregroundColor: Colors.white,
-                  side: BorderSide(
-                    color: _effectivePhase == _AgentArtifactFormPhase.submitted
-                        ? const Color(0xff9db7bd)
-                        : const Color(0xff207d93),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  textStyle: textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                      ? MomCozyColors.mutedForeground
+                      : MomCozyColors.mutedForeground,
                 ),
               ),
             ),
@@ -198,29 +186,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
       key: ValueKey('agent-artifact-form-${widget.card.id}'),
       child: widget.dialogMode
           ? content
-          : DecoratedBox(
-              decoration: BoxDecoration(
-                color: isCollection
-                    ? const Color(0xfffffdfc)
-                    : MomCozyColors.raised,
-                borderRadius: BorderRadius.circular(isCollection ? 24 : 12),
-                border: Border.all(
-                  color: isCollection
-                      ? const Color(0xffeadfe5)
-                      : MomCozyColors.border,
-                ),
-                boxShadow: isCollection
-                    ? const [
-                        BoxShadow(
-                          color: Color(0x0f412a34),
-                          blurRadius: 30,
-                          offset: Offset(0, 10),
-                        ),
-                      ]
-                    : null,
-              ),
-              child: content,
-            ),
+          : MomCozySurface(padding: EdgeInsets.zero, child: content),
     );
   }
 
@@ -310,7 +276,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _ArtifactFormFieldLabel(field: field),
-        const SizedBox(height: 8),
+        const SizedBox(height: MomCozySpacing.compact),
         for (var index = 0; index < field.options.length; index++) ...[
           _ArtifactFormOptionRow(
             label: field.options[index],
@@ -319,7 +285,8 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
             radio: true,
             onTap: () => _setFieldValue(field.id, field.options[index]),
           ),
-          if (index < field.options.length - 1) const SizedBox(height: 8),
+          if (index < field.options.length - 1)
+            const SizedBox(height: MomCozySpacing.compact),
         ],
         _fieldHelpText(context, field),
       ],
@@ -333,17 +300,17 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
     return DecoratedBox(
       key: ValueKey('agent-artifact-form-field-${widget.card.id}-${field.id}'),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xffe5e5e5)),
+        color: MomCozyColors.card,
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.border),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(MomCozySpacing.content),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _ArtifactFormFieldLabel(field: field),
-            const SizedBox(height: 10),
+            const SizedBox(height: MomCozySpacing.statusGap),
             for (var index = 0; index < field.options.length; index++) ...[
               _ArtifactFormOptionRow(
                 label: field.options[index],
@@ -354,7 +321,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
               if (field.allowOtherInput &&
                   _isOtherOption(field.options[index]) &&
                   _isOptionSelected(field, field.options[index])) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: MomCozySpacing.compact),
                 TextFormField(
                   key: ValueKey(
                     'agent-artifact-form-other-${widget.card.id}-${field.id}',
@@ -368,7 +335,8 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
                       _setOtherFieldValue(field.id, value.trim()),
                 ),
               ],
-              if (index < field.options.length - 1) const SizedBox(height: 8),
+              if (index < field.options.length - 1)
+                const SizedBox(height: MomCozySpacing.compact),
             ],
             _fieldHelpText(context, field),
           ],
@@ -388,7 +356,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
       child: Text(
         helpText,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: const Color(0xff525252),
+          color: MomCozyColors.mutedForeground,
           height: 1.4,
         ),
       ),
@@ -396,33 +364,7 @@ class AgentArtifactFormState extends State<AgentArtifactForm> {
   }
 
   InputDecoration _inputDecoration({String? hintText, Widget? suffixIcon}) {
-    const borderColor = Color(0xffe5e5e5);
-    return InputDecoration(
-      hintText: hintText,
-      hintStyle: const TextStyle(color: Color(0xff8a737c), fontSize: 14),
-      suffixIcon: suffixIcon,
-      isDense: true,
-      filled: true,
-      fillColor: Colors.white.withValues(alpha: 0.95),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      constraints: const BoxConstraints(minHeight: 44),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: borderColor),
-      ),
-      disabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: borderColor),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xff207d93)),
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: borderColor),
-      ),
-    );
+    return InputDecoration(hintText: hintText, suffixIcon: suffixIcon);
   }
 
   Future<void> _pickDate(AgentArtifactFormFieldView field) async {
@@ -781,7 +723,7 @@ class _ArtifactFormFieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyMedium?.copyWith(
-      color: const Color(0xff171717),
+      color: MomCozyColors.foreground,
       fontWeight: FontWeight.w600,
       height: 1.35,
     );
@@ -792,7 +734,7 @@ class _ArtifactFormFieldLabel extends StatelessWidget {
           Text(
             '*',
             style: style?.copyWith(
-              color: const Color(0xffd84c5f),
+              color: MomCozyColors.danger,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -822,16 +764,16 @@ class _ArtifactFormOptionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xfffbfaf9),
+      color: MomCozyColors.background,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
         side: BorderSide(
-          color: selected ? const Color(0xff207d93) : const Color(0xffe5e5e5),
+          color: selected ? MomCozyColors.primary : MomCozyColors.border,
         ),
       ),
       child: InkWell(
         onTap: enabled ? onTap : null,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
@@ -844,8 +786,8 @@ class _ArtifactFormOptionRow extends StatelessWidget {
                         ? Icons.radio_button_checked_rounded
                         : Icons.radio_button_off_rounded,
                     color: selected
-                        ? const Color(0xff207d93)
-                        : const Color(0xff737373),
+                        ? MomCozyColors.primary
+                        : MomCozyColors.mutedForeground,
                     size: 22,
                   ),
                 )
@@ -855,12 +797,12 @@ class _ArtifactFormOptionRow extends StatelessWidget {
                   onChanged: enabled ? (_) => onTap() : null,
                   visualDensity: VisualDensity.compact,
                 ),
-              const SizedBox(width: 4),
+              const SizedBox(width: MomCozySpacing.xs),
               Expanded(
                 child: Text(
                   label,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xff171717),
+                    color: MomCozyColors.foreground,
                   ),
                 ),
               ),
@@ -897,13 +839,13 @@ class _ArtifactFormGroup extends StatelessWidget {
               title,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: tone.title,
-                fontSize: 12,
+                fontSize: MomCozyTypography.captionSize,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
           Divider(height: 1, color: tone.divider),
-          const SizedBox(height: 12),
+          const SizedBox(height: MomCozySpacing.content),
           ...children,
         ],
       );
@@ -911,11 +853,11 @@ class _ArtifactFormGroup extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: tone.background,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(MomCozyRadii.card),
         border: Border.all(color: tone.border),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(MomCozySpacing.headingGap),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -933,7 +875,7 @@ class _ArtifactFormGroup extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: MomCozySpacing.content),
             ...children,
           ],
         ),
@@ -965,28 +907,28 @@ class _ArtifactFormGroupTone {
 
 const _formGroupTones = [
   _ArtifactFormGroupTone(
-    background: Color(0xfffff6f8),
-    border: Color(0xffefd6de),
-    divider: Color(0xffecced8),
-    title: Color(0xff743149),
+    background: MomCozyColors.roseSoft,
+    border: MomCozyColors.border,
+    divider: MomCozyColors.border,
+    title: MomCozyColors.primaryDark,
   ),
   _ArtifactFormGroupTone(
-    background: Color(0xfff4fbf6),
-    border: Color(0xffd8e8de),
-    divider: Color(0xffcfe5d7),
-    title: Color(0xff27634d),
+    background: MomCozyColors.careSoft,
+    border: MomCozyColors.border,
+    divider: MomCozyColors.border,
+    title: MomCozyColors.care,
   ),
   _ArtifactFormGroupTone(
-    background: Color(0xfff3f8ff),
-    border: Color(0xffd7e2f3),
-    divider: Color(0xffcbdcf2),
-    title: Color(0xff2c5c92),
+    background: MomCozyColors.blueSoft,
+    border: MomCozyColors.border,
+    divider: MomCozyColors.border,
+    title: MomCozyColors.blue,
   ),
   _ArtifactFormGroupTone(
-    background: Color(0xfffff8ee),
-    border: Color(0xffeadcc8),
-    divider: Color(0xffead7bb),
-    title: Color(0xff7a5425),
+    background: MomCozyColors.amberSoft,
+    border: MomCozyColors.border,
+    divider: MomCozyColors.border,
+    title: MomCozyColors.amber,
   ),
 ];
 

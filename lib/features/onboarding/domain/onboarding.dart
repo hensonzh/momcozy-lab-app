@@ -205,8 +205,6 @@ class OnboardingProfileDraft {
     this.displayName = '',
     this.age,
     this.deliveryDate,
-    this.gestationalWeeks,
-    this.gestationalDays,
     this.deliveryType,
     this.infantCount = 1,
     List<OnboardingInfantDraft>? infants,
@@ -215,8 +213,6 @@ class OnboardingProfileDraft {
   String displayName;
   int? age;
   DateTime? deliveryDate;
-  int? gestationalWeeks;
-  int? gestationalDays;
   String? deliveryType;
   int infantCount;
   final List<OnboardingInfantDraft> infants;
@@ -239,10 +235,6 @@ class OnboardingProfileDraft {
       'display_name': displayName.trim(),
       'age': age,
       'delivery_date': _date(deliveryDate!),
-      'delivery_gestational_age': {
-        'weeks': gestationalWeeks!,
-        if (gestationalDays != null) 'days': gestationalDays,
-      },
       'delivery_type': deliveryType,
       'infant_count': infantCount,
       'infants': infants.map((infant) => infant.toMap()).toList(),

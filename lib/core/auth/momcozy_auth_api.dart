@@ -12,22 +12,95 @@ class MomCozyAuthApiRepository {
 
   final ApiJsonTransport transport;
 
-  Future<MomCozyAuthTokenResponse> signup({
+  Future<Map<String, Object?>> _post(
+    String path, {
+    Map<String, Object?> body = const {},
+  }) =>
+      transport.postJson(path, body: body).timeout(const Duration(seconds: 15));
+
+  Future<void> register({
     required String email,
     required String password,
-    String displayName = '',
+  }) async {
+    await _post(
+      '/v1/auth/register',
+      body: {'email': email.trim(), 'password': password},
+    );
+  }
+
+  Future<MomCozyAuthTokenResponse> verifyEmail({
+    required String email,
+    required String code,
+    required String password,
     String deviceId = '',
   }) async {
-    final response = await transport.postJson(
-      authSignupEndpoint,
+    return MomCozyAuthTokenResponse.fromMap(
+      await _post(
+        '/v1/auth/verify-email',
+        body: {
+          'email': email.trim(),
+          'token': code.trim(),
+          'password': password,
+          'device_id': deviceId,
+        },
+      ),
+    );
+  }
+
+  Future<void> resendVerification(String email) async {
+    await _post('/v1/auth/resend-verification', body: {'email': email.trim()});
+  }
+
+  Future<void> forgotPassword(String email) async {
+    await _post('/v1/auth/forgot-password', body: {'email': email.trim()});
+  }
+
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String password,
+  }) async {
+    await _post(
+      '/v1/auth/reset-password',
       body: {
         'email': email.trim(),
-        'password': password,
-        if (displayName.trim().isNotEmpty) 'display_name': displayName.trim(),
-        if (deviceId.trim().isNotEmpty) 'device_id': deviceId.trim(),
+        'token': code.trim(),
+        'new_password': password,
       },
     );
-    return MomCozyAuthTokenResponse.fromMap(response);
+  }
+
+  Future<MomCozyAuthTokenResponse> googleLogin({
+    required String idToken,
+    String deviceId = '',
+  }) async {
+    return MomCozyAuthTokenResponse.fromMap(
+      await _post(
+        '/v1/auth/google',
+        body: {'id_token': idToken, 'device_id': deviceId},
+      ),
+    );
+  }
+
+  Future<void> linkGoogle({
+    required String idToken,
+    required String password,
+  }) async {
+    await _post(
+      '/v1/auth/google/link',
+      body: {'id_token': idToken, 'password': password},
+    );
+  }
+
+  Future<Map<String, Object?>> account() =>
+      transport.getJson('/v1/auth/me').timeout(const Duration(seconds: 15));
+
+  Future<void> deleteAccount() async {
+    final mutations = transport;
+    if (mutations is! ApiJsonMutationTransport) {
+      throw StateError('Account deletion is unavailable.');
+    }
+    await (mutations as ApiJsonMutationTransport).deleteJson('/v1/auth/me');
   }
 
   Future<MomCozyAuthTokenResponse> login({
@@ -35,7 +108,7 @@ class MomCozyAuthApiRepository {
     required String password,
     String deviceId = '',
   }) async {
-    final response = await transport.postJson(
+    final response = await _post(
       authLoginEndpoint,
       body: {
         'email': email.trim(),
@@ -50,7 +123,7 @@ class MomCozyAuthApiRepository {
     required String inviteCode,
     required String deviceId,
   }) async {
-    final response = await transport.postJson(
+    final response = await _post(
       authInviteLoginEndpoint,
       body: {'invite_code': inviteCode.trim(), 'device_id': deviceId.trim()},
     );
@@ -60,15 +133,22 @@ class MomCozyAuthApiRepository {
   Future<MomCozyAuthTokenResponse> refresh({
     required String refreshToken,
   }) async {
-    final response = await transport.postJson(
+    final response = await _post(
       authRefreshEndpoint,
       body: {'refresh_token': refreshToken.trim()},
     );
     return MomCozyAuthTokenResponse.fromMap(response);
   }
 
+  Future<void> logoutSession(String refreshToken) async {
+    await _post(
+      '/v1/auth/logout-session',
+      body: {'refresh_token': refreshToken},
+    );
+  }
+
   Future<void> logout() async {
-    await transport.postJson(authLogoutEndpoint);
+    await _post(authLogoutEndpoint);
   }
 }
 
@@ -105,7 +185,7 @@ class MomCozyAuthTokenResponse {
       status: MomCozySessionStatus.authenticated,
       userId: user.id,
       babyId: trimmedSessionValue(babyId) ?? 'demo-baby',
-      locale: trimmedSessionValue(locale) ?? 'zh-CN',
+      locale: trimmedSessionValue(locale) ?? 'en-US',
       accessToken: accessToken,
       refreshToken: refreshToken,
     );
@@ -194,6 +274,39 @@ class MomCozySessionRefreshCoordinator {
     );
     await store.writeSession(expired);
     return expired;
+  }
+}
+
+class MomCozySessionRestorer {
+  const MomCozySessionRestorer({
+    required this.authRepository,
+    required this.store,
+  });
+  final MomCozyAuthApiRepository authRepository;
+  final MomCozySessionStore store;
+
+  Future<MomCozySession> restore(MomCozySession current) async {
+    if (!current.isAuthenticated) return current;
+    try {
+      final account = await authRepository.account();
+      if (account['id'] == current.userId &&
+          account['account_status'] == 'active') {
+        return current;
+      }
+      final expired = current.copyWith(
+        status: MomCozySessionStatus.expired,
+        clearAccessToken: true,
+        clearRefreshToken: true,
+      );
+      await store.writeSession(expired);
+      return expired;
+    } on ApiHttpException catch (error) {
+      if (!_isTerminalRefreshError(error)) rethrow;
+      return MomCozySessionRefreshCoordinator(
+        authRepository: authRepository,
+        store: store,
+      ).refresh(current);
+    }
   }
 }
 
@@ -371,7 +484,8 @@ class AuthenticatedApiMultipartTransport implements ApiMultipartTransport {
 }
 
 bool _sameSessionScope(MomCozySession first, MomCozySession second) {
-  return first.userId == second.userId &&
+  return second.isAuthenticated &&
+      first.userId == second.userId &&
       first.babyId == second.babyId &&
       first.locale == second.locale;
 }
@@ -386,7 +500,8 @@ bool _shouldRefresh(Object error) {
   if (error is! ApiHttpException) return false;
   return error.statusCode == 401 ||
       error.errorCode == 'authentication_required' ||
-      error.errorCode == 'token_expired';
+      error.errorCode == 'token_expired' ||
+      error.errorCode == 'account_inactive';
 }
 
 bool _isTerminalRefreshError(Object error) {

@@ -1,0 +1,2281 @@
+[
+  {
+    "path": "lib/app/baby_module_routes.dart",
+    "lines": 62,
+    "widgets": [],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 2,
+    "card": 0
+  },
+  {
+    "path": "lib/app/ibclc/workbench_app.dart",
+    "lines": 394,
+    "widgets": [
+      "MomCozyWorkbenchApp"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 6,
+    "card": 0
+  },
+  {
+    "path": "lib/app/ibclc/workbench_shell.dart",
+    "lines": 289,
+    "widgets": [
+      "WorkbenchShell"
+    ],
+    "colors": {
+      "mutedForeground": 4,
+      "card": 2,
+      "roseSoft": 2,
+      "primary": 2,
+      "border": 1
+    },
+    "font_sizes": {
+      "12": 3,
+      "11": 1,
+      "13": 1,
+      "14": 1,
+      "10": 1
+    },
+    "radii": {
+      "11": 1,
+      "12": 1
+    },
+    "spacing": 6,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 12,
+    "card": 2
+  },
+  {
+    "path": "lib/app/mom_bottom_navigation.dart",
+    "lines": 154,
+    "widgets": [
+      "MomCozyBottomNavigation"
+    ],
+    "colors": {
+      "raised": 1,
+      "violet": 3,
+      "violetSoft": 2,
+      "transparent": 1,
+      "ff93818e": 2
+    },
+    "font_sizes": {
+      "10": 2
+    },
+    "radii": {
+      "15": 1
+    },
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 11,
+    "card": 3
+  },
+  {
+    "path": "lib/app/mom_module_routes.dart",
+    "lines": 235,
+    "widgets": [],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 11,
+    "card": 0
+  },
+  {
+    "path": "lib/app/momcozy_app.dart",
+    "lines": 955,
+    "widgets": [
+      "MomCozyFlutterApp",
+      "_BackendCapabilityUnavailablePage",
+      "MomCozyRouteShell",
+      "MomCozyRoutePage"
+    ],
+    "colors": {
+      "background": 2,
+      "mutedForeground": 1,
+      "ff7f6a75": 1,
+      "ff9f6378": 1,
+      "ff862644": 3,
+      "ffb2773b": 1,
+      "ffa21849": 1,
+      "ff6b6da8": 1
+    },
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 76,
+    "card": 0
+  },
+  {
+    "path": "lib/core/observability/momcozy_observability.dart",
+    "lines": 350,
+    "widgets": [
+      "MomCozyRouteTelemetry"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 29,
+    "card": 0
+  },
+  {
+    "path": "lib/features/agent_hub/agent_hub_page.dart",
+    "lines": 6824,
+    "widgets": [
+      "AgentHubPage",
+      "AgentHubTopBar",
+      "_AgentOlderConversationHistoryControl",
+      "_AgentResponseLightRail",
+      "_AgentHubTopFade",
+      "AgentHubHistoryPanel",
+      "AgentHubHistorySliver",
+      "_AgentHistoryBubble",
+      "AgentRunPhaseBadge",
+      "_AgentRunTranscriptListenable",
+      "AgentRunTranscript",
+      "AgentQuickRepliesBar",
+      "_AgentQuickReplyPill",
+      "AgentCitationList",
+      "_AgentCitationLink",
+      "AgentMarkdownText",
+      "_AgentMarkdownImage",
+      "_AgentMarkdownImagePlaceholder",
+      "AgentRunStatusLine",
+      "_AgentSweepText",
+      "AgentThinkingNote",
+      "_AgentAssistantAvatar",
+      "AgentActionPanel",
+      "AgentComposerBar"
+    ],
+    "colors": {
+      "background": 5,
+      "fffff1f4": 1,
+      "ffffd5df": 1,
+      "primary": 3,
+      "foreground": 11,
+      "transparent": 11,
+      "black": 1,
+      "ff7a6670": 1,
+      "ff3b2f36": 1,
+      "ffffeef5": 1,
+      "ffecacc3": 1,
+      "ffffe8f0": 1,
+      "fff6d2de": 1,
+      "ffdc7897": 1,
+      "white": 2,
+      "ffe4a060": 1,
+      "ff7dbcb1": 1,
+      "ffd67697": 1,
+      "00fff8f6": 1,
+      "ff75545f": 1,
+      "ff3f3038": 2,
+      "fff8f0f1": 1,
+      "73eadde2": 1,
+      "muted": 6,
+      "roseSoft": 3,
+      "ffb64b4b": 1,
+      "mutedForeground": 9,
+      "ff9b7a84": 1,
+      "ff4a3a40": 1,
+      "ffdbc3cb": 2,
+      "fff8edf2": 2,
+      "9effffff": 1,
+      "ffeadde2": 1,
+      "ffb78294": 1,
+      "ff8f7a84": 1,
+      "ffaa929f": 1,
+      "ff3d7d85": 1,
+      "ffb8d7d4": 1,
+      "border": 6,
+      "secondary": 1,
+      "card": 3,
+      "ff9a7a86": 2,
+      "ff5d3f4d": 1,
+      "ff98a3af": 2,
+      "ff2d3745": 1,
+      "ffaa647d": 1,
+      "ff8bbdb5": 1,
+      "ff754c5e": 3,
+      "primaryDark": 1,
+      "raised": 1
+    },
+    "font_sizes": {
+      "13": 2,
+      "10": 2,
+      "11": 3,
+      "17": 1,
+      "14": 2
+    },
+    "radii": {
+      "14": 1,
+      "8": 5,
+      "10": 1,
+      "16": 1,
+      "22": 1,
+      "24": 1
+    },
+    "spacing": 35,
+    "shadows": 3,
+    "overlays": 0,
+    "tokens": 71,
+    "card": 6
+  },
+  {
+    "path": "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+    "lines": 369,
+    "widgets": [
+      "AgentArtifactPanel",
+      "_AgentArtifactGenericCard",
+      "_AgentExportableArtifactCard",
+      "_AgentUnsupportedArtifactCard"
+    ],
+    "colors": {
+      "roseSoft": 1,
+      "border": 2,
+      "foreground": 2,
+      "mutedForeground": 4,
+      "white": 1,
+      "raised": 1
+    },
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 13,
+    "card": 0
+  },
+  {
+    "path": "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+    "lines": 473,
+    "widgets": [
+      "_MotionAssessmentCard",
+      "_ArtifactCardSurface",
+      "_IbclcConsultCard",
+      "_IbclcConsultantTag"
+    ],
+    "colors": {
+      "ff8c4768": 1,
+      "fffffdfc": 1,
+      "ffeadfe5": 1,
+      "12412a34": 1,
+      "ff2f1f29": 1,
+      "fffbfdfc": 1,
+      "ffd6dde5": 2,
+      "0d000000": 1,
+      "ff177a89": 3,
+      "ff142726": 1,
+      "white": 2,
+      "ff182b2a": 1,
+      "ff1a6863": 1,
+      "ffe9f3f1": 1,
+      "ff7a4260": 1,
+      "fff4edf1": 1,
+      "ff60706e": 1,
+      "fff6fbfa": 1,
+      "ffdbe7e4": 1,
+      "ffb9cbc8": 1,
+      "ff586967": 1,
+      "ff71807d": 1,
+      "ffd7dfdd": 1,
+      "ff778683": 1
+    },
+    "font_sizes": {
+      "22": 1,
+      "16": 1,
+      "13": 1,
+      "12": 1,
+      "11": 2,
+      "14": 1
+    },
+    "radii": {
+      "22": 1,
+      "16": 1,
+      "14": 1,
+      "12": 2,
+      "10": 1,
+      "6": 1,
+      "3": 1,
+      "999": 1
+    },
+    "spacing": 9,
+    "shadows": 2,
+    "overlays": 0,
+    "tokens": 2,
+    "card": 0
+  },
+  {
+    "path": "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart",
+    "lines": 1044,
+    "widgets": [
+      "AgentArtifactForm",
+      "_ArtifactFormFieldLabel",
+      "_ArtifactFormOptionRow",
+      "_ArtifactFormGroup"
+    ],
+    "colors": {
+      "ff171717": 3,
+      "ff525252": 2,
+      "ff207d93": 5,
+      "white": 4,
+      "ffd4d4d4": 1,
+      "ff55727a": 1,
+      "ff737373": 2,
+      "ff9db7bd": 1,
+      "fffffdfc": 1,
+      "raised": 1,
+      "ffeadfe5": 1,
+      "border": 1,
+      "0f412a34": 1,
+      "ffe5e5e5": 3,
+      "ff8a737c": 1,
+      "ffd84c5f": 1,
+      "fffbfaf9": 1,
+      "fffff6f8": 1,
+      "ffefd6de": 1,
+      "ffecced8": 1,
+      "ff743149": 1,
+      "fff4fbf6": 1,
+      "ffd8e8de": 1,
+      "ffcfe5d7": 1,
+      "ff27634d": 1,
+      "fff3f8ff": 1,
+      "ffd7e2f3": 1,
+      "ffcbdcf2": 1,
+      "ff2c5c92": 1,
+      "fffff8ee": 1,
+      "ffeadcc8": 1,
+      "ffead7bb": 1,
+      "ff7a5425": 1
+    },
+    "font_sizes": {
+      "14": 1,
+      "12": 1
+    },
+    "radii": {
+      "14": 6,
+      "12": 2,
+      "18": 1
+    },
+    "spacing": 8,
+    "shadows": 1,
+    "overlays": 0,
+    "tokens": 2,
+    "card": 2
+  },
+  {
+    "path": "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+    "lines": 652,
+    "widgets": [
+      "AgentArtifactFormEntry",
+      "AgentArtifactFormDialog"
+    ],
+    "colors": {
+      "transparent": 2,
+      "fffffbfc": 1,
+      "ffe7dce1": 2,
+      "10532f40": 1,
+      "ffedf7f5": 2,
+      "ff247b76": 5,
+      "ff8a6d7a": 1,
+      "ff372330": 1,
+      "ff725b67": 1,
+      "white": 1,
+      "fffffdfd": 1,
+      "24532f40": 1,
+      "ff30232a": 2,
+      "ffeee4e8": 2
+    },
+    "font_sizes": {
+      "10": 1,
+      "13": 1,
+      "11": 1,
+      "16": 1
+    },
+    "radii": {
+      "8": 5,
+      "14": 1,
+      "13": 1
+    },
+    "spacing": 6,
+    "shadows": 2,
+    "overlays": 1,
+    "tokens": 0,
+    "card": 3
+  },
+  {
+    "path": "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+    "lines": 397,
+    "widgets": [
+      "_AgentConversationPanel",
+      "_ConversationPanelMessage"
+    ],
+    "colors": {
+      "520f0a0d": 1,
+      "background": 1,
+      "40000000": 1,
+      "ff3f3038": 2,
+      "66eadde2": 1,
+      "mutedForeground": 5,
+      "ffb64b4b": 1,
+      "fff2e6e9": 1,
+      "transparent": 1,
+      "ff7a5360": 1
+    },
+    "font_sizes": {
+      "12": 2,
+      "14": 1,
+      "11": 1,
+      "13": 1
+    },
+    "radii": {
+      "14": 2
+    },
+    "spacing": 7,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 6,
+    "card": 2
+  },
+  {
+    "path": "lib/features/agent_hub/presentation/agent_file_previews.dart",
+    "lines": 144,
+    "widgets": [
+      "AgentComposerFileAttachment",
+      "AgentSentFiles"
+    ],
+    "colors": {
+      "card": 2,
+      "border": 2,
+      "muted": 1,
+      "mutedForeground": 2
+    },
+    "font_sizes": {},
+    "radii": {
+      "12": 2,
+      "10": 1
+    },
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 7,
+    "card": 2
+  },
+  {
+    "path": "lib/features/agent_hub/presentation/agent_image_previews.dart",
+    "lines": 366,
+    "widgets": [
+      "AgentSentImages",
+      "AgentComposerImageAttachment",
+      "_AgentFullScreenImage",
+      "_AgentDataUrlImage",
+      "_AgentImageFallback"
+    ],
+    "colors": {
+      "muted": 2,
+      "border": 1,
+      "white": 2,
+      "black": 4,
+      "mutedForeground": 3
+    },
+    "font_sizes": {
+      "12": 1
+    },
+    "radii": {
+      "12": 1,
+      "8": 1
+    },
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 6,
+    "card": 0
+  },
+  {
+    "path": "lib/features/app_pages/momcozy_feature_pages.dart",
+    "lines": 131,
+    "widgets": [
+      "MomCozyFeaturePage",
+      "_UnsupportedRoutePage"
+    ],
+    "colors": {
+      "mutedForeground": 1
+    },
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 5,
+    "card": 0
+  },
+  {
+    "path": "lib/features/auth/presentation/account_page.dart",
+    "lines": 238,
+    "widgets": [
+      "MomCozyAccountPage"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 2,
+    "tokens": 8,
+    "card": 0
+  },
+  {
+    "path": "lib/features/auth/presentation/auth_page.dart",
+    "lines": 453,
+    "widgets": [
+      "MomCozyAuthPage"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 15,
+    "card": 0
+  },
+  {
+    "path": "lib/features/auth/presentation/invite_auth_page.dart",
+    "lines": 279,
+    "widgets": [
+      "MomCozyInviteAuthPage"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 15,
+    "card": 0
+  },
+  {
+    "path": "lib/features/media/presentation/media_viewer_page.dart",
+    "lines": 574,
+    "widgets": [
+      "MediaViewerPage",
+      "_MediaViewerHeader",
+      "_MediaViewerMissingResource",
+      "_MediaViewerContent",
+      "_PdfViewerStage",
+      "_ImageViewerStage",
+      "_MediaViewerLoading",
+      "_MediaViewerLoadError",
+      "_VideoViewerStage"
+    ],
+    "colors": {
+      "background": 5,
+      "border": 1,
+      "foreground": 2,
+      "mutedForeground": 3,
+      "33000000": 1,
+      "black": 2,
+      "b3ffffff": 2
+    },
+    "font_sizes": {
+      "14": 2
+    },
+    "radii": {},
+    "spacing": 2,
+    "shadows": 1,
+    "overlays": 0,
+    "tokens": 14,
+    "card": 0
+  },
+  {
+    "path": "lib/features/media/presentation/product_asset_image.dart",
+    "lines": 153,
+    "widgets": [
+      "ProductAssetImage",
+      "_DefaultProductAssetImageLoading",
+      "_DefaultProductAssetImageError"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/features/media/presentation/product_asset_video_player.dart",
+    "lines": 621,
+    "widgets": [
+      "ProductAssetVideoPlayer",
+      "_VideoLoadingState",
+      "_VideoErrorState",
+      "_ProductAssetVideoFullscreenPage",
+      "_ProductAssetVideoViewport",
+      "_ProductAssetVideoCanvas",
+      "_ProductAssetVideoControls"
+    ],
+    "colors": {
+      "background": 1,
+      "foreground": 1,
+      "secondary": 1,
+      "black": 4,
+      "b3ffffff": 5,
+      "white": 7,
+      "99000000": 1,
+      "a6000000": 1,
+      "primary": 1,
+      "66ffffff": 1,
+      "33ffffff": 1
+    },
+    "font_sizes": {
+      "14": 2,
+      "12": 1
+    },
+    "radii": {
+      "8": 2
+    },
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 4,
+    "card": 0
+  },
+  {
+    "path": "lib/features/motion_assessment/data/motion_pose_platform.dart",
+    "lines": 305,
+    "widgets": [
+      "MotionPosePreview"
+    ],
+    "colors": {
+      "black": 1,
+      "white": 1
+    },
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/features/motion_assessment/presentation/motion_assessment_page.dart",
+    "lines": 419,
+    "widgets": [
+      "MotionAssessmentPage"
+    ],
+    "colors": {
+      "black": 4,
+      "white": 5,
+      "orangeAccent": 1,
+      "ff51e1d2": 1,
+      "ff2b2024": 1,
+      "ffffc2cf": 1
+    },
+    "font_sizes": {
+      "16": 1
+    },
+    "radii": {
+      "4": 1,
+      "24": 1
+    },
+    "spacing": 5,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/features/motion_assessment/presentation/motion_pose_overlay.dart",
+    "lines": 349,
+    "widgets": [
+      "MotionPoseOverlay"
+    ],
+    "colors": {
+      "ff51e1d2": 1,
+      "ffff79ae": 1,
+      "ffffd166": 1,
+      "ffffa14a": 1,
+      "ffa993ff": 1,
+      "white": 1,
+      "length": 2
+    },
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+    "lines": 94,
+    "widgets": [
+      "AppointmentReminderTile"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/features/notifications/presentation/notification_settings_page.dart",
+    "lines": 150,
+    "widgets": [
+      "NotificationSettingsPage"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/features/notifications/presentation/notifications_page.dart",
+    "lines": 451,
+    "widgets": [
+      "NotificationsPage",
+      "_NotificationsHeader",
+      "_NotificationCard",
+      "_NotificationsLoadingState",
+      "_NotificationsEmptyState",
+      "_NotificationsErrorBanner"
+    ],
+    "colors": {
+      "background": 1,
+      "primary": 5,
+      "foreground": 3,
+      "mutedForeground": 5,
+      "roseSoft": 2,
+      "raised": 1,
+      "border": 1,
+      "white": 1
+    },
+    "font_sizes": {},
+    "radii": {
+      "22": 3,
+      "18": 1
+    },
+    "spacing": 7,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 19,
+    "card": 2
+  },
+  {
+    "path": "lib/features/onboarding/presentation/avatar_task_banner.dart",
+    "lines": 206,
+    "widgets": [
+      "AvatarTaskBanner",
+      "_TaskStatusIcon"
+    ],
+    "colors": {
+      "white": 3,
+      "foreground": 1,
+      "primaryDark": 4,
+      "fffff2e4": 1,
+      "ffe8f5ea": 1,
+      "roseSoft": 1,
+      "transparent": 1,
+      "mutedForeground": 1,
+      "amber": 1,
+      "care": 1
+    },
+    "font_sizes": {
+      "14.5": 1,
+      "12.5": 1
+    },
+    "radii": {
+      "18": 2
+    },
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 9,
+    "card": 1
+  },
+  {
+    "path": "lib/features/onboarding/presentation/onboarding_page.dart",
+    "lines": 1949,
+    "widgets": [
+      "OnboardingPage",
+      "_LoadingView",
+      "_LoadFailureView",
+      "_OnboardingHeader",
+      "_AvatarTaskHeader",
+      "_AvatarActivationSuccessView",
+      "_StepPrompt",
+      "_AvatarGenerationWaitingView",
+      "_AvatarGenerationRecipe",
+      "_AvatarGenerationRecipeNode",
+      "_AvatarGenerationOperator",
+      "_AvatarPhotoReceivedVisual",
+      "_AvatarReferenceStyleVisual",
+      "_AvatarOptionsVisual",
+      "_AvatarOptionPlaceholder",
+      "_AvatarGenerationTimeline",
+      "_AvatarGenerationStep",
+      "_AvatarGenerationConnector",
+      "_AvatarGenerationWaitNote",
+      "_DateField",
+      "_CountField",
+      "_ReferenceAvatar",
+      "_AvatarCandidateCard",
+      "_DefaultAvatarChoiceCard",
+      "_AvatarSelectedMark",
+      "_GeneratedAvatar",
+      "_PrimaryButton"
+    ],
+    "colors": {
+      "background": 1,
+      "mutedForeground": 12,
+      "roseSoft": 7,
+      "primaryDark": 17,
+      "ffffecec": 1,
+      "danger": 1,
+      "border": 8,
+      "foreground": 8,
+      "ffe8f5ea": 1,
+      "care": 2,
+      "secondary": 4,
+      "raised": 4,
+      "white": 4,
+      "transparent": 2
+    },
+    "font_sizes": {
+      "12.5": 3,
+      "20": 1,
+      "24": 1,
+      "18": 1,
+      "27": 1,
+      "29": 2,
+      "14": 1,
+      "15": 3,
+      "12": 1,
+      "14.5": 1,
+      "13": 2,
+      "16": 1
+    },
+    "radii": {
+      "12": 1,
+      "99": 1,
+      "14": 2,
+      "22": 3,
+      "20": 3,
+      "16": 1,
+      "28": 1
+    },
+    "spacing": 25,
+    "shadows": 0,
+    "overlays": 3,
+    "tokens": 79,
+    "card": 10
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_growth_curve.dart",
+    "lines": 347,
+    "widgets": [
+      "BabyGrowthCurve"
+    ],
+    "colors": {
+      "card": 2,
+      "border": 2,
+      "mutedForeground": 4,
+      "care": 1,
+      "careSoft": 1,
+      "transparent": 1,
+      "secondary": 1,
+      "ffa0928f": 1,
+      "ffeee5e2": 1,
+      "ffe7f1ed": 1,
+      "ffc9dcd5": 1,
+      "ff302b2c": 2
+    },
+    "font_sizes": {
+      "13": 1,
+      "10": 3,
+      "12": 1,
+      "11": 1
+    },
+    "radii": {
+      "14": 1,
+      "11": 1
+    },
+    "spacing": 6,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 15,
+    "card": 2
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_home_page.dart",
+    "lines": 531,
+    "widgets": [
+      "BabyHomePage"
+    ],
+    "colors": {
+      "roseSoft": 2,
+      "primaryDark": 2,
+      "care": 1,
+      "ff857167": 1,
+      "ff7d5c83": 1,
+      "fff0e7f1": 1,
+      "blue": 1,
+      "blueSoft": 1,
+      "amber": 1,
+      "amberSoft": 1,
+      "secondary": 1,
+      "mutedForeground": 1
+    },
+    "font_sizes": {
+      "12": 1,
+      "26": 2,
+      "10": 2,
+      "11": 1
+    },
+    "radii": {
+      "12": 1,
+      "20": 2
+    },
+    "spacing": 10,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 11,
+    "card": 2
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_overview_cards.dart",
+    "lines": 340,
+    "widgets": [
+      "BabyFeedingSummary",
+      "BabySleepMonitor",
+      "BabySectionHeading",
+      "BabyStatusCard",
+      "BabyGrowthMetrics"
+    ],
+    "colors": {
+      "card": 2,
+      "border": 3,
+      "roseSoft": 1,
+      "primaryDark": 3,
+      "mutedForeground": 5,
+      "violetSoft": 1,
+      "ff7d6a89": 1,
+      "transparent": 1
+    },
+    "font_sizes": {
+      "14": 2,
+      "11": 2,
+      "13": 1,
+      "10": 2,
+      "16": 1,
+      "17": 1,
+      "9": 1,
+      "12": 1
+    },
+    "radii": {
+      "12": 7,
+      "9": 2,
+      "16": 1,
+      "15": 1,
+      "8": 1
+    },
+    "spacing": 8,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 15,
+    "card": 9
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_profile_editor.dart",
+    "lines": 273,
+    "widgets": [
+      "BabyProfileEditor"
+    ],
+    "colors": {
+      "background": 1,
+      "mutedForeground": 2,
+      "danger": 1
+    },
+    "font_sizes": {
+      "19": 1,
+      "12": 2
+    },
+    "radii": {
+      "22": 1
+    },
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 4,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_record_editor.dart",
+    "lines": 259,
+    "widgets": [
+      "BabyRecordEditor"
+    ],
+    "colors": {
+      "background": 1,
+      "mutedForeground": 1,
+      "danger": 1
+    },
+    "font_sizes": {
+      "19": 1,
+      "12": 1
+    },
+    "radii": {
+      "22": 1
+    },
+    "spacing": 5,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 3,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_record_fields.dart",
+    "lines": 284,
+    "widgets": [
+      "BabyRecordFields"
+    ],
+    "colors": {
+      "mutedForeground": 4,
+      "violetSoft": 1
+    },
+    "font_sizes": {
+      "12": 4
+    },
+    "radii": {
+      "14": 1
+    },
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 5,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/baby/presentation/baby_records_page.dart",
+    "lines": 393,
+    "widgets": [
+      "BabyRecordsPage",
+      "_RecordCard"
+    ],
+    "colors": {
+      "background": 2,
+      "careSoft": 1,
+      "mutedForeground": 2
+    },
+    "font_sizes": {
+      "18": 1,
+      "12": 2
+    },
+    "radii": {
+      "12": 1
+    },
+    "spacing": 8,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 6,
+    "card": 2
+  },
+  {
+    "path": "lib/modules/consultation/presentation/device_check_dialog.dart",
+    "lines": 114,
+    "widgets": [
+      "ConsultationDeviceCheckDialog"
+    ],
+    "colors": {
+      "ff2b373c": 1,
+      "white": 1,
+      "care": 1
+    },
+    "font_sizes": {
+      "13": 2,
+      "12": 2
+    },
+    "radii": {
+      "14": 1,
+      "8": 1
+    },
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 1,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/consultation/presentation/room_page.dart",
+    "lines": 592,
+    "widgets": [
+      "ConsultationRoomPage"
+    ],
+    "colors": {
+      "amberSoft": 1,
+      "mutedForeground": 3,
+      "care": 4,
+      "careSoft": 2
+    },
+    "font_sizes": {
+      "13": 2,
+      "22": 1,
+      "12": 4,
+      "10": 1,
+      "18": 1
+    },
+    "radii": {
+      "12": 1,
+      "99": 1
+    },
+    "spacing": 9,
+    "shadows": 0,
+    "overlays": 4,
+    "tokens": 10,
+    "card": 6
+  },
+  {
+    "path": "lib/modules/consultation/presentation/video_stage.dart",
+    "lines": 287,
+    "widgets": [
+      "ConsultationVideoStage",
+      "ConsultationMediaControls",
+      "_Control"
+    ],
+    "colors": {
+      "ff2b373c": 1,
+      "ff43575f": 2,
+      "white": 3,
+      "ffd8e0e4": 1,
+      "ffe0e7ea": 2,
+      "ff849298": 1,
+      "roseSoft": 1,
+      "muted": 1,
+      "danger": 2,
+      "mutedForeground": 1,
+      "care": 1,
+      "foreground": 1
+    },
+    "font_sizes": {
+      "18": 1,
+      "12": 2,
+      "10": 1,
+      "11": 1
+    },
+    "radii": {
+      "22": 1,
+      "14": 3
+    },
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 7,
+    "card": 3
+  },
+  {
+    "path": "lib/modules/ibclc/appointments/presentation/appointments_page.dart",
+    "lines": 348,
+    "widgets": [
+      "WorkbenchAppointmentsPage",
+      "WorkbenchAppointmentList"
+    ],
+    "colors": {
+      "muted": 2,
+      "mutedForeground": 4,
+      "care": 1,
+      "primary": 1,
+      "careSoft": 1,
+      "roseSoft": 1
+    },
+    "font_sizes": {
+      "11": 4,
+      "13": 4,
+      "12": 3
+    },
+    "radii": {},
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 10,
+    "card": 3
+  },
+  {
+    "path": "lib/modules/ibclc/appointments/presentation/intake_review_page.dart",
+    "lines": 224,
+    "widgets": [
+      "IntakeReviewPage",
+      "_Field"
+    ],
+    "colors": {
+      "primary": 1,
+      "roseSoft": 1,
+      "mutedForeground": 1
+    },
+    "font_sizes": {
+      "18": 2,
+      "12": 1
+    },
+    "radii": {},
+    "spacing": 3,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 3,
+    "card": 4
+  },
+  {
+    "path": "lib/modules/ibclc/auth/presentation/workbench_login_page.dart",
+    "lines": 289,
+    "widgets": [
+      "WorkbenchLoginPage"
+    ],
+    "colors": {
+      "mutedForeground": 3,
+      "danger": 1,
+      "care": 1
+    },
+    "font_sizes": {
+      "13": 1,
+      "26": 1,
+      "12": 1
+    },
+    "radii": {},
+    "spacing": 5,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 6,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/ibclc/documentation/presentation/documentation_editors.dart",
+    "lines": 311,
+    "widgets": [
+      "DocumentationField",
+      "ClinicalNoteEditor",
+      "CarePlanEditor",
+      "_PlanTaskEditor"
+    ],
+    "colors": {
+      "card": 1,
+      "secondary": 1,
+      "border": 1
+    },
+    "font_sizes": {
+      "14": 1
+    },
+    "radii": {
+      "12": 1
+    },
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 3,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/ibclc/documentation/presentation/documentation_page.dart",
+    "lines": 489,
+    "widgets": [
+      "DocumentationPage",
+      "_AmendDialog"
+    ],
+    "colors": {
+      "background": 1,
+      "mutedForeground": 3,
+      "card": 1,
+      "border": 1,
+      "amberSoft": 1,
+      "careSoft": 1
+    },
+    "font_sizes": {},
+    "radii": {
+      "18": 1,
+      "10": 1
+    },
+    "spacing": 7,
+    "shadows": 0,
+    "overlays": 3,
+    "tokens": 8,
+    "card": 2
+  },
+  {
+    "path": "lib/modules/ibclc/followup/presentation/followups_page.dart",
+    "lines": 348,
+    "widgets": [
+      "WorkbenchFollowupsPage",
+      "_ClientRow"
+    ],
+    "colors": {
+      "mutedForeground": 3,
+      "muted": 1,
+      "care": 1,
+      "amber": 1,
+      "careSoft": 1,
+      "amberSoft": 1
+    },
+    "font_sizes": {
+      "12": 3,
+      "17": 1
+    },
+    "radii": {},
+    "spacing": 5,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 8,
+    "card": 3
+  },
+  {
+    "path": "lib/modules/ibclc/reminders/presentation/reminders_page.dart",
+    "lines": 283,
+    "widgets": [
+      "WorkbenchRemindersPage"
+    ],
+    "colors": {
+      "primary": 3,
+      "roseSoft": 3,
+      "violetSoft": 1,
+      "violet": 1,
+      "mutedForeground": 4,
+      "muted": 1
+    },
+    "font_sizes": {
+      "16": 3,
+      "13": 2,
+      "12": 1,
+      "11": 1
+    },
+    "radii": {
+      "18": 1,
+      "12": 1
+    },
+    "spacing": 7,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 13,
+    "card": 3
+  },
+  {
+    "path": "lib/modules/ibclc/reports/presentation/feedback_dialog.dart",
+    "lines": 74,
+    "widgets": [
+      "ReportFeedbackDialog"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/ibclc/reports/presentation/report_content.dart",
+    "lines": 238,
+    "widgets": [
+      "ReportSection",
+      "ReportFindings",
+      "ReportDialogueList"
+    ],
+    "colors": {
+      "mutedForeground": 6,
+      "muted": 1,
+      "border": 1,
+      "care": 1
+    },
+    "font_sizes": {
+      "17": 1,
+      "12": 5,
+      "13": 1
+    },
+    "radii": {
+      "10": 1,
+      "14": 1
+    },
+    "spacing": 8,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 9,
+    "card": 3
+  },
+  {
+    "path": "lib/modules/ibclc/reports/presentation/report_page.dart",
+    "lines": 483,
+    "widgets": [
+      "WorkbenchReportPage"
+    ],
+    "colors": {
+      "mutedForeground": 6,
+      "amber": 1,
+      "careSoft": 1,
+      "amberSoft": 1
+    },
+    "font_sizes": {
+      "13": 3,
+      "12": 2
+    },
+    "radii": {
+      "12": 1
+    },
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 9,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/ibclc/schedule/presentation/calendar_page.dart",
+    "lines": 491,
+    "widgets": [
+      "WorkbenchCalendarPage",
+      "_WeekTimeline",
+      "_CalendarEvent"
+    ],
+    "colors": {
+      "mutedForeground": 5,
+      "primary": 1,
+      "foreground": 1,
+      "roseSoft": 1,
+      "card": 1,
+      "border": 1,
+      "careSoft": 1,
+      "care": 2
+    },
+    "font_sizes": {
+      "16": 1,
+      "12": 4,
+      "17": 2,
+      "10": 4,
+      "11": 1
+    },
+    "radii": {
+      "8": 2
+    },
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 13,
+    "card": 3
+  },
+  {
+    "path": "lib/modules/ibclc/shared/workbench_widgets.dart",
+    "lines": 155,
+    "widgets": [
+      "WorkbenchPageBody",
+      "WorkbenchHeading",
+      "WorkbenchPagination",
+      "WorkbenchBadge"
+    ],
+    "colors": {
+      "mutedForeground": 3,
+      "muted": 1
+    },
+    "font_sizes": {
+      "26": 1,
+      "13": 1,
+      "12": 2,
+      "11": 1
+    },
+    "radii": {
+      "8": 1
+    },
+    "spacing": 5,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 4,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/ibclc/users/presentation/clients_page.dart",
+    "lines": 423,
+    "widgets": [
+      "WorkbenchClientsPage",
+      "WorkbenchClientPage",
+      "_ServiceCard"
+    ],
+    "colors": {
+      "mutedForeground": 3
+    },
+    "font_sizes": {
+      "17": 1,
+      "12": 2,
+      "13": 2,
+      "20": 1,
+      "18": 1
+    },
+    "radii": {},
+    "spacing": 6,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 3,
+    "card": 5
+  },
+  {
+    "path": "lib/modules/mom/presentation/diary_fields.dart",
+    "lines": 200,
+    "widgets": [
+      "RestFields",
+      "BodyFields",
+      "MoodFields"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/mom/presentation/lactation_chart.dart",
+    "lines": 245,
+    "widgets": [
+      "LactationTrendChart"
+    ],
+    "colors": {
+      "ff3b2c23": 1,
+      "fffff8f1": 1,
+      "ffcdbbae": 1,
+      "12fff4e5": 1,
+      "ff9d8877": 2,
+      "73967c69": 1,
+      "80f2c49d": 1,
+      "00f2c49d": 1,
+      "ffe9bb91": 1,
+      "ffd9b394": 1,
+      "fff0c6a3": 1
+    },
+    "font_sizes": {
+      "17": 2,
+      "12": 2,
+      "54": 1,
+      "13": 1,
+      "10": 2
+    },
+    "radii": {
+      "8": 1
+    },
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/mom/presentation/lactation_page.dart",
+    "lines": 55,
+    "widgets": [
+      "LactationPage"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/mom/presentation/lactation_panel.dart",
+    "lines": 698,
+    "widgets": [
+      "LactationPanel",
+      "_LactationFields",
+      "_DaySummary",
+      "_RecordRow"
+    ],
+    "colors": {
+      "background": 1,
+      "mutedForeground": 7,
+      "danger": 2,
+      "003b2c23": 1,
+      "border": 2,
+      "raised": 1
+    },
+    "font_sizes": {
+      "22": 2,
+      "12": 5,
+      "17": 2,
+      "14": 1,
+      "10": 1
+    },
+    "radii": {
+      "13": 1
+    },
+    "spacing": 9,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 13,
+    "card": 2
+  },
+  {
+    "path": "lib/modules/mom/presentation/mother_diary_editor.dart",
+    "lines": 273,
+    "widgets": [
+      "MotherDiaryEditor"
+    ],
+    "colors": {
+      "background": 1,
+      "mutedForeground": 1,
+      "primaryDark": 1,
+      "care": 1
+    },
+    "font_sizes": {
+      "22": 1
+    },
+    "radii": {
+      "22": 1
+    },
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 2,
+    "tokens": 4,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/mom/presentation/mother_diary_page.dart",
+    "lines": 58,
+    "widgets": [
+      "MotherDiaryPage"
+    ],
+    "colors": {
+      "background": 1
+    },
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 1,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/mom/presentation/mother_home_page.dart",
+    "lines": 389,
+    "widgets": [
+      "MotherHomePage",
+      "_SectionHeading",
+      "_UpcomingTools"
+    ],
+    "colors": {
+      "ff857167": 1,
+      "ff685647": 1,
+      "raised": 1,
+      "border": 1,
+      "primary": 1,
+      "mutedForeground": 2
+    },
+    "font_sizes": {
+      "26": 1,
+      "11": 2,
+      "19": 1
+    },
+    "radii": {
+      "18": 1
+    },
+    "spacing": 5,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 5,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/mom/presentation/mother_status_card.dart",
+    "lines": 192,
+    "widgets": [
+      "MotherStatusCard"
+    ],
+    "colors": {
+      "fff4eee6": 1,
+      "ffefe6d9": 1,
+      "fff5efe5": 1,
+      "fff7f0e6": 1,
+      "fff8ece6": 1,
+      "fff4e3dc": 1,
+      "fff8eee7": 1,
+      "fff3e5df": 1,
+      "transparent": 1,
+      "ff60544b": 1,
+      "ff705b4a": 1,
+      "ff3b322b": 1,
+      "ff817167": 1,
+      "b8fffbed": 1,
+      "80f3dfbe": 1,
+      "33fff9ef": 1,
+      "a6fff9f1": 1
+    },
+    "font_sizes": {
+      "13": 2,
+      "10": 1
+    },
+    "radii": {
+      "22": 1
+    },
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/profile/presentation/more_page.dart",
+    "lines": 185,
+    "widgets": [
+      "MorePage",
+      "_AccountCard",
+      "_ActionCard"
+    ],
+    "colors": {
+      "background": 1,
+      "violetSoft": 1,
+      "violet": 2
+    },
+    "font_sizes": {
+      "22": 1
+    },
+    "radii": {},
+    "spacing": 3,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 5,
+    "card": 2
+  },
+  {
+    "path": "lib/modules/schedule/presentation/schedule_page.dart",
+    "lines": 600,
+    "widgets": [
+      "SchedulePage",
+      "_Header",
+      "_MonthGrid",
+      "_DayAgenda",
+      "_AppointmentCard",
+      "_TaskCard",
+      "_PersonalCard"
+    ],
+    "colors": {
+      "background": 1,
+      "mutedForeground": 2,
+      "primary": 3,
+      "white": 2,
+      "foreground": 1
+    },
+    "font_sizes": {
+      "12": 1
+    },
+    "radii": {
+      "12": 2
+    },
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 2,
+    "tokens": 7,
+    "card": 6
+  },
+  {
+    "path": "lib/modules/services/presentation/appointment_detail_page.dart",
+    "lines": 151,
+    "widgets": [
+      "AppointmentDetailPage"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 0,
+    "card": 0
+  },
+  {
+    "path": "lib/modules/services/presentation/appointment_summary.dart",
+    "lines": 109,
+    "widgets": [
+      "AppointmentSummary"
+    ],
+    "colors": {
+      "raised": 1,
+      "border": 1,
+      "mutedForeground": 3,
+      "care": 2,
+      "careSoft": 1
+    },
+    "font_sizes": {
+      "12": 2,
+      "18": 1,
+      "17": 1,
+      "11": 1
+    },
+    "radii": {
+      "22": 1
+    },
+    "spacing": 2,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 8,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/services/presentation/booking_page.dart",
+    "lines": 553,
+    "widgets": [
+      "BookingPage",
+      "_Panel"
+    ],
+    "colors": {
+      "mutedForeground": 10,
+      "danger": 3,
+      "amberSoft": 1,
+      "raised": 1,
+      "secondary": 1,
+      "border": 2,
+      "foreground": 1
+    },
+    "font_sizes": {
+      "12": 5,
+      "19": 1,
+      "23": 1,
+      "13": 2,
+      "11": 1,
+      "17": 1
+    },
+    "radii": {
+      "14": 1,
+      "18": 3,
+      "22": 1
+    },
+    "spacing": 9,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 19,
+    "card": 4
+  },
+  {
+    "path": "lib/modules/services/presentation/consultation_summary_page.dart",
+    "lines": 516,
+    "widgets": [
+      "ConsultationSummaryPage"
+    ],
+    "colors": {
+      "background": 1,
+      "care": 6,
+      "mutedForeground": 6,
+      "careSoft": 2,
+      "secondary": 2
+    },
+    "font_sizes": {
+      "13": 2,
+      "27": 1,
+      "15": 1,
+      "12": 6,
+      "21": 1,
+      "16": 1,
+      "14": 1,
+      "18": 1,
+      "11": 1
+    },
+    "radii": {
+      "20": 1,
+      "8": 1,
+      "14": 1
+    },
+    "spacing": 10,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 17,
+    "card": 2
+  },
+  {
+    "path": "lib/modules/services/presentation/expert_support_section.dart",
+    "lines": 263,
+    "widgets": [
+      "ExpertSupportSection",
+      "ExpertServiceCard"
+    ],
+    "colors": {
+      "ff685647": 1,
+      "raised": 1,
+      "border": 1,
+      "care": 2,
+      "violetSoft": 1,
+      "violet": 1,
+      "mutedForeground": 2
+    },
+    "font_sizes": {
+      "19": 1,
+      "12": 2,
+      "16": 1,
+      "11": 3,
+      "23": 1
+    },
+    "radii": {
+      "20": 1
+    },
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 8,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/services/presentation/intake_page.dart",
+    "lines": 526,
+    "widgets": [
+      "IntakePage"
+    ],
+    "colors": {
+      "mutedForeground": 3,
+      "careSoft": 1,
+      "care": 1,
+      "foreground": 1,
+      "danger": 1,
+      "border": 1
+    },
+    "font_sizes": {
+      "12": 3,
+      "17": 3,
+      "13": 1,
+      "14": 2
+    },
+    "radii": {
+      "20": 1
+    },
+    "spacing": 6,
+    "shadows": 0,
+    "overlays": 2,
+    "tokens": 8,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/services/presentation/service_catalog_page.dart",
+    "lines": 225,
+    "widgets": [
+      "ServiceCatalogPage",
+      "ProviderTeamTile"
+    ],
+    "colors": {
+      "raised": 1,
+      "border": 1,
+      "mutedForeground": 1,
+      "violetSoft": 1,
+      "violet": 1
+    },
+    "font_sizes": {
+      "21": 1,
+      "24": 1,
+      "13": 1,
+      "12": 2
+    },
+    "radii": {
+      "20": 1
+    },
+    "spacing": 3,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 5,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/services/presentation/service_package_page.dart",
+    "lines": 255,
+    "widgets": [
+      "ServicePackagePage",
+      "_DeliveryList"
+    ],
+    "colors": {
+      "raised": 1,
+      "border": 1,
+      "care": 1
+    },
+    "font_sizes": {
+      "25": 1,
+      "15": 1,
+      "28": 1,
+      "18": 1,
+      "14": 1
+    },
+    "radii": {
+      "20": 1
+    },
+    "spacing": 4,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 3,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/services/presentation/service_progress_page.dart",
+    "lines": 244,
+    "widgets": [
+      "ServiceProgressPage",
+      "_Event"
+    ],
+    "colors": {
+      "care": 1,
+      "mutedForeground": 2,
+      "primary": 1,
+      "raised": 1,
+      "border": 1
+    },
+    "font_sizes": {
+      "25": 1,
+      "12": 1,
+      "11": 1,
+      "13": 1
+    },
+    "radii": {
+      "16": 1
+    },
+    "spacing": 6,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 6,
+    "card": 1
+  },
+  {
+    "path": "lib/modules/services/presentation/service_purchase_dialog.dart",
+    "lines": 429,
+    "widgets": [
+      "ServicePurchaseDialog"
+    ],
+    "colors": {
+      "danger": 3,
+      "careSoft": 1,
+      "care": 2,
+      "mutedForeground": 1
+    },
+    "font_sizes": {
+      "21": 1,
+      "13": 1,
+      "12": 2,
+      "22": 1,
+      "18": 2
+    },
+    "radii": {
+      "12": 1
+    },
+    "spacing": 6,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 7,
+    "card": 1
+  },
+  {
+    "path": "lib/shared/design_system/momcozy_theme.dart",
+    "lines": 201,
+    "widgets": [],
+    "colors": {
+      "primary": 11,
+      "background": 5,
+      "roseSoft": 5,
+      "foreground": 9,
+      "secondary": 4,
+      "warm": 1,
+      "card": 4,
+      "muted": 1,
+      "mutedForeground": 5,
+      "border": 10,
+      "ffdc2626": 1,
+      "ffffe4e6": 1,
+      "raised": 4,
+      "transparent": 1,
+      "care": 2
+    },
+    "font_sizes": {
+      "13": 1
+    },
+    "radii": {
+      "5": 1
+    },
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 84,
+    "card": 0
+  },
+  {
+    "path": "lib/shared/widgets/choice_field.dart",
+    "lines": 85,
+    "widgets": [],
+    "colors": {
+      "foreground": 2,
+      "roseSoft": 1,
+      "raised": 1,
+      "mutedForeground": 1,
+      "primaryDark": 1,
+      "border": 1
+    },
+    "font_sizes": {
+      "16": 1,
+      "14": 1
+    },
+    "radii": {},
+    "spacing": 3,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 7,
+    "card": 0
+  },
+  {
+    "path": "lib/shared/widgets/knowledge_banner.dart",
+    "lines": 360,
+    "widgets": [
+      "KnowledgeBanner",
+      "_CompactKnowledgeBanner"
+    ],
+    "colors": {
+      "transparent": 2,
+      "fffcf9fc": 1,
+      "fff3ebf9": 1,
+      "ffe5d4f5": 1,
+      "00e5d4f5": 1,
+      "fff9e7e2": 1,
+      "00f9e7e2": 1,
+      "ff715487": 1,
+      "ff352d40": 1,
+      "ff6b5c76": 1,
+      "ffeee5f5": 1,
+      "white": 2,
+      "59ffffff": 1,
+      "1f8752c7": 1,
+      "violet": 1,
+      "ffc8dde0": 2,
+      "ffeaf2f3": 1,
+      "fff5f9f9": 1,
+      "fffbf8f5": 1,
+      "8cfffefc": 1,
+      "ff3e626c": 2,
+      "ff7f7375": 1,
+      "primaryDark": 1,
+      "mutedForeground": 1
+    },
+    "font_sizes": {
+      "11": 1,
+      "19": 1,
+      "12": 2,
+      "10": 2,
+      "17": 1,
+      "16": 1,
+      "22": 1
+    },
+    "radii": {
+      "18": 3
+    },
+    "spacing": 8,
+    "shadows": 2,
+    "overlays": 1,
+    "tokens": 5,
+    "card": 5
+  },
+  {
+    "path": "lib/shared/widgets/momcozy_wordmark.dart",
+    "lines": 30,
+    "widgets": [
+      "MomCozyWordmark"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 0,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 2,
+    "card": 0
+  },
+  {
+    "path": "lib/shared/widgets/month_selector.dart",
+    "lines": 131,
+    "widgets": [
+      "MonthSelector"
+    ],
+    "colors": {
+      "mutedForeground": 2,
+      "primary": 2,
+      "roseSoft": 1,
+      "transparent": 1,
+      "white": 1,
+      "foreground": 1
+    },
+    "font_sizes": {
+      "14": 1,
+      "11": 1,
+      "12": 1
+    },
+    "radii": {
+      "8": 1
+    },
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 6,
+    "card": 0
+  },
+  {
+    "path": "lib/shared/widgets/product_feedback.dart",
+    "lines": 88,
+    "widgets": [
+      "ProductErrorView",
+      "ProductEmptyView"
+    ],
+    "colors": {
+      "amberSoft": 1,
+      "foreground": 1
+    },
+    "font_sizes": {
+      "16": 1
+    },
+    "radii": {
+      "12": 1
+    },
+    "spacing": 5,
+    "shadows": 0,
+    "overlays": 0,
+    "tokens": 2,
+    "card": 1
+  },
+  {
+    "path": "lib/shared/widgets/zoned_datetime_field.dart",
+    "lines": 104,
+    "widgets": [
+      "ZonedDateTimeField"
+    ],
+    "colors": {},
+    "font_sizes": {},
+    "radii": {},
+    "spacing": 1,
+    "shadows": 0,
+    "overlays": 1,
+    "tokens": 0,
+    "card": 0
+  }
+]

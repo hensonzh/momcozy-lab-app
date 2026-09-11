@@ -7,7 +7,7 @@ const requiredDomains = <String>[
   'user_profile',
   'pump',
   'mom_baby',
-  'plan',
+  'schedule',
   'notify',
   'media',
 ];

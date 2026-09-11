@@ -36,11 +36,7 @@ void main() {
   });
 
   test('active Flutter source has no prenatal product contracts', () {
-    const allowedLegacyFiles = <String>{
-      'lib/core/privacy/log_redactor.dart',
-      'lib/core/storage/legacy_prenatal_data_cleaner.dart',
-      'lib/core/migrations/legacy_prenatal_contract_filter.dart',
-    };
+    const allowedLegacyFiles = <String>{'lib/core/privacy/log_redactor.dart'};
     const removedContracts = <String>[
       'OnboardingCareStage',
       'MomLifeStage',
@@ -58,7 +54,6 @@ void main() {
       'pregnancy_plan.changed',
       'pregnancy.due_date_or_week',
       'PlanCategory.pregnancy',
-      'PlanSessionKind.pregnancy',
       'birth_journey_plan_card',
       'birth_plan_card',
       'hospital_bag_card',
@@ -101,19 +96,13 @@ void main() {
       '${root.path}/lib/features/onboarding/domain/onboarding.dart',
     ).readAsStringSync();
     final profile = File(
-      '${root.path}/lib/features/profile_overview/domain/profile_overview.dart',
+      '${root.path}/lib/domain/mother/mother_profile.dart',
     ).readAsStringSync();
 
-    for (final field in <String>[
-      'deliveryDate',
-      'gestationalWeeks',
-      'gestationalDays',
-      'deliveryType',
-      'infants',
-    ]) {
+    for (final field in <String>['deliveryDate', 'deliveryType', 'infants']) {
       expect(onboarding, contains(field), reason: 'missing postpartum $field');
     }
-    expect(profile, contains('actualDeliveryDate'));
+    expect(profile, contains('deliveryDate'));
     expect(profile, contains('postpartumDay'));
   });
 }

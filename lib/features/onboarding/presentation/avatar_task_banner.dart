@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_controller.dart';
 
 class AvatarTaskBanner extends StatefulWidget {
@@ -59,13 +59,13 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
     final ready = status == AvatarTaskStatus.reviewRequired;
     final failed = status == AvatarTaskStatus.failed;
     final completed = status == AvatarTaskStatus.completed;
-    final foreground = ready ? Colors.white : MomCozyV3Colors.ink;
+    final foreground = ready ? MomCozyColors.raised : MomCozyColors.foreground;
     final background = switch (status) {
-      AvatarTaskStatus.reviewRequired => MomCozyV3Colors.brand,
-      AvatarTaskStatus.failed => const Color(0xfffff2e4),
-      AvatarTaskStatus.completed => const Color(0xffe8f5ea),
+      AvatarTaskStatus.reviewRequired => MomCozyColors.primaryDark,
+      AvatarTaskStatus.failed => MomCozyColors.amberSoft,
+      AvatarTaskStatus.completed => MomCozyColors.careSoft,
       AvatarTaskStatus.queued ||
-      AvatarTaskStatus.generating => MomCozyV3Colors.roseTint,
+      AvatarTaskStatus.generating => MomCozyColors.roseSoft,
       AvatarTaskStatus.hidden => Colors.transparent,
     };
     final title = switch (status) {
@@ -97,18 +97,22 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
           duration: const Duration(milliseconds: 240),
           curve: Curves.easeOutCubic,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+            padding: const EdgeInsets.fromLTRB(
+              MomCozySpacing.pageGutter,
+              MomCozySpacing.compact,
+              MomCozySpacing.pageGutter,
+              MomCozySpacing.xs,
+            ),
             child: Material(
               key: const ValueKey('avatar-task-banner'),
               color: background,
-              borderRadius: BorderRadius.circular(18),
-              elevation: ready ? 5 : 0,
-              shadowColor: MomCozyV3Colors.brand.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(MomCozyRadii.card),
+              elevation: 0,
               child: InkWell(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(MomCozyRadii.card),
                 onTap: actionable ? widget.onOpen : null,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 11, 12, 11),
+                  padding: MomCozyInsets.compactCard,
                   child: Row(
                     children: [
                       _TaskStatusIcon(status: status, foreground: foreground),
@@ -123,24 +127,22 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
                             children: [
                               Text(
                                 title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: foreground,
-                                  fontSize: 14.5,
-                                  fontWeight: FontWeight.w800,
+                                  fontSize: MomCozyTypography.bodySize,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 subtitle,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: ready
-                                      ? Colors.white.withValues(alpha: 0.86)
-                                      : MomCozyV3Colors.mutedText,
-                                  fontSize: 12.5,
+                                      ? MomCozyColors.raised.withValues(
+                                          alpha: 0.86,
+                                        )
+                                      : MomCozyColors.mutedForeground,
+                                  fontSize: MomCozyTypography.secondarySize,
                                   height: 1.25,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -153,7 +155,9 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
                         const SizedBox(width: 6),
                         Icon(
                           Icons.chevron_right_rounded,
-                          color: ready ? Colors.white : MomCozyV3Colors.brand,
+                          color: ready
+                              ? MomCozyColors.raised
+                              : MomCozyColors.primaryDark,
                         ),
                       ],
                     ],
@@ -179,10 +183,10 @@ class _TaskStatusIcon extends StatelessWidget {
     if (status == AvatarTaskStatus.queued ||
         status == AvatarTaskStatus.generating) {
       return const SizedBox.square(
-        dimension: 24,
+        dimension: MomCozyIconSizes.standard,
         child: CircularProgressIndicator(
           strokeWidth: 2.4,
-          color: MomCozyV3Colors.brand,
+          color: MomCozyColors.primaryDark,
         ),
       );
     }
@@ -194,11 +198,11 @@ class _TaskStatusIcon extends StatelessWidget {
         _ => Icons.hourglass_top_rounded,
       },
       color: status == AvatarTaskStatus.failed
-          ? MomCozyV3Colors.warning
+          ? MomCozyColors.amber
           : status == AvatarTaskStatus.completed
-          ? MomCozyV3Colors.success
+          ? MomCozyColors.care
           : foreground,
-      size: 25,
+      size: MomCozyIconSizes.standard,
     );
   }
 }

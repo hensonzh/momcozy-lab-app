@@ -12,8 +12,9 @@ import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dar
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
-import 'package:momcozy_flutter_app/features/plan/data/plan_api_repository.dart';
-import 'package:momcozy_flutter_app/features/profile_overview/data/profile_overview_api_repository.dart';
+import 'package:momcozy_flutter_app/services/baby/baby_profiles_api_repository.dart';
+import 'package:momcozy_flutter_app/modules/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 
 class TestSmokeConfig {
   const TestSmokeConfig({
@@ -203,14 +204,8 @@ List<TestSmokeProbe> buildDefaultTestSmokeProbes(TestSmokeConfig config) {
   );
 
   return [
-    _ProfileOverviewProbe(
-      config,
-      ProfileOverviewApiRepository(
-        transport: jsonTransport,
-        babyId: config.session.babyId,
-      ),
-    ),
-    _PlanProbe(config, PlanApiRepository(transport: jsonTransport)),
+    _BabyProfilesProbe(BabyProfilesApiRepository(transport: jsonTransport)),
+    _ScheduleProbe(ScheduleApiRepository(transport: jsonTransport)),
     _RecordsProbe(config, RecordsApiRepository(transport: jsonTransport)),
     _PumpWorkstateProbe(PumpWorkstateApiRepository(transport: jsonTransport)),
     _MediaUploadProbe(
@@ -233,35 +228,28 @@ AgentRunCreateContextProvider buildTestSmokeRunCreateContextProvider({
   );
 }
 
-class _ProfileOverviewProbe implements TestSmokeProbe {
-  const _ProfileOverviewProbe(this.config, this.repository);
-
-  final TestSmokeConfig config;
-  final ProfileOverviewApiRepository repository;
-
+class _BabyProfilesProbe implements TestSmokeProbe {
+  const _BabyProfilesProbe(this.repository);
+  final BabyProfilesApiRepository repository;
   @override
-  String get name => 'profile overview /v1/profile/me + /v1/profile/infants';
-
+  String get name => 'baby profiles /v1/babies';
   @override
   bool get requiresMutation => false;
-
   @override
   bool get requiresAgentStream => false;
-
   @override
   Future<void> run() async {
-    await repository.fetchOverview();
+    await repository.list();
   }
 }
 
-class _PlanProbe implements TestSmokeProbe {
-  const _PlanProbe(this.config, this.repository);
+class _ScheduleProbe implements TestSmokeProbe {
+  const _ScheduleProbe(this.repository);
 
-  final TestSmokeConfig config;
-  final PlanApiRepository repository;
+  final ScheduleRepository repository;
 
   @override
-  String get name => 'plan /v1/plans + /v1/plans/tasks/list';
+  String get name => 'schedule /v1/schedule';
 
   @override
   bool get requiresMutation => false;
@@ -271,7 +259,12 @@ class _PlanProbe implements TestSmokeProbe {
 
   @override
   Future<void> run() async {
-    await repository.fetchDashboard(weekOf: DateTime.now());
+    final today = DateTime.now().toUtc();
+    await repository.read(
+      start: LocalDate(today.year, today.month, today.day),
+      end: LocalDate(today.year, today.month, today.day).addDays(42),
+      timezone: 'UTC',
+    );
   }
 }
 

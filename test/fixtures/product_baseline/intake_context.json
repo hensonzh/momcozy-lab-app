@@ -1,0 +1,35 @@
+{
+  "appointment": {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "episode_id": "00000000-0000-0000-0000-000000000002",
+    "provider_id": "00000000-0000-0000-0000-000000000003",
+    "provider_name": "Test IBCLC",
+    "starts_at": "2026-09-08T16:00:00Z",
+    "ends_at": "2026-09-08T17:00:00Z",
+    "timezone": "America/Los_Angeles",
+    "region": "CA",
+    "status": "confirmed",
+    "hold_expires_at": "2026-09-08T15:10:00Z",
+    "version": 2,
+    "intake_version": 0,
+    "confirmed_at": "2026-09-08T15:00:00Z",
+    "cancelled_at": null
+  },
+  "intake": null,
+  "previous_intake": null,
+  "consents": [],
+  "babies": [
+    {
+      "name": "宝宝",
+      "birth_date": "2026-08-18",
+      "sex": "female",
+      "feeding_mode": "unknown",
+      "id": "3df630e7-513a-481f-b1f8-e2577200e219",
+      "version": 1,
+      "created_at": "2026-09-09T12:00:00Z",
+      "updated_at": "2026-09-09T12:00:00Z"
+    }
+  ],
+  "delivery_date": "2026-08-18",
+  "consent_policy_version": "2026-09-08"
+}

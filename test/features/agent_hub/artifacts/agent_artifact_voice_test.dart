@@ -16,8 +16,8 @@ void main() {
             label: '打开泌乳计划',
             icon: Icons.water_drop_outlined,
             kind: 'navigate',
-            value: '/plan',
-            routePath: '/plan',
+            value: '/schedule',
+            routePath: '/schedule',
           ),
         ],
       ),
@@ -25,7 +25,7 @@ void main() {
 
     expect(text, '泌乳支持清单 我已经帮你整理好了。');
     expect(text, isNot(contains('打开泌乳计划')));
-    expect(text, isNot(contains('/plan')));
+    expect(text, isNot(contains('/schedule')));
     expect(text, isNot(contains('旧卡片')));
   });
 

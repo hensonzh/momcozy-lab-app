@@ -37,9 +37,7 @@ class MomCozyAppCapabilities {
       onboardingGateEnabled && releaseResetEnabled;
 
   bool isRouteEnabled(String path) {
-    if (path == '/motion-assessment' ||
-        path == '/more' ||
-        path.startsWith('/more/body-profile')) {
+    if (path == '/motion-assessment') {
       return extendedProductApiEnabled;
     }
     return true;

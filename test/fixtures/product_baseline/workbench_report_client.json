@@ -1,0 +1,132 @@
+{
+  "client": {
+    "patient_ref": "a410ab54-a728-4ddd-b6db-55c93a35eeb2",
+    "name": "林晓",
+    "delivery_date": "2026-08-18",
+    "services": [
+      {
+        "episode": {
+          "id": "cd26dafe-da39-4cc1-bf9e-4744f7b7a5fe",
+          "order_id": "4090a2be-f9b8-4a9e-8927-a051db6cbe5d",
+          "package_id": "feeding-confidence",
+          "baby_id": null,
+          "assigned_ibclc_id": "a6c8f0e6-3a88-4483-b402-f49b6afcd48d",
+          "status": "active",
+          "stage": "active_care",
+          "total_sessions": 2,
+          "remaining_sessions": 1,
+          "starts_at": "2026-09-10T15:55:00Z",
+          "ends_at": "2026-09-17T15:55:00Z",
+          "version": 4
+        },
+        "package": {
+          "id": "feeding-confidence",
+          "name": "喂养安心",
+          "subtitle": "Feeding Confidence",
+          "description": "判断宝宝当前是否吃够，明确是否需要调整喂养，并形成 Feeding Plan。",
+          "duration_days": 7,
+          "sessions": 2,
+          "price_minor": 21900,
+          "currency": "USD",
+          "highlights": [
+            "判断宝宝是否吃够",
+            "形成 Feeding Plan",
+            "7 天持续跟进"
+          ],
+          "expert_services": [
+            "1 次首次视频咨询（60 分钟）",
+            "1 次 IBCLC 跟进（20–30 分钟）"
+          ],
+          "continuous_services": [
+            "跟踪 feeding、pumping、奶量及宝宝关键记录",
+            "按 Care Plan 提醒执行与记录",
+            "收集喂养反馈",
+            "生成阶段总结供 IBCLC 复核"
+          ]
+        },
+        "case_consent": true
+      }
+    ]
+  },
+  "appointments": [
+    {
+      "appointment": {
+        "id": "859c47fc-21d7-4bad-baf3-3f302eda9108",
+        "episode_id": "cd26dafe-da39-4cc1-bf9e-4744f7b7a5fe",
+        "provider_id": "a6c8f0e6-3a88-4483-b402-f49b6afcd48d",
+        "provider_name": "Test IBCLC",
+        "starts_at": "2026-09-10T16:00:00Z",
+        "ends_at": "2026-09-10T17:00:00Z",
+        "timezone": "America/Los_Angeles",
+        "region": "CA",
+        "status": "completed",
+        "hold_expires_at": "2026-09-09T12:10:00Z",
+        "version": 4,
+        "intake_version": 0,
+        "confirmed_at": "2026-09-09T12:00:00Z",
+        "cancelled_at": null
+      },
+      "episode": {
+        "id": "cd26dafe-da39-4cc1-bf9e-4744f7b7a5fe",
+        "order_id": "4090a2be-f9b8-4a9e-8927-a051db6cbe5d",
+        "package_id": "feeding-confidence",
+        "baby_id": null,
+        "assigned_ibclc_id": "a6c8f0e6-3a88-4483-b402-f49b6afcd48d",
+        "status": "active",
+        "stage": "active_care",
+        "total_sessions": 2,
+        "remaining_sessions": 1,
+        "starts_at": "2026-09-10T15:55:00Z",
+        "ends_at": "2026-09-17T15:55:00Z",
+        "version": 4
+      },
+      "package": {
+        "id": "feeding-confidence",
+        "name": "喂养安心",
+        "subtitle": "Feeding Confidence",
+        "description": "判断宝宝当前是否吃够，明确是否需要调整喂养，并形成 Feeding Plan。",
+        "duration_days": 7,
+        "sessions": 2,
+        "price_minor": 21900,
+        "currency": "USD",
+        "highlights": [
+          "判断宝宝是否吃够",
+          "形成 Feeding Plan",
+          "7 天持续跟进"
+        ],
+        "expert_services": [
+          "1 次首次视频咨询（60 分钟）",
+          "1 次 IBCLC 跟进（20–30 分钟）"
+        ],
+        "continuous_services": [
+          "跟踪 feeding、pumping、奶量及宝宝关键记录",
+          "按 Care Plan 提醒执行与记录",
+          "收集喂养反馈",
+          "生成阶段总结供 IBCLC 复核"
+        ]
+      },
+      "patient_ref": "a410ab54-a728-4ddd-b6db-55c93a35eeb2",
+      "patient_name": "林晓",
+      "delivery_date": "2026-08-18",
+      "case_consent": true,
+      "consultation": {
+        "id": "19aa6f07-1ecd-4713-8e62-47139536e1a8",
+        "appointment_id": "859c47fc-21d7-4bad-baf3-3f302eda9108",
+        "episode_id": "cd26dafe-da39-4cc1-bf9e-4744f7b7a5fe",
+        "version": 4,
+        "status": "closed",
+        "room_status": "closing",
+        "video_provider": "sandbox",
+        "started_at": "2026-09-10T15:55:00Z",
+        "ended_at": "2026-09-10T15:55:00Z",
+        "end_reason": "completed"
+      },
+      "note_status": "signed",
+      "published_revision": 1
+    }
+  ],
+  "appointment_total": 1,
+  "offset": 0,
+  "limit": 20,
+  "server_time": "2026-09-10T15:55:00Z"
+}

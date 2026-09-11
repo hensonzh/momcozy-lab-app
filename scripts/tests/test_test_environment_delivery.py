@@ -194,19 +194,6 @@ class TestDeliveryContractTest(unittest.TestCase):
         for path in pure_golden_tests:
             self.assertIn("@Tags(['golden'])", path.read_text(), str(path))
 
-        mixed_golden_counts = {
-            "test/features/more/more_profile_page_test.dart": 5,
-            "test/features/plan/plan_page_test.dart": 5,
-            "test/features/profile_overview/me_baby_overview_page_test.dart": 14,
-        }
-        for relative_path, expected_count in mixed_golden_counts.items():
-            source = (ROOT / relative_path).read_text()
-            self.assertEqual(
-                source.count("goldenTest("),
-                expected_count,
-                relative_path,
-            )
-
     def test_live_test_smoke_runs_inside_the_flutter_test_runtime(self) -> None:
         release_gate = (ROOT / "scripts" / "run-flutter-release-gate.mjs").read_text()
         smoke_source = (

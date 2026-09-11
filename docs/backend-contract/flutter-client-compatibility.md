@@ -82,28 +82,12 @@ versioning plan.
   `/v1/agent/runs/{run_id}/stream?after_sequence=<last_sequence>&follow=true`
   so `action.applied`, `action.failed`, `action.rejected`, and final message
   events replace local pending states.
-- Treat durable `pregnancy_plan.changed` as a privacy-safe notification and
-  cache-invalidation signal only. Deduplicate it by `event_id`, then load the
-  current user's authoritative Plan from
-  `/v1/plans?plan_type=pregnancy&status=active`; do not derive or cache the
-  personalized plan from the event payload.
-- Keep Schedule task state authoritative: use `/plans/tasks/{task_id}/state`
-  for `pending/completed/skipped`, and refetch the selected day after writes.
-  A pumping or feeding record created for task completion must send the stable
-  `plan_task_id` and reuse its `Idempotency-Key` on retry.
-- Update pregnancy-card todo completion only through
-  `/plans/{plan_id}/todos/{item_id}/completion`, sending the last observed plan
-  `version` as `expected_version`. Replace local plan state with the returned
-  `PlanRead`; on `version_conflict`, reload before retrying. Never fall back to
-  title matching when `item_id` is absent.
-- Accept optional `starts_on` and `ends_on` lifecycle dates on `PlanRead`.
 - Treat durable `diary.changed` as a privacy-safe diary invalidation signal;
   deduplicate it by `event_id` and reload the authoritative daily diary.
-- Treat durable `milk_plan.changed` as a privacy-safe Schedule invalidation
-  signal for an existing plan. Accept `operation=updated`, `deleted`, or
-  `rescheduled`, then refresh owner-scoped authoritative plan/task data. New
-  milk-plan creation and its preview/card artifacts are not supported client
-  flows.
+- Schedule reads use `GET /v1/schedule?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD&timezone=IANA`.
+  Personal entries are created, edited, and deleted through `/v1/schedule/personal`;
+  task feedback uses the published care-plan task endpoint. All writes remain
+  owner-scoped and use the returned timestamp/version for conflict handling.
 - Treat `voice_provider_disabled` as a stable unavailable-state response for
   voice UI; do not fall back to legacy realtime voice endpoints.
 

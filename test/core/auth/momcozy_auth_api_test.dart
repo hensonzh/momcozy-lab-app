@@ -33,21 +33,19 @@ void main() {
       expect(tokens.user.displayName, 'Test User');
     });
 
-    test('signup sends optional fields only when present', () async {
+    test('register sends mailbox verification request without profile fields', () async {
       final transport = FixtureApiJsonTransport(_tokenResponse());
       final repository = MomCozyAuthApiRepository(transport: transport);
 
-      await repository.signup(
+      await repository.register(
         email: 'new@example.test',
         password: 'strong-password',
-        displayName: ' New Mom ',
       );
 
-      expect(transport.lastPath, authSignupEndpoint);
+      expect(transport.lastPath, '/v1/auth/register');
       expect(transport.lastBody, {
         'email': 'new@example.test',
         'password': 'strong-password',
-        'display_name': 'New Mom',
       });
       expect(transport.lastBody, isNot(containsPair('device_id', anything)));
     });

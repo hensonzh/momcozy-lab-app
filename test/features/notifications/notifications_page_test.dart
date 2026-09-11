@@ -1,6 +1,6 @@
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/notifications/domain/momcozy_notification.dart';
 import 'package:momcozy_flutter_app/features/notifications/presentation/notifications_page.dart';
 
@@ -48,6 +48,30 @@ void main() {
 class _FakeNotificationsRepository implements NotificationsRepository {
   String? readNotificationId;
   String? archivedNotificationId;
+  @override
+  Future<NotificationPageData> fetchPage({
+    String? cursor,
+    int limit = 30,
+  }) async => NotificationPageData(
+    items: await fetchNotifications(),
+    unreadCount: readNotificationId == null && archivedNotificationId == null
+        ? 1
+        : 0,
+  );
+  @override
+  Future<void> markAllRead() async {
+    readNotificationId = 'notification-1';
+  }
+
+  @override
+  Future<NotificationOpenTarget> openNotification(
+    String notificationId,
+  ) async => NotificationOpenTarget(
+    notification: await setReadState(
+      notificationId: notificationId,
+      read: true,
+    ),
+  );
 
   @override
   Future<List<MomCozyNotification>> fetchNotifications({

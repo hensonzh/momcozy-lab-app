@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "id": "06bd8c02-d5dc-4177-a36b-f3210a7b21d3",
+      "report_date": "2026-09-10",
+      "timezone": "America/Los_Angeles",
+      "version": 1,
+      "status": "ready",
+      "review_decision": null,
+      "generated_at": "2026-09-10T15:55:00Z"
+    }
+  ],
+  "server_time": "2026-09-10T15:55:00Z"
+}

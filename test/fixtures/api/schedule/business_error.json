@@ -1,0 +1,22 @@
+{
+  "domain": "schedule",
+  "endpoint": "/v1/schedule",
+  "method": "GET",
+  "request": {
+    "query": {
+      "start_date": "2026-09-01",
+      "end_date": "2026-10-12",
+      "timezone": "Asia/Shanghai"
+    }
+  },
+  "variant": "business_error",
+  "response": {
+    "status": 40001,
+    "message": "schedule fixture business error",
+    "data": {
+      "error": -1,
+      "code": "SCHEDULE_BUSINESS_ERROR",
+      "retryable": false
+    }
+  }
+}

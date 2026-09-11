@@ -1,10 +1,10 @@
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';

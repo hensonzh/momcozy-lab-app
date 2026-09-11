@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/design_system/momcozy_design_system.dart';
+import '../../../shared/widgets/momcozy_components.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_controller.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_pose_overlay.dart';
@@ -116,7 +118,7 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
       animation: controller,
       builder: (context, _) {
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: MomCozyColors.mediaBackground,
           body: SafeArea(
             child: Stack(
               fit: StackFit.expand,
@@ -150,36 +152,39 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        padding: const EdgeInsets.fromLTRB(
+          MomCozySpacing.page,
+          MomCozySpacing.content,
+          MomCozySpacing.page,
+          0,
+        ),
         child: Row(
           children: [
             Expanded(
               child: Text(
                 controller.target == 'posture_screen' ? '体态动态评估' : '头颈姿态动态评估',
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
+                style: MomCozyTypography.title.copyWith(
+                  color: MomCozyColors.onMedia,
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: MomCozySpacing.compact),
             TextButton(
               key: const ValueKey('motion-assessment-end'),
               onPressed: controller.canEnd
                   ? () => unawaited(controller.finish())
                   : null,
               style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                disabledForegroundColor: Colors.white38,
-                backgroundColor: Colors.black.withValues(alpha: 0.36),
+                foregroundColor: MomCozyColors.onMedia,
+                disabledForegroundColor: MomCozyColors.onMediaDisabled,
+                backgroundColor: MomCozyColors.mediaControlBackground,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 9,
+                  horizontal: MomCozySpacing.content,
+                  vertical: MomCozySpacing.compact,
                 ),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                minimumSize: const Size(0, MomCozyTapTargets.minimum),
               ),
               child: const Text('结束评估'),
             ),
@@ -195,8 +200,8 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
         controller.phase == MotionAssessmentPagePhase.targetChanged;
     final guide = controller.framingGuide;
     final color = blocked
-        ? Colors.orangeAccent
-        : Colors.white.withValues(alpha: 0.72);
+        ? MomCozyColors.motionWarning
+        : MomCozyColors.onMedia.withValues(alpha: 0.72);
     final key = switch (guide) {
       MotionAssessmentFramingGuide.forwardHead => const ValueKey(
         'motion-framing-guide-forward-head',
@@ -216,7 +221,7 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     };
     return Positioned.fill(
       left: 6,
-      top: 58,
+      top: 58 * MediaQuery.textScalerOf(context).scale(1),
       right: 6,
       bottom: 22,
       child: IgnorePointer(
@@ -235,15 +240,20 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(36, 0, 36, 28),
+        padding: const EdgeInsets.fromLTRB(
+          MomCozySpacing.spacious,
+          0,
+          MomCozySpacing.spacious,
+          MomCozySpacing.homeBottom,
+        ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(MomCozyRadii.pill),
           child: LinearProgressIndicator(
             key: const ValueKey('motion-assessment-sampling-progress'),
             value: controller.samplingProgress,
             minHeight: 5,
-            backgroundColor: Colors.black38,
-            color: const Color(0xff51e1d2),
+            backgroundColor: MomCozyColors.mediaControlBackground,
+            color: MomCozyColors.motionLeft,
           ),
         ),
       ),
@@ -252,37 +262,32 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
 
   Widget _failureOverlay() {
     return ColoredBox(
-      color: Colors.black.withValues(alpha: 0.74),
+      color: MomCozyColors.mediaBackground.withValues(alpha: 0.74),
       child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: const Color(0xff2b2024),
-              borderRadius: BorderRadius.circular(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(MomCozySpacing.page),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: MomCozyLayout.maxAppWidth,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
+            child: MomCozySurface(
+              padding: MomCozyInsets.dialog,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
                     Icons.error_outline_rounded,
-                    color: Color(0xffffc2cf),
-                    size: 34,
+                    color: MomCozyColors.danger,
+                    size: MomCozyIconSizes.feature,
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: MomCozySpacing.headingGap),
                   Text(
                     controller.errorMessage ?? '评估暂时中断，请重试。',
                     key: const ValueKey('motion-assessment-error'),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      height: 1.45,
-                    ),
+                    style: MomCozyTypography.title,
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: MomCozySpacing.section),
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton(
@@ -291,7 +296,7 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                       child: const Text('重新尝试'),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: MomCozySpacing.compact),
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(

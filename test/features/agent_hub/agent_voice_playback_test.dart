@@ -22,19 +22,14 @@ void main() {
       );
     });
 
-    test('removes media paths and hospital bag cart link labels', () {
+    test('removes media paths and reads current navigation labels', () {
       expect(
         sanitizeAgentVoicePlaybackText(
           '请看 pump_step_3.png 和 /skill-assets/device/videos/demo.mp4。',
         ),
         '请看 和 。',
       );
-      expect(
-        sanitizeAgentVoicePlaybackText(
-          '**[打开待产包一键打包下单页](/hospital-bag-cart)**',
-        ),
-        isEmpty,
-      );
+      expect(sanitizeAgentVoicePlaybackText('**[打开日程](/schedule)**'), '打开日程');
     });
 
     test('replaces media markdown with explicit narration once', () {
@@ -62,7 +57,7 @@ void main() {
       );
     });
 
-    test('matches legacy URL labels, routes, and unfinished markup', () {
+    test('handles URL labels, routes, and unfinished markup', () {
       expect(
         sanitizeAgentVoicePlaybackText(
           '[https://example.com](https://example.com) 已生成',
@@ -70,11 +65,11 @@ void main() {
         '已生成',
       );
       expect(
-        sanitizeAgentVoicePlaybackText('请看 [Plan 页面](/plan?tab=ready)。'),
-        '请看 Plan 页面 。',
+        sanitizeAgentVoicePlaybackText('请看 [日程页面](/schedule?date=2026-09-09)。'),
+        '请看 日程页面 。',
       );
       expect(
-        sanitizeAgentVoicePlaybackText('请打开 /hospital-bag-cart?tab=ready 查看。'),
+        sanitizeAgentVoicePlaybackText('请打开 /schedule?date=2026-09-09 查看。'),
         '请打开 查看。',
       );
       expect(
@@ -122,12 +117,12 @@ void main() {
       expect(filter.flush(), isEmpty);
     });
 
-    test('skips a hospital bag cart link split across deltas', () {
+    test('reads a schedule link label split across deltas', () {
       final filter = AgentVoiceTextStreamFilter();
 
-      expect(filter.push('请看 [打开待产包购物车]('), '请看 ');
-      expect(filter.push('/hospital-bag-cart?tab=ready'), isEmpty);
-      expect(filter.push(')，然后继续。'), ' ，然后继续。');
+      expect(filter.push('请看 [打开日程]('), '请看 ');
+      expect(filter.push('/schedule?date=2026-09-09'), isEmpty);
+      expect(filter.push(')，然后继续。'), ' 打开日程 ，然后继续。');
       expect(filter.flush(), isEmpty);
     });
 
@@ -211,7 +206,7 @@ void main() {
 
     test('releases body after route and domain lines', () {
       for (final prefix in const [
-        '/hospital-bag-cart?tab=ready',
+        '/schedule?date=2026-09-09',
         'docs.example.com/guide',
       ]) {
         final filter = AgentVoiceTextStreamFilter();

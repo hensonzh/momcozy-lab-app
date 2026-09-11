@@ -81,9 +81,8 @@ void main() {
     );
 
     final infoPlist = File('ios/Runner/Info.plist').readAsStringSync();
-    expect(infoPlist, contains('智能体图片'));
-    expect(infoPlist, contains('动态体态评估'));
-    expect(infoPlist, contains('录制语音消息'));
+    expect(infoPlist, contains('智能体分析'));
+    expect(infoPlist, contains('语音消息'));
     expect(infoPlist, contains('母婴场景图片'));
   });
 

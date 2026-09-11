@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
+import '../../../support/momcozy_test_fonts.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_assessment_api_repository.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_pose_platform.dart';
 import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_realtime_voice.dart';
@@ -21,6 +24,7 @@ import 'package:momcozy_flutter_app/features/motion_assessment/presentation/moti
 import 'package:momcozy_flutter_app/features/motion_assessment/presentation/motion_assessment_page.dart';
 
 void main() {
+  setUpAll(loadMomCozyTestFonts);
   test(
     'keeps a posture screen in voice selection until a versioned plan is confirmed',
     () async {
@@ -1503,6 +1507,125 @@ void main() {
       expect(firstPose.stopCalls, greaterThanOrEqualTo(1));
     },
   );
+  for (final width in [320.0, 390.0, 430.0]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('motion responsive failure retry and exit $width / $scale', (
+        tester,
+      ) async {
+        tester.view.physicalSize = Size(width, scale == 1 ? 720 : 320);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final failedPose = _FakePosePlatform(
+          startError: PlatformException(
+            code: 'pose_model_initialization_failed',
+          ),
+        );
+        final failed = MotionAssessmentController(
+          target: 'forward_head',
+          locale: 'zh-CN',
+          repository: _FakeRepository(immediateSession: _session()),
+          posePlatform: failedPose,
+          voice: _FakeVoice(),
+        );
+        await tester.runAsync(failed.start);
+        final retryPose = _FakePosePlatform();
+        final retried = MotionAssessmentController(
+          target: 'forward_head',
+          locale: 'zh-CN',
+          repository: _FakeRepository(immediateSession: _session()),
+          posePlatform: retryPose,
+          voice: _FakeVoice(),
+        );
+        var attempts = 0;
+        final router = GoRouter(
+          initialLocation: '/motion',
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (_, _) => const Scaffold(body: Text('评估返回页')),
+            ),
+            GoRoute(
+              path: '/motion',
+              builder: (_, _) => MotionAssessmentPage(
+                controllerIdentity: 'responsive-motion',
+                controllerFactory: () => attempts++ == 0 ? failed : retried,
+                previewBuilder: (_) =>
+                    const ColoredBox(color: Color(0xff283538)),
+              ),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: momCozyTheme(),
+            routerConfig: router,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(scale),
+                padding: const EdgeInsets.only(top: 24, bottom: 20),
+              ),
+              child: RepaintBoundary(
+                key: const ValueKey('motion-design'),
+                child: child!,
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        if (scale == 1) {
+          await expectLater(
+            find.byKey(const ValueKey('motion-design')),
+            matchesGoldenFile(
+              '../../../goldens/design_system/motion-failure-${width.toInt()}.png',
+            ),
+          );
+        }
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('motion-assessment-retry')),
+        );
+        await tester.tap(find.byKey(const ValueKey('motion-assessment-retry')));
+        await tester.pumpAndSettle();
+        expect(attempts, 2);
+        expect(retryPose.startCalls, 1);
+        expect(failedPose.stopCalls, greaterThanOrEqualTo(1));
+        expect(
+          find.byKey(const ValueKey('motion-assessment-error')),
+          findsNothing,
+        );
+        expect(
+          tester
+              .getSize(find.byKey(const ValueKey('motion-assessment-end')))
+              .height,
+          greaterThanOrEqualTo(44),
+        );
+        expect(tester.takeException(), isNull);
+        if (scale == 1) {
+          await expectLater(
+            find.byKey(const ValueKey('motion-design')),
+            matchesGoldenFile(
+              '../../../goldens/design_system/motion-guide-${width.toInt()}.png',
+            ),
+          );
+        }
+        retryPose.emitError(
+          PlatformException(code: 'pose_model_initialization_failed'),
+        );
+        await tester.runAsync(_flush);
+        await tester.pumpAndSettle();
+        expect(retried.phase, MotionAssessmentPagePhase.failed);
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('motion-assessment-exit')),
+        );
+        await tester.tap(find.byKey(const ValueKey('motion-assessment-exit')));
+        await tester.pumpAndSettle();
+        expect(find.text('评估返回页'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
 }
 
 Future<void> _flush() => Future<void>.delayed(Duration.zero);

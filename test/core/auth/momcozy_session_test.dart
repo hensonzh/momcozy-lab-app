@@ -92,9 +92,9 @@ void main() {
 
         expect(await store.readSession(), isNull);
         expect(operations, [
+          'clear',
           'clearUserScope:user-001',
           'clearNativePendingState',
-          'clear',
         ]);
         expect(loggedOut.status, MomCozySessionStatus.anonymous);
         expect(loggedOut.accessToken, isNull);
