@@ -14,6 +14,14 @@ export PATH := $(TOOLCHAIN_PATH)
 
 .PHONY: \
 	flutter-check \
+	local-dev-init \
+	local-dev-up \
+	local-dev-start \
+	local-dev-app \
+	local-dev-verify \
+	local-dev-status \
+	local-dev-logs \
+	local-dev-down \
 	flutter-invite-dev \
 	flutter-packaging-check \
 	flutter-security-check \
@@ -25,6 +33,30 @@ export PATH := $(TOOLCHAIN_PATH)
 
 flutter-check:
 	node scripts/check-flutter-toolchain.mjs
+
+local-dev-init:
+	node scripts/local-dev-stack.mjs init
+
+local-dev-up:
+	node scripts/local-dev-stack.mjs up
+
+local-dev-start:
+	node scripts/local-dev-stack.mjs start
+
+local-dev-app:
+	node scripts/local-dev-stack.mjs app
+
+local-dev-verify:
+	node scripts/local-dev-stack.mjs verify
+
+local-dev-status:
+	node scripts/local-dev-stack.mjs status
+
+local-dev-logs:
+	node scripts/local-dev-stack.mjs logs
+
+local-dev-down:
+	node scripts/local-dev-stack.mjs down
 
 flutter-invite-dev:
 	node scripts/run-flutter-invite-dev.mjs

@@ -10,14 +10,14 @@
 flutter pub get
 flutter run -d chrome -t lib/main_ibclc.dart \
   --web-hostname=127.0.0.1 --web-port=5173 \
-  --dart-define=MOMCOZY_API_BASE_URL=http://127.0.0.1:8000
+  --dart-define=MOMCOZY_API_BASE_URL=http://127.0.0.1:8769
 ```
 
 构建静态 Web 资源：
 
 ```sh
 flutter build web -t lib/main_ibclc.dart --no-web-resources-cdn --pwa-strategy=none \
-  --dart-define=MOMCOZY_API_BASE_URL=http://127.0.0.1:8000
+  --dart-define=MOMCOZY_API_BASE_URL=http://127.0.0.1:8769
 ```
 
 `--pwa-strategy=none` 在当前 Flutter 版本中已标记废弃，但仍用于明确关闭生成的离线服务工作线程；升级 SDK 时需检查替代方式。构建产物位于 `build/web`，运行时采用 hash 深链。部署需配置真实 HTTPS API 地址；本任务未部署云端。

@@ -18,7 +18,7 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
   make flutter-invite-dev
 
 Environment overrides:
-  MOMCOZY_API_BASE_URL=http://10.0.2.2:8000
+  MOMCOZY_API_BASE_URL=http://10.0.2.2:8769
   MOMCOZY_AGENT_API_BASE_URL=http://10.0.2.2:8010
   MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5554
   MOMCOZY_RESET_INVITE_APP=0
@@ -44,6 +44,12 @@ const javaHome =
 const androidSdkRoot =
   process.env.ANDROID_SDK_ROOT ||
   path.join(toolchainRoot, toolchainConfig.android.sdkPath);
+const pinnedAapt2 = path.join(
+  androidSdkRoot,
+  "build-tools",
+  toolchainConfig.android.buildTools,
+  process.platform === "win32" ? "aapt2.exe" : "aapt2",
+);
 const env = {
   ...process.env,
   JAVA_HOME: javaHome,
@@ -58,6 +64,11 @@ const env = {
     process.env.PATH || "",
   ].join(path.delimiter),
 };
+if (process.platform === "darwin" && existsSync(pinnedAapt2)) {
+  env["ORG_GRADLE_PROJECT_android.aapt2FromMavenOverride"] =
+    process.env["ORG_GRADLE_PROJECT_android.aapt2FromMavenOverride"] ||
+    pinnedAapt2;
+}
 
 const packageName =
   process.env.MOMCOZY_FLUTTER_EMULATOR_PACKAGE ||
@@ -66,7 +77,7 @@ let apiConfig;
 try {
   apiConfig = resolveFlutterApiConfig({
     flavor: "local",
-    productUrl: process.env.MOMCOZY_API_BASE_URL || "http://10.0.2.2:8000",
+    productUrl: process.env.MOMCOZY_API_BASE_URL || "http://10.0.2.2:8769",
     agentUrl:
       process.env.MOMCOZY_AGENT_API_BASE_URL || "http://10.0.2.2:8010",
   });
