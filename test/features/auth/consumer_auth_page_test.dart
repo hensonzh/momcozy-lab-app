@@ -4,6 +4,7 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/google_sign_in_gateway.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import '../../support/fixture_api_transport.dart';
 
@@ -20,12 +21,13 @@ class _CancelledGoogle implements GoogleSignInGateway {
 void main() {
   Future<MomCozyRuntimeController> mount(
     WidgetTester tester,
-    FixtureApiJsonTransport transport,
+    ApiJsonTransport transport,
     MomCozySessionStore store,
   ) async {
     final controller = MomCozyRuntimeController(
       MomCozyApiRuntime(jsonTransport: transport),
     );
+    addTearDown(controller.dispose);
     await tester.pumpWidget(
       MaterialApp(
         home: MomCozyAuthPage(
@@ -53,6 +55,58 @@ void main() {
       password,
     );
   }
+
+  testWidgets('unverified login opens verification without a separate entry', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransportByPath({
+      '/v1/auth/login': {
+        'http_status': 403,
+        'body': {
+          'error': {'code': 'email_unverified', 'message': 'Verify your email'},
+        },
+      },
+      '/v1/auth/resend-verification': {'status': 'verification_if_required'},
+      '/v1/auth/verify-email': {
+        'access_token': 'access',
+        'refresh_token': 'refresh',
+        'expires_in': 900,
+        'user': {'id': 'mia'},
+      },
+    });
+    final store = MemoryMomCozySessionStore();
+    final controller = await mount(tester, transport, store);
+    expect(find.text('Verify an existing account'), findsNothing);
+    expect(find.byKey(const ValueKey('auth-code-field')), findsNothing);
+    await fill(tester);
+    await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+    await tester.pumpAndSettle();
+    expect(transport.mutationPaths, [
+      '/v1/auth/login',
+      '/v1/auth/resend-verification',
+    ]);
+    expect(find.text('Verify your email'), findsOneWidget);
+    expect(find.text('Resend code'), findsOneWidget);
+    expect(controller.currentSession.isAuthenticated, isFalse);
+    expect(
+      tester
+          .widget<TextFormField>(find.byKey(const ValueKey('auth-email-field')))
+          .controller
+          ?.text,
+      'mia@example.com',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-code-field')),
+      '12345678',
+    );
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-submit-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+    await tester.pumpAndSettle();
+    expect(transport.lastPath, '/v1/auth/verify-email');
+    expect((await store.readSession())?.userId, 'mia');
+  });
 
   testWidgets(
     'email login saves a session and Google cancellation does not sign in',
