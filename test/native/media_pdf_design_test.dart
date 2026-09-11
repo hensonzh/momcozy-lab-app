@@ -75,11 +75,14 @@ void main() {
             await tester.runAsync(
               () => Future<void>.delayed(const Duration(milliseconds: 20)),
             );
-            if (find.byType(PdfViewer).evaluate().isNotEmpty)
+            if (find.byType(PdfViewer).evaluate().isNotEmpty) {
               controller = tester
                   .widget<PdfViewer>(find.byType(PdfViewer))
                   .controller;
-            if (controller?.isReady ?? false) break;
+            }
+            if (controller?.isReady ?? false) {
+              break;
+            }
           }
           expect(controller?.isReady, isTrue);
           expect(controller!.pages, hasLength(2));

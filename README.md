@@ -65,21 +65,37 @@ flutter build apk --release --flavor unified \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
-邀请码登录本地联调用父目录命令：
+在 `app/` 目录可用一个入口初始化并启动 Product Backend、Agent Runtime 及其依赖，随后执行跨服务登录验收：
+
+```bash
+make local-dev-up
+```
+
+该命令会在缺失时从示例创建两个仓库各自被忽略的 `env/compose.local.env`，生成本地 JWT 私钥，对齐服务密钥、issuer、audience 和端口，然后依次启动 Backend 与 Agent。Android 模拟器在线后，启动 Android App 使用：
+
+```bash
+make local-dev-start
+```
+
+常用维护命令为 `make local-dev-verify`、`make local-dev-status`、`make local-dev-logs` 和 `make local-dev-down`。`local-dev-down` 保留数据库与对象存储卷，方便下一次增量启动。
+
+日常开发只需在工作开始时执行一次 `make local-dev-up`。`make local-dev-start` 保持 Flutter 会话常驻，可直接使用 hot reload；无需发布云端测试环境。服务代码变化后重新执行 `make local-dev-up` 会复用 Docker 构建层和数据卷。
+
+仅启动邀请码登录 App 时使用：
 
 ```bash
 make flutter-invite-dev
 ```
 
 该命令默认将 Product Backend 和 Agent Runtime 分别连接到
-`http://10.0.2.2:8000` 与
+`http://10.0.2.2:8769` 与
 `http://10.0.2.2:8010`，不会传入 `MOMCOZY_API_TOKEN` 或
 `MOMCOZY_REFRESH_TOKEN`，并会先清理 local flavor 安装包，确保进入邀请码登录页。
 如需覆盖模拟器或后端地址：
 
 ```bash
 MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5554 \
-MOMCOZY_API_BASE_URL=http://10.0.2.2:8000 \
+MOMCOZY_API_BASE_URL=http://10.0.2.2:8769 \
 MOMCOZY_AGENT_API_BASE_URL=http://10.0.2.2:8010 \
 make flutter-invite-dev
 ```
